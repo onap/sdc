@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   id="svg3809"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="handle.svg">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 224.4375 150 A 74.815327 74.815327 0 1 0 224.4375 299.625 L 775.5625 299.625 A 74.815327 74.815327 0 1 0 775.5625 150 L 224.4375 150 z M 225.25 425.375 A 74.596181 74.815327 0 1 0 225.25 575 L 774.75 575 A 74.596181 74.815327 0 1 0 774.75 425.375 L 225.25 425.375 z M 225.25 700.375 A 74.596181 74.815327 0 1 0 225.25 850 L 774.75 850 A 74.596181 74.815327 0 1 0 774.75 700.375 L 225.25 700.375 z "
+       id="path2988" />
+  </g>
+</svg>

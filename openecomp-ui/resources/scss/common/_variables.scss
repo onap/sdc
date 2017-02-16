@@ -1,0 +1,47 @@
+
+// primary colors
+$blue: #009fdb;
+$dark-blue: #0568ae;
+$light-blue: #71c5e8;
+$green: #4ca90c;
+$dark-green: #007a3e;
+$light-green: #b5bd00;
+$orange: #ea7400;
+$yellow: #ffb81c;
+$dark-purple: #702f8a;
+$purple: #9063cd;
+$light-purple: #caa2dd;
+$black: #000000;
+$dark-gray: #5a5a5a;
+$gray: #959595;
+$light-gray: #d2d2d2;
+$white: #ffffff;
+
+// Secondary Colors
+$red: #cf2a2a;
+
+$background-alice-blue: #e5f5fb;
+$background-gray: #f2f2f2;
+$text-black: #191919;
+$link-blue: #056bae;
+$functional-green: #007a3e;
+$functional-yellow: #ffb81c;
+$tlv-gray: #f8f8f8;
+$tlv-light-gray: #eaeaea;
+$tlv-hover: #e6f6fb;
+
+$content-background-color: $white;
+
+$scroll-bar-color: $text-black;//$light-gray;
+
+//responsive @media params
+$tablet-max-width: 1024px;
+$laptop-min-width: 1224px;
+$desktop-min-width: 1824px;
+
+/* Textures */
+$images-folder-name: "../images";
+$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
+$interface-icon: $images-folder-name + "/interface.svg";
+$sdc-logo: $images-folder-name + "/logo.svg";
+$warning-icon: $images-folder-name + "/warning.svg";

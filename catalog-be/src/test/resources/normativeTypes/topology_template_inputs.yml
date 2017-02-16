@@ -1,0 +1,103 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: >
+  This TOSCA simple profile deploys nodejs, mongodb, each on a separate server
+  with monitoring enabled for nodejs server where a sample nodejs application is running. 
+
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+      default: dummy
+    cmd_fw_srv_grp_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: uuid of the server group
+      default: be97d566-35c1-4bc6-a9dd-a5f193cba314
+    nimbus_hsl_interface_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for ServiceInstance
+      default: other
+    cmd_fw_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: Comma Delimited List of Names for ServiceInstance VMs
+      default:
+      - ZRDM2FCMD01CMD001
+      - ' ZRDM2FCMD01CMD002'
+      - ' ZRDM2FCMD01CMD003'
+      - ' ZRDM2FCMD01CMD004'
+      entry_schema:
+        type: string
+    cmd_fw_shc_max_retries:
+      hidden: false
+      immutable: false
+      type: integer
+      description: max_retries for the ServiceHealthCheck
+      default: 2
+    cmd_fw_shc_url_path:
+      hidden: false
+      immutable: false
+      type: string
+      description: url_path for the ServiceHealthCheck
+      default: local-ip
+  node_templates:
+    nodejs:
+      type: tosca.nodes.WebServer      
+      requirements:
+        - host:
+            node: app_server      
+    mongo_db:
+      type: tosca.nodes.Database
+      requirements:
+        - host: mongo_dbms     
+    mongo_dbms:
+      type: tosca.nodes.DBMS
+      properties:
+       root_password:
+        get_input: nimbus_hsl_interface_type
+      # fixed_ips:
+      #  - ip_address:
+      #      get_input: app2_int_ota_apps_ip_1
+      #    subnet_id:
+      #      get_input: pmaa_dpu_subnet_id
+      #  - ip_address:
+      #      get_input: app2_int_ota_apps_ip_3
+      #    subnet_id:
+      #      get_input: pmaa_dpu_subnet_id
+      # name:
+      #    get_input:
+      #    - mnsoamvfw_names
+       #   - get_input: index
+      # metadata:
+     #     pmaa.sb_nic:
+      #      address:
+      #        get_input: pmaa_dpu_fixed_ip
+      #      cidr:
+      #        get_input: pmaa_dpu_cidr
+      #      gateway:
+      #        get_input: pmaa_dpu_gateway		  
+       #port:
+       # get_input: cmd_fw_shc_max_retries
+      requirements:
+        - host: mongo_server      
+    app_server:
+      type: tosca.nodes.Compute  
+    mongo_server:
+      type: tosca.nodes.Compute
+    
+  outputs:
+    nodejs_url:
+      description: URL for the nodejs server, http://<IP>:3000
+      value: { get_attribute: [ app_server, private_address ] }
+    mongodb_url:
+      description: URL for the mongodb server.
+      value: { get_attribute: [ mongo_server, private_address ] }
+   

@@ -1,0 +1,72 @@
+.asdcs-control {
+
+  // Input /////////////////////////////////////////////////////////////////////////////////////////
+
+  input.asdcs-editable {
+    border: 1px solid $asdcsInputTextBorderColor;
+    border-radius: $asdcsInputTextBorderRadius;
+    padding: 3px 5px;
+    height: $asdcsInputTextHeight;
+    width: calc(100% - 10px);
+    color: $asdcsInputTextColor;
+    background-color: $asdcsColorWhite;
+    &:focus {
+      border: 1px solid $asdcsInputTextBorderFocusColor;
+      background-color: $asdcsColorWhitish;
+    }
+  }
+
+  // Select ////////////////////////////////////////////////////////////////////////////////////////
+
+  .asdcs-editable-select {
+    outline: none;
+    border-radius: $asdcsInputSelectBorderRadius;
+    border: 1px solid $asdcsInputSelectBorderColor;
+    height: $asdcsInputSelectHeight;
+    div {
+      border-radius: $asdcsInputSelectBorderRadius;
+    }
+    * {
+      line-height: initial;
+      text-align: initial;
+      font-size: $asdcsInputSelectFontSize;
+    }
+    .Select-menu-outer {
+      .Select-option {
+        padding: 4px;
+        .is-selected {
+          background-color: $asdcsColorOneLight;
+        }
+      }
+    }
+    .Select-value {
+      height: $asdcsInputSelectHeight - 4px;
+      padding-left: 5px;
+    }
+    .Select-input {
+      border: none;
+      height: 1px;
+      line-height: 1px;
+    }
+    .Select-control {
+      box-shadow: none;
+      border: none;
+    }
+    .Select-control, .Select-placeholder {
+      border: none;
+      height: $asdcsInputSelectHeight - 4px;
+    }
+    .Select-placeholder {
+      padding-left: 4px;
+    }
+    .Select-arrow-zone {
+      text-align: center;
+      overflow: hidden;
+      padding-top: 4px;
+    }
+    &.is-focused {
+      .Select-control {
+      }
+    }
+  }
+}

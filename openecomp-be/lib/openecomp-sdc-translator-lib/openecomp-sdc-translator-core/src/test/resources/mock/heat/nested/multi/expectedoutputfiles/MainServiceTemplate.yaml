@@ -1,0 +1,240 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    oam_net_ips:
+      label: OAM network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM network ips
+      entry_schema:
+        type: string
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    pcm_server_names:
+      label: PCRF CM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF CM instance
+      entry_schema:
+        type: string
+    pcm_image_name:
+      label: PCRF CM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+    cps_net_ips:
+      label: CPS network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: CPS network ips
+      entry_schema:
+        type: string
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    pcm_volumes:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: list
+      description: CPS Cluman Cinder Volume
+      entry_schema:
+        type: string
+    pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+  node_templates:
+    server_pcm_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        pcm_flavor_name:
+          get_input: pcm_flavor_name
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcm_image_name:
+          get_input: pcm_image_name
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        security_group_name:
+          get_input: security_group_name
+        pcm_server_name:
+          get_input:
+          - pcm_server_names
+          - 0
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        oam_net_gw:
+          get_input: oam_net_gw
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+        oam_net_ip:
+          get_input:
+          - oam_net_ips
+          - 0
+        oam_net_mask:
+          get_input: oam_net_mask
+        oam_net_name:
+          get_input: oam_net_name
+    server_pcm_004:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1_2
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1_2ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+    server_pcm_003:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+  groups:
+    hot-nimbus-pcm_v0.4_2:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4_2.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_004
+      - server_pcm_003
+    hot-nimbus-pcm_v0.4:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_002
+      - server_pcm_001

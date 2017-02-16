@@ -1,0 +1,109 @@
+.version-controller-bar {
+  .navbar-inverse {
+    @extend .body-1-medium;
+    background-color: transparent;
+    border-bottom: $tlv-light-gray thin solid;
+    padding-top: 14px;
+    padding-bottom: 12px;
+    margin-bottom: 0;
+    .container {
+      width: 100%;
+      padding: 0 52px;
+      height: 30px;
+      .navbar-collapse {
+        padding-left: 0;
+        .items-in-left {
+          display: flex;
+          height: 30px;
+          .version-section {
+            .form-group {
+              margin-right: 5px;
+              .input-options {
+                border: none;
+                .input-options-select {
+                  padding-top: 4px;
+                }
+              }
+            }
+          }
+          .vc-status {
+            display: flex;
+            padding-left: 14px;
+            border-left: $light-gray thin solid;
+            .status-text {
+              align-self: center;
+              display: flex;
+              padding-left: 3px;
+              .status-text-dash {
+                padding: 0 9px;
+              }
+            }
+            .onboarding-status-icon {
+              width: 25px;
+              height: 19px;
+              background-image: url('../images/ecomp/ASDC_Sprite.png');
+              background-position: -306px 674px;
+              align-self: center;
+            }
+            .checkout-status-icon {
+              display: flex;
+              & > .catalog-tile-check-in-status.sprite-new.checkout-editable-status-icon {
+                width: 25px;
+                height: 19px;
+                align-self: center;
+                margin-left: 5px;
+              }
+            }
+          }
+        }
+        .items-in-right {
+          display: flex;
+          height: 30px;
+          .action-buttons {
+            display: flex;
+            border-right: $gray thin solid;
+            padding: 0 13px;
+            .version-control-buttons {
+              display: flex;
+            }
+            .vc-nav-item-button {
+              border: 1px solid $light-gray;
+              border-radius: 5px;
+              cursor: pointer;
+              margin-right:10px;
+              padding: 6px 20px;
+              &:hover, &:focus {
+                background-color: lightgrey;
+              }
+              &.button-submit{
+                background-color: transparent;
+                color: $green;
+                border-color: $green;
+              }
+              &.button-checkin-checkout {
+                background-color: $white;
+                @extend .body-1;
+              }
+            }
+            .revert-btn, .save-btn {
+              height: 24px;
+              width: 24px;
+              align-self: center;
+              cursor: pointer;
+              margin-right: 10px;
+            }
+          }
+          .vc-nav-item-close {
+            display: flex;
+            padding-left: 18px;
+            padding-top: 3px;
+            align-self: center;
+            @extend .body-1;
+            color: $gray;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}

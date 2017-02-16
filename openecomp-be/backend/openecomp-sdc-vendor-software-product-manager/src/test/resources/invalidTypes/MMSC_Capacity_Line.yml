@@ -1,0 +1,3223 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template that creates internal networks, load balancers and servers for vMMSC capacity Line 1.
+  #11/23: updated the network definition to meet the juniper best practices way of defining the gateway, DHCP enable for internal networks (L457-L547)
+
+parameters:
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+    default: This_is_the_MMSC_id
+  oam_net_name:
+    type: string
+    label: UID of OAM network
+    description: UID of OAM network
+  oam_network_netmask:
+    type: string
+    label: oam network netmask
+    description: oam network gateway
+  oam_network_gateway:
+    type: string
+    label: oam network gateway
+    description: oam network gateway
+  oam_network_route_1:
+    type: string
+    label: oam network route 1
+    description: oam network route 1
+  oam_network_route_2:
+    type: string
+    label: oam network route 2
+    description:  oam network route 2
+  external_dns:
+    type: string
+    label: dns server
+    description: dns server for MMSC
+  external_ntp:
+    type: string
+    label: ntp server 
+    description: ntp server for MMSC
+  lb_oam_ips:
+    type: comma_delimited_list
+    label: management network ips for mmsc lb
+    description: the ips of the management network for mmsc lb
+  dmz_protected_net_name:
+    type: string
+    label: UID of dmz_protected network
+    description: UID of dmz_protected network
+  lb_dmz_protected_ips:
+    type: comma_delimited_list
+    label: dmz protected network local ips for lb VM
+    description: local ips of the dmz protected network for lb VM
+  cor_direct_net_name:
+    type: string
+    label: cor direct net UID
+    description: cor direct net
+  lb_cor_direct_ips:
+    type: comma_delimited_list
+    label:  cor direct network local ips for lb VM
+    description: local ips of cor direct network for lb VM
+  mms_traffic_net_name:
+    type: string
+    label: Name of MMS traffic network
+    description: Name of MMS traffic network
+  mms_traffic_net_cidr:
+    type: string
+    label: MMS traffic network address (CIDR notation)
+    description: MMS traffic network address (CIDR notation)
+  mms_traffic_netmask:
+    type: string
+    label: MMS traffic network subnet mask
+    description: MMS traffic network subnet mask  
+  mms_traffic_net_gateway:
+    type: string
+    label: MMS traffic network gateway address
+    description: MMS traffic network gateway address
+  mms_traffic_start:
+    type: string
+    label: mmsc traffic start IP
+    description: mmsc traffic start IP
+  mms_traffic_end:
+    type: string
+    label: mmsc traffic end IP
+    description: mmsc traffic end IP
+  mms_traffic_net_cidr:
+    type: string
+    label: mmsc traffic cidr
+    description: mmsc traffic cidr
+  mms_traffic_net_local_ip1:
+    type: string
+    label: mmsc traffic network local ip1
+    description: the local ip1 of the mmsc traffic network
+  mms_traffic_net_local_ip2:
+    type: string
+    label: mmsc traffic network local ip2
+    description: the local ip2 of the mmsc traffic network
+  mms_traffic_net_floating_ip:
+    type: string
+    label: mmsc traffic floating ip
+    description: mmsc traffic floating ip
+  nems_internal_name:
+    type: string
+    label: nems internal network name
+    description: nems internal network name
+  nems_internal_start:
+    type: string
+    label: nems internal start
+    description: nems internal start
+  nems_internal_end:
+    type: string
+    label: nems internal end
+    description: nems internal end
+  nems_internal_cidr:
+    type: string
+    label: nems ineternal cidr
+    description: nems internal cidr
+  nems_internal_netmask:
+    type: string
+    label: NEMS internal network subnet mask
+    description: NEMS internal network subnet mask
+  nems_internal_gateway:
+    type: string
+    label: nems internal gw
+    description: nems internal gw
+  nems_traffic_name:
+    type: string
+    label: nems traffic name
+    description: nems traffic name
+  nems_traffic_start:
+    type: string
+    label: nems traffic start
+    description: nems traffic start
+  nems_traffic_end:
+    type: string
+    label: nems traffic end
+    description: nems traffic end
+  nems_traffic_cidr:
+    type: string
+    label: nems traffic cidr
+    description: nems traffic cidr
+  nems_traffic_netmask:
+    type: string
+    label: NEMS traffic network subnet mask
+    description: NEMS traffic network subnet mask
+  nems_traffic_gateway:
+    type: string
+    label: NEMS traffic network gateway
+    description: NEMS traffic network gateway  
+  nems_traffic_net_local_ip1:
+    type: string
+    label: nems traffic network local ip1
+    description: the local ip1 of the nems traffic network
+  nems_traffic_net_local_ip2:
+    type: string
+    label: nems traffic network local ip2
+    description: the local ip2 of the nems traffic network
+  nems_traffic_net_floating_ip:
+    type: string
+    label: nems traffic floating ip
+    description: nems traffic floating ip
+  nems_user_web_name:
+    type: string
+    label: nems user web name
+    description: nems user web name
+  nems_user_web_start:
+    type: string
+    label: nems user web start
+    description: nems user web end
+  nems_user_web_end:
+    type: string
+    label: nems user web end
+    description: nems user web end
+  nems_user_web_cidr:
+    type: string
+    label: nems user web cidr
+    description: nems user web cidr
+  nems_user_web_netmask:
+    type: string
+    label: NEMS user web network subnet mask
+    description: NEMS user web network subnet mask
+  nems_user_web_gateway:
+    type: string
+    label: NEMS user web network gateway
+    description: NEMS user web network gateway
+  nems_user_web_net_local_ip1:
+    type: string
+    label: nems user web network local ip1
+    description: the local ip1 of the nems user web network
+  nems_user_web_net_local_ip2:
+    type: string
+    label: nems user web network local ip2
+    description: the local ip2 of the nems user web network
+  nems_user_web_net_floating_ip:
+    type: string
+    label: nems user web floating ip
+    description: nems user web floating ip 
+  nems_imap_name:
+    type: string
+    label: nems imap name
+    description: nems imap name
+  nems_imap_netmask:
+    type: string
+    label: nems imap subnet mask
+    description: nems imap subnet mask  
+  nems_imap_start:
+    type: string
+    label: nems imap start
+    description: nems imap start
+  nems_imap_end:
+    type: string
+    label: nems imap end
+    description: nems imap end
+  nems_imap_cidr:
+    type: string
+    label: nems imap cidr
+    description: nems imap cidr
+  nems_imap_gateway:
+    type: string
+    label: nems imap gateway
+    description: nems imap gateway  
+  eca_traffic_name:
+    type: string
+    label: eca traffic name
+    description: eca traffic name
+  eca_traffic_start:
+    type: string
+    label: eca traffic start
+    description: eca traffic start
+  eca_traffic_end:
+    type: string
+    label: eca traffic end
+    description: eca traffic end
+  eca_traffic_cidr:
+    type: string
+    label: eca traffic cidr
+    description: eca traffic cidr
+  eca_traffic_netmask:
+    type: string
+    label: ECA traffic network subnet mask
+    description: ECA traffic network subnet mask
+  eca_traffic_net_gateway:
+    type: string
+    label: eca_traffic network gateway
+    description: eca_traffic network gateway  
+  eca_traffic_net_local_ip1:
+    type: string
+    label: eca traffic network local ip1
+    description: the local ip1 of the eca traffic network
+  eca_traffic_net_local_ip2:
+    type: string
+    label: eca traffic network local ip2
+    description: the local ip2 of the eca traffic network
+  eca_traffic_net_floating_ip:
+    type: string
+    label: eca traffic floating ip
+    description: eca traffic floating ip
+  ha_net_name:
+    type: string
+    label: ha_failover network name
+    description: ha_failover network name
+  ha_net_start:
+    type: string
+    label: ha net start
+    description: ha net start
+  ha_net_end:
+    type: string
+    label: ha net end
+    description: ha net end
+  ha_net_cidr:
+    type: string
+    label: ha net cidr
+    description: ha net cidr
+  ha_net_local_ip1:
+    type: string
+    label: ha net network local ip1
+    description: the local ip1 of the ha network
+  ha_net_local_ip2:
+    type: string
+    label: ha net network local ip2
+    description: the local ip2 of the ha network
+  lb_names:
+    type: comma_delimited_list
+    label: MMSC load balancer instance names
+    description: MMSC load balancer instance names
+  lb_image_name:
+    type: string
+    label: MMSC load balancer image name
+    description: MMSC load balancer image name
+  lb_flavor_name:
+    type: string
+    label: Load balancer flavor name
+    description: the flavor name of MMSC load balancer instance
+  availability_zone_0:
+    type: string
+    label: MMSC availabilityzone name
+    description: MMSC availabilityzone name
+  security_group_name:
+    type: string
+    label: MMSC security group name
+    description: MMSC security group name
+  mmsc_image:
+    type: string
+    label: Image for MMSC server
+    description: Image for MMSC server
+  mmsc_flavor:
+    type: string
+    label: Flavor for MMSC server
+    description: Flavor for MMSC server
+  mmsc_cinder_volume_size:
+    type: number
+    label: MMSC Cinder volume size
+    description: the size of the MMSC Cinder volume
+  nems_fe_image:
+    type: string
+    label: Image for NEMS FE server
+    description: Image for NEMS FE server
+  nems_fe_flavor:
+    type: string
+    label: Flavor for NEMS FE server
+    description: Flavor for NEMS FE server
+  nems_be_image:
+    type: string
+    label: Image for NEMS BE server
+    description: Image for NEMS BE server
+  nems_be_flavor:
+    type: string
+    label: Flavor for NEMS BE server
+    description: Flavor for NEMS BE server
+  eca_trx_image:
+    type: string
+    label: Image for ECA TRX server
+    description: Image for ECA TRX server
+  eca_trx_flavor:
+    type: string
+    label: Flavor for ECA TRX server
+    description: Flavor for ECA TRX server
+  mmsc_oam_ips:
+    type: comma_delimited_list
+    label: MMSC oam_net IP addresses
+    description: MMSC oam_net IP addresses
+  mmsc_mms_traffic_net_ips:
+    type: comma_delimited_list
+    label: MMSC mms_traffic_net IP addresses
+    description: MMSC mms_traffic_net IP addresses
+  nems_fe_names:
+    type: comma_delimited_list
+    label: NEMS_FE server names
+    description: NEMS_FE server names
+  nems_fe_node_roles:
+    type: comma_delimited_list
+    label: nems fe node roles
+    description: nems fe node roles
+  nems_fe_oam_ips:
+    type: comma_delimited_list
+    label: OAM_net IP for NEMS_FE
+    description: OAM_net IP for NEMS_FE
+  nems_fe_nems_traffic_net_ips:
+    type: comma_delimited_list
+    label: nems_traffic_net IPs for NEMS_FE
+    description: nems_traffic_net IPs for NEMS_FE
+  nems_fe_nems_user_web_net_ips:
+    type: comma_delimited_list
+    label: nems_web_user_net IPs for NEMS_FE
+    description: nems_web_user_net IPs for NEMS_FE
+  nems_fe_nems_internal_net_ips:
+    type: comma_delimited_list
+    label: nems_internal_net IPs for NEMS_FE
+    description: nems_internal_net IPs for NEMS_FE
+  nems_fe_nems_imap_net_ips:
+    type: comma_delimited_list
+    label: nems_imap_net IPs for NEMS_FE
+    description: nems_imap_net IPs for NEMS_FE  
+  nems_be_names:
+    type: string
+    label: NEMS_BE server names
+    description: NEMS_BE server names
+  nems_be_node_roles:
+    type: string
+    label: nems node roles
+    description: nems node roles
+  nems_be_oam_ips:
+    type: string
+    label: OAM net IPs for NEMS_BE
+    description: OAM net IPs for NEMS_BE
+  nems_be_nems_internal_net_ips:
+    type: string
+    label: nems internal net IPs for NEMS_BE
+    description: nems internal net IPs for NEMS_BE
+  nems_be_nems_imap_net_ips:
+    type: string
+    label: nems imap_net IPs for NEMS_BE
+    description: nems imap net IPs for NEMS_BE 
+  eca_trx_oam_ips:
+    type: comma_delimited_list
+    label: OAM net IP for ECA_TRX
+    description: OAM net IP for ECA_TRX
+  eca_trx_mgmt_ips:
+    type: comma_delimited_list
+    label: eca mgmt net IP for ECA_TRX
+    description: eca mgmt net IP for ECA_TRX
+  timezone:
+    type: string
+    label: timezone
+    description: timezone
+  eca_trx_names:
+    type: comma_delimited_list
+    label: ECA_TRX server names
+    description: ECA_TRX server names
+  eca_trx_eca_traffic_net_ips:
+    type: comma_delimited_list
+    label: eca traffic net IPs for ECA_TRX
+    description: eca traffic net IPs for ECA_TRX
+  mmsc_names:
+    type: comma_delimited_list
+    label: MMSC server names
+    description: MMSC server names
+  nems_volume_size:
+    type: number
+    label: nems fe volume size
+    description: nems fe volume size
+  nems_be_volume_size:
+    type: number
+    label: nems be volume size
+    description: nems be volume size
+  MMSC_volume_type:
+    type: string
+    label: MMSC vm volume type
+    description: the name of the target volume backend
+  NEMS_FE_volume_type:
+    type: string
+    label: nems fe vm volume type
+    description: the name of the target volume backend
+  NEMS_BE_volume_type:
+    type: string
+    label: nems be vm volume type
+    description: the name of the target volume backend
+  mmsc_core_virtual_server_ips:
+    type: comma_delimited_list
+    label: mmsc core virtual server ips
+    description: mmsc core virtual server ips
+  mmsc_core_snat_ips:
+    type: comma_delimited_list
+    label: mmsc core snat ips
+    description: mmsc core snat ips
+  mmsc_dmz_protected_virtual_server_ips:
+    type: comma_delimited_list
+    label: mmsc dmz_protected virtual server ips
+    description: mmsc dmz_protected virtual server ips
+  mmsc_dmz_protected_snat_ips:
+    type: comma_delimited_list
+    label: mmsc dmz_protected snat ips
+    description: mmsc dmz_protected snat ips
+  eca_mgmt_net_name:
+    type: string
+    label: eca management network ID
+    description: Network ID for eca management
+
+resources:
+  mms_traffic_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: mms_traffic_net_name }
+
+  mms_traffic_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: mms_traffic_net_name}      
+      network_id: { get_resource: mms_traffic_net }
+      cidr: { get_param: mms_traffic_net_cidr }
+      allocation_pools: [{"start": {get_param: mms_traffic_start}, "end": {get_param: mms_traffic_end}}]
+
+  nems_internal_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: nems_internal_name}
+
+  nems_internal_network_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: nems_internal_name}
+      allocation_pools: [{"start": {get_param: nems_internal_start}, "end": {get_param: nems_internal_end}}]
+      cidr: {get_param: nems_internal_cidr}
+      network_id: {get_resource: nems_internal_net}
+
+  nems_traffic_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: nems_traffic_name}
+
+  nems_traffic_network_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: nems_traffic_name}
+      allocation_pools: [{"start": {get_param: nems_traffic_start}, "end": {get_param: nems_traffic_end}}]
+      cidr: {get_param: nems_traffic_cidr}
+      network_id: {get_resource: nems_traffic_net}
+
+  nems_user_web_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: nems_user_web_name}
+
+  nems_user_web_network_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: nems_user_web_name}
+      allocation_pools: [{"start": {get_param: nems_user_web_start}, "end": {get_param: nems_user_web_end}}]
+      cidr: {get_param: nems_user_web_cidr}
+      network_id: {get_resource: nems_user_web_net}
+
+  nems_imap_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: nems_imap_name}
+
+  nems_imap_network_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: nems_imap_name}
+      allocation_pools: [{"start": {get_param: nems_imap_start}, "end": {get_param: nems_imap_end}}]
+      cidr: {get_param: nems_imap_cidr}
+      network_id: {get_resource: nems_imap_net}
+
+  eca_traffic_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: eca_traffic_name}
+
+  eca_traffic_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: eca_traffic_name}
+      allocation_pools: [{"start": {get_param: eca_traffic_start}, "end": {get_param: eca_traffic_end}}]
+      cidr: {get_param: eca_traffic_cidr}
+      network_id: {get_resource: eca_traffic_net}
+
+  ha_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: ha_net_name}
+
+  ha_net_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: ha_net_name}
+      allocation_pools: [{"start": {get_param: ha_net_start}, "end": {get_param: ha_net_end}}]
+      cidr: {get_param: ha_net_cidr}
+      network_id: {get_resource: ha_net}
+
+  lb1_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [lb_names, 0]}
+      image: {get_param: lb_image_name}
+      flavor: {get_param: lb_flavor_name}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: lb1_mgmt_port}
+        - port: {get_resource: lb1_dmz_protected_port}
+        - port: {get_resource: lb1_cor_direct_port}
+        - port: {get_resource: lb1_mms_traffic_port}
+        - port: {get_resource: lb1_nems_traffic_port}
+        - port: {get_resource: lb1_nems_user_web_port}
+        - port: {get_resource: lb1_eca_traffic_port}
+        - port: {get_resource: lb1_ha_net_port}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  lb1_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_mms_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip} }]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_dmz_protected_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: dmz_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_dmz_protected_ips, 0]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 0]}}, {"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 1]}}, {"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 2]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 0]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 1]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 2]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 3]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_cor_direct_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cor_direct_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_cor_direct_ips, 0]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: [mmsc_core_virtual_server_ips, 0]}}, {"ip_address": {get_param: [mmsc_core_virtual_server_ips, 1]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 0]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 1]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 2]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 3]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 4]}} ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_nems_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: nems_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_traffic_net_floating_ip} }]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_nems_user_web_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_user_web_net}
+      fixed_ips: [{"ip_address": {get_param: nems_user_web_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_user_web_net_floating_ip} }]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_ha_net_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: ha_net}
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip1}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb1_eca_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: eca_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip1}}]
+      allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [lb_names, 1]}
+      image: {get_param: lb_image_name}
+      flavor: {get_param: lb_flavor_name}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: lb2_mgmt_port}
+        - port: {get_resource: lb2_dmz_protected_port}
+        - port: {get_resource: lb2_cor_direct_port}
+        - port: {get_resource: lb2_mms_traffic_port}
+        - port: {get_resource: lb2_nems_traffic_port}
+        - port: {get_resource: lb2_nems_user_web_port}
+        - port: {get_resource: lb2_eca_traffic_port}
+        - port: {get_resource: lb2_ha_net_port}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  lb2_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_oam_ips, 1]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_mms_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: mms_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: mms_traffic_net_floating_ip}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_dmz_protected_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: dmz_protected_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_dmz_protected_ips, 1]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 0]}}, {"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 1]}}, {"ip_address": {get_param: [mmsc_dmz_protected_virtual_server_ips, 2]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 0]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 1]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 2]}}, {"ip_address": {get_param: [mmsc_dmz_protected_snat_ips, 3]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_cor_direct_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: cor_direct_net_name}
+      fixed_ips: [{"ip_address": {get_param: [lb_cor_direct_ips, 1]}}]
+      allowed_address_pairs: [{"ip_address": {get_param: [mmsc_core_virtual_server_ips, 0]}}, {"ip_address": {get_param: [mmsc_core_virtual_server_ips, 1]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 0]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 1]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 2]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 3]}}, {"ip_address": {get_param: [mmsc_core_snat_ips, 4]}} ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_nems_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: nems_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_traffic_net_floating_ip}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_nems_user_web_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: nems_user_web_net}
+      fixed_ips: [{"ip_address": {get_param: nems_user_web_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: nems_user_web_net_floating_ip}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_ha_net_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: ha_net}
+      fixed_ips: [{"ip_address": {get_param: ha_net_local_ip2}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  lb2_eca_traffic_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: eca_traffic_net}
+      fixed_ips: [{"ip_address": {get_param: eca_traffic_net_local_ip2}}]
+      allowed_address_pairs: [{"ip_address": {get_param: eca_traffic_net_floating_ip} }]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_mmsc1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [mmsc_names, 0]}
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc1_port_0 }
+      - port: { get_resource: mmsc1_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+            mmsc.hostname=${mmsc.hostname}
+            mmsc.timezone=${mmsc.timezone}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: [mmsc_oam_ips, 0]}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param:  [mmsc_mms_traffic_net_ips, 0]}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp}
+            ${mmsc.hostname}: {get_param: [mmsc_names, 0]}
+            ${mmsc.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  mmsc1_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: mmsc_cinder_volume_size}
+      volume_type: {get_param: MMSC_volume_type}
+
+  mmsc1_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: mmsc1_volume}
+      instance_uuid: {get_resource: server_mmsc1}
+
+  mmsc1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_oam_ips, 0]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  mmsc1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_mms_traffic_net_ips, 0]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+  
+  server_mmsc2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [mmsc_names, 1]}
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc2_port_0 }
+      - port: { get_resource: mmsc2_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+            mmsc.hostname=${mmsc.hostname}
+            mmsc.timezone=${mmsc.timezone}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: [mmsc_oam_ips, 1]}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param: [mmsc_mms_traffic_net_ips, 1]}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp} 
+            ${mmsc.hostname}: {get_param: [mmsc_names, 1]}
+            ${mmsc.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  mmsc2_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: mmsc_cinder_volume_size}
+      volume_type: {get_param: MMSC_volume_type}
+
+  mmsc2_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: mmsc2_volume}
+      instance_uuid: {get_resource: server_mmsc2}
+
+  mmsc2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_oam_ips, 1]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+ 
+  mmsc2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_mms_traffic_net_ips, 1]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_mmsc3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [mmsc_names, 2]}
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc3_port_0 }
+      - port: { get_resource: mmsc3_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+            mmsc.hostname=${mmsc.hostname}
+            mmsc.timezone=${mmsc.timezone}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: [mmsc_oam_ips, 2]}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param:  [mmsc_mms_traffic_net_ips, 2]}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp}
+            ${mmsc.hostname}: {get_param: [mmsc_names, 2]}
+            ${mmsc.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  mmsc3_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: mmsc_cinder_volume_size}
+      volume_type: {get_param: MMSC_volume_type}
+
+  mmsc3_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: mmsc3_volume}
+      instance_uuid: {get_resource: server_mmsc3}
+
+  mmsc3_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_oam_ips, 2]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  mmsc3_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_mms_traffic_net_ips, 2]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+  
+  server_mmsc4:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [mmsc_names, 3]}
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc4_port_0 }
+      - port: { get_resource: mmsc4_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+            mmsc.hostname=${mmsc.hostname}
+            mmsc.timezone=${mmsc.timezone}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: [mmsc_oam_ips, 3]}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param: [mmsc_mms_traffic_net_ips, 3]}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp} 
+            ${mmsc.hostname}: {get_param: [mmsc_names, 3]}
+            ${mmsc.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  mmsc4_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: mmsc_cinder_volume_size}
+      volume_type: {get_param: MMSC_volume_type}
+
+  mmsc4_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: mmsc4_volume}
+      instance_uuid: {get_resource: server_mmsc4}
+
+  mmsc4_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_oam_ips, 3]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+ 
+  mmsc4_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_mms_traffic_net_ips, 3]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_mmsc5:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [mmsc_names, 4]}
+      image: { get_param: mmsc_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: mmsc_flavor }
+      networks:
+      - port: { get_resource: mmsc5_port_0 }
+      - port: { get_resource: mmsc5_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            mmsc.mgmt.ip=${mmsc.mgmt.ip}
+            mmsc.mgmt.netmask=${mmsc.mgmt.netmask}
+            mmsc.mgmt.gateway=${mmsc.mgmt.gateway}
+            mmsc.traffic.ip=${mmsc.traffic.ip}
+            mmsc.traffic.netmask=${mmsc.traffic.netmask}
+            mmsc.traffic.gateway=${mmsc.traffic.gateway}
+            mmsc.mgmt.route.1=${mmsc.mgmt.route.1}
+            mmsc.mgmt.route.2=${mmsc.mgmt.route.2}
+            mmsc.external.dns=${mmsc.external.dns}
+            mmsc.external.ntp=${mmsc.external.ntp}
+            mmsc.hostname=${mmsc.hostname}
+            mmsc.timezone=${mmsc.timezone}
+          params:
+            ${mmsc.mgmt.ip}: {get_param: [mmsc_oam_ips, 4]}
+            ${mmsc.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${mmsc.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${mmsc.traffic.ip}: {get_param: [mmsc_mms_traffic_net_ips, 4]}
+            ${mmsc.traffic.netmask}: {get_param: mms_traffic_netmask}
+            ${mmsc.traffic.gateway}: {get_param: mms_traffic_net_gateway}
+            ${mmsc.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${mmsc.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${mmsc.external.dns}: {get_param: external_dns}
+            ${mmsc.external.ntp}: {get_param: external_ntp} 
+            ${mmsc.hostname}: {get_param: [mmsc_names, 4]}
+            ${mmsc.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  mmsc5_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: mmsc_cinder_volume_size}
+      volume_type: {get_param: MMSC_volume_type}
+
+  mmsc5_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: mmsc5_volume}
+      instance_uuid: {get_resource: server_mmsc5}
+
+  mmsc5_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_oam_ips, 4]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+ 
+  mmsc5_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: {get_resource: mms_traffic_net}
+      fixed_ips: [
+        "ip_address": {get_param: [mmsc_mms_traffic_net_ips, 4]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_nems_fe1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [nems_fe_names, 0] }
+      image: { get_param: nems_fe_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: nems_fe_flavor }
+      networks:
+      - port: { get_resource: nems_fe1_port_0 }
+      - port: { get_resource: nems_fe1_port_1 }
+      - port: { get_resource: nems_fe1_port_2 }
+      - port: { get_resource: nems_fe1_port_3 }
+      - port: { get_resource: nems_fe1_port_4 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            nems.mgmt.ip=${nems.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.traffic.ip=${nems.traffic.ip}
+            nems.traffic.netmask=${nems.traffic.netmask}
+            nems.traffic.gateway=${nems.traffic.gateway}
+            nems.fe0.internal.ip=${nems.fe0.internal.ip}
+            nems.fe1.internal.ip=${nems.fe1.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.userweb.ip=${nems.userweb.ip}
+            nems.userweb.netmask=${nems.userweb.netmask}
+            nems.userweb.gateway=${nems.userweb.gateway}
+            nems.imap.ip=${nems.imap.ip}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+            nems.be0.host.name=${nems.be0.host.name}
+            nems.fe0.host.name=${nems.fe0.host.name}
+            nems.fe1.host.name=${nems.fe1.host.name}
+            nems.timezone=${nems.timezone}
+          params:
+            ${nems.mgmt.ip}: {get_param: [nems_fe_oam_ips, 0]}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.traffic.ip}: {get_param: [nems_fe_nems_traffic_net_ips, 0]}
+            ${nems.traffic.netmask}: {get_param: nems_traffic_netmask}
+            ${nems.traffic.gateway}: {get_param: nems_traffic_gateway}
+            ${nems.fe0.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 0]}
+            ${nems.fe1.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 1]}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.userweb.ip}: {get_param: [nems_fe_nems_user_web_net_ips, 0]}
+            ${nems.userweb.netmask}: {get_param: nems_user_web_netmask}
+            ${nems.userweb.gateway}: {get_param: nems_user_web_gateway}
+            ${nems.imap.ip}: {get_param: [nems_fe_nems_imap_net_ips, 0]}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}       
+            ${nems.be.internal.ip}: {get_param: nems_be_nems_internal_net_ips}
+            ${nems.be.imap.ip}: {get_param: nems_be_nems_imap_net_ips}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: [nems_fe_node_roles, 0]} 
+            ${nems.fe0.host.name}: {get_param: [nems_fe_names, 0]}
+            ${nems.fe1.host.name}: {get_param: [nems_fe_names, 1]}
+            ${nems.be0.host.name}: {get_param: nems_be_names}
+            ${nems.timezone}: {get_param: timezone}
+      user_data_format: RAW
+ 
+  nems1_fe_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: nems_volume_size}
+      volume_type: {get_param: NEMS_FE_volume_type}
+ 
+  nems1_fe_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: nems1_fe_volume}
+      instance_uuid: {get_resource: server_nems_fe1}
+
+  nems_fe1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_oam_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_traffic_net_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_user_web_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_user_web_net_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe1_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_internal_net_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe1_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_imap_net_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_nems_fe2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [nems_fe_names, 1] }
+      image: { get_param: nems_fe_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: nems_fe_flavor }
+      networks:
+      - port: { get_resource: nems_fe2_port_0 }
+      - port: { get_resource: nems_fe2_port_1 }
+      - port: { get_resource: nems_fe2_port_2 }
+      - port: { get_resource: nems_fe2_port_3 }
+      - port: { get_resource: nems_fe2_port_4 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            nems.mgmt.ip=${nems.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.traffic.ip=${nems.traffic.ip}
+            nems.traffic.netmask=${nems.traffic.netmask}
+            nems.traffic.gateway=${nems.traffic.gateway}
+            nems.fe0.internal.ip=${nems.fe0.internal.ip}
+            nems.fe1.internal.ip=${nems.fe1.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.userweb.ip=${nems.userweb.ip}
+            nems.userweb.netmask=${nems.userweb.netmask}
+            nems.userweb.gateway=${nems.userweb.gateway}
+            nems.imap.ip=${nems.imap.ip}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+            nems.be0.host.name=${nems.be0.host.name}
+            nems.fe0.host.name=${nems.fe0.host.name}
+            nems.fe1.host.name=${nems.fe1.host.name}
+            nems.timezone=${nems.timezone}
+          params:
+            ${nems.mgmt.ip}: {get_param: [nems_fe_oam_ips, 1]}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.traffic.ip}: {get_param: [nems_fe_nems_traffic_net_ips, 1]}
+            ${nems.traffic.netmask}: {get_param: nems_traffic_netmask}
+            ${nems.traffic.gateway}: {get_param: nems_traffic_gateway}
+            ${nems.fe0.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 0]}
+            ${nems.fe1.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 1]}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.userweb.ip}: {get_param: [nems_fe_nems_user_web_net_ips, 1]}
+            ${nems.userweb.netmask}: {get_param: nems_user_web_netmask}
+            ${nems.userweb.gateway}: {get_param: nems_user_web_gateway}
+            ${nems.imap.ip}: {get_param: [nems_fe_nems_imap_net_ips, 1]}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.be.internal.ip}: {get_param: nems_be_nems_internal_net_ips}
+            ${nems.be.imap.ip}: {get_param: nems_be_nems_imap_net_ips}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: [nems_fe_node_roles, 1]}
+            ${nems.fe0.host.name}: {get_param: [nems_fe_names, 0]}
+            ${nems.fe1.host.name}: {get_param: [nems_fe_names, 1]}
+            ${nems.be0.host.name}: {get_param: nems_be_names}
+            ${nems.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  nems2_fe_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: nems_volume_size}
+      volume_type: {get_param: NEMS_FE_volume_type}
+ 
+  nems2_fe_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: nems2_fe_volume}
+      instance_uuid: {get_resource: server_nems_fe2}
+
+  nems_fe2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": {get_param: [nems_fe_oam_ips, 1]}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_traffic_net_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe2_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_user_web_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_user_web_net_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_fe2_port_3:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_internal_net_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+
+  nems_fe2_port_4:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: [nems_fe_nems_imap_net_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_nems_be1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: nems_be_names }
+      image: { get_param: nems_be_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: nems_be_flavor }
+      networks:
+      - port: { get_resource: nems_be1_port_0 }
+      - port: { get_resource: nems_be1_port_1 }
+      - port: { get_resource: nems_be1_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            nems.be.mgmt.ip=${nems.be.mgmt.ip}
+            nems.mgmt.netmask=${nems.mgmt.netmask}
+            nems.mgmt.gateway=${nems.mgmt.gateway}
+            nems.be.internal.ip=${nems.be.internal.ip}
+            nems.internal.netmask=${nems.internal.netmask}
+            nems.imap.netmask=${nems.imap.netmask}
+            nems.fe0.internal.ip=${nems.fe0.internal.ip}
+            nems.fe1.internal.ip=${nems.fe1.internal.ip}
+            nems.be.imap.ip=${nems.be.imap.ip}
+            nems.mgmt.route.1=${nems.mgmt.route.1}
+            nems.mgmt.route.2=${nems.mgmt.route.2}
+            nems.external.dns=${nems.external.dns}
+            nems.external.ntp=${nems.external.ntp}
+            nems.node=${nems.node}
+            nems.be0.host.name=${nems.be0.host.name}
+            nems.fe0.host.name=${nems.fe0.host.name}
+            nems.fe1.host.name=${nems.fe1.host.name}
+            nems.timezone=${nems.timezone}
+          params:
+            ${nems.be.mgmt.ip}: {get_param: nems_be_oam_ips}
+            ${nems.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${nems.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${nems.fe0.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 0]}
+            ${nems.fe1.internal.ip}: {get_param: [nems_fe_nems_internal_net_ips, 1]}
+            ${nems.be.internal.ip}: {get_param: nems_be_nems_internal_net_ips}
+            ${nems.internal.netmask}: {get_param: nems_internal_netmask}
+            ${nems.imap.netmask}: {get_param: nems_imap_netmask}
+            ${nems.be.imap.ip}: {get_param: nems_be_nems_imap_net_ips}
+            ${nems.mgmt.route.1}: {get_param: oam_network_route_1}
+            ${nems.mgmt.route.2}: {get_param: oam_network_route_2}
+            ${nems.external.dns}: {get_param: external_dns}
+            ${nems.external.ntp}: {get_param: external_ntp}
+            ${nems.node}: {get_param: nems_be_node_roles}
+            ${nems.be0.host.name}: {get_param: nems_be_names}
+            ${nems.fe0.host.name}: {get_param: [nems_fe_names, 0]}
+            ${nems.fe1.host.name}: {get_param: [nems_fe_names, 1]}
+            ${nems.timezone}: {get_param: timezone} 
+      user_data_format: RAW
+
+  nems_be_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: nems_be_volume_size}
+      volume_type: {get_param: NEMS_BE_volume_type}
+
+  nems_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties: 
+      volume_id: {get_resource: nems_be_volume}
+      instance_uuid: {get_resource: server_nems_be1} 
+
+
+  nems_be1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [
+        "ip_address": { get_param: nems_be_oam_ips}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_be1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_internal_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be_nems_internal_net_ips}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  nems_be1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: nems_imap_net }
+      fixed_ips: [
+        "ip_address": { get_param: nems_be_nems_imap_net_ips}
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 0]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx1_port_0 }
+      - port: { get_resource: eca_trx1_port_1 }
+      - port: { get_resource: eca_trx1_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 0]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 0]}
+  
+  eca_trx1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx1_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 0] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+      
+
+  server_eca_trx2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 1]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx2_port_0 }
+      - port: { get_resource: eca_trx2_port_1 }
+      - port: { get_resource: eca_trx2_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 1]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 1]}
+
+  eca_trx2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx2_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 1] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 2]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx3_port_0 }
+      - port: { get_resource: eca_trx3_port_1 }
+      - port: { get_resource: eca_trx3_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 2]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 2]}
+  
+  eca_trx3_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 2] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx3_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 2] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx3_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 2] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx4:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 3]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx4_port_0 }
+      - port: { get_resource: eca_trx4_port_1 }
+      - port: { get_resource: eca_trx4_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 3]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 3]}
+  
+  eca_trx4_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 3] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx4_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 3] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx4_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 3] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx5:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 4]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx5_port_0 }
+      - port: { get_resource: eca_trx5_port_1 }
+      - port: { get_resource: eca_trx5_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 4]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 4]}
+  
+  eca_trx5_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 4] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx5_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 4] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx5_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 4] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx6:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 5]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx6_port_0 }
+      - port: { get_resource: eca_trx6_port_1 }
+      - port: { get_resource: eca_trx6_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 5]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 5]}
+  
+  eca_trx6_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 5] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx6_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 5] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx6_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 5] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO   
+
+  server_eca_trx7:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 6]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx7_port_0 }
+      - port: { get_resource: eca_trx7_port_1 }
+      - port: { get_resource: eca_trx7_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 6]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 6]}
+
+  eca_trx7_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 6] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx7_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 6] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx7_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 6] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx8:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 7]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx8_port_0 }
+      - port: { get_resource: eca_trx8_port_1 }
+      - port: { get_resource: eca_trx8_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 7]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 7]}
+  
+  eca_trx8_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 7] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx8_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 7] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx8_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 7] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx9:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 8]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx9_port_0 }
+      - port: { get_resource: eca_trx9_port_1 }
+      - port: { get_resource: eca_trx9_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 8]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 8]}
+  
+  eca_trx9_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 8] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx9_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 8] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx9_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 8] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx10:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 9]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx10_port_0 }
+      - port: { get_resource: eca_trx10_port_1 }
+      - port: { get_resource: eca_trx10_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 9]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 9]}
+  
+  eca_trx10_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 9] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx10_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 9] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx10_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 9] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx11:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 10]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx11_port_0 }
+      - port: { get_resource: eca_trx11_port_1 }
+      - port: { get_resource: eca_trx11_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 10]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 10]}
+  
+  eca_trx11_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 10] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx11_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 10] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx11_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 10] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+      
+
+  server_eca_trx12:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 11]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx12_port_0 }
+      - port: { get_resource: eca_trx12_port_1 }
+      - port: { get_resource: eca_trx12_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 11]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 11]}
+
+  eca_trx12_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 11] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx12_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 11] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx12_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 11] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx13:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 12]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx13_port_0 }
+      - port: { get_resource: eca_trx13_port_1 }
+      - port: { get_resource: eca_trx13_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 12]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 12]}
+  
+  eca_trx13_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 12] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx13_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 12] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx13_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 12] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx14:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 13]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx14_port_0 }
+      - port: { get_resource: eca_trx14_port_1 }
+      - port: { get_resource: eca_trx14_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 13]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 13]}
+  
+  eca_trx14_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 13] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx14_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 13] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx14_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 13] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx15:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 14]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx15_port_0 }
+      - port: { get_resource: eca_trx15_port_1 }
+      - port: { get_resource: eca_trx15_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 14]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 14]}
+  
+  eca_trx15_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 14] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx15_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 14] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx15_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 14] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx16:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 15]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx16_port_0 }
+      - port: { get_resource: eca_trx16_port_1 }
+      - port: { get_resource: eca_trx16_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 15]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 15]}
+  
+  eca_trx16_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 15] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx16_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 15] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx16_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 15] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+      
+
+  server_eca_trx17:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 16]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx17_port_0 }
+      - port: { get_resource: eca_trx17_port_1 }
+      - port: { get_resource: eca_trx17_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 16]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 16]}
+
+  eca_trx17_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 16] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx17_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 16] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx17_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 16] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx18:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 17]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx18_port_0 }
+      - port: { get_resource: eca_trx18_port_1 }
+      - port: { get_resource: eca_trx18_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 17]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 17]}
+  
+  eca_trx18_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 17] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx18_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 17] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx18_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 17] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx19:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 18]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx19_port_0 }
+      - port: { get_resource: eca_trx19_port_1 }
+      - port: { get_resource: eca_trx19_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 8]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 18]}
+  
+  eca_trx19_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 18] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx19_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 18] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx19_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 18] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_eca_trx20:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [eca_trx_names, 19]}
+      image: { get_param: eca_trx_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: eca_trx_flavor }
+      networks:
+      - port: { get_resource: eca_trx20_port_0 }
+      - port: { get_resource: eca_trx20_port_1 }
+      - port: { get_resource: eca_trx20_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            touch /tmp/user_data.log
+            sed -i s/HOSTNAME.*/"HOSTNAME=trx_hostname"/g /etc/sysconfig/network
+            echo "172.26.8.6 puppet" > /etc/hosts
+            eth0_ip_address='trx_traf_ip_address'
+            eth0_gateway='172.26.5.3'
+            echo "$eth0_ip_address" >>/tmp/user_data.log
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address" 
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"  
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            puppet agent -t > /root/puppet-agent-t.out
+          params:
+            trx_hostname: {get_param: [eca_trx_names, 19]}
+            trx_traf_ip_address: {get_param: [eca_trx_eca_traffic_net_ips, 19]}
+  
+  eca_trx20_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_oam_ips, 19] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx20_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: eca_mgmt_net_name }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_mgmt_ips, 19] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  eca_trx20_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: eca_traffic_net }
+      fixed_ips: [
+        "ip_address": { get_param: [eca_trx_eca_traffic_net_ips, 19] }
+      ]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO

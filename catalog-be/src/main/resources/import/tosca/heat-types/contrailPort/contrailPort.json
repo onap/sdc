@@ -1,0 +1,21 @@
+{
+  "payloadName": "contrailPort.yml",
+  "contactId": "jh0003",
+  "name": "ContrailPort",
+  "description": "Represents a logical entity that associates between Compute and Network normative types for contrail.",
+  "resourceIconPath": "port",
+  "resourceType": "CP",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "ContrailPort"
+  ]
+}

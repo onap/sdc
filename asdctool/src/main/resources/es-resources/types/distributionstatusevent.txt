@@ -1,0 +1,12 @@
+{
+             "action": "ACTION",
+             "timestamp": "TIMESTAMP",
+             "requestId": "REQUEST_ID",
+             "serviceInstanceId": "SERVICE_INSTANCE_ID",
+             "desc": "DESC",
+             "status": "STATUS",
+             "resourceUrl": "RESOURCE_URL",
+             "consumerId": "CONSUMER_ID",
+             "distributionId": "DID",
+             "topicName": "TOPIC_NAME"
+}

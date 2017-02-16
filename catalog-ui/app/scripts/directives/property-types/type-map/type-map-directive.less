@@ -1,0 +1,83 @@
+.add-map-item{
+    &:nth-child(odd){
+        float: right;
+    }
+    &:nth-child(1){
+        float: none;
+        .add-btn{
+            float: none;
+        }
+    }
+    width: 400px;
+    .add-btn{
+        width: 44px;
+        float: right;
+    }
+    &.schema-data-type{
+        float:none;
+        .add-btn{
+            float: none;
+        }
+    }
+}
+
+.add-btn {
+    .f-color.a;
+    .f-type._14_m;
+    .hand;
+
+    &:before {
+        .sprite-new;
+        .plus-icon;
+        margin-right: 5px;
+        content: "";
+
+    }
+    &:hover {
+        .f-color.b;
+        &:before {
+            .sprite-new;
+            .plus-icon-hover;
+        }
+    }
+
+}
+
+.map-item{
+    min-width: 389px;
+    min-height: 65px;
+    background-color: @tlv_color_v;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    float: left;
+    display: flex;
+    &:nth-child(even).primitive-value-map{
+        float: right;
+    }
+    .delete-map-item {
+        float: right;
+        position: relative;
+        top: 5px;
+        right: 5px;
+        .sprite-new;
+        .delete-icon;
+        &:hover{
+            .delete-icon-hover;
+        }
+    }
+    .map-item-field {
+        margin: 7px 12px !important;
+        float: left;
+        min-width: 170px;
+        min-height: 50px;
+        select{
+            width:171px;
+        }
+        input[type="text"]{
+            width: 170px;
+        }
+        &>.data-type-fields-structure{
+            padding: 0;
+        }
+    }
+}

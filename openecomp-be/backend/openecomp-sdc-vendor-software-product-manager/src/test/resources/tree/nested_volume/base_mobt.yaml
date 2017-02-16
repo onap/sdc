@@ -1,0 +1,26 @@
+heat_template_version: 2014-10-16
+
+description: heat template that creates additional MOBT nodes in stack
+
+parameters:
+  mobt_vol_count: 
+    type: number
+    label: MOBT OAM server count 
+    description: MOBT OAM server instance count 
+    default: 2 
+    constraints: 
+      - range: { min: 2, max: 2 }
+    
+resources:
+  server_volume_attach_group: 
+    type: OS::Heat::ResourceGroup
+    properties: 
+      count: { get_param: mobt_vol_count }
+      resource_def:
+       type: hot_mobt_volume_attach_nested.yaml
+       properties: 
+          mobt_vol_index: "%index%"
+          server_mobt_group_ids: { get_attr: [ server_mobt_group_data, mobt_server_adm_x_id ] }
+    update_policy: 
+      batch_create: 
+        max_batch_size: 1

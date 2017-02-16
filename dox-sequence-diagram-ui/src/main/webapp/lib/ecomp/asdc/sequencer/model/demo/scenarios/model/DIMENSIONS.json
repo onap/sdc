@@ -1,0 +1,91 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "DIMENSIONS1",
+      "name": "Dimensions Test",
+      "ref": "DIMENSIONS"
+    },
+    "lifelines": [
+      {
+        "id": "L01",
+        "name": "Lorum Ipsum"
+      },
+      {
+        "id": "L02",
+        "name": "Donec nisi urna, porttitor efficitur felis vel, efficitur consequat nunc"
+      },
+      {
+        "id": "L03",
+        "name": "Mauris dignissim SphymomanometerSphymomanometer enim non sapien tristique lacinia"
+      }
+    ],
+    "steps": [
+      {
+        "message": {
+          "id": "M01",
+          "from": "L01",
+          "to": "L02",
+          "name": "Morbi",
+          "type": "request",
+          "notes": [
+            "Proin non libero malesuada."
+          ],
+          "fragment": {
+            "operator": "alt",
+            "start": true,
+            "guard": "Curabitur sollicitudin nulla elit, et ultrices tortor faucibus quis"
+          },
+          "occurrences": {
+            "start": ["L01", "L02"],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M02",
+          "from": "L02",
+          "to": "L03",
+          "name": "Quisque pretium tellus sit amet congue dictum. Mauris ac rutrum arcu, et fringilla orci",
+          "type": "request",
+          "notes": [
+            "Nam quis felis hendrerit, lacinia ipsum vitae, faucibus elit. Morbi sit amet nunc eget massa vehicula rhoncus sit amet vel tellus. Aliquam accumsan eros elit, et sollicitudin lacus vehicula eu. Aenean rhoncus justo ut felis tincidunt, sit amet vulputate metus aliquet. Phasellus tellus est, consequat nec ex mollis, lacinia vestibulum justo. Nam quis felis hendrerit, lacinia ipsum vitae, faucibus elit. Morbi sit amet nunc eget massa vehicula rhoncus sit amet vel tellus. Aliquam accumsan eros elit, et sollicitudin lacus vehicula eu. Aenean rhoncus justo ut felis tincidunt, sit amet vulputate metus aliquet. Phasellus tellus est, consequat nec ex mollis, lacinia vestibulum justo."
+          ],
+          "occurrences": {
+            "start": [],
+            "stop": ["L02"]
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M03",
+          "from": "L01",
+          "to": "L03",
+          "name": "Nullam",
+          "type": "response",
+          "fragment": {
+            "stop": true
+          },
+          "occurrences": {
+            "start": [],
+            "stop": ["L01"]
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M04",
+          "from": "L01",
+          "to": "L03",
+          "name": "Etiam convallis augue est. ",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      }
+    ]
+  }
+}

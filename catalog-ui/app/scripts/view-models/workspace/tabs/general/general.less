@@ -1,0 +1,64 @@
+.sdc-workspace-general-step {
+
+    .w-sdc-form {
+        padding: 0;
+
+        .i-sdc-form-file-upload{
+            input[type="button"] {
+                cursor: pointer;
+                display: block;
+                filter: alpha(opacity=0);
+                width: 100px;
+                height: 30px;
+                opacity: 0;
+                position: absolute;
+                right: 0;
+                text-align: right;
+                top: 0;
+            }
+
+            .file-upload-browse-btn {
+                .noselect;
+                .bg_n;
+                padding: 4px 6px;
+                cursor: pointer;
+                z-index: 999;
+                width: 100px;
+                height: 28px;
+                text-align: center;
+
+                &.disabled {
+                    cursor: default;
+                }
+            }
+        }
+
+        .w-sdc-form-section-container {
+            text-align: center;
+        }
+
+        .i-sdc-form-item {
+            &.upload {
+                margin-top: 0;
+                width: auto;
+                padding: 10px;
+            }
+        }
+
+        .template-desc {
+            border: 1px dashed @border_color_f;
+            height: 130px;
+            overflow: hidden;
+            padding: 10px 6px 6px 6px;
+            margin-top: 10px;
+        }
+
+        .sdc-tag .tag {
+            max-width: 225px;
+        }
+
+    }
+
+}
+
+

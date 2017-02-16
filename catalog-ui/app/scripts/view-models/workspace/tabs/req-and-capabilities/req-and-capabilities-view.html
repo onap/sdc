@@ -1,0 +1,144 @@
+<div class="workspace-req-and-cap">
+    <div class="tabs">
+        <button data-tests-id="req-tab" data-ng-click="mode='requirements';filterTerms='';" class="tlv-btn" data-ng-class="{'selected':mode=='requirements'}">Requirements({{requirements.length||'0'}})</button>
+        <button data-tests-id="cap-tab" data-ng-click="mode='capabilities';filterTerms='';" class="tlv-btn" data-ng-class="{'selected':mode=='capabilities'}">Capabilities({{capabilities.length||'0'}})</button>
+    </div>
+    <div class="expand-collapse-buttons" data-ng-if="mode=='capabilities'">
+        <span class="sprite-new expand-all" data-ng-click="allCapabilitiesSelected(true)"></span>
+        <span class="sprite-new collapse-all" data-ng-click="allCapabilitiesSelected(false)"></span>
+    </div>
+    <div class="search">
+        <input id="search-box" data-tests-id="search-box"  type="search" placeholder="Search" data-ng-model-options="{debounce: 200}" data-ng-model="filterTerms"/>
+        <div class="search-icon-container">
+            <span class="search-icon sprite-new search-white-icon"></span>
+        </div>
+    </div>
+    <div class="table-container-flex requirements-table" data-ng-if="mode=='requirements'">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in requirementsTableHeadersList track by $index" data-ng-click="sort(header.property, requirementsSortTableDefined)">{{header.title}}
+                    <span data-ng-if="requirementsSortTableDefined.sortByField === header.property" class="table-header-sort-arrow" data-ng-class="{'down': requirementsSortTableDefined.reverse, 'up':!requirementsSortTableDefined.reverse}"> </span>
+                </div>
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="requirements.length === 0" class="no-row-text">
+                        There are no requirements to display
+
+                    </div>
+                    <div data-ng-repeat="req in requirements | orderBy:requirementsSortTableDefined.sortByField:requirementsSortTableDefined.reverse | filter: {filterTerm:filterTerms} track by $index"
+                         class="flex-container data-row" data-tests-id="reqRow">
+
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{req.name}}" tooltips tooltip-content="{{req.name}}">{{req.name}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{req.capability}}" tooltips tooltip-content="{{req.capability}}">{{req.capability.substring("tosca.capabilities.".length)}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{req.node}}" tooltips tooltip-content="{{req.node}}">{{req.node.substring("tosca.nodes.".length)}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{req.relationship}}" tooltips tooltip-content="{{req.relationship}}">{{req.relationship.substring("tosca.relationships.".length)}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text" data-tests-id="{{}}" data-ng-bind=""></div>
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{req.minOccurrences}},{{req.maxOccurrences}}" tooltips tooltip-content="{{req.minOccurrences}},{{req.maxOccurrences}}">{{req.minOccurrences}},{{req.maxOccurrences}}</span>
+                        </div>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+    <div class="table-container-flex capabilities-table" data-ng-if="mode=='capabilities'">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in capabilitiesTableHeadersList track by $index" data-ng-click="sort(header.property, capabilitiesSortTableDefined)">{{header.title}}
+                    <span data-ng-if="capabilitiesSortTableDefined.sortByField === header.property" class="table-header-sort-arrow" data-ng-class="{'down': capabilitiesSortTableDefined.reverse, 'up':!capabilitiesSortTableDefined.reverse}"> </span>
+                </div>
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="capabilities.length === 0" class="no-row-text">
+                        There are no capabilities to display
+
+                    </div>
+                    <div data-ng-repeat-start="capability in capabilities | orderBy:capabilitiesSortTableDefined.sortByField:capabilitiesSortTableDefined.reverse | filter: {filterTerm:filterTerms} track by $index"
+                         class="flex-container data-row" data-ng-class="{'selected': capability.selected}"
+                         data-ng-click="capability.selected = !capability.selected" data-tests-id="capabilities-table-row">
+
+                        <div class="table-col-general flex-item text">
+                            <span class="sprite-new arrow-up-small" data-ng-class="{'opened': capability.selected}"></span>
+                            <span  data-tests-id="{{capability.name}}" tooltips tooltip-content="{{capability.name}}">{{capability.name}}</span>
+                        </div>
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{capability.type}}" tooltips tooltip-content="{{capability.type}}">{{capability.type.substring("tosca.capabilities.".length)}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{capability.description}}" tooltips tooltip-content="{{capability.description}}">{{capability.description}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{capability.validSourceTypes.join(',')}}" tooltips tooltip-content="{{capability.validSourceTypes.join(',')}}">{{capability.validSourceTypes.join(',')}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item text">
+                            <span  data-tests-id="{{capability.minOccurrences}},{{capability.maxOccurrences}}" tooltips tooltip-content="{{capability.minOccurrences}},{{capability.maxOccurrences}}">{{capability.minOccurrences}},{{capability.maxOccurrences}}</span>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" data-ng-if="capability.selected" class="item-opened">
+                        <p class="properties-title">Properties</p>
+                        <div class="table-container-flex properties-table">
+                            <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+                                <div class="head flex-container">
+                                    <div class="table-header head-row hand flex-item" data-ng-repeat="header in capabilityPropertiesTableHeadersList track by $index" data-ng-click="sort(header.property, propertiesSortTableDefined)">{{header.title}}
+                                        <span data-ng-if="propertiesSortTableDefined.sortByField === header.property" class="table-header-sort-arrow" data-ng-class="{'down': propertiesSortTableDefined.reverse, 'up':!propertiesSortTableDefined.reverse}"> </span>
+                                    </div>
+                                </div>
+
+                                <div class="body">
+                                        <div data-ng-if="capability.properties.length === 0" class="no-row-text">
+                                            There are no properties to display
+                                        </div>
+                                        <div data-ng-repeat="property in filteredProperties[$parent.$index]=(capability.properties | orderBy:propertiesSortTableDefined.sortByField:propertiesSortTableDefined.reverse) track by $index"
+                                             data-tests-id="propertyRow"
+                                             class="flex-container data-row">
+
+                                            <div class="table-col-general flex-item text">
+                                                <a  data-tests-id="{{property.name}}"
+                                                    tooltips tooltip-content="{{property.name}}"
+                                                    data-ng-click="updateProperty(property, $parent.$index); $event.stopPropagation();"
+                                                    data-ng-class="{'disabled': isViewMode()}">{{property.name}}</a>
+
+                                            </div>
+
+                                            <div class="table-col-general flex-item text"
+                                                 data-tests-id="{{property.type}}"
+                                                 tooltips tooltip-content="{{property.type}}"
+                                                 data-ng-bind="property.type">
+                                            </div>
+                                            <div class="table-col-general flex-item text"
+                                                 data-tests-id="{{property.schema.property.type}}"
+                                                 tooltips tooltip-content="{{property.schema.property.type}}"
+                                                 data-ng-bind="property.schema.property.type">
+                                            </div>
+                                            <div class="table-col-general flex-item text">
+                                                <span tooltips tooltip-content="{{property.description}}" data-tests-id="{{property.description}}" data-ng-bind="property.description"></span>
+                                            </div>
+                                        </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,42 @@
+{
+  "name": "catalog-ui",
+  "private": true,
+  "dependencies": {
+    "angular": "1.5.0",
+    "angular-base64": "2.0.5",
+    "angular-base64-upload": "0.1.19",
+    "angular-bootstrap": "0.14.3",
+    "angular-dragdrop": "https://github.com/dimkinv/angular-dragdrop.git#1.0.14",
+    "angular-filter": "0.5.14",
+    "angular-mocks": "1.5.0",
+    "angular-perfect-scrollbar": "0.0.4",
+    "angular-resource": "1.5.11",
+    "angular-sanitize": "1.4.4",
+    "angular-tooltips": "0.1.23",
+    "angular-translate": "2.8.0",
+    "angular-translate-loader-static-files": "2.8.0",
+    "angular-ui-router": "0.2.14",
+    "angular-uuid4": "0.3.0",
+    "bootstrap": "3.3.4",
+    "checklist-model": "0.2.4",
+    "jquery": "2.2.4",
+    "jspdf": "1.0.272",
+    "animate.css": "~3.5.1",
+    "angular-clipboard": "1.5.0",
+    "ui-bootstrap": "1.3.3",
+    "angular-resizable": "1.2.0",
+    "angular-ui-notification": "0.2.0",
+    "js-md5": "md5#0.4.1",
+    "cytoscape": "^2.7.10",
+    "lodash": "^4.17.2",
+    "restangular": "^1.5.2",
+    "cytoscape-expand-collapse": "https://github.com/bardit/cytoscape.js-expand-collapse.git",
+    "cytoscape-qtip": "https://github.com/bardit/cytoscape.js-qtip.git",
+    "qtip2": "^2.2.1"
+  },
+  "resolutions": {
+    "angular": "1.5.0",
+    "jquery": "2.2.4",
+    "angular-translate": "2.8.1"
+  }
+}

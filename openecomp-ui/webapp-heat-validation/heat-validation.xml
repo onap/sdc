@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
+
+
+<Configure id="heatValidationWebapp" class="org.eclipse.jetty.webapp.WebAppContext">
+
+  <Set name="contextPath">/heat-validation</Set>
+  <Set name="war"><Property name="jetty.webapps" default="."/>/heat-validation.war</Set>
+
+  <!-- Enable WebSocket container -->
+  <Call name="setAttribute">
+    <Arg>org.eclipse.jetty.websocket.jsr356</Arg>
+    <Arg type="Boolean">true</Arg>
+  </Call>
+
+  <Set name="gzipHandler">
+    <New class="org.eclipse.jetty.server.handler.gzip.GzipHandler">
+      <Set name="minGzipSize">2048</Set>
+    </New>
+  </Set>
+
+
+  <Get name="securityHandler">
+    <Set name="loginService">
+      <New class="org.eclipse.jetty.security.HashLoginService">
+        <Set name="name">Test Realm</Set>
+        <Set name="config"><SystemProperty name="jetty.base" default="."/>/etc/realm.properties</Set>
+            <!-- To enable reload of realm when properties change, uncomment the following lines -->
+            <!-- changing refreshInterval (in seconds) as desired                                -->
+            <!--
+            <Set name="refreshInterval">5</Set>
+            <Call name="start"></Call>
+            -->
+      </New>
+    </Set>
+    <Set name="authenticator">
+      <New class="org.eclipse.jetty.security.authentication.FormAuthenticator">
+        <Set name="alwaysSaveUri">true</Set>
+      </New>
+    </Set>
+    <Set name="checkWelcomeFiles">true</Set>
+  </Get>
+
+
+</Configure>

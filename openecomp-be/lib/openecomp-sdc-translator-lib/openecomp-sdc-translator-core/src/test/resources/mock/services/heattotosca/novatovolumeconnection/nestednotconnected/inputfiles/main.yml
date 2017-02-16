@@ -1,0 +1,64 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+    cmaui_cinder_volume_size:
+       type: number
+       label: CMAUI Cinder volume size
+       description: the size of the CMAUI Cinder volume
+    CMAUI_volume_type:
+      type: string
+      label: CMAUI vm volume type
+      description: the name of the target volume backend
+    security_group_name:
+      type: comma_delimited_list
+      description: CMAUI1, CMAUI2 server names
+    cmaui_names:
+      type: comma_delimited_list
+      description: CMAUI1, CMAUI2 server names
+    cmaui_image:
+      type: string
+      description: Image for CMAUI server
+    availability_zone_0:
+      type: string
+      label: availabilityzone name
+      description: availabilityzone name
+    cmaui_flavor:
+      type: string
+      description: Flavor for CMAUI server
+    cmaui_oam_ips:
+      type: string
+    p1:
+      type: string
+      description: UID of OAM network
+
+resources:
+  test_vol:
+     type: OS::Cinder::Volume
+     properties:
+       size: {get_param: cmaui_cinder_volume_size}
+       volume_type: {get_param: CMAUI_volume_type}
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: p1 }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_cmaui1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }
+
+  test_nested:
+    type: nested.yml
+    properties:
+      cmaui_volume_param: { get_resource: server_cmaui1}

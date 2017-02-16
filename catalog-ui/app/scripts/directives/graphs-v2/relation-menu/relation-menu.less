@@ -1,0 +1,118 @@
+.link-menu-open {
+    display: block !important;
+    color: @main_color_m;
+    font-size: 14px;
+    position: absolute;
+    z-index: 99999;
+    border-radius: 2px;
+    background-color:  #ffffff;
+    box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.5);
+    width: 460px;
+    height: 418px;
+
+    h4 {
+        width: 50%;
+        float: left;
+        background-color: @tlv_color_u;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 36px;
+        margin: 0;
+        padding: 0 15px;
+
+        & + h4 {
+            border-left: #d8d8d8 1px solid;
+        }
+    }
+    p {
+        clear: both;
+        text-indent: 15px;
+        border-bottom: #d8d8d8 1px solid;
+        line-height: 34px;
+        margin: 0;
+        color: @func_color_s;
+    }
+
+    .scrollbar-container {
+        height: 232px;
+        width: 50%;
+        float: left;
+        margin-bottom: 5px;
+        .perfect-scrollbar;
+
+        & + .scrollbar-container {
+            border-left: #d8d8d8 1px solid;
+        }
+
+        .inner-title {
+            width: 189px;
+            margin: 5px auto 3px auto;
+            //text-indent: 10px;
+            color: @func_color_s;
+            text-transform: uppercase;
+            font-weight: bold;
+
+            //&:not(:first-child) {
+            //    margin-top: 10px;
+            //}
+        }
+
+        .link-item {
+            padding: 0 10px;
+            line-height: 23px;
+            height: 23px;
+            text-indent: 5px;
+            .hand;
+
+            &.selected {
+                background-color:  @tlv_color_v;
+            }
+        }
+    }
+
+    .vl-type {
+        height: 33px;
+        border-top: #d8d8d8 solid 1px;
+        clear: both;
+        padding: 0 10px;
+        line-height: 32px;
+        color: @main_color_m;
+
+        &.disabled {
+            background-color: #f2f2f2;
+            color: @color_m;
+        }
+        .info-icon {
+            float:right;
+            margin-top: 9px;
+        }
+        .tlv-radio {
+            margin-right: 10px;
+        }
+    }
+
+    .result {
+        background-color: @main_color_m;
+        line-height: 29px;
+        color:  #ffffff;
+        padding: 0 15px;
+    }
+
+    button {
+        float: right;
+        margin-top: 9px;
+        margin-right: 10px;
+    }
+}
+.link-menu-item {
+    cursor: pointer;
+    line-height: 24px;
+    padding: 0 10px;
+    &:hover {
+        color: @color_a;
+    }
+}
+.link-menu::before {
+    right: inherit !important;
+    left: 50px;
+}

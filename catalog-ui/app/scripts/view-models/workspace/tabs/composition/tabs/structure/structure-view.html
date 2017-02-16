@@ -1,0 +1,13 @@
+<perfect-scrollbar include-padding="true" class="w-sdc-designer-sidebar-tab-content">
+
+    <div class="w-sdc-designer-sidebar-section">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content" class="w-sdc-designer-sidebar-section-title">
+            Composition
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content" ng-show="selectedComponent.isComplex()">
+            <structure-tree component="selectedComponent"></structure-tree>
+        </div>
+    </div>
+</perfect-scrollbar>

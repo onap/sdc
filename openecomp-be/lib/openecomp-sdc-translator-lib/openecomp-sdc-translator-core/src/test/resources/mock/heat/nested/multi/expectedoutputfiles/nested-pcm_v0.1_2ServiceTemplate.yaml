@@ -1,0 +1,193 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pcm_v0.1_2
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcm_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    pcm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+    pcm_vol:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    pcm_server_name:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+  node_templates:
+    pcm_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+    server_pcm:
+      type: org.openecomp.resource.vfc.nodes.heat.pcm_server
+      properties:
+        flavor:
+          get_input: pcm_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcm_image_name
+        config_drive: 'True'
+        user_data_format: RAW
+        name:
+          get_input: pcm_server_name
+    pcm_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        network:
+          get_input: cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-pcm_v0.1_2:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pcm_v0.1_2.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - pcm_port_1
+      - server_pcm
+      - pcm_port_0
+  outputs:
+    server_pcm_id:
+      description: the pcm nova service id
+      value: server_pcm
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1_2
+    capabilities:
+      endpoint_server_pcm:
+      - server_pcm
+      - endpoint
+      os_server_pcm:
+      - server_pcm
+      - os
+      host_server_pcm:
+      - server_pcm
+      - host
+      scalable_server_pcm:
+      - server_pcm
+      - scalable
+      binding_server_pcm:
+      - server_pcm
+      - binding
+      attachment_pcm_port_0:
+      - pcm_port_0
+      - attachment
+      attachment_pcm_port_1:
+      - pcm_port_1
+      - attachment
+    requirements:
+      link_pcm_port_0:
+      - pcm_port_0
+      - link
+      link_pcm_port_1:
+      - pcm_port_1
+      - link
+      local_storage_server_pcm:
+      - server_pcm
+      - local_storage

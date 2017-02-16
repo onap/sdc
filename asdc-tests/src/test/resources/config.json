@@ -1,0 +1,12 @@
+{
+
+catalogBeHost: behost,
+catalogFeHost: fehost,
+esHost: eshost,
+catalogFePort: 8080,
+catalogBePort: 8080,
+esPort: 9200,
+resourceConfigDir: "src/test/resources/CI/tests",
+componentsConfigDir: "src/test/resources/CI/components"
+
+}

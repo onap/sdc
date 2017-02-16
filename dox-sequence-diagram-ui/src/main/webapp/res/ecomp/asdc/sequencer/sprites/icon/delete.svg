@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   id="svg2985"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="delete.svg">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 500,98.34375 C 278.76784,98.34375 98.34375,278.76784 98.34375,500 98.34375,721.23216 278.76784,901.65625 500,901.65625 721.23214,901.65625 901.65625,721.23216 901.65625,500 901.65625,278.76783 721.23215,98.34375 500,98.34375 z m 0,100 c 167.18813,0 301.65625,134.4681 301.65625,301.65625 C 801.65625,667.18814 667.18814,801.65625 500,801.65625 332.81184,801.65625 198.34375,667.18814 198.34375,500 198.34375,332.81184 332.81184,198.34375 500,198.34375 z m -154.4375,97.25 A 50.005,50.005 0 0 0 310.71875,381.4375 L 429.28125,500 310.71875,618.5625 a 50.005708,50.005708 0 1 0 70.71875,70.71875 L 500,570.71875 618.5625,689.28125 A 50.005708,50.005708 0 1 0 689.28125,618.5625 L 570.71875,500 689.28125,381.4375 A 50.005708,50.005708 0 1 0 618.5625,310.71875 L 500,429.28125 381.4375,310.71875 a 50.005,50.005 0 0 0 -35.875,-15.125 z"
+       id="path3789-6"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

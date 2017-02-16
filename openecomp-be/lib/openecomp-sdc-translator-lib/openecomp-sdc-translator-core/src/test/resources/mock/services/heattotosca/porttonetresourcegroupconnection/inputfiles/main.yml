@@ -1,0 +1,31 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_net:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
+  test_nested:
+    type: nested.yml
+    properties:
+      p1: { get_resource: test_net}
+
+  mvs_modules:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 3
+      index_var: "%index%"
+      resource_def:
+        type: nested.yml
+        properties:
+          p1: { get_resource: test_net}

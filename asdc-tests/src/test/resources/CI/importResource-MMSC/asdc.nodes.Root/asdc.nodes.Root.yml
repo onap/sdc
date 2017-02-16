@@ -1,0 +1,3 @@
+asdc.nodes.Root:
+  derived_from: tosca.nodes.Root
+

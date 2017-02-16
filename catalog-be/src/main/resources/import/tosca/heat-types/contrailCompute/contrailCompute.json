@@ -1,0 +1,15 @@
+{
+	"payloadName": "contrailCompute.yml",
+	"contactId": "jh0003",
+	"name": "ContrailCompute",
+	"description": "Represents a virtual machine for contrail service template. The information provided will be used to create a VM that matches characteristics.",
+	"resourceIconPath": "compute",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["ContrailCompute"]
+}

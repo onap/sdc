@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-type" content="text/html"/>
+    <link rel="SHORTCUT ICON" href="images/icons/favicon.png"/>
+    <title>Service Design &amp; Creation</title>
+</head>
+<body>
+<div id="sdc-app" class="sdc-app"></div>
+
+<script>
+
+(function(){
+
+    /**
+     * Bundle Import script( By Language)!
+     */
+
+    var DEFAULT_LANG = 'en';
+    var lang = localStorage.getItem('user_locale') || ((navigator && (navigator.language || navigator.userLanguage)) || DEFAULT_LANG).toLowerCase();
+
+    function writeAppBundle() {
+        var supportedLangs = [
+        //<!--prod:supported-langs--><!--/prod:supported-langs-->
+        ];
+        if(-1 === supportedLangs.indexOf(lang)) {
+            lang = DEFAULT_LANG;
+        }
+
+        var bundleScript = document.createElement('script');
+        bundleScript.src = 'bundle_' + lang + '.js';
+        document.write(bundleScript.outerHTML);
+    }
+
+    writeAppBundle();
+
+})()
+</script>
+
+</body>
+</html>

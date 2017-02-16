@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+description: >
+  A Serving-CSCF (S-CSCF) is the central node of the signalling plane. 
+  It is a SIP server, but performs session control too. It is always located in the home network. 
+  It uses Diameter Cx and Dx interfaces to the HSS to download user profiles and upload 
+  user-to-S-CSCF associations (the user profile is only cached locally for processing reasons only
+  and is not changed). All necessary subscriber profile information is loaded from the HSS.
+  
+node_types:
+  att.nodes.ims.SCSCF:
+    derived_from: tosca.nodes.SoftwareComponent
+    capabilities:
+      icscf_endpoint:
+        type: tosca.capabilities.Endpoint
+        relationship: tosca.relationships.ConnectTo
+        occurrences: [0, UNBOUNDED]  
+        description: Connection with one ore more I-CSCF functions 
+    requirements:
+      hss_endpoint: 
+        capability: tosca.capabilities.Endpoint  
+        node: att.nodes.ims.HSS
+        relationship: tosca.relationships.ConnectsTo

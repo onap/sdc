@@ -1,0 +1,12 @@
+asdc.nodes.module.MMSC:
+  derived_from: asdc.nodes.Module
+  requirements:
+    - oam_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.OAM
+    - cinder_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Cinder
+    - traffic_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Traffic        

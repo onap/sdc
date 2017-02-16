@@ -1,0 +1,670 @@
+heat_template_version: '2014-10-16'
+
+parameters:
+  base_image_name:
+    description: The base ID or name of the image to boot with
+    type: string
+  cdr_network:
+    description: A string specifying a symbolic name for the network
+    type: string
+  domain_name:
+    description: The servers domain
+    type: string
+  manager_name_0:
+    description: VM Name for Manager VM 0
+    type: string
+  manager_oam_direct_ip_0:
+    description: The public ip address of the manager
+    type: string
+  ntp_timezone:
+    description: Name of NTP Time zone to be used
+    type: string
+  oam_private_net_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_internal_network_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_internal_network_subnet_alloc_end:
+    description: End address for the allocation pool
+    type: string
+  packet_internal_network_subnet_alloc_start:
+    description: Start address for the allocation pool
+    type: string
+  packet_internal_network_subnet_cidr:
+    description: The Classless Inter-Domain Routing
+    type: string
+  packet_internal_network_subnet_name:
+    description: The name of the subnet
+    type: string
+  packet_mirror_network_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_mirror_network_subnet_alloc_end:
+    description: End address for the allocation pool
+    type: string
+  packet_mirror_network_subnet_alloc_start:
+    description: Start address for the allocation pool
+    type: string
+  packet_mirror_network_subnet_cidr:
+    description: The Classless Inter-Domain Routing
+    type: string
+  packet_mirror_network_subnet_name:
+    description: The name of the subnet
+    type: string
+  availability_zone_0:
+    description: Name of the availability zone for server placement
+    type: string
+  qrouter_cluster_name:
+    description: The component cluster name
+    type: string
+  qrouter_flavor_name:
+    description: The ID or name of the flavor to boot onto
+    type: string
+  qrouter_names:
+    description: VM Names for QRouter VMs
+    type: comma_delimited_list
+  qrouter_node_count:
+    description: The number of nodes to create
+    type: number
+  qrouter_volume_name_0:
+    description: The name of the volume
+    type: string
+  qrouter_volume_name_1:
+    description: The name of the volume
+    type: string
+  qrouter_volume_name_2:
+    description: The name of the volume
+    type: string
+  qrouter_volume_size_0:
+    description: The size of the volume in GB
+    type: number
+  qrouter_volume_size_1:
+    description: The size of the volume in GB
+    type: number
+  qrouter_volume_size_2:
+    description: The size of the volume in GB
+    type: number
+  qrouter_volume_type_0:
+    description: The type of the volume mapping to a backend
+    type: string
+  qrouter_volume_type_1:
+    description: The type of the volume mapping to a backend
+    type: string
+  qrouter_volume_type_2:
+    description: The type of the volume mapping to a backend
+    type: string
+  qtrace_name_0:
+    description: VM Name for QRouter VMs
+    type: string
+  region_name:
+    description: Name of region to be used
+    type: string
+  rpmrepository_ip_0:
+    description: The public ip address of the repository
+    type: string
+  tenant_name:
+    description: Name of tenant to be used
+    type: string
+  availability_zone_1:
+    description: Name of the availability zone for server placement
+    type: string
+  vLBAgent_cluster_name:
+    description: The component cluster name
+    type: string
+  vLBAgent_flavor_name:
+    description: The ID or name of the flavor to boot onto
+    type: string
+  vLBAgent_names:
+    description: VM Names for vLBAgent VMs
+    type: comma_delimited_list
+  vLBAgent_node_count:
+    description: The number of nodes to create
+    type: number
+  vLBAgent_type:
+    description: vLBAgent Type. mme or sgw
+    type: string
+  vLBAgent_version_name:
+    description: The version name of the component
+    type: string
+  vLBAgent_volume_name_0:
+    description: The name of the volume
+    type: string
+  vLBAgent_volume_name_1:
+    description: The name of the volume
+    type: string
+  vLBAgent_volume_name_2:
+    description: The name of the volume
+    type: string
+  vLBAgent_volume_size_0:
+    description: The size of the volume in GB
+    type: number
+  vLBAgent_volume_size_1:
+    description: The size of the volume in GB
+    type: number
+  vLBAgent_volume_size_2:
+    description: The size of the volume in Gigabytes.
+    type: number
+  vLBAgent_volume_type_0:
+    description: The type of the volume mapping to a backend
+    type: string
+  vLBAgent_volume_type_1:
+    description: The type of the volume mapping to a backend
+    type: string
+  vLBAgent_volume_type_2:
+    description: The Cinder volume type. Used to specify the backend.
+    type: string
+  availability_zone_2:
+    description: Name of the availability zone for server placement.
+    type: string
+  vLB_cluster_name:
+    description: The component cluster name.
+    type: string
+  vLB_flavor_name:
+    description: The name of the flavor to boot onto.
+    type: string
+  vLB_names:
+    description: VM Names for vLB VMs
+    type: comma_delimited_list
+  vLB_node_count:
+    description: The number of nodes to create.
+    type: number
+  vLB_type:
+    description: The type of VLB. MME or SGW.
+    type: string
+  vLB_version_name:
+    description: The version name of the component.
+    type: string
+  vLB_volume_name_0:
+    description: The name of the volume
+    type: string
+  vLB_volume_name_1:
+    description: The name of the volume
+    type: string
+  vLB_volume_name_2:
+    description: The name of the volume
+    type: string
+  vLB_volume_size_0:
+    description: The size of the volume in GB.
+    type: number
+  vLB_volume_size_1:
+    description: The size of the volume in GB.
+    type: number
+  vLB_volume_size_2:
+    description: The size of the volume in GB.
+    type: number
+  vLB_volume_type_0:
+    description: The type of the volume mapping to a backend
+    type: string
+  vLB_volume_type_1:
+    description: The type of the volume mapping to a backend
+    type: string
+  vLB_volume_type_2:
+    description: The type of the volume mapping to a backend
+    type: string
+  vProbe_cluster_name:
+    description: The component cluster name
+    type: string
+  vProbe_node_count:
+    description: The number of nodes to create
+    type: number
+  vProbe_version_name:
+    description: The version name of the component
+    type: string
+  version_number:
+    description: The version number of the component
+    type: string
+  vf_module_id:
+    description: The VF MODULE ID of the RADCOM System.
+    type: string
+  vnf_id:
+    description: The VNF ID of the RADCOM System.
+    type: string
+  vprobe_AppDependenciesMachineType:
+    description: The application dependencies
+    type: string
+  availability_zone_3:
+    description: Name of the availability zone for server placement
+    type: string
+  vprobe_flavor_name:
+    description: The name of the flavor to boot onto
+    type: string
+  vprobe_names:
+    description: VM Names for vProbe VMs
+    type: comma_delimited_list
+  vprobe_type:
+    description: The type of vProbe. MME or SGW.
+    type: string
+  vf_module_name:
+    description: The VNF module name for vProbe elements.
+    type: string
+  vprobe_volume_name_0:
+    description: The name of the volume
+    type: string
+  vprobe_volume_name_1:
+    description: The name of the volume
+    type: string
+  vprobe_volume_name_2:
+    description: The name of the volume
+    type: string
+  vprobe_volume_size_0:
+    description: The size of the volume in GB
+    type: number
+  vprobe_volume_size_1:
+    description: The size of the volume in GB
+    type: number
+  vprobe_volume_size_2:
+    description: The size of the volume in GB
+    type: number
+  vprobe_volume_type_0:
+    description: The type of the volume mapping to a backend
+    type: string
+  vprobe_volume_type_1:
+    description: The type of the volume mapping to a backend
+    type: string
+  vprobe_volume_type_2:
+    description: The type of the volume mapping to a backend
+    type: string
+  win_domain_name:
+    description: Windows servers' domain
+    type: string
+resources:
+  QRouter:
+    depends_on:
+    - security_group
+    - packet_mirror_network
+    - packet_mirror_network_subnet
+    - packet_internal_network
+    - packet_internal_network_subnet
+    properties:
+      cdr_network:
+        get_param: cdr_network
+      domain_name:
+        get_param: domain_name
+      qrouter_image_name:
+        get_param: base_image_name
+      manager_name_0:
+        get_param: manager_name_0
+      manager_oam_direct_ip_0:
+        get_param: manager_oam_direct_ip_0
+      ntp_timezone:
+        get_param: ntp_timezone
+      oam_private_net_name:
+        get_param: oam_private_net_name
+      availability_zone_0:
+        get_param: availability_zone_0
+      qrouter_cluster_name:
+        get_param: qrouter_cluster_name
+      qrouter_flavor_name:
+        get_param: qrouter_flavor_name
+      qrouter_names:
+        get_param: qrouter_names
+      qrouter_node_count:
+        get_param: qrouter_node_count
+      qrouter_volume_name_0:
+        get_param: qrouter_volume_name_0
+      qrouter_volume_name_1:
+        get_param: qrouter_volume_name_1
+      qrouter_volume_name_2:
+        get_param: qrouter_volume_name_2
+      qrouter_volume_size_0:
+        get_param: qrouter_volume_size_0
+      qrouter_volume_size_1:
+        get_param: qrouter_volume_size_1
+      qrouter_volume_size_2:
+        get_param: qrouter_volume_size_2
+      qrouter_volume_type_0:
+        get_param: qrouter_volume_type_0
+      qrouter_volume_type_1:
+        get_param: qrouter_volume_type_1
+      qrouter_volume_type_2:
+        get_param: qrouter_volume_type_2
+      region_name:
+        get_param: region_name
+      rpmrepository_ip_0:
+        get_param: rpmrepository_ip_0
+      security_group:
+        get_resource: security_group
+      tenant_name:
+        get_param: tenant_name
+      version_number:
+        get_param: version_number
+      vf_module_id:
+        get_param: vf_module_id
+      vf_module_name:
+        get_param: vf_module_name
+      vnf_id:
+        get_param: vnf_id
+    type: FEAdd_On_Module_QRouterTemplate.yaml
+  packet_internal_network:
+    properties:
+      name:
+        get_param: packet_internal_network_name
+    type: OS::Neutron::Net
+  packet_internal_network_subnet:
+    properties:
+      allocation_pools:
+      - end:
+          get_param: packet_internal_network_subnet_alloc_end
+        start:
+          get_param: packet_internal_network_subnet_alloc_start
+      cidr:
+        get_param: packet_internal_network_subnet_cidr
+      enable_dhcp: true
+      gateway_ip_0: null
+      name:
+        get_param: packet_internal_network_subnet_name
+      network_id:
+        get_resource: packet_internal_network
+    type: OS::Neutron::Subnet
+  packet_mirror_network:
+    properties:
+      name:
+        get_param: packet_mirror_network_name
+    type: OS::Neutron::Net
+  packet_mirror_network_subnet:
+    properties:
+      allocation_pools:
+      - end:
+          get_param: packet_mirror_network_subnet_alloc_end
+        start:
+          get_param: packet_mirror_network_subnet_alloc_start
+      cidr:
+        get_param: packet_mirror_network_subnet_cidr
+      enable_dhcp: true
+      gateway_ip_0: null
+      name:
+        get_param: packet_mirror_network_subnet_name
+      network_id:
+        get_resource: packet_mirror_network
+    type: OS::Neutron::Subnet
+  security_group:
+    properties:
+      name: FE_radcom_security_group
+      rules:
+      - port_range_max: 23
+        port_range_min: 23
+        protocol: tcp
+      - port_range_max: 123
+        port_range_min: 123
+        protocol: tcp
+      - port_range_max: 3389
+        port_range_min: 3389
+        protocol: tcp
+      - port_range_max: 5434
+        port_range_min: 5434
+        protocol: udp
+      - port_range_max: 5443
+        port_range_min: 5435
+        protocol: tcp
+      - port_range_max: 8000
+        port_range_min: 8000
+        protocol: tcp
+      - port_range_max: 9900
+        port_range_min: 9900
+        protocol: tcp
+      - port_range_max: 12050
+        port_range_min: 12000
+        protocol: tcp
+      - port_range_max: 161
+        port_range_min: 161
+        protocol: tcp
+      - port_range_max: 8000
+        port_range_min: 8000
+        protocol: udp
+      - protocol: icmp
+      - protocol: 47
+      - port_range_max: 22
+        port_range_min: 22
+        protocol: tcp
+      - port_range_max: 3050
+        port_range_min: 3000
+        protocol: tcp
+      - port_range_max: 8081
+        port_range_min: 8080
+        protocol: tcp
+      - port_range_max: 8084
+        port_range_min: 8084
+        protocol: tcp
+      - port_range_max: 4000
+        port_range_min: 4000
+        protocol: tcp
+      - port_range_max: 33000
+        port_range_min: 33000
+        protocol: tcp
+      - port_range_max: 8082
+        port_range_min: 8082
+        protocol: tcp
+    type: OS::Neutron::SecurityGroup
+  vLB:
+    depends_on:
+    - security_group
+    - packet_mirror_network
+    - packet_mirror_network_subnet
+    - packet_internal_network
+    - packet_internal_network_subnet
+    properties:
+      domain_name:
+        get_param: domain_name
+      vlb_image_name:
+        get_param: base_image_name
+      manager_name_0:
+        get_param: manager_name_0
+      manager_oam_direct_ip_0:
+        get_param: manager_oam_direct_ip_0
+      ntp_timezone:
+        get_param: ntp_timezone
+      oam_private_net_name:
+        get_param: oam_private_net_name
+      packet_internal_network:
+        get_resource: packet_internal_network
+      packet_mirror_network:
+        get_resource: packet_mirror_network
+      region_name:
+        get_param: region_name
+      rpmrepository_ip_0:
+        get_param: rpmrepository_ip_0
+      security_group:
+        get_resource: security_group
+      tenant_name:
+        get_param: tenant_name
+      availability_zone_0:
+        get_param: availability_zone_1
+      vLB_cluster_name:
+        get_param: vLB_cluster_name
+      vLB_flavor_name:
+        get_param: vLB_flavor_name
+      vLB_names:
+        get_param: vLB_names
+      vLB_node_count:
+        get_param: vLB_node_count
+      vLB_type:
+        get_param: vLB_type
+      vLB_version_name:
+        get_param: vLB_version_name
+      vLB_volume_name_0:
+        get_param: vLB_volume_name_0
+      vLB_volume_name_1:
+        get_param: vLB_volume_name_1
+      vLB_volume_name_2:
+        get_param: vLB_volume_name_2
+      vLB_volume_size_0:
+        get_param: vLB_volume_size_0
+      vLB_volume_size_1:
+        get_param: vLB_volume_size_1
+      vLB_volume_size_2:
+        get_param: vLB_volume_size_2
+      vLB_volume_type_0:
+        get_param: vLB_volume_type_0
+      vLB_volume_type_1:
+        get_param: vLB_volume_type_1
+      vLB_volume_type_2:
+        get_param: vLB_volume_type_2
+      vProbe_cluster_name:
+        get_param: vProbe_cluster_name
+      vf_module_id:
+        get_param: vf_module_id
+      vf_module_name:
+        get_param: vf_module_name
+      vnf_id:
+        get_param: vnf_id
+    type: FEAdd_On_Module_vLBTemplate.yaml
+  vLBAgent:
+    depends_on:
+    - security_group
+    - packet_mirror_network
+    - packet_mirror_network_subnet
+    - packet_internal_network
+    - packet_internal_network_subnet
+    properties:
+      domain_name:
+        get_param: domain_name
+      vlb_agent_image_name:
+        get_param: base_image_name
+      manager_name_0:
+        get_param: manager_name_0
+      manager_oam_direct_ip_0:
+        get_param: manager_oam_direct_ip_0
+      ntp_timezone:
+        get_param: ntp_timezone
+      oam_private_net_name:
+        get_param: oam_private_net_name
+      packet_internal_network:
+        get_resource: packet_internal_network
+      packet_mirror_network:
+        get_resource: packet_mirror_network
+      region_name:
+        get_param: region_name
+      rpmrepository_ip_0:
+        get_param: rpmrepository_ip_0
+      security_group:
+        get_resource: security_group
+      tenant_name:
+        get_param: tenant_name
+      availability_zone_0:
+        get_param: availability_zone_2
+      vLBAgent_cluster_name:
+        get_param: vLBAgent_cluster_name
+      vLBAgent_flavor_name:
+        get_param: vLBAgent_flavor_name
+      vLBAgent_names:
+        get_param: vLBAgent_names
+      vLBAgent_node_count:
+        get_param: vLBAgent_node_count
+      vLBAgent_type:
+        get_param: vLBAgent_type
+      vLBAgent_version_name:
+        get_param: vLBAgent_version_name
+      vLBAgent_volume_name_0:
+        get_param: vLBAgent_volume_name_0
+      vLBAgent_volume_name_1:
+        get_param: vLBAgent_volume_name_1
+      vLBAgent_volume_name_2:
+        get_param: vLBAgent_volume_name_2
+      vLBAgent_volume_size_0:
+        get_param: vLBAgent_volume_size_0
+      vLBAgent_volume_size_1:
+        get_param: vLBAgent_volume_size_1
+      vLBAgent_volume_size_2:
+        get_param: vLBAgent_volume_size_2
+      vLBAgent_volume_type_0:
+        get_param: vLBAgent_volume_type_0
+      vLBAgent_volume_type_1:
+        get_param: vLBAgent_volume_type_1
+      vLBAgent_volume_type_2:
+        get_param: vLBAgent_volume_type_2
+      vLB_cluster_name:
+        get_param: vLB_cluster_name
+      vLB_node_count:
+        get_param: vLB_node_count
+      vProbe_cluster_name:
+        get_param: vProbe_cluster_name
+      vf_module_id:
+        get_param: vf_module_id
+      vf_module_name:
+        get_param: vf_module_name
+      vnf_id:
+        get_param: vnf_id
+    type: FEAdd_On_Module_vLBAgentTemplate.yaml
+  vProbe:
+    depends_on:
+    - security_group
+    - packet_mirror_network
+    - packet_mirror_network_subnet
+    - packet_internal_network
+    - packet_internal_network_subnet
+    properties:
+      cdr_network:
+        get_param: cdr_network
+      domain_name:
+        get_param: domain_name
+      vprobe_image_name:
+        get_param: base_image_name
+      manager_name_0:
+        get_param: manager_name_0
+      manager_oam_direct_ip_0:
+        get_param: manager_oam_direct_ip_0
+      ntp_timezone:
+        get_param: ntp_timezone
+      oam_private_net_name:
+        get_param: oam_private_net_name
+      packet_internal_network:
+        get_resource: packet_internal_network
+      qrouter_cluster_name:
+        get_param: qrouter_cluster_name
+      qtrace_name_0:
+        get_param: qtrace_name_0
+      region_name:
+        get_param: region_name
+      rpmrepository_ip_0:
+        get_param: rpmrepository_ip_0
+      security_group:
+        get_resource: security_group
+      tenant_name:
+        get_param: tenant_name
+      vLB_node_count:
+        get_param: vLB_node_count
+      vProbe_cluster_name:
+        get_param: vProbe_cluster_name
+      vProbe_node_count:
+        get_param: vProbe_node_count
+      vProbe_version_name:
+        get_param: vProbe_version_name
+      vf_module_id:
+        get_param: vf_module_id
+      vf_module_name:
+        get_param: vf_module_name
+      vnf_id:
+        get_param: vnf_id
+      vprobe_AppDependenciesMachineType:
+        get_param: vprobe_AppDependenciesMachineType
+      availability_zone_0:
+        get_param: availability_zone_3
+      vprobe_flavor_name:
+        get_param: vprobe_flavor_name
+      vprobe_names:
+        get_param: vprobe_names
+      vprobe_type:
+        get_param: vprobe_type
+      vprobe_volume_name_0:
+        get_param: vprobe_volume_name_0
+      vprobe_volume_name_1:
+        get_param: vprobe_volume_name_1
+      vprobe_volume_name_2:
+        get_param: vprobe_volume_name_2
+      vprobe_volume_size_0:
+        get_param: vprobe_volume_size_0
+      vprobe_volume_size_1:
+        get_param: vprobe_volume_size_1
+      vprobe_volume_size_2:
+        get_param: vprobe_volume_size_2
+      vprobe_volume_type_0:
+        get_param: vprobe_volume_type_0
+      vprobe_volume_type_1:
+        get_param: vprobe_volume_type_1
+      vprobe_volume_type_2:
+        get_param: vprobe_volume_type_2
+      win_domain_name:
+        get_param: win_domain_name
+    type: FEAdd_On_Module_vProbeTemplate.yaml
+ 

@@ -1,0 +1,51 @@
+.i-sdc-left-sidebar-page-nav {
+
+    height: 64px;
+    
+    .sidebar-page-nav-item-selected,
+    .sidebar-page-nav-item {
+        .i_11;
+        background-color:  #e0e5e9;
+        width: 100%;
+        height: 64px;
+        border-bottom: solid 1px #cccccc;
+        line-height: 64px;
+        text-align: center;
+        cursor: pointer;
+        vertical-align: middle;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-page-nav-item-selected {
+        z-index: 1010;
+        position: absolute;
+        top: 0px;
+    }
+
+    .sidebar-page-nav-item-selected span {
+        .sprite;
+        .sprite.table-arrow;
+        position: absolute;
+        top: 28px;
+        margin-left: 10px;
+
+        &.expanded {
+            .sprite;
+            .sprite.table-arrow.opened;
+            top: 30px;
+        }
+    }
+
+    ul {
+        position: absolute;
+        top: 0px;
+        padding: 0;
+        width: 100%;
+        z-index: 99;
+        visibility: hidden; //Need this and not display none, so I can use the function: getComputedStyle
+        .box-shadow(0px 4px 2px -2px rgba(0, 0, 0, 0.36));
+    }
+
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   id="svg4406"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="upload.svg">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 500,900 C 279.0861,900 100,720.9139 100,500 100,279.08611 279.0861,100 500,100 c 220.9139,0 400,179.08611 400,400 0,220.9139 -179.0861,400 -400,400 z m -26.35714,-243.53571 45.71428,0 c 6.33143,0 11.42857,-5.09715 11.42857,-11.42858 l 0,-117.28571 91.42858,0 -63.25,-92.57143 L 495.75,342.60714 432.5,435.17857 369.25,527.75 l 92.96429,0 0,117.28571 c 0,6.33143 5.09714,11.42858 11.42857,11.42858 z"
+       id="path2987"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

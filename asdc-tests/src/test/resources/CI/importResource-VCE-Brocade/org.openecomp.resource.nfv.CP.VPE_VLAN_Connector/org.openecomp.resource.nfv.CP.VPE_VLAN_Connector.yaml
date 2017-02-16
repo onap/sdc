@@ -1,0 +1,48 @@
+##################################################################
+  ############### VPE VLAN Connector CP Node   #####################
+  ##################################################################
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.nfv.cp.VPE_VLAN_Connector: 
+    derived_from: org.openecomp.resource.nfv.CP
+    properties: 
+      vpe_network_name: 
+        type: string
+      
+      vpe_network_type: 
+        type: string
+      
+      vpe_network_uuid: 
+        type: string
+      
+      vlan_segment_ids: 
+        type: list
+        entry_schema:
+          type: string
+          description: list of segmentation Ids.
+        
+      
+    #attributes: 
+    capabilities: 
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.VPE_VLAN_Connector
+        description: This capability has been introduced to model this Connector as a component of VCE VNF, because Node Template is not supported by ASDC Team
+    
+    requirements: 
+      - virtualBindingRequirement: 
+          capability: org.openecomp.capabilities.nfv.vdu.VirtualBindable
+          #node: org.openecomp.asdc.nodes.vCE_Brocade_VDU
+          relationship: org.openecomp.relationships.nfv.VirtualBindsTo
+          occurrences: [1, 1] #default
+          
+      - virtualLinkingrequirement: 
+          capability: org.openecomp.capabilities.nfv.VirtualLinkable
+          #node: org.openecomp.asdc.nodes.nfv.VL
+          relationship: org.openecomp.relationships.nfv.VirtualLinksTo
+          occurrences: [1, 1] #default
+          
+    #interfaces: 
+      #standard: 
+        #configure: 
+          #implementation: configure.sh
+  

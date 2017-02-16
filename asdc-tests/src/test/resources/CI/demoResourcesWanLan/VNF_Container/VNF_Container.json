@@ -1,0 +1,11 @@
+{
+  "payloadName": "VNF_Container.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.VNF_Container",
+  "description": "Represents a VNF_Container Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "org.openecomp.asdc.nodes.VNF_Container"
+  ]
+}

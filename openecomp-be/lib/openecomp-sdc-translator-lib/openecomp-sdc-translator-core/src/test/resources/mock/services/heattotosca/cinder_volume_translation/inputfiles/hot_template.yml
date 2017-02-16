@@ -1,0 +1,79 @@
+heat_template_version:  2013-05-23
+
+description: server template for vMME
+
+parameters:
+
+      volume_type:
+        type: string
+        label:  volume type
+        description: volume type Gold
+
+      volume_size:
+        type: number
+        label:  volume size
+        description: my volume size 320GB
+
+      FSB_1_image:
+        type: string
+        label: MME_FSB1
+        description: MME_FSB1_15B-CP04-r5a01
+
+      FSB_2_image:
+        type: string
+        label: MME_FSB2
+        description: MME_FSB2_15B-CP04-r5a01
+
+      FSB1_volume_name:
+        type: string
+        label: FSB1_volume
+        description: FSB1_volume_1
+
+      FSB2_volume_name:
+        type: string
+        label: FSB2_volume
+        description: FSB2_volume_1
+
+      stam:
+        type: number
+        label: stam
+        description: stam
+
+resources:
+
+    FSB1_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: 3
+        volume_type: {get_param: volume_type}
+        name: {get_param: FSB1_volume_name}
+        image: {get_param: FSB_1_image}
+        read_only: {get_param: stam}
+
+    FSB2_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: {get_param: volume_size}
+        volume_type: {get_param: volume_type}
+        name: {get_param: FSB2_volume_name}
+        image: {get_param: FSB_2_image}
+        read_only: 1
+
+    FSB3_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: 3
+        volume_type: {get_param: volume_type}
+        name: {get_param: FSB1_volume_name}
+        image: {get_param: FSB_1_image}
+        read_only: t
+
+    FSB4_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: {get_param: volume_size}
+        volume_type: {get_param: volume_type}
+        name: {get_param: FSB2_volume_name}
+        image: {get_param: FSB_2_image}
+        read_only: true
+

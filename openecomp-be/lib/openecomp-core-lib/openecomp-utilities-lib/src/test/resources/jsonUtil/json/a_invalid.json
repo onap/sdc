@@ -1,0 +1,13 @@
+{
+  "address": {
+    "streetAddress": "21 2nd Street",
+    "city": "Paris"
+  },
+  "phoneNumber": [
+    {
+      "location": "home",
+      "code": "test"
+    }
+  ],
+  "cityOfBirth": "Paris"
+}

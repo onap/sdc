@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>openecomp-sdc</artifactId>
+        <groupId>org.openecomp.sdc</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <name>openecomp-sdc-lib</name>
+    <artifactId>openecomp-sdc-lib</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>openecomp-core-lib</module>
+        <module>openecomp-common-lib</module>
+        <module>openecomp-sdc-versioning-lib</module>
+        <module>openecomp-sdc-vendor-license-lib</module>
+        <module>openecomp-sdc-vendor-software-product-lib</module>
+        <module>openecomp-sdc-translator-lib</module>
+        <module>openecomp-sdc-model-lib</module>
+        <module>openecomp-sdc-validation-lib</module>
+        <module>openecomp-sdc-datatypes-lib</module>
+        <module>openecomp-heat-lib</module>
+        <module>openecomp-tosca-lib</module>
+        <module>openecomp-sdc-action-lib</module>
+        <module>openecomp-sdc-enrichment-lib</module>
+    </modules>
+</project>

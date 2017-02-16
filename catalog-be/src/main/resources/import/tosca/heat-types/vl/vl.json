@@ -1,0 +1,21 @@
+{
+  "payloadName": "vl.yml",
+  "contactId": "jh0003",
+  "name": "VL",
+  "description": " Virtual link (VL) describes the basic topology of the connectivity as well as other required parameters (e.g. bandwidth and QoS class). ",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Network Connectivity",
+    "subcategories": [
+     {
+        "name": "Virtual Links"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "VL"
+  ]
+}

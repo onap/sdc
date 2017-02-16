@@ -1,0 +1,22 @@
+<div class="sdc-tutorial-page" data-ng-if="showTutorial">
+    <div class="sdc-tutorial-container-wrapper">
+        <div class="sdc-tutorial-skip" translate="{{isFirstTime?'TUTRIAL_GENERAL_SKIP_BUTTON':'TUTRIAL_GENERAL_CLOSE_BUTTON'}}" data-ng-click="closeTutorial()"></div>
+        <div class="sdc-tutorial-container">
+            <div class="sdc-tutorial-container-tabs">
+                <div class="sdc-tutorial-container-tab" data-ng-repeat="tab in tabs" data-ng-class="{'selected': tab.id===pageObject.tab}">
+                    <span translate="{{tab.name}}" data-ng-click="initPage(tab.defaultPage)"></span>
+                </div>
+            </div>
+            <ng-include src="templateUrl"></ng-include>
+        </div>
+
+        <div class="sdc-tutorial-footer">
+            <div class="sdc-tutorial-footer-prev-button"><span data-ng-show="hasPrevious()" translate="TUTRIAL_GENERAL_PREVIOUS_BUTTON" data-ng-click="previous()"></span></div>
+            <div class="sdc-tutorial-footer-page-counter"><span class="selected" data-ng-bind="currentPageIndex+1"></span>/<span class="total" data-ng-bind="totalPages"></span></div>
+            <div class="sdc-tutorial-footer-next-button">
+                <span data-ng-if="hasNext()" translate="TUTRIAL_GENERAL_NEXT_BUTTON" data-ng-click="next()"></span>
+                <span data-ng-if="(currentPageIndex+1) === totalPages" translate="TUTRIAL_GENERAL_NEXT_BUTTON_END" data-ng-click="closeAndShowLastPage()"></span>
+            </div>
+        </div>
+    </div>
+</div>

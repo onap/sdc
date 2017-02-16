@@ -1,0 +1,19 @@
+<g class="asdcs-diagram-lifeline-container" data-id="<%-id%>" data-type="lifeline">
+
+    <rect x="<%-(x-(headerWidth/2))%>" y="<%-(y0)%>" width="<%-headerWidth%>" height="<%-headerHeight%>" class="asdcs-diagram-lifeline-heading-box"></rect>
+
+    <text x="<%-x%>" y="<%-(headerHeight * ((rows-lines.length)/10))%>" class="asdcs-diagram-lifeline-heading-label"><%
+        for (var linesIndex = 0; linesIndex < lines.length && linesIndex < rows ; linesIndex++) {
+            %><tspan x="<%-x%>" dy="<%-(headerHeight/rows)-5%>px"><%- lines[linesIndex] %></tspan><%
+        }
+    %></text>
+
+    <rect x="<%-(x-5)%>" y="<%-(y0+headerHeight)%>" width="10" height="<%-(y1-(y0+headerHeight))%>" class="asdcs-diagram-lifeline-bg"></rect>
+
+    <path d="M<%-x%>,<%-(y0+headerHeight)%> L<%-x%>,<%-y1%>"
+          class="asdcs-diagram-lifeline-selectable"></path>
+
+    <path d="M<%-x%>,<%-(y0+headerHeight)%> L<%-x%>,<%-y1%>"
+          class="asdcs-diagram-lifeline"></path>
+
+</g>

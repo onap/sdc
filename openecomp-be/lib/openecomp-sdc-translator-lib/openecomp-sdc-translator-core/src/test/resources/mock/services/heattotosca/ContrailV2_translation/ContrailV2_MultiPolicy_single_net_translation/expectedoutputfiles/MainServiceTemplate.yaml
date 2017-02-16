@@ -1,0 +1,305 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    left_vn_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    Internal1_cidr:
+      hidden: false
+      immutable: false
+      type: string
+    src_port_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    Internal1_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+    Internal1_dhcp:
+      hidden: false
+      immutable: false
+      type: string
+    src_port_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    policy_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    dst_port_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    simple_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    service_instance_fq_name:
+      hidden: false
+      immutable: false
+      type: string
+    Internal2_cidr:
+      hidden: false
+      immutable: false
+      type: string
+    protocol:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    Internal2_dhcp:
+      hidden: false
+      immutable: false
+      type: string
+    dst_port_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_addr_from_start_true:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    Internal2_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+    right_vn_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    left_vn:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    direction:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+  node_templates:
+    template_VirtualNetwork_2:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        dhcp_enabled:
+          get_input: Internal1_dhcp
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_policy_refs_data:
+        - network_policy_refs_data_sequence:
+            network_policy_refs_data_sequence_major: 0
+            network_policy_refs_data_sequence_minor: 0
+        network_name:
+          get_input: left_vn
+        network_ipam_refs:
+        - UNSUPPORTED_RESOURCE_template_NetworkIpam_2
+        network_policy_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - template_NetworkPolicy_1
+            - fq_name
+        - get_attribute:
+          - template_NetworkPolicy_2
+          - fq_name
+        - template_NetworkPolicy_3
+        subnets:
+          Internal-subnet-1:
+            enable_dhcp:
+              get_input: Internal1_dhcp
+            cidr:
+              get_input: Internal1_cidr
+            gateway_ip:
+              get_input: Internal1_default_gateway
+          Internal-subnet-2:
+            enable_dhcp:
+              get_input: Internal2_dhcp
+            cidr:
+              get_input: Internal2_cidr
+            gateway_ip:
+              get_input: Internal2_default_gateway
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: template_NetworkPolicy_1
+          relationship: tosca.relationships.DependsOn
+    template_NetworkPolicy_1:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules
+      properties:
+        name:
+          get_input: policy_name
+        network_policy_entries:
+          network_policy_entries_policy_rule:
+          - network_policy_entries_policy_rule_dst_addresses:
+            - network_policy_entries_policy_rule_dst_addresses_virtual_network:
+                get_input: right_vn_fqdn
+            network_policy_entries_policy_rule_dst_ports:
+            - network_policy_entries_policy_rule_dst_ports_start_port:
+                get_input: dst_port_start
+              network_policy_entries_policy_rule_dst_ports_end_port:
+                get_input: dst_port_end
+            network_policy_entries_policy_rule_protocol:
+              get_input: protocol
+            network_policy_entries_policy_rule_src_addresses:
+            - network_policy_entries_policy_rule_src_addresses_virtual_network:
+                get_input: left_vn_fqdn
+            network_policy_entries_policy_rule_direction:
+              get_input: direction
+            network_policy_entries_policy_rule_src_ports:
+            - network_policy_entries_policy_rule_src_ports_start_port:
+                get_input: src_port_start
+              network_policy_entries_policy_rule_src_ports_end_port:
+                get_input: src_port_end
+            network_policy_entries_policy_rule_action_list:
+              network_policy_entries_policy_rule_action_list_simple_action:
+                get_input: simple_action
+              network_policy_entries_policy_rule_action_list_apply_service:
+              - get_input: service_instance_fq_name
+      requirements:
+      - network:
+          capability: tosca.capabilities.Attachment
+          node: template_VirtualNetwork_2
+          relationship: org.openecomp.relationships.AttachesTo
+    template_NetworkPolicy_3:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules
+      properties:
+        name:
+          get_input: policy_name
+        network_policy_entries:
+          network_policy_entries_policy_rule:
+          - network_policy_entries_policy_rule_dst_addresses:
+            - network_policy_entries_policy_rule_dst_addresses_virtual_network:
+                get_input: right_vn_fqdn
+            network_policy_entries_policy_rule_dst_ports:
+            - network_policy_entries_policy_rule_dst_ports_start_port:
+                get_input: dst_port_start
+              network_policy_entries_policy_rule_dst_ports_end_port:
+                get_input: dst_port_end
+            network_policy_entries_policy_rule_protocol:
+              get_input: protocol
+            network_policy_entries_policy_rule_src_addresses:
+            - network_policy_entries_policy_rule_src_addresses_virtual_network:
+                get_input: left_vn_fqdn
+            network_policy_entries_policy_rule_direction:
+              get_input: direction
+            network_policy_entries_policy_rule_src_ports:
+            - network_policy_entries_policy_rule_src_ports_start_port:
+                get_input: src_port_start
+              network_policy_entries_policy_rule_src_ports_end_port:
+                get_input: src_port_end
+            network_policy_entries_policy_rule_action_list:
+              network_policy_entries_policy_rule_action_list_simple_action:
+                get_input: simple_action
+              network_policy_entries_policy_rule_action_list_apply_service:
+              - get_input: service_instance_fq_name
+      requirements:
+      - network:
+          capability: tosca.capabilities.Attachment
+          node: template_VirtualNetwork_2
+          relationship: org.openecomp.relationships.AttachesTo
+    template_NetworkPolicy_2:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules
+      properties:
+        name:
+          get_input: policy_name
+        network_policy_entries:
+          network_policy_entries_policy_rule:
+          - network_policy_entries_policy_rule_dst_addresses:
+            - network_policy_entries_policy_rule_dst_addresses_virtual_network:
+                get_input: right_vn_fqdn
+            network_policy_entries_policy_rule_dst_ports:
+            - network_policy_entries_policy_rule_dst_ports_start_port:
+                get_input: dst_port_start
+              network_policy_entries_policy_rule_dst_ports_end_port:
+                get_input: dst_port_end
+            network_policy_entries_policy_rule_protocol:
+              get_input: protocol
+            network_policy_entries_policy_rule_src_addresses:
+            - network_policy_entries_policy_rule_src_addresses_virtual_network:
+                get_input: left_vn_fqdn
+            network_policy_entries_policy_rule_direction:
+              get_input: direction
+            network_policy_entries_policy_rule_src_ports:
+            - network_policy_entries_policy_rule_src_ports_start_port:
+                get_input: src_port_start
+              network_policy_entries_policy_rule_src_ports_end_port:
+                get_input: src_port_end
+            network_policy_entries_policy_rule_action_list:
+              network_policy_entries_policy_rule_action_list_simple_action:
+                get_input: simple_action
+              network_policy_entries_policy_rule_action_list_apply_service:
+              - get_input: service_instance_fq_name
+      requirements:
+      - network:
+          capability: tosca.capabilities.Attachment
+          node: template_VirtualNetwork_2
+          relationship: org.openecomp.relationships.AttachesTo
+  groups:
+    main:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: cmaui server template for vMMSC
+      members:
+      - template_VirtualNetwork_2
+      - template_NetworkPolicy_1
+      - template_NetworkPolicy_3
+      - template_NetworkPolicy_2

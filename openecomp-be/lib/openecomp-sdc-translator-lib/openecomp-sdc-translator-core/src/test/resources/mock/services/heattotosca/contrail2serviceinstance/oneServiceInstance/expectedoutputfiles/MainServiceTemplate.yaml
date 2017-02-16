@@ -1,0 +1,300 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    protected_net:
+      hidden: false
+      immutable: false
+      type: string
+    service_policy_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Policy Name
+      default: MNS-25180-L-02Shared_policy_direct_fw_protected_oam_1
+    oam_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    st_static_routes_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of static routes enabled-disabled
+      default: True,True,True,True
+    st_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service type
+      default: firewall
+    st_service_interface_type_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of interface types
+      default: management,left,right,other
+    oam_protected_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    st_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: service mode
+      default: in-network-nat
+    static_prefix_3_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: prefix for static route
+      default: 107.239.80.0/21
+    oam_hsl_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    start_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of dst port
+      default: -1
+    st_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor
+      default: lc.medium
+    st_scaling:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates whether service scaling is enabled
+      default: 'True'
+    service_instance_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: service instance name
+    max_num_fw_instances:
+      hidden: false
+      immutable: false
+      type: float
+      description: maximum number of firewall instances for scaling
+      default: 8
+    start_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of src port
+      default: -1
+    availability_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability zone in form of Zone:Host
+    service_policy_direction:
+      hidden: false
+      immutable: false
+      type: string
+      description: Direction of Policy
+      default: <>
+    st_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: service template name or ID
+      default: MNS-25180-L-02Shared_oam_fw_template_1
+    st_availability_zone_enable_flag:
+      hidden: false
+      immutable: false
+      type: string
+      description: service template availablity_zone feature enable flag
+      default: 'True'
+    st_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the image
+      default: NIMBUS_SRX_151X49-D303
+    st_shared_ip_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of shared ip enabled-disabled
+      default: False,True,False,False
+    oam_mgmt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    end_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of src port
+      default: -1
+    end_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of dst port
+      default: -1
+  node_templates:
+    service_instance:
+      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      directives:
+      - substitutable
+      properties:
+        availability_zone:
+          get_input: availability_zone
+        static_routes_list:
+        - token:
+          - false;false;false;false
+          - ;
+          - 0
+        - token:
+          - false;false;false;false
+          - ;
+          - 1
+        - token:
+          - false;false;false;false
+          - ;
+          - 2
+        - token:
+          - false;false;false;false
+          - ;
+          - 3
+        availability_zone_enable:
+          get_input: st_availability_zone_enable_flag
+        service_template_name:
+          get_input: st_name
+        ordered_interfaces: true
+        flavor:
+          get_input: st_flavor
+        image_name:
+          get_input: st_image
+        service_template_filter:
+          substitute_service_template: service_instanceServiceTemplate.yaml
+          count: 5
+          scaling_enabled:
+            get_input: st_scaling
+          mandatory: true
+        service_type:
+          get_input: st_type
+        service_interface_type_list:
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 2
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 3
+        interface_list:
+        - virtual_network:
+            get_input: oam_mgmt_net_id
+        - virtual_network:
+            get_input: oam_protected_net_id
+        - static_routes:
+          - prefix:
+              get_input: static_prefix_3_1
+          virtual_network:
+            get_input: oam_direct_net_id
+        - virtual_network:
+            get_input: oam_hsl_net_id
+        service_instance_name:
+          get_input: service_instance_name
+        service_mode:
+          get_input: st_mode
+        shared_ip_list:
+        - true
+        - true
+        - false
+        - false
+    service_policy:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        entries:
+          policy_rule:
+          - src_ports:
+            - start_port:
+                get_input: start_src_ports
+              end_port:
+                get_input: end_src_ports
+            protocol: any
+            action_list:
+              apply_service:
+              - service_instance
+            dst_addresses:
+            - virtual_network:
+                get_input: oam_direct_net_id
+            dst_ports:
+            - start_port:
+                get_input: start_dst_ports
+              end_port:
+                get_input: end_dst_ports
+            src_addresses:
+            - virtual_network:
+                get_input: protected_net
+            direction:
+              get_input: service_policy_direction
+        name:
+          get_input: service_policy_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: service_instance
+          relationship: tosca.relationships.DependsOn
+  groups:
+    lcp1_mss.oam-fw_si:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/lcp1_mss.oam-fw_si.yaml
+        description: |
+          Version 2.0 10-14-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-OAM-FW-SI template that creates two OAM networks (direct and protected) with a scaled out firewall service between the two.
+      members:
+      - service_instance
+      - service_policy

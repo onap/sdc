@@ -1,0 +1,65 @@
+.workspace-icons {
+
+    width: 89%;
+    display: inline-block;
+    text-align: center;
+    align-items: center;
+
+    .w-sdc-form {
+        padding-top: 0px;
+        padding-bottom:  0px;
+        .selected-icon-container {
+            text-align: left;
+            border: 1px solid #cfcfcf;
+            clear: both;
+            margin-bottom: 30px;
+            padding: 2px 0px 5px 5px;
+            .selected-icon {
+                margin: 8px 5px 0px 6px;
+            }
+        }
+
+        .suggested-icons-container {
+            text-align: left;
+            border: 1px solid #cfcfcf;
+            clear: both;
+            padding: 2px 0px 5px 5px;
+            height: 340px;
+            margin-bottom: 0px;
+
+            .suggested-icon-wrapper {
+                margin: 8px 5px 0px 6px;
+                display: inline-block;
+
+                &.selected {
+                    border: 2px solid @main_color_a;
+                    border-radius: 35px;
+                    display: inline-block;
+                    line-height: 0px;
+                    padding: 3px;
+                }
+
+            }
+            .suggested-icon {
+                // margin: 8px 5px 0px 6px;
+                display: inline-block;
+                &.disable{
+                    opacity: 0.4;
+                }
+            }
+        }
+
+        .icons-label {
+            float: left;
+        }
+
+        .icons-text {
+            text-align: left;
+            line-height: 32px;
+            padding-left: 10px;
+            width: 100%;
+            border: 1px solid #cfcfcf;
+            border-bottom: none;
+        }
+    }
+}

@@ -1,0 +1,181 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    param_type_comma_delimited_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: param comma_delimited_list - List
+      entry_schema:
+        type: string
+    param_type_string_default_value_with_env:
+      hidden: false
+      immutable: false
+      type: string
+      description: param value should be - HEAT_ENV_default string
+      default: HEAT_ENV default string
+    volume_type:
+      label: FSB Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB Volume type
+    FSB1_volume_name:
+      label: FSB Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB Volume name
+    param_constraint_length_allowed_pattern_range_hidden:
+      label: User Name
+      hidden: true
+      immutable: false
+      type: string
+      description: User name to be configured for the application
+      constraints:
+      - max_length: 8
+      - min_length: 6
+      - pattern: '[A-Z]+[a-zA-Z0-9]*'
+      - in_range:
+        - 0
+        - 10
+    param_type_boolean_default_value_with_env:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: param value should be false
+      default: false
+    param_type_string:
+      hidden: false
+      immutable: false
+      type: string
+      description: param String - string
+    param_type_string_default_value:
+      hidden: false
+      immutable: false
+      type: string
+      description: param value should be - HEAT_default string
+      default: HEAT_default string
+    param_type_number:
+      hidden: false
+      immutable: false
+      type: float
+      description: param number - float
+    param_type_boolean:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: param boolean - boolean
+    param_type_comma_delimited_list_default_value_with_env:
+      hidden: false
+      immutable: false
+      type: list
+      description: param value should be [b1,b2,b3,b4]
+      default:
+      - b1
+      - b2
+      - b3
+      - b4
+      entry_schema:
+        type: string
+    param_type_boolean_default_value:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: param value should be true
+      default: true
+    param_type_number_default_value:
+      hidden: false
+      immutable: false
+      type: float
+      description: param value should be 12345
+      default: 12345
+    FSB_1_image:
+      label: FSB Image
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB Image name
+    param_type_comma_delimited_list_default_value:
+      hidden: false
+      immutable: false
+      type: list
+      description: param value should be [a1,a2,a3,a4]
+      default:
+      - a1
+      - a2
+      - a3
+      - a4
+      entry_schema:
+        type: string
+    param_type_number_default_value_with_env:
+      hidden: false
+      immutable: false
+      type: float
+      description: param value should be 54321
+      default: 54321
+    param_type_json:
+      hidden: false
+      immutable: false
+      type: json
+      description: param json - map<String>
+    param_allowed_values:
+      label: Instance Type
+      hidden: false
+      immutable: false
+      type: string
+      description: Instance type for compute instances
+      constraints:
+      - valid_values:
+        - m1.small
+        - m1.medium
+        - m1.large
+  node_templates:
+    FSB1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_1_image
+        volume_type:
+          get_input: volume_type
+        size: 3*1024
+        name:
+          get_input: FSB1_volume_name
+  groups:
+    parameters:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/parameters.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - FSB1_volume

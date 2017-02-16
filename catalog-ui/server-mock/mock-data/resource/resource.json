@@ -1,0 +1,153 @@
+{
+    "uniqueId": "my-resource.1.0.0",
+    "isAbstract": false,
+    "resourceName": "my-resource",
+    "resourceVersion": "1.0.0",
+    "isHighestVersion": false,
+    "vendorName": "vendorName",
+    "vendorRelease": "vendorRelease",
+    "contactId": "contactId",
+    "olderVersions": [
+        "bla"
+    ],
+    "resourceIconSrc": "images/resource-icons/firewall.png",
+    "icon":"icon-red2",
+    "creatorUserId": "jh0003",
+    "creatorFullName": "Jimmy Hendrix",
+    "lastUpdaterUserId": "jh000322",
+    "lastUpdaterFullName": "JHaval Jimmy Hendrix",
+    "creationDate": 1431525184379,
+    "lastUpdateDate": 1431525184394,
+    "description": "Description bla bla",
+    "tags": [
+        "some tag",
+        "tag2",
+        "tag3",
+        "tag4"
+    ],
+    "category": "Infrastructure",
+    "lifecycleState": "CERTIFIED",
+    "derivedFrom": [
+        "template1"
+    ],
+    "artifacts": {
+        "db_content": {
+            "uniqueId": "my-resource.1.0.0.db_content",
+            "artifactType": "puppet",
+            "artifactRef": "http://swift OR CATALOG FE /myfile",
+            "artifactName": "some Artifact Name1",
+            "artifactRepository": "SWIFT",
+            "artifactData": "base 64 dajfvsd fsdfsfs s==",
+            "artifactChecksum": "base 64 dsdsd==",
+            "userIdCreator": "jh0003",
+            "userIdLastUpdater": "jh0003",
+            "creatorFullName": "Jimmy Hendrix",
+            "updaterFullName": "Jimmy Hendrix",
+            "creationDate": 1431525184377,
+            "lastUpdateDate": 1431525184377
+        },
+        "db_content_2": {
+          "uniqueId": "my-resource.1.0.0.db_content_2",
+          "artifactType": "puppet",
+          "artifactRef": "http://swift OR CATALOG FE /myfile",
+          "artifactName": "some Artifact Name2",
+          "artifactRepository": "SWIFT",
+          "artifactData": "base 64 dajfvsd fsdfsfs s==",
+          "artifactChecksum": "base 64 dsdsd==",
+          "userIdCreator": "jh0003",
+          "userIdLastUpdater": "jh0003",
+          "creatorFullName": "Jimmy Hendrix",
+          "updaterFullName": "Jimmy Hendrix",
+          "creationDate": 1431525184377,
+          "lastUpdateDate": 1431525184377
+        },
+        "db_content_3": {
+          "uniqueId": "my-resource.1.0.0.db_content_3",
+          "artifactType": "puppet",
+          "artifactRef": "http://swift OR CATALOG FE /myfile",
+          "artifactName": "some Artifact Name3",
+          "artifactRepository": "SWIFT",
+          "artifactData": "base 64 dajfvsd fsdfsfs s==",
+          "artifactChecksum": "base 64 dsdsd==",
+          "userIdCreator": "jh0003",
+          "userIdLastUpdater": "jh0003",
+          "creatorFullName": "Jimmy Hendrix",
+          "updaterFullName": "Jimmy Hendrix",
+          "creationDate": 1431525184377,
+          "lastUpdateDate": 1431525184377
+        }
+    },
+    "properties": {
+        "disk_size": {
+            "uniqueId": "uniqueId_1",
+            "type": "integer",
+            "required": false,
+            "defaultValue": "10",
+            "description": "Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.",
+            "constraints": [
+                {
+                    "inRange": [
+                        "100"
+                    ]
+                }
+            ],
+            "isPassword": false
+        },
+        "num_cpus": {
+            "uniqueId": "uniqueId_2",
+            "type": "integer",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Number of (actual or virtual) CPUs associated with the Compute node.",
+            "constraints": [
+                {
+                    "inRange": [
+                        "1",
+                        "4"
+                    ]
+                }
+            ],
+            "isPassword": false
+        }
+    },
+    "attributes": {
+        "tmp": {}
+    },
+    "interfaces": {
+        "tmp": {
+            "operations": {}
+        }
+    },
+  "capabilities": {
+    "host": {
+      "uniqueId": "capability.tosca.nodes.Compute.1.0.host",
+      "type": "tosca.capabilities.Container",
+      "validSourceTypes": [
+        "tosca.nodes.SC"
+      ]
+    }
+  },
+  "requirements": {
+    "host": {
+      "uniqueId": "tosca.nodes.SoftwareComponent.1.0.host",
+      "capability": "tosca.capabilities.Container",
+      "node": "tosca.nodes.Compute",
+      "requirementImpl": {
+        "uniqueId": "requirementImpl.my-resource.1.0.host",
+        "nodeId": "tosca.nodes.Compute.1.0",
+        "requirementProperties": {
+          "host": {
+            "uniqueId": "capabilityInst.requirementImpl.my-resource.1.0.host.host",
+            "properties": {
+              "disk_size": "10",
+              "num_cpus": "2"
+            }
+          }
+        }
+      }
+    }
+  },
+    "defaultCapabilities": [
+        "defaultCapabilities"
+    ]
+}

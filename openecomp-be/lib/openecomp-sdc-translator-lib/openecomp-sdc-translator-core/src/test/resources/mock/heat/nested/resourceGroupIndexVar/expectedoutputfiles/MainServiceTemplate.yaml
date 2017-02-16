@@ -1,0 +1,569 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.compute:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF_MODULE instance
+    vf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The VF Name; defaults to VMVM for the virtual MVM VNF.
+      constraints:
+      - pattern: '[a-zA-Z0-9]+'
+      - max_length: 4
+      - min_length: 4
+    type_name:
+      hidden: false
+      immutable: false
+      type: string
+    cloud_zone_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: The cloud zone for this VF instance
+    vf_instance_num:
+      hidden: false
+      immutable: false
+      type: string
+      description: The number for this VF instance
+      constraints:
+      - pattern: '[0-9]+'
+      - max_length: 2
+      - min_length: 2
+    virtual_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual management network ip address
+    mvs_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Management network IP addresses for IPv4
+      entry_schema:
+        type: string
+    compute_image_name:
+      hidden: false
+      immutable: false
+      type: string
+    flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Server flavor
+      constraints: [
+        ]
+    key_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SSH key name
+      constraints: [
+        ]
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Availability Zone IDs or Names
+      entry_schema:
+        type: string
+    mgmt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron UUID for the Management network
+      constraints: [
+        ]
+    vm_instance_num:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM instance number list must be a list of three-digit numeric value
+      entry_schema:
+        type: string
+    bootimage:
+      hidden: false
+      immutable: false
+      type: string
+      description: Master bootimage volume id
+    sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Security groups
+      entry_schema:
+        type: string
+    vf_component:
+      hidden: false
+      immutable: false
+      type: string
+      description: The component that this VF instance is running
+      constraints:
+      - pattern: '[a-zA-Z0-9]+'
+      - max_length: 3
+      - min_length: 3
+    num_instances:
+      hidden: false
+      immutable: false
+      type: float
+      description: number of instance of the VF_module
+  node_templates:
+    mvs_modules_custIndexVar2:
+      type: org.openecomp.resource.abstract.nodes.heat.mvs.nested.heat
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+        - get_input: vf_module_id
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - fff
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_name:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - vf_name
+        cloud_zone_id:
+          concat:
+          - cloud_zone_id_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_instance_num:
+          concat:
+          - vf_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _bbbb
+        virtual_mgmt_ip_0:
+          get_input: virtual_mgmt_ip_0
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        mvs_mgmt_ip_0: mvs_mgmt_ip_0
+        flavor:
+          a: a
+          b: b
+          e:
+            get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          w:
+            concat:
+            - get_property:
+              - SELF
+              - service_template_filter
+              - index_value
+            - _pp
+        key_name:
+        - a
+        - b
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - p
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        service_template_filter:
+          substitute_service_template: mvs.nested.heatServiceTemplate.yaml
+          count: 2
+          mandatory: true
+        vnf_id: null
+        availability_zone_0:
+          get_input: availability_zone_0
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        vm_instance_num:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _vm_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _hhh_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _pppp
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        bootimage:
+          get_input: bootimage
+        sec_groups:
+          get_input: sec_groups
+        vf_component:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    mvs_modules_custIndexVar1:
+      type: org.openecomp.resource.abstract.nodes.heat.mvs.nested.heat
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+        - get_input: vf_module_id
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - fff
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_name:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - vf_name
+        cloud_zone_id:
+          concat:
+          - cloud_zone_id_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_instance_num:
+          concat:
+          - vf_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _bbbb
+        virtual_mgmt_ip_0:
+          get_input: virtual_mgmt_ip_0
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        mvs_mgmt_ip_0: mvs_mgmt_ip_0
+        flavor:
+          a: a
+          b: b
+          e:
+            get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          w:
+            concat:
+            - get_property:
+              - SELF
+              - service_template_filter
+              - index_value
+            - _pp
+        key_name:
+        - a
+        - b
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - p
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        service_template_filter:
+          substitute_service_template: mvs.nested.heatServiceTemplate.yaml
+          count: 2
+          mandatory: true
+        vnf_id: null
+        availability_zone_0:
+          get_input: availability_zone_0
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        vm_instance_num:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _vm_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _hhh_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _pppp
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        bootimage:
+          get_input: bootimage
+        sec_groups:
+          get_input: sec_groups
+        vf_component:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    mvs_modules_defaultIndexVar:
+      type: org.openecomp.resource.abstract.nodes.heat.mvs.nested.heat
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+        - get_input: vf_module_id
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - fff
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_name:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - vf_name
+        cloud_zone_id:
+          concat:
+          - cloud_zone_id_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        vf_instance_num:
+          concat:
+          - vf_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _bbbb
+        virtual_mgmt_ip_0:
+          get_input: virtual_mgmt_ip_0
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        mvs_mgmt_ip_0: mvs_mgmt_ip_0
+        flavor:
+          a: a
+          b:
+            aa:
+            - sss
+            - concat:
+              - dddd
+              - get_property:
+                - SELF
+                - service_template_filter
+                - index_value
+              - ppp
+            - sd
+            ppp:
+              concat:
+              - get_property:
+                - SELF
+                - service_template_filter
+                - index_value
+              - _pppp___
+              - get_property:
+                - SELF
+                - service_template_filter
+                - index_value
+            eeee: eeeeeee
+          e:
+            get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          w:
+            concat:
+            - get_property:
+              - SELF
+              - service_template_filter
+              - index_value
+            - _pp
+        key_name:
+        - a
+        - b
+        - get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        - concat:
+          - p
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        service_template_filter:
+          substitute_service_template: mvs.nested.heatServiceTemplate.yaml
+          count: 3
+          mandatory: true
+        vnf_id: null
+        availability_zone_0:
+          get_input: availability_zone_0
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        vm_instance_num:
+          concat:
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _vm_instance_num_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _hhh_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+          - _pppp
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        bootimage:
+          get_input: bootimage
+        sec_groups:
+          get_input: sec_groups
+        vf_component:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    server_compute_get_attr_test:
+      type: org.openecomp.resource.vfc.nodes.heat.compute
+      properties:
+        flavor: compute_flavor_name
+        image:
+          get_input: compute_image_name
+        config_drive:
+          get_attribute:
+          - mvs_modules_defaultIndexVar
+          - vnfci_id_1
+          - vnfci_id_2
+        user_data_format:
+          get_attribute:
+          - mvs_modules_defaultIndexVar
+          - vnfci_id_1
+          - 1
+        name: compute_name
+  groups:
+    mvs.vfmodule.heat:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/mvs.vfmodule.heat.yaml
+        description: |
+          Metaswitch MVS (Metaview Server)
+      members:
+      - mvs_modules_custIndexVar2
+      - mvs_modules_custIndexVar1
+      - mvs_modules_defaultIndexVar
+      - server_compute_get_attr_test

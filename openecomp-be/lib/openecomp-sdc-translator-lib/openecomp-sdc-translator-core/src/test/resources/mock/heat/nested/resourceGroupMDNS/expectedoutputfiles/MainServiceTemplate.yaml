@@ -1,0 +1,246 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF module instance
+    dns_int_bearer_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: DNS Bearer IP list
+      entry_schema:
+        type: string
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+    oam_protected_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network where instaces will connect
+    dns_oam_protected_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: DNS OAM IP list
+      entry_schema:
+        type: string
+    dns_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: creator's ssh public key
+    int_bearer_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Bearer network where instaces will connect
+    route_eth0:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network routes
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability zone ID or Name
+    DNS_shared_sec_grp_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: security group UUID
+    node_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: the number of DNS nested instances
+      default: 4
+    dns_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: operative system image
+      default: NIMBUS_DNS_3.0.2.qcow2
+    dns_int_bearer_ipv6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: fixed IP assignment for VM's on the Bearer network
+      entry_schema:
+        type: string
+    dns_server_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: DNS VM server name list
+      entry_schema:
+        type: string
+    dns_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: resources to by appplied on instances
+      default: nv.c4r4d80
+  node_templates:
+    dns_server_group_az:
+      type: org.openecomp.resource.abstract.nodes.heat.dns_nested_01
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        name_with_index:
+          concat:
+          - name_
+          - get_property:
+            - SELF
+            - service_template_filter
+            - index_value
+        dns_int_bearer_ips:
+          get_input: dns_int_bearer_ips
+        vnf_name:
+          get_input: vnf_name
+        index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        security_group:
+          get_input: DNS_shared_sec_grp_id
+        oam_protected_net_name:
+          get_input: oam_protected_net_name
+        dns_oam_protected_ips:
+          get_input: dns_oam_protected_ips
+        dns_key:
+          get_input: dns_key
+        int_bearer_net_name:
+          get_input: int_bearer_net_name
+        route_eth0:
+          get_input: route_eth0
+        service_template_filter:
+          substitute_service_template: dns_nested_01ServiceTemplate.yaml
+          count:
+            get_input: node_count
+          mandatory: false
+        dns_names:
+          get_input: dns_server_names
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        dns_image_name:
+          get_input: dns_image_name
+        dns_int_bearer_ipv6_ips:
+          get_input: dns_int_bearer_ipv6_ips
+        dns_flavor_name:
+          get_input: dns_flavor_name
+    DNS_SECURITY_GROUP:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VF_NAME_sec_grp_DNS
+            params:
+              VF_NAME:
+                get_input: vnf_name
+        description: vscp security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_dns_int_bearer_0_port
+          node: dns_server_group_az
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_dns_oam_protected_0_port
+          node: dns_server_group_az
+          relationship: org.openecomp.relationships.AttachesTo
+  groups:
+    base_dns:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_dns.yaml
+        description: |
+          Base HOT template to create The Security Group for the the DNS VNF
+      members:
+      - DNS_SECURITY_GROUP
+    dns_az_01:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/dns_az_01.yaml
+        description: DNS master template
+      members:
+      - dns_server_group_az

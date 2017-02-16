@@ -1,0 +1,11 @@
+{
+  "payloadName": "loadBalancer.yml",
+  "contactId": "jh0003",
+  "resourceName": "tosca.nodes.LoadBalancer",
+  "description": "Represents logical function that be used in conjunction with a Floating Address to distribute an application’s traffic (load) across a number of instances of the application (e.g., for a clustered or scaled application).",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "tosca.nodes.LoadBalancer"
+  ]
+}

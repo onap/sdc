@@ -1,0 +1,252 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested1
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.abc:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    abc_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    abc_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      description: not impotrtant
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    abc_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    abc_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+  node_templates:
+    cmaui_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network:
+          get_input: p2
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    server_abc:
+      type: org.openecomp.resource.vfc.nodes.heat.abc
+      properties:
+        flavor:
+          get_input: abc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: abc_image
+        name:
+          get_input:
+          - abc_names
+          - 0
+    abc_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - abc_oam_ips
+            - 0
+        network:
+          get_input: p2
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_abc
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network:
+          get_input: p1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested1:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested1.yml
+        description: cmaui server template for vMMSC
+      members:
+      - cmaui_port_2
+      - server_cmaui
+      - server_abc
+      - abc_port_1
+      - cmaui_port_1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested1
+    capabilities:
+      scalable_server_abc:
+      - server_abc
+      - scalable
+      os_server_cmaui:
+      - server_cmaui
+      - os
+      attachment_abc_port_1:
+      - abc_port_1
+      - attachment
+      scalable_server_cmaui:
+      - server_cmaui
+      - scalable
+      host_server_abc:
+      - server_abc
+      - host
+      os_server_abc:
+      - server_abc
+      - os
+      host_server_cmaui:
+      - server_cmaui
+      - host
+      binding_server_abc:
+      - server_abc
+      - binding
+      endpoint_server_cmaui:
+      - server_cmaui
+      - endpoint
+      binding_server_cmaui:
+      - server_cmaui
+      - binding
+      endpoint_server_abc:
+      - server_abc
+      - endpoint
+      attachment_cmaui_port_2:
+      - cmaui_port_2
+      - attachment
+      attachment_cmaui_port_1:
+      - cmaui_port_1
+      - attachment
+    requirements:
+      local_storage_server_cmaui:
+      - server_cmaui
+      - local_storage
+      link_abc_port_1:
+      - abc_port_1
+      - link
+      link_cmaui_port_2:
+      - cmaui_port_2
+      - link
+      link_cmaui_port_1:
+      - cmaui_port_1
+      - link
+      local_storage_server_abc:
+      - server_abc
+      - local_storage

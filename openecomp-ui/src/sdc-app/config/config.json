@@ -1,0 +1,8 @@
+{
+	"pageSize": 25,
+	"version": "9.4",
+	"build": "dev",
+
+	"defaultRestPrefix": "/onboarding-api",
+	"defaultRestATTPrefix": "/sdc1/feProxy/rest"
+}

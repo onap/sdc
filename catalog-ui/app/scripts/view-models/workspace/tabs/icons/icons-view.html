@@ -1,0 +1,26 @@
+<div class="workspace-icons">
+
+    <form novalidate class="w-sdc-form" name="iconForm">
+        <label class="i-sdc-form-label icons-label required">Icons</label>
+        <div class="selected-icon-container" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="i-sdc-form-item-suggested-icon large selected-icon {{iconSprite}} {{component.icon}}"
+                 data-ng-class="{ 'disable': isViewMode() }"
+                 ng-model="component.icon"
+                 tooltips tooltip-content='{{component.icon | translate}}'
+                >
+            </div>
+        </div>
+        <div data-ng-class="{'view-mode': isViewMode()}" class="icons-text">Select one of the icons below for the asset</div>
+        <div class="i-sdc-form-item suggested-icons-container" data-ng-class="{'view-mode no-pointer-events' : isViewMode()}">
+            <div class ="suggested-icon-wrapper" ng-class="component.icon==='{{iconSrc}}' ? 'selected' : '' "  data-ng-repeat="iconSrc in icons track by $index">
+                <div class="i-sdc-form-item-suggested-icon large {{iconSprite}} {{iconSrc}}" data-ng-class="component.isAlreadyCertified() ||  isViewMode() ? 'disable':'hand'"
+                     ng-model="component.icon"
+                     data-tests-id="{{iconSrc}} iconBox"
+                     data-ng-click="!component.isAlreadyCertified() && setComponentIcon(iconSrc)"
+                     tooltips tooltip-content='{{iconSrc | translate}}'
+                    >
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,112 @@
+@import '../common/_variables.scss';
+
+$asdcsApplicationMinHeight: 400px;
+$asdcsEditorWidth: 500px;
+
+$asdcsFontSize: 13px;
+$asdcsTransitionTime: 250ms;
+$asdcsTextColor: $text-black;
+
+$asdcsColorWhite: $white;
+$asdcsColorWhitish: lighten($asdcsColorWhite, 5%);
+$asdcsColorBlack: $black;
+
+$asdcsColorOne: $tlv-light-gray;
+$asdcsColorOneLight: lighten($asdcsColorOne, 5%);
+$asdcsColorOneDark: $dark-gray;
+
+$asdcsColorTwo: $blue;
+$asdcsColorTwoLight: lighten($asdcsColorTwo, 10%);
+
+$asdcsColorThree: $light-purple;
+
+$asdcsColorGrey: $gray;
+$asdcsColorDarkGrey: $dark-gray;
+$asdcsColorLightGrey: $light-gray;
+
+$asdcsColorEmphasis: lighten($asdcsColorTwo, 10%);
+$asdcsColorEmphasisHover: $asdcsColorTwo;
+
+$asdcsSmallIconSize: 20px;
+
+// Buttons.
+
+$asdcsColorButtonBG: $asdcsColorOneDark;
+$asdcsColorButtonBGHover: $asdcsColorOne;
+$asdcsColorButtonFG: $asdcsColorWhitish;
+$asdcsColorButtonFGHover: $asdcsColorWhite;
+
+// Input fields.
+
+$asdcsInputSelectBorderColor: #d8d8d8;
+$asdcsInputSelectBorderRadius: 2px;
+$asdcsInputSelectFontSize: 14px;
+$asdcsInputSelectHeight: 30px;
+$asdcsInputSelectArrowColor: $asdcsColorOneDark;
+
+$asdcsInputTextColor: $asdcsTextColor;
+$asdcsInputTextBorderColor: $asdcsColorWhite;
+$asdcsInputTextBorderFocusColor: #d8d8d8;
+$asdcsInputTextBorderRadius: 2px;
+$asdcsInputTextFontSize: $asdcsFontSize;
+$asdcsInputTextHeight: 22px;
+
+$asdcsPopupBorderRadius: 3px;
+
+// SVG-specific.
+
+$asdcsSVGSelectableColor: $asdcsColorOne;
+$asdcsSVGSelectableOpacity: 0.01;
+$asdcsSVGSelectableWidth: 100;
+
+$asdcsSVGStrokeColor: $gray;
+$asdcsSVGStrokeColorLifeline: $asdcsSVGStrokeColor;
+$asdcsSVGStrokeColorMessage: #d8d8d8;
+$asdcsSVGTextColorMessage: $asdcsColorOneDark;
+$asdcsSVGStrokeColorFragment: $asdcsColorOneDark;
+$asdcsSVGStrokeWidth: 4;
+$asdcsSVGStrokeActiveColor: $asdcsColorBlack;
+$asdcsSVGStrokeActiveWidth: $asdcsSVGStrokeWidth + 4;
+
+// -------------------------------------------------------------------------------------------------
+
+@mixin drop-shadow($x: 0px, $y: 0px, $blur: 2px, $spread: 2px, $alpha: 0.25) {
+    -webkit-box-shadow:	$x $y $blur $spread rgba(0, 0, 0, $alpha);
+    -moz-box-shadow: $x $y $blur $spread rgba(0, 0, 0, $alpha);
+    box-shadow:	$x $y $blur $spread rgba(0, 0, 0, $alpha);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+@mixin transition($transition) {
+    -webkit-transition: $transition;
+    -moz-transition: $transition;
+    -ms-transition: $transition;
+    -o-transition: $transition;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+@mixin gradient($startColor: #eee, $endColor: white) {
+    background-color: $startColor;
+    background: -webkit-gradient(linear, left top, left bottom, from($startColor), to($endColor));
+    background: -webkit-linear-gradient(top, $startColor, $endColor);
+    background: -moz-linear-gradient(top, $startColor, $endColor);
+    background: -ms-linear-gradient(top, $startColor, $endColor);
+    background: -o-linear-gradient(top, $startColor, $endColor);
+}
+
+// -------------------------------------------------------------------------------------------------
+
+@mixin noselect() {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* IE/Edge */
+    user-select: none;           /* non-prefixed version, currently not supported by any browser */
+}
+
+.asdcs-hidden {
+    display: none;
+}

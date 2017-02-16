@@ -1,0 +1,46 @@
+{
+  "invalid_duplicateKey.yaml": {
+    "errorMessageList": [
+      {
+        "level": "ERROR",
+        "message": "Can\u0027t construct a java object for tag:yaml.org,2002:java.util.Map; exception\u003dwhile parsing MappingNode\n in \u0027string\u0027, line 6, column 3:\n      network_0:\n      ^\nduplicate key: network_0\n in \u0027string\u0027, line 26, column 1:\n    \n    ^\n\n in \u0027string\u0027, line 2, column 1:\n    description: Generated template\n    ^\n"
+      }
+    ]
+  },
+  "invalid_empty.yml": {
+    "errorMessageList": [
+      {
+        "level": "ERROR",
+        "message": "File:invalid_empty.yml is empty."
+      }
+    ]
+  },
+  "MANIFEST.json": {
+    "errorMessageList": []
+  },
+  "invalid_yamlInXMLFormat.yaml": {
+    "errorMessageList": [
+      {
+        "level": "ERROR",
+        "message": "Can\u0027t construct a java object for tag:yaml.org,2002:java.util.Map; exception\u003dNo single argument constructor found for interface java.util.Map\n in \u0027string\u0027, line 1, column 1:\n    \u003cstart\u003e\n    ^\n"
+      }
+    ]
+  },
+  "expected_output.json": {
+    "errorMessageList": []
+  },
+  "invalid_additionalSpaceBeforeProperty.yaml": {
+    "errorMessageList": [
+      {
+        "level": "ERROR",
+        "message": "while parsing a block mapping\n in \u0027string\u0027, line 7, column 5:\n        properties:\n        ^\nexpected \u003cblock end\u003e, but found BlockMappingStart\n in \u0027string\u0027, line 9, column 7:\n          name: NET_167\n          ^\n"
+      }
+    ]
+  },
+  "validHeat.yaml": {
+    "errorMessageList": []
+  },
+  "heat_missing_from_manifast.yaml": {
+    "errorMessageList": []
+  }
+}

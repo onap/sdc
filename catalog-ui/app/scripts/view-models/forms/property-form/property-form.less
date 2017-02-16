@@ -1,0 +1,63 @@
+.sdc-edit-property-container {
+    .scrollbar-container{
+        height: 415px;
+        width: 830px;
+        .perfect-scrollbar;
+    }
+
+    form{
+        width: 813px;
+        [name="description"]{
+            min-height:50px;
+        }
+    }
+
+    .sdc-modal-top-bar{
+        height: 40px;
+        .sdc-modal-top-bar-buttons {
+            float: right;
+
+            > span:not(.delimiter){
+                vertical-align: middle;
+                .hand;
+
+                &.sprite-new {
+                    text-indent: 100%;
+                }
+                &.disabled, &:hover.disabled {
+                    pointer-events: none;
+                }
+            }
+
+            .delete-btn{
+                margin-right: 6px;
+            }
+
+            .left-arrow{
+                margin-right: 8px;
+            }
+
+            .delimiter {
+                height: 20px;
+                width: 1px;
+                background-color: #959595;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 10px;
+            }
+        }
+    }
+
+    .w-sdc-form-note {
+        .h_9;
+        display: block;
+        position: relative;
+        top: 13px;
+    }
+
+    .default-value-section{
+        border-top: solid 1px @main_color_a;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+}

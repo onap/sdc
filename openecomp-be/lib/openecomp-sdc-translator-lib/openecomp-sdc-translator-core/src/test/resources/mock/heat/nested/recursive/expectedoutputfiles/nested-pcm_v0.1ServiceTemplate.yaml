@@ -1,0 +1,291 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pcm_v0.1
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcm_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    pcm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+    cps_net_ips:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    pcm_volumes:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    pcm_vol:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    pcm_server_name:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+  node_templates:
+    pcm_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+    server_pcm:
+      type: org.openecomp.resource.vfc.nodes.heat.pcm_server
+      properties:
+        flavor:
+          get_input: pcm_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcm_image_name
+        config_drive: 'True'
+        user_data_format: RAW
+        name:
+          get_input: pcm_server_name
+    server_pcm_005:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1_2
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1_2ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+    pcm_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        network:
+          get_input: cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pcm
+          relationship: tosca.relationships.network.BindsTo
+    network:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: cps_net_name
+  groups:
+    nested-pcm_v0.1:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pcm_v0.1.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - pcm_port_1
+      - server_pcm
+      - server_pcm_005
+      - pcm_port_0
+      - network
+  outputs:
+    server_pcm_id:
+      description: the pcm nova service id
+      value: server_pcm
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+    capabilities:
+      endpoint_server_pcm:
+      - server_pcm
+      - endpoint
+      host_server_pcm:
+      - server_pcm
+      - host
+      host_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - host_server_pcm
+      os_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - os_server_pcm
+      scalable_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - scalable_server_pcm
+      binding_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - binding_server_pcm
+      endpoint_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - endpoint_server_pcm
+      attachment_network_server_pcm_005:
+      - server_pcm_005
+      - attachment_network
+      attachment_network:
+      - network
+      - attachment
+      binding_server_pcm:
+      - server_pcm
+      - binding
+      link_network:
+      - network
+      - link
+      attachment_pcm_port_0_server_pcm_005:
+      - server_pcm_005
+      - attachment_pcm_port_0
+      os_server_pcm:
+      - server_pcm
+      - os
+      link_network_server_pcm_005:
+      - server_pcm_005
+      - link_network
+      scalable_server_pcm:
+      - server_pcm
+      - scalable
+      attachment_pcm_port_0:
+      - pcm_port_0
+      - attachment
+      attachment_pcm_port_1:
+      - pcm_port_1
+      - attachment
+      attachment_pcm_port_1_server_pcm_005:
+      - server_pcm_005
+      - attachment_pcm_port_1
+    requirements:
+      link_pcm_port_0:
+      - pcm_port_0
+      - link
+      link_pcm_port_1:
+      - pcm_port_1
+      - link
+      link_pcm_port_1_server_pcm_005:
+      - server_pcm_005
+      - link_pcm_port_1
+      link_pcm_port_0_server_pcm_005:
+      - server_pcm_005
+      - link_pcm_port_0
+      local_storage_server_pcm:
+      - server_pcm
+      - local_storage
+      local_storage_server_pcm_server_pcm_005:
+      - server_pcm_005
+      - local_storage_server_pcm

@@ -1,0 +1,160 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pps_v1.0
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcrf_pps_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pcrf_cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    pcrf_vnf_id:
+      label: PCRF VNF Id
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF VNF Id
+    pcrf_cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    pcrf_cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    pcrf_pps_image_name:
+      label: PCRF PS image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PS image name
+    pcrf_pps_flavor_name:
+      label: PCRF PS flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF PS instance
+    pcrf_pps_server_name:
+      label: PCRF PS server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PS server name
+    pcrf_security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+  node_templates:
+    pcrf_pps_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_cps_net_ip
+        network:
+          get_input: pcrf_cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_pps
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_server_pps:
+      type: org.openecomp.resource.vfc.nodes.heat.pcrf_pps_server
+      properties:
+        flavor:
+          get_input: pcrf_pps_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcrf_pps_image_name
+        config_drive: 'True'
+        metadata:
+          vnf_id:
+            get_input: pcrf_vnf_id
+        user_data_format: RAW
+        name:
+          get_input: pcrf_pps_server_name
+  groups:
+    nested-pps_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pps_v1.0.yaml
+        description: heat template that creates PCRF Policy Server stack
+      members:
+      - pcrf_pps_port_0
+      - pcrf_server_pps
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+    capabilities:
+      binding_pcrf_server_pps:
+      - pcrf_server_pps
+      - binding
+      attachment_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - attachment
+      scalable_pcrf_server_pps:
+      - pcrf_server_pps
+      - scalable
+      os_pcrf_server_pps:
+      - pcrf_server_pps
+      - os
+      endpoint_pcrf_server_pps:
+      - pcrf_server_pps
+      - endpoint
+      host_pcrf_server_pps:
+      - pcrf_server_pps
+      - host
+    requirements:
+      link_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - link
+      local_storage_pcrf_server_pps:
+      - pcrf_server_pps
+      - local_storage

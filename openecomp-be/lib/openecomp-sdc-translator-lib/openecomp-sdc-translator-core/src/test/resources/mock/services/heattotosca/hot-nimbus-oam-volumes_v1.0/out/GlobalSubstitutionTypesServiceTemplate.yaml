@@ -1,0 +1,642 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      pcrf_cps_net_ip:
+        type: string
+        description: CPS network ip
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcrf_vnf_id:
+        type: string
+        description: PCRF VNF Id
+      pcrf_cps_net_name:
+        type: string
+        description: CPS network name
+      pcrf_cps_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_pps_image_name:
+        type: string
+        description: PCRF PS image name
+      pcrf_pps_flavor_name:
+        type: string
+        description: flavor name of PCRF PS instance
+      pcrf_pps_server_name:
+        type: string
+        description: PCRF PS server name
+      pcrf_security_group_name:
+        type: string
+        description: the name of security group
+    requirements:
+    - link_pcrf_pps_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_pcrf_server_pps:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      binding_pcrf_server_pps:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_pps_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_pcrf_server_pps:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_pcrf_server_pps:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_pcrf_server_pps:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_pcrf_server_pps:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      pcrf_ppd_image_name:
+        type: string
+        description: PCRF PD image name
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcrf_sp_net_ip:
+        type: string
+        description: Sp network ip
+      pcrf_ppd_server_name:
+        type: string
+        description: PCRF PD server name
+      pcrf_gx_net_ip:
+        type: string
+        description: Gx network ip
+      pcrf_sy_net_name:
+        type: string
+        description: Sy network name
+      pcrf_sp_net_mask:
+        type: string
+        description: Sp network mask
+      pcrf_sd_net_ip:
+        type: string
+        description: Sd network ip
+      pcrf_vnf_id:
+        type: string
+        description: PCRF VNF Id
+      pcrf_oam_net_name:
+        type: string
+        description: OAM network name
+      pcrf_oam_net_ip:
+        type: string
+        description: OAM network ip
+      pcrf_cps_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_gx_net_mask:
+        type: string
+        description: Gx network mask
+      pcrf_sgi_sy_net_name:
+        type: string
+        description: Sgi Sy network name
+      pcrf_sd_net_name:
+        type: string
+        description: Sd network name
+      pcrf_oam_net_gw:
+        type: string
+        description: CPS network gateway
+      pcrf_rx_net_name:
+        type: string
+        description: Rx network name
+      pcrf_rx_net_ip:
+        type: string
+        description: Rx network ip
+      pcrf_sy_net_ip:
+        type: string
+        description: Sy network ip
+      pcrf_sgi_sy_net_ip:
+        type: string
+        description: Sgi Sy network ip
+      pcrf_ppd_flavor_name:
+        type: string
+        description: flavor name of PCRF PD instance
+      pcrf_cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcrf_sy_net_mask:
+        type: string
+        description: Sy network mask
+      pcrf_cps_net_name:
+        type: string
+        description: CPS network name
+      pcrf_oam_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_lb_management_vip:
+        type: string
+        description: CPS OAM LB VIP
+      pcrf_sgi_sy_net_mask:
+        type: string
+        description: Sgi Sy network mask
+      pcrf_lb_internal_vip:
+        type: string
+        description: CPS Internal LB VIP
+      pcrf_sd_net_mask:
+        type: string
+        description: Sd network mask
+      pcrf_gx_net_name:
+        type: string
+        description: Gx network name
+      pcrf_sp_net_name:
+        type: string
+        description: Sp network name
+      pcrf_rx_net_mask:
+        type: string
+        description: Rx network mask
+      pcrf_security_group_name:
+        type: string
+        description: the name of security group
+    requirements:
+    - link_pcrf_ppd_port_5:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_6:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_pcrf_server_ppd:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcrf_ppd_port_4:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_7:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_ppd_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      attachment_pcrf_ppd_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_pcrf_server_ppd:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_5:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_6:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_3:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_pcrf_server_ppd:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_4:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_pcrf_server_ppd:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_pcrf_server_ppd:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_ppd_port_7:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_pcrf_server_ppd:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nested-pcm_v1.0:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      pcrf_pcm_flavor_name:
+        type: string
+        description: flavor name of PCRF CM instance
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcrf_cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcrf_pcm_image_name:
+        type: string
+        description: PCRF CM image name
+      pcrf_vnf_id:
+        type: string
+        description: PCRF VNF Id
+      pcrf_oam_net_name:
+        type: string
+        description: OAM network name
+      pcrf_cps_net_name:
+        type: string
+        description: CPS network name
+      pcrf_oam_net_ip:
+        type: string
+        description: OAM network ip
+      pcrf_oam_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_cps_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_pcm_server_name:
+        type: string
+        description: PCRF CM server name
+      pcrf_oam_net_gw:
+        type: string
+        description: CPS network gateway
+      pcrf_pcm_volume_id:
+        type: string
+        description: CPS Cluman Cinder Volume
+      pcrf_security_group_name:
+        type: string
+        description: the name of security group
+    attributes:
+      pcrf_server_pcm_id:
+        type: string
+        description: the pcm server id
+    requirements:
+    - link_pcrf_pcm_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_pcrf_server_pcm:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcrf_pcm_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      endpoint_pcrf_server_pcm:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_pcm_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_pcrf_server_pcm:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_pcrf_server_pcm:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_pcrf_server_pcm:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_pcrf_server_pcm:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_pcm_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nested-oam_v1.0:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcrf_oam_flavor_name:
+        type: string
+        description: flavor name of PCRF OAM instance
+      pcrf_oam_server_name:
+        type: string
+        description: PCRF OAM server name
+      pcrf_cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcrf_vnf_id:
+        type: string
+        description: PCRF VNF Id
+      pcrf_oam_net_name:
+        type: string
+        description: OAM network name
+      pcrf_cps_net_name:
+        type: string
+        description: CPS network name
+      pcrf_arbiter_vip:
+        type: string
+        description: OAM Arbiter LB VIP
+      pcrf_oam_net_ip:
+        type: string
+        description: OAM network ip
+      pcrf_oam_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_cps_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_oam_volume_id:
+        type: string
+        description: CPS OAM Cinder Volume
+      pcrf_oam_net_gw:
+        type: string
+        description: CPS network gateway
+      pcrf_oam_image_name:
+        type: string
+        description: PCRF OAM image name
+      pcrf_security_group_name:
+        type: string
+        description: the name of security group
+    attributes:
+      pcrf_oam_vol_attachment_id:
+        type: string
+        description: the pcrf_oam_vol_attachment_id id
+    requirements:
+    - local_storage_pcrf_server_oam:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcrf_oam_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcrf_oam_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      endpoint_pcrf_server_oam:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_pcrf_server_oam:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_pcrf_server_oam:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_oam_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcrf_oam_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_pcrf_server_oam:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_pcrf_server_oam:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      pcrf_cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcrf_psm_flavor_name:
+        type: string
+        description: flavor name of PCRF SM instance
+      pcrf_psm_image_name:
+        type: string
+        description: PCRF SM image name
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcrf_vnf_id:
+        type: string
+        description: PCRF VNF Id
+      pcrf_cps_net_name:
+        type: string
+        description: CPS network name
+      pcrf_cps_net_mask:
+        type: string
+        description: CPS network mask
+      pcrf_psm_server_name:
+        type: string
+        description: PCRF SM server name
+      pcrf_security_group_name:
+        type: string
+        description: the name of security group
+    requirements:
+    - local_storage_pcrf_server_psm:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_psm01_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      endpoint_pcrf_server_psm:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_pcrf_server_psm:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_pcrf_server_psm:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_psm01_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_pcrf_server_psm:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_pcrf_server_psm:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED

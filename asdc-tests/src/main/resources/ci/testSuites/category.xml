@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="category" >
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.category.CategoriesTests"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.category.GroupingTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.category.SubCategoriesTest"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- category -->

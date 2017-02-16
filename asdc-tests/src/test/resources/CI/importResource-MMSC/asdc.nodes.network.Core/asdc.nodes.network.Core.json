@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.network.Core.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.network.Core",
+  "description": "Represents Cloud Core network which provide interface to other services.",
+  "resourceIconPath": "network",
+  "category": "Generic/Network Elements",
+  "tags": [
+    "asdc.nodes.network.Core", "Network", "Core", "Cloud"
+  ]
+}
+

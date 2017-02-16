@@ -1,0 +1,1308 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.NCB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.GPB2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.NCB2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.GPB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.FSB2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.VLC1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.VLC2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    Internal2_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: Internal2-subnet
+    vlc2-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc2-Internal2
+      default: 00:81:37:0E:02:12
+    epc-sctp-a-net-rt:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a route target
+      default: 13979:105717
+    epc-sctp-b-net-rt:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b route target
+      default: 13979:105719
+    gpb-flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers gpb
+      default: m4.xlarge4
+    Internal1_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.253.0.0/17
+    epc-sctp-a-pool-start:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a-net network ip pool start IP address
+      default: 107.243.37.3
+    Internal2_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_int_int_sub_2
+    Internal1_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_int_int_sub_1
+    gpb1-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb1-Internal1
+      default: 00:80:37:0E:01:22
+    gpb1-Internal1-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.254.0.101
+    FSB_1_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: image name
+    fsb1-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb1-Internal2
+      default: 00:81:37:0E:0B:12
+    ncb_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning ncb instances
+      default: nova
+    Internal2_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_int_int_2
+    epc-sctp-a-pool-end:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a-net network ip pool end IP address
+      default: 107.243.37.30
+    Internal1_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: Internal1-subnet
+    gpb2-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb2
+      default: ZRDM1MMEX33GPB002
+    fsb2-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb2-Internal1
+      default: 00:80:37:0E:0D:12
+    fsb2-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of fsb1
+      default: ZRDM1MMEX33FSB002
+    static_prefix_sctp_b_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static Prefix
+      default: 107.239.40.64/30
+    fsb2-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.250.172.222
+    fsb2-flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers  fsb2
+      default: m4.xlarge4
+    fsb2-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb2-Internal2
+      default: 00:81:37:0E:0D:12
+    ncb2-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb2-Internal1
+      default: 00:80:37:0E:0F:12
+    ncb2-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of ncb2
+      default: ZRDM1MMEX33NCB002
+    epc-sctp-b-pool-end:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b-net network ip pool end IP address
+      default: 107.243.37.62
+    vlc1-gtp-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.67
+    epc-sctp-b-pool-start:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b-net network ip pool start IP address
+      default: 107.243.37.35
+    my_instance:
+      hidden: false
+      immutable: false
+      type: string
+      description: instance
+    Internal2_shared:
+      hidden: false
+      immutable: false
+      type: string
+      default: 'False'
+    Internal1_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_int_int_1
+    vlc2-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc2
+      default: ZRDM1MMEX33VLC002
+    Internal2_ipam_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_ipam_int2
+    vlc1-sctp-b-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.35
+    Internal1_net_pool_end:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.253.0.254
+    Internal1_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.253.0.3
+    ncb1-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb1-Internal1
+      default: 00:80:37:0E:09:12
+    epc-gtp-net-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp net name
+      default: EPC-GTP
+    vlc1-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1-Internal1
+      default: 00:80:37:0E:01:12
+    gpb2-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb2-Internal1
+      default: 00:80:37:0E:02:22
+    epc-gtp-net-cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp stubnet
+      default: 107.243.37.64/27
+    oam_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: uuid of oam network
+      default: 47bf4cca-0961-422f-bcd6-d5a4fbb1a351
+    vlc_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning vlc instances
+      default: nova
+    vlc2-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc2-Internal1
+      default: 00:80:37:0E:02:12
+    epc-sctp-a-net-cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a subnet
+      default: 107.243.37.0/27
+    Internal1_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      default: l2
+    Internal2_dhcp:
+      hidden: false
+      immutable: false
+      type: boolean
+      default: false
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.250.172.221
+    FSB_2_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: image name
+    vlc1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.250.172.227
+    epc-sctp-a-net-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a net name
+      default: EPC-SCTP-A
+    vlc2-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.250.172.228
+    Internal2_net_pool_start:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.255.0.100
+    FSB1_volume_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+    vlc1-sctp-a-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.3
+    Internal1_ipam_name:
+      hidden: false
+      immutable: false
+      type: string
+      default: vmme_ipam_int1
+    Internal1_dhcp:
+      hidden: false
+      immutable: false
+      type: boolean
+      default: false
+    Internal2_external:
+      hidden: false
+      immutable: false
+      type: string
+      default: 'False'
+    Internal2_forwarding_mode:
+      hidden: false
+      immutable: false
+      type: string
+      default: l2
+    vlc1-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of vlc1
+      default: ZRDM1MMEX33VLC002
+    vlc-flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers vlc
+      default: m4.xlarge4
+    epc-gtp-net-rt:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp route target
+      default: 13979:105715
+    gpb_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning gpb instances
+      default: nova
+    Internal1-net:
+      hidden: false
+      immutable: false
+      type: string
+      description: net
+    gpb1-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb1-Internal2
+      default: 00:81:37:0E:01:22
+    fsb1-Internal1-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to fsb1-Internal1
+      default: 00:80:37:0E:0B:12
+    FSB2_volume_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+    VMME_FSB2_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+      default: 089a0d11-4b15-4370-8343-3f90907b1221
+    fsb_zone:
+      hidden: false
+      immutable: false
+      type: string
+      description: cluster for spawnning fsb instances
+      default: nova
+    VMME_FSB1_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+      default: 8248e794-6173-4b49-b9c3-8219b0b56f4e
+    Internal2_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.255.0.3
+    Internal1_external:
+      hidden: false
+      immutable: false
+      type: string
+      default: 'False'
+    vlc2-sctp-a-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.4
+    ncb-flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers ncb
+      default: m4.xlarge4
+    Internal1_shared:
+      hidden: false
+      immutable: false
+      type: string
+      default: 'False'
+    fsb1-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of fsb1
+      default: ZRDM1MMEX33FSB001
+    static_prefix_gtp_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static Prefix
+      default: 107.239.40.96/30
+    epc-sctp-b-net-gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b-net network gateway
+      default: 107.243.37.33
+    epc-sctp-b-net-cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b subnet
+      default: 107.243.37.32/24
+    epc-gtp-pool-end:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp network ip pool end IP address
+      default: 107.243.37.94
+    epc-sctp-a-net-gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-a-net network gateway
+      default: 107.243.37.1
+    vlc2-gtp-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.68
+    vlc2-sctp-b-ip:
+      hidden: false
+      immutable: false
+      type: string
+      default: 107.243.37.36
+    Internal1_net_pool_start:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.253.0.100
+    volume_size:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume
+    fsb2-image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of image to use for server fsb2
+      default: MME_FSB2_15B-CP04-r5a01
+    ncb2-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb2-Internal2
+      default: 00:81:37:0E:0F:12
+    ncb1-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of ncb1
+      default: ZRDM1MMEX33NCB001
+    fsb1-image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of image to use for server fsb1
+      default: MME_FSB1_15B-CP04-r5a01
+    fsb1-flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for servers  fsb1
+      default: m4.xlarge4
+    volume_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume
+    Internal2_net_pool_end:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.255.0.254
+    epc-sctp-b-net-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: epc-sctp-b net name
+      default: EPC-SCTP-B
+    Internal2_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      default: 169.255.0.0/17
+    epc-gtp-net-gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp network gateway
+      default: 107.243.37.65
+    gpb2-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to gpb2-Internal2
+      default: 00:81:37:0E:02:22
+    ncb1-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to ncb1-Internal2
+      default: 00:81:37:0E:09:12
+    epc-gtp-pool-start:
+      hidden: false
+      immutable: false
+      type: string
+      description: gtp network ip pool start IP address
+      default: 107.243.37.67
+    static_prefix_sctp_a_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Static Prefix
+      default: 107.239.40.32/30
+    gpb1-name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of gpb1
+      default: ZRDM1MMEX33GPB001
+    pxe-image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of image to use for server ncb
+      default: MME_PXE-BOOT_cxp9025898_2r5a01.qcow2
+    vlc1-Internal2-mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1-Internal2
+      default: 00:81:37:0E:01:12
+  node_templates:
+    NCB1:
+      type: org.openecomp.resource.vfc.nodes.heat.NCB1
+      properties:
+        flavor:
+          get_input: ncb-flavor
+        availability_zone:
+          get_input: ncb_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: ncb1-name
+    NCB2:
+      type: org.openecomp.resource.vfc.nodes.heat.NCB2
+      properties:
+        flavor:
+          get_input: ncb-flavor
+        availability_zone:
+          get_input: ncb_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: ncb2-name
+    VLC2_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc2-oam-ip
+        network:
+          get_input: oam_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    epc-gtp-net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        route_targets:
+        - get_input: epc-gtp-net-rt
+        network_name:
+          get_input: epc-gtp-net-name
+        subnets:
+          epc-gtp-subnet:
+            cidr:
+              get_input: epc-gtp-net-cidr
+            gateway_ip:
+              get_input: epc-gtp-net-gateway
+            allocation_pools:
+            - start:
+                get_input: epc-gtp-pool-start
+              end:
+                get_input: epc-gtp-pool-end
+    NCB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: ncb1-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB1
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: vlc2-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    NCB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: ncb1-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB1
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: vlc2-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_GTP:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc2-gtp-ip
+        network: epc-gtp-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-gtp-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    FSB1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_1_image
+        volume_type:
+          get_input: volume_type
+        size: 3*1024
+        name:
+          get_input: FSB1_volume_name
+    testConvertGetParamFunctions:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        shared:
+          get_input: Internal1_shared
+        forwarding_mode:
+          get_input: Internal1_forwarding_mode
+        external:
+          get_input:
+          - my_instance
+          - networks
+          - private
+          - 0
+        network_name:
+          get_input: Internal1_net_name
+    FSB2_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_2_image
+        volume_type:
+          get_input: volume_type
+        size: '(get_input : volume_size) * 1024'
+        name:
+          get_input: FSB2_volume_name
+    FSB1_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: fsb1-oam-ip
+        network:
+          get_input: oam_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1
+          relationship: tosca.relationships.network.BindsTo
+    Internal1-net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        dhcp_enabled:
+          get_input: Internal1_dhcp
+        shared:
+          get_input: Internal1_shared
+        forwarding_mode:
+          get_input: Internal1_forwarding_mode
+        external: true
+        route_targets:
+          get_artifact:
+          - SELF
+          - nimbus-ethernet
+        network_name:
+          get_input: Internal1_net_name
+        subnets:
+          Internal3-subnet:
+            enable_dhcp:
+              get_input: Internal2_dhcp
+            cidr:
+              get_input: Internal2_cidr
+            gateway_ip:
+              get_input: Internal2_default_gateway
+          Internal1-subnet:
+            enable_dhcp:
+              get_input: Internal1_dhcp
+            cidr:
+              get_input: Internal1_cidr
+            gateway_ip:
+              get_input: Internal1_default_gateway
+          Internal4-subnet:
+            enable_dhcp: false
+            cidr:
+              get_input: Internal1_cidr
+            gateway_ip:
+              get_input: Internal1_default_gateway
+      artifacts:
+        nimbus-ethernet:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/nimbus-ethernet.sh
+    GPB2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: gpb2-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB2
+          relationship: tosca.relationships.network.BindsTo
+    GPB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: gpb2-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB2
+          relationship: tosca.relationships.network.BindsTo
+    testConvertGetAttributeFunctions:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        shared:
+          get_input: Internal1_shared
+        forwarding_mode:
+          get_input: Internal1_forwarding_mode
+        external:
+          get_input: Internal1_external
+        network_name:
+          get_input: Internal1_net_name
+    NCB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: ncb2-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB2
+          relationship: tosca.relationships.network.BindsTo
+    NCB2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: ncb2-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB2
+          relationship: tosca.relationships.network.BindsTo
+    FSB2:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB2
+      properties:
+        flavor:
+          get_input: fsb2-flavor
+        availability_zone:
+          get_input: fsb_zone
+        name:
+          get_input: fsb2-name
+    FSB1:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB1
+      properties:
+        flavor:
+          get_input: fsb1-flavor
+        availability_zone:
+          get_input: fsb_zone
+        name:
+          get_input: fsb1-name
+    Internal2-net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        dhcp_enabled:
+          get_input: Internal2_dhcp
+        shared:
+          get_input: Internal2_shared
+        forwarding_mode:
+          get_input: Internal2_forwarding_mode
+        external:
+          get_input: Internal2_external
+        network_name:
+          get_input: Internal2_name
+        subnets:
+          Internal2-subnet:
+            enable_dhcp:
+              get_input: Internal2_dhcp
+            cidr:
+              get_input: Internal2_cidr
+            gateway_ip:
+              get_input: Internal2_default_gateway
+    VLC1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: vlc1-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    epc-sctp-a-net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        route_targets:
+        - get_input: epc-sctp-a-net-rt
+        network_name:
+          get_input: epc-sctp-a-net-name
+        subnets:
+          epc-sctp-a-subnet:
+            cidr:
+              get_input: epc-sctp-a-net-cidr
+            gateway_ip:
+              get_input: epc-sctp-a-net-gateway
+            allocation_pools:
+            - start:
+                get_input: epc-sctp-a-pool-start
+              end:
+                get_input: epc-sctp-a-pool-end
+    VLC1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: vlc1-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    VLC1_SCTP_B:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc1-sctp-b-ip
+        network: epc-sctp-b-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-sctp-b-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_SCTP_B:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc2-sctp-b-ip
+        network: epc-sctp-b-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-sctp-b-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC1_SCTP_A:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc1-sctp-a-ip
+        network: epc-sctp-a-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-sctp-a-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_SCTP_A:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc2-sctp-a-ip
+        network: epc-sctp-a-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-sctp-a-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC1:
+      type: org.openecomp.resource.vfc.nodes.heat.VLC1
+      properties:
+        flavor:
+          get_input: vlc-flavor
+        availability_zone:
+          get_input: vlc_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: vlc1-name
+    FSB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb1-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1
+          relationship: tosca.relationships.network.BindsTo
+    VLC2:
+      type: org.openecomp.resource.vfc.nodes.heat.VLC2
+      properties:
+        flavor:
+          get_input: vlc-flavor
+        availability_zone:
+          get_input: vlc_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: vlc2-name
+    FSB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb1-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1
+          relationship: tosca.relationships.network.BindsTo
+    FSB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb2-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+    FSB2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb2-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+    VLC1_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc1-oam-ip
+        network:
+          get_input: oam_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    epc-sctp-b-net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        route_targets:
+        - get_input: epc-sctp-b-net-rt
+        network_name:
+          get_input: epc-sctp-b-net-name
+        subnets:
+          epc-sctp-b-subnet:
+            cidr:
+              get_input: epc-sctp-b-net-cidr
+            gateway_ip:
+              get_input: epc-sctp-b-net-gateway
+            allocation_pools:
+            - start:
+                get_input: epc-sctp-b-pool-start
+              end:
+                get_input: epc-sctp-b-pool-end
+    GPB2:
+      type: org.openecomp.resource.vfc.nodes.heat.GPB2
+      properties:
+        flavor:
+          get_input: gpb-flavor
+        availability_zone:
+          get_input: gpb_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: gpb2-name
+    GPB1:
+      type: org.openecomp.resource.vfc.nodes.heat.GPB1
+      properties:
+        flavor:
+          get_input: gpb-flavor
+        availability_zone:
+          get_input: gpb_zone
+        image:
+          get_input: pxe-image
+        name:
+          get_input: gpb1-name
+    VLC1_GTP:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: vlc1-gtp-ip
+        network: epc-gtp-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: epc-gtp-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC1
+          relationship: tosca.relationships.network.BindsTo
+    FSB2_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: fsb2-oam-ip
+        network:
+          get_input: oam_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+    GPB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: gpb1-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal2-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB1
+          relationship: tosca.relationships.network.BindsTo
+    GPB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: gpb1-Internal1-mac
+        network: Internal1-net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: Internal1-net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB1
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    vmme_small:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_small.yml
+        description: |
+          HOT template to create vmme 2 fsb 2 ncb 2 gbp 2 vlc
+      members:
+      - NCB1
+      - NCB2
+      - VLC2_OAM
+      - epc-gtp-net
+      - NCB1_Internal1
+      - VLC2_Internal2
+      - NCB1_Internal2
+      - VLC2_Internal1
+      - VLC2_GTP
+      - FSB1_volume
+      - testConvertGetParamFunctions
+      - FSB2_volume
+      - FSB1_OAM
+      - Internal1-net
+      - GPB2_Internal1
+      - GPB2_Internal2
+      - testConvertGetAttributeFunctions
+      - NCB2_Internal2
+      - NCB2_Internal1
+      - FSB2
+      - FSB1
+      - Internal2-net
+      - VLC1_Internal1
+      - epc-sctp-a-net
+      - VLC1_Internal2
+      - VLC1_SCTP_B
+      - VLC2_SCTP_B
+      - VLC1_SCTP_A
+      - VLC2_SCTP_A
+      - VLC1
+      - FSB1_Internal2
+      - VLC2
+      - FSB1_Internal1
+      - FSB2_Internal2
+      - FSB2_Internal1
+      - VLC1_OAM
+      - epc-sctp-b-net
+      - GPB2
+      - GPB1
+      - VLC1_GTP
+      - FSB2_OAM
+      - GPB1_Internal2
+      - GPB1_Internal1

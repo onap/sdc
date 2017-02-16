@@ -1,0 +1,174 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  Internal1_cidr:
+    type: string
+  Internal2_cidr:
+    type: string
+  Internal1_default_gateway:
+    type: string
+  Internal2_default_gateway:
+    type: string
+  Internal1_dhcp:
+      type: string
+  Internal2_dhcp:
+    type: string
+  direction:
+    description: dummy
+    type: string
+  dst_port_end:
+    description: dummy
+    type: string
+  dst_port_start:
+    description: dummy
+    type: string
+  left_vn:
+    description: dummy
+    type: string
+  left_vn_fqdn:
+    description: dummy
+    type: string
+  network_ipam_refs_data_ipam_subnets_addr_from_start_true:
+    description: dummy
+    type: string
+  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
+    description: dummy
+    type: string
+  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
+    description: dummy
+    type: string
+  policy_name:
+    description: dummy
+    type: string
+  protocol:
+    description: dummy
+    type: string
+  right_vn_fqdn:
+    description: dummy
+    type: string
+  simple_action:
+    description: dummy
+    type: string
+  src_port_end:
+    description: dummy
+    type: string
+  src_port_start:
+    description: dummy
+    type: string
+  service_instance_fq_name:
+    type: string
+
+resources:
+  template_NetworkIpam_2:
+    properties:
+      name:
+        get_param: left_vn
+    type: "OS::ContrailV2::NetworkIpam"
+  template_NetworkPolicy:
+    properties:
+      name:
+        get_param: policy_name
+      network_policy_entries:
+        network_policy_entries_policy_rule:
+          -
+            network_policy_entries_policy_rule_action_list:
+              network_policy_entries_policy_rule_action_list_apply_service:
+                -
+                  get_param: service_instance_fq_name
+              network_policy_entries_policy_rule_action_list_simple_action:
+                get_param: simple_action
+            network_policy_entries_policy_rule_direction:
+              get_param: direction
+            network_policy_entries_policy_rule_dst_addresses:
+              -
+                network_policy_entries_policy_rule_dst_addresses_virtual_network:
+                  get_param: right_vn_fqdn
+            network_policy_entries_policy_rule_dst_ports:
+              -
+                network_policy_entries_policy_rule_dst_ports_end_port:
+                  get_param: dst_port_end
+                network_policy_entries_policy_rule_dst_ports_start_port:
+                  get_param: dst_port_start
+            network_policy_entries_policy_rule_protocol:
+              get_param: protocol
+            network_policy_entries_policy_rule_src_addresses:
+              -
+                network_policy_entries_policy_rule_src_addresses_virtual_network:
+                  get_param: left_vn_fqdn
+            network_policy_entries_policy_rule_src_ports:
+              -
+                network_policy_entries_policy_rule_src_ports_end_port:
+                  get_param: src_port_end
+                network_policy_entries_policy_rule_src_ports_start_port:
+                  get_param: src_port_start
+    type: "OS::ContrailV2::NetworkPolicy"
+  test_net1:
+    depends_on:
+      - template_NetworkIpam_2
+      - template_NetworkPolicy
+    properties:
+      name:
+        get_param: left_vn
+      network_ipam_refs:
+        -
+          get_resource: template_NetworkIpam_2
+      network_ipam_refs_data:
+        -
+          network_ipam_refs_data_ipam_subnets:
+            -
+              network_ipam_refs_data_ipam_subnets_addr_from_start:
+                get_param: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+              network_ipam_refs_data_ipam_subnets_subnet:
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                  get_param: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                  get_param: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+      network_policy_refs: [ { list_join: [':', { get_attr: [ template_NetworkPolicy, fq_name ] } ] } ]
+      network_policy_refs_data:
+        -
+          network_policy_refs_data_sequence:
+            network_policy_refs_data_sequence_major: 0
+            network_policy_refs_data_sequence_minor: 0
+    type: "OS::ContrailV2::VirtualNetwork"
+
+  test_net2:
+    depends_on:
+      - template_NetworkIpam_2
+      - template_NetworkPolicy
+    properties:
+      name:
+        get_param: left_vn
+      network_ipam_refs:
+        -
+          get_resource: template_NetworkIpam_2
+      network_ipam_refs_data:
+        -
+          network_ipam_refs_data_ipam_subnets:
+            -
+              network_ipam_refs_data_ipam_subnets_addr_from_start:
+                get_param: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+              network_ipam_refs_data_ipam_subnets_subnet:
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                  get_param: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+                network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                  get_param: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+      network_policy_refs: [ { list_join: [':', { get_attr: [ template_NetworkPolicy, fq_name ] } ] } ]
+      network_policy_refs_data:
+        -
+          network_policy_refs_data_sequence:
+            network_policy_refs_data_sequence_major: 0
+            network_policy_refs_data_sequence_minor: 0
+    type: "OS::ContrailV2::VirtualNetwork"
+
+outputs:
+    shared_network_id1:
+      value: {get_resource: test_net1}
+
+    shared_network_id2:
+      value: {get_resource: test_net2}

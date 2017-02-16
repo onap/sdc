@@ -1,0 +1,6 @@
+{
+  "test.select.all": "SELECT * FROM test",
+  "test.drop": "DROP TABLE IF EXISTS test",
+  "test.create": "CREATE TABLE test (name text PRIMARY KEY,value text)",
+  "test.insert": "INSERT INTO test (name,value) VALUES ( ?,?)"
+}

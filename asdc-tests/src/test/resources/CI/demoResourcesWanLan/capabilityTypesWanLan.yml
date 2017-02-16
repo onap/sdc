@@ -1,0 +1,4 @@
+org.openecomp.asdc.capabilities.Endpoint:
+    derived_from: tosca.capabilities.Endpoint
+org.openecomp.asdc.capabilities.Container:
+    derived_from: tosca.capabilities.Container

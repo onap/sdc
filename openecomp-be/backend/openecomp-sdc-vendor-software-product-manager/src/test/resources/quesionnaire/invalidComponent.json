@@ -1,0 +1,34 @@
+{
+  "general": {
+    "hypervisor": {
+      "hypervisor": "KVM",
+      "containerFeaturesDescription": "Nn8XhahKjo,FapqJ4Ale11LkO-f3,TlCJ2d0S Q B1w0JJwZgWo MeqEk85utsaM tdM33ZmAiAKp__c_PRBt_5-24gBU21unWme",
+      "drivers": ",Lz-m3R7iwRREmjBA3Ss6b0K8YBcH4SS66UJSG8OGTlaMs6Be"
+    },
+    "image": {
+      "ephemeralDiskSizePerVM": 8,
+      "format": "iso",
+      "bootDiskSizePerVM": 100,
+      "providedBy": "Vendor"
+    },
+    "dnsConfiguration": "dolore adipisicing proident aute amet",
+    "recovery": {
+      "vmProcessFailuresHandling": "in ad est ut",
+      "pointObjective": 20
+    }
+  },
+  "network": {},
+  "highAvailabilityAndLoadBalancing": {
+    "architectureChoice": "nostrud eu culpa velit Lorem",
+    "slaRequirements": "est esse Excepteur eu",
+    "failureLoadDistribution": "velit reprehenderit aute dolor in",
+    "loadDistributionMechanism": "quis fugiat veniam cillum"
+  },
+  "storage": {
+    "backup": {
+      "backupType": "On Site",
+      "backupStorageSize": 9,
+      "backupSolution": "fugiat tempor"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+heat_template_version: 2015-04-30
+#Nimbus DNS Base Template
+#AUTHORS: 
+description: >
+  Base HOT template to create The Security Group for the the DNS VNF
+
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+#####################
+resources:
+#####################  
+  
+  DNS_SECURITY_GROUP:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: vscp security group
+      name: 
+        str_replace:
+            template: VF_NAME_sec_grp_DNS
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+             ]
+
+
+outputs:
+  DNS_shared_sec_grp_id:
+    description: UUID of DNS Resource SecurityGroup
+    value: { get_resource: DNS_SECURITY_GROUP }
+

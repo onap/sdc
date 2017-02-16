@@ -1,0 +1,16 @@
+org.openecomp.asdc.nodes.VNF:
+  #The VNF node is required to be hosted by a VNF_Container
+    derived_from: org.openecomp.asdc.nodes.Root
+    properties:
+      service_name:
+        type: string
+    attributes:
+      #attribute means the value is fulfilled at run-time. 
+      service_id:
+      #In this case, we consider the VNF node only has the service_id value when the node is instantiated
+        type: string
+    requirements:
+      #the "host" requirement can establish the relationship with a VNF_Container node
+      - host :
+          capability: org.openecomp.asdc.capabilities.Container
+          node: org.openecomp.asdc.nodes.VNF_Container 

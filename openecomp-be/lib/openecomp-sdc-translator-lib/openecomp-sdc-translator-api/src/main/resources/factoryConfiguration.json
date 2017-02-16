@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory": "org.openecomp.sdc.translator.impl.heattotosca.HeatToToscaTranslatorFactoryImpl"
+}

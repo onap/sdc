@@ -1,0 +1,308 @@
+heat_template_version: 2014-10-16
+
+parameters:
+  cdr_network:
+    type: string
+  domain_name:
+    type: string
+  vprobe_image_name:
+    type: string
+  manager_name_0:
+    type: string
+  manager_oam_direct_ip_0:
+    type: string
+  ntp_timezone:
+    type: string
+  oam_private_net_name:
+    type: string
+  packet_internal_network:
+    type: string
+  qrouter_cluster_name:
+    type: string
+  qtrace_name_0:
+    type: string
+  region_name:
+    type: string
+  rpmrepository_ip_0:
+    type: string
+  security_group:
+    type: string
+  tenant_name:
+    type: string
+  vLB_node_count:
+    type: number
+  vProbe_cluster_name:
+    type: string
+  vProbe_node_count:
+    type: number
+  vProbe_version_name:
+    type: string
+  vf_module_id:
+    type: string
+  vf_module_name:
+    type: string
+  vnf_id:
+    type: string
+  vprobe_AppDependenciesMachineType:
+    type: string
+  availability_zone_0:
+    type: string
+  vprobe_flavor_name:
+    type: string
+  vprobe_index:
+    type: number
+  vprobe_names:
+    type: comma_delimited_list
+  vprobe_type:
+    type: string
+  vprobe_volume_name_0:
+    type: string
+  vprobe_volume_name_1:
+    type: string
+  vprobe_volume_name_2:
+    type: string
+  vprobe_volume_size_0:
+    type: number
+  vprobe_volume_size_1:
+    type: number
+  vprobe_volume_size_2:
+    type: number
+  vprobe_volume_type_0:
+    type: string
+  vprobe_volume_type_1:
+    type: string
+  vprobe_volume_type_2:
+    type: string
+  win_domain_name:
+    type: string
+resources:
+  ProbeInstance:
+    properties:
+      availability_zone:
+        get_param: availability_zone_0
+      config_drive: true
+      flavor:
+        get_param: vprobe_flavor_name
+      image:
+        get_param: vprobe_image_name
+      metadata:
+        AppDependencies:
+          get_param: vprobe_AppDependenciesMachineType
+        DPDK: DPDK_IP
+        ProbeInstance:
+          get_param: vprobe_index
+        cdr_network_cidr:
+          get_attr:
+          - cdr_network_port
+          - subnets
+          - 0
+          - cidr
+        cdr_network_ip_0:
+          get_attr:
+          - cdr_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        cluster_name:
+          get_param: vProbe_cluster_name
+        machine_name:
+          get_param:
+          - vprobe_names
+          - get_param: vprobe_index
+        machine_type: vProbe
+        manager_oam_direct_ip_0:
+          get_param: manager_oam_direct_ip_0
+        mount_colon__slash_config:
+          get_resource: vprobe_volume_2
+        mount_colon__slash_data:
+          get_resource: vprobe_volume_0
+        mount_colon__slash_log:
+          get_resource: vprobe_volume_1
+        ntp_timezone:
+          get_param: ntp_timezone
+        oam_private_network_cidr:
+          get_attr:
+          - oam_private_net_network_port
+          - subnets
+          - 0
+          - cidr
+        oam_private_network_ip_0:
+          get_attr:
+          - oam_private_net_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        packet_internal_network_cidr:
+          get_attr:
+          - packet_internal_network_port
+          - subnets
+          - 0
+          - cidr
+        packet_internal_network_ip_0:
+          get_attr:
+          - packet_internal_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        probe_id: P_ID
+        probe_name:
+          get_param:
+          - vprobe_names
+          - get_param: vprobe_index
+        region:
+          get_param: region_name
+        repo_ip_0:
+          get_param: rpmrepository_ip_0
+        tenant:
+          get_param: tenant_name
+        vLB_node_count:
+          get_param: vLB_node_count
+        vProbe_node_count:
+          get_param: vProbe_node_count
+        vProbe_version_name:
+          get_param: vProbe_version_name
+        version_number:
+          get_param: vProbe_version_name
+        vf_module_id:
+          get_param: vf_module_id
+        vf_module_name:
+          get_param: vf_module_name
+        vnf_id:
+          get_param: vnf_id
+        vprobe_type:
+          get_param: vprobe_type
+      name:
+        get_param:
+        - vprobe_names
+        - get_param: vprobe_index
+      networks:
+      - port:
+          get_resource: oam_private_net_network_port
+      - port:
+          get_resource: cdr_network_port
+      - port:
+          get_resource: packet_internal_network_port
+      personality:
+        /root/CheckAvailability/check_availability.py:
+          get_file: check_availability.py
+        /root/RegisterStatus/register_status.py:
+          get_file: register_status.py
+        /root/call_home.py:
+          get_file: call_home.py
+        /root/dependencies.json:
+          get_file: vprobedependencies.json
+        /tmp/wait_for_resources.py:
+          get_file: wait_for_resources.py
+      user_data:  
+        str_replace:
+          params:
+            '%ProbeInstance%':
+              get_param: vprobe_index
+            '%domain_name%':
+              get_param: domain_name
+            '%manager_hostname%':
+              get_param: manager_name_0
+            '%manager_oam_direct_ip_0%':
+              get_param: manager_oam_direct_ip_0
+            '%probe_config%':
+              get_resource: vprobe_volume_2
+            '%probe_data%':
+              get_resource: vprobe_volume_0
+            '%probe_id_number%':
+              get_attr:
+              - vprobe_id
+              - value
+            '%probe_log%':
+              get_resource: vprobe_volume_1
+            '%qrouter_cluster_name%':
+              get_param: qrouter_cluster_name
+            '%qtrace_hostname%':
+              get_param: qtrace_name_0
+            '%rpm_repo_ip_0%':
+              get_param: rpmrepository_ip_0
+            '%vProbe_cluster_name%':
+              get_param: vProbe_cluster_name
+            '%vProbe_node_count%':
+              get_param: vProbe_node_count
+            '%vProbe_version_name%':
+              get_param: vProbe_version_name
+            '%win_domain_name%':
+              get_param: win_domain_name
+          template:
+            get_file: FEAdd_On_Module_vProbeCloudConfig
+      user_data_format: RAW
+    type: OS::Nova::Server
+  cdr_network_port:
+    properties:
+      network:
+        get_param: cdr_network
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  oam_private_net_network_port:
+    properties:
+      network:
+        get_param: oam_private_net_name
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  packet_internal_network_port:
+    properties:
+      network:
+        get_param: packet_internal_network
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  vprobe_id:
+    properties:
+      length: 4
+      sequence: digits
+    type: OS::Heat::RandomString
+  vprobe_volume_0:
+    properties:
+      description:
+        get_param: vprobe_volume_name_0
+      size:
+        get_param: vprobe_volume_size_0
+      volume_type:
+        get_param: vprobe_volume_type_0
+    type: OS::Cinder::Volume
+  vprobe_volume_0_att:
+    properties:
+      instance_uuid:
+        get_resource: ProbeInstance
+      volume_id:
+        get_resource: vprobe_volume_0
+    type: OS::Cinder::VolumeAttachment
+  vprobe_volume_1:
+    properties:
+      description:
+        get_param: vprobe_volume_name_1
+      size:
+        get_param: vprobe_volume_size_1
+      volume_type:
+        get_param: vprobe_volume_type_1
+    type: OS::Cinder::Volume
+  vprobe_volume_1_att:
+    properties:
+      instance_uuid:
+        get_resource: ProbeInstance
+      volume_id:
+        get_resource: vprobe_volume_1
+    type: OS::Cinder::VolumeAttachment
+  vprobe_volume_2:
+    properties:
+      description:
+        get_param: vprobe_volume_name_2
+      size:
+        get_param: vprobe_volume_size_2
+      volume_type:
+        get_param: vprobe_volume_type_2
+    type: OS::Cinder::Volume
+  vprobe_volume_2_att:
+    properties:
+      instance_uuid:
+        get_resource: ProbeInstance
+      volume_id:
+        get_resource: vprobe_volume_2
+    type: OS::Cinder::VolumeAttachment

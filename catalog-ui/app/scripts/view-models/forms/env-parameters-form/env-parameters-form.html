@@ -1,0 +1,39 @@
+<sdc-modal modal="envParametersModal" type="classic" class="sdc-env-form-container" buttons="saveButton" header="{{isInstance()?'HEAT Template':'Update Parameters'}}" show-close-button="true">
+    <div class="sdc-env-form-container">
+        <div class="w-sdc-modal-body">
+            <span class="w-sdc-modal-body-content" data-ng-if="!isInstance()" translate="UPDATE_PARAMETERS_TEXT"></span>
+            <form novalidate class="" name="editForm">
+            <perfect-scrollbar class="perfect-scrollbar w-sdc-form w-sdc-env-form-container">
+                        <div class="i-sdc-form-item" data-ng-repeat="parameter in heatParameters track by $index">
+                            <div class="left-column-container">
+                                <ng-form name="editForm">
+                                    <label class="i-sdc-env-form-label" data-ng-class="{required:parameter.defaultValue}"
+                                           data-ng-bind="parameter.name +' (' + parameter.type + ')'" tooltips tooltip-content="{{parameter.name +' (' + parameter.type + ')'}}"></label>
+                                    <input class="i-sdc-form-input" data-ng-class="{error:(editForm.currentValue.$invalid)}"
+                                       data-ng-model-options="{ debounce: 200 }"
+                                       data-ng-model="parameter.currentValue"
+                                       type="text"
+                                       name="currentValue"
+                                       data-ng-pattern="getValidationPattern(parameter.type, 'heat')"
+                                       data-ng-required="parameter.defaultValue"
+                                       data-ng-change="'json'==parameter.type && editForm.currentValue.$setValidity('pattern', validateJson(parameter.currentValue))"
+                                       data-ng-blur="(editForm.currentValue.$error.required && (parameter.currentValue=parameter.defaultValue))"
+                                       />
+
+                                    <div class="input-error" data-ng-show="editForm.currentValue.$invalid">
+                                        <span ng-show="editForm.currentValue.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Value'}"></span>
+                                        <span ng-show="editForm.currentValue.$error.pattern && parameter.type==='string'" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                                        <span ng-show="editForm.currentValue.$error.pattern && !(parameter.type==='string')" translate="VALIDATION_ERROR_TYPE" translate-values="{'type': '{{parameter.type}}'}"></span>
+                                    </div>
+                                </ng-form>
+                            </div>
+                            <div class="i-sdc-env-form-label-description">
+                                <label class="i-sdc-env-form-label" data-ng-bind="parameter.description" tooltips tooltip-content="{{parameter.description}}"></label>
+                            </div>
+                        </div>
+            </perfect-scrollbar>
+            <div class="env-file-generation-label" data-ng-if="isInstance()" translate="ENV_FILE_GENERATION"></div>
+             </form>
+        </div>
+    </div>
+</sdc-modal>

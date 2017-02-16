@@ -1,0 +1,76 @@
+heat_template_version: 2013-05-23
+
+#################################
+#
+#  Changes from MSO - 11/5/2015
+#  - Parameter changes as below
+#  - CDLs for vmNames, IPs 
+#  - aZone->availability_zone_0
+#  - nwName->{nwRole}_net_name
+#  - nwID->{nwRole}_net_id
+#  - vmName->{vmType}_names
+# -  ips ->{vmType}_{nwRole}_ips
+# -  fips->{vmType}_{nwRole}_floating_ip
+#  - added replacement_policy: AUTO to all ports
+#  - added vnf_id for metadata to all servers
+#  - externalized security group resource
+#  - externalized eca_mgmt network
+#
+#################################
+
+description: >
+  HOT template that creates Security Group and ECA network
+
+parameters:
+  eca_mgmt_name:
+    type: string
+    label: eca management name
+    description: eca management name
+  eca_mgmt_start:
+    type: string
+    label: eca management start
+    description: eca management start
+  eca_mgmt_end:
+    type: string
+    label: eca management end
+    description: eca management end
+  eca_mgmt_cidr:
+    type: string
+    label: eca management cidr
+    description: eca management cidr
+  eca_mgmt_netmask:
+    type: string
+    label: ECA mgmt network subnet mask
+    description: ECA mgmt network subnet mask
+  security_group_name:
+    type: string
+    label: MMSC security group name
+    description: MMSC security group name
+
+resources:
+  mms_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: mmsc security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+  eca_mgmt_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: {get_param: eca_mgmt_name}
+
+  eca_mgmt_network_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: {get_param: eca_mgmt_name}
+      allocation_pools: [{"start": {get_param: eca_mgmt_start}, "end": {get_param: eca_mgmt_end}}]
+      cidr: {get_param: eca_mgmt_cidr}
+      #enable_dhcp: false
+      #gateway_ip: null
+      network_id: {get_resource: eca_mgmt_net}

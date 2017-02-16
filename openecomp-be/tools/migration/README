@@ -1,0 +1,88 @@
+Info -
+	Name:		1607 to 1610 ASDC VSP migration tool
+	Version:	4.0
+	Date:		15 Sep, 2016
+
+General -
+	This is a utility used for migration of VSP data from ASDC version 1607 to version 1610.
+	This utility will be executed post upgrade process to 1610.
+	This utility must run from the ASDC backend (BE) machine.
+
+	From version 3.0 the tool can be run several times without changing a VSP version more then once, the first time.
+	Once the VSP is "fixed" it will not be migrated by this tool.
+
+Concept -
+	Once migrating ASDC from 1607 to 1610 changes were made in the VSP load/validation.
+	In order to support these changes and force a valid HEAT file upload, the migration process should be
+	run on the existing data.
+	Not doing so will result in VSPs that will not open for update action.
+
+	The migration will run on VSPs that were upgraded from 1607 to 1610 and are not able to be retrieved.
+
+Pre ASDC upgrade requisite -
+    In order to achieve the best result from this tool users must check-in ALL VSPs.
+
+Limitations -
+
+	* Will not work if user did not create a first version of the VSP, i.e. at least one time check-in action.
+	* Once run, user must checkout a VSP, go to General and re select a license model version.
+
+
+Usage -
+
+	Note: There are default values if the script is run without arguments.
+	      The values are credentials: cs0008/cs0008,  with host: 127.0.0.1
+	1607_to_1610 -h                            --> get help
+	1607_to_1610 -a <username>/<password> [-ip {ip}]
+	Example:
+		using cassandra on localhost  - 1607_to_1610 -a root/secret
+		using cassandra on remote host - 1607_to_1610 -a root/secert -ip 10.147.97.191
+
+	Result:
+		The migration result will be listed in a CSV file: upgradereport.csv
+		"None" is an indication that the VSP was not in a checkout status prior to the upgrade.
+
+	Exmample for a valid output:
+
+		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP-OK was tested and does not need a migration
+		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: OPENECOMP, locked by: cs0008, status not started
+		Server Error
+		Service VSP02-Checkout was tested and it needs a migration
+		Service VSP02 - Migration start
+		Service VSP02-Checkout is locked - forcing checkin
+		Doing new checkout
+		200 OK Content-Type: application/json
+		Date: Thu, 08 Sep 2016 13:25:21 GMT
+		Server: Jetty(9.3.6.v20151106)
+
+		done upload
+		Doing new checkin
+		Service VSP-EMPTY - Migration end
+		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP-EMPTY was tested and does not need a migration
+		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: OPENECOMP, locked by: None, status not started
+		Server Error
+		Service VSP01 was tested and it needs a migration
+		Service VSP-EMPTY - Migration start
+		Doing new checkout
+		200 OK Content-Type: application/json
+		Date: Thu, 08 Sep 2016 13:25:22 GMT
+		Server: Jetty(9.3.6.v20151106)
+
+		done upload
+		Doing new checkin
+		Service {0} - Migration end
+
+	Example for a case with no migration needed:
+
+		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP-OK was tested and does not need a migration
+		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP02-Checkout was tested and does not need a migration
+		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP-EMPTY was tested and does not need a migration
+		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: OPENECOMP, locked by: None, status not started
+		Service VSP01 was tested and does not need a migration
+
+

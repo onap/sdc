@@ -1,0 +1,48 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  cmaui_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  security_group_name:
+    type: not_important
+    description: not impotrtant
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  cmaui_oam_ips:
+      type: string
+  abc_oam_ips:
+    type: string
+
+resources:
+
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: p1 }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  server_cmaui:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }

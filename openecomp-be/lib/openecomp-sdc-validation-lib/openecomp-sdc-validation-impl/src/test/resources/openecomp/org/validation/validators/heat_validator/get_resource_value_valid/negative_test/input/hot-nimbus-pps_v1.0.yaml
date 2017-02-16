@@ -1,0 +1,31 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Server stack
+
+parameters:
+  param_1:
+    type: number
+
+  param_2:
+    type: number
+
+
+resources:
+  server_pcrf_pps_006:
+      type: OS::Contrail::NetworkIpam
+      properties:
+        pcrf_pps_server_name: { get_resource: [param_1, param_2] }
+
+
+  server_pcrf_pps_007:
+      type: OS::Contrail::NetworkIpam
+      properties:
+        pcrf_pps_server_name: { get_resource: {get_param: param_1} }
+
+
+  server_pcrf_pps_008:
+      type: OS::Contrail::NetworkIpam
+      properties:
+        pcrf_pps_server_name: { get_resource:  }
+
+

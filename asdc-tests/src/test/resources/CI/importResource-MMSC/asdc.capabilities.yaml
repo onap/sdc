@@ -1,0 +1,13 @@
+asdc.capabilities.NetworkInterface:
+  derived_from: tosca.capabilities.Root
+
+asdc.capabilities.Container:
+  derived_from: tosca.capabilities.Container
+
+# binding a VDU to a CP
+asdc.capabilities.nfv.VirtualBindable:
+  derived_from: tosca.capabilities.Root
+
+# linking a VL to a CP
+asdc.capabilities.nfv.VirtualLinkable:
+  derived_from: tosca.capabilities.Root

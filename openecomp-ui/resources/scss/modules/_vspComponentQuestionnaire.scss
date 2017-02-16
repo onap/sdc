@@ -1,0 +1,54 @@
+
+.vsp-component-questionnaire-view {
+  input[type='radio'], input[type='checkbox'] {
+    &:before {
+      border: 1px solid $dark-gray;
+      cursor: pointer;
+    }
+    &:checked:before {
+      border: 1px solid $blue;
+    }
+  }
+  .component-questionnaire-validation-form {
+
+
+    .section-sub-title {
+      @extend .heading-5;
+      padding-bottom: 10px;
+    }
+    .section-field {
+      textarea {
+        height: 80px;
+      }
+    }
+
+    .rows-section {
+      .row-flex-components {
+        display: flex;
+      }
+
+      .vertical-flex {
+        flex-direction: column;
+        .control-label {
+          @extend .body-2-medium;
+        }
+        .radio-options-content-row {
+          display: flex;
+          margin-top: -4px;
+          .validation-input-wrapper {
+            width: 240px;
+            margin-right: 7px;
+
+            & > .form-group {
+              display: flex;
+            }
+            .form-group .radio {
+              width: auto;
+              margin-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

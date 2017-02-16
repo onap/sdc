@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+    <!-- CXF -->
+    <context:component-scan base-package="org.openecomp.sdcrests"/>
+    <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+
+    <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
+    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+
+    <bean id="jacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+
+    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider">
+        <property name="mapper" ref="jacksonObjectMapper"/>
+    </bean>
+
+    <bean id="outEmptyResponseInterceptor" class="org.openecomp.server.interceptors.EmptyOutputOutInterceptor"/>
+
+    <!-- ASDC -->
+    <bean id="vendorLicenseManager" class="org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl"/>
+    <bean id="vendorSoftwareProductManager" class="org.openecomp.sdc.vendorsoftwareproduct.impl.VendorSoftwareProductManagerImpl"/>
+    <bean id="UploadValidationManager" class="org.openecomp.sdc.validation.impl.UploadValidationManagerImpl"/>
+    <bean id="actionManager" class="org.openecomp.sdc.action.impl.ActionManagerImpl"/>
+    <bean id="applicationConfigManager" class="org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl"/>
+
+    <!-- RESTful Services -->
+    <jaxrs:server id="restContainer" address="/">
+
+        <jaxrs:serviceBeans>
+            <ref bean="vendorLicenseModels"/>
+            <ref bean="licenseAgreements"/>
+            <ref bean="featureGroups"/>
+            <ref bean="entitlementPools"/>
+            <ref bean="licenseKeyGroups"/>
+            <ref bean="vendorSoftwareProducts"/>
+            <ref bean="networks"/>
+            <ref bean="components"/>
+            <ref bean="nics"/>
+            <ref bean="processes"/>
+            <ref bean="componentProcesses"/>
+            <ref bean="validation"/>
+            <ref bean="actions"/>
+            <ref bean="applicationConfiguration"/>
+            <ref bean="componentUploads"/>
+        </jaxrs:serviceBeans>
+
+        <jaxrs:providers>
+            <ref bean="jsonProvider"/>
+            <bean class="org.openecomp.sdc.action.errors.ActionExceptionMapper"/>
+            <bean class="org.openecomp.sdcrests.errors.DefaultExceptionMapper"/>
+        </jaxrs:providers>
+
+        <jaxrs:outInterceptors>
+            <ref bean="outEmptyResponseInterceptor"/>
+        </jaxrs:outInterceptors>
+    </jaxrs:server>
+
+</beans>

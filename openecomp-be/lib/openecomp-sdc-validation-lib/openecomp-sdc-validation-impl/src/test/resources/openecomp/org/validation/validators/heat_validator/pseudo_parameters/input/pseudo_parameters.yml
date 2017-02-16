@@ -1,0 +1,61 @@
+heat_template_version:  2013-05-23
+
+description: HOT template for vMME Cinder Volumes
+
+
+parameters:
+
+    volume_type:
+      type: string
+      label:  volume type
+      description: volume type SolidFire
+
+    volume_size:
+      type: number
+      label:  volume size
+      description: my volume size 320GB
+
+    FSB_1_image:
+      type: string
+      label: MME_FSB1
+      description: MME_FSB1_16ACP03_GA
+
+    FSB_2_image:
+      type: string
+      label: MME_FSB2
+      description: MME_FSB2_16ACP03_GA
+
+resources:
+
+    FSB1_volume:
+      type: OS::Cinder::Volume
+      properties:
+        name: 
+          list_join: ['_', [{get_param: 'OS::stack_name'}, 'FSB1_Vol_1']]
+
+    FSB2_volume:
+      type: OS::Cinder::Volume
+      properties:
+        name:
+          list_join: ['_', [{get_param: 'OS::stack_id'}, 'FSB1_Vol_2']]
+
+    FSB3_volume:
+      type: OS::Cinder::Volume
+      properties:
+        name:
+          list_join: ['_', [{get_param: 'OS::project_id'}, 'FSB1_Vol_3']]
+
+
+outputs:
+  FSB1_volume_id:
+    description: ID of Cinder Volume for FSB1
+    value: {get_resource: FSB1_volume}
+
+  FSB2_volume_id:
+    description: ID of Cinder Volume for FSB2
+    value: {get_resource: FSB2_volume}
+
+  FSB3_volume_id:
+    description: ID of Cinder Volume for FSB3
+    value: {get_resource: FSB3_volume}
+

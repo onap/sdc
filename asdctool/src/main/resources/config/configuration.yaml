@@ -1,0 +1,376 @@
+identificationHeaderFields:
+   - HTTP_IV_USER
+   - HTTP_CSP_FIRSTNAME
+   - HTTP_CSP_LASTNAME
+   - HTTP_IV_REMOTE_ADDRESS
+   - HTTP_CSP_WSTYPE
+
+
+
+# catalog backend hostname
+beFqdn: sdccatalog
+
+# catalog backend http port
+beHttpPort: 8080
+
+# catalog backend http context
+beContext: /sdc/rest/config/get
+
+# catalog backend protocol
+beProtocol: http
+
+# catalog backend ssl port
+beSslPort: 8443
+
+version: 1.0
+released: 2012-11-30
+
+titanCfgFile: src/main/resources/config/titan.properties
+titanInMemoryGraph: false
+titanLockTimeout: 30
+titanReconnectIntervalInSeconds: 3
+titanHealthCheckReadTimeout: 1
+esReconnectIntervalInSeconds: 3
+uebHealthCheckReconnectIntervalInSeconds: 15
+uebHealthCheckReadTimeout: 4
+
+# Protocols
+protocols:
+   - http
+   - https
+
+# Users
+users:
+    tom: passwd
+    bob: passwd
+    
+neo4j:
+    host: neo4jhost
+    port: 7474
+    user: neo4j
+    password: "12345"
+    
+
+#Application-specific settings of ES
+elasticSearch:
+    # Mapping of index prefix to time-based frame. For example, if below is configured:
+    #
+    # - indexPrefix: auditingevents
+    #    creationPeriod: minute
+    #
+    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
+    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
+    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
+    #
+    # PLEASE NOTE: the timestamps are created in UTC/GMT timezone! This is needed so that timestamps will be correctly presented in Kibana.
+    #
+    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
+    #
+    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
+
+    indicesTimeFrequency:
+      - indexPrefix: auditingevents
+        creationPeriod: month
+      - indexPrefix: monitoring_events
+        creationPeriod: month
+
+artifactTypes:
+   - CHEF
+   - PUPPET
+   - SHELL
+   - YANG
+   - YANG_XML
+   - HEAT
+   - BPEL
+   - DG_XML
+   - MURANO_PKG
+   - WORKFLOW
+   - NETWORK_CALL_FLOW
+   - TOSCA_TEMPLATE
+   - TOSCA_CSAR
+   - AAI_SERVICE_MODEL
+   - AAI_VF_MODEL
+   - AAI_VF_MODULE_MODEL
+   - AAI_VF_INSTANCE_MODEL
+   - OTHER
+
+licenseTypes:
+   - User
+   - Installation
+   - CPU
+
+#Deployment artifacts placeHolder
+resourceTypes: &allResourceTypes
+  - VFC
+  - CP
+  - VL
+  - VF
+ 
+# validForResourceTypes usage
+#     validForResourceTypes:
+#        - VF
+#        - VL
+deploymentResourceArtifacts:
+  heat:
+      displayName: "Base HEAT Template"
+      type: HEAT
+      validForResourceTypes: *allResourceTypes
+  heatVol:
+      displayName: "Volume HEAT Template"
+      type: HEAT_VOL
+      validForResourceTypes: *allResourceTypes
+  heatNet:
+      displayName: "Network HEAT Template"
+      type: HEAT_NET
+      validForResourceTypes: *allResourceTypes
+  
+deploymentResourceInstanceArtifacts:
+  heatEnv:
+      displayName: "HEAT ENV"
+      type: HEAT_ENV
+      description: "Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+
+#tosca artifacts placeholders
+toscaArtifacts:
+  assetToscaTemplate:
+      artifactName: -template.yml
+      displayName: Tosca Template
+      type: TOSCA_TEMPLATE
+      description: TOSCA representation of the asset
+  assetToscaCsar:
+      artifactName: -csar.csar
+      displayName: Tosca Model
+      type: TOSCA_CSAR
+      description: TOSCA definition package of the asset
+
+#Informational artifacts placeHolder
+excludeResourceCategory:
+  - Generic
+informationalResourceArtifacts:
+  features:
+      displayName: Features
+      type: OTHER
+  capacity:
+      displayName: Capacity
+      type: OTHER
+  vendorTestResult:
+      displayName: Vendor Test Result
+      type: OTHER
+  testScripts:
+      displayName: Test Scripts
+      type: OTHER
+  cloudQuestionnaire:
+      displayName: Cloud Questionnaire (completed)
+      type: OTHER
+  HEATTemplateFromVendor:
+      displayName: HEAT Template from Vendor
+      type: HEAT
+  resourceSecurityTemplate:
+      displayName: Resource Security Template
+      type: OTHER
+ 
+excludeServiceCategory:
+
+informationalServiceArtifacts:
+  serviceArtifactPlan:
+      displayName: Service Artifact Plan
+      type: OTHER
+  summaryOfImpactsToECOMPElements:
+      displayName: Summary of impacts to ECOMP elements,OSSs, BSSs
+      type: OTHER
+  controlLoopFunctions:
+      displayName: Control Loop Functions
+      type: OTHER
+  dimensioningInfo:
+      displayName: Dimensioning Info
+      type: OTHER
+  affinityRules:
+      displayName: Affinity Rules
+      type: OTHER
+  operationalPolicies:
+      displayName: Operational Policies
+      type: OTHER
+  serviceSpecificPolicies:
+      displayName: Service-specific Policies
+      type: OTHER
+  engineeringRules:
+      displayName: Engineering Rules (ERD)
+      type: OTHER
+  distributionInstructions:
+      displayName: Distribution Instructions
+      type: OTHER
+  certificationTestResults:
+      displayName: TD Certification Test Results
+      type: OTHER
+  deploymentVotingRecord:
+      displayName: Deployment Voting Record
+      type: OTHER
+  serviceQuestionnaire:
+      displayName: Service Questionnaire
+      type: OTHER
+  serviceSecurityTemplate:
+      displayName: Service Security Template
+      type: OTHER
+      
+serviceApiArtifacts:
+  configuration:
+      displayName: Configuration
+      type: OTHER
+  instantiation:
+      displayName: Instantiation
+      type: OTHER
+  monitoring:
+      displayName: Monitoring
+      type: OTHER
+  reporting:
+      displayName: Reporting
+      type: OTHER
+  logging:
+      displayName: Logging
+      type: OTHER
+  testing:
+      displayName: Testing
+      type: OTHER
+
+
+additionalInformationMaxNumberOfKeys: 50
+
+systemMonitoring:
+    enabled: false
+    isProxy: false
+    probeIntervalInSeconds: 15
+
+defaultHeatArtifactTimeoutMinutes: 60
+
+serviceDeploymentArtifacts:
+    YANG_XML:
+        acceptedTypes:
+            - xml
+    AAI_SERVICE_MODEL:
+        acceptedTypes:
+            - xml
+    AAI_VF_MODULE_MODEL:
+        acceptedTypes:
+            - xml
+    AAI_VF_INSTANCE_MODEL:
+        acceptedTypes:
+            - xml 
+    OTHER:
+        acceptedTypes:
+
+resourceDeploymentArtifacts:
+    HEAT:
+        acceptedTypes:
+            - yaml
+            - yml
+    HEAT_VOL:
+        acceptedTypes:
+            - yaml
+            - yml
+    HEAT_NET:
+        acceptedTypes:
+            - yaml
+            - yml
+    YANG_XML:
+        acceptedTypes:
+            - xml
+    AAI_VF_MODEL:
+        acceptedTypes:
+            - xml
+        validForResourceTypes:
+            - VF
+    AAI_VF_MODULE_MODEL:
+        acceptedTypes:
+            - xml
+        validForResourceTypes:
+            - VF 
+    OTHER:
+        acceptedTypes:
+
+resourceInstanceDeploymentArtifacts:
+    HEAT_ENV:
+        acceptedTypes:
+            - env
+
+resourceInformationalDeployedArtifacts:
+
+
+requirementsToFulfillBeforeCert:
+     CP:
+       - tosca.capabilities.network.Bindable
+       
+capabilitiesToConsumeBeforeCert:
+
+unLoggedUrls:
+   - /sdc2/rest/healthCheck
+
+cleanComponentsConfiguration:
+    cleanIntervalInMinutes: 1440
+    componentsToClean:
+       - Resource
+       - Service
+
+artifactsIndex: resources
+cassandraConfig:
+    cassandraHosts: ['localhost']
+    localDataCenter:
+    reconnectTimeout : 30000
+    authenticate: false
+    username: koko
+    password: bobo
+    ssl: false
+    truststorePath : /path/path
+    truststorePassword : 123123
+    keySpaces:
+        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+
+
+switchoverDetector:
+    gBeFqdn: 
+    gFeFqdn: 
+    beVip: 1.2.3.4
+    feVip: 1.2.3.4
+    beResolveAttempts: 3
+    feResolveAttempts: 3
+    enabled: false
+    interval: 60
+    changePriorityUser: ecompasdc
+    changePriorityPassword: ecompasdc123
+    publishNetworkUrl: 
+    publishNetworkBody: '{"note":"publish network"}'
+    groups:
+      beSet: { changePriorityUrl: "http://localhost/",
+               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.cip","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
+      feSet: { changePriorityUrl: "http://localhost/",
+               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.cip","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip.att.com"}'}
+    
+
+heatEnvArtifactHeader:
+    ""
+heatEnvArtifactFooter:
+    ""
+
+applicationL1Cache:
+    datatypes:
+        enabled: false
+        firstRunDelay: 10
+        pollIntervalInSec: 60
+
+applicationL2Cache:
+    enabled: false
+    catalogL1Cache:
+        enabled: false
+        resourcesSizeInCache: 300
+        servicesSizeInCache: 200
+        productsSizeInCache: 100
+    queue:
+        syncIntervalInSecondes: 60
+        waitOnShutDownInMinutes: 30
+        numberOfCacheWorkers: 4
+
+toscaValidators:
+    stringMaxLength: 1024
+disableAudit: true

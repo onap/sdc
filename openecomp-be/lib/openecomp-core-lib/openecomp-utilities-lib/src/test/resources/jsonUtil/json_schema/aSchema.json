@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "definitions": {
+    "city": {
+      "type": "string",
+      "enum": [
+        "Tel Aviv",
+        "New York",
+        "London"
+      ]
+    }
+  },
+  "properties": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": {
+          "type": "string"
+        },
+        "city": {
+          "$ref": "#/definitions/city"
+        }
+      },
+      "enum": [
+        {
+          "streetAddress": "21 2nd Street",
+          "city": "New York"
+        }
+      ],
+      "required": [
+        "streetAddress",
+        "city"
+      ]
+    },
+    "phoneNumber": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "location",
+          "code"
+        ]
+      }
+    },
+    "cityOfBirth" : { "$ref"  : "#/definitions/city"}
+  },
+  "required": [
+    "address",
+    "phoneNumber"
+  ]
+}

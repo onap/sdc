@@ -1,0 +1,176 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested
+imports:
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  nested:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui_image:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: String
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    security_group_name:
+      hidden: false
+      immutable: false
+      description: not impotrtant
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+  node_templates:
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui_image
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    cmaui_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network:
+          get_input: p1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+    cmaui1_port_1:
+          type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+          properties:
+            replacement_policy: AUTO
+            security_groups:
+            - get_input: security_group_name
+            fixed_ips:
+            - subnet: subnetNameVal
+              ip_address:
+                get_input:
+                - cmaui_oam_ips
+                - 1
+            - subnet: subnetNameVal2
+              ip_address:
+                get_input:
+                - cmaui_oam_ips
+                - 1
+            network: jsa_net
+          requirements:
+          - link:
+              capability: tosca.capabilities.network.Linkable
+              node: jsa_net1
+              relationship: tosca.relationships.network.LinksTo
+          - link:
+              capability: tosca.capabilities.network.Linkable
+              node: jsa_net2
+              relationship: tosca.relationships.network.LinksTo
+          - binding:
+              capability: tosca.capabilities.network.Bindable
+              node: server_cmaui
+              relationship: tosca.relationships.network.BindsTo
+    jsa_net1:
+          type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+          properties:
+            shared: true
+            network_name:
+              get_input: jsa_net_name
+    jsa_net2:
+              type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+              properties:
+                shared: true
+                network_name:
+                  get_input: jsa_net_name
+  groups:
+    nested:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui
+      - cmaui_port_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested
+    capabilities:
+      host_server_cmaui:
+      - server_cmaui
+      - host
+      os_server_cmaui:
+      - server_cmaui
+      - os
+      endpoint_server_cmaui:
+      - server_cmaui
+      - endpoint
+      binding_server_cmaui:
+      - server_cmaui
+      - binding
+      scalable_server_cmaui:
+      - server_cmaui
+      - scalable
+      attachment_cmaui_port_0:
+      - cmaui_port_0
+      - attachment
+    requirements:
+      local_storage_server_cmaui:
+      - server_cmaui
+      - local_storage
+      link_cmaui_port_0:
+      - cmaui_port_0
+      - link
+      link_cmaui_port_invalid:
+      - cmaui_port_9
+      - link

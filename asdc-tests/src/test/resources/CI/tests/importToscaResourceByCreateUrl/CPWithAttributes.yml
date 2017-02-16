@@ -1,0 +1,59 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+  org.openecomp.resource.cp.CP:
+    derived_from: tosca.nodes.Root
+    properties:
+      type:
+        type: string
+        required: false
+      ip_address:
+        type: string
+        required: false
+        description: Allow the user to set a static IP.
+      order:
+        type: integer
+        required: false
+        default: 0
+        description: The order of the NIC on the compute instance (e.g. eth2).
+      is_default:
+        type: boolean
+        required: false
+        default: false
+        description: “If is_default=true this port will be used for the default gateway route. Only one port that is associated to single compute node can set as is_default=true.”
+      ip_range_start:
+        type: string
+        required: false
+        description: “Defines the starting IP of a range to be allocated for the VFC instances that are associated with this Port.”
+      ip_range_end:
+        type: string
+        required: false
+        description: “Defines the ending IP of a range to be allocated for the compute instances that are associated with this Port.”
+      is_tagged:
+        type: boolean
+        required: false
+        default: false
+        description: 
+    attributes:
+      private_address:
+        type: string
+        default: "Hello"
+        value: "HelloWord"
+      public_address:
+        default: "DefaultValuePublicAddress"
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+      - virtualLink:
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - virtualbinding:
+          capability: tosca.capabilities.network.Bindable
+          relationship: tosca.relationships.network.BindsTo

@@ -1,0 +1,90 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Server stack
+
+parameters:
+  pcrf_pps_server_names:
+    type: comma_delimited_list
+    label: PCRF PS server names
+    description: PCRF PS server names
+  pcrf_pps_image_name:
+    type: string
+    label: PCRF PS image name
+    description: PCRF PS image name
+  pcrf_pps_flavor_name:
+    type: string
+    label: PCRF PS flavor name
+    description: flavor name of PCRF PS instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+resources:
+  used_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      pcrf_pps_server_name: { get_param: [pcrf_pps_server_names, 0] }
+      pcrf_pps_image_name: { get_param: pcrf_pps_image_name }
+
+  not_used_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      pcrf_pps_server_name: { get_param: [pcrf_pps_server_names, 0] }
+      pcrf_pps_image_name: { get_param: pcrf_pps_image_name }
+
+  shared_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      pcrf_pps_server_name: { get_param: [pcrf_pps_server_names, 0] }
+      pcrf_pps_image_name: { get_param: pcrf_pps_image_name }
+
+  shared_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      pcrf_pps_server_name: { get_param: [pcrf_pps_server_names, 0] }
+      pcrf_pps_image_name: { get_param: pcrf_pps_image_name }
+
+  server_pcrf_network:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      pcrf_pps_server_name: { get_param: [pcrf_pps_server_names, 0] }
+      pcrf_pps_image_name: { get_param: pcrf_pps_image_name }
+
+  attach_policy_resource:
+    type: OS::Neutron::Port
+    properties:
+      security_groups: [{ get_resource: used_security_group }]
+
+
+outputs:
+  output_shrared_resource_1:
+    description:  uuid of the security group
+    value: {get_resource: shared_security_group }
+
+  output_shrared_resource_2:
+    description:  uuid of the security group
+    value: {get_resource: shared_server_group }
+
+
+

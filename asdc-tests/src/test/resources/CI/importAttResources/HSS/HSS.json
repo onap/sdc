@@ -1,0 +1,11 @@
+{
+  "payloadName": "HSS.yml",
+  "contactId": "jh0003",
+  "resourceName": "att.nodes.ims.HSS",
+  "description": "The home subscriber server (HSS), or user profile server function (UPSF), is a master user database that supports the IMS network entities that actually handle calls. It contains the subscription-related information (subscriber profiles), performs authentication and authorization of the user, and can provide information about the subscriber's location and IP information.",
+  "resourceIconPath": "defaulticon",
+  "category": "IMS",
+  "tags": [
+    "att.nodes.ims.HSS", "IMS_TAG"
+  ]
+}

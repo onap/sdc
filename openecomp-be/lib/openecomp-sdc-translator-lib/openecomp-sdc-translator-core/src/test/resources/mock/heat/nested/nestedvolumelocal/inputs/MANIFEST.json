@@ -1,0 +1,14 @@
+{
+  "name": "vEP_JSA_Net",
+  "description": "Version 2.0 02-09-2016 (Authors: John Doe, user PROD)",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "hot-nimbus-pcm_v0.4.yaml",
+      "type": "HEAT"
+    },{
+      "file": "nested-pcm_v0.1.yaml",
+      "type": "HEAT"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  shared_network_id1:
+    type: string
+    description: network name of jsa log network
+
+  shared_network_id2:
+    type: string
+    description: network name of jsa log network
+
+resources:
+
+  test_nested1:
+    type: nested1.yml
+    properties:
+      p1: { get_param: shared_network_id1}
+      p2: { get_param: shared_network_id2}
+
+  test_nested2:
+    type: nested2.yml
+    properties:
+      p1: { get_param: shared_network_id1}
+
+  test_nested3:
+    type: nested1.yml
+    properties:
+      p1: { get_param: shared_network_id1}
+      p2: { get_param: shared_network_id2}

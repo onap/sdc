@@ -1,0 +1,11 @@
+{
+  "payloadName": "root.yml",
+  "contactId": "jh0003",
+  "resourceName": "tosca.nodes.Root",
+  "description": "Represents a generic software component that can be managed and run by a Compute Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Abstract",
+  "tags": [
+    "tosca.nodes.Root"
+  ]
+}

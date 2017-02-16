@@ -1,0 +1,125 @@
+.asdcs-control {
+
+    div.asdcs-editor {
+
+        $asdcsEditorResizeWidth: 6px;
+        $asdcsEditorToolbarPadding: 4px;
+
+        box-sizing: border-box;
+        float: left;
+        height: 100%;
+        width: $asdcsEditorWidth;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: relative;
+        padding-right: $asdcsEditorResizeWidth;
+
+        div.asdcs-editor-toolbar {
+
+            display: none;
+
+            height: 40px;
+            width: 100%;
+
+            background-color: $asdcsColorOneDark;
+            text-align: center;
+
+            .asdcs-editor-toolbar-demo {
+                padding: $asdcsEditorToolbarPadding;
+                display: inline;
+                float: left;
+            }
+
+            .asdcs-editor-toolbar-toggle {
+                padding: $asdcsEditorToolbarPadding;
+                display: inline;
+                float: right;
+            }
+
+            button {
+
+                &.asdcs-button-mode {
+
+                    padding-left: 8px;
+                    padding-right: 8px;
+
+                    &.asdcs-button-toggle-left {
+                        border-top-right-radius: 0;
+                        border-bottom-right-radius: 0;
+                        margin-right: -4px;
+                    }
+
+                    &.asdcs-button-toggle-right {
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                        margin-left: -4px;
+                    }
+
+                    &.asdcs-button-toggle-center {
+                        border-radius: 0;
+                        border-right: 1px solid lighten($asdcsColorOneDark, 3%);
+                        border-left: 1px solid lighten($asdcsColorOneDark, 3%);
+                    }
+
+                    &.asdcs-active {
+                        background-color: $asdcsColorButtonBGHover;
+                    }
+
+                    &:hover {
+                        border-color: transparent;
+                        @include transition(border-color $asdcsTransitionTime ease);
+                    }
+                }
+
+                svg {
+                    height: $asdcsSmallIconSize;
+                    width: $asdcsSmallIconSize;
+                    fill: $asdcsColorWhitish;
+                }
+            }
+        }
+
+        div.asdcs-editor-content {
+
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            div.asdcs-editor-code {
+                display:none;
+                height: 100%;
+                width: 100%;
+                background-color: $asdcsColorWhitish;
+                textarea {
+                    height: 100%;
+                }
+                .CodeMirror {
+                    height: 100%;
+                }
+            }
+
+            div.asdcs-editor-designer {
+                height: 100%;
+                width: 100%;
+
+                .asdcs-designer-accordion {
+                    height: 100%;
+                }
+            }
+
+        }
+
+        div.asdcs-editor-resize-handle {
+            background-color: $asdcsColorOne;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: $asdcsEditorResizeWidth;
+            cursor: e-resize;
+            @include drop-shadow();
+
+        }
+    }
+}

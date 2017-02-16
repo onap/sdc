@@ -1,0 +1,46 @@
+uebServers:
+   - uebsb91sfdc.it.att.com:3904
+   - uebsb92sfdc.it.att.com:3904
+   - uebsb93sfdc.it.att.com:3904
+
+# prev Kansas City Sandbox uebPublicKey: 8F3MDAtMSBwwpSMy 
+uebPublicKey: sSJc5qiBnKy2qrlc
+
+# prev Kansas City Sandbox uebSecretKey: gzFmsTxSCtO5RQfAccM6PqqX
+uebSecretKey: 4ZRPzNJfEUK0sSNBvccd2m7X
+
+distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
+distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
+
+initRetryIntervalSec: 5
+initMaxIntervalSec: 60
+
+distribNotifServiceArtifactTypes:
+  info:
+      - MURANO-PKG
+
+distribNotifResourceArtifactTypes:
+  lifecycle:
+      - HEAT
+      - DG-XML
+
+environments:
+   - PROD
+
+distributionStatusTopic:
+   pollingIntervalSec: 60
+   fetchTimeSec: 15
+   consumerGroup: asdc
+   consumerId: asdc-id
+
+distributionNotificationTopic:
+   minThreadPoolSize: 0
+   maxThreadPoolSize: 10
+   maxWaitingAfterSendingSeconds: 5
+
+
+createTopic:
+   partitionCount: 1
+   replicationCount: 1
+
+startDistributionEngine: true

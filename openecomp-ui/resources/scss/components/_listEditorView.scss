@@ -1,0 +1,157 @@
+.list-editor-view {
+  @extend .flex-column;
+  background-color: $content-background-color;
+
+  .list-editor-view-title {
+    @extend .section-title;
+  }
+
+  .list-editor-view-title-inline {
+    @extend .list-editor-view-title;
+    position: relative;
+    top: 9px;
+    &:first-child {
+      padding: 0;
+    }
+  }
+
+  .list-editor-view-add-section {
+    display: inline-block;
+    padding: 0 10px 0 10px;
+  }
+
+  .list-editor-view-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $light-gray;
+    padding-bottom: 18px;
+    .list-editor-view-add-controller {
+      @extend .body-1-medium;
+      color: $blue;
+      display: table;
+      cursor: pointer;
+      position: relative;
+      top: 9px;
+      span {
+        display: table-cell;
+        vertical-align: middle;
+        &:nth-child(2) {
+          padding-left: 10px;
+        }
+      }
+    }
+
+    .search-wrapper {
+      width: 265px;
+    }
+  }
+
+  .list-editor-view-list-scroller {
+    @extend .flex;
+    overflow: auto;
+    margin: 18px 0 30px 0;
+  }
+
+  .list-editor-view-list {
+    @extend .flex-column;
+
+
+    .list-editor-item-view {
+      margin: 8px 0;
+      border: 1px solid $light-gray;
+      background-color: $white;
+      cursor: pointer;
+      display: flex;
+      height: 100px;
+      min-height: 100px;
+      overflow: hidden;
+      .list-editor-item-view-content {
+        padding: 10px 28px;
+        display: flex;
+        flex-basis: 95%;
+        width: 95%;
+        .list-editor-item-view-field {
+          flex: 1 1;
+          color: $black;
+          padding: 0;
+          @include ellipsis;
+          overflow-wrap: break-word;
+          white-space: initial;
+          .number-field {
+            align-content: center;
+          }
+          .title {
+            @extend .body-1;
+            padding-bottom: 5px;
+            &:not(:first-child) {
+              line-height: 0.9;
+            }
+          }
+          .text {
+            @extend .body-1;
+          }
+        }
+      }
+      .list-editor-item-view-controller {
+        display: flex;
+        flex-basis: 5%;
+        align-self: center;
+        justify-content: center;
+        flex-direction: column;
+        .fa {
+          transition: color .3s;
+          font-size: 22px;
+          color: $white;
+          &:first-child{
+            margin-bottom: 10px;
+          }
+        }
+      }
+      &:hover {
+        @extend .box-hover;
+        .list-editor-item-view-controller {
+          .fa {
+            color: $gray;
+          }
+        }
+      }
+    }
+  }
+
+  &.thinner-list {
+    background-color: $white;
+    padding: 0;
+    margin-top: 35px;
+
+    .list-editor-view-list {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 23px;
+      .list-editor-item-view {
+        &:hover {
+          border-color: $light-gray;
+        }
+        margin: 5px 0 0 0;
+        height: 30px;
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        .list-editor-item-view-content {
+          padding: 4px;
+          .name {
+            @extend .body-2-medium;
+            flex-basis: 36%;
+          }
+        }
+        .list-editor-item-view-controller {
+          .fa-trash-o {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+

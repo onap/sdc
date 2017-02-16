@@ -1,0 +1,11 @@
+{
+  "payloadName": "asdc.nodes.network.Traffic.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.network.Traffic",
+  "description": "Represents Network Traffic",
+  "resourceIconPath": "network",
+  "category": "Generic/Network Elements",
+  "tags": [
+    "asdc.nodes.network.Traffic", "Network", "Cloud"
+  ]
+}

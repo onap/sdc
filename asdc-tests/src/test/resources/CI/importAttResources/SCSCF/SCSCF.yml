@@ -1,0 +1,13 @@
+att.nodes.ims.SCSCF:
+  derived_from: tosca.nodes.SoftwareComponent
+  capabilities:
+    icscf_endpoint:
+      type: tosca.capabilities.Endpoint
+      relationship: tosca.relationships.ConnectTo
+      occurrences: [0, UNBOUNDED]  
+      description: Connection with one ore more I-CSCF functions 
+  requirements:
+    hss_endpoint: 
+      capability: tosca.capabilities.Endpoint  
+      node: att.nodes.ims.HSS
+      relationship: tosca.relationships.ConnectsTo

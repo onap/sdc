@@ -1,0 +1,12 @@
+&.dox-ui-punch-out {
+  background-color: $content-background-color;
+}
+
+&.dox-ui-punch-out.dox-ui-punch-out-full-page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+}

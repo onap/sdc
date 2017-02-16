@@ -1,0 +1,216 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pcm_v1.0
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcrf_pcm_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pcrf_pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    pcrf_cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    pcrf_pcm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+    pcrf_vnf_id:
+      label: PCRF VNF Id
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF VNF Id
+    pcrf_oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+    pcrf_cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    pcrf_oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    pcrf_oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    pcrf_cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    pcrf_pcm_server_name:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    pcrf_oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    pcrf_pcm_volume_id:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    pcrf_security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+  node_templates:
+    pcrf_pcm_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_cps_net_ip
+        network:
+          get_input: pcrf_cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_pcm
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_server_pcm:
+      type: org.openecomp.resource.vfc.nodes.heat.pcrf_pcm_server
+      properties:
+        flavor:
+          get_input: pcrf_pcm_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcrf_pcm_image_name
+        config_drive: 'True'
+        metadata:
+          vnf_id:
+            get_input: pcrf_vnf_id
+        user_data_format: RAW
+        name:
+          get_input: pcrf_pcm_server_name
+    pcrf_pcm_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_oam_net_ip
+        network:
+          get_input: pcrf_oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_pcm
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-pcm_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pcm_v1.0.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - pcrf_pcm_port_0
+      - pcrf_server_pcm
+      - pcrf_pcm_port_1
+  outputs:
+    pcrf_server_pcm_id:
+      description: the pcm server id
+      value: pcrf_server_pcm
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v1.0
+    capabilities:
+      endpoint_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - endpoint
+      attachment_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - attachment
+      binding_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - binding
+      os_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - os
+      host_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - host
+      scalable_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - scalable
+      attachment_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - attachment
+    requirements:
+      local_storage_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - local_storage
+      link_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - link
+      link_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - link

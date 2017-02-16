@@ -1,0 +1,59 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ContrailV2VirtualMachineInterfaceGlobalType
+  template_version: 1.0.0
+description: Contrail Virtual Machine Interface TOSCA Global Types
+imports:
+  common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface:
+    derived_from: tosca.nodes.network.Port
+    properties:
+      virtual_machine_intefrace_mac_addresses:
+        type: list
+        description: List of mac addresses.
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      name:
+        type: string
+        description: Virtual Machine Interface name
+        required: false
+        status: SUPPORTED
+      security_group_refs:
+        type: list
+        description: List of security groups.
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      virtual_network_refs:
+        type: list
+        description: List of virtual networks.
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      virtual_machine_interface_properties:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
+        description: virtual machine interface properties.
+        required: false
+        status: SUPPORTED
+      port_tuple_refs:
+        type: list
+        description: List of port tuples.
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      fq_name:
+        type: string
+        description: The FQ name of the Virtual Network.
+        status: SUPPORTED
+      show:
+        type: string
+        description: All attributes.
+        status: SUPPORTED

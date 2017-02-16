@@ -1,0 +1,40 @@
+<div class="workspace-hierarchy">
+    <div class="dropdown-container"  clicked-outside="{onClickedOutside: 'clickOutside()', clickedOutsideEnable: 'true'}" >
+        <input placeholder="Add Group" data-ng-click="onInputTextClicked()" class="dropdown-input-text"  data-ng-model="search.filterTerms" data-ng-disabled="isViewMode()"  data-ng-class="{'view-mode': isViewMode()}" data-ng-model-options="{debounce: 200}"/>
+        <div data-ng-class="{'show': showDropDown}" class="dropdown-content" >
+            <perfect-scrollbar scroll-y-margin-offset="0" include-padding="false" class="scrollbar-container">
+                <div ng-repeat="category in categoriesOptions track by $index">
+                    <div ng-repeat="subcategory in category.subcategories track by $index">
+                        <div class="dropdown-option" ng-show="!category.filteredGroup || category.filteredGroup.length > 0">
+                            <div class="category-container">
+                                <div class="category">{{category.name}}</div>
+                                <div class="subcategory">{{subcategory.name}}</div>
+                            </div>
+                            <div class="groupings-container">
+                                <div ng-init="group.filterTerms = group.name + ' ' + category.name + ' ' + subcategory.name"
+                                     ng-repeat="group in (category.filteredGroup = (subcategory.groupings  | filter:search )) track by $index">
+                                    <div class="group" data-ng-disabled="group.isDisabled" data-ng-class="{'disabled-group': group.isDisabled}" ng-click="onGroupSelected(category, subcategory, group)">
+                                        <span >{{group.name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+    </div>
+    <div class="hierarchy-groups-container no-border-top" data-ng-class="{'view-mode': isViewMode()}">
+        <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+            <div ng-if="!product.categories.length ||  product.categories.length === 0" class="no-groups-text" translate="NEW_PRODUCT_NO_CATEGORIES_TO_DISPLAY"></div>
+            <div ng-repeat="category in product.categories track by $index">
+                <div ng-repeat="subcategory in category.subcategories track by $index">
+                    <div class="group-tag" ng-repeat="group in subcategory.groupings track by $index"
+                         data-ng-init="tooltip = '<b>' + category.name + '</b><br />' + subcategory.name">
+                        <sdc-tag sdc-disable="isViewMode()" data-on-delete="deleteGroup(uniqueId)" data-tag-data="{tag: group.name, tooltip: tooltip, id: group.uniqueId }"></sdc-tag>
+                    </div>
+                </div>
+            </div>
+        </perfect-scrollbar>
+    </div>
+</div>

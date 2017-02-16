@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.CP.yaml",
+  "contactId": "jh0003",
+  "name": "org.openecomp.resource.nfv.CP",
+  "description": "ATT CP element",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "org.openecomp.resource.nfv.CP"
+  ]
+}

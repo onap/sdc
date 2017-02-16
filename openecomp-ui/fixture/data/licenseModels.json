@@ -1,0 +1,16 @@
+{
+  "results":[
+    {
+      "vendorName": "Omer Corp.",
+      "description": "",
+      "iconRef": "string",
+      "id": "1"
+    },
+    {
+      "vendorName": "Robotricks",
+      "description": "Optimus Prime",
+      "iconRef": "string",
+      "id": "2"
+    }
+  ]
+}

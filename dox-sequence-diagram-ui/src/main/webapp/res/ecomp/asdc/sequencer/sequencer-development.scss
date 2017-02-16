@@ -1,0 +1,29 @@
+html,body {
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+  width: 100%;
+}
+@font-face {
+  font-family: Omnes-Light;
+  src: url('../common/fonts/omnes-att-light.otf');
+}
+
+@font-face {
+  font-family: Omnes-Regular;
+  src: url('../common/fonts/omnes-att-regular.otf');
+}
+
+@font-face {
+  font-family: Omnes-Medium;
+  src: url('../common/fonts/omnes-att-medium.otf');
+}
+
+@font-face {
+  font-family: Omnes-Bold;
+  src: url('../common/fonts/omnes-att-bold.otf');
+}
+
+* {
+  font-family: "Omnes-Regular", "Helvetiva Neue", Helvetica, Arial, SansSerif;
+}

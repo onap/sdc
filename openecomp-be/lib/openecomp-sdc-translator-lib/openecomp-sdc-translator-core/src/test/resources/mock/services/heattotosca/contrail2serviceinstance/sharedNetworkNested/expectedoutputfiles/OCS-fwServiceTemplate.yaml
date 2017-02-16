@@ -1,0 +1,294 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: OCS-fw
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    service_policy_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Policy Name
+    st_static_routes_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of static routes enabled-disabled
+    st_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service type
+    st_service_interface_type_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of interface types
+    st_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: service mode
+    Cricket_OCS_protected_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of Cricket OCS network
+    oam_mgmt_net_0_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of OAM network
+    start_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of dst port
+    st_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability zone
+    service_instance_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Service instance name
+    st_scaling:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates whether service scaling is enabled
+    max_num_fw_instances:
+      hidden: false
+      immutable: false
+      type: float
+      description: maximum number of firewall instances for scaling
+    start_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of src port
+    service_policy_direction:
+      hidden: false
+      immutable: false
+      type: string
+      description: Direction of Policy
+    st_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of service template
+    hsl_direct_net3:
+      hidden: false
+      immutable: false
+      type: string
+    hsl_direct_net4:
+      hidden: false
+      immutable: false
+      type: string
+    HSL_direct_net_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: HSL (Logging) network gateway address
+    hsl_direct_net1:
+      hidden: false
+      immutable: false
+      type: string
+    hsl_direct_net2:
+      hidden: false
+      immutable: false
+      type: string
+    st_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the image
+    st_shared_ip_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of shared ip enabled-disabled
+    Cricket_OCS_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of Cricket OCS network
+    network_param:
+      hidden: false
+      immutable: false
+      type: string
+    end_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of src port
+    end_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of dst port
+    HSL_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of HSL (Logging) network
+    HSL_direct_net_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: HSL (Logging) network address (CIDR notation)
+  node_templates:
+    hsl_direct_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: HSL_direct_net_id
+        subnets:
+          hsl_ip_subnet:
+            cidr:
+              get_input: HSL_direct_net_cidr
+            gateway_ip:
+              get_input: HSL_direct_net_gateway
+    service_instance:
+      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      directives:
+      - substitutable
+      properties:
+        flavor:
+          get_input: st_flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image_name:
+          get_input: st_image
+        service_template_filter:
+          substitute_service_template: service_instanceServiceTemplate.yaml
+          count:
+            get_input: max_num_fw_instances
+          mandatory: false
+        service_type:
+          get_input: st_type
+        static_routes_list:
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 0
+        service_template_name:
+          get_input: st_name
+        service_interface_type_list:
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 0
+        interface_list:
+        - virtual_network:
+            get_input: network_param
+        service_instance_name:
+          get_input: service_instance_name
+        service_mode:
+          get_input: st_mode
+        shared_ip_list:
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 0
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: hsl_direct_net
+          relationship: tosca.relationships.DependsOn
+    service_policy:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        entries:
+          policy_rule:
+          - src_ports:
+            - start_port:
+                get_input: start_src_ports
+              end_port:
+                get_input: end_src_ports
+            protocol: any
+            action_list:
+              apply_service:
+              - service_instance
+            dst_addresses:
+            - virtual_network:
+                get_input: Cricket_OCS_direct_net_id
+            dst_ports:
+            - start_port:
+                get_input: start_dst_ports
+              end_port:
+                get_input: end_dst_ports
+            src_addresses:
+            - virtual_network:
+                get_input: Cricket_OCS_protected_net_id
+            direction:
+              get_input: service_policy_direction
+        name:
+          get_input: service_policy_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: service_instance
+          relationship: tosca.relationships.DependsOn
+  groups:
+    OCS-fw:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/OCS-fw.yml
+        description: |
+          Based on the following reference for the HOT-DMZ-FW template: Version 3.5 8-10-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-DMZ-FW template that creates two DMZ networks (direct and protected) with a scaled out firewall service between the two.
+      members:
+      - hsl_direct_net
+      - service_instance
+      - service_policy
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.OCS-fw
+    capabilities:
+      link_hsl_direct_net:
+      - hsl_direct_net
+      - link
+      attachment_hsl_direct_net:
+      - hsl_direct_net
+      - attachment
+    requirements:
+      network_service_policy:
+      - service_policy
+      - network
+      link_port_0_service_instance:
+      - service_instance
+      - link_port_0

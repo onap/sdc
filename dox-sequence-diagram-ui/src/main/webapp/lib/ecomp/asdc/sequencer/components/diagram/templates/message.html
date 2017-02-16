@@ -1,0 +1,29 @@
+<g class="asdcs-diagram-message-container" data-id="<%-id%>" data-type="lifeline">
+
+    <%
+    var delta = 40;
+    var x = (x0 + x1) / 2;
+    var y0 = y - ((labels.length + 1) * delta);
+    %>
+
+    <rect class="asdcs-diagram-message-label-bg"
+          x="<%-x%>"
+          y="<%-y0%>"
+          height="10"
+          width="10"
+          rx="10" ry="10" ></rect>
+
+    <text class="asdcs-diagram-message-label" x="<%-x%>" y="<%-y0%>"><%
+        for (var labelIndex = 0; labelIndex < labels.length && labelIndex < lines ; labelIndex++) {
+        %><tspan x="<%-x%>" dy="<%-delta%>px"><%- labels[labelIndex] %></tspan><%
+    }%></text>
+
+
+    <rect x="<%-Math.min(x0,x1)%>" y="<%-(y-5)%>" width="<%-Math.abs(x1-x0)%>" height="10" class="asdcs-diagram-message-bg"></rect>
+
+    <path class="asdcs-diagram-message-selectable" d="<%-path%>"></path>
+
+    <path class="<%-classes%>" marker-end="url(#<%-marker%>)" stroke-dasharray="<%-dasharray%>"
+          data-id="<%-id%>" data-type="message" d="<%-path%>"></path>
+
+</g>

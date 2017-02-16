@@ -1,0 +1,46 @@
+.dual-list-box {
+  display: flex;
+  margin: 25px 0 10px 0;
+
+  .dual-search-multi-select-section {
+    $multi-select-box-width: 398px;
+    width: $multi-select-box-width;
+    .dual-text-box-search-title, .dual-list-box-multi-select-text {
+      @extend .body-1;
+      color: $dark-gray;
+    }
+    .dual-text-box-search {
+      margin: 5px 0 30px 0;
+    }
+    .dual-list-box-multi-select {
+      flex: 1 1;
+      display: flex;
+      height: 166px;
+      margin-bottom: 0;
+      select {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-y: scroll;
+        height: inherit;
+        option {
+          padding: 4px 0 4px 10px;
+        }
+      }
+    }
+  }
+  .dual-list-options-bar {
+    margin: 62px 54px 27px 54px;
+    padding-top: 23px;
+    .dual-list-option {
+      text-align: center;
+      line-height: 10px;
+      font-size: 25px;
+      width: 20px;
+      height: 15px;
+      cursor: pointer;
+      margin-top: 20px;
+      color: $blue;
+    }
+  }
+}

@@ -1,0 +1,11 @@
+mytypes.phonenumber:
+  description: my phone number datatype
+  properties:
+    countrycode:
+      type: integer
+    areacode1:
+      type: integer
+    number:
+      type: integer
+    areacode1:
+      type: integer

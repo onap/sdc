@@ -1,0 +1,21 @@
+{
+  "payloadName": "port.yml",
+  "contactId": "jh0003",
+  "name": "Port",
+  "description": "Represents a logical entity that associates between Compute and Network normative types.",
+  "resourceIconPath": "port",
+  "resourceType": "CP",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "Port"
+  ]
+}

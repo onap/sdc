@@ -1,0 +1,84 @@
+.edit-process-modal {
+  background-color: $white;
+  height: 100%;
+  &.modal-body {
+    padding: 0;
+    background-color: $white;
+  }
+  .vsp-processes-editor {
+    padding-left: 0;
+    padding-right: 0;
+    .editor-title {
+      @extend .heading-2;
+      color: $dark-gray;
+      padding-bottom: 50px;
+    }
+    .file-upload-box {
+      @extend .body-1;
+      display: flex;
+      text-align: center;
+      flex-direction: column;
+      justify-content: center;
+      border: 2px dashed $light-gray;
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      align-items: center;
+      .upload-btn {
+        padding: 20px;
+        padding-top: 7px;
+        padding-bottom: 3px;
+      }
+      .drag-text {
+        color: $blue;
+        font-weight: bolder;
+      }
+      .or-text {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    }
+    .vsp-processes-editor-data {
+      padding: 28px 54px;
+      transition: border .2s;
+      .vsp-process-dropzone-view {
+        background-color: transparent;
+        padding: 15px;
+        &.active-dragging {
+          border: 3px dashed $dark-blue;
+          border-radius: 20px;
+          .draggable-wrapper {
+            opacity: 0.5;
+          }
+        }
+      }
+      .validation-input-wrapper {
+        .form-group {
+          .vsp-process-description {
+            height: 200px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.vsp-processes-page {
+  .processes-list {
+    @extend .flex-column;
+  }
+  .list-editor-view {
+    .list-editor-view-list {
+      .list-editor-item-view {
+        .list-editor-item-view-content {
+          .list-editor-item-view-field {
+            .artifact-name {
+              @extend .body-1;
+              color: $light-green;
+            }
+          }
+        }
+      }
+    }
+  }
+}

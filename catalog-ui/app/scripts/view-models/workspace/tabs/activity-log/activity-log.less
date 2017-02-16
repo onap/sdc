@@ -1,0 +1,83 @@
+.activity-log {
+
+    margin-top: 30px;
+
+    .title-wrapper {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .table-container-flex .table .body .scrollbar-container {
+        max-height: 448px;
+    }
+    
+    .view-mode {
+        background-color: @main_color_p;
+    }
+
+    .table{
+        height: 490px;
+        margin-bottom: 0;
+    }
+
+    .table-container-flex {
+        margin-top: 10px;
+
+        .flex-item:nth-child(1) { width: 200px; }
+        .flex-item:nth-child(2) { flex-grow: 20; }
+        .flex-item:nth-child(3) { flex-grow: 30; }
+        .flex-item:nth-child(4) { flex-grow: 20; }
+        .flex-item:nth-child(5) { width: 80px; }
+
+        .success {
+            position: absolute;
+            top: 11px;
+            right: 20px;
+            .sprite-new;
+            .sdc-success;
+        }
+
+        .error {
+            position: absolute;
+            top: 11px;
+            right: 20px;
+            .sprite-new;
+            .sdc-error;
+        }
+
+    }
+
+    .data-row {
+        position: relative;
+    }
+
+    .top-search {
+        float: right;
+        position: relative;
+
+        input.search-text {
+            .border-radius(2px);
+            width: 245px;
+            height: 32px;
+            line-height: 32px;
+            border: 1px solid @main_color_o;
+            margin: 0;
+            outline: none;
+            text-indent: 10px;
+
+            &::-webkit-input-placeholder { font-style: italic; } /* Safari, Chrome and Opera */
+            &:-moz-placeholder { font-style: italic; } /* Firefox 18- */
+            &::-moz-placeholder { font-style: italic; } /* Firefox 19+ */
+            &:-ms-input-placeholder { font-style: italic; } /* IE 10+ */
+            &:-ms-input-placeholder { font-style: italic; } /* Edge */
+        }
+
+        .magnification {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+    }
+
+}

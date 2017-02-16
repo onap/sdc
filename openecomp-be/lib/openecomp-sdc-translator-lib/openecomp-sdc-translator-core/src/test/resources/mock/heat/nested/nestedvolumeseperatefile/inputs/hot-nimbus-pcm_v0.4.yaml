@@ -1,0 +1,23 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  not_null:
+    type: string
+
+  nove_001_vol:
+      type: string
+      label: volume
+      description: volume name
+
+
+
+resources:
+  server_pcm_001:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      nove_001_vol_property: { get_param: nove_001_vol }
+
+
+

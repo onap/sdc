@@ -1,0 +1,37 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "$",
+      "ref": "BLANK",
+      "name": "New Sequence"
+    },
+    "lifelines": [
+      {
+        "id": "Alice",
+        "name": "Alice"
+      },
+      {
+        "id": "Bob",
+        "name": "Bob"
+      }
+    ],
+    "steps": [
+      {
+        "message": {
+          "from": "Alice",
+          "to": "Bob",
+          "label": "Sup Bob",
+          "type": "request"
+        }
+      },
+      {
+        "message": {
+          "from": "Bob",
+          "to": "Alice",
+          "label": "Yo Alice",
+          "type": "response"
+        }
+      }
+    ]
+  }
+}

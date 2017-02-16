@@ -1,0 +1,22 @@
+.sdc-app {
+  height: 100%;
+
+}
+.flex {
+  display: flex;
+  flex: 1;
+}
+
+.flex-column {
+  @extend .flex;
+  flex-direction: column;
+}
+
+.content-area {
+  padding: 30px 60px 70px 60px;
+  overflow-y: auto;
+  height: 100%;
+  &.no-padding-content-area {
+    padding: 0;
+  }
+}

@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.missing_userId:
+    derived_from: tosca.nodes.Root
+    properties:
+      size: 
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 1 MB
+      volume_id:
+        type: string
+        required: false
+      snapshot_id:
+        type: string
+        required: false
+    capabilities:
+      attachment: 
+        type: tosca.capabilities.Attachment

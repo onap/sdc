@@ -1,0 +1,104 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    cmaui_cinder_volume_size:
+      label: CMAUI Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the CMAUI Cinder volume
+    shared_vol1:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+    shared_vol2:
+      hidden: false
+      immutable: false
+      type: string
+      description: volume name
+    CMAUI_volume_type:
+      label: CMAUI vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+  node_templates:
+    test_vol1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    test_vol2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    test_nested:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+        cmaui_volume_param1:
+          get_input: shared_vol1
+        cmaui_volume_param2:
+          get_input: shared_vol2
+      requirements:
+      - local_storage_server_cmaui2:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui1:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui1:
+          capability: tosca.capabilities.Attachment
+          node: test_vol2
+          relationship: tosca.relationships.AttachesTo
+  groups:
+    addOn:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested
+    main:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_vol1
+      - test_vol2
+  outputs:
+    out1_not_shared:
+      value: test_nested

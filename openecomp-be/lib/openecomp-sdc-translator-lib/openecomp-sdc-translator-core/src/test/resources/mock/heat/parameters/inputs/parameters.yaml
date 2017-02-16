@@ -1,0 +1,101 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  param_type_string:
+      type: string
+      description: param String - string
+  param_type_number:
+      type: number
+      description: param number - float
+  param_type_json:
+      type: json
+      description: param json - map<String>
+  param_type_boolean:
+      type: boolean
+      description: param boolean - boolean
+  param_type_comma_delimited_list:
+      type: comma_delimited_list
+      description: param comma_delimited_list - List
+
+  volume_type:
+      type: string
+      label: FSB Volume
+      description: FSB Volume type
+
+  FSB1_volume_name:
+    type: string
+    label: FSB Volume
+    description: FSB Volume name
+
+  FSB_1_image:
+    type: string
+    label: FSB Image
+    description: FSB Image name
+
+  param_constraint_length_allowed_pattern_range_hidden:
+    type: string
+    label: User Name
+    description: User name to be configured for the application
+    hidden: true
+    constraints:
+      - length: { min: 6, max: 8 }
+        description: User name must be between 6 and 8 characters
+      - allowed_pattern: "[A-Z]+[a-zA-Z0-9]*"
+        description: User name must start with an uppercase character
+      - range: { min: 0, max: 10 }
+  param_allowed_values:
+    type: string
+    label: Instance Type
+    description: Instance type for compute instances
+    constraints:
+      - allowed_values:
+        - m1.small
+        - m1.medium
+        - m1.large
+
+  param_type_string_default_value:
+      type: string
+      default: HEAT_default string
+      description: param value should be - HEAT_default string
+  param_type_string_default_value_with_env:
+      type: string
+      description: param value should be - HEAT_ENV_default string
+      default: HEAT_default string
+
+  param_type_number_default_value:
+      type: number
+      description: param value should be 12345
+      default: 12345
+  param_type_number_default_value_with_env:
+        type: number
+        description: param value should be 54321
+        default: 12345
+  param_type_boolean_default_value:
+      type: boolean
+      description: param value should be true
+      default: true
+  param_type_boolean_default_value_with_env:
+      type: boolean
+      description: param value should be false
+      default: true
+  param_type_comma_delimited_list_default_value:
+      type: comma_delimited_list
+      description: param value should be [a1,a2,a3,a4]
+      default: a1,a2,a3,a4
+  param_type_comma_delimited_list_default_value_with_env:
+        type: comma_delimited_list
+        description: param value should be [b1,b2,b3,b4]
+        default: a1,a2,a3,a4
+resources:
+  FSB1_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: 3
+      volume_type: {get_param: volume_type}
+      name: {get_param: FSB1_volume_name}
+      image: {get_param: FSB_1_image}
+
+

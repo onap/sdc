@@ -1,0 +1,29 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  pcm_server_name:
+    type: string
+    label: PCRF CM server name
+    description: PCRF CM server name
+  nove_001_vol_property:
+    type: string
+    label: PCRF CM server name
+    description: PCRF CM server name
+  nova_image_name:
+    type: string
+    label: nova_001 image name
+    description: PCRF CM server name
+
+resources:
+  nova_001:
+    type: OS::Nova::Server
+    properties:
+      not_null: not_null
+      image: {get_param: nova_image_name}
+  nove_001_vol_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: nove_001_vol_property}
+      instance_uuid: {get_resource: nova_001}

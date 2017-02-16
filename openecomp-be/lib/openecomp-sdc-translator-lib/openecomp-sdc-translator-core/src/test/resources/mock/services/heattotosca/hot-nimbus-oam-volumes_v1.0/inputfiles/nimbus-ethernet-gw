@@ -1,0 +1,6 @@
+DEVICE=$dev
+BOOTPROTO=none
+NM_CONTROLLED=no
+IPADDR=$ip
+NETMASK=$netmask
+GATEWAY=$gateway

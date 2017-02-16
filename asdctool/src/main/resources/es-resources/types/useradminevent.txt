@@ -1,0 +1,20 @@
+{
+             "action": "ACTION",
+             "timestamp": "TIMESTAMP",
+             "requestId": "REQUEST_ID",
+             "serviceInstanceId": "SERVICE_INSTANCE_ID",
+             "desc": "DESC",
+             "status": "STATUS",
+             "modifierName": "MODIFIER_NAME",
+             "modifierUid": "MODIFIER_UID",
+             "userUid": "USER_UID",
+             "userName": "USER_NAME",
+             "userEmail": "USER_EMAIL",
+             "userRole": "USER_ROLE",
+             "userBeforeName": "USER_BEFORE_NAME",
+             "userBeforeEmail": "USER_BEFORE_EMAIL",
+             "userBeforeRole": "USER_BEFORE_ROLE",
+             "userAfterName": "USER_AFTER_NAME",
+             "userAfterEmail": "USER_AFTER_EMAIL",
+             "userAfterRole": "USER_AFTER_ROLE"
+}

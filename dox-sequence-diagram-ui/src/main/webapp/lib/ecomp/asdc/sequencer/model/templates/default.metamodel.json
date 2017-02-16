@@ -1,0 +1,17 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "$",
+      "name": "Blank Sequence"
+
+    },
+    "lifelines": {
+      "lifelines": [],
+      "constraints": {
+        "create": true,
+        "delete": true,
+        "reorder": true
+      }
+    }
+  }
+}

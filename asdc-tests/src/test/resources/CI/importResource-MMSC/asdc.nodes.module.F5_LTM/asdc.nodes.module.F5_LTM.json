@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.module.F5_LTM.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.F5_LTM",
+  "description": "vMMSC Local Traffic Manager serves as the load balancer for traffic coming into the vMMSC. Traffic from MMSC designated to external network passes via F5. Also, internal communication between ECA and MMSC is via F5",
+  "resourceIconPath": "loadBalancer",
+  "category": "Application Layer 4+/Load Balancer",
+  "tags": [
+    "asdc.nodes.module.F5_LTM", "F5", "Load Balancer", "vMMSC", "Mobility"
+  ]
+}
+

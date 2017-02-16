@@ -1,0 +1,99 @@
+{
+  "name": "hot-mog",
+  "description": "HOT template to create hot mog server",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "hot-nimbus-oam_v1.0.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "hot-nimbus-oam_v1.0.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "hot-nimbus-oam-volumes_v1.0.yaml",
+          "type": "HEAT_VOL",
+          "data": [{
+            "file": "hot-nimbus-oam-volumes_v1.0.env",
+            "type": "HEAT_ENV"
+          }]
+        }
+      ]
+    },
+    {
+      "file": "hot-nimbus-pcm_v1.0.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "hot-nimbus-pcm_v1.0.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "hot-nimbus-pcm-volumes_v1.0.yaml",
+          "type": "HEAT_VOL",
+          "data": [{
+            "file": "hot-nimbus-pcm-volumes_v1.0.env",
+            "type": "HEAT_ENV"
+          }]
+        }
+      ]
+    },
+    {
+      "file": "hot-nimbus-ppd_v1.0.yaml",
+      "type": "HEAT",
+      "data": [{
+        "file": "hot-nimbus-ppd_v1.1.env",
+        "type": "HEAT_ENV"
+      }]
+    },
+    {
+      "file": "hot-nimbus-pps_v1.0.yaml",
+      "type": "HEAT",
+      "data": [{
+        "file": "hot-nimbus-pps_v1.0.env",
+        "type": "HEAT_ENV"
+      }]
+    },
+    {
+      "file": "hot-nimbus-psm_v1.0.yaml",
+      "type": "HEAT",
+      "data": [{
+        "file": "hot-nimbus-psm_v1.0.env",
+        "type": "HEAT_ENV"
+      }]
+    },
+    {
+      "file": "nested-oam_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested-pcm_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested-ppd_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested-pps_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested-psm_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "cloud-nimbus.sh",
+      "type": "SHELL"
+    },
+    {
+      "file": "nimbus-ethernet",
+      "type": "OTHER"
+    },
+    {
+      "file": "nimbus-ethernet-gw",
+      "type": "OTHER"
+    }
+  ]
+}

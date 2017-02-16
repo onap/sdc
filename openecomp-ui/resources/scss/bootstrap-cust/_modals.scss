@@ -1,0 +1,18 @@
+.modal-content {
+  .modal-header {
+    border-top: 3px solid $blue;
+    .modal-title {
+      @extend .heading-2;
+    }
+  }
+
+  .modal-body{
+    padding: 15px;
+  }
+
+  .modal-footer {
+    padding: 15px;
+    border-top: 0;
+    background-color: $tlv-gray;
+  }
+}

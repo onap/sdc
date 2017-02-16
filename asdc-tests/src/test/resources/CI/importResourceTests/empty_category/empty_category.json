@@ -1,0 +1,22 @@
+{
+  "payloadName": "normative-types-new-empty_category.yml",
+  "contactId": "adminid",
+  "name": "tosca.nodes.empty_category",
+  "description": "Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "",
+    "subcategories": [
+      {
+        "name": "Infrastructure"
+      }
+    ]
+  }
+], 
+  "tags": [
+    "tosca.nodes.empty_category"
+  ],
+  "vendorName": "ATT (Tosca)",
+  "vendorRelease": "1.0.0.wd03"
+}

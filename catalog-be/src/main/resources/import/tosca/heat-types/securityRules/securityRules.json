@@ -1,0 +1,21 @@
+{
+  "payloadName": "securityRules.yml",
+  "contactId": "jh0003",
+  "name": "SecurityRules",
+  "description": "Configuration of policy rules to be applied on ports.",
+  "resourceIconPath": "securityrules",
+  "resourceType": "VFC",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Rules"
+      }
+    ]
+  }
+],
+  "tags": [
+    "SecurityRules"
+  ]
+}

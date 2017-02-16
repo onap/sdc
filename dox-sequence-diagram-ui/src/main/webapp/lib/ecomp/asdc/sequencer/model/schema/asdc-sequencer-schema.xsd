@@ -1,0 +1,274 @@
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://ns.ecomp.com/asdc/sequencer"
+        xmlns:s="http://ns.ecomp.com/asdc/sequencer"
+        attributeFormDefault="unqualified"
+        elementFormDefault="unqualified">
+
+    <!--
+
+        https://github.com/highsource/jsonix-schema-compiler/wiki/JSON-Schema-Generation
+
+        npm install -x-save-dev json-schema-generation
+
+        java -jar node_modules/jsonix-schema-compiler/lib/jsonix-schema-compiler-full.jar \
+              -generateJsonSchema \
+              -d ./src/main/webapp/lib/ecomp/asdc/sequencer/schema/ \
+              -p asdc_sequencer_schema \
+              ./src/main/webapp/lib/ecomp/asdc/sequencer/schema/asdc-sequencer-schema.xsd
+
+    -->
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:element name="diagram">
+        <xs:annotation>
+            <xs:documentation>
+                Diagram state.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="metadata" type="s:metadataType"/>
+                <xs:element name="lifelines" type="s:lifelinesType"/>
+                <xs:element name="steps" type="s:stepsType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="entityType" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Stuff common to all entities; an identifier, a name, an optional
+                schema reference, and some optional notes.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="notes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="annotation" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        Optional annotations; non-structural information attached to any entity.
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:any minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Entity identifier.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ref" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Optional reference to schema definition, where this entity
+                    corresponds to (and is constrained by) a schema entity.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Human-readable name.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="externalId" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    ID of entity in originating system. For external use; not
+                    used by the sequencer widget.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="metadataType">
+        <xs:annotation>
+            <xs:documentation>
+                Diagram metadata, including name, identifier and schema reference.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="lifelineType">
+        <xs:annotation>
+            <xs:documentation>
+                Definition of a single lifeline.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="lifelinesType">
+        <xs:annotation>
+            <xs:documentation>
+                A set of lifelines. May be top-level or in a fragment.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType">
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="lifeline" type="s:lifelineType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="occurrencesType">
+        <xs:annotation>
+            <xs:documentation>
+                An occurrence at one or other end of a message.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="start" use="optional">
+            <xs:simpleType>
+                <xs:list itemType="xs:token"/>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="stop" use="optional">
+            <xs:simpleType>
+                <xs:list itemType="xs:token"/>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="fragmentType">
+        <xs:annotation>
+            <xs:documentation>
+                A fragment directive.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="start" type="xs:boolean" use="optional" default="false">
+            <xs:annotation>
+                <xs:documentation>
+                    Whether fragment starts; fragment activated when @start=true.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="stop" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Indication of the last message in this fragment.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="operation" use="optional" default="alt">
+            <xs:annotation>
+                <xs:documentation>
+                    Fragment operation. Start with the three everybody knows, but
+                    there are others.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="alt"/>
+                    <xs:enumeration value="opt"/>
+                    <xs:enumeration value="loop"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="guard" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    Guard condition.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="messageType">
+        <xs:annotation>
+            <xs:documentation>
+                A message between lifelines.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType">
+                <xs:sequence>
+                    <xs:element name="occurrences" type="s:occurrencesType" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="fragment" type="s:fragmentType" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="to" type="xs:string" use="required"/>
+                <xs:attribute name="from" type="xs:string" use="required"/>
+                <xs:attribute name="type">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="request"/>
+                            <xs:enumeration value="response"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="asynchronous" type="xs:boolean" default="false"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="guardType">
+        <xs:annotation>
+            <xs:documentation>
+                Guard condition within a fragment. Some fragments have more than
+                one section, each with their own guard condition.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="guard" type="xs:string"/>
+            <xs:element name="steps" type="s:stepsType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="stepsType">
+        <xs:annotation>
+            <xs:documentation>
+                An ordered set of messages and subsequences.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType">
+                <xs:sequence maxOccurs="unbounded">
+                    <xs:choice>
+                        <xs:element name="message" type="s:messageType"/>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

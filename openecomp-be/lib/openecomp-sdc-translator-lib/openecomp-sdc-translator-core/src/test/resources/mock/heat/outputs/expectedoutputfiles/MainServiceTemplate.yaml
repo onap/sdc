@@ -1,0 +1,86 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  node_templates:
+    jsa_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    jsa_net_test_full_attribute:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_input: jsa_net_name
+        subnets:
+          jsa_net_test_full_attribute_subnet:
+            cidr:
+              get_input: jsa_cidr
+        value_specs:
+          key1: spec1
+          key2: spec2
+  groups:
+    outputs:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/outputs.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - jsa_net
+      - jsa_net_test_full_attribute
+  outputs:
+    output_regular:
+      description: output_regula
+      value: regular
+    output_func_getParam:
+      description: output_func_getParam
+      value:
+        get_input: jsa_cidr
+    output_func_getAttr:
+      description: output_func_getAttr
+      value:
+        get_attribute:
+        - jsa_net_test_full_attribute
+        - network_name
+    output_func_getResource:
+      description: output_func_getResource
+      value: jsa_net_test_full_attribute

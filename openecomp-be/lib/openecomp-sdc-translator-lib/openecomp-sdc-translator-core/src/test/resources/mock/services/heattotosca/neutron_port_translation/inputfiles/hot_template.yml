@@ -1,0 +1,49 @@
+heat_template_version: 2013-05-23
+
+#################################
+#
+#  Changes from MSO 01/26/2016
+#  Updated per ECOMP feedback
+#
+#################################
+
+description: cmaui server template for vMMSC
+
+resources:
+  cmaui1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 1]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  cmaui1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: jsa_net }
+      fixed_ips: [{"subnet": subnetNameVal, "ip_address": {get_param: [cmaui_oam_ips, 1]}}, {"subnet": subnetNameVal2, "ip_address": {get_param: [cmaui_oam_ips, 1]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  jsa_net:
+      type: OS::Neutron::Net
+      properties:
+        name: {get_param: jsa_net_name}
+        shared: True
+
+  cmaui1_port_2:
+      type: OS::Neutron::Port
+      properties:
+        network: { get_resource: jsa_net1 }
+        fixed_ips: [{"subnet": subnetNameVal, "ip_address": {get_param: [cmaui_oam_ips, 1]}}, {"subnet": subnetNameVal2, "ip_address": {get_param: [cmaui_oam_ips, 1]}}]
+        security_groups: [{get_param: security_group_name}]
+        replacement_policy: AUTO
+
+  jsa_net1:
+      type: OS::Neutron::Net
+      properties:
+        name: {get_param: jsa_net_name}
+        shared: True
+
+

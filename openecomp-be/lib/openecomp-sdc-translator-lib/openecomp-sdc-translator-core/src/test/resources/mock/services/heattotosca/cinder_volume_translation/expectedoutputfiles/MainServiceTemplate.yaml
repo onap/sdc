@@ -1,0 +1,131 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type Gold
+    FSB1_volume_name:
+      label: FSB1_volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_volume_1
+    FSB_1_image:
+      label: MME_FSB1
+      hidden: false
+      immutable: false
+      type: string
+      description: MME_FSB1_15B-CP04-r5a01
+    volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: my volume size 320GB
+    stam:
+      label: stam
+      hidden: false
+      immutable: false
+      type: float
+      description: stam
+    FSB_2_image:
+      label: MME_FSB2
+      hidden: false
+      immutable: false
+      type: string
+      description: MME_FSB2_15B-CP04-r5a01
+    FSB2_volume_name:
+      label: FSB2_volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB2_volume_1
+  node_templates:
+    FSB1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_1_image
+        volume_type:
+          get_input: volume_type
+        size: 3*1024
+        read_only:
+          get_input: stam
+        name:
+          get_input: FSB1_volume_name
+    FSB2_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_2_image
+        volume_type:
+          get_input: volume_type
+        size: '(get_input : volume_size) * 1024'
+        read_only: true
+        name:
+          get_input: FSB2_volume_name
+    FSB3_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_1_image
+        volume_type:
+          get_input: volume_type
+        size: 3*1024
+        read_only: true
+        name:
+          get_input: FSB1_volume_name
+    FSB4_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        image:
+          get_input: FSB_2_image
+        volume_type:
+          get_input: volume_type
+        size: '(get_input : volume_size) * 1024'
+        read_only: true
+        name:
+          get_input: FSB2_volume_name
+  groups:
+    hot_template:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot_template.yml
+        description: server template for vMME
+      members:
+      - FSB1_volume
+      - FSB2_volume
+      - FSB3_volume
+      - FSB4_volume

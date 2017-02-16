@@ -1,0 +1,43 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Server stack
+
+parameters:
+  pcrf_pps_server_names:
+    type: comma_delimited_list
+    label: PCRF PS server names
+    description: PCRF PS server names
+  pcrf_pps_image_name:
+    type: string
+    label: PCRF PS image name
+    description: PCRF PS image name
+
+resources:
+  resource_depends_on_legal_1:
+    type: OS::Heat::CloudConfig
+    depends_on: [resource_1, resource_2]
+
+  resource_depends_on_legal_2:
+    type: OS::Heat::CloudConfig
+    depends_on: resource_1
+
+  resource_depends_on_illegal_1:
+    type: OS::Heat::CloudConfig
+    depends_on: resource_not_exist
+
+  resource_depends_on_illegal_2:
+    type: OS::Heat::CloudConfig
+    depends_on: [resource_1, resource_3]
+
+  resource_depends_on_illegal_3:
+    type: OS::Heat::CloudConfig
+    depends_on:
+
+  resource_1:
+    type: OS::Heat::CloudConfig
+
+  resource_2:
+    type: OS::Heat::CloudConfig
+
+
+

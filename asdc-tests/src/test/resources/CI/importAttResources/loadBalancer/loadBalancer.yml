@@ -1,0 +1,16 @@
+tosca.nodes.LoadBalancer:
+  derived_from: tosca.nodes.Root 
+  properties:
+    # TBD
+    algorithm :
+      type: string
+      required: false
+      status: experimental
+  capabilities :
+    client: 
+      type: tosca.capabilities.Endpoint.Public
+      description: the Floating (IP) client’s on the public network can connect to
+  requirements: 
+    - application: 
+        capability: tosca.capabilities.Endpoint
+        relationship: tosca.relationships.RoutesTo

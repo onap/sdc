@@ -1,0 +1,75 @@
+.i-sdc-form-file-upload {
+
+    display: flex;
+    margin-top: 0;
+    width: 100%;
+    .p_1;
+    .bg_c;
+    .border-radius(2px);
+    border: solid 1px @border_color_f;
+    height: 30px;
+
+    input[type="file"] {
+        cursor: inherit;
+        display: block;
+        filter: alpha(opacity=0);
+        width: 100px;
+        height: 30px;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        text-align: right;
+        top: 0;
+    }
+
+    .i-sdc-form-file-name{
+        flex-grow: 999;
+        text-align: left;
+        padding: 3px 10px;
+        opacity: 0.6;
+        width: 80%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+    }
+
+    .i-sdc-form-file-upload-x-btn{
+        flex-grow: 1;
+        .sprite;
+        .sprite.small-x-btn-black;
+        cursor: pointer;
+        top: 10px;
+        right: 9px;
+        width: 10px;
+        position: relative;
+    }
+    .i-sdc-form-file-upload-label {
+        float: right;
+        width: 100px;
+        height: 100%;
+        .bg_n;
+        .b_9;
+
+        .file-upload-browse-btn {
+            .noselect;
+            padding: 4px 6px;
+            cursor: pointer;
+            z-index: 999;
+            position: absolute;
+            width: 100px;
+            height: 28px;
+            text-align: center;
+
+            &.disabled {
+                cursor: default;
+            }
+        }
+    }
+
+    &.error {
+        border-color: #da1f3d;
+        outline: none;
+        box-sizing: border-box;
+    }
+}

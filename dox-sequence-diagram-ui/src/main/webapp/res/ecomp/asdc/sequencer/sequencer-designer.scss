@@ -1,0 +1,256 @@
+.asdcs-control {
+
+    .asdcs-editor-designer {
+
+        overflow: hidden;
+        table {
+            border-spacing: 2px;
+        }
+
+        $asdcsActiveBorderWidth: 1px;
+        $asdcsActiveBorderColor: $asdcsColorEmphasis;
+        .asdcs-designer-accordion {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asdcs-designer-metadata {
+            height: 70px;
+            display: table-cell;
+            padding: 0 15px;
+            text-align: left;
+            vertical-align: middle;
+            font-size: 16px;
+            color: $asdcsTextColor;
+            @include noselect();
+        }
+
+        .asdcs-designer-lifelines-container,
+        .asdcs-designer-steps-container {
+            flex: 1;
+            div,span {
+                @include noselect();
+            }
+            // overflow: hidden;
+            overflow: auto;
+        }
+
+        .asdcs-designer-lifelines-container {
+            padding: 0;
+            margin: 0;
+            .asdcs-designer-lifelines {
+                padding: 0;
+                .asdcs-designer-lifeline {
+                    background-color: $asdcsColorWhite;
+                    border: $asdcsActiveBorderWidth solid transparent; //$asdcsColorWhite;
+                    border-bottom: $asdcsActiveBorderWidth solid $asdcsColorOne;
+                    .asdcs-designer-lifeline-new {
+                        background-color: $asdcsColorOneLight;
+                    }
+                    &.asdcs-active {
+                        border: $asdcsActiveBorderWidth solid $asdcsColorEmphasis;
+                    }
+                }
+            }
+        }
+
+        .asdcs-designer-steps-container {
+            padding: 0;
+            margin: 0;
+            .asdcs-designer-steps {
+                padding: 0;
+                .asdcs-designer-message {
+                    border: $asdcsActiveBorderWidth solid $asdcsColorWhite;
+                    border-bottom: $asdcsActiveBorderWidth solid $asdcsColorOne;
+                    background-color: $asdcsColorWhite;
+                    .asdcs-designer-message-new {
+                        background-color: $asdcsColorOneLight;
+                    }
+                    &.asdcs-active {
+                        border: $asdcsActiveBorderWidth solid $asdcsColorEmphasis;
+                    }
+                    select {
+                        height: 30px;
+                        width: 100%;
+                        background-color: $asdcsColorWhite;
+                        border-radius: $asdcsInputSelectBorderRadius;
+                        border: 1px solid $asdcsInputSelectBorderColor;
+                        -moz-appearance: none; // Just FF.
+                        option {
+                            padding: 10px 0;
+                            font-size: $asdcsFontSize + 2;
+                        }
+                        &.asdcs-designer-select-message-type {
+                            option {
+                                font-size: $asdcsFontSize + 5;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .asdcs-designer-lifelines-container,
+        .asdcs-designer-steps-container {
+            table.asdcs-designer-layout {
+                width: 100%;
+                padding: 8px;
+                tbody, tr {
+                    width: 100%;
+                }
+                td {
+                    text-align: center;
+                    vertical-align: middle;
+                }
+                &.asdcs-designer-message-row1 {
+                    padding-bottom: 4px;
+                    td:nth-child(3) {
+                        width: 99%;
+                    }
+                }
+                &.asdcs-designer-message-row2 {
+                    padding-top: 0;
+                    tr {
+                        td:nth-child(1), td:nth-child(3) {
+                            width: 45%;
+                        }
+                        td:nth-child(2) {
+                            min-width: 70px;
+                            width: 70px;
+                        }
+                        svg {
+                            fill: $asdcsColorOneDark;
+                        }
+                    }
+                }
+                &.asdcs-designer-message-new {
+                    tr {
+                        td:nth-child(2) div {
+                            white-space: nowrap;
+                            color: $asdcsColorEmphasis;
+                            cursor: pointer;
+                            &:hover {
+                                color: $asdcsColorEmphasisHover;
+                            }
+                        }
+                        td:nth-child(3) div {
+                            fill: $asdcsColorEmphasis;
+                            cursor: pointer;
+                            &:hover {
+                                fill: $asdcsColorEmphasisHover;
+                            }
+                        }
+                        td:nth-child(4) {
+                            width: 99%;
+                        }
+                    }
+                }
+                &.asdcs-designer-lifeline-row1 {
+                    tr {
+                        td:nth-child(3) {
+                            width: 99%;
+                        }
+                    }
+                }
+                &.asdcs-designer-lifeline-new {
+                    tr {
+                        td:nth-child(2) div {
+                            white-space: nowrap;
+                            color: $asdcsColorEmphasis;
+                            cursor: pointer;
+                            &:hover {
+                                color: $asdcsColorEmphasisHover;
+                            }
+                        }
+                        td:nth-child(3) div {
+                            fill: $asdcsColorEmphasis;
+                            &:hover {
+                                fill: $asdcsColorEmphasisHover;
+                            }
+                        }
+                        td:nth-child(4) {
+                            width: 99%;
+                        }
+                    }
+                }
+            }
+        }
+
+        .asdcs-designer-placeholder {
+            padding: 8px;
+            background-color: $asdcsColorOneLight;
+        }
+
+        .asdcs-designer-icon {
+            display: table-cell;
+            text-align: right;
+            vertical-align: middle;
+            cursor: pointer;
+            fill: $asdcsColorDarkGrey;
+            min-width: $asdcsSmallIconSize;
+            width: $asdcsSmallIconSize;
+            height: $asdcsSmallIconSize;
+            &.asdcs-active {
+                fill: $asdcsColorEmphasis;
+            }
+            &:hover {
+                fill: $asdcsColorEmphasisHover;
+                @include transition(fill $asdcsTransitionTime ease);
+            }
+            svg {
+                pointer-events: none;
+                width: $asdcsSmallIconSize;
+                height: $asdcsSmallIconSize;
+            }
+        }
+
+        .asdcs-designer-sort {
+            text-align: center;
+            cursor: move;
+            display: table-cell;
+        }
+
+        .asdcs-designer-lifeline-index,
+        .asdcs-designer-message-index{
+            color: $asdcsTextColor;
+        }
+
+        button.asdcs-designer-new {
+            padding: 0 4px;
+            svg {
+                width: $asdcsSmallIconSize;
+                height: $asdcsSmallIconSize;
+            }
+            fill: $asdcsColorWhitish;
+            &:hover {
+                background-color: $asdcsColorEmphasis;
+                @include transition(background-color $asdcsTransitionTime ease);
+            }
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 14px;
+            line-height: 40px;
+            vertical-align: middle;
+            height: 40px;
+            padding: 0 10px 0 15px;
+            background-color: $asdcsColorOne;
+            border-bottom: 1px solid $asdcsColorOneLight;
+            color: $asdcsColorOneDark;
+            text-transform: uppercase;
+            cursor: pointer;
+            div.asdcs-designer-icon {
+                padding-top: 7px;
+                display: inline;
+                float: right;
+                fill: $asdcsColorDarkGrey;
+                &:hover {
+                    fill: $asdcsColorGrey;
+                    @include transition(fill $asdcsTransitionTime ease);
+                }
+            }
+            @include noselect();
+        }
+    }
+}

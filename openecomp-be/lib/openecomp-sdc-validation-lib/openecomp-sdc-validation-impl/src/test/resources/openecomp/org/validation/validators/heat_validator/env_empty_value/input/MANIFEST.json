@@ -1,0 +1,17 @@
+{
+  "name": "hot-mog",
+  "description": "HOT template to create hot mog server",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "env_empty_value.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "env_empty_value.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    }
+  ]
+}

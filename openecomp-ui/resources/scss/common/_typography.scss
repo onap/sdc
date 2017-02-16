@@ -1,0 +1,115 @@
+/* Fonts */
+@font-face {
+  font-family: Omnes-Light;
+  src: url('../fonts/omnes-att-light.otf');
+}
+
+@font-face {
+  font-family: Omnes-Regular;
+  src: url('../fonts/omnes-att-regular.otf');
+}
+
+@font-face {
+  font-family: Omnes-Medium;
+  src: url('../fonts/omnes-att-medium.otf');
+}
+
+@font-face {
+  font-family: Omnes-Bold;
+  src: url('../fonts/omnes-att-bold.otf');
+}
+
+$base-font-regular: omnes-regular, "Omnes-Regular";
+$base-font-light: omnes-light, "Omnes-Light";
+$base-font-medium: omnes-medium, "Omnes-Medium";
+$base-font-bold: omnes-bold, "Omnes-Bold";
+
+$heading-font-1: 36px;
+$heading-font-2: 24px;
+$heading-font-3: 20px;
+$heading-font-4: 18px;
+$heading-font-5: 16px;
+
+$body-font-1: 14px;
+$body-font-2: 13px;
+$body-font-3: 12px;
+
+$icon-font-size: 10px;
+$icon-font-family: FontAwesome;
+$radio-font-family: Arial;
+
+.heading-1 {
+  font-family: $base-font-light;
+  font-size: $heading-font-1;
+}
+
+.heading-2 {
+  font-family: $base-font-light;
+  font-size: $heading-font-2;
+}
+
+.heading-3-light {
+  font-family: $base-font-light;
+  font-size: $heading-font-3;
+}
+
+.heading-3 {
+  font-family: $base-font-regular;
+  font-size: $heading-font-3;
+}
+
+.heading-3-medium {
+  font-family: $base-font-medium;
+  font-size: $heading-font-3;
+}
+
+.heading-4 {
+  font-family: $base-font-regular;
+  font-size: $heading-font-4;
+}
+
+.heading-4-medium {
+  font-family: $base-font-medium;
+  font-size: $heading-font-4;
+}
+
+.heading-5 {
+  font-family: $base-font-regular;
+  font-size: $heading-font-5;
+}
+
+.heading-5-medium {
+  font-family: $base-font-medium;
+  font-size: $heading-font-5;
+}
+
+.body-1 {
+  font-family: $base-font-regular;
+  font-size: $body-font-1;
+}
+
+.body-1-medium {
+  font-family: $base-font-medium;
+  font-size: $body-font-1;
+}
+
+.body-2 {
+  font-family: $base-font-regular;
+  font-size: $body-font-2;
+}
+
+.body-2-medium {
+  font-family: $base-font-medium;
+  font-size: $body-font-2;
+}
+
+.body-3 {
+  font-family: $base-font-regular;
+  font-size: $body-font-3;
+}
+
+.body-3-medium {
+  font-family: $base-font-medium;
+  font-size: $body-font-3;
+}
+

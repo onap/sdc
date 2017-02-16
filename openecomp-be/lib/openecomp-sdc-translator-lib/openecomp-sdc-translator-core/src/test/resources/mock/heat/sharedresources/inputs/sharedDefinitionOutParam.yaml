@@ -1,0 +1,45 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+      FSB_1_image:
+        type: string
+        label: MME_FSB1
+        description: MME_FSB1_15B-CP04-r5a01
+      fsb1-flavor:
+        type: string
+        label: FSB1_flavor
+        description: FSB1_flavor
+      fsb_zone:
+        type: string
+        label: FSB1_zone
+        description: FSB1_zone
+      fsb1-name:
+        type: string
+        label: FSB1_name
+        description: FSB1_name
+resources:
+  server_pcm_001:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: fsb1-name }
+        flavor: { get_param: fsb1-flavor }
+        availability_zone: { get_param: fsb_zone }
+
+  server_pcm_002:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: fsb1-name }
+        flavor: { get_param: fsb1-flavor }
+        availability_zone: { get_param: fsb_zone }
+
+outputs:
+    server_pcm_001_id:
+         value: {get_resource: server_pcm_001}
+    server_pcm_002_id:
+        value: {get_resource: server_pcm_002}
+    out_id1:
+        value: {get_param: oam_net_gw}
+    out_id2:
+        value: "static value"

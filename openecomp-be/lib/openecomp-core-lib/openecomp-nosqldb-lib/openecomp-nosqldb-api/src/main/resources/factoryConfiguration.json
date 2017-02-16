@@ -1,0 +1,4 @@
+{
+  "org.openecomp.core.dao.UniqueValueDaoFactory": "org.openecomp.core.dao.impl.UniqueValueDaoFactoryImpl",
+  "org.openecomp.core.nosqldb.factory.NoSqlDbFactory": "org.openecomp.core.nosqldb.impl.cassandra.CassandraNoSqlDbFactoryImpl"
+}

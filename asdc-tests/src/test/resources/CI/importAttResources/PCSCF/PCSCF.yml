@@ -1,0 +1,13 @@
+att.nodes.ims.PCSCF:
+  derived_from: tosca.nodes.SoftwareComponent
+  capabilities:
+    pcscf_endpoint:
+      type: tosca.capabilities.Endpoint.Public
+      relationship: tosca.relationships.ConnectTo
+      occurrences: [0, UNBOUNDED]  
+      description: Connection with one ore more UAs
+  requirements:
+    icscf_endpoint: 
+      capability: tosca.capabilities.Endpoint  
+      node: att.nodes.ims.ICSCF
+      relationship: tosca.relationships.ConnectsTo

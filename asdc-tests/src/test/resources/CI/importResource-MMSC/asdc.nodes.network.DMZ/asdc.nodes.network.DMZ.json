@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.network.DMZ.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.network.DMZ",
+  "description": "Represents DMZ network.",
+  "resourceIconPath": "network",
+  "category": "Generic/Network Elements",
+  "tags": [
+    "asdc.nodes.network.DMZ", "Network", "DMZ", "Cloud"
+  ]
+}
+

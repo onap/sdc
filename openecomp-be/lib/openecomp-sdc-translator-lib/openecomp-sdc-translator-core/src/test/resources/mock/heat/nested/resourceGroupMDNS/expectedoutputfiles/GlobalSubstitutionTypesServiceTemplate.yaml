@@ -1,0 +1,153 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.dns_nested_01:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF module instance
+      name_with_index:
+        type: string
+        description: name parameter which will include the index value
+      dns_int_bearer_ips:
+        type: list
+        description: DNS Bearer IP list
+        entry_schema:
+          type: string
+      vnf_name:
+        type: string
+        description: Unique name for this VF instance
+      index:
+        type: float
+        description: index parameter
+      security_group:
+        type: string
+        description: security group
+      oam_protected_net_name:
+        type: string
+        description: OAM network where instaces will connect
+      dns_oam_protected_ips:
+        type: list
+        description: DNS OAM IP list
+        entry_schema:
+          type: string
+      dns_key:
+        type: string
+        description: server key
+      int_bearer_net_name:
+        type: string
+        description: Bearer network where instaces will connect
+      route_eth0:
+        type: string
+        description: OAM network routes
+      dns_names:
+        type: list
+        description: server name
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: Unique ID for this VF instance
+      availability_zone_0:
+        type: string
+        description: availability zone ID or Name
+      dns_image_name:
+        type: string
+        description: server image
+      dns_int_bearer_ipv6_ips:
+        type: list
+        description: fixed IPv6 assignment for VM's on the Bearer network
+        entry_schema:
+          type: string
+      dns_flavor_name:
+        type: string
+        description: server flavor
+    requirements:
+    - link_dns_oam_protected_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_dns_int_bearer_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_dns_servers:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      host_dns_servers:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_dns_int_bearer_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_dns_oam_protected_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_dns_servers:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_dns_servers:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_dns_servers:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_dns_servers:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED

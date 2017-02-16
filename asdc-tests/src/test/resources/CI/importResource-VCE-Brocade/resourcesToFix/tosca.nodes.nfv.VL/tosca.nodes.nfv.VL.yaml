@@ -1,0 +1,16 @@
+##################################################################
+  ############## TOSCA   VL Node Type        #######################
+  ##################################################################
+  tosca.nodes.nfv.VL: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      vendor: 
+        type: string
+        required: false
+        description: name of the vendor who provides this VL
+        
+    capabilities: 
+      virtuallinkable: 
+        type: tosca.capabilities.nfv.VirtualLinkable
+        occurrences: [1, UNBOUNDED] # this is default
+  

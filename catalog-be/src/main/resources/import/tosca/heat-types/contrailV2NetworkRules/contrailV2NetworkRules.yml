@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ContrailV2NetworkRuleGlobalType
+  template_version: 1.0.0
+description: Contrail V2 Network Rule Global Types
+imports:
+  common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: A symbolic name for this contrail v2 network rule
+        required: false
+        status: SUPPORTED
+      network_policy_entries:
+        type: org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList
+        description: A symbolic name for this contrail v2 network rule
+        required: false
+        status: SUPPORTED
+    attributes:
+      fq_name:
+        type: string
+        description: fq_name
+        status: SUPPORTED
+    requirements:
+    - network:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+  <context:annotation-config />
+  <aop:aspectj-autoproxy proxy-target-class="true" />
+
+  <context:component-scan
+    base-package="org.openecomp.sdc.be.dao.impl,	   
+		org.openecomp.sdc.be.dao.es,
+		org.openecomp.sdc.be.resources.impl,			
+		org.openecomp.sdc.be.dao.neo4j,
+		org.openecomp.sdc.be.model.operations.impl,
+		org.openecomp.sdc.be.model.cache,
+		org.openecomp.sdc.be.dao.titan,
+		org.openecomp.sdc.be.user, 
+		org.openecomp.sdc.be.impl,
+		org.openecomp.sdc.be.auditing.impl,
+		org.openecomp.sdc.be.components.impl,
+		org.openecomp.sdc.be.components.distribution.engine,
+		org.openecomp.sdc.be.distribution,
+		org.openecomp.sdc.be.components.clean,
+		org.openecomp.sdc.be.dao.cassandra,
+		org.openecomp.sdc.be.switchover.detector,
+		org.openecomp.sdc.be.tosca,
+		org.openecomp.sdc.be.externalapi.servlet
+		">
+		
+   </context:component-scan>
+
+  <bean id="resourceImportManager" class="org.openecomp.sdc.be.components.impl.ResourceImportManager" />
+  <bean id="capabilityTypeImportManager" class="org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager" />
+  <bean id="servletUtils" class="org.openecomp.sdc.be.impl.ServletUtils" />
+  <bean id="resourceBusinessLogic" class="org.openecomp.sdc.be.components.impl.ResourceBusinessLogic" />
+  <bean id="serviceBusinessLogic" class="org.openecomp.sdc.be.components.impl.ServiceBusinessLogic" />
+  <bean id="productBusinessLogic" class="org.openecomp.sdc.be.components.impl.ProductBusinessLogic" />
+  <bean id="artifactBusinessLogic" class="org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic" />
+  <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic" />
+  <bean id="serviceComponentInstanceBusinessLogic" class="org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic" />
+  <bean id="productComponentInstanceBusinessLogic" class="org.openecomp.sdc.be.components.impl.ProductComponentInstanceBusinessLogic" />
+  <bean id="vfComponentInstanceBusinessLogic" class="org.openecomp.sdc.be.components.impl.VFComponentInstanceBusinessLogic" />
+  <bean id="transactionManager" class="org.openecomp.sdc.common.transaction.mngr.TransactionManager" />
+  <bean id="userBusinessLogic" class="org.openecomp.sdc.be.user.UserBusinessLogic" />
+  <bean id="elementsBusinessLogic" class="org.openecomp.sdc.be.components.impl.ElementBusinessLogic" />
+  <bean id="propertyBusinessLogic" class="org.openecomp.sdc.be.components.impl.PropertyBusinessLogic" />
+  <bean id="auditingManager" class="org.openecomp.sdc.be.auditing.impl.AuditingManager" />
+  <bean id="distributionBusinessLogic" class="org.openecomp.sdc.be.distribution.DistributionBusinessLogic" />
+  <bean id="interfaceLifecycleTypeImportManager" class="org.openecomp.sdc.be.components.impl.InterfaceLifecycleTypeImportManager" />
+  <bean id="distributionMonitoringBusinessLogic" class="org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic" />
+  <bean id="additionalInformationBusinessLogic" class="org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic" />
+  <bean id="distribution-engine-cluster-health" class="org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth" />
+  <bean id="categoriesImportManager" class="org.openecomp.sdc.be.components.impl.CategoriesImportManager" />
+  <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.externalapi.servlet.AssetMetadataConverter" />
+  
+  
+  
+  <util:properties id="elasticsearchConfig" location="file:${config.home}/elasticsearch.yml" />
+  
+</beans>

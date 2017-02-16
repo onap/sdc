@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Artifacts" >
+	<test name="Artifacts">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ArtifactServletTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateHeatArtFieldsTypes" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.PlaceHolderValidations" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateArtResponse" />
+			<class name="org.openecomp.sdc.ci.tests.execute.artifacts.CrudArt" />
+		</classes>
+	</test>
+</suite> <!-- Artifacts -->

@@ -1,0 +1,12 @@
+{
+  "name": "vEP_JSA_Net",
+  "description": "Version 2.0 02-09-2016 (Authors: John Doe, user PROD)",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "sharedDefinitionOutParam.yaml",
+      "type": "HEAT",
+      "isBase": "true"
+    }
+  ]
+}

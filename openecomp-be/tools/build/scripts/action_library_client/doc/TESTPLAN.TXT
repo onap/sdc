@@ -1,0 +1,10 @@
+1.  Unit + integration tests.
+2.  Reading credentials from configfile.
+3.  Writing output to logfile, response to stdout.
+4.  Reading JSON from stdin.
+5.  TLS URL, success, failure (if Python checks, and with insecure mode enabled).
+6.  Auth failure.
+7.  Print help, version.
+8.  Python 2.6/2.7 sanity (whichever isn't primary)
+9.  Run BASH example scripts.
+10. Run Python example script(s).

@@ -1,0 +1,1646 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    pcrf_sgi_sy_net_ips:
+      label: Sgi Sy network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Sgi Sy network ips
+      default:
+      - 107.239.26.131
+      - 107.239.26.132
+      - 107.239.26.133
+      - 107.239.26.134
+      entry_schema:
+        type: string
+    pcrf_ppd_server_names:
+      label: PCRF PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF PD instance
+      default:
+      - ZRDM1PCRF01PPD001
+      - ZRDM1PCRF01PPD002
+      - ZRDM1PCRF01PPD003
+      - ZRDM1PCRF01PPD004
+      entry_schema:
+        type: string
+    pcrf_oam_vol_size:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the Cinder volume
+      default: 500
+    pcrf_oam_vol_name_2:
+      label: OAM volume name 2
+      hidden: false
+      immutable: false
+      type: string
+      description: Assigning name to volume
+      default: sde1-pcrfx01-oam001-vol-2
+    pcrf_pps_flavor_name:
+      label: PCRF PS flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF PS instance
+      default: lc.3xlarge
+    pcrf_psm_server_names:
+      label: PCRF SM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF SM instance
+      default:
+      - ZRDM1PCRF01PSM001
+      - ZRDM1PCRF01PSM002
+      - ZRDM1PCRF01PSM003
+      - ZRDM1PCRF01PSM004
+      - ZRDM1PCRF01PSM005
+      - ZRDM1PCRF01PSM006
+      - ZRDM1PCRF01PSM007
+      - ZRDM1PCRF01PSM008
+      - ZRDM1PCRF01PSM009
+      - ZRDM1PCRF01PSM010
+      - ZRDM1PCRF01PSM011
+      - ZRDM1PCRF01PSM012
+      entry_schema:
+        type: string
+    pcrf_oam_vol_name_1:
+      label: OAM volume name 1
+      hidden: false
+      immutable: false
+      type: string
+      description: Assigning name to volume
+      default: sde1-pcrfx01-oam001-vol-1
+    pcrf_sy_net_name:
+      label: Sy network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sy network name
+      default: Mobisupport-25193-I-INT1_cor_pcrf_sy_net_0
+    pcrf_pcm_vol_size:
+      label: Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the Cinder volume
+      default: 50
+    pcrf_vnf_id:
+      label: PCRF VNF Id
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF VNF Id
+      default: 730797234b4a40aa99335157b02871cd
+    pcrf_pcm_image_name:
+      label: PCRF CM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+      default: PCRF_8.995-ATTM1.0.3.qcow2
+    pcrf_oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+      default: MNS-25180-L-01_oam_protected_net_0
+    pcrf_sd_net_ips:
+      label: Sd network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Sd network ips
+      default:
+      - 107.239.24.99
+      - 107.239.24.100
+      - 107.239.24.101
+      - 107.239.24.102
+      entry_schema:
+        type: string
+    pcrf_sp_net_ips:
+      label: Sp network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Sp network ips
+      default:
+      - 107.239.24.75
+      - 107.239.24.76
+      - 107.239.24.77
+      - 107.239.24.78
+      entry_schema:
+        type: string
+    pcrf_cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+      default: 255.255.255.0
+    pcrf_pcm_volume_silver:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend for PCM
+      default: Silver
+    pcrf_rx_net_ips:
+      label: Rx network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Rx network ips
+      default:
+      - 107.239.24.91
+      - 107.239.24.92
+      - 107.239.24.93
+      - 107.239.24.94
+      entry_schema:
+        type: string
+    pcrf_sgi_sy_net_name:
+      label: Sgi Sy network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sgi Sy network name
+      default: Mobisupport-25193-I-INT1_sgi_pcrf_sy_net_0
+    pcrf_sd_net_name:
+      label: Sd network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sd network name
+      default: Mobisupport-25193-I-INT1_cor_pcrf_sd_net_0
+    pcrf_pcm_volume_id_1:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+      default: 3438a3fe-1241-4390-80f2-d0b86238c40e
+    pcrf_oam_volume_silver-2:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend for OAM2
+      default: Silver
+    pcrf_oam_volume_silver-1:
+      label: vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend for OAM1
+      default: Silver
+    pcrf_oam_flavor_name:
+      label: PCRF OAM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF OAM instance
+      default: lc.4xlarge4
+    pcrf_pcm_server_names:
+      label: PCRF CM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF CM instance
+      default:
+      - ZRDM1PCRF01PCM001
+      entry_schema:
+        type: string
+    pcrf_cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+      default: Mobisupport-25193-I-INT1_int_pcrf_net_0
+    pcrf_oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+      default: 255.255.248.0
+    pcrf_sgi_sy_net_mask:
+      label: Sgi Sy network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sgi Sy network mask
+      default: 255.255.255.248
+    pcrf_pps_image_name:
+      label: PCRF PS image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PS image name
+      default: PCRF_8.995-ATTM1.0.3.qcow2
+    pcrf_lb_internal_vip:
+      label: CPS Internal LB VIP
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Internal LB VIP
+      default: 172.26.16.114
+    pcrf_pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+      default: lc.2xlarge4
+    pcrf_ppd_image_name:
+      label: PCRF PD image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PD image name
+      default: PCRF_8.995-ATTM1.0.3.qcow2
+    pcrf_pcm_vol_name_1:
+      label: PCM volume name
+      hidden: false
+      immutable: false
+      type: string
+      description: Assigning name to volume
+      default: sde1-pcrfx01-pcm001-vol-1
+    pcrf_sp_net_mask:
+      label: Sp network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sp network mask
+      default: 255.255.255.248
+    pcrf_psm_flavor_name:
+      label: PCRF SM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF SM instance
+      default: lc.4xlarge4
+    pcrf_psm_image_name:
+      label: PCRF SM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF SM image name
+      default: PCRF_8.995-ATTM1.0.3.qcow2
+    pcrf_oam_net_ips:
+      label: OAM network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM network ips
+      default:
+      - 107.239.64.121
+      entry_schema:
+        type: string
+    pcrf_gx_net_mask:
+      label: Gx network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Gx network mask
+      default: 255.255.255.248
+    pcrf_oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+      default: 107.239.64.1
+    pcrf_gx_net_ips:
+      label: Gx network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Gx network ips
+      default:
+      - 107.239.24.67
+      - 107.239.24.68
+      - 107.239.24.69
+      - 107.239.24.70
+      entry_schema:
+        type: string
+    pcrf_rx_net_name:
+      label: Rx network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network name
+      default: Mobisupport-25193-I-INT1_cor_pcrf_rx_net_0
+    pcrf_oam_image_name:
+      label: PCRF OAM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF OAM image name
+      default: PCRF_8.995-ATTM1.0.3.qcow2
+    pcrf_cps_net_ips:
+      label: CPS network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: CPS network ips
+      default:
+      - 172.26.16.113
+      entry_schema:
+        type: string
+    pcrf_oam_volume_id_1:
+      label: CPS OAM 001 Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS OAM 001 Cinder Volumes
+      default: a4aa05fb-fcdc-457b-8077-6845fdfc3257
+    pcrf_oam_volume_id_2:
+      label: CPS OAM 002 Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS OAM 002 Cinder Volumes
+      default: 93d8fc1f-f1c3-4933-86b2-039881ee910f
+    pcrf_pps_server_names:
+      label: PCRF PS server names
+      hidden: false
+      immutable: false
+      type: list
+      description: PCRF PS server names
+      default:
+      - ZRDM1PCRF01PPS001
+      - ZRDM1PCRF01PPS002
+      - ZRDM1PCRF01PPS003
+      - ZRDM1PCRF01PPS004
+      - ZRDM1PCRF01PPS005
+      - ZRDM1PCRF01PPS006
+      entry_schema:
+        type: string
+    pcrf_ppd_flavor_name:
+      label: PCRF PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF PD instance
+      default: lc.4xlarge4
+    pcrf_sy_net_mask:
+      label: Sy network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sy network mask
+      default: 255.255.255.248
+    pcrf_arbiter_vip:
+      label: OAM Arbiter LB VIP
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM Arbiter LB VIP
+      default: 172.26.16.115
+    pcrf_lb_management_vip:
+      label: CPS OAM LB VIP
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS OAM LB VIP
+      default: 107.239.64.123
+    pcrf_sy_net_ips:
+      label: Sy network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: Sy network ips
+      default:
+      - 107.239.24.83
+      - 107.239.24.84
+      - 107.239.24.85
+      - 107.239.24.86
+      entry_schema:
+        type: string
+    pcrf_sd_net_mask:
+      label: Sd network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sd network mask
+      default: 255.255.255.248
+    pcrf_gx_net_name:
+      label: Gx network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Gx network name
+      default: Mobisupport-25193-I-INT1_cor_pcrf_gx_net_0
+    pcrf_sp_net_name:
+      label: Sp network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sp network name
+      default: Mobisupport-25193-I-INT1_cor_pcrf_sp_net_0
+    pcrf_oam_server_names:
+      label: PCRF OAM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF OAM instance
+      default:
+      - ZRDM1PCRF01OAM001
+      - ZRDM1PCRF01OAM002
+      entry_schema:
+        type: string
+    pcrf_security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+      default: nimbus_security_group
+    pcrf_rx_net_mask:
+      label: Rx network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network mask
+      default: 255.255.255.248
+  node_templates:
+    server_pcrf_psm_012:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 11
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 11
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_pcm_flavor_name:
+          get_input: pcrf_pcm_flavor_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 0
+        service_template_filter:
+          substitute_service_template: nested-pcm_v1.0ServiceTemplate.yaml
+        pcrf_pcm_image_name:
+          get_input: pcrf_pcm_image_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 0
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pcm_server_name:
+          get_input:
+          - pcrf_pcm_server_names
+          - 0
+        pcrf_pcm_volume_id:
+          get_input: pcrf_pcm_volume_id_1
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+      requirements:
+      - local_storage_pcrf_server_pcm:
+          capability: tosca.capabilities.Attachment
+          node: pcrf_pcm_volume_id_1
+          relationship: tosca.relationships.AttachesTo
+    pcrf_oam_volume_id_11:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: pcrf_oam_volume_silver-1
+        size: '(get_input : pcrf_oam_vol_size) * 1024'
+        name:
+          get_input: pcrf_oam_vol_name_1
+    server_pcrf_oam_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v1.0
+      directives:
+      - substitutable
+      properties:
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_oam_flavor_name:
+          get_input: pcrf_oam_flavor_name
+        pcrf_oam_server_name:
+          get_input:
+          - pcrf_oam_server_names
+          - 0
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 0
+        service_template_filter:
+          substitute_service_template: nested-oam_v1.0ServiceTemplate.yaml
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 0
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_arbiter_vip:
+          get_input: pcrf_arbiter_vip
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_oam_volume_id:
+          get_input: pcrf_oam_volume_id_1
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_oam_image_name:
+          get_input: pcrf_oam_image_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+      requirements:
+      - local_storage_pcrf_server_oam:
+          capability: tosca.capabilities.Attachment
+          node: pcrf_oam_volume_id_11
+          relationship: tosca.relationships.AttachesTo
+    server_pcrf_oam_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v1.0
+      directives:
+      - substitutable
+      properties:
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_oam_flavor_name:
+          get_input: pcrf_oam_flavor_name
+        pcrf_oam_server_name:
+          get_input:
+          - pcrf_oam_server_names
+          - 1
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 1
+        service_template_filter:
+          substitute_service_template: nested-oam_v1.0ServiceTemplate.yaml
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 1
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_arbiter_vip:
+          get_input: pcrf_arbiter_vip
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_oam_volume_id:
+          get_input: pcrf_oam_volume_id_2
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_oam_image_name:
+          get_input: pcrf_oam_image_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+      requirements:
+      - local_storage_pcrf_server_oam:
+          capability: tosca.capabilities.Attachment
+          node: pcrf_oam_volume_id_22
+          relationship: tosca.relationships.AttachesTo
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: server_pcrf_oam_001
+          relationship: tosca.relationships.DependsOn
+    server_pcrf_ppd_003:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_ppd_image_name:
+          get_input: pcrf_ppd_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_sp_net_ip:
+          get_input:
+          - pcrf_sp_net_ips
+          - 2
+        pcrf_ppd_server_name:
+          get_input:
+          - pcrf_ppd_server_names
+          - 2
+        pcrf_gx_net_ip:
+          get_input:
+          - pcrf_gx_net_ips
+          - 2
+        pcrf_sy_net_name:
+          get_input: pcrf_sy_net_name
+        pcrf_sp_net_mask:
+          get_input: pcrf_sp_net_mask
+        service_template_filter:
+          substitute_service_template: nested-ppd_v1.0ServiceTemplate.yaml
+        pcrf_sd_net_ip:
+          get_input:
+          - pcrf_sd_net_ips
+          - 2
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 2
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_gx_net_mask:
+          get_input: pcrf_gx_net_mask
+        pcrf_sgi_sy_net_name:
+          get_input: pcrf_sgi_sy_net_name
+        pcrf_sd_net_name:
+          get_input: pcrf_sd_net_name
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_rx_net_name:
+          get_input: pcrf_rx_net_name
+        pcrf_rx_net_ip:
+          get_input:
+          - pcrf_rx_net_ips
+          - 2
+        pcrf_sy_net_ip:
+          get_input:
+          - pcrf_sy_net_ips
+          - 2
+        pcrf_sgi_sy_net_ip:
+          get_input:
+          - pcrf_sgi_sy_net_ips
+          - 2
+        pcrf_ppd_flavor_name:
+          get_input: pcrf_ppd_flavor_name
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 2
+        pcrf_sy_net_mask:
+          get_input: pcrf_sy_net_mask
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_lb_management_vip:
+          get_input: pcrf_lb_management_vip
+        pcrf_sgi_sy_net_mask:
+          get_input: pcrf_sgi_sy_net_mask
+        pcrf_lb_internal_vip:
+          get_input: pcrf_lb_internal_vip
+        pcrf_sd_net_mask:
+          get_input: pcrf_sd_net_mask
+        pcrf_gx_net_name:
+          get_input: pcrf_gx_net_name
+        pcrf_sp_net_name:
+          get_input: pcrf_sp_net_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+        pcrf_rx_net_mask:
+          get_input: pcrf_rx_net_mask
+    server_pcrf_ppd_004:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_ppd_image_name:
+          get_input: pcrf_ppd_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_sp_net_ip:
+          get_input:
+          - pcrf_sp_net_ips
+          - 3
+        pcrf_ppd_server_name:
+          get_input:
+          - pcrf_ppd_server_names
+          - 3
+        pcrf_gx_net_ip:
+          get_input:
+          - pcrf_gx_net_ips
+          - 3
+        pcrf_sy_net_name:
+          get_input: pcrf_sy_net_name
+        pcrf_sp_net_mask:
+          get_input: pcrf_sp_net_mask
+        service_template_filter:
+          substitute_service_template: nested-ppd_v1.0ServiceTemplate.yaml
+        pcrf_sd_net_ip:
+          get_input:
+          - pcrf_sd_net_ips
+          - 3
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 3
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_gx_net_mask:
+          get_input: pcrf_gx_net_mask
+        pcrf_sgi_sy_net_name:
+          get_input: pcrf_sgi_sy_net_name
+        pcrf_sd_net_name:
+          get_input: pcrf_sd_net_name
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_rx_net_name:
+          get_input: pcrf_rx_net_name
+        pcrf_rx_net_ip:
+          get_input:
+          - pcrf_rx_net_ips
+          - 3
+        pcrf_sy_net_ip:
+          get_input:
+          - pcrf_sy_net_ips
+          - 3
+        pcrf_sgi_sy_net_ip:
+          get_input:
+          - pcrf_sgi_sy_net_ips
+          - 3
+        pcrf_ppd_flavor_name:
+          get_input: pcrf_ppd_flavor_name
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 3
+        pcrf_sy_net_mask:
+          get_input: pcrf_sy_net_mask
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_lb_management_vip:
+          get_input: pcrf_lb_management_vip
+        pcrf_sgi_sy_net_mask:
+          get_input: pcrf_sgi_sy_net_mask
+        pcrf_lb_internal_vip:
+          get_input: pcrf_lb_internal_vip
+        pcrf_sd_net_mask:
+          get_input: pcrf_sd_net_mask
+        pcrf_gx_net_name:
+          get_input: pcrf_gx_net_name
+        pcrf_sp_net_name:
+          get_input: pcrf_sp_net_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+        pcrf_rx_net_mask:
+          get_input: pcrf_rx_net_mask
+    pcrf_pcm_volume_id_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: pcrf_pcm_volume_silver
+        size: '(get_input : pcrf_pcm_vol_size) * 1024'
+        name:
+          get_input: pcrf_pcm_vol_name_1
+    server_pcrf_ppd_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_ppd_image_name:
+          get_input: pcrf_ppd_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_sp_net_ip:
+          get_input:
+          - pcrf_sp_net_ips
+          - 0
+        pcrf_ppd_server_name:
+          get_input:
+          - pcrf_ppd_server_names
+          - 0
+        pcrf_gx_net_ip:
+          get_input:
+          - pcrf_gx_net_ips
+          - 0
+        pcrf_sy_net_name:
+          get_input: pcrf_sy_net_name
+        pcrf_sp_net_mask:
+          get_input: pcrf_sp_net_mask
+        service_template_filter:
+          substitute_service_template: nested-ppd_v1.0ServiceTemplate.yaml
+        pcrf_sd_net_ip:
+          get_input:
+          - pcrf_sd_net_ips
+          - 0
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 0
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_gx_net_mask:
+          get_input: pcrf_gx_net_mask
+        pcrf_sgi_sy_net_name:
+          get_input: pcrf_sgi_sy_net_name
+        pcrf_sd_net_name:
+          get_input: pcrf_sd_net_name
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_rx_net_name:
+          get_input: pcrf_rx_net_name
+        pcrf_rx_net_ip:
+          get_input:
+          - pcrf_rx_net_ips
+          - 0
+        pcrf_sy_net_ip:
+          get_input:
+          - pcrf_sy_net_ips
+          - 0
+        pcrf_sgi_sy_net_ip:
+          get_input:
+          - pcrf_sgi_sy_net_ips
+          - 0
+        pcrf_ppd_flavor_name:
+          get_input: pcrf_ppd_flavor_name
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 0
+        pcrf_sy_net_mask:
+          get_input: pcrf_sy_net_mask
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_lb_management_vip:
+          get_input: pcrf_lb_management_vip
+        pcrf_sgi_sy_net_mask:
+          get_input: pcrf_sgi_sy_net_mask
+        pcrf_lb_internal_vip:
+          get_input: pcrf_lb_internal_vip
+        pcrf_sd_net_mask:
+          get_input: pcrf_sd_net_mask
+        pcrf_gx_net_name:
+          get_input: pcrf_gx_net_name
+        pcrf_sp_net_name:
+          get_input: pcrf_sp_net_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+        pcrf_rx_net_mask:
+          get_input: pcrf_rx_net_mask
+    server_pcrf_ppd_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_ppd_image_name:
+          get_input: pcrf_ppd_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_sp_net_ip:
+          get_input:
+          - pcrf_sp_net_ips
+          - 1
+        pcrf_ppd_server_name:
+          get_input:
+          - pcrf_ppd_server_names
+          - 1
+        pcrf_gx_net_ip:
+          get_input:
+          - pcrf_gx_net_ips
+          - 1
+        pcrf_sy_net_name:
+          get_input: pcrf_sy_net_name
+        pcrf_sp_net_mask:
+          get_input: pcrf_sp_net_mask
+        service_template_filter:
+          substitute_service_template: nested-ppd_v1.0ServiceTemplate.yaml
+        pcrf_sd_net_ip:
+          get_input:
+          - pcrf_sd_net_ips
+          - 1
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_oam_net_name:
+          get_input: pcrf_oam_net_name
+        pcrf_oam_net_ip:
+          get_input:
+          - pcrf_oam_net_ips
+          - 1
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_gx_net_mask:
+          get_input: pcrf_gx_net_mask
+        pcrf_sgi_sy_net_name:
+          get_input: pcrf_sgi_sy_net_name
+        pcrf_sd_net_name:
+          get_input: pcrf_sd_net_name
+        pcrf_oam_net_gw:
+          get_input: pcrf_oam_net_gw
+        pcrf_rx_net_name:
+          get_input: pcrf_rx_net_name
+        pcrf_rx_net_ip:
+          get_input:
+          - pcrf_rx_net_ips
+          - 1
+        pcrf_sy_net_ip:
+          get_input:
+          - pcrf_sy_net_ips
+          - 1
+        pcrf_sgi_sy_net_ip:
+          get_input:
+          - pcrf_sgi_sy_net_ips
+          - 1
+        pcrf_ppd_flavor_name:
+          get_input: pcrf_ppd_flavor_name
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 1
+        pcrf_sy_net_mask:
+          get_input: pcrf_sy_net_mask
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_oam_net_mask:
+          get_input: pcrf_oam_net_mask
+        pcrf_lb_management_vip:
+          get_input: pcrf_lb_management_vip
+        pcrf_sgi_sy_net_mask:
+          get_input: pcrf_sgi_sy_net_mask
+        pcrf_lb_internal_vip:
+          get_input: pcrf_lb_internal_vip
+        pcrf_sd_net_mask:
+          get_input: pcrf_sd_net_mask
+        pcrf_gx_net_name:
+          get_input: pcrf_gx_net_name
+        pcrf_sp_net_name:
+          get_input: pcrf_sp_net_name
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+        pcrf_rx_net_mask:
+          get_input: pcrf_rx_net_mask
+    server_pcrf_psm_003:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 2
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 2
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_004:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 3
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 3
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 0
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 0
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 1
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 1
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_007:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 6
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 6
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_008:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 7
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 7
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_005:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 4
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 4
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_006:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 5
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 5
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    pcrf_oam_volume_id_22:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: pcrf_oam_volume_silver-2
+        size: '(get_input : pcrf_oam_vol_size) * 1024'
+        name:
+          get_input: pcrf_oam_vol_name_2
+    server_pcrf_psm_009:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 8
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 8
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 0
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 0
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_002:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 1
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 1
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_003:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 2
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 2
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_004:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 3
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 3
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_005:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 4
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 4
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_pps_006:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 5
+        service_template_filter:
+          substitute_service_template: nested-pps_v1.0ServiceTemplate.yaml
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_pps_image_name:
+          get_input: pcrf_pps_image_name
+        pcrf_pps_flavor_name:
+          get_input: pcrf_pps_flavor_name
+        pcrf_pps_server_name:
+          get_input:
+          - pcrf_pps_server_names
+          - 5
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_010:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 9
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 9
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+    server_pcrf_psm_011:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-psm_v1.0
+      directives:
+      - substitutable
+      properties:
+        pcrf_cps_net_ip:
+          get_input:
+          - pcrf_cps_net_ips
+          - 10
+        service_template_filter:
+          substitute_service_template: nested-psm_v1.0ServiceTemplate.yaml
+        pcrf_psm_flavor_name:
+          get_input: pcrf_psm_flavor_name
+        pcrf_psm_image_name:
+          get_input: pcrf_psm_image_name
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        pcrf_vnf_id:
+          get_input: pcrf_vnf_id
+        pcrf_cps_net_name:
+          get_input: pcrf_cps_net_name
+        pcrf_cps_net_mask:
+          get_input: pcrf_cps_net_mask
+        pcrf_psm_server_name:
+          get_input:
+          - pcrf_psm_server_names
+          - 10
+        pcrf_security_group_name:
+          get_input: pcrf_security_group_name
+  groups:
+    hot-nimbus-ppd_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-ppd_v1.0.yaml
+        description: heat template that creates PCRF Policy Director stack
+      members:
+      - server_pcrf_ppd_003
+      - server_pcrf_ppd_004
+      - server_pcrf_ppd_001
+      - server_pcrf_ppd_002
+    hot-nimbus-pcm_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v1.0.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcrf_pcm_001
+    hot-nimbus-oam_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-oam_v1.0.yaml
+        description: heat template that creates multiple PCRF OAM nodes stack
+      members:
+      - server_pcrf_oam_001
+      - server_pcrf_oam_002
+    hot-nimbus-oam-volumes_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-oam-volumes_v1.0.yaml
+      members:
+      - pcrf_oam_volume_id_11
+      - pcrf_oam_volume_id_22
+    hot-nimbus-psm_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-psm_v1.0.yaml
+        description: heat template that creates PCRF Session Manager stack
+      members:
+      - server_pcrf_psm_003
+      - server_pcrf_psm_004
+      - server_pcrf_psm_001
+      - server_pcrf_psm_012
+      - server_pcrf_psm_002
+      - server_pcrf_psm_007
+      - server_pcrf_psm_008
+      - server_pcrf_psm_005
+      - server_pcrf_psm_006
+      - server_pcrf_psm_009
+      - server_pcrf_psm_010
+      - server_pcrf_psm_011
+    hot-nimbus-pcm-volumes_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm-volumes_v1.0.yaml
+      members:
+      - pcrf_pcm_volume_id_1
+    hot-nimbus-pps_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pps_v1.0.yaml
+        description: heat template that creates PCRF Policy Server stack
+      members:
+      - server_pcrf_pps_001
+      - server_pcrf_pps_002
+      - server_pcrf_pps_003
+      - server_pcrf_pps_004
+      - server_pcrf_pps_005
+      - server_pcrf_pps_006
+  outputs:
+    pcrf_oam_volume_id_1:
+      description: the oam 001 volume id
+      value: pcrf_oam_volume_id_11
+    pcrf_oam_volume_id_2:
+      description: the oam 002 volume id
+      value: pcrf_oam_volume_id_22
+    pcrf_pcm_volume_id_1:
+      description: the pcrf_pcm_volume_id
+      value: pcrf_pcm_volume_id_1

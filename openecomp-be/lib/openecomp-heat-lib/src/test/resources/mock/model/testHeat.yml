@@ -1,0 +1,524 @@
+heat_template_version: 2013-05-23
+
+description: vSeGW/vSRX Firewall Template
+
+parameter_groups:
+- label: System Settings
+  description: System Level Settings
+  parameters:
+  - availability_zone_0
+  - vnf_name
+  - vnf_id
+
+parameters:
+  availability_zone_0:
+    type: string
+    description: Availability Zone
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+
+# Note we are requesting a flavor with 10 physical CPU cores and may be limited by 16 vCPU flavor.
+  flavor_segw_name:
+    type: string
+    description: flavor type
+# The image will be provided as a qcow2 KVM image.
+  image_segw_name:
+    type: string
+    description: Image use to boot a server
+
+  flavor_vsrxfw_name:
+    type: string
+    description: flavor type
+  image_vsrxfw_name:
+    type: string
+    description: Image use to boot a server
+  
+  INTERNET_direct_net_id:
+    type: string
+    description: The Internet
+
+  oam_mgmt_net_0_id:
+    type: string
+    description: Name of OAM mgmt network
+
+  oam_protected_net_0_id:
+    type: string
+    description: Name of OAM protected network
+
+  Mobility_OAM_protected_net_0_id:
+    type: string
+    description: Network name for OAM
+
+  GN_direct_net_0_id:
+    type: string
+    description: Network name for GN network
+
+  Mobility_OAM_protected_net_1_id:
+    type: string
+    description: Network name for OAM
+
+  GN_direct_net_1_id:
+    type: string
+    description: Network name for GN network
+
+  HSL_direct_net_id:
+    type: string
+    description: Name of HSL (Logging) network
+  HSL_direct_net_cidr:
+    type: string
+    description: HSL (Logging) network address (CIDR notation)
+
+  int_dummi0_net_id:
+    type: string
+    description: Dummi Parent Network for port
+  int_dummi1_net_id:
+    type: string
+    description: Dummi Parent Network for port
+#  int_dummi2_net_id:
+#    type: string
+#    description: Dummi Parent Network for port
+#  int_dummi3_net_id:
+#    type: string
+#    description: Dummi Parent Network for port
+#  int_dummi4_net_id:
+#    type: string
+#    description: Dummi Parent Network for port
+#  int_dummi5_net_id:
+#    type: string
+#    description: Dummi Parent Network for port
+
+  int_dummi0_cidr:
+    type: string
+    description: IPv4 prefix (CIDR notation)
+  int_dummi1_cidr:
+    type: string
+    description: IPv4 prefix (CIDR notation)
+#  int_dummi2_cidr:
+#    type: string
+#    description: IPv4 prefix (CIDR notation)
+#  int_dummi3_cidr:
+#    type: string
+#    description: IPv4 prefix (CIDR notation)
+#  int_dummi4_cidr:
+#    type: string
+#    description: IPv4 prefix (CIDR notation)
+#  int_dummi5_cidr:
+#    type: string
+#    description: IPv4 prefix (CIDR notation)
+
+  segw_0_inet_ip_0:
+    type: string
+    label: segw_0 port ens10 Ingress IP address alias_0
+    description: SeGW's Ingress interface IPv4 address, primary
+  segw_0_inet_ip_1:
+    type: string
+    label: segw_0 port ens10 Ingress IP address alias_1
+    description: SeGW's Ingress interface IPv4 address, alias 1
+  segw_0_inet_ip_2:
+    type: string
+    label: segw_0 port ens10 Ingress IP address alias_2
+    description: SeGW's Ingress interface IPv4 address, alias 2
+
+  segw_1_inet_ip_0:
+    type: string
+    label: segw_1 port ens10 Ingress IP address alias_0
+    description: SeGW's Ingress interface IPv4 address, primary
+  segw_1_inet_ip_1:
+    type: string
+    label: segw_1 port ens10 Ingress IP address alias_1
+    description: SeGW's Ingress interface IPv4 address, alias 1
+  segw_1_inet_ip_2:
+    type: string
+    label: segw_1 port ens10 Ingress IP address alias_2
+    description: SeGW's Ingress interface IPv4 address, alias 2
+  segw_0_oam_protected_ip:
+    type: string
+    label: segw_0 OAM MGMT IP address
+    description: segw_0 OAM MGMT IP address
+  segw_1_oam_protected_ip:
+    type: string
+    label: segw_1 OAM MGMT IP address
+    description: segw_1 OAM MGMT IP address
+
+#  vsrx_fw_0_GN_direct_ip:
+#    type: string
+#    label: vsrx_fw_0 GN Direct IP address
+#    description: vsrx_fw_0 GN Direct IP address
+#  vsrx_fw_1_GN_direct_ip:
+#    type: string
+#    label: vsrx_fw_1 GN Direct IP address
+#    description: vsrx_fw_1 GN Direct IP address
+#  vsrx_fw_2_OAM_protected_ip:
+#    type: string
+#    label: vsrx_fw_2 OAM Protected IP address
+#    description: vsrx_fw_2 OAM Protected IP address
+#  vsrx_fw_3_OAM_protected_ip:
+#    type: string
+#    label: vsrx_fw_3 OAM Protected IP address
+#    description: vsrx_fw_3 OAM Protected IP address
+    
+  segw_0_name:
+    type: string
+    default: vSeGW_0
+    description: name of VM
+  segw_1_name:
+    type: string
+    default: vSeGW_1
+    description: name of VM    
+  vsrx_fw_0_name:
+    type: string
+    default: vSRX_FW_0
+    description: name of VM
+  vsrx_fw_1_name:
+    type: string
+    default: vSRX_FW_1
+    description: name of VM
+  vsrx_fw_2_name:
+    type: string
+    default: vSRX_FW_2
+    description: name of VM
+  vsrx_fw_3_name:
+    type: string
+    default: vSRX_FW_3
+    description: name of VM
+  
+  security_group_name:
+    type: string
+    label: SEGW security group name
+    description: SEGW security group name
+
+resources:
+
+  SeGW_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+  vSRXFW_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+
+  Dummi0_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_dummi0_net_id }
+  Dummi0_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Dummi0_net }
+      cidr: { get_param: int_dummi0_cidr }
+
+  Dummi1_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_dummi1_net_id }
+  Dummi1_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Dummi1_net }
+      cidr: { get_param: int_dummi1_cidr }
+
+  hsl_direct_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: HSL_direct_net_id }
+
+  hsl_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: hsl_direct_net }
+      cidr: { get_param: HSL_direct_net_cidr }
+
+  segw_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: vscp security group
+      name: {get_param: security_group_name}
+# Need to add any-any rule through GUI to get SCTP traffic to work - any-any rules are not supported in heat template
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  server_segw_segw_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: segw_0_name }
+      image: { get_param: image_segw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_segw_name }
+      scheduler_hints: { group: { get_resource: SeGW_Affinity } }
+      networks:
+      - port: { get_resource: port_segw_0_oam_protected }
+      - port: { get_resource: port_segw_0_internet }
+      - port: { get_resource: port_segw_0_dummi }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_segw_0_oam_protected:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_protected_net_0_id }
+      fixed_ips: [{"ip_address": {get_param: segw_0_oam_protected_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_segw_0_internet:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: INTERNET_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: segw_0_inet_ip_0}}, {"ip_address": {get_param: segw_0_inet_ip_1}}, {"ip_address": {get_param: segw_0_inet_ip_2}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_segw_0_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi0_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  server_segw_segw_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: segw_1_name }
+      image: { get_param: image_segw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_segw_name }
+      scheduler_hints: { group: { get_resource: SeGW_Affinity } }
+      networks:
+      - port: { get_resource: port_segw_1_oam_protected }
+      - port: { get_resource: port_segw_1_internet }
+      - port: { get_resource: port_segw_1_dummi }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_segw_1_oam_protected:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_protected_net_0_id }
+      fixed_ips: [{"ip_address": {get_param: segw_1_oam_protected_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_segw_1_internet:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: INTERNET_direct_net_id }
+      fixed_ips: [{"ip_address": {get_param: segw_1_inet_ip_0}}, {"ip_address": {get_param: segw_1_inet_ip_1}}, {"ip_address": {get_param: segw_1_inet_ip_2}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_segw_1_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi1_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  server_vsrx_fw_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vsrx_fw_0_name }
+      image: { get_param: image_vsrxfw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_vsrxfw_name }
+      scheduler_hints: { group: { get_resource: vSRXFW_Affinity } }
+      networks:
+      - port: { get_resource: port_vsrx_fw_0_oam_mgmt }
+      - port: { get_resource: port_vsrx_fw_0_dummi }
+      - port: { get_resource: port_vsrx_fw_0_GN }
+      - port: { get_resource: port_vsrx_fw_0_HSL }
+
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_vsrx_fw_0_oam_mgmt:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_mgmt_net_0_id }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_0_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi0_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_0_GN:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: GN_direct_net_0_id }
+#      fixed_ips: [{"ip_address": {get_param: vsrx_fw_0_GN_direct_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_0_HSL:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: hsl_direct_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  server_vsrx_fw_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vsrx_fw_1_name }
+      image: { get_param: image_vsrxfw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_vsrxfw_name }
+      scheduler_hints: { group: { get_resource: vSRXFW_Affinity } }
+      networks:
+      - port: { get_resource: port_vsrx_fw_1_oam_mgmt }
+      - port: { get_resource: port_vsrx_fw_1_dummi }
+      - port: { get_resource: port_vsrx_fw_1_GN }
+      - port: { get_resource: port_vsrx_fw_1_HSL }
+
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_vsrx_fw_1_oam_mgmt:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_mgmt_net_0_id }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_1_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi1_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_1_GN:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: GN_direct_net_1_id }
+#      fixed_ips: [{"ip_address": {get_param: vsrx_fw_1_GN_direct_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_1_HSL:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: hsl_direct_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  server_vsrx_fw_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vsrx_fw_2_name }
+      image: { get_param: image_vsrxfw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_vsrxfw_name }
+      scheduler_hints: { group: { get_resource: vSRXFW_Affinity } }
+      networks:
+      - port: { get_resource: port_vsrx_fw_2_oam_mgmt }
+      - port: { get_resource: port_vsrx_fw_2_dummi }
+      - port: { get_resource: port_vsrx_fw_2_OAM }
+      - port: { get_resource: port_vsrx_fw_2_HSL }
+
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_vsrx_fw_2_oam_mgmt:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_mgmt_net_0_id }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_2_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi0_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_2_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Mobility_OAM_protected_net_0_id }
+#      fixed_ips: [{"ip_address": {get_param: vsrx_fw_2_OAM_protected_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_2_HSL:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: hsl_direct_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  server_vsrx_fw_3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vsrx_fw_3_name }
+      image: { get_param: image_vsrxfw_name }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: flavor_vsrxfw_name }
+      scheduler_hints: { group: { get_resource: vSRXFW_Affinity } }
+      networks:
+      - port: { get_resource: port_vsrx_fw_3_oam_mgmt }
+      - port: { get_resource: port_vsrx_fw_3_dummi }
+      - port: { get_resource: port_vsrx_fw_3_OAM }
+      - port: { get_resource: port_vsrx_fw_3_HSL }
+
+      metadata:
+        vnf_id: { get_param: vnf_id }
+
+  port_vsrx_fw_3_oam_mgmt:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_mgmt_net_0_id }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_3_dummi:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Dummi1_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_3_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: Mobility_OAM_protected_net_1_id }
+#      fixed_ips: [{"ip_address": {get_param: vsrx_fw_3_OAM_protected_ip}}]
+      security_groups: [{get_resource: segw_security_group}]
+
+  port_vsrx_fw_3_HSL:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: hsl_direct_net }
+      security_groups: [{get_resource: segw_security_group}]
+
+conditions:
+  cd1: True
+  cd2:
+    get_param: param1
+  cd3:
+    equals:
+    - get_param: param2
+    - yes
+  cd4:
+    not:
+      equals:
+      - get_param: param3
+      - yes
+  cd5:
+    and:
+    - equals:
+      - get_param: env_type
+      - prod
+    - not:
+        equals:
+        - get_param: zone
+        - beijing
+  cd6:
+    or:
+    - equals:
+      - get_param: zone
+      - shanghai
+    - equals:
+      - get_param: zone
+      - beijing
+  cd7:
+    not: cd4
+  cd8:
+    and:
+    - cd1
+    - cd2
+  create_prod_res: {equals : [{get_param: env_type}, "prod"]}

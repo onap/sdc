@@ -1,0 +1,36 @@
+{
+  "ipConfiguration": {
+    "ipv6Required": false
+  },
+  "protocols": {
+    "protocolWithHighestTrafficProfile": "TCP"
+  },
+  "network": {
+    "networkDescription": "mLRqrnteBeIIUQsuvZEetXjllKPnYvbG"
+  },
+  "sizing": {
+    "describeQualityOfService": "adipisicing voluptate aute",
+    "acceptableJitter": {
+      "mean": "98690087997256150885582732516496929349161209784564642159997681825133065"
+    },
+    "flowLength": {
+      "packets": {},
+      "bytes": {}
+    },
+    "outflowTrafficPerSecond": {
+      "packets": {}
+    },
+    "acceptablePacketLoss": "15",
+    "inflowTrafficPerSecond": {
+      "bytes": {}
+    }
+  },
+  "describeQualityOfService": "minim dolore",
+  "acceptablePacketLoss": "4",
+  "flowLength": {},
+  "acceptableJitter": {
+    "mean": "61827261335222870878257995122569227177432366697624312367018960696207118652325834319325112734287",
+    "max": "498307229580528005673649352861421755",
+    "variable": "5085363947608755025538570280250262251802454469028997134802881591362"
+  }
+}

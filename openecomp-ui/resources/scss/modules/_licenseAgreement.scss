@@ -1,0 +1,92 @@
+
+.license-agreement-list-editor {
+
+  .list-editor-view-list {
+    .list-editor-item-view {
+      min-height: 110px;
+      height: 110px;
+    }
+    .list-editor-item-view-field {
+      .list-editor-item-view-field-tight {
+        vertical-align: top;
+        display: inline-block;
+        &:first-child {
+          @include ellipsis;
+          margin-right: 95px;
+          width: 20%;
+          overflow-wrap: break-word;
+        }
+      }
+      .feature-groups-count, .contract-number, .type {
+        color: $light-green;
+      }
+      .feature-groups-count {
+        @extend .heading-1;
+        padding-top: 2px;
+        text-align: center;
+      }
+      .contract-number {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+.license-agreement-modal {
+  .modal-body {
+    padding: 0;
+  }
+  .license-agreement-form {
+      .button-tab{
+        @extend .body-1-medium;
+        color: $dark-gray;
+        padding: 6px;
+        border: 0;
+        background-color: $white;
+        box-shadow: none;
+        &:first-child {
+          margin-right: 28px;
+        }
+        &.active, &:hover {
+          color: $text-black;
+          border-bottom: 2px solid $blue;
+        }
+      }
+    .no-items-msg {
+      margin-top: 55px;
+      color: $dark-gray;
+    }
+    .tab-content {
+      padding: 50px;
+      .list-editor-item-view-content {
+        white-space: nowrap;
+        overflow: hidden;
+        > div {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:not(:last-of-type) {
+            margin-right: 24px;
+          }
+        }
+      }
+    }
+    .license-agreement-form-row {
+      display: flex;
+      justify-content: space-between;
+      .license-agreement-form-col {
+        flex: 0 1 45%;
+      }
+      .validation-input-wrapper {
+        flex: 0 1 45%;
+        .form-group {
+          textarea {
+            height: 100px;
+          }
+        }
+      }
+    }
+    .validation-buttons {
+      padding: 20px 50px;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+             "action": "ACTION",
+             "timestamp": "TIMESTAMP",
+             "requestId": "REQUEST_ID",
+             "serviceInstanceId": "SERVICE_INSTANCE_ID",
+             "desc": "DESC",
+             "status": "STATUS",
+             "currVersion": "CURR_VERSION",
+             "distributionId": "DID",
+             "modifierName": "MODIFIER_NAME",
+             "modifierUid": "MODIFIER_UID",
+             "resourceName": "RESOURCE_NAME",
+             "resourceType": "RESOURCE_TYPE"
+}

@@ -1,0 +1,23 @@
+org.openecomp.asdc.nodes.Connector.LAN_Connector:
+  #The LAN_Connector node connects Router and VNF_Container
+    derived_from: org.openecomp.asdc.nodes.Connector
+    properties:
+      network_id: 
+        #or called: vlan_id
+        type: string 
+        required: true
+      network_type:
+        #The technology types used by LAN connector
+        type: string
+    attributes:
+      network_ip_address:
+        #ip address is generated only after the node is instantiated at run-time
+        type: string
+    requirements:
+      - connectToRouter :
+          capability: tosca.capabilities.Root
+          node: org.openecomp.asdc.nodes.Router
+      - connectToVNF :
+          capability: tosca.capabilities.Root
+          node: org.openecomp.asdc.nodes.VNF_Container
+      #These two explicit requirements specify the LAN_Connector has two "connectTo" to connect to the node of Router type and VNF_Container type respectively

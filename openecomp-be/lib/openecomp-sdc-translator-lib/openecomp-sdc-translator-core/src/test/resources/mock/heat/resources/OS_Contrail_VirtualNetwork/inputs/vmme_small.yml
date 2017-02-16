@@ -1,0 +1,722 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template to create vmme 2 fsb 2 ncb 2 gbp 2 vlc
+
+parameters:
+  fsb1-oam-ip:
+    type: string
+  fsb2-oam-ip:
+    type: string
+  vlc1-oam-ip:
+    type: string
+  vlc2-oam-ip:
+    type: string
+  Internal1_net_pool_start:
+    type: string
+  Internal1_net_pool_end:
+    type: string
+  Internal2_net_pool_start:
+    type: string
+  Internal2_net_pool_end:
+    type: string
+  Internal1_default_gateway:
+    type: string
+  Internal2_default_gateway:
+    type: string
+  Internal1_shared:
+    type: string
+  Internal1_external:
+    type: string
+  Internal1_net_name:
+    type: string
+  Internal1_subnet_name:
+    type: string
+  Internal1_ipam_name:
+    type: string
+  Internal1_cidr:
+    type: string
+  Internal1_forwarding_mode:
+    type: string
+  Internal1_dhcp:
+    type: string
+  Internal1_name:
+    type: string
+  Internal2_net_name:
+    type: string
+  Internal2_subnet_name:
+    type: string
+  Internal2_ipam_name:
+    type: string
+  Internal2_cidr:
+    type: string
+  Internal2_forwarding_mode:
+    type: string
+  Internal2_dhcp:
+    type: string
+  Internal2_name:
+    type: string
+  Internal2_shared:
+    type: string
+  Internal2_external:
+    type: string
+  vlc1-sctp-a-ip:
+    type: string
+  vlc1-sctp-b-ip:
+    type: string
+  vlc1-gtp-ip:
+    type: string
+  vlc2-sctp-a-ip:
+    type: string
+  vlc2-sctp-b-ip:
+    type: string
+  vlc2-gtp-ip:
+    type: string
+  fsb1-name:
+    type: string
+    description: Name of fsb1
+  fsb2-name:
+    type: string
+    description: Name of fsb1
+  ncb1-name:
+    type: string
+    description: Name of ncb1
+  ncb2-name:
+    type: string
+    description: Name of ncb2
+  vlc1-name:
+    type: string
+    description: Name of vlc1
+  vlc2-name:
+    type: string
+    description: Name of vlc2
+  gpb1-name:
+    type: string
+    description: Name of gpb1
+  gpb2-name:
+    type: string
+    description: Name of gpb2
+  fsb_zone:
+    type: string
+    description: cluster for spawnning fsb instances
+  fsb1-image:
+    type: string
+    description: Name of image to use for server fsb1
+  fsb1-flavor:
+    type: string
+    description: Flavor to use for servers  fsb1
+  oam_net_id:
+    type: string
+    description: uuid of oam network
+  fsb1-Internal1-mac:
+    type: string
+    description: static mac address assigned to fsb1-Internal1
+  fsb1-Internal2-mac:
+    type: string
+    description: static mac address assigned to fsb1-Internal2
+  fsb2-image:
+    type: string
+    description: Name of image to use for server fsb2
+  fsb2-flavor:
+    type: string
+    description: Flavor to use for servers  fsb2
+  fsb2-Internal1-mac:
+    type: string
+    description: static mac address assigned to fsb2-Internal1
+  fsb2-Internal2-mac:
+    type: string
+    description: static mac address assigned to fsb2-Internal2
+  pxe-image:
+    type: string
+    description: Name of image to use for server ncb
+  ncb-flavor:
+    type: string
+    description: Flavor to use for servers ncb
+  ncb_zone:
+    type: string
+    description: cluster for spawnning ncb instances
+  ncb1-Internal1-mac:
+    type: string
+    description: static mac address assigned to ncb1-Internal1
+  ncb1-Internal2-mac:
+    type: string
+    description: static mac address assigned to ncb1-Internal2
+  ncb2-Internal1-mac:
+    type: string
+    description: static mac address assigned to ncb2-Internal1
+  ncb2-Internal2-mac:
+    type: string
+    description: static mac address assigned to ncb2-Internal2
+  gpb-flavor:
+    type: string
+    description: Flavor to use for servers gpb
+  gpb_zone:
+    type: string
+    description: cluster for spawnning gpb instances
+  gpb1-Internal1-ip:
+    type: string
+  gpb1-Internal1-mac:
+    type: string
+    description: static mac address assigned to gpb1-Internal1
+  gpb1-Internal2-mac:
+    type: string
+    description: static mac address assigned to gpb1-Internal2
+  gpb2-Internal1-mac:
+    type: string
+    description: static mac address assigned to gpb2-Internal1
+  gpb2-Internal2-mac:
+    type: string
+    description: static mac address assigned to gpb2-Internal2
+  vlc-flavor:
+    type: string
+    description: Flavor to use for servers vlc
+  vlc_zone:
+    type: string
+    description: cluster for spawnning vlc instances
+  vlc1-Internal1-mac:
+    type: string
+    description: static mac address assigned to vlc1-Internal1
+  vlc1-Internal2-mac:
+    type: string
+    description: static mac address assigned to vlc1-Internal2
+  vlc2-Internal1-mac:
+    type: string
+    description: static mac address assigned to vlc2-Internal1
+  vlc2-Internal2-mac:
+    type: string
+    description: static mac address assigned to vlc2-Internal2
+  epc-sctp-a-net-name:
+    type: string
+    description: epc-sctp-a net name
+  epc-sctp-a-net-rt:
+    type: string
+    description: epc-sctp-a route target
+  epc-sctp-a-net-cidr:
+    type: string
+    description: epc-sctp-a subnet
+  epc-sctp-a-net-gateway:
+    type: string
+    description: epc-sctp-a-net network gateway
+  epc-sctp-a-pool-start:
+    type: string
+    description: epc-sctp-a-net network ip pool start IP address
+  epc-sctp-a-pool-end:
+    type: string
+    description: epc-sctp-a-net network ip pool end IP address
+  epc-sctp-b-net-name:
+    type: string
+    description: epc-sctp-b net name
+  epc-sctp-b-net-rt:
+    type: string
+    description: epc-sctp-b route target
+  epc-sctp-b-net-cidr:
+    type: string
+    description: epc-sctp-b subnet
+  epc-sctp-b-net-gateway:
+    type: string
+    description: epc-sctp-b-net network gateway
+  epc-sctp-b-pool-start:
+    type: string
+    description: epc-sctp-b-net network ip pool start IP address
+  epc-sctp-b-pool-end:
+    type: string
+    description: epc-sctp-b-net network ip pool end IP address
+  epc-gtp-net-name:
+    type: string
+    description:  gtp net name
+  epc-gtp-net-rt:
+    type: string
+    description:  gtp route target
+  epc-gtp-net-cidr:
+    type: string
+    description:  gtp stubnet
+  epc-gtp-net-gateway:
+    type: string
+    description:  gtp network gateway
+  epc-gtp-pool-start:
+    type: string
+    description:  gtp network ip pool start IP address
+  epc-gtp-pool-end:
+    type: string
+    description: gtp network ip pool end IP address
+  static_prefix_sctp_a_1:
+    type: string
+    description: Static Prefix
+  static_prefix_sctp_b_1:
+    type: string
+    description: Static Prefix
+  static_prefix_gtp_1:
+    type: string
+    description: Static Prefix
+  VMME_FSB1_boot_volume:
+    type: string
+  VMME_FSB2_boot_volume:
+    type: string
+  volume_type:
+    type: string
+    description: volume
+  volume_size:
+    type: string
+    description: volume
+  FSB1_volume_name:
+    type: string
+    description: volume name
+  FSB_1_image:
+    type: string
+    description: image name
+  FSB2_volume_name:
+      type: string
+      description: volume name
+  FSB_2_image:
+    type: string
+    description: image name
+  my_instance:
+    type: string
+    description: instance
+  Internal1-net:
+    type: string
+    description: net
+
+resources:
+  FSB1_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: 3
+      volume_type: {get_param: volume_type}
+      name: {get_param: FSB1_volume_name}
+      image: {get_param: FSB_1_image}
+
+  FSB2_volume:
+      type: OS::Cinder::Volume
+      properties:
+        size: {get_param: volume_size}
+        volume_type: {get_param: volume_type}
+        name: {get_param: FSB2_volume_name}
+        image: {get_param: FSB_2_image}
+
+  Internal1_ipam:
+    type: OS::Contrail::NetworkIpam
+    properties:
+      name: { get_param: Internal1_ipam_name }
+
+  Internal2_ipam:
+    type: OS::Contrail::NetworkIpam
+    properties:
+      name: { get_param: Internal2_ipam_name }
+
+  Internal1-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+      external: true
+      route_targets: { get_file: 'file:///nimbus-ethernet.sh' }
+  testConvertGetParamFunctions:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+      external: { get_param: [my_instance, networks, private, 0] }
+#      route_targets: { "Fn::Split" : [ ",", Ref: route_targets ] }
+  testConvertGetAttributeFunctions:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+      external: { get_param: Internal1_external }
+#      route_targets: { "Fn::Split" : [ ",", Ref: route_targets ] }
+
+  Internal1-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Internal1-net }
+      cidr: { get_param: Internal1_cidr }
+      gateway_ip: { get_param: Internal1_default_gateway }
+      enable_dhcp: { get_param: Internal1_dhcp }
+
+  Internal3-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Internal1-net }
+      cidr: { get_param: Internal2_cidr }
+      gateway_ip: { get_param: Internal2_default_gateway }
+      enable_dhcp: { get_param: Internal2_dhcp }
+
+  Internal4-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Internal1-net }
+      cidr: { get_param: Internal1_cidr }
+      gateway_ip: { get_param: Internal1_default_gateway }
+      enable_dhcp: off
+
+#  Internal1-subnet:
+#    type: OS::Contrail::VnSubnet
+#    properties:
+#      name: { get_param: Internal1_subnet_name  }
+#      network: { get_resource: Internal1-net }
+#      ip_prefix: { get_param: Internal1_cidr }
+ #     ipam: { get_resource: Internal1_ipam }
+ #     enable_dhcp: { get_param: Internal1_dhcp }
+ #     default_gateway: { get_param: Internal1_default_gateway }
+ #     allocation_pools:
+  #      - start: { get_param: Internal1_net_pool_start }
+  #        end: { get_param: Internal1_net_pool_end }
+
+
+
+  Internal2-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal2_name }
+      forwarding_mode: { get_param: Internal2_forwarding_mode }
+      shared: { get_param: Internal2_shared }
+      external: { get_param: Internal2_external }
+#      route_targets: { "Fn::Split" : [ ",", Ref: route_targets ] }
+
+#  Internal2-subnet:
+#    type: OS::Contrail::VnSubnet
+#    properties:
+#      name: { get_param: Internal2_subnet_name  }
+#      network: { get_resource: Internal2-net }
+#      ip_prefix: { get_param: Internal2_cidr }
+#      ipam: { get_resource: Internal2_ipam }
+#      enable_dhcp: { get_param: Internal2_dhcp }
+#      default_gateway: { get_param: Internal2_default_gateway }
+#      allocation_pools:
+#        - start: { get_param: Internal2_net_pool_start }
+#          end: { get_param: Internal2_net_pool_end }
+
+  Internal2-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Internal2-net }
+      cidr: { get_param: Internal2_cidr }
+      gateway_ip: { get_param: Internal2_default_gateway }
+      enable_dhcp: { get_param: Internal2_dhcp }
+
+  epc-sctp-a-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: epc-sctp-a-net-name }
+      route_targets: [ get_param: epc-sctp-a-net-rt ]
+
+
+  epc-sctp-a-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: epc-sctp-a-net }
+      cidr: { get_param: epc-sctp-a-net-cidr }
+      gateway_ip: { get_param: epc-sctp-a-net-gateway }
+      allocation_pools:
+        - start: { get_param: epc-sctp-a-pool-start }
+          end: { get_param: epc-sctp-a-pool-end }
+
+  epc-sctp-b-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: epc-sctp-b-net-name }
+      route_targets: [ get_param: epc-sctp-b-net-rt ]
+
+  epc-sctp-b-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: epc-sctp-b-net }
+      cidr: { get_param: epc-sctp-b-net-cidr }
+      gateway_ip: { get_param: epc-sctp-b-net-gateway }
+      allocation_pools:
+        - start: { get_param: epc-sctp-b-pool-start }
+          end: { get_param: epc-sctp-b-pool-end }
+
+  epc-gtp-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: epc-gtp-net-name }
+      route_targets: [ get_param: epc-gtp-net-rt ]
+
+  epc-gtp-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: epc-gtp-net }
+      cidr: { get_param: epc-gtp-net-cidr }
+      gateway_ip: { get_param: epc-gtp-net-gateway }
+      allocation_pools:
+        - start: { get_param: epc-gtp-pool-start }
+          end: { get_param: epc-gtp-pool-end }
+
+  FSB1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: fsb1-name }
+      block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_FSB1_boot_volume }, delete_on_termination: "false" }]
+      flavor: { get_param: fsb1-flavor }
+      availability_zone: { get_param: fsb_zone }
+      networks:
+        - port: { get_resource: FSB1_Internal1 }
+        - port: { get_resource: FSB1_Internal2 }
+        - port: { get_resource: FSB1_OAM }
+
+  FSB1_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: fsb1-Internal1-mac }
+
+  FSB1_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: fsb1-Internal2-mac }
+
+  FSB1_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_id }
+      fixed_ips:
+        - ip_address: { get_param: fsb1-oam-ip }
+
+  FSB2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: fsb2-name }
+      block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_FSB2_boot_volume }, delete_on_termination: "false" }]
+      flavor: { get_param: fsb2-flavor }
+      availability_zone: { get_param: fsb_zone }
+      networks:
+        - port: { get_resource: FSB2_Internal1 }
+        - port: { get_resource: FSB2_Internal2 }
+        - port: { get_resource: FSB2_OAM }
+
+  FSB2_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: fsb2-Internal1-mac }
+
+
+  FSB2_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: fsb2-Internal2-mac }
+
+  FSB2_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_id }
+      fixed_ips:
+        - ip_address: { get_param: fsb2-oam-ip }
+
+  NCB1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: ncb1-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: ncb-flavor }
+      availability_zone: { get_param: ncb_zone }
+      networks:
+        - port: { get_resource: NCB1_Internal1 }
+        - port: { get_resource: NCB1_Internal2 }
+
+  NCB1_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: ncb1-Internal1-mac }
+
+  NCB1_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: ncb1-Internal2-mac }
+
+  NCB2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: ncb2-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: ncb-flavor }
+      availability_zone: { get_param: ncb_zone }
+      networks:
+        - port: { get_resource: NCB2_Internal1 }
+        - port: { get_resource: NCB2_Internal2 }
+
+  NCB2_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: ncb2-Internal1-mac }
+
+  NCB2_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: ncb2-Internal2-mac }
+
+  GPB1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: gpb1-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: gpb-flavor }
+      availability_zone: { get_param: gpb_zone }
+      networks:
+        - port: { get_resource: GPB1_Internal1 }
+        - port: { get_resource: GPB1_Internal2 }
+
+  GPB1_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: gpb1-Internal1-mac }
+
+  GPB1_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: gpb1-Internal2-mac }
+
+  GPB2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: gpb2-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: gpb-flavor }
+      availability_zone: { get_param: gpb_zone }
+      networks:
+        - port: { get_resource: GPB2_Internal1 }
+        - port: { get_resource: GPB2_Internal2 }
+
+  GPB2_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: gpb2-Internal1-mac }
+
+  GPB2_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: gpb2-Internal2-mac }
+
+  VLC1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vlc1-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: vlc-flavor }
+      availability_zone: { get_param: vlc_zone }
+      networks:
+        - port: { get_resource: VLC1_Internal1 }
+        - port: { get_resource: VLC1_Internal2 }
+        - port: { get_resource: VLC1_OAM }
+        - port: { get_resource: VLC1_SCTP_A }
+        - port: { get_resource: VLC1_SCTP_B }
+        - port: { get_resource: VLC1_GTP }
+
+  VLC1_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: vlc1-Internal1-mac }
+
+  VLC1_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: vlc1-Internal2-mac }
+
+  VLC1_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_id }
+      fixed_ips:
+        - ip_address: { get_param: vlc1-oam-ip }
+
+  VLC1_SCTP_A:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-sctp-a-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc1-sctp-a-ip }
+
+  VLC1_SCTP_B:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-sctp-b-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc1-sctp-b-ip }
+
+  VLC1_GTP:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-gtp-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc1-gtp-ip }
+
+  VLC2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: vlc2-name }
+      image: { get_param: pxe-image }
+      flavor: { get_param: vlc-flavor }
+      availability_zone: { get_param: vlc_zone }
+      networks:
+        - port: { get_resource: VLC2_Internal1 }
+        - port: { get_resource: VLC2_Internal2 }
+        - port: { get_resource: VLC2_OAM }
+        - port: { get_resource: VLC2_SCTP_A }
+        - port: { get_resource: VLC2_SCTP_B }
+        - port: { get_resource: VLC2_GTP }
+
+
+  VLC2_Internal1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal1-net }
+      mac_address: { get_param: vlc2-Internal1-mac }
+
+  VLC2_OAM:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_id }
+      fixed_ips:
+        - ip_address: { get_param: vlc2-oam-ip }
+
+  VLC2_Internal2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: Internal2-net }
+      mac_address: { get_param: vlc2-Internal2-mac }
+
+  VLC2_SCTP_A:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-sctp-a-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc2-sctp-a-ip }
+
+  VLC2_SCTP_B:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-sctp-b-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc2-sctp-b-ip }
+
+  VLC2_GTP:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: epc-gtp-net }
+      fixed_ips:
+        - ip_address: { get_param: vlc2-gtp-ip }
+
+  Test-empty-network-in-subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_param: Internal1-net }
+      cidr: { get_param: Internal1_cidr }
+      gateway_ip: { get_param: Internal1_default_gateway }
+      enable_dhcp: { get_param: Internal1_dhcp }

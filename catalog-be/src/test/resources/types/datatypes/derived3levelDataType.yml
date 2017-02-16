@@ -1,0 +1,37 @@
+mytypes.phonenumber:
+  description: my phone number datatype
+  properties:
+    countrycode:
+      type: integer
+    areacode:
+      type: integer
+    number:
+      type: integer
+      
+# define a new datatype that derives from existing type and extends it
+mytypes.phonenumber.extended:
+  derived_from: mytypes.phonenumber
+  description: custom phone number type that extends the basic phonenumber type
+  properties:
+    phone_description:
+      type: string
+      constraints:
+        - max_length: 128
+      
+      
+      
+      
+mytypes.phonenumber.extended.extended:
+  derived_from: mytypes.phonenumber.extended
+  description: custom phone number type that extends the basic phonenumber type
+  properties:
+    email:
+      type: string
+      constraints:
+        - max_length: 128
+    complex1:
+      type: mytypes.phonenumber.extended
+      constraints:
+        - max_length: 128
+            
+        

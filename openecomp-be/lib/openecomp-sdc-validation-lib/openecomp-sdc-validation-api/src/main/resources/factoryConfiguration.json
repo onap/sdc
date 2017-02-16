@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.validation.factory.ValidationManagerFactory":"org.openecomp.sdc.validation.impl.ValidationManagerFactoryImpl"
+}

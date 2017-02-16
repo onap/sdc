@@ -1,0 +1,159 @@
+/*
+<div class="asdcs-dialog">
+<div class="asdcs-dialog-overlay"></div>
+<div class="asdcs-dialog-header"></div>
+<div class="asdcs-dialog-body"></div>
+<div class="asdcs-dialog-buttonbar">
+<button class="asdcs-dialog-button-cancel">Cancel</button>
+<button class="asdcs-dialog-button-ok">OK</button>
+</div>
+</div>
+*/
+
+.asdcs-control {
+
+    $asdcsDialogIconSize: 70px;
+    $asdcsDialogWidth: 400px;
+
+    .asdcs-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 5;
+        background-color: white;
+        opacity: 0.25;
+        pointer-events: all;
+    }
+
+    .asdcs-dialog {
+
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: $asdcsDialogWidth;
+        margin-left: -($asdcsDialogWidth/2);
+        height: 300px;
+        margin-top: -150px;
+        background: $asdcsColorOneLight;
+        border: 1px solid $asdcsColorWhitish;
+        border-radius: $asdcsPopupBorderRadius;
+        z-index: 10;
+
+        @include drop-shadow();
+
+        .asdcs-dialog-header {
+            position: absolute;
+            height: 60px;
+            line-height: 40px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+
+        .asdcs-dialog-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            height: $asdcsSmallIconSize;
+            width: $asdcsSmallIconSize;
+            fill: $asdcsColorGrey;
+            cursor: pointer;
+            &:hover {
+                fill: $asdcsColorEmphasis;
+            }
+        }
+
+        .asdcs-dialog-buttonbar {
+
+            position: absolute;
+            height: 50px;
+            width: 100%;
+            bottom: 0;
+            //background-color: $asdcsColorOne;
+            text-align: right;
+
+            button {
+                width: 75px;
+                border-radius: 4px;
+                border: none;
+                background-color: $asdcsColorTwo;
+                color: $asdcsColorWhite;
+                padding: 7px 10px;
+                margin: 10px 10px 10px 0px;
+                &:hover {
+                    background-color: $asdcsColorTwoLight;
+                }
+            }
+        }
+
+        .asdcs-dialog-icon {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            height: $asdcsDialogIconSize;
+            width: $asdcsDialogIconSize;
+            pointer-events: none;
+            fill: $asdcsColorOneDark;
+
+            svg {
+                display: none;
+            }
+
+            &.asdcs-icon-question {
+                svg.asdcs-icon-question {
+                    display: block;
+                }
+            }
+
+            &.asdcs-icon-exclaim {
+                svg.asdcs-icon-exclaim {
+                    display: block;
+                }
+            }
+
+            &.asdcs-icon-info {
+                svg.asdcs-icon-info {
+                    display: block;
+                }
+            }
+
+            &.asdcs-icon-edit {
+                svg.asdcs-icon-edit {
+                    display: block;
+                }
+            }
+        }
+
+        .asdcs-dialog-message {
+            position: absolute;
+            padding: 10px;
+            top: 90px;
+            height: 100px;
+            left: 100px;
+            width: $asdcsDialogWidth - 120px;
+            display: table-cell;
+            vertical-align: middle;
+            word-wrap: break-word;
+            text-overflow: ellipsis;
+        }
+
+        .asdcs-dialog-text {
+            position:absolute;
+            padding: 10px;
+            top:60px;
+            height: 150px;
+            left:100px;
+            width: $asdcsDialogWidth - 130px;
+            textarea {
+                height:100%;
+                width:100%;
+                resize: none;
+            }
+        }
+    }
+}

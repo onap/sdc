@@ -1,0 +1,25 @@
+tosca.datatypes.Root:
+  description: The TOSCA root Data Type all other TOSCA base Data Types derive from
+
+string:
+  derived_from: tosca.datatypes.Root
+  
+integer:
+  derived_from: tosca.datatypes.Root 
+
+tosca.datatypes.Credential2: 
+  derived_from: tosca.datatypes.Root
+  properties: 
+    protocol2: 
+      type: string
+      required: false
+
+tosca.datatypes.Credential: 
+  derived_from: tosca.datatypes.Credential2
+  properties: 
+    protocol: 
+      type: integer
+      required: false
+    protocol2: 
+      type: integer
+      required: false

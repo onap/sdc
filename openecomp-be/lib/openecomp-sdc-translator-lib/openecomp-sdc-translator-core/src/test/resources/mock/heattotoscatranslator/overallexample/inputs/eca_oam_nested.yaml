@@ -1,0 +1,406 @@
+heat_template_version: 2013-05-23
+
+##########################################################
+#
+#  Changes from MSO 
+#  - Updated per ECOMP Feedback
+#  
+#
+##########################################################
+
+description: This stack creates two ECA OAM VM and one ARB VM
+
+parameters:
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+    default: This_is_ths_MMSC-ECA_id
+  cmaui_name:
+    type: comma_delimited_list
+    label: oam servers names
+  cmaui_image:
+    type: comma_delimited_list
+    label: oam servers names
+    description: the names of the OAM1,OAM2 VM instances
+  networks:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  flavor:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  metadata:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  user_data:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  user_data_format:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  eca_names:
+    type: comma_delimited_list
+    label: oam servers names
+    description: the names of the OAM1,OAM2 VM instances
+  arb_names:
+    type: comma_delimited_list
+    label: arbiter server names
+    description: the names of the arbiter VM instances
+  oam_image_name:
+    type: string
+    label: image name
+    description: the OAM image name
+  oam_flavor:
+    type: string
+    label: flavor name
+    description: OAM flavor name
+  arbiter_flavor:
+    type: string
+    label: flavor name
+    description: arbiter flavor name
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    label: oam network name
+    description: the name of the oam network
+  eca_mgmt_net_name:
+    type: string
+    label: internal network name
+    description: the name of the internal network
+  eca_oam_ips:
+    type: comma_delimited_list
+    label: oam network ips
+    description: the ips of oam networks for eca VM
+  eca_eca_mgmt_ips:
+    type: comma_delimited_list
+    label: eca_mgmt network ips for eca VM
+    description: internal eca_mgmt network ips for eca VM
+  arb_oam_ips:
+    type: comma_delimited_list
+    label: oam network ips for arb VM
+    description: oam network ips for eca VM
+  arb_eca_mgmt_ips:
+    type: comma_delimited_list
+    label: eca_mgmt network ips 
+    description:  internal eca_mgmt network ips for arb VM
+  eca_oam_gateway:
+    type: string
+    label: oam network gateway
+    description: oam network gateway
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  oam_volume_size:
+    type: number
+    label: volume size
+    description: the size of the OAM volume
+  arb_volume_size:
+    type: number
+    label: volume size
+    description: the size of the ARB volume
+  swift_eca_url:
+    type: string
+    label: Swift URL
+    description: Base URL for eca swift object store
+  ECA_OAM_volume_type:
+    type: string
+    label: eca oam vm volume type
+    description: the name of the target volume backend
+  ARB_volume_type:
+    type: string
+    label: arb vm volume type
+    description: the name of the target volume backend
+
+resources:
+  oam1_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [eca_names, 0]}
+      image: {get_param: oam_image_name}
+      flavor: {get_param: oam_flavor}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: oam1_int_port}
+        - port: {get_resource: oam1_mgmt_port}
+      metadata:
+        vnf_id: { get_param: vnf_id }  
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sed -i s/HOSTNAME.*/"HOSTNAME=oam1_hostname"/g /etc/sysconfig/network
+            eth1_ip_address='oam1_mgt_ip'
+            eth1_gateway='oam_gateway'
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address"
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            mkdir /etc/puppet/files/roles/transcoder
+            mkdir /etc/puppet/files/roles/oam_primary
+            curl swift_url/etc/puppet/manifests/roles/oam_primary.pp > /etc/puppet/manifests/roles/oam_primary.pp
+            curl swift_url/etc/puppet/manifests/roles/transcoder.pp > /etc/puppet/manifests/roles/transcoder.pp
+            curl swift_url/etc/puppet/files/roles/oam_primary/config.yaml > /etc/puppet/files/roles/oam_primary/config.yaml
+            curl swift_url/etc/puppet/files/roles/transcoder/config.yaml > /etc/puppet/files/roles/transcoder/config.yaml
+            curl swift_url/etc/puppet/files/roles/transcoder/hpm.conf > /etc/puppet/files/roles/transcoder/hpm.conf
+            curl swift_url/etc/puppet/files/roles/transcoder/trx.conf > /etc/puppet/files/roles/transcoder/trx.conf
+            curl swift_url/etc/puppet/files/roles/transcoder/plugins-mo.conf > /etc/puppet/files/roles/transcoder/plugins-mo.conf
+            curl swift_url/etc/puppet/files/global/11-customer.conf > /etc/puppet/files/global/11-customer.conf
+            curl swift_url/etc/puppet/manifests/site.pp > /etc/puppet/manifests/site.pp
+            curl swift_url/scripts/van-init-replicaset > /usr/sbin/van-init-replicaset
+            van-role oam_primary > /root/startup-van-role.out
+            curl swift_url/scripts/fdisk-keystrokes > /root/fdisk-keystrokes 
+            fdisk /dev/vdb < /root/fdisk-keystrokes 
+            curl swift_url/scripts/os-conf-cinder-vol > /root/os-conf-cinder-vol
+            chmod 755 /root/os-conf-cinder-vol
+            /root/os-conf-cinder-vol 2>> /tmp/cinder_volume.log
+          params:
+            oam1_mgt_ip: {get_param: [eca_oam_ips, 0] }
+            oam_gateway: {get_param: eca_oam_gateway }
+            oam1_hostname: {get_param: [eca_names, 0]}
+            swift_url: {get_param: swift_eca_url}
+
+  oam1_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [eca_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  oam1_int_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: eca_mgmt_net_name}
+      fixed_ips: [{"ip_address": {get_param: [eca_eca_mgmt_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  oam1_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: oam_volume_size}
+      volume_type: {get_param: ECA_OAM_volume_type}
+
+  oam1_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: oam1_volume}
+      instance_uuid: {get_resource: oam1_instance}
+
+  oam2_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [eca_names, 1]}
+      image: {get_param: oam_image_name}
+      flavor: {get_param: oam_flavor}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: oam2_int_port}
+        - port: {get_resource: oam2_mgmt_port}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sed -i s/HOSTNAME.*/"HOSTNAME=oam2_hostname"/g /etc/sysconfig/network
+            eth1_ip_address='oam2_mgt_ip'
+            eth1_gateway='oam_gateway'
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address"
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            curl swift_url/etc/puppet/manifests/roles/oam_secondary.pp > /etc/puppet/manifests/roles/oam_secondary.pp
+            curl swift_url/etc/puppet/files/global/config.yaml > /etc/puppet/files/global/config.yaml
+            curl swift_url/etc/puppet/files/global/11-customer.conf > /etc/puppet/files/global/11-customer.conf
+            van-role oam_secondary > /root/startup-van-role.out
+            curl swift_url/scripts/fdisk-keystrokes > /root/fdisk-keystrokes 
+            fdisk /dev/vdb < /root/fdisk-keystrokes 
+            curl swift_url/scripts/os-conf-cinder-vol > /root/os-conf-cinder-vol
+            chmod 755 /root/os-conf-cinder-vol
+            /root/os-conf-cinder-vol 2>> /tmp/cinder_volume.log
+            
+          params:
+            oam2_mgt_ip: {get_param: [eca_oam_ips, 1] }
+            oam2_hostname: {get_param: [eca_names, 1]}
+            swift_url: {get_param: swift_eca_url}
+            oam_gateway: {get_param: eca_oam_gateway }
+
+  oam2_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [eca_oam_ips, 1]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  oam2_int_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: eca_mgmt_net_name}
+      fixed_ips: [{"ip_address": {get_param: [eca_eca_mgmt_ips, 1]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  oam2_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: oam_volume_size}
+      volume_type: {get_param: ECA_OAM_volume_type}
+
+  oam2_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: oam2_volume}
+      instance_uuid: {get_resource: oam2_instance}
+
+  arb_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [arb_names, 0]}
+      image: {get_param: oam_image_name}
+      flavor: {get_param: arbiter_flavor}
+      availability_zone: {get_param: availability_zone_0}
+      networks:
+        - port: {get_resource: arb_int_port}
+        - port: {get_resource: arb_mgmt_port}
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sed -i s/HOSTNAME.*/"HOSTNAME=arb_hostname"/g /etc/sysconfig/network
+            eth1_ip_address='arb_mgt_ip'
+            eth1_gateway='oam_gateway'
+            for interface in $(ip addr show|perl -nle 's/\d:\s([a-z0-9]*?):/print $1/e') ; do
+              if [ "$interface" != "lo" ]; then
+                DEVICE_NAME=$interface
+                interface_ip_var="${DEVICE_NAME}_ip_address"
+                gateway_var="${DEVICE_NAME}_gateway"
+                var_name="$interface_ip_var"
+                var_gateway="$gateway_var"
+                if [ ! -z ${!var_name} ]; then
+                  IPADDR=${!var_name}
+                  BOOTPROTO="static"
+                  GATEWAY=${!var_gateway}
+                  IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes\nUSERCTL=no"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=$BOOTPROTO"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nIPADDR=$IPADDR"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nNETMASK=255.255.255.0"
+                  IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nGATEWAY=$GATEWAY"
+                  printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                else
+                  if [ ! -f /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME ]; then
+                    echo "Configuring $DEVICE_NAME to use DHCP"
+                    IFCFG_TEMPLATE="DEVICE=$DEVICE_NAME\nNM_CONTROLLED=no\nONBOOT=yes"
+                    IFCFG_TEMPLATE="$IFCFG_TEMPLATE\nBOOTPROTO=dhcp\nUSERCTL=no"
+                    printf $IFCFG_TEMPLATE > /etc/sysconfig/network-scripts/ifcfg-$DEVICE_NAME
+                  fi
+                fi
+                ifdown $DEVICE_NAME
+                ifup $DEVICE_NAME
+                printf "$DEVICE_NAME\n" >> /tmp/network_config
+              fi
+            done
+            curl swift_url/etc/puppet/manifests/roles/oam_arbiter.pp > /etc/puppet/manifests/roles/oam_arbiter.pp
+            curl swift_url/etc/puppet/files/global/config.yaml > /etc/puppet/files/global/config.yaml
+            curl swift_url/etc/puppet/files/global/11-customer.conf > /etc/puppet/files/global/11-customer.conf
+            van-role oam_arbiter > /root/startup-van-role.out
+            curl swift_url/scripts/fdisk-keystrokes > /root/fdisk-keystrokes 
+            fdisk /dev/vdb < /root/fdisk-keystrokes 
+            curl swift_url/scripts/os-conf-cinder-vol > /root/os-conf-cinder-vol
+            chmod 755 /root/os-conf-cinder-vol
+            /root/os-conf-cinder-vol 2>> /tmp/cinder_volume.log
+          params:
+            arb_mgt_ip: {get_param: [arb_oam_ips, 0] }
+            arb_hostname: {get_param: [arb_names, 0]}
+            swift_url: {get_param: swift_eca_url}
+            oam_gateway: {get_param: eca_oam_gateway }
+
+  arb_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      fixed_ips: [{"ip_address": {get_param: [arb_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  arb_int_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: eca_mgmt_net_name}
+      fixed_ips: [{"ip_address": {get_param: [arb_eca_mgmt_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  arb_volume:
+    type: OS::Cinder::Volume
+    properties:
+      size: {get_param: arb_volume_size}
+      volume_type: {get_param: ARB_volume_type}
+  arb_volume_attachment:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_resource: arb_volume}
+      instance_uuid: {get_resource: arb_instance}

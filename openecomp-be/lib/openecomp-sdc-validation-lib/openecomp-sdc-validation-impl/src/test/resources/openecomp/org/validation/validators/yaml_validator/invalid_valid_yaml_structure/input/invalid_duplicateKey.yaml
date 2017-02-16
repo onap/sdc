@@ -1,0 +1,25 @@
+### Heat Template ###
+description: Generated template
+heat_template_version: 2013-05-23
+parameters: {}
+resources:
+  network_0:
+    properties:
+      admin_state_up: true
+      name: NET_167
+      shared: true
+    type: OS::Neutron::Net
+  network_0:
+      properties:
+        admin_state_up: true
+        name: NET_167
+        shared: true
+      type: OS::Neutron::Net
+  network_1:
+    properties:
+      admin_state_up: true
+      name: NET_169
+      shared: true
+    type: OS::Neutron::Net
+
+

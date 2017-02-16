@@ -1,0 +1,52 @@
+<div class="workspace-attributes">
+    <div class="add-btn" data-tests-id="add-attribute-button" ng-if="!isViewMode()"
+         data-ng-class="{'disabled': isDisableMode()}" data-ng-click="addOrUpdateAttribute()" data-tests-id="add-attribute-button">Add</div>
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-if="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item" ng-if="!isViewMode()"></div>
+                <!--div class="table-no-text-header head-row flex-item"></div-->
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="component.attributes.length === 0" class="no-row-text"  data-ng-class="{'disabled': isDisableMode()}">
+                        There are no attributes to display <br>
+                        <span ng-if="!isViewMode()"> click <a data-ng-click="addOrUpdateAttribute()">here</a> to add one </span>
+
+                    </div>
+                    <div data-ng-repeat-start="attribute in component.attributes | orderBy:sortBy:reverse track by $index"
+                         class="flex-container data-row" data-ng-class="{'selected': attribute.selected}"
+                         data-ng-click="attribute.selected = !attribute.selected" data-tests-id="attributes-table-row">
+
+                        <div class="table-col-general flex-item text">
+                            <span class="sprite table-arrow" data-ng-class="{'opened': attribute.selected}"></span>
+                            <span  data-tests-id="{{attribute.name}}" tooltips tooltip-content="{{attribute.name}}">{{attribute.name}}</span>
+
+                        </div>
+
+                        <div class="table-col-general flex-item text" data-tests-id="{{attribute.type}}" data-ng-bind="attribute.type"></div>
+
+                        <div class="table-col-general flex-item text">
+                            <span tooltips tooltip-content="{{attribute.defaultValue}}" data-tests-id="{{attribute.defaultValue}}" data-ng-bind="attribute.defaultValue"></span>
+                        </div>
+
+                        <div class="table-btn-col flex-item" ng-if="!isViewMode()">
+                            <button class="table-edit-btn" data-tests-id="edit_{{attribute.name}}" data-ng-show="attribute.parentUniqueId==component.uniqueId"
+                                    data-ng-click="addOrUpdateAttribute(attribute); $event.stopPropagation();"  data-ng-class="{'disabled': isViewMode()}"> </button>
+                            <button class="table-delete-btn" data-tests-id="delete_{{attribute.name}}"  data-ng-show="attribute.parentUniqueId==component.uniqueId"
+                                    data-ng-click="delete(attribute); $event.stopPropagation();"  data-ng-class="{'disabled': isViewMode()}"> </button>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" data-ng-if="attribute.selected && attribute.description" class="item-opened" data-ng-bind="attribute.description">
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+
+</div>

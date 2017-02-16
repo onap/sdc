@@ -1,0 +1,76 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  mgmt_net:
+    type: string
+    description: network name of OAM network
+  jsa_net:
+    type: string
+    description: network name of jsa log network
+  st_name:
+    type: string
+    description: service template name or ID
+  st_type:
+    type: string
+    description: service type
+  st_image:
+    type: string
+    description: Name of the image
+  st_flavor:
+    type: string
+    description: Flavor
+  st_service_interface_type_list:
+    type: string
+    description: List of interface types
+  st_shared_ip_list:
+    type: string
+    description: List of shared ip enabled-disabled
+  st_static_routes_list:
+    type: string
+    description: List of static routes enabled-disabled
+  st_scaling:
+    type: string
+    description: Indicates whether service scaling is enabled
+  st_mode:
+    type: string
+    description: service mode
+  max_num_fw_instances:
+    type: number
+    description: maximum number of firewall instances for scaling
+  service_instance_name:
+    type: string
+    description: service instance name
+
+resources:
+  service_template:
+    type: OS::Contrail::ServiceTemplate
+    properties:
+      name: { get_param: st_name }
+      service_mode: { get_param: st_mode }
+      service_type: { get_param: st_type }
+      image_name: { get_param: st_image }
+      flavor: { get_param: st_flavor }
+      service_interface_type_list: { "Fn::Split" : [ ",", Ref: st_service_interface_type_list ] }
+      shared_ip_list: { "Fn::Split" : [ ",", Ref: st_shared_ip_list ] }
+      static_routes_list: { "Fn::Split" : [ ",", Ref: st_static_routes_list ]}
+      service_scaling: { get_param: st_scaling }
+
+  service_instance:
+    type: OS::Contrail::ServiceInstance
+    properties:
+      name: { get_param: service_instance_name }
+      service_template: { get_resource:  service_template }
+      scale_out:
+          max_instances: { get_param: max_num_fw_instances }
+      interface_list: [
+          {
+              virtual_network: {get_param: mgmt_net}
+          },
+          {
+              virtual_network: {get_param: jsa_net}
+          },
+      ]
+

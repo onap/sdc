@@ -1,0 +1,39 @@
+{
+  "name": "$$HOSTNAME$$",
+  "type": "vLBAgent",
+  "cluster": "VLBAGENT_CLUSTER_NAME",
+  "node_count": "VLBAGENT_NODE_COUNT",
+  "attributes": [
+    {
+      "name": "ip-eth0",
+      "value": "$$OAM_NET_IP$$"
+    },
+    {
+      "name": "rprb_26071_oam_direct_net_1",
+      "value": "$$OAM_NET_IP$$"
+    },
+    {
+      "name": "rprb_26071_mme_int_pktmirror_net_1",
+      "value": "$$PACKET_MIRROR_NET_IP$$"
+    },
+    {
+      "name": "rprb_26071_mme_int_pktinternal_net_1",
+      "value": "$$PACKET_INTERNAL_NET_IP$$"
+    }
+  ],
+  "dependencies": [
+    {
+      "resource_name": "VPROBE_CLUSTER_NAME",
+      "resource_type": "cluster",
+      "attribute": "eth0-eth2-and-ProbeInstance",
+      "role": "vProbe_cluster",
+      "format": "all"
+    },
+    {
+      "resource_name": "MANAGER_INSTANCE_NAME",
+      "resource_type": "machine",
+      "attribute": "rprb_26071_oam_direct_net_1",
+      "role": "manager_oam_direct_ip"
+    }
+  ]
+}

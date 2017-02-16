@@ -1,0 +1,9 @@
+asdc.nodes.module.ECA_OAM:
+  derived_from: asdc.nodes.Module
+  requirements:
+    - oam_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.OAM
+    - internal_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Internal

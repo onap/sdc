@@ -1,0 +1,11 @@
+.sequence-diagram {
+  @extend .flex-column;
+  .sequence-diagram-sequencer {
+    flex: 0 1 auto;
+    margin-bottom: 30px;
+  }
+  .sequence-diagram-action-buttons {
+    flex: 0.1;
+    text-align: center;
+  }
+}

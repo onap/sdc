@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>api-docs</artifactId>
+    <groupId>org.openecomp.sdc.onboarding</groupId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <plugin.name>api-docs</plugin.name>
+        <package.dir>${basedir}/${plugin.name}</package.dir>
+        <rest.api.dir>${basedir}/../../api/openecomp-sdc-rest-webapp/onboarding-rest-war</rest.api.dir>
+        <api.json.file>api.json</api.json.file>
+        <api.html.file>api.html</api.html.file>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Copy api json files"/>
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${basedir}/target/${api.json.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/swagger-ui/swagger.json" tofile="${package.dir}/${api.json.file}"/>
+                                <copy file="${rest.api.dir}/target/generated/${api.html.file}" tofile="${package.dir}/${api.html.file}"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptor>assembly/swagger.xml</descriptor>
+                    <finalName>${plugin.name}</finalName>
+                    <outputDirectory>${package.dir}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

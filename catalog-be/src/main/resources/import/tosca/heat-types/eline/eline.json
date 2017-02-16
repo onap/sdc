@@ -1,0 +1,21 @@
+{
+  "payloadName": "eline.yml",
+  "contactId": "jh0003",
+  "name": "VL ELINE",
+  "description": "The node represents an E-Line virtual link entity.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Network Connectivity",
+    "subcategories": [
+      {
+        "name": "Virtual Links"
+      }
+    ]
+  }
+],
+  "tags": [
+    "VL ELINE"
+  ]
+}

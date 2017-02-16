@@ -1,0 +1,161 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.mvs.nested.heat:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF_MODULE instance
+      vf_name:
+        type: string
+        description: The VF Name; defaults to VMVM for the virtual MVM VNF.
+        constraints:
+        - pattern: '[a-zA-Z0-9]+'
+        - max_length: 4
+        - min_length: 4
+      cloud_zone_id:
+        type: string
+        description: The cloud zone for this VF instance
+      vf_instance_num:
+        type: string
+        description: The number for this VF instance
+        constraints:
+        - pattern: '[0-9]+'
+        - max_length: 2
+        - min_length: 2
+      virtual_mgmt_ip_0:
+        type: string
+        description: Virtual management network ip address
+      indx:
+        type: float
+        description: Index of the current instance
+      mvs_mgmt_ip_0:
+        type: list
+        description: List of Management network IP addresses for IPv4
+        entry_schema:
+          type: string
+      flavor:
+        type: string
+        description: Server flavor
+        constraints: [
+          ]
+      key_name:
+        type: string
+        description: SSH key name
+        constraints: [
+          ]
+      vnf_id:
+        type: string
+        description: Unique ID for this VF instance
+      availability_zone_0:
+        type: list
+        description: List of Availability Zone IDs or Names
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Neutron UUID for the Management network
+        constraints: [
+          ]
+      vm_instance_num:
+        type: list
+        description: VM instance number list must be a list of three-digit numeric value
+        entry_schema:
+          type: string
+      bootimage:
+        type: string
+        description: Master bootimage volume id
+      sec_groups:
+        type: list
+        description: Security groups
+        entry_schema:
+          type: string
+      vf_component:
+        type: string
+        description: The component that this VF instance is running
+        constraints:
+        - pattern: '[a-zA-Z0-9]+'
+        - max_length: 3
+        - min_length: 3
+    attributes:
+      vnfci_id_2:
+        type: string
+      vnfci_id_1:
+        type: string
+    requirements:
+    - local_storage_vnfci:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_mgmt_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      os_vnfci:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_mgmt_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_vnfci:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_vnfci:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_vnfci:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_vnfci:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED

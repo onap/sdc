@@ -1,0 +1,10 @@
+{
+    "title": "Show all certified services & resources (per day)",
+    "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"TIMESTAMP\",\"interval\":\"d\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+    "uiStateJSON": "{}",
+    "description": "",
+    "version": 1,
+    "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"auditingevents-*\",\"query\":{\"query_string\":{\"query\":\"ACTION:\\\"CertificationSuccess\\\" AND (RESOURCE_TYPE:\\\"Resource\\\" OR RESOURCE_TYPE:\\\"Service\\\")\",\"analyze_wildcard\":true}},\"filter\":[]}"
+    }
+}

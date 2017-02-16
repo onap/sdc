@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+	
+	<servlet>
+		<servlet-name>jersey</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>com.wordnik.swagger.jaxrs.json, org.openecomp.sdc.be.servlets</param-value>
+		</init-param>
+		<init-param>
+			<param-name>jersey.config.server.provider.classnames</param-name>
+			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter, org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter</param-value>
+			<!-- <param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter</param-value> -->
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	
+	<servlet-mapping>
+		<servlet-name>jersey</servlet-name>
+		<url-pattern>/sdc2/rest/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>EsGateway</servlet-name>
+		<servlet-class>org.openecomp.sdc.be.monitoring.EsGateway</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>EsGateway</servlet-name>
+		<url-pattern>/sdc2/esGateway/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>jerseyDistribution</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>org.openecomp.sdc.be.distribution.servlet, org.openecomp.sdc.be.externalapi.servlet</param-value>
+		</init-param>
+		<init-param>
+			<param-name>jersey.config.server.provider.classnames</param-name>
+<!-- 			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter,org.openecomp.sdc.be.filters.BasicAuthenticationFilter, org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter</param-value> -->
+			
+			<!-- Closed till the feature done and basic authentication defined with M Lando -->
+			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter,org.openecomp.sdc.be.filters.BasicAuthenticationFilter</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>jerseyDistribution</servlet-name>
+		<url-pattern>/asdc/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Jersey2Config</servlet-name>
+		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
+		<init-param>
+			<param-name>api.version</param-name>
+			<param-value>1.0.0</param-value>
+		</init-param> 
+		
+		<init-param>
+			<param-name>swagger.api.basepath</param-name>
+			<param-value>http://behost:8080/sdc2/rest</param-value>
+		</init-param>
+		
+		<load-on-startup>2</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	
+	<!-- ECOMP Portal -->	
+	<servlet>
+		<servlet-name>ViewStatusMessages</servlet-name>
+		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ViewStatusMessages</servlet-name>
+		<url-pattern>/lbClassicStatus</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+	   <filter-name>GzipFilter</filter-name>
+	   <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
+	   <async-supported>true</async-supported>
+	   <init-param>
+		<param-name>methods</param-name>
+		<param-value>GET,POST</param-value>
+	   </init-param>
+	   <init-param>
+	      <param-name>mimeTypes</param-name>
+	      <param-value>text/html,text/plain,text/css,application/javascript,application/json</param-value>
+	   </init-param>
+	</filter>
+	<filter-mapping>
+	   <filter-name>GzipFilter</filter-name>
+		<url-pattern>/sdc2/rest/*</url-pattern>
+	</filter-mapping>
+
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:application-context.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.openecomp.sdc.be.listen.BEAppContextListener</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>

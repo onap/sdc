@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "name": "Software Product 1",
+      "version": "1.0",
+      "id": "1",
+      "category": "Category1",
+      "subCategory": "Sub Category1",
+      "vendor": "1",
+      "status": "string",
+      "checkinStatus": "string"
+    },
+    {
+      "name": "Software Product 2",
+      "version": "1.0",
+      "id": "2",
+      "category": "Category2",
+      "subCategory": "Sub Category2",
+      "vendor": "2",
+      "status": "string",
+      "checkinStatus": "string"
+    },
+    {
+      "name": "Software Product 3",
+      "version": "1.0",
+      "id": "3",
+      "category": "Category3",
+      "subCategory": "Sub Category3",
+      "vendor": "3",
+      "status": "string",
+      "checkinStatus": "string"
+    }
+  ]
+}

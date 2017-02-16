@@ -1,0 +1,206 @@
+.asdcs-control {
+
+    div.asdcs-diagram {
+
+        width: auto;
+        height: 100%;
+        overflow: hidden;
+
+        @include noselect();
+
+        div.asdcs-diagram-name {
+            height: 40px;
+            line-height: 40px;
+            font-size: 24px;
+            text-align: center;
+            background-color: $asdcsColorOneLight;
+            @include noselect();
+        }
+
+        div.asdcs-diagram-svg {
+            height: 100%;
+        }
+
+        div.asdcs-diagram-popup {
+
+            @include drop-shadow();
+
+            $asdcsDiagramPopupIconPaneSize: 80px;
+            $asdcsDiagramPopupHeaderHeight: 40px;
+            $asdcsDiagramPopupFooterHeight: $asdcsDiagramPopupHeaderHeight;
+            $asdcsDiagramPopupHeight: 200px;
+            $asdcsDiagramPopupWidth: 320px;
+            $asdcsDiagramPopupBodyHeight: $asdcsDiagramPopupHeight - ($asdcsDiagramPopupHeaderHeight + $asdcsDiagramPopupFooterHeight);
+            $asdcsDiagramPopupNotesIconSize: 64px;
+
+            position: absolute;
+            height: $asdcsDiagramPopupHeight;
+            width: $asdcsDiagramPopupWidth;
+            text-overflow: ellipsis;
+            background: $asdcsColorOneLight;
+            border: 1px solid $asdcsColorWhitish;
+            border-radius: $asdcsPopupBorderRadius;
+
+            .asdcs-diagram-popup-header {
+                font-weight: bold;
+                font-size: 120%;
+                padding: 4px 10px;
+                height: $asdcsDiagramPopupHeaderHeight;
+                line-height: $asdcsDiagramPopupHeaderHeight;
+            }
+
+            .asdcs-diagram-popup-body {
+
+                height: $asdcsDiagramPopupBodyHeight;
+                overflow: hidden;
+
+                .asdcs-icon-popup {
+                    display: table-cell;
+                    text-align: center;
+                    vertical-align: middle;
+                    height: $asdcsDiagramPopupBodyHeight;
+                    width: $asdcsDiagramPopupIconPaneSize;
+                    min-width: $asdcsDiagramPopupIconPaneSize;
+                    svg {
+                        height: $asdcsDiagramPopupNotesIconSize;
+                        width: $asdcsDiagramPopupNotesIconSize;
+                        .asdcs-icon {
+                            fill: $asdcsColorOneDark;
+                        }
+                    }
+                }
+
+                .asdcs-diagram-notes {
+                    display: table-cell;
+                    width: 100%;
+                    vertical-align: middle;
+                    overflow: hidden;
+                    text-align: left;
+                    padding: 0 15px 5px 0;
+                    margin-right: 10px;
+                }
+            }
+
+            .asdcs-diagram-popup-footer {
+                height: 0;
+            }
+
+            $asdcsPopupBorderColor1: rgba(242, 242, 242, 0);
+            $asdcsPopupBorderColor2: rgba(211, 211, 211, 0);
+
+            &.asdcs-diagram-popup-topleft {
+
+                &:after, &:before {
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    bottom: 100%;
+                    left: 50px;
+                }
+
+                &:after {
+                    border-color: $asdcsPopupBorderColor1;
+                    border-width: 6px;
+                    border-bottom-color: $asdcsColorOneLight;
+                    margin-left: -6px;
+                }
+
+                &:before {
+                    border-color: $asdcsPopupBorderColor2;
+                    border-width: 7px;
+                    border-bottom-color: $asdcsColorOneLight;
+                    margin-left: -7px;
+                }
+            }
+
+            &.asdcs-diagram-popup-topright {
+
+                &:after, &:before {
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    bottom: 100%;
+                    right: 50px;
+                }
+
+                &:after {
+                    border-color: $asdcsPopupBorderColor1;
+                    border-width: 6px;
+                    border-bottom-color: $asdcsColorOneLight;
+                    margin-left: -6px;
+                }
+
+                &:before {
+                    border-color: $asdcsPopupBorderColor2;
+                    border-width: 7px;
+                    border-bottom-color: $asdcsColorOneLight;
+                    margin-left: -7px;
+                }
+            }
+
+            &.asdcs-diagram-popup-bottomleft {
+
+                &:after, &:before {
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    top: 100%;
+                    left: 50px;
+                }
+
+                &:after {
+                    border-color: $asdcsPopupBorderColor1;
+                    border-width: 6px;
+                    border-top-color: $asdcsColorOneLight;
+                    margin-left: -6px;
+                }
+
+                &:before {
+                    border-color: $asdcsPopupBorderColor2;
+                    border-width: 7px;
+                    border-top-color: $asdcsColorOneLight;
+                    margin-left: -7px;
+                }
+            }
+
+            &.asdcs-diagram-popup-bottomright {
+
+                &:after, &:before {
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    top: 100%;
+                    right: 50px;
+                }
+
+                &:after {
+                    border-color: rgba(242, 242, 242, 0);
+                    border-width: 6px;
+                    border-top-color: $asdcsColorOneLight;
+                    margin-left: -6px;
+                }
+
+                &:before {
+                    border-color: rgba(211, 211, 211, 0);
+                    border-width: 7px;
+                    border-top-color: $asdcsColorOneLight;
+                    margin-left: -7px;
+                }
+            }
+        }
+
+        @import 'sequencer-diagram-svg.scss';
+    }
+}

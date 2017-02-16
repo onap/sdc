@@ -1,0 +1,30 @@
+﻿tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.Vl.importResource4test:
+    derived_from: tosca.nodes.Root
+    description: The TOSCA Node Type all other TOSCA base Node Types derive from
+    attributes:
+      tosca_id:
+        type: string
+      tosca_name:
+        type: string
+      state:
+        type: string
+    capabilities:
+      feature2: 
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency2 :
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.importResource4test 
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    properties:
+      root_password: 
+        type: string
+        required: false
+        description: the optional root password for the DBMS service
+      port:
+        type: integer
+        required: false
+        description: the port the DBMS service will listen to for data and requests 

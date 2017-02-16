@@ -1,0 +1,354 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: CommonGlobalTypes
+  template_version: 1.0.0
+description: TOSCA Global Types
+imports:
+  NativeTypesServiceTemplate:
+    file: NativeTypesServiceTemplateServiceTemplate.yaml
+data_types:
+  org.openecomp.datatypes.heat.network.AddressPair:
+    derived_from: tosca.datatypes.Root
+    description: MAC/IP address pairs
+    properties:
+      mac_address:
+        type: string
+        description: MAC address
+        required: false
+        status: SUPPORTED
+      ip_address:
+        type: string
+        description: IP address
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.network.AllocationPool:
+    derived_from: tosca.datatypes.Root
+    description: The start and end addresses for the allocation pool
+    properties:
+      start:
+        type: string
+        description: Start address for the allocation pool
+        required: false
+        status: SUPPORTED
+      end:
+        type: string
+        description: End address for the allocation pool
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.network.contrail.AddressPair:
+    derived_from: tosca.datatypes.Root
+    description: Address Pair
+    properties:
+      address_mode:
+        type: string
+        description: Address mode active-active or active-standy
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - active-active
+          - active-standby
+      prefix:
+        type: string
+        description: IP address prefix
+        required: false
+        status: SUPPORTED
+      mac_address:
+        type: string
+        description: Mac address
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.network.subnet.HostRoute:
+    derived_from: tosca.datatypes.Root
+    description: Host route info for the subnet
+    properties:
+      destination:
+        type: string
+        description: The destination for static route
+        required: false
+        status: SUPPORTED
+      nexthop:
+        type: string
+        description: The next hop for the destination
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.network.contrail.port.StaticRoute:
+    derived_from: tosca.datatypes.Root
+    description: static route
+    properties:
+      prefix:
+        type: string
+        description: Route prefix
+        required: false
+        status: SUPPORTED
+      next_hop:
+        type: string
+        description: Next hop
+        required: false
+        status: SUPPORTED
+      next_hop_type:
+        type: string
+        description: Next hop type
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.network.neutron.Subnet:
+    derived_from: tosca.datatypes.Root
+    description: A subnet represents an IP address block that can be used for assigning IP addresses to virtual instances
+    properties:
+      tenant_id:
+        type: string
+        description: The ID of the tenant who owns the network
+        required: false
+        status: SUPPORTED
+      enable_dhcp:
+        type: boolean
+        description: Set to true if DHCP is enabled and false if DHCP is disabled
+        required: false
+        default: true
+        status: SUPPORTED
+      ipv6_address_mode:
+        type: string
+        description: IPv6 address mode
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - dhcpv6-stateful
+          - dhcpv6-stateless
+          - slaac
+      ipv6_ra_mode:
+        type: string
+        description: IPv6 RA (Router Advertisement) mode
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - dhcpv6-stateful
+          - dhcpv6-stateless
+          - slaac
+      value_specs:
+        type: map
+        description: Extra parameters to include in the request
+        required: false
+        default: {
+          }
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      allocation_pools:
+        type: list
+        description: The start and end addresses for the allocation pools
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AllocationPool
+      subnetpool:
+        type: string
+        description: The name or ID of the subnet pool
+        required: false
+        status: SUPPORTED
+      dns_nameservers:
+        type: list
+        description: A specified set of DNS name servers to be used
+        required: false
+        default: [
+          ]
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      host_routes:
+        type: list
+        description: The gateway IP address
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.subnet.HostRoute
+      ip_version:
+        type: integer
+        description: The gateway IP address
+        required: false
+        default: 4
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - '4'
+          - '6'
+      name:
+        type: string
+        description: The name of the subnet
+        required: false
+        status: SUPPORTED
+      prefixlen:
+        type: integer
+        description: Prefix length for subnet allocation from subnet pool
+        required: false
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      cidr:
+        type: string
+        description: The CIDR
+        required: false
+        status: SUPPORTED
+      gateway_ip:
+        type: string
+        description: The gateway IP address
+        required: false
+        status: SUPPORTED
+capability_types:
+  org.openecomp.capabilities.metric.SnmpTrap:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using snmp trap.
+    properties:
+      oid:
+        type: string
+        description: Object Id of the metric
+        required: true
+        status: SUPPORTED
+  org.openecomp.capabilities.metric.SnmpPolling:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using snmp polling.
+    properties:
+      oid:
+        type: string
+        description: Object Id of the metric
+        required: true
+        status: SUPPORTED
+  org.openecomp.capabilities.metric.Ceilometer:
+    derived_from: org.openecomp.capabilities.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+    properties:
+      name:
+        type: string
+        description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+        required: true
+        status: SUPPORTED
+  org.openecomp.capabilities.Metric:
+    derived_from: tosca.capabilities.nfv.Metric
+    description: A node type that includes the Metric capability indicates that it can be monitored.
+    properties:
+      unit:
+        type: string
+        description: Unit of the metric value
+        required: true
+        status: SUPPORTED
+      description:
+        type: string
+        description: Description of the metric
+        required: false
+        status: SUPPORTED
+      type:
+        type: string
+        description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+        required: true
+        status: SUPPORTED
+      category:
+        type: string
+        description: Category of the metric, for an example, compute, disk, network, storage and etc.
+        required: false
+        status: SUPPORTED
+    attributes:
+      value:
+        type: string
+        description: Runtime monitored value
+        status: SUPPORTED
+relationship_types:
+  org.openecomp.relationships.AttachesTo:
+    derived_from: tosca.relationships.Root
+    description: This type represents an attachment relationship
+group_types:
+  org.openecomp.groups.heat.HeatStack:
+    derived_from: tosca.groups.Root
+    description: Grouped all heat resources which are in the same heat stack
+    properties:
+      heat_file:
+        type: string
+        description: Heat file which associate to this group/heat stack
+        required: true
+        status: SUPPORTED
+      description:
+        type: string
+        description: Heat file description
+        required: false
+        status: SUPPORTED
+policy_types:
+  org.openecomp.policies.placement.valet.Exclusivity:
+    derived_from: tosca.policy.placement
+    description: Valet Exclusivity
+    properties:
+      level:
+        type: string
+        description: exclusivity
+        required: false
+        default: host
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - host
+          - rack
+  org.openecomp.policies.placement.valet.Diversity:
+    derived_from: tosca.policy.placement
+    description: Valet Diversity
+    properties:
+      level:
+        type: string
+        description: diversity
+        required: false
+        default: host
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - host
+          - rack
+  org.openecomp.policies.placement.Colocate:
+    derived_from: tosca.policy.placement
+    description: Keep associated nodes (groups of nodes) based upon affinity value
+    properties:
+      name:
+        type: string
+        description: The name of the policy
+        required: false
+        status: SUPPORTED
+      affinity:
+        type: string
+        description: affinity
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - host
+          - region
+          - compute
+  org.openecomp.policies.placement.valet.Affinity:
+    derived_from: tosca.policy.placement
+    description: Valet Affinity
+    properties:
+      level:
+        type: string
+        description: affinity
+        required: false
+        default: host
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - host
+          - rack
+  org.openecomp.policies.placement.Antilocate:
+    derived_from: tosca.policy.placement
+    description: My placement policy for separation based upon container type value
+    properties:
+      name:
+        type: string
+        description: The name of the policy
+        required: false
+        status: SUPPORTED
+      container_type:
+        type: string
+        description: container type
+        required: false
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - host
+          - region
+          - compute

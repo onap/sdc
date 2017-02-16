@@ -1,0 +1,20 @@
+{
+  "payloadName": "softwareComponent.yml",
+  "contactId": "jh0003",
+  "name": "SoftwareComponent",
+  "description": "Represents a generic software component that can be managed and run by a Compute Node Type.",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "SoftwareComponent"
+  ]
+}

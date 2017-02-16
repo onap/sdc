@@ -1,0 +1,634 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.smp:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    hostid_fe1:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE1 Hostid (from Ulticom license)
+    ip_address_stp2:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP2 IP address
+    Mobility_OAM_protected_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network name for OAM
+    hostid_fe2:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE2 Hostid (from Ulticom license)
+    flavor_scp_fe_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP FE Flavor
+      default: a1.Small
+    ip_address_stp1:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP1 IP address
+    int_vscp_ce_network_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Inter-CE Network
+    int_vscp_ce_network_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private Network Address (CIDR notation)
+    cluster_type:
+      hidden: false
+      immutable: false
+      type: string
+      constraints:
+      - valid_values:
+        - Test
+        - Prod
+    be_Mobility_OAM_protected_ip_1:
+      label: be_1 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be_1 OAM ip address
+    be_Mobility_OAM_protected_ip_2:
+      label: be_2 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be_2 OAM ip address
+    be_Mobility_OAM_protected_ip_0:
+      label: be_0 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be_0 OAM ip address
+    ip_address_dra:
+      hidden: false
+      immutable: false
+      type: string
+      description: DRA VIP address
+    image_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP image
+      default: asc_base_image_smp
+    fe_connectivity:
+      hidden: false
+      immutable: false
+      type: string
+      constraints:
+      - valid_values:
+        - NEE
+        - STP
+    lab_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Lab name
+    smp_Mobility_OAM_protected_ip_1:
+      label: smp_1 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: smp_1 OAM ip address
+    fe_SIGNET_vrf_B1_direct_ip_0:
+      label: fe1 SIGTRAN ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: fe1 SIGTRAN ip address
+    smp_Mobility_OAM_protected_ip_0:
+      label: smp_0 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: smp_0 OAM ip address
+    int_vscp_cluster_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: LAN3 Cluster
+    be_Mobility_OAM_protected_ip_3:
+      label: be_3 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be_3 OAM ip address
+    be_Mobility_OAM_protected_ip_4:
+      label: be_4 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be_4 OAM ip address
+    hostname_nee1:
+      hidden: false
+      immutable: false
+      type: string
+      description: NEE1 Hostname (from Ulticom license)
+    int_vscp_fe_cluster_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: LAN2 FE Cluster/KA
+    SIGNET_vrf_A1_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network name for SIGTRAN_A
+    key_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: keypair to enable SSH access to the instance.
+      default: vSCP-keypair
+    int_vscp_fe_cluster_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private Network2 Address (CIDR notation)
+    fe_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_FE2
+    fe_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_FE1
+    be_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_BE1
+    int_vscp_cluster_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private Network3 Address (CIDR notation)
+    be_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_BE2
+    be_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_BE3
+    point_code_stp:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP virtual point code (in "zone-cluster-member" format)
+    be_name_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_BE4
+    be_name_4:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSCP_BE5
+    global_title_scp:
+      hidden: false
+      immutable: false
+      type: string
+      description: vSCP Global Title address
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance
+      default: This_is_the_SCP_name
+    be_Cricket_OCS_protected_ip_2:
+      label: be3 Cricket_OCS ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be3 Cricket_OCS ip address
+    fe_Mobility_OAM_protected_ip_0:
+      label: fe_0 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: fe_0 OAM ip address
+    hostname_fe1:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE1 Hostname (from Ulticom license)
+    be_Cricket_OCS_protected_ip_1:
+      label: be2 Cricket_OCS ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be2 Cricket_OCS ip address
+    hostname_fe2:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE2 Hostname (from Ulticom license)
+    be_Cricket_OCS_protected_ip_4:
+      label: be5 Cricket_OCS ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be5 Cricket_OCS ip address
+    be_Cricket_OCS_protected_ip_3:
+      label: be4 Cricket_OCS ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be4 Cricket_OCS ip address
+    fe_Mobility_OAM_protected_ip_1:
+      label: fe_1 OAM ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: fe_1 OAM ip address
+    be_Cricket_OCS_protected_ip_0:
+      label: be1 Cricket_OCS ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: be1 Cricket_OCS ip address
+    route_table_fe1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Additional route table for FE1
+    Cricket_OCS_protected_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network name for CRICKET_OCS
+    smp_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSMP2
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_SCP_id
+    smp_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSMP2
+    flavor_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP Flavor
+      default: a1.Small
+    image_scp_be_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP BE image
+      default: asc_base_image_be
+    smp_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSMP1
+    route_table_fe2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Additional route table for FE2
+    hostid_nee1:
+      hidden: false
+      immutable: false
+      type: string
+      description: NEE1 Hostid (from Ulticom license)
+    SIGNET_vrf_B1_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network name for SIGTRAN_B
+    fe_SIGNET_vrf_A1_direct_ip_0:
+      label: fe2 SIGTRAN ip address
+      hidden: false
+      immutable: false
+      type: string
+      description: fe2 SIGTRAN ip address
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+    nee_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vNEE
+    fe_smp_affinity_param:
+      hidden: false
+      immutable: false
+      type: string
+      description: be affinity param
+    ip_port_stp1:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP1 IP port
+    ip_port_stp2:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP2 IP port
+    image_scp_fe_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP FE image
+      default: asc_base_image_fe
+    flavor_scp_be_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP BE Flavor
+      default: a1.Small
+    security_group_name:
+      label: vSCP security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: vSCP security group name
+    ip_port_fe2:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE2 IP port in SIGTRAN network
+    route_table_be:
+      hidden: false
+      immutable: false
+      type: string
+      description: Additional route table for BEs
+    ip_port_fe1:
+      hidden: false
+      immutable: false
+      type: string
+      description: FE1 IP port in SIGTRAN network
+    port_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: port name
+      default: port_name
+    be_affinity_param:
+      hidden: false
+      immutable: false
+      type: string
+      description: be affinity param
+    point_code_scp:
+      hidden: false
+      immutable: false
+      type: string
+      description: vSCP point code (in "zone-cluster-member" format)
+    global_title_stp:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP Global Title address
+    point_code_stp1:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP1 point code (in "zone-cluster-member" format)
+    point_code_stp2:
+      hidden: false
+      immutable: false
+      type: string
+      description: STP2 point code (in "zone-cluster-member" format)
+    multi_anti_affinity_param:
+      hidden: false
+      immutable: false
+      type: string
+      description: be affinity param
+  node_templates:
+    server_smp2:
+      type: org.openecomp.resource.vfc.nodes.heat.smp
+      properties:
+        flavor:
+          get_input: flavor_smp_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: image_smp_name
+        metadata:
+          jx_vm_role: smp2
+          vnf_id:
+            get_input: vnf_id
+          jx_lab_name:
+            get_input: lab_name
+        user_data_format: RAW
+        name:
+          get_input: smp_name_2
+        scheduler_hints:
+          group:
+            get_input: fe_smp_affinity_param
+    server_smp3:
+      type: org.openecomp.resource.vfc.nodes.heat.smp
+      properties:
+        flavor:
+          get_input: flavor_smp_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: image_smp_name
+        metadata:
+          jx_vm_role: smp2
+          vnf_id:
+            get_input: vnf_id
+          jx_lab_name:
+            get_input: lab_name
+        user_data_format: RAW
+        name:
+          get_input: smp_name_2
+        scheduler_hints:
+          group2:
+            get_input: multi_anti_affinity_param
+          group1:
+            get_input: fe_smp_affinity_param
+    port3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp3
+          relationship: tosca.relationships.network.BindsTo
+    port4:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp3
+          relationship: tosca.relationships.network.BindsTo
+    port1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp1
+          relationship: tosca.relationships.network.BindsTo
+    port2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp2
+          relationship: tosca.relationships.network.BindsTo
+    server_smp1:
+      type: org.openecomp.resource.vfc.nodes.heat.smp
+      properties:
+        flavor:
+          get_input: flavor_smp_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: image_smp_name
+        metadata:
+          jx_vm_role: smp2
+          vnf_id:
+            get_input: vnf_id
+          jx_lab_name:
+            get_input: lab_name
+        user_data_format: RAW
+        name:
+          get_input: smp_name_1
+        scheduler_hints:
+          group:
+            get_input: be_affinity_param
+  groups:
+    FE_SMP_Affinity:
+      type: tosca.groups.Root
+      members:
+      - server_smp2
+      - server_smp3
+    Multi_Anti_Affinity:
+      type: tosca.groups.Root
+      members:
+      - server_smp3
+    addOn1:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn1.yml
+        description: ASC Template
+      members:
+      - port1
+      - server_smp1
+    addOn3:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn3.yml
+        description: ASC Template
+      members:
+      - server_smp3
+      - port3
+      - port4
+    addOn2:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn2.yml
+        description: ASC Template
+      members:
+      - server_smp2
+      - port2
+    BE_Affinity:
+      type: tosca.groups.Root
+      members:
+      - server_smp1
+  policies:
+    FE_SMP_Affinity:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: abc
+        affinity: host
+      targets:
+      - FE_SMP_Affinity
+    Multi_Anti_Affinity:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name: def
+        container_type: host
+      targets:
+      - Multi_Anti_Affinity
+    BE_Affinity:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: def
+        affinity: host
+      targets:
+      - BE_Affinity
