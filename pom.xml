@@ -21,11 +21,11 @@
 		<module>catalog-fe</module>
 		<module>asdc-tests</module>
 		<module>ui-ci</module>
-		<module>sdc-os-chef</module>
-
+		
 		<module>openecomp-be</module>
 		<module>openecomp-ui</module>
 
+		<module>sdc-os-chef</module>
 	</modules>
 
 
