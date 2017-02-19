@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -11,36 +11,199 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<build>
-	    <plugins>
-		<plugin>
-                	<groupId>com.google.code.maven-replacer-plugin</groupId>
-                        <artifactId>replacer</artifactId>
-                        <version>1.5.3</version>
-                        <executions>
-                        	<execution>
-                                	<phase>package</phase>
-                                        <goals>
-                                        	<goal>replace</goal>
-                                        </goals>
-                                </execution>
-                        </executions>
 
-                        <configuration>
-                        	<basedir>${project.basedir}</basedir>
-                        	<includes>
-                        		<include>sdc-backend/Dockerfile</include>
-								<include>sdc-frontend/Dockerfile</include>
-								<include>scripts/docker_run.sh</include>							
-                        	</includes>
-                        	<replacements>
-                        		<replacement>
-                                		<token>__SDC-RELEASE__</token>
-                                        	<value>${project.version}</value>
-                                	</replacement>
-                        	</replacements>
-                        </configuration>
-		</plugin>
-	    </plugins>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<basedir>${project.basedir}</basedir>
+					<includes>
+						<include>sdc-backend/Dockerfile</include>
+						<include>sdc-frontend/Dockerfile</include>
+						<include>scripts/docker_run.sh</include>
+					</includes>
+					<replacements>
+						<replacement>
+							<token>__SDC-RELEASE__</token>
+							<value>${project.version}</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy-resources-be</id>
+								<!-- here the phase you need -->
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-backend</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target</directory>
+											<includes>
+												<include>onboarding-be-*.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-fe</id>
+								<!-- here the phase you need -->
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/openecomp-ui/dist</directory>
+											<includes>
+												<include>onboarding*.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.16.5</version>
+
+						<configuration>
+							<verbose>true</verbose>
+							<apiVersion>1.23</apiVersion>
+
+							<images>
+
+								<!-- Build backend image -->
+								<image>
+									<name>openecomp/sdc-backend:%l</name>
+									<alias>sdc-backend</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>sdc-backend</dockerFileDir>
+										<dockerFile>../../../sdc-backend/Dockerfile</dockerFile>
+									</build>
+								</image>
+
+								<!-- Build frontend image -->
+								<image>
+									<name>openecomp/sdc-frontend:%l</name>
+									<alias>sdc-frontend</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>sdc-frontend</dockerFileDir>
+										<dockerFile>../../../sdc-frontend/Dockerfile</dockerFile>
+									</build>
+								</image>
+
+								<!-- Build elastic search image -->
+								<image>
+									<name>openecomp/sdc-elasticsearch:%l</name>
+									<alias>sdc-elasticsearch</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>sdc-elasticsearch</dockerFileDir>
+										<dockerFile>../../../sdc-elasticsearch/Dockerfile</dockerFile>
+									</build>
+								</image>
+
+								<!-- Build kibana image -->
+								<image>
+									<name>openecomp/sdc-kibana:%l</name>
+									<alias>sdc-kibana</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>sdc-kibana</dockerFileDir>
+										<dockerFile>../../../sdc-kibana/Dockerfile</dockerFile>
+									</build>
+								</image>
+
+								<!-- Build cassandra image
+								<image>
+									<name>openecomp/sdc-cassandra:%l</name>
+									<alias>sdc-cassandra</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>sdc-cassandra</dockerFileDir>
+										<dockerFile>../../../sdc-cassandra/Dockerfile</dockerFile>
+									</build>
+								</image>
+                                -->
+
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+                                <id>clean-images</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                <goal>remove</goal>
+                                </goals>
+                                <configuration>
+                                <removeAll>true</removeAll>
+                                <image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+                                </configuration>
+							</execution>
+
+							<execution>
+								<id>generate-images</id>
+								<phase>package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+
+							<execution>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                <goal>build</goal>
+                                <goal>push</goal>
+                                </goals>
+                                <configuration>
+                                <image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+                                </configuration>
+							</execution>
+						</executions>
+
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
