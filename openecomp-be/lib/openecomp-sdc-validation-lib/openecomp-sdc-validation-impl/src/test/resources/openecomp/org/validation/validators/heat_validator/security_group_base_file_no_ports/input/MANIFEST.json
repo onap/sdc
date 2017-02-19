@@ -1,0 +1,17 @@
+{
+  "name": "hot-mog",
+  "description": "HOT template to create hot mog server",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "baseFile.yaml",
+      "type": "HEAT",
+      "isBase": true
+    },
+    {
+      "file": "notBaseFile.yaml",
+      "type": "HEAT",
+      "isBase": false
+    }
+  ]
+}

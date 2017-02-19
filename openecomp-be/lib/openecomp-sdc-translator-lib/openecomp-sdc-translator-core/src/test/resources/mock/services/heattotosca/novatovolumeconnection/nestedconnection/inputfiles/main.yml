@@ -1,0 +1,26 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+    cmaui_cinder_volume_size:
+       type: number
+       label: CMAUI Cinder volume size
+       description: the size of the CMAUI Cinder volume
+    CMAUI_volume_type:
+      type: string
+      label: CMAUI vm volume type
+      description: the name of the target volume backend
+
+resources:
+  test_vol:
+     type: OS::Cinder::Volume
+     properties:
+       size: {get_param: cmaui_cinder_volume_size}
+       volume_type: {get_param: CMAUI_volume_type}
+
+  test_nested:
+    type: nested.yml
+    properties:
+      cmaui_volume_param: { get_resource: test_vol}

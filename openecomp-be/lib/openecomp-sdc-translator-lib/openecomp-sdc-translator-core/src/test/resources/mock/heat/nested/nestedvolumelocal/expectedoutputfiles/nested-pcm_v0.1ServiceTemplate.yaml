@@ -1,0 +1,91 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-pcm_v0.1
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.nova:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    nova_image_name:
+      label: nova_001 image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    pcm_server_name:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+    nove_001_vol_property:
+      label: PCRF CM server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM server name
+  node_templates:
+    nova_001:
+      type: org.openecomp.resource.vfc.nodes.heat.nova
+      properties:
+        image:
+          get_input: nova_image_name
+  groups:
+    nested-pcm_v0.1:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-pcm_v0.1.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - nova_001
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+    capabilities:
+      scalable_nova_001:
+      - nova_001
+      - scalable
+      host_nova_001:
+      - nova_001
+      - host
+      endpoint_nova_001:
+      - nova_001
+      - endpoint
+      os_nova_001:
+      - nova_001
+      - os
+      binding_nova_001:
+      - nova_001
+      - binding
+    requirements:
+      local_storage_nova_001:
+      - nova_001
+      - local_storage

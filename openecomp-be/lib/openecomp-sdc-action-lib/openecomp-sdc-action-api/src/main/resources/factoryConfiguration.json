@@ -1,0 +1,4 @@
+{
+  "org.openecomp.sdc.action.dao.ActionDaoFactory":"org.openecomp.sdc.action.dao.impl.ActionDaoFactoryImpl",
+  "org.openecomp.sdc.action.dao.ActionArtifactDaoFactory":"org.openecomp.sdc.action.dao.impl.ActionArtifactDaoFactoryImpl"
+}

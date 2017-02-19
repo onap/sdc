@@ -1,0 +1,156 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ContrailV2NetworkRuleGlobalType
+  template_version: 1.0.0
+description: Contrail V2 Network Rule Global Types
+imports:
+  common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+data_types:
+  org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs:
+    derived_from: tosca.datatypes.Root
+    description: destination port pairs
+    properties:
+      network_policy_entries_policy_rule_dst_ports_start_port:
+        type: string
+        description: Start port
+        required: false
+        status: SUPPORTED
+      network_policy_entries_policy_rule_dst_ports_end_port:
+        type: string
+        description: End port
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList:
+    derived_from: tosca.datatypes.Root
+    description: list of policy rules
+    properties:
+      network_policy_entries_policy_rule:
+        type: list
+        description: Contrail network rule
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.Rule
+  org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs:
+    derived_from: tosca.datatypes.Root
+    description: source port pairs
+    properties:
+      network_policy_entries_policy_rule_src_ports_start_port:
+        type: string
+        description: Start port
+        required: false
+        status: SUPPORTED
+      network_policy_entries_policy_rule_src_ports_end_port:
+        type: string
+        description: End port
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork:
+    derived_from: tosca.datatypes.Root
+    description: source addresses
+    properties:
+      network_policy_entries_policy_rule_src_addresses_virtual_network:
+        type: string
+        description: Source addresses Virtual network
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork:
+    derived_from: tosca.datatypes.Root
+    description: destination addresses
+    properties:
+      network_policy_entries_policy_rule_dst_addresses_virtual_network:
+        type: string
+        description: Destination addresses Virtual network
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
+    derived_from: tosca.datatypes.Root
+    description: Action List
+    properties:
+      network_policy_entries_policy_rule_action_list_simple_action:
+        type: string
+        description: Simple Action
+        required: false
+        status: SUPPORTED
+      network_policy_entries_policy_rule_action_list_apply_service:
+        type: list
+        description: Apply Service
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+  org.openecomp.datatypes.heat.contrailV2.network.rule.Rule:
+    derived_from: tosca.datatypes.Root
+    description: policy rule
+    properties:
+      network_policy_entries_policy_rule_dst_addresses:
+        type: list
+        description: Destination addresses
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork
+      network_policy_entries_policy_rule_dst_ports:
+        type: list
+        description: Destination ports
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs
+      network_policy_entries_policy_rule_protocol:
+        type: string
+        description: Protocol
+        required: false
+        status: SUPPORTED
+      network_policy_entries_policy_rule_src_addresses:
+        type: list
+        description: Source addresses
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork
+      network_policy_entries_policy_rule_direction:
+        type: string
+        description: Direction
+        required: false
+        status: SUPPORTED
+      network_policy_entries_policy_rule_src_ports:
+        type: list
+        description: Source ports
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs
+      network_policy_entries_policy_rule_action_list:
+        type: org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList
+        description: Action list
+        required: false
+        status: SUPPORTED
+node_types:
+  org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: A symbolic name for this contrail v2 network rule
+        required: false
+        status: SUPPORTED
+      network_policy_entries:
+        type: org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList
+        description: A symbolic name for this contrail v2 network rule
+        required: false
+        status: SUPPORTED
+    attributes:
+      fq_name:
+        type: string
+        description: fq_name
+        status: SUPPORTED
+    requirements:
+    - network:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED

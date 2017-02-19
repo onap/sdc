@@ -1,0 +1,94 @@
+heat_template_version: 2014-10-16
+
+description: DNS master template
+
+parameters:
+  dns_image_name:
+    type: string
+    description: operative system image
+  dns_flavor_name:
+    type: string
+    description: resources to by appplied on instances
+  dns_key:
+    type: string
+    description: creator's ssh public key
+  node_count:
+    type: number
+    description: the number of DNS nested instances
+  oam_protected_net_name:
+    type: string
+    description: OAM network where instaces will connect
+  int_bearer_net_name:
+    type: string
+    description: Bearer network where instaces will connect
+  dns_oam_protected_ips:
+    type: comma_delimited_list
+    description: DNS OAM IP list
+  dns_int_bearer_ips:
+    type: comma_delimited_list
+    description: DNS Bearer IP list
+  dns_int_bearer_ipv6_ips:
+    type: comma_delimited_list
+    description: fixed IP assignment for VM's on the Bearer network
+  dns_server_names:
+    type: comma_delimited_list
+    description: DNS VM server name list
+  route_eth0:
+    type: string
+    description: OAM network routes 
+  DNS_shared_sec_grp_id:
+    type: string
+    description: security group UUID
+  availability_zone_0:
+    type: string
+    description: availability zone ID or Name
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+    
+
+resources:
+  dns_server_group_az:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: node_count }
+      index_var: index
+      resource_def:
+        type: dns_nested_01.yaml
+        properties:
+          index: index
+          name_with_index: name_index
+          dns_image_name: { get_param: dns_image_name }
+          dns_flavor_name: { get_param: dns_flavor_name }
+          dns_key: { get_param: dns_key }
+          availability_zone_0: { get_param: availability_zone_0 }
+          security_group: { get_param: DNS_shared_sec_grp_id }
+          oam_protected_net_name: { get_param: oam_protected_net_name }
+          int_bearer_net_name: { get_param: int_bearer_net_name }   
+          dns_oam_protected_ips: { get_param: dns_oam_protected_ips }
+          dns_int_bearer_ips: { get_param: dns_int_bearer_ips }
+          dns_int_bearer_ipv6_ips: { get_param: dns_int_bearer_ipv6_ips }
+          dns_names: { get_param: dns_server_names }
+          route_eth0: { get_param: route_eth0 }
+          vnf_name: { get_param: vnf_name }
+          vnf_id: { get_param: vnf_id }
+          vf_module_id: {get_param: vf_module_id}
+
+#outputs:
+#  vm_name:
+#    description: VM name
+#    value: { get_attr: [ dns_server_group_az, vm_name ] }
+#  networks:
+#    description: networks
+#    value: { get_attr: [ dns_server_group_az, networks ] } 
+
+

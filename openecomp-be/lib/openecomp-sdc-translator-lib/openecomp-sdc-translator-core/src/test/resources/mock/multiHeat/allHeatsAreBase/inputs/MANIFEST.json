@@ -1,0 +1,37 @@
+{
+	"name": "multiple_not_nested",
+	"description": "multiple heat files in zip, no nesting",
+	"version": "2013-05-23",
+	"data": [{
+		"file": "cmaui.yml",
+		"type": "HEAT",
+		"data": [{
+			"file": "cmaui.env",
+			"type": "HEAT_ENV"
+		}]
+	},
+	{
+		"file": "eca_oam.yaml",
+		"type": "HEAT",
+		"data": [{
+			"file": "eca_oam.env",
+			"type": "HEAT_ENV"
+		}]
+	},	
+	{
+		"file": "MMSC_Capacity_Line.yml",
+		"type": "HEAT",
+		"data": [{
+			"file": "MMSC_Capacity_Line_1.env",
+			"type": "HEAT_ENV"
+		}]
+	},
+	{
+		"file": "SG_ECA_MGMT.yaml",
+		"type": "HEAT",
+		"data": [{
+			"file": "sg_eca_mgmt.env",
+			"type": "HEAT_ENV"
+		}]
+	}]
+}

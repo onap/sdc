@@ -1,0 +1,153 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 10-14-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-OAM-FW-SI template that creates two OAM networks (direct and protected) with a scaled out firewall service between the two.
+
+parameters:
+  service_policy_name:
+    type: string
+    description: Policy Name
+  service_policy_direction:
+    type: string
+    description: Direction of Policy
+  start_src_ports:
+    type: number
+    description: Start of src port
+  end_src_ports:
+    type: number
+    description: End of src port
+  start_dst_ports:
+    type: number
+    description: Start of dst port
+  end_dst_ports:
+    type: number
+    description: End of dst port
+  oam_mgmt_net_id:
+    type: string
+    description: Name of private network to be created
+  oam_protected_net_id:
+    type: string
+    description: Name of private network to be created
+  oam_direct_net_id:
+    type: string
+    description: Name of private network to be created
+  oam_hsl_net_id:
+    type: string
+    description: Name of private network to be created
+  st_name:
+    type: string
+    description: service template name or ID
+  st_type:
+    type: string
+    description: service type
+  st_image:
+    type: string
+    description: Name of the image
+  st_flavor:
+    type: string
+    description: Flavor
+  st_service_interface_type_list:
+    type: string
+    description: List of interface types
+  st_shared_ip_list:
+    type: string
+    description: List of shared ip enabled-disabled
+  st_static_routes_list:
+    type: string
+    description: List of static routes enabled-disabled
+  st_scaling:
+    type: string
+    description: Indicates whether service scaling is enabled
+  st_mode:
+    type: string
+    description: service mode
+  st_availability_zone_enable_flag:
+    type: string
+    description: service template availablity_zone feature enable flag
+  max_num_fw_instances:
+    type: number
+    description: maximum number of firewall instances for scaling
+  service_instance_name:
+    type: string
+    description: service instance name
+  availability_zone:
+    type: string
+    description: availability zone in form of Zone:Host
+  static_prefix_3_1:
+    type: string
+    description: prefix for static route
+  protected_net:
+    type: string
+
+resources:
+  service_template:
+    type: OS::Contrail::ServiceTemplate
+    properties:
+      name: { get_param: st_name }
+      service_mode: { get_param: st_mode }
+      service_type: { get_param: st_type }
+      image_name: { get_param: st_image }
+      flavor: { get_param: st_flavor }
+      service_interface_type_list: { "Fn::Split" : [ ",", Ref: st_service_interface_type_list ] }
+      shared_ip_list: [ true, on, no, 0 ]
+      static_routes_list: { "Fn::Split" : [ ";", "n;false;false;false" ] }
+      service_scaling: { get_param: st_scaling }
+      availability_zone_enable: { get_param: st_availability_zone_enable_flag }
+      ordered_interfaces: true
+
+  service_instance:
+    type: OS::Contrail::ServiceInstance
+    properties:
+      name: { get_param: service_instance_name }
+      service_template: { get_resource:  service_template }
+      availability_zone: { get_param: availability_zone }
+      scale_out:
+          max_instances: 5
+      interface_list: [
+          {
+              virtual_network: {get_param: oam_mgmt_net_id}
+          },
+          {
+              virtual_network: {get_param: oam_protected_net_id}
+          },
+          {
+              virtual_network: {get_param: oam_direct_net_id},
+              static_routes: [
+                  { "prefix": {get_param: static_prefix_3_1} },
+              ],
+          },
+          {
+              virtual_network: {get_param: oam_hsl_net_id}
+          },
+      ]
+
+  service_policy:
+    type: OS::Contrail::NetworkPolicy
+    depends_on: [ service_instance ]
+    properties:
+      name: { get_param: service_policy_name }
+      entries:
+        policy_rule: [
+              {
+                "direction": { get_param: service_policy_direction },
+                "protocol": "any",
+                "src_ports": [{"start_port": {get_param: start_src_ports}, "end_port": {get_param: end_src_ports}}],
+                "dst_ports": [{"start_port": {get_param: start_dst_ports}, "end_port": {get_param: end_dst_ports}}],
+                "dst_addresses": [{ "virtual_network": {get_param: oam_direct_net_id}}],
+                "action_list": {"apply_service": [{get_resource: service_instance}]},
+                "src_addresses": [{ "virtual_network": {get_param: protected_net}}]
+              },
+        ]
+  service_policy_attach_direct_net:
+    type: OS::Contrail::AttachPolicy
+    depends_on: [ service_policy ]
+    properties:
+      network: { get_param: oam_direct_net_id }
+      policy: { get_attr: [service_policy, fq_name] }
+
+  service_policy_attach_protected_net:
+    type: OS::Contrail::AttachPolicy
+    depends_on: [ service_policy ]
+    properties:
+      network: { get_param: oam_protected_net_id }
+      policy: { get_attr: [service_policy, fq_name] }

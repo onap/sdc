@@ -1,0 +1,117 @@
+heat_template_version: 2013-05-23
+
+description: >
+  HOT template to creates two virtual network with one subnet each. 
+  Creates a network policy for applying service between two VNs created before.
+  Attach the network policy to two virtual networks
+parameters:
+  policy_name:
+    type: string
+    description: Virtual network id
+  direction:
+    type: string
+    description: Direction of Policy
+  start_src_ports:
+    type: number
+    description: Start of src port
+  end_src_ports:
+    type: number
+    description: End of src port
+  start_dst_ports:
+    type: number
+    description: Start of dst port
+  end_dst_ports:
+    type: number
+    description: End of dst port
+  apply_service:
+    type: string
+    description: service to apply
+  private_net_1_name:
+    type: string
+    description: Name of private network to be created
+  private_net_1_cidr:
+    type: string
+    description: Private network address (CIDR notation)
+  private_net_1_gateway:
+    type: string
+    description: Private network gateway address
+  private_net_1_pool_start:
+    type: string
+    description: Start of private network IP address allocation pool
+  private_net_1_pool_end:
+    type: string
+    description: End of private network IP address allocation pool
+  private_net_2_name:
+    type: string
+    description: Name of private network to be created
+  private_net_2_cidr:
+    type: string
+    description: Private network address (CIDR notation)
+  private_net_2_gateway:
+    type: string
+    description: Private network gateway address
+  private_net_2_pool_start:
+    type: string
+    description: Start of private network IP address allocation pool
+  private_net_2_pool_end:
+    type: string
+    description: End of private network IP address allocation pool
+
+resources:
+  private_net_1:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_param: private_net_1_name }
+
+  private_net_2:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_param: private_net_2_name }
+
+  private_subnet_1:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: private_net_1 }
+      cidr: { get_param: private_net_1_cidr }
+      gateway_ip: { get_param: private_net_1_gateway }
+      allocation_pools:
+        - start: { get_param: private_net_1_pool_start }
+          end: { get_param: private_net_1_pool_end }
+
+  private_subnet_2:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: private_net_2 }
+      cidr: { get_param: private_net_2_cidr }
+      gateway_ip: { get_param: private_net_2_gateway }
+      allocation_pools:
+        - start: { get_param: private_net_2_pool_start }
+          end: { get_param: private_net_2_pool_end }
+
+  private_policy:
+    type: OS::Contrail::NetworkPolicy
+    properties:
+      name: { get_param: policy_name }
+      entries:
+        policy_rule: [
+              { 
+                "direction": { get_param: direction }, 
+                "protocol": "any", 
+                "src_ports": [{"start_port": {get_param: start_src_ports}, "end_port": {get_param: end_src_ports}}],
+                "dst_ports": [{"start_port": {get_param: start_dst_ports}, "end_port": {get_param: end_dst_ports}}],
+                "dst_addresses": [{ "virtual_network": {get_resource: private_net_1}}], 
+                "action_list": {"apply_service": [{get_param: apply_service}]}, 
+                "src_addresses": [{ "virtual_network": {get_resource: private_net_2}}] 
+              }, 
+        ]
+  private_policy_attach_net1:
+    type: OS::Contrail::AttachPolicy
+    properties:
+      network: { get_resource: private_net_1 }
+      policy: { get_attr: [private_policy, fq_name] }
+
+  private_policy_attach_net2:
+    type: OS::Contrail::AttachPolicy
+    properties:
+      network: { get_resource: private_net_2 }
+      policy: { get_attr: [private_policy, fq_name] }

@@ -1,0 +1,16 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "hot_mobt_volume_attach_nested.yaml", 
+            "type": "HEAT_VOL", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "base_mobt.yaml", 
+            "type": "HEAT", 
+            "isBase": "true"
+        }
+    ]
+}

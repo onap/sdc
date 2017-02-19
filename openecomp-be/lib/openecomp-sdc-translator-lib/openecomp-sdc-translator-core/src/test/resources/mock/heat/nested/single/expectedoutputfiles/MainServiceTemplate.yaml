@@ -1,0 +1,236 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.compute:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    oam_net_ips:
+      label: OAM network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM network ips
+      default:
+      - 107.239.64.121
+      entry_schema:
+        type: string
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+      default: 107.239.64.1
+    pcm_server_names:
+      label: PCRF CM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PCRF CM instance
+      default:
+      - ZRDM1PCRF01PCM001
+      entry_schema:
+        type: string
+    pcm_image_name:
+      label: PCRF CM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF CM image name
+      default: rhel2
+    cps_net_ips:
+      label: CPS network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: CPS network ips
+      default:
+      - 172.26.16.113
+      entry_schema:
+        type: string
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+      default: nimbus_security_group
+    pcm_volumes:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: list
+      description: CPS Cluman Cinder Volume
+      default:
+      - 249cb355-8fdf-4382-9c3c-a2ebe767d45b
+      entry_schema:
+        type: string
+    compute_image_name:
+      hidden: false
+      immutable: false
+      type: string
+    pcm_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+      default: cps
+    net_name:
+      hidden: false
+      immutable: false
+      type: string
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+      default: int_pcrf_net_0
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+      default: 255.255.255.0
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+      default: 255.255.255.0
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+      default: oam_protected_net_0
+  node_templates:
+    server_pcm_001:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        oam_net_gw:
+          get_input: oam_net_gw
+        pcm_image_name:
+          get_input: pcm_image_name
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        pcm_flavor_name:
+          get_input: pcm_flavor_name
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        pcm_server_name:
+          get_input:
+          - pcm_server_names
+          - 0
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+        oam_net_ip:
+          get_input:
+          - oam_net_ips
+          - 0
+        oam_net_mask:
+          get_input: oam_net_mask
+        oam_net_name:
+          get_input: oam_net_name
+    compute_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        network:
+          get_input: net_name
+    server_compute_get_attr_test:
+      type: org.openecomp.resource.vfc.nodes.heat.compute
+      properties:
+        flavor:
+          compute_flavor_name: null
+        image:
+          get_input: compute_image_name
+        config_drive:
+          get_attribute:
+          - compute_port_0
+          - tenant_id
+          - port_security_enabled
+          - device_id
+          - qos_policy
+          - allowed_address_pairs
+          - show
+          - device_owner
+          - network
+          - security_groups
+          - fixed_ips
+          - mac_address
+          - admin_state_up
+          - name
+          - subnets
+          - status
+        user_data_format:
+          get_attribute:
+          - server_pcm_001
+          - oam_net_gw
+        name:
+          compute_name: null
+  groups:
+    hot-nimbus-pcm_v0.4:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_001
+      - compute_port_0
+      - server_compute_get_attr_test

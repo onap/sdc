@@ -1,0 +1,28 @@
+heat_template_version: 2014-10-16
+
+description: nested heat template that associtate the cinder volumes to OAM nodes stack
+
+parameters:
+  mobt_volume_ids:
+    type: comma_delimited_list
+    label: MOBT OAM Cinder Volumes
+    description: MOBT OAM Cinder Volumes
+
+  server_mobt_group_ids:
+    type: comma_delimited_list
+    label: MOBT OAM Resource Group
+    description: MOBT OAM Resource Group
+
+  mobt_vol_index:
+    type: number
+    label: ADM volume index
+    description: ADM volume UUID in list 
+    
+resources:
+  mobt_adm_vol_attachment_x:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: { get_param: [ mobt_volume_ids, get_param: mobt_vol_index ]}
+      mountpoint: /dev/vdb
+      instance_uuid: { get_param: [ server_mobt_group_ids, get_param: mobt_vol_index ]}
+

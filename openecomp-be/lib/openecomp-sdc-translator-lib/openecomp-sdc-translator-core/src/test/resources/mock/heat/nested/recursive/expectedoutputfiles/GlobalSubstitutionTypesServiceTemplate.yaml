@@ -1,0 +1,330 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1_2:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      pcm_flavor_name:
+        type: string
+        description: flavor name of PCRF CM instance
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      pcm_image_name:
+        type: string
+        description: PCRF CM image name
+      pcm_vol:
+        type: string
+        description: CPS Cluman Cinder Volume
+      security_group_name:
+        type: string
+        description: the name of security group
+      cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcm_server_name:
+        type: string
+        description: PCRF CM server name
+      cps_net_name:
+        type: string
+        description: CPS network name
+      cps_net_mask:
+        type: string
+        description: CPS network mask
+      oam_net_ip:
+        type: string
+      oam_net_name:
+        type: string
+        description: OAM network name
+    attributes:
+      server_pcm_id:
+        type: string
+        description: the pcm nova service id
+    requirements:
+    - link_pcm_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_server_pcm:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcm_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      endpoint_server_pcm:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_network:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_server_pcm:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_server_pcm:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_server_pcm:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_network:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_server_pcm:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      availabilityzone_name:
+        type: string
+        description: availabilityzone name
+      oam_net_gw:
+        type: string
+        description: CPS network gateway
+      pcm_image_name:
+        type: string
+        description: PCRF CM image name
+      cps_net_ips:
+        type: string
+        description: CPS network ip
+      security_group_name:
+        type: string
+        description: the name of security group
+      cps_net_ip:
+        type: string
+        description: CPS network ip
+      pcm_volumes:
+        type: string
+        description: CPS Cluman Cinder Volume
+      pcm_flavor_name:
+        type: string
+        description: flavor name of PCRF CM instance
+      pcm_vol:
+        type: string
+        description: CPS Cluman Cinder Volume
+      pcm_server_name:
+        type: string
+        description: PCRF CM server name
+      cps_net_name:
+        type: string
+        description: CPS network name
+      cps_net_mask:
+        type: string
+        description: CPS network mask
+      oam_net_ip:
+        type: string
+        description: OAM network ip
+      oam_net_mask:
+        type: string
+        description: CPS network mask
+      oam_net_name:
+        type: string
+        description: OAM network name
+    attributes:
+      server_pcm_id:
+        type: string
+        description: the pcm nova service id
+    requirements:
+    - link_pcm_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_server_pcm:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcm_port_1_server_pcm_005:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_server_pcm_server_pcm_005:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_pcm_port_0_server_pcm_005:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_pcm_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      endpoint_server_pcm:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_server_pcm:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_server_pcm_server_pcm_005:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_server_pcm_server_pcm_005:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_server_pcm_server_pcm_005:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_server_pcm_server_pcm_005:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_server_pcm_server_pcm_005:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_network_server_pcm_005:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_network:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_server_pcm:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_network:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_0_server_pcm_005:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_server_pcm:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_network_server_pcm_005:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_server_pcm:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_0:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_1:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_pcm_port_1_server_pcm_005:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED

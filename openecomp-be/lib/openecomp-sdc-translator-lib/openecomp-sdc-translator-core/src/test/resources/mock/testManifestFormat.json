@@ -1,0 +1,59 @@
+{
+  "name": "vSRX",
+  "description": "juniper firewall",
+  "version": "0.1",
+  "data": [
+    {
+      "file": "vSRX.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "bella.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "im_network_heat.yml",
+          "type": "HEAT_NET"
+        },
+        {
+          "file": "im_volume_heat.yml",
+          "type": "HEAT_VOL"
+        }
+      ]
+    },
+    {
+      "file": "im_nested_heat.yml",
+      "type": "HEAT",
+      "data": [{
+        "file": "alpha.env",
+        "type": "HEAT_ENV"
+      }]
+    },
+    {
+      "file": "vSRX_VM.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "bella_vm.env",
+          "type": "HEAT_ENV"
+        },
+        {
+          "file": "im_network_heat.yml",
+          "type": "HEAT_NET",
+          "data": [{
+            "file": "mika.env",
+            "type": "HEAT_ENV"
+          }]
+        },
+        {
+          "file": "im_volume_heat.yml",
+          "type": "HEAT_VOL"
+        }
+      ]
+    },
+    {
+      "file": "im_artifact.yml",
+      "type": "CHEF"
+    }
+  ]
+}

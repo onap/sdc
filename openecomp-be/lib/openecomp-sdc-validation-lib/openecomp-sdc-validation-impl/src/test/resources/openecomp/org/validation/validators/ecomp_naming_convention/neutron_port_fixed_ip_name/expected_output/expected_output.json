@@ -1,0 +1,42 @@
+{
+  "hot-nimbus-pps_v1.0.yaml": {
+    "errorMessageList": [
+      {
+        "level": "WARNING",
+        "message": "Fixed_IPS not aligned with Guidelines, Resource ID [fixed_ip_illegal_name_1]"
+      },
+      {
+        "level": "WARNING",
+        "message": "Fixed_IPS not aligned with Guidelines, Resource ID [fixed_ip_illegal_name_2]"
+      },
+      {
+        "level": "WARNING",
+        "message": "Fixed_IPS not aligned with Guidelines, Resource ID [fixed_ip_illegal_name_3]"
+      }
+    ]
+  },
+  "nested-pps_v1.0.yaml": {
+    "errorMessageList": [
+      {
+        "level": "WARNING",
+        "message": "Missing VF_MODULE_ID resource id [pcrf_server_pps]"
+      },
+      {
+        "level": "WARNING",
+        "message": "Server Name not aligned with Guidelines, Resource ID [pcrf_server_pps]"
+      },
+      {
+        "level": "WARNING",
+        "message": "Fixed_IPS not aligned with Guidelines, Resource ID [pcrf_pps_port_0]"
+      }
+    ]
+  },
+  "MANIFEST.json": {
+    "errorMessageList": [
+      {
+        "level": "WARNING",
+        "message": "Missing Base HEAT. Pay attention that without Base HEAT, there will be no shared resources"
+      }
+    ]
+  }
+}

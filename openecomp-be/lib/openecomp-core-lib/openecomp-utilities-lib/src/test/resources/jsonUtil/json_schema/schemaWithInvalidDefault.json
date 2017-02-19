@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {
+    "city": {
+      "type": "string",
+      "enum": [
+        "Tel Aviv",
+        "New York",
+        "London"
+      ],
+      "default": "Tel Aviv"
+    }
+  },
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "streetAddress": {
+          "type": "string",
+          "default" : 7
+        },
+        "city": {
+          "$ref": "#/definitions/city"
+        }
+      },
+      "required": [
+        "streetAddress",
+        "city"
+      ]
+    },
+    "phoneNumber": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer",
+            "default": 777
+          }
+        },
+        "required": [
+          "location",
+          "code"
+        ]
+      },
+      "default": [
+        {
+          "location": "Home",
+          "code": 1
+        },
+        {
+          "location": "Office",
+          "code": 2
+        }
+      ]
+    },
+    "cityOfBirth" : { "$ref"  : "#/definitions/city"}
+  },
+  "required": [
+    "address",
+    "phoneNumber"
+  ]
+}

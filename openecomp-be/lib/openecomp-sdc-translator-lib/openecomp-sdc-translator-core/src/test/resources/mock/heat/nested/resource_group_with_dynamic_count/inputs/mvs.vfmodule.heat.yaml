@@ -1,0 +1,105 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Metaswitch MVS (Metaview Server)
+
+parameters:
+  cloud_zone_id:
+    type: string
+    description: The cloud zone for this VF instance
+  vf_name:
+    type: string
+    description: The VF Name; defaults to VMVM for the virtual MVM VNF.
+    constraints:
+      - allowed_pattern: "[a-zA-Z0-9]+"
+      - length: { min: 4, max: 4 }
+        description: Each VF will have a 4-character alphanumeric identifier
+  vf_instance_num:
+    type: string
+    description: The number for this VF instance
+    constraints:
+      - allowed_pattern: "[0-9]+"
+      - length: { min: 2, max: 2 }
+        description: VF instance number must be a two-digit numeric value
+  vf_component:
+    type: string
+    description: The component that this VF instance is running
+    constraints:
+      - allowed_pattern: "[a-zA-Z0-9]+"
+      - length: { min: 3, max: 3 }
+        description: Each VF component will have a 3-character alphanumeric identifier
+  vm_instance_num:
+    type: comma_delimited_list
+    description: VM instance number list must be a list of three-digit numeric value
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF_MODULE instance
+  bootimage:
+    type: string
+    description: Master bootimage volume id
+  flavor:
+    type: string
+    description: Server flavor
+    constraints:
+      - custom_constraint: nova.flavor
+  key_name:
+    type: string
+    description: SSH key name
+    constraints:
+      - custom_constraint: nova.keypair
+
+  availability_zone_0:
+    type: comma_delimited_list
+    description: List of Availability Zone IDs or Names
+
+  sec_groups:
+    type: comma_delimited_list
+    description: Security groups
+  mgmt_net_id:
+    type: string
+    description: Neutron UUID for the Management network
+    constraints:
+    - custom_constraint: neutron.network
+  virtual_mgmt_ip_0:
+    type: string
+    description: Virtual management network ip address
+
+  mvs_mgmt_ip_0:
+    type: comma_delimited_list
+    description: List of Management network IP addresses for IPv4
+
+  num_instances:
+    type: number
+    description: number of instance of the VF_module
+
+resources:
+  mvs_modules:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: num_instances }
+      resource_def:
+        type: mvs.nested.heat.yaml
+        properties:
+          cloud_zone_id: { get_param: cloud_zone_id }
+          vf_name:  { get_param: vf_name }
+          vf_instance_num: { get_param: vf_instance_num }
+          vf_component: { get_param: vf_component }
+          vm_instance_num: { get_param: vm_instance_num }
+          vnf_id: { get_param: vnf_id }
+          vf_module_id: { get_param: vf_module_id }
+          bootimage: { get_param: bootimage }
+          flavor: { get_param: flavor }
+          key_name: { get_param: key_name }
+
+          availability_zone_0: { get_param: availability_zone_0 }
+
+          sec_groups: { get_param: sec_groups }
+          mgmt_net_id: { get_param: mgmt_net_id }
+          virtual_mgmt_ip_0: { get_param: virtual_mgmt_ip_0 }
+
+          mvs_mgmt_ip_0: { get_param: mvs_mgmt_ip_0 }
+
+          indx: "%index%"

@@ -1,0 +1,150 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    cmaui_cinder_volume_size:
+      label: CMAUI Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the CMAUI Cinder volume
+    timezone:
+      label: timezone
+      hidden: false
+      immutable: false
+      type: string
+      description: timezone
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    oam_network_netmask:
+      label: oam network netmask
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network gateway
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_MMSC-CMAUI_id
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    oam_network_gateway:
+      label: oam network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network gateway
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      label: CMAUI oam_net IP addresses
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI oam_net IP addresses
+      entry_schema:
+        type: string
+    external_dns:
+      label: dns server
+      hidden: false
+      immutable: false
+      type: string
+      description: dns server
+    oam_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    external_ntp:
+      label: ntp server
+      hidden: false
+      immutable: false
+      type: string
+      description: ntp server
+    CMAUI_volume_type:
+      label: CMAUI vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+  node_templates:
+    server_cmaui:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        cmaui_names:
+          get_input:
+          - cmaui_names
+          - 0
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+        cmaui_image:
+          get_input: cmaui_image
+        cmaui_flavor:
+          get_input: cmaui_flavor
+        availability_zone_0:
+          get_input: availability_zone_0
+  groups:
+    main:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui

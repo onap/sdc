@@ -1,0 +1,116 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Test
+  template_author: OPENECOMP
+  template_version: 1.0.0
+description: testing desc tosca service template
+imports:
+  myfile1:
+    file: path1/path2/file1.yaml
+  myfile2:
+    file: path1/path2/file2.yaml
+artifact_types:
+  one_artifact:
+    mime_type: application/java-archive
+    file_ext:
+    - yaml
+    - xml
+node_types:
+  compute_node_type:
+    derived_from: tosca.nodes.Root
+    version: 1.0.0
+    description: tosca compute test
+    properties:
+      cpu_num:
+        type: integer
+        description: Number of CPUs requested for a software node instance
+        required: true
+        default: 1
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 5.0
+        - equal: 5
+        - greater_than: 6.02
+        - in_range:
+          - 0
+          - UNBOUNDED
+    attributes:
+      attDef1:
+        type: string
+        default: hi
+        status: SUPPORTED
+    requirements:
+    - re1:
+        capability: tosca.cap1
+        occurrences:
+        - 5
+        - 1
+    capabilities:
+      cap1:
+        type: tosca.cap
+        valid_source_types:
+        - node1
+        - node2
+        occurrences:
+        - 1
+        - UNBOUNDED
+topology_template:
+  description: topologi template descroption
+  inputs:
+    inParam1:
+      type: string
+      description: desc
+      required: false
+      default: my default val
+      constraints:
+      - greater_than: 6
+      - greater_or_equal: 9
+      entry_schema:
+        type: tosca.myType
+  node_templates:
+    firatNodeTemplate:
+      type: nodeTypeRef
+      directives:
+      - selectable
+      - substitutable
+      properties:
+        prop2: '{ get_input: my_mysql_rootpw }'
+        prop1: abcd
+      attributes:
+        att2: '{ get_input: my_mysql_rootpw }'
+        att1: att1Val
+      requirements:
+      - req1:
+          capability: capA
+          node: nodeA
+          relationship: relationB
+          node_filter:
+            properties:
+              propName1:
+              - greater_or_equal: 9
+              propName2:
+              - min_length: 1
+              - max_length: 2
+          occurrences:
+          - 1
+          - 2
+      - req2:
+          capability: capA
+          node: nodeA
+          relationship: relationB
+      capabilities:
+      - cap1:
+          properties:
+            num_cpus: '{ get_input: cpus }'
+          attributes:
+            num_cpus: '66'
+      node_filter:
+        properties:
+          test1:
+          - equal: 1 MB
+  substitution_mappings:
+    node_type: myNodeType.node
+    capabilities:
+      database_endpoint:
+      - database
+      - database_endpoint

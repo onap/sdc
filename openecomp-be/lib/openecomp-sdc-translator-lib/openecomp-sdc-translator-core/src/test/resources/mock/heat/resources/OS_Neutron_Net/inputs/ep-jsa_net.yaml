@@ -1,0 +1,135 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  param_string:
+      type: string
+      description: param String - string
+  param_number:
+      type: number
+      description: param number - float
+  param_json:
+      type: json
+      description: param json - map<String>
+  param_boolean:
+      type: boolean
+      description: param boolean - boolean
+  param_comma_delimited_list:
+      type: comma_delimited_list
+      description: param comma_delimited_list - List
+
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  jsa_cidr:
+    type: string
+    description: CIDR of jsa log network
+  user_name:
+    type: string
+    label: User Name
+    description: User name to be configured for the application
+    hidden: true
+    constraints:
+      - length: { min: 6, max: 8 }
+        description: User name must be between 6 and 8 characters
+      - allowed_pattern: "[A-Z]+[a-zA-Z0-9]*"
+        description: User name must start with an uppercase character
+      - range: { min: 0, max: 10 }
+  instance_type:
+    type: string
+    label: Instance Type
+    description: Instance type for compute instances
+    constraints:
+      - allowed_values:
+        - m1.small
+        - m1.medium
+        - m1.large
+
+resources:
+  jsa_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: {get_resource: jsa_net}
+      cidr: {get_param: jsa_cidr}
+
+  jsa_net:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
+  jsa_net_test_full_attribute:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+            key1: "spec1"
+            key2: "spec2"
+
+  jsa_net_test_full_attribute_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: {get_resource: jsa_net_test_full_attribute}
+      cidr: {get_param: jsa_cidr}
+
+  jsa_net_test_get_attribute_2_params:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_attr: [jsa_net, name]}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+            key1: "spec1"
+
+  jsa_net_test_get_attribute_3_params:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_attr: [jsa_net, name, 0]}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+            key1: "spec1"
+
+  jsa_net_test_get_attribute_4_params:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_attr: [jsa_net, name, 0,a1]}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+            key1: "spec1"
+
+  jsa_net_test_get_attribute_5_params:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_attr: [jsa_net, name, 0, a1, a2]}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+            key1: "spec1"
+
+

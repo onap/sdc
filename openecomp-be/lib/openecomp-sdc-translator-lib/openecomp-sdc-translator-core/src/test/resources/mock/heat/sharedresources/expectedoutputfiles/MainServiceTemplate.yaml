@@ -1,0 +1,95 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.server_pcm_002:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.server_pcm_001:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    fsb1-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    fsb_zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    FSB_1_image:
+      label: MME_FSB1
+      hidden: false
+      immutable: false
+      type: string
+      description: MME_FSB1_15B-CP04-r5a01
+  node_templates:
+    server_pcm_002:
+      type: org.openecomp.resource.vfc.nodes.heat.server_pcm_002
+      properties:
+        flavor:
+          get_input: fsb1-flavor
+        availability_zone:
+          get_input: fsb_zone
+        name:
+          get_input: fsb1-name
+    server_pcm_001:
+      type: org.openecomp.resource.vfc.nodes.heat.server_pcm_001
+      properties:
+        flavor:
+          get_input: fsb1-flavor
+        availability_zone:
+          get_input: fsb_zone
+        name:
+          get_input: fsb1-name
+  groups:
+    sharedDefinitionOutParam:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/sharedDefinitionOutParam.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_002
+      - server_pcm_001
+  outputs:
+    out_id2:
+      value: static value
+    out_id1:
+      value:
+        get_input: oam_net_gw

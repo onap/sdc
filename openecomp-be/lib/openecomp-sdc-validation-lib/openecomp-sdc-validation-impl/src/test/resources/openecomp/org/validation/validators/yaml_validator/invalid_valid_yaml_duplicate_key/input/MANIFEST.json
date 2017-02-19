@@ -1,0 +1,39 @@
+{
+    "data": [
+        {
+            "file": "validHeat.yaml",
+            "type": "HEAT",
+            "data": [
+                {
+                    "file": "hot-nimbus-oam_v1.0.env",
+                    "type": "HEAT_ENV"
+                },
+                {
+                    "file": "hot-nimbus-oam-volumes_v1.0",
+                    "type": "HEAT_VOL",
+                    "data": [{
+                        "file": "hot-nimbus-oam-volumes_v1.0.env",
+                        "type": "HEAT_ENV"
+                    }]
+                }
+            ]
+        }, 
+        {
+            "file": "mainValid.yaml",
+            "type": "HEAT",
+            "data": [
+                {
+                    "file": "hot-nimbus-oam-networks_v1.0",
+                    "type": "HEAT_NET"
+                }
+            ]
+        },
+        {
+            "file": "missingHeatFromZip.yaml.yaml",
+            "type": "HEAT"
+        }
+    ], 
+    "description": "RXAEmleoRDWLeWVvmXUJxDKCItgjkMEXuKJcUWyVUZrCUiMzZSyHPzhqLcJSIUNBzohsIGXLBIwstuVDEuFtxuLIwWgCCdjprtvzruHIUKdVnCyifJQUJjqSCoKKKyVaWFTFKzHNhTZNlZTYaMKGEpIMXOpIxSyTZZCgVsGkItQelBbFVrmCltTgkuppYMrEfvwqNBLVRSGCucNwliWFZUuXloXBiZaqtodZjyFpqBNqhlpcrARmMpvLiz", 
+    "name": "FCTRQGcMevNngRDvECQYfiEXCYbGeAWRHdaGggLUgyOnssHAiU", 
+    "version": "2013-05-23"
+}

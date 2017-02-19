@@ -1,0 +1,35 @@
+{
+  "name": "$$HOSTNAME$$",
+  "type": "qrouter",
+  "cluster": "QROUTER_CLUSTER_NAME",
+  "node_count": "QROUTER_NODE_COUNT",
+  "attributes": [
+    {
+      "name": "ip-eth0",
+      "value": "$$OAM_NET_IP$$"
+    },
+    {
+      "name": "rprb_26071_oam_direct_net_1",
+      "value": "$$OAM_NET_IP$$"
+    },
+    {
+      "name": "rprb_26071_cdr_direct_net_1",
+      "value": "$$CDR_NET_IP$$"
+    }
+  ],
+  "dependencies": [
+    {
+      "resource_name": "ProcessingCluster",
+      "resource_type": "cluster",
+      "attribute": "rprb_26071_cdr_direct_net_1",
+      "role": "processing_ip",
+      "format": "all"
+    },
+    {
+      "resource_name": "MANAGER_INSTANCE_NAME",
+      "resource_type": "machine",
+      "attribute": "rprb_26071_oam_direct_net_1",
+      "role": "manager_oam_direct_ip"
+    }
+  ]
+}

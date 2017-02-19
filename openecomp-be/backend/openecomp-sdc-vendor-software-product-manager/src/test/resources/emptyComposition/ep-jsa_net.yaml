@@ -1,0 +1,21 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:      
+      snapshot02:
+        type: string
+        description: prop
+      network_name:
+        type: string
+        description: prop
+
+resources:
+
+  pcrf_server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_param: network_name}
+      - config: { get_param: snapshot02}

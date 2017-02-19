@@ -23,7 +23,7 @@
 		<module>ui-ci</module>
 		<module>sdc-os-chef</module>
 
-		<!--<module>openecomp-be</module>-->
+		<module>openecomp-be</module>
 		<!--<module>openecomp-ui</module>-->
 
 	</modules>

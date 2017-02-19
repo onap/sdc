@@ -1,0 +1,102 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Session Manager stack
+
+parameters:
+  num_instances:
+    type: comma_delimited_list
+    label: PCRF SM server names
+    description: name of the PCRF SM instance
+  pcrf_psm_server_names:
+    type: comma_delimited_list
+    label: PCRF SM server names
+    description: name of the PCRF SM instance
+  pcrf_psm_image_name:
+    type: string
+    label: PCRF SM image name
+    description: PCRF SM image name
+  pcrf_psm_flavor_name:
+    type: string
+    label: PCRF SM flavor name
+    description: flavor name of PCRF SM instance 
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+  pcrf_pps_server_names:
+    type: string
+
+  pcrf_pps_image_name:
+    type: string
+  pcrf_pps_flavor_name:
+    type: string
+  availability_zone_0:
+    type: string
+resources:
+  resource_with_resources_group_1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: num_instances }
+      resource_def:
+        type: {get_param: pcrf_vnf_id}
+        properties:
+          pcrf_psm_server_name: { get_param: pcrf_pps_server_names }
+          pcrf_psm_image_name:  { get_param: pcrf_pps_image_name }
+
+
+
+
+  resource_with_resources_group_2:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: num_instances }
+      resource_def:
+        type: OS::Nova::Server
+        properties:
+          cloud_zone_id: { get_param: pcrf_pps_server_names }
+          vf_name:  { get_param: pcrf_pps_image_name }
+
+
+
+  resource_with_resources_group_3:
+      type: OS::Heat::ResourceGroup
+      properties:
+        count: { get_param: num_instances }
+        resource_def:
+          type:
+          properties:
+            cloud_zone_id: { get_param: pcrf_pps_server_names }
+            vf_name:  { get_param: pcrf_pps_image_name }
+
+
+  resource_with_resources_group_4:
+      type: OS::Heat::ResourceGroup
+      properties:
+        count: { get_param: num_instances }
+        resource_def:
+          type: yamlFile.yaml
+
+
+
+
+

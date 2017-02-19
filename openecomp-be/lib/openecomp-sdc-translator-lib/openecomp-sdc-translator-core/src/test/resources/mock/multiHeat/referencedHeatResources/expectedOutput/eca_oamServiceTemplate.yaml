@@ -1,0 +1,569 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: eca_oam
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.eca:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.arb:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    metadata:
+      label: metadata
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui metadata
+    oam_flavor:
+      label: flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM flavor name
+      default: lc.xlarge4
+    eca_eca_mgmt_ips:
+      label: eca_mgmt network ips for eca VM
+      hidden: false
+      immutable: false
+      type: list
+      description: internal eca_mgmt network ips for eca VM
+      default:
+      - 172.25.137.242
+      - 172.25.137.243
+      entry_schema:
+        type: string
+    eca_mgmt_net_name:
+      label: internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the internal network
+      default: int_mms_eca_mgmt_net_1
+    ECA_OAM_volume_type:
+      label: eca oam vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    arb_eca_mgmt_ips:
+      label: eca_mgmt network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: internal eca_mgmt network ips for arb VM
+      default:
+      - 172.25.137.244
+      entry_schema:
+        type: string
+    networks:
+      label: network name
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui network name
+    cmaui_name:
+      label: cmaui name
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui name
+    arb_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the ARB volume
+      default: 40
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_MMSC-ECA_id
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: the OAM image name
+      default: ECABASE
+    oam_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the OAM volume
+      default: 1800
+    swift_eca_url:
+      label: Swift URL
+      hidden: false
+      immutable: false
+      type: string
+      description: Base URL for eca swift object store
+      default: http://object-store.rdm2.cci.com:8080/v1/AUTH_1bbab536a19b4756926e7d0ec1eb543c/eca
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the oam network
+      default: oam_protected_net_0
+    ARB_volume_type:
+      label: arb vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    eca_names:
+      label: oam servers names
+      hidden: false
+      immutable: false
+      type: list
+      description: the names of the OAM1,OAM2 VM instances
+      default:
+      - ZRDM1MMSC02OAM001
+      - ZRDM1MMSC02OAM002
+      entry_schema:
+        type: string
+    arbiter_flavor:
+      label: flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: arbiter flavor name
+      default: m1.large2
+    eca_oam_ips:
+      label: oam network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: the ips of oam networks for eca VM
+      default:
+      - 107.250.172.44
+      - 107.250.172.45
+      entry_schema:
+        type: string
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+      default: mmsc_security_group_1
+    user_data:
+      label: user data
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui user data
+    cmaui_image:
+      label: cmaui image
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui image
+    arb_names:
+      label: arbiter server names
+      hidden: false
+      immutable: false
+      type: list
+      description: the names of the arbiter VM instances
+      default:
+      - ZRDM1MMSC02ARB001
+      entry_schema:
+        type: string
+    cmaui_flavor:
+      label: flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui flavor name
+    user_data_format:
+      label: user data
+      hidden: false
+      immutable: false
+      type: string
+      description: cmaui user data
+    eca_oam_gateway:
+      label: oam1 oam gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: the ip of oam gateway
+      default: 107.250.172.1
+    arb_oam_ips:
+      label: oam network ips for arb VM
+      hidden: false
+      immutable: false
+      type: list
+      description: oam network ips for eca VM
+      default:
+      - 107.250.172.46
+      entry_schema:
+        type: string
+  node_templates:
+    arb_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - arb_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: arb_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam2_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam2_instance
+          relationship: tosca.relationships.network.BindsTo
+    arb_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.arb
+      properties:
+        flavor:
+          get_input: arbiter_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - arb_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: arb_volume
+          relationship: arb_volume_attachment
+    arb_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ARB_volume_type
+        size: '(get_input : arb_volume_size) * 1024'
+    oam1_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.eca
+      properties:
+        flavor:
+          get_input: oam_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: oam1_volume
+          relationship: oam1_volume_attachment
+    oam2_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ECA_OAM_volume_type
+        size: '(get_input : oam_volume_size) * 1024'
+    oam1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ECA_OAM_volume_type
+        size: '(get_input : oam_volume_size) * 1024'
+    oam1_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_eca_mgmt_ips
+            - 0
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam1_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam1_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam1_instance
+          relationship: tosca.relationships.network.BindsTo
+    arb_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - arb_eca_mgmt_ips
+            - 0
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: arb_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam2_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_eca_mgmt_ips
+            - 1
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam2_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam2_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.eca
+      properties:
+        flavor:
+          get_input: oam_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_names
+          - 1
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: oam2_volume
+          relationship: oam2_volume_attachment
+  relationship_templates:
+    oam2_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: oam2_volume
+        instance_uuid: oam2_instance
+    oam1_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: oam1_volume
+        instance_uuid: oam1_instance
+    arb_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: arb_volume
+        instance_uuid: arb_instance
+  groups:
+    eca_oam:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/eca_oam.yaml
+        description: This stack creates two ECA OAM VM and one ARB VM
+      members:
+      - arb_mgmt_port
+      - oam2_mgmt_port
+      - arb_instance
+      - arb_volume
+      - oam1_instance
+      - oam2_volume
+      - oam1_volume
+      - oam1_int_port
+      - oam1_mgmt_port
+      - arb_int_port
+      - oam2_int_port
+      - oam2_instance
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.eca_oam
+    capabilities:
+      attachment_oam2_volume:
+      - oam2_volume
+      - attachment
+      binding_oam2_instance:
+      - oam2_instance
+      - binding
+      attachment_oam2_int_port:
+      - oam2_int_port
+      - attachment
+      attachment_oam1_volume:
+      - oam1_volume
+      - attachment
+      os_oam1_instance:
+      - oam1_instance
+      - os
+      scalable_oam2_instance:
+      - oam2_instance
+      - scalable
+      scalable_arb_instance:
+      - arb_instance
+      - scalable
+      endpoint_oam1_instance:
+      - oam1_instance
+      - endpoint
+      binding_arb_instance:
+      - arb_instance
+      - binding
+      host_arb_instance:
+      - arb_instance
+      - host
+      endpoint_arb_instance:
+      - arb_instance
+      - endpoint
+      attachment_oam1_int_port:
+      - oam1_int_port
+      - attachment
+      attachment_arb_volume:
+      - arb_volume
+      - attachment
+      host_oam1_instance:
+      - oam1_instance
+      - host
+      os_oam2_instance:
+      - oam2_instance
+      - os
+      endpoint_oam2_instance:
+      - oam2_instance
+      - endpoint
+      scalable_oam1_instance:
+      - oam1_instance
+      - scalable
+      host_oam2_instance:
+      - oam2_instance
+      - host
+      os_arb_instance:
+      - arb_instance
+      - os
+      attachment_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - attachment
+      attachment_arb_int_port:
+      - arb_int_port
+      - attachment
+      attachment_arb_mgmt_port:
+      - arb_mgmt_port
+      - attachment
+      attachment_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - attachment
+      binding_oam1_instance:
+      - oam1_instance
+      - binding
+    requirements:
+      link_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - link
+      link_oam1_int_port:
+      - oam1_int_port
+      - link
+      link_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - link
+      local_storage_arb_instance:
+      - arb_instance
+      - local_storage
+      link_arb_mgmt_port:
+      - arb_mgmt_port
+      - link
+      local_storage_oam2_instance:
+      - oam2_instance
+      - local_storage
+      link_arb_int_port:
+      - arb_int_port
+      - link
+      link_oam2_int_port:
+      - oam2_int_port
+      - link
+      local_storage_oam1_instance:
+      - oam1_instance
+      - local_storage

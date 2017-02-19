@@ -1,0 +1,30 @@
+{
+  "ipConfiguration": {
+    "ipv6Required": false
+  },
+  "protocols": {
+    "protocolWithHighestTrafficProfile": "TCP"
+  },
+  "network": {
+    "networkDescription": "mLRqrnteBeIIUQsuvZEetXjllKPnYvbG"
+  },
+  "sizing": {
+    "describeQualityOfService": "adipisicing voluptate aute",
+    "flowLength": {
+      "packets": {},
+      "bytes": {}
+    },
+    "outflowTrafficPerSecond": {
+      "packets": {}
+    },
+    "acceptablePacketLoss": 15,
+    "inflowTrafficPerSecond": {
+      "bytes": {}
+    },
+    "acceptableJitter": {
+      "mean": 2000,
+      "max": 3000,
+      "variable": 4000
+    }
+  }
+}

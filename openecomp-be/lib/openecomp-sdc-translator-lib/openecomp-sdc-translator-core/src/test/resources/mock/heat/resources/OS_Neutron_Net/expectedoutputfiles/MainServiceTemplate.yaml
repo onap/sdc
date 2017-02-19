@@ -1,0 +1,219 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    param_number:
+      hidden: false
+      immutable: false
+      type: float
+      description: param number - float
+    jsa_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR of jsa log network
+      default: 107.243.7.128/26
+    param_string:
+      hidden: false
+      immutable: false
+      type: string
+      description: param String - string
+    param_json:
+      hidden: false
+      immutable: false
+      type: json
+      description: param json - map<String>
+    param_comma_delimited_list:
+      hidden: false
+      immutable: false
+      type: list
+      description: param comma_delimited_list - List
+      entry_schema:
+        type: string
+    user_name:
+      label: User Name
+      hidden: true
+      immutable: false
+      type: string
+      description: User name to be configured for the application
+      constraints:
+      - max_length: 8
+      - min_length: 6
+      - pattern: '[A-Z]+[a-zA-Z0-9]*'
+      - in_range:
+        - 0
+        - 10
+    param_boolean:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: param boolean - boolean
+    instance_type:
+      label: Instance Type
+      hidden: false
+      immutable: false
+      type: string
+      description: Instance type for compute instances
+      constraints:
+      - valid_values:
+        - m1.small
+        - m1.medium
+        - m1.large
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+      default: jsa_log_net_0
+  node_templates:
+    jsa_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+        subnets:
+          jsa_subnet:
+            cidr:
+              get_input: jsa_cidr
+    jsa_net_test_get_attribute_2_params:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_attribute:
+          - jsa_net
+          - network_name
+        value_specs:
+          key1: spec1
+    jsa_net_test_get_attribute_3_params:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_attribute:
+          - jsa_net
+          - network_name
+          - 0
+        value_specs:
+          key1: spec1
+    jsa_net_test_get_attribute_4_params:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_attribute:
+          - jsa_net
+          - network_name
+          - 0
+          - a1
+        value_specs:
+          key1: spec1
+    jsa_net_test_get_attribute_5_params:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_attribute:
+          - jsa_net
+          - network_name
+          - 0
+          - a1
+          - a2
+        value_specs:
+          key1: spec1
+    jsa_net_test_full_attribute:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_agent_ids:
+        - '1000'
+        - '1001'
+        - '1002'
+        tenant_id: 23456
+        port_security_enabled: true
+        shared: true
+        admin_state_up: false
+        qos_policy: full
+        network_name:
+          get_input: jsa_net_name
+        subnets:
+          jsa_net_test_full_attribute_subnet:
+            cidr:
+              get_input: jsa_cidr
+        value_specs:
+          key1: spec1
+          key2: spec2
+  groups:
+    ep-jsa_net:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - jsa_net
+      - jsa_net_test_get_attribute_2_params
+      - jsa_net_test_get_attribute_3_params
+      - jsa_net_test_get_attribute_4_params
+      - jsa_net_test_get_attribute_5_params
+      - jsa_net_test_full_attribute

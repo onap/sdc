@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="49" passed="49">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="6008" started-at="2016-09-08T07:19:36Z" finished-at="2016-09-08T07:19:42Z">
+    <groups>
+      <group name="updateTestGroup">
+        <method signature="ActionTest.updateTest()[pri:0, instance:ActionTest@5b367418]" name="updateTest" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateInvalidVersion_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateInvalidVersion_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateInvariantId_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateInvariantId_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateName_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateName_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateOtherUser_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateOtherUser_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateStatus_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateStatus_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateUniqueId_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateUniqueId_negative" class="ActionTest"/>
+        <method signature="ActionTest.testUpdateVersion_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateVersion_negative" class="ActionTest"/>
+      </group> <!-- updateTestGroup -->
+    </groups>
+    <test name="Default test" duration-ms="6008" started-at="2016-09-08T07:19:36Z" finished-at="2016-09-08T07:19:42Z">
+      <class name="ActionTest">
+        <test-method status="PASS" signature="init()[pri:0, instance:ActionTest@5b367418]" name="init" is-config="true" duration-ms="2613" started-at="2016-09-08T12:49:36Z" finished-at="2016-09-08T12:49:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- init -->
+        <test-method status="PASS" signature="createTest()[pri:0, instance:ActionTest@5b367418]" name="createTest" duration-ms="79" started-at="2016-09-08T12:49:39Z" finished-at="2016-09-08T12:49:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- createTest -->
+        <test-method status="PASS" signature="testDeleteArtifactInvalidActInvId()[pri:0, instance:ActionTest@5b367418]" name="testDeleteArtifactInvalidActInvId" duration-ms="3" started-at="2016-09-08T12:49:39Z" finished-at="2016-09-08T12:49:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteArtifactInvalidActInvId -->
+        <test-method status="PASS" signature="testDownloadArtifactNegativeInvalidAction()[pri:0, instance:ActionTest@5b367418]" name="testDownloadArtifactNegativeInvalidAction" duration-ms="4" started-at="2016-09-08T12:49:39Z" finished-at="2016-09-08T12:49:39Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDownloadArtifactNegativeInvalidAction -->
+        <test-method status="PASS" signature="testGetByCategory()[pri:0, instance:ActionTest@5b367418]" name="testGetByCategory" duration-ms="961" started-at="2016-09-08T12:49:39Z" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByCategory -->
+        <test-method status="PASS" signature="testGetByInvIdOnCreate()[pri:0, instance:ActionTest@5b367418]" name="testGetByInvIdOnCreate" duration-ms="30" started-at="2016-09-08T12:49:40Z" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByInvIdOnCreate -->
+        <test-method status="PASS" signature="testGetECOMPComponents()[pri:0, instance:ActionTest@5b367418]" name="testGetECOMPComponents" duration-ms="5" started-at="2016-09-08T12:49:40Z" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetECOMPComponents -->
+        <test-method status="PASS" signature="testUploadArtifact()[pri:0, instance:ActionTest@5b367418]" name="testUploadArtifact" duration-ms="78" started-at="2016-09-08T12:49:40Z" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadArtifact -->
+        <test-method status="PASS" signature="testgetActionsByActionUUID_Negative()[pri:0, instance:ActionTest@5b367418]" name="testgetActionsByActionUUID_Negative" duration-ms="4" started-at="2016-09-08T12:49:40Z" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testgetActionsByActionUUID_Negative -->
+        <test-method status="PASS" signature="testCheckOutOnCheckOut()[pri:0, instance:ActionTest@5b367418]" name="testCheckOutOnCheckOut" duration-ms="13" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.createTest" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckOutOnCheckOut -->
+        <test-method status="PASS" signature="testCheckOutOnCheckOutWithOtherUser()[pri:0, instance:ActionTest@5b367418]" name="testCheckOutOnCheckOutWithOtherUser" duration-ms="9" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.createTest" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckOutOnCheckOutWithOtherUser -->
+        <test-method status="PASS" signature="testCreateWithExistingActionName_negative()[pri:0, instance:ActionTest@5b367418]" name="testCreateWithExistingActionName_negative" duration-ms="5" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.createTest" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCreateWithExistingActionName_negative -->
+        <test-method status="PASS" signature="testGetAllActions()[pri:0, instance:ActionTest@5b367418]" name="testGetAllActions" duration-ms="56" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.testGetByCategory" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetAllActions -->
+        <test-method status="PASS" signature="testDeleteArtifactInvalidArtifactUUID()[pri:0, instance:ActionTest@5b367418]" name="testDeleteArtifactInvalidArtifactUUID" duration-ms="9" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.testGetByInvIdOnCreate" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteArtifactInvalidArtifactUUID -->
+        <test-method status="PASS" signature="testGetByIgnoreCaseName()[pri:0, instance:ActionTest@5b367418]" name="testGetByIgnoreCaseName" duration-ms="11" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.testGetByInvIdOnCreate" finished-at="2016-09-08T12:49:40Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByIgnoreCaseName -->
+        <test-method status="PASS" signature="testGetByInvIdManyVersionWithoutSubmit()[pri:0, instance:ActionTest@5b367418]" name="testGetByInvIdManyVersionWithoutSubmit" duration-ms="451" started-at="2016-09-08T12:49:40Z" depends-on-methods="ActionTest.testGetByInvIdOnCreate" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByInvIdManyVersionWithoutSubmit -->
+        <test-method status="PASS" signature="testGetBySupportedComponent()[pri:0, instance:ActionTest@5b367418]" name="testGetBySupportedComponent" duration-ms="44" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testGetByCategory" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetBySupportedComponent -->
+        <test-method status="PASS" signature="testGetBySupportedModel()[pri:0, instance:ActionTest@5b367418]" name="testGetBySupportedModel" duration-ms="44" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testGetByCategory" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetBySupportedModel -->
+        <test-method status="PASS" signature="testGetByVendor()[pri:0, instance:ActionTest@5b367418]" name="testGetByVendor" duration-ms="41" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testGetByCategory" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByVendor -->
+        <test-method status="PASS" signature="testDeleteArtifact()[pri:0, instance:ActionTest@5b367418]" name="testDeleteArtifact" duration-ms="39" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteArtifact -->
+        <test-method status="PASS" signature="testDeleteArtifactLockedByOtherUser()[pri:0, instance:ActionTest@5b367418]" name="testDeleteArtifactLockedByOtherUser" duration-ms="5" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteArtifactLockedByOtherUser -->
+        <test-method status="PASS" signature="testDeleteReadOnlyArtifact()[pri:0, instance:ActionTest@5b367418]" name="testDeleteReadOnlyArtifact" duration-ms="59" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteReadOnlyArtifact -->
+        <test-method status="PASS" signature="testDownloadArtifact()[pri:0, instance:ActionTest@5b367418]" name="testDownloadArtifact" duration-ms="8" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDownloadArtifact -->
+        <test-method status="PASS" signature="testDownloadArtifactNegativeInvalidArtifact()[pri:0, instance:ActionTest@5b367418]" name="testDownloadArtifactNegativeInvalidArtifact" duration-ms="5" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDownloadArtifactNegativeInvalidArtifact -->
+        <test-method status="PASS" signature="testUpdateArtifact()[pri:0, instance:ActionTest@5b367418]" name="testUpdateArtifact" duration-ms="22" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateArtifact -->
+        <test-method status="PASS" signature="testUploadArtifactCheckedOutOtherUser_negative()[pri:0, instance:ActionTest@5b367418]" name="testUploadArtifactCheckedOutOtherUser_negative" duration-ms="6" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadArtifactCheckedOutOtherUser_negative -->
+        <test-method status="PASS" signature="testUploadArtifactInvalidActionInvId_negative()[pri:0, instance:ActionTest@5b367418]" name="testUploadArtifactInvalidActionInvId_negative" duration-ms="6" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadArtifactInvalidActionInvId_negative -->
+        <test-method status="PASS" signature="testUploadArtifactSameName_negative()[pri:0, instance:ActionTest@5b367418]" name="testUploadArtifactSameName_negative" duration-ms="9" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadArtifactSameName_negative -->
+        <test-method status="PASS" signature="testUploadArtifactUnlockedAction_negative()[pri:0, instance:ActionTest@5b367418]" name="testUploadArtifactUnlockedAction_negative" duration-ms="21" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifact" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUploadArtifactUnlockedAction_negative -->
+        <test-method status="PASS" signature="testgetActionsByActionUUID()[pri:0, instance:ActionTest@5b367418]" name="testgetActionsByActionUUID" duration-ms="5" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.createTest" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testgetActionsByActionUUID -->
+        <test-method status="PASS" signature="testGetByInvIdManyVersionWithFirstSubmit()[pri:0, instance:ActionTest@5b367418]" name="testGetByInvIdManyVersionWithFirstSubmit" duration-ms="515" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testGetByInvIdManyVersionWithoutSubmit" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByInvIdManyVersionWithFirstSubmit -->
+        <test-method status="PASS" signature="testDeleteArtifactOnUnlockedAction()[pri:0, instance:ActionTest@5b367418]" name="testDeleteArtifactOnUnlockedAction" duration-ms="5" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.testUploadArtifactUnlockedAction_negative" finished-at="2016-09-08T12:49:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testDeleteArtifactOnUnlockedAction -->
+        <test-method status="PASS" signature="updateTest()[pri:0, instance:ActionTest@5b367418]" name="updateTest" duration-ms="17" started-at="2016-09-08T12:49:41Z" depends-on-methods="ActionTest.createTest, ActionTest.testCreateWithExistingActionName_negative" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- updateTest -->
+        <test-method status="PASS" signature="testGetByInvIdManyVersionWithMultSubmit()[pri:0, instance:ActionTest@5b367418]" name="testGetByInvIdManyVersionWithMultSubmit" duration-ms="366" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testGetByInvIdManyVersionWithFirstSubmit" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByInvIdManyVersionWithMultSubmit -->
+        <test-method status="PASS" signature="testUpdateInvalidVersion_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateInvalidVersion_negative" duration-ms="7" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateInvalidVersion_negative -->
+        <test-method status="PASS" signature="testUpdateInvariantId_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateInvariantId_negative" duration-ms="6" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateInvariantId_negative -->
+        <test-method status="PASS" signature="testUpdateName_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateName_negative" duration-ms="8" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateName_negative -->
+        <test-method status="PASS" signature="testUpdateOtherUser_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateOtherUser_negative" duration-ms="7" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateOtherUser_negative -->
+        <test-method status="PASS" signature="testUpdateStatus_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateStatus_negative" duration-ms="10" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateStatus_negative -->
+        <test-method status="PASS" signature="testUpdateUniqueId_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateUniqueId_negative" duration-ms="9" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateUniqueId_negative -->
+        <test-method status="PASS" signature="testUpdateVersion_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateVersion_negative" duration-ms="7" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.updateTest" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateVersion_negative -->
+        <test-method status="PASS" signature="testGetByInvIdOnName()[pri:0, instance:ActionTest@5b367418]" name="testGetByInvIdOnName" duration-ms="271" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testGetByInvIdManyVersionWithMultSubmit" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGetByInvIdOnName -->
+        <test-method status="PASS" signature="testCheckIn()[pri:0, instance:ActionTest@5b367418]" name="testCheckIn" duration-ms="10" depends-on-groups="updateTestGroup" started-at="2016-09-08T12:49:42Z" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckIn -->
+        <test-method status="PASS" signature="testUpdateOnCheckedInAction_negative()[pri:0, instance:ActionTest@5b367418]" name="testUpdateOnCheckedInAction_negative" duration-ms="7" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testCheckIn" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUpdateOnCheckedInAction_negative -->
+        <test-method status="PASS" signature="testSubmit()[pri:0, instance:ActionTest@5b367418]" name="testSubmit" duration-ms="20" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testUpdateOnCheckedInAction_negative" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSubmit -->
+        <test-method status="PASS" signature="testCheckInWithoutCheckout()[pri:0, instance:ActionTest@5b367418]" name="testCheckInWithoutCheckout" duration-ms="4" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testSubmit" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckInWithoutCheckout -->
+        <test-method status="PASS" signature="testCheckOut()[pri:0, instance:ActionTest@5b367418]" name="testCheckOut" duration-ms="21" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testSubmit" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckOut -->
+        <test-method status="PASS" signature="testCheckInWithOtherUser()[pri:0, instance:ActionTest@5b367418]" name="testCheckInWithOtherUser" duration-ms="5" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testCheckOut" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testCheckInWithOtherUser -->
+        <test-method status="PASS" signature="testSubmitOnCheckout()[pri:0, instance:ActionTest@5b367418]" name="testSubmitOnCheckout" duration-ms="4" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testCheckOut" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testSubmitOnCheckout -->
+        <test-method status="PASS" signature="testUndoCheckout()[pri:0, instance:ActionTest@5b367418]" name="testUndoCheckout" duration-ms="18" started-at="2016-09-08T12:49:42Z" depends-on-methods="ActionTest.testCheckOut" finished-at="2016-09-08T12:49:42Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testUndoCheckout -->
+      </class> <!-- ActionTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

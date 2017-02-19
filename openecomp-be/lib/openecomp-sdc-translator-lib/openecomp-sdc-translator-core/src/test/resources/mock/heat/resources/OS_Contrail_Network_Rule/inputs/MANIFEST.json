@@ -1,0 +1,12 @@
+{
+  "name": "network_policy_chain",
+  "description": "network_policy_chain",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "network_policy_chain.yaml",
+      "type": "HEAT",
+      "data": []
+    }
+  ]
+}

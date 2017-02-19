@@ -1,0 +1,303 @@
+heat_template_version: 2014-10-16
+
+parameters:
+  domain_name:
+    type: string
+  vlb_agent_image_name:
+    type: string
+  manager_name_0:
+    type: string
+  manager_oam_direct_ip_0:
+    type: string
+  ntp_timezone:
+    type: string
+  oam_private_net_name:
+    type: string
+  packet_internal_network:
+    type: string
+  packet_mirror_network:
+    type: string
+  region_name:
+    type: string
+  rpmrepository_ip_0:
+    type: string
+  security_group:
+    type: string
+  tenant_name:
+    type: string
+  availability_zone_0:
+    type: string
+  vLBAgent_cluster_name:
+    type: string
+  vLBAgent_flavor_name:
+    type: string
+  vLBAgent_index:
+    type: number
+  vLBAgent_names:
+    type: comma_delimited_list
+  vLBAgent_node_count:
+    type: number
+  vLBAgent_type:
+    type: string
+  vLBAgent_version_name:
+    type: string
+  vLBAgent_volume_name_0:
+    type: string
+  vLBAgent_volume_name_1:
+    type: string
+  vLBAgent_volume_name_2:
+    type: string
+  vLBAgent_volume_size_0:
+    type: number
+  vLBAgent_volume_size_1:
+    type: number
+  vLBAgent_volume_size_2:
+    type: number
+  vLBAgent_volume_type_0:
+    type: string
+  vLBAgent_volume_type_1:
+    type: string
+  vLBAgent_volume_type_2:
+    type: string
+  vLB_cluster_name:
+    type: string
+  vLB_node_count:
+    type: number
+  vProbe_cluster_name:
+    type: string
+  vf_module_id:
+    type: string
+  vf_module_name:
+    type: string
+  vnf_id:
+    type: string
+resources:
+  oam_private_net_network_port:
+    properties:
+      network:
+        get_param: oam_private_net_name
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  packet_internal_network_port:
+    properties:
+      network:
+        get_param: packet_internal_network
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  packet_mirror_network_port:
+    properties:
+      network:
+        get_param: packet_mirror_network
+      security_groups:
+      - get_param: security_group
+    type: OS::Neutron::Port
+  vLBAgentInstance:
+    properties:
+      availability_zone:
+        get_param: availability_zone_0
+      config_drive: true
+      flavor:
+        get_param: vLBAgent_flavor_name
+      image:
+        get_param: vlb_agent_image_name
+      metadata:
+        DPDK: DPDK_IP
+        cluster_name:
+          get_param: vLBAgent_cluster_name
+        machine_name:
+          get_param:
+          - vLBAgent_names
+          - get_param: vLBAgent_index
+        machine_type: vLBAgent
+        manager_oam_direct_ip_0:
+          get_param: manager_oam_direct_ip_0
+        mount_colon__slash_config:
+          get_resource: vLBAgent_volume_2
+        mount_colon__slash_data:
+          get_resource: vLBAgent_volume_0
+        mount_colon__slash_log:
+          get_resource: vLBAgent_volume_1
+        ntp_timezone:
+          get_param: ntp_timezone
+        oam_private_network_cidr:
+          get_attr:
+          - oam_private_net_network_port
+          - subnets
+          - 0
+          - cidr
+        oam_private_network_ip_0:
+          get_attr:
+          - oam_private_net_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        packet_internal_network_cidr:
+          get_attr:
+          - packet_internal_network_port
+          - subnets
+          - 0
+          - cidr
+        packet_internal_network_ip_0:
+          get_attr:
+          - packet_internal_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        packet_mirror_network_cidr:
+          get_attr:
+          - packet_mirror_network_port
+          - subnets
+          - 0
+          - cidr
+        packet_mirror_network_ip_0:
+          get_attr:
+          - packet_mirror_network_port
+          - fixed_ip_0s
+          - 0
+          - ip_address
+        region:
+          get_param: region_name
+        repo_ip_0:
+          get_param: rpmrepository_ip_0
+        tenant:
+          get_param: tenant_name
+        vLBAgentInstance:
+          get_param: vLBAgent_index
+        vLBAgent_id:
+          get_attr:
+          - vLBAgent_id
+          - value
+        vLBAgent_name:
+          get_param:
+          - vLBAgent_names
+          - get_param: vLBAgent_index
+        vLBAgent_type:
+          get_param: vLBAgent_type
+        vLBAgent_version_name:
+          get_param: vLBAgent_version_name
+        vLB_node_count:
+          get_param: vLB_node_count
+        version_number:
+          get_param: vLBAgent_version_name
+        vf_module_id:
+          get_param: vf_module_id
+        vf_module_name:
+          get_param: vf_module_name
+        vnf_id:
+          get_param: vnf_id
+      name:
+        get_param:
+        - vLBAgent_names
+        - get_param: vLBAgent_index
+      networks:
+      - port:
+          get_resource: oam_private_net_network_port
+      - port:
+          get_resource: packet_mirror_network_port
+      - port:
+          get_resource: packet_internal_network_port
+      personality:
+        /root/CheckAvailability/check_availability.py:
+          get_file: check_availability.py
+        /root/RegisterStatus/register_status.py:
+          get_file: register_status.py
+        /root/call_home.py:
+          get_file: call_home.py
+        /root/dependencies_with_vLB.json:
+          get_file: vlbagentdependencies_with_vLB.json
+        /root/dependencies_without_vLB.json:
+          get_file: vlbagentdependencies_without_vLB.json
+        /tmp/wait_for_resources.py:
+          get_file: wait_for_resources.py
+      user_data:
+        str_replace:
+          params:
+            '%domain_name%':
+              get_param: domain_name
+            '%manager_hostname%':
+              get_param: manager_name_0
+            '%manager_oam_direct_ip_0%':
+              get_param: manager_oam_direct_ip_0
+            '%rpm_repo_ip_0%':
+              get_param: rpmrepository_ip_0
+            '%vLBAgent_cluster_name%':
+              get_param: vLBAgent_cluster_name
+            '%vLBAgent_config%':
+              get_resource: vLBAgent_volume_2
+            '%vLBAgent_data%':
+              get_resource: vLBAgent_volume_0
+            '%vLBAgent_id_number%':
+              get_attr:
+              - vLBAgent_id
+              - value
+            '%vLBAgent_log%':
+              get_resource: vLBAgent_volume_1
+            '%vLBAgent_node_count%':
+              get_param: vLBAgent_node_count
+            '%vLBAgent_version_name%':
+              get_param: vLBAgent_version_name
+            '%vLB_cluster_name%':
+              get_param: vLB_cluster_name
+            '%vLB_node_count%':
+              get_param: vLB_node_count
+            '%vProbe_cluster_name%':
+              get_param: vProbe_cluster_name
+          template:
+            get_file: FEAdd_On_Module_vLBAgentCloudConfig
+      user_data_format: RAW
+    type: OS::Nova::Server
+  vLBAgent_id:
+    properties:
+      length: 4
+      sequence: digits
+    type: OS::Heat::RandomString
+  vLBAgent_volume_0:
+    properties:
+      description:
+        get_param: vLBAgent_volume_name_0
+      size:
+        get_param: vLBAgent_volume_size_0
+      volume_type:
+        get_param: vLBAgent_volume_type_0
+    type: OS::Cinder::Volume
+  vLBAgent_volume_0_att:
+    properties:
+      instance_uuid:
+        get_resource: vLBAgentInstance
+      volume_id:
+        get_resource: vLBAgent_volume_0
+    type: OS::Cinder::VolumeAttachment
+  vLBAgent_volume_1:
+    properties:
+      description:
+        get_param: vLBAgent_volume_name_1
+      size:
+        get_param: vLBAgent_volume_size_1
+      volume_type:
+        get_param: vLBAgent_volume_type_1
+    type: OS::Cinder::Volume
+  vLBAgent_volume_1_att:
+    properties:
+      instance_uuid:
+        get_resource: vLBAgentInstance
+      volume_id:
+        get_resource: vLBAgent_volume_1
+    type: OS::Cinder::VolumeAttachment
+  vLBAgent_volume_2:
+    properties:
+      description:
+        get_param: vLBAgent_volume_name_2
+      size:
+        get_param: vLBAgent_volume_size_2
+      volume_type:
+        get_param: vLBAgent_volume_type_2
+    type: OS::Cinder::Volume
+  vLBAgent_volume_2_att:
+    properties:
+      instance_uuid:
+        get_resource: vLBAgentInstance
+      volume_id:
+        get_resource: vLBAgent_volume_2
+    type: OS::Cinder::VolumeAttachment

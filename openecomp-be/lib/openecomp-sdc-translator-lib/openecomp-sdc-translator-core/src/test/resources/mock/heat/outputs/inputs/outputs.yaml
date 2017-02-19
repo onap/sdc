@@ -1,0 +1,48 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+outputs:
+  output_regular:
+      description: output_regula
+      value: regular
+  output_func_getParam:
+      description: output_func_getParam
+      value: {get_param: jsa_cidr}
+  output_func_getAttr:
+      description: output_func_getAttr
+      value: {get_attr: [jsa_net_test_full_attribute, name]}
+  output_func_getResource:
+        description: output_func_getResource
+        value: {get_resource: jsa_net_test_full_attribute_subnet}
+
+resources:
+  jsa_net:
+      type: OS::Neutron::Net
+      properties:
+        name: {get_param: jsa_net_name}
+        shared: True
+
+  jsa_net_test_full_attribute:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+      dhcp_agent_ids: ['1000','1001','1002']
+      tenant_id: 23456
+      port_security_enabled: t
+      admin_state_up: 0
+      qos_policy: full
+      value_specs:
+        key1: "spec1"
+        key2: "spec2"
+
+  jsa_net_test_full_attribute_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: {get_resource: jsa_net_test_full_attribute}
+      cidr: {get_param: jsa_cidr}
+
+
+

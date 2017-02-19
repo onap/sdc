@@ -1,0 +1,122 @@
+heat_template_version: 2014-10-16
+
+description: create BIG-IP VE instance
+
+parameters:
+
+  # 06-01-2015 added anti-affinity policy
+  lb_server_group:
+    type: string
+    description: Anti-affinity group for lb
+  server_name:
+    type: comma_delimited_list
+    label: BIG-IP instance name
+    description: BIG-IP instance name
+  image_name:
+    type: string
+    label: image name
+    description: the MVM BIG-IP image name
+  flavor_name:
+    type: string
+    label: bigip flavor name
+    description: the flavor name of bigip instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: the availabilityzone name
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  oam_mgmt_network_id:
+    type: string
+    label: oam network name
+    description: mgmt eth0 local mgmt network
+  oam_mgmt_network_ip:
+    type: comma_delimited_list
+    label: oam network ip
+    description: the local ip of mgmt network
+  oam_network_id:
+    type: string
+    label: bigip oam network id
+    description: oam TMM 1.1 network
+  oam_network_ip:
+    type: comma_delimited_list
+    label: oam network ip
+    description: the local ip of oam network
+  oam_network_vip_ip:
+    type: string
+    label: oam network virtual server ip
+    description: oam network virtual server ip
+  dmz_network_id:
+    type: string
+    label: bigip dmz network id
+    description: dmz TMM 1.2 network
+  dmz_network_ip:
+    type: comma_delimited_list
+    label: dmz network ip
+    description: BIGIP dmz network ip
+  dmz_network_vip_ip:
+    type: string
+    label: dmz network virtual server ip
+    description: dmz network virtual server ip
+  core_network_id:
+    type: string
+    label: core network id
+    description: core TMM 1.3 network
+  core_network_ip:
+    type: comma_delimited_list
+    label: core network ip
+    description: core network ip
+  core_network_vip_ip:
+    type: string
+    label: core network virtual server ip
+    description: core network virtual server ip
+  ha_network_f5_id:
+    type: string
+    label: HA network id
+    description: HA TMM 1.4 network
+  ha_local_ip:
+    type: comma_delimited_list
+    label: HA local ip
+    description: HA failover local ip
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF_MODULE instance
+  cluster_size:
+    type: number
+    description: number of instance of the VF_module
+
+resources:
+ f5_modules:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: cluster_size }
+      resource_def:
+        type: vvm_f5_5nic.nested.heat.yaml
+        properties:
+          lb_system_name: { get_param: lb_server_group }
+          server_name: { get_param: server_name }
+          image_name:  { get_param: image_name }
+          flavor_name: { get_param: flavor_name }
+          availabilityzone_name: { get_param: availabilityzone_name }
+          security_group_name: { get_param: security_group_name }
+          oam_mgmt_network_id: { get_param: oam_mgmt_network_id }
+          oam_mgmt_network_ip: { get_param: oam_mgmt_network_ip }
+          oam_network_id: { get_param: oam_network_id }
+          oam_network_ip: { get_param: oam_network_ip }
+          oam_network_vip_ip: { get_param: oam_network_vip_ip }
+          dmz_network_id: { get_param: dmz_network_id }
+          dmz_network_ip: { get_param: dmz_network_ip }
+          dmz_network_vip_ip: { get_param: dmz_network_vip_ip }
+          core_network_id: { get_param: core_network_id }
+          core_network_ip: { get_param: core_network_ip }
+          core_network_vip_ip: { get_param: core_network_vip_ip }
+          ha_network_id: { get_param: ha_network_f5_id }
+          ha_local_ip: { get_param: ha_local_ip }
+          vnf_id: { get_param: vnf_id }
+          vf_module_id: { get_param: vf_module_id }
+          indx: "%index%"

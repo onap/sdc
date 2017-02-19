@@ -1,0 +1,79 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  pcm_server_names:
+    type: comma_delimited_list
+    label: PCRF CM server names
+    description: name of the PCRF CM instance
+  pcm_image_name:
+    type: string
+    label: PCRF CM image name
+    description: PCRF CM image name
+  pcm_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  oam_net_ips:
+    type: comma_delimited_list
+    label: OAM network ips
+    description: OAM network ips
+  oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  oam_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcm_volumes:
+    type: comma_delimited_list
+    label: CPS Cluman Cinder Volume
+    description: CPS Cluman Cinder Volume
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+
+resources:
+  server_pcm_003:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      availabilityzone_name: { get_param: availabilityzone_name }
+      security_group_name: { get_param: security_group_name }
+      pcm_vol: { get_param: [pcm_volumes, 0] }
+      cps_net_name: { get_param: cps_net_name }
+      cps_net_ip: { get_param: [cps_net_ips, 0] }
+      cps_net_mask: { get_param: cps_net_mask }
+
+  server_pcm_004:
+      type: nested-pcm_v0.1_2.yaml
+      properties:
+        availabilityzone_name: { get_param: availabilityzone_name }
+        security_group_name: { get_param: security_group_name }
+        pcm_vol: { get_param: [pcm_volumes, 0] }
+        cps_net_name: { get_param: cps_net_name }
+        cps_net_ip: { get_param: [cps_net_ips, 0] }
+        cps_net_mask: { get_param: cps_net_mask }
+

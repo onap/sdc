@@ -1,0 +1,28 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  port_resource:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: not_valid_network_name }
+  port_resource_1:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: not_valid_net }
+  port_resource_2:
+    type: OS::Neutron::Port
+    properties:
+     network_id: { get_param: not_valid_net_id_error }
+  port_resource_3:
+      type: OS::Neutron::Port
+      properties:
+       network_id: { get_param:   }
+
+outputs:
+  expose_resource_port_output:
+    description: the pcrf_server
+    value: { get_resource: port_resource }
+
+

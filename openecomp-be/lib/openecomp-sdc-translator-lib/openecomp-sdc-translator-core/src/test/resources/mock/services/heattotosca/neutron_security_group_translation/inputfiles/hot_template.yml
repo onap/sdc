@@ -1,0 +1,57 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-11-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  oam_net_name:
+    type: string
+    description: network name of OAM network
+  security_group_name:
+    type: string
+    description: security group name of JSA
+  MASTER_names:
+    type: string
+    description: JSA MASTER instance name
+  MASTER_image_name:
+    type: string
+    description: JSA MASTER instance image name
+  MASTER_flavor_name:
+    type: string
+    description: the flavor name of JSA MASTER instance
+
+resources:
+  jsa_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+
+  MASTER_instance:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: MASTER_names}
+      image: {get_param: MASTER_image_name}
+      flavor: {get_param: MASTER_flavor_name}
+      networks:
+        - port: {get_resource: MASTER_mgmt_port}
+
+  MASTER_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      security_groups: [{get_resource: jsa_security_group}]

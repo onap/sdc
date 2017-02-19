@@ -1,0 +1,30 @@
+### Heat Template ###
+description: Generated template
+heat_template_version: 2013-05-23
+parameters: {}
+resources:
+  Key_1_unique:
+    properties:
+      admin_state_up: true
+      name: name_notReleventForTest
+      - shared: true
+    type: type_notReleventForTest
+  Key_2_not_unique:
+    properties:
+      admin_state_up: true
+      name: name_notReleventForTest
+      shared: true
+    type: type_notReleventForTest
+  Key_2_not_unique:
+    properties:
+      admin_state_up: true
+      name: name_notReleventForTest
+      shared: true
+    type: type_notReleventForTest
+  Key_3_unique:
+    properties:
+      admin_state_up: true
+      name: name_notReleventForTest
+      shared: true
+    type: type_notReleventForTest
+

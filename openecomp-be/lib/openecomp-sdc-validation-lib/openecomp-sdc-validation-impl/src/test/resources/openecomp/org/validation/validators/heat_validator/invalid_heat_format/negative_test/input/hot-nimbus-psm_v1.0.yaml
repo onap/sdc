@@ -1,0 +1,52 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Session Manager stack
+
+parameters:
+  num_instances:
+    type: comma_delimited_list
+    label: PCRF SM server names
+    description: name of the PCRF SM instance
+  pcrf_psm_server_names:
+    type: comma_delimited_list
+    label: PCRF SM server names
+    description: name of the PCRF SM instance
+  pcrf_psm_image_name:
+    type: string
+
+  pcrf_pps_image_name:
+    type: string
+  pcrf_pps_flavor_name:
+    type: string
+  availability_zone_0:
+    type: string
+resources:
+  resource_with_resources_group_1:
+    kuku: kuku
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: num_instances }
+      resource_def:
+        type: {get_param: pcrf_vnf_id}
+        properties:
+          pcrf_psm_server_name: { get_param: pcrf_pps_server_names }
+          pcrf_psm_image_name:  { get_param: pcrf_pps_image_name }
+
+
+
+
+  resource_with_resources_group_2:
+    blabla: blabla
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: num_instances }
+      resource_def:
+        type: OS::Nova::Server
+        properties:
+          cloud_zone_id: { get_param: pcrf_pps_server_names }
+          vf_name:  { get_param: pcrf_pps_image_name }
+
+
+
+
+

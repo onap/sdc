@@ -1,0 +1,30 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+    shared_vol1:
+      type: string
+      description: volume name
+    shared_vol2:
+      type: string
+      description: volume name
+    cmaui_cinder_volume_size:
+       type: number
+       label: CMAUI Cinder volume size
+       description: the size of the CMAUI Cinder volume
+    CMAUI_volume_type:
+      type: string
+      label: CMAUI vm volume type
+      description: the name of the target volume backend
+
+resources:
+  test_nested:
+    type: nested.yml
+    properties:
+      shared_vol1: { get_param: shared_vol1}
+      cmaui_volume_param2: { get_param: shared_vol2}
+outputs:
+    out1_not_shared:
+      value: {get_resource: test_nested}

@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>openecomp-sdc-lib</artifactId>
+        <groupId>org.openecomp.sdc</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.openecomp.core</groupId>
+    <artifactId>openecomp-core-lib</artifactId>
+    <name>openecomp-core-lib</name>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>/openecomp-facade-lib</module>
+        <module>/openecomp-nosqldb-lib</module>
+        <module>/openecomp-utilities-lib</module>
+        <module>/openecomp-config-lib</module>
+    </modules>
+</project>

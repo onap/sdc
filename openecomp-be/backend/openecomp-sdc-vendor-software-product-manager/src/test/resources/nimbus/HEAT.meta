@@ -1,0 +1,215 @@
+{
+  "importStructure": [
+    {
+      "HEAT": [
+        {
+          "fileName": "hot-nimbus-oam_v1.0.yaml",
+          "env": "hot-nimbus-oam_v1.0.env",
+          "volume": [
+            {
+              "fileName": "hot-nimbus-oam-volumes_v1.0.yaml",
+              "env": "hot-nimbus-oam-volumes_v1.0.env"
+            }
+          ],
+          "nested": [
+            {
+              "fileName": "nested-oam_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-oam_v1.0.yaml"
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "mount_iso_script.sh",
+              "status": "OK"
+            },
+            {
+              "name": "cloud-nimbus.sh",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet-gw",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "fileName": "hot-nimbus-pps_v1.0.yaml",
+          "env": "hot-nimbus-pps_v1.0.env",
+          "nested": [
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-pps_v1.0.yaml"
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "mount_iso_script.sh",
+              "status": "OK"
+            },
+            {
+              "name": "cloud-nimbus.sh",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet-gw",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "fileName": "hot-nimbus-psm_v1.0.yaml",
+          "env": "hot-nimbus-psm_v1.0.env",
+          "nested": [
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-psm_v1.0.yaml"
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "mount_iso_script.sh",
+              "status": "OK"
+            },
+            {
+              "name": "cloud-nimbus.sh",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet-gw",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "fileName": "hot-nimbus-ppd_v1.0.yaml",
+          "env": "hot-nimbus-ppd_v1.1.env",
+          "nested": [
+            {
+              "fileName": "nested-ppd_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-ppd_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-ppd_v1.0.yaml"
+            },
+            {
+              "fileName": "nested-ppd_v1.0.yaml"
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "mount_iso_script.sh",
+              "status": "OK"
+            },
+            {
+              "name": "cloud-nimbus.sh",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet-gw",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "fileName": "hot-nimbus-pcm_v1.0.yaml",
+          "env": "hot-nimbus-pcm_v1.0.env",
+          "volume": [
+            {
+              "fileName": "hot-nimbus-pcm-volumes_v1.0.yaml",
+              "env": "hot-nimbus-pcm-volumes_v1.0.env"
+            }
+          ],
+          "nested": [
+            {
+              "fileName": "nested-pcm_v1.0.yaml"
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "mount_iso_script.sh",
+              "status": "OK"
+            },
+            {
+              "name": "cloud-nimbus.sh",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet",
+              "status": "OK"
+            },
+            {
+              "name": "nimbus-ethernet-gw",
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,311 @@
+heat_template_version: 2013-05-23
+
+description: ASC Template
+
+parameters:
+  cluster_type:
+    type: string
+    constraints:
+    - allowed_values: [ Test, Prod ]
+  fe_connectivity:
+    type: string
+    constraints:
+    - allowed_values: [ NEE, STP ]
+  key_name:
+    type: string
+    description: keypair to enable SSH access to the instance.
+    default: vSCP-keypair
+
+# Availability Zone information may need to be updated and the specifications under Nova server capabilities uncommented
+  availability_zone_0:
+    type: string
+
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+    default: This_is_the_SCP_name
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+    default: This_is_ths_SCP_id
+
+  port_name:
+    type: string
+    description: port name
+    default: port_name
+
+  flavor_scp_be_name:
+    type: string
+    description: SCP BE Flavor
+    default: a1.Small
+  flavor_scp_fe_name:
+    type: string
+    description: SCP FE Flavor
+    default: a1.Small
+  flavor_smp_name:
+    type: string
+    description: SCP SMP Flavor
+    default: a1.Small
+  image_scp_be_name:
+    type: string
+    description: SCP BE image
+    default: asc_base_image_be
+  image_scp_fe_name:
+    type: string
+    description: SCP FE image
+    default: asc_base_image_fe
+  image_smp_name:
+    type: string
+    description: SCP SMP image
+    default: asc_base_image_smp
+  int_vscp_fe_cluster_net_id:
+    type: string
+    description: LAN2 FE Cluster/KA
+  int_vscp_fe_cluster_cidr:
+    type: string
+    description: Private Network2 Address (CIDR notation)
+  int_vscp_cluster_net_id:
+    type: string
+    description: LAN3 Cluster
+  int_vscp_cluster_cidr:
+    type: string
+    description: Private Network3 Address (CIDR notation)
+  int_vscp_ce_network_net_id:
+    type: string
+    description: Inter-CE Network
+  int_vscp_ce_network_cidr:
+    type: string
+    description: Private Network Address (CIDR notation)
+  SIGNET_vrf_A1_direct_net_id:
+    type: string
+    description: Network name for SIGTRAN_A
+  SIGNET_vrf_B1_direct_net_id:
+    type: string
+    description: Network name for SIGTRAN_B
+  Cricket_OCS_protected_net_id:
+    type: string
+    description: Network name for CRICKET_OCS
+  Mobility_OAM_protected_net_id:
+    type: string
+    description: Network name for OAM
+  be_Cricket_OCS_protected_ip_0:
+    type: string
+    label: be1 Cricket_OCS ip address
+    description: be1 Cricket_OCS ip address
+  be_Cricket_OCS_protected_ip_1:
+    type: string
+    label: be2 Cricket_OCS ip address
+    description: be2 Cricket_OCS ip address
+  be_Cricket_OCS_protected_ip_2:
+    type: string
+    label: be3 Cricket_OCS ip address
+    description: be3 Cricket_OCS ip address
+  be_Cricket_OCS_protected_ip_3:
+    type: string
+    label: be4 Cricket_OCS ip address
+    description: be4 Cricket_OCS ip address
+  be_Cricket_OCS_protected_ip_4:
+    type: string
+    label: be5 Cricket_OCS ip address
+    description: be5 Cricket_OCS ip address
+  fe_SIGNET_vrf_B1_direct_ip_0:
+    type: string
+    label: fe1 SIGTRAN ip address
+    description: fe1 SIGTRAN ip address
+  fe_SIGNET_vrf_A1_direct_ip_0:
+    type: string
+    label: fe2 SIGTRAN ip address
+    description: fe2 SIGTRAN ip address
+  be_Mobility_OAM_protected_ip_0:
+    type: string
+    label: be_0 OAM ip address
+    description: be_0 OAM ip address
+  be_Mobility_OAM_protected_ip_1:
+    type: string
+    label: be_1 OAM ip address
+    description: be_1 OAM ip address
+  be_Mobility_OAM_protected_ip_2:
+    type: string
+    label: be_2 OAM ip address
+    description: be_2 OAM ip address
+  be_Mobility_OAM_protected_ip_3:
+    type: string
+    label: be_3 OAM ip address
+    description: be_3 OAM ip address
+  be_Mobility_OAM_protected_ip_4:
+    type: string
+    label: be_4 OAM ip address
+    description: be_4 OAM ip address
+  fe_Mobility_OAM_protected_ip_0:
+    type: string
+    label: fe_0 OAM ip address
+    description: fe_0 OAM ip address
+  fe_Mobility_OAM_protected_ip_1:
+    type: string
+    label: fe_1 OAM ip address
+    description: fe_1 OAM ip address
+  smp_Mobility_OAM_protected_ip_0:
+    type: string
+    label: smp_0 OAM ip address
+    description: smp_0 OAM ip address
+  smp_Mobility_OAM_protected_ip_1:
+    type: string
+    label: smp_1 OAM ip address
+    description: smp_1 OAM ip address
+  be_name_0:
+    type: string
+    default: vSCP_BE1
+    description: name of VM
+  be_name_1:
+    type: string
+    default: vSCP_BE2
+    description: name of VM
+  be_name_2:
+    type: string
+    default: vSCP_BE3
+    description: name of VM
+  be_name_3:
+    type: string
+    default: vSCP_BE4
+    description: name of VM
+  be_name_4:
+    type: string
+    default: vSCP_BE5
+    description: name of VM
+  fe_name_0:
+    type: string
+    default: vSCP_FE1
+    description: name of VM
+  fe_name_1:
+    type: string
+    default: vSCP_FE2
+    description: name of VM
+  smp_name_0:
+    type: string
+    default: vSMP1
+    description: name of VM
+  smp_name_1:
+    type: string
+    default: vSMP2
+    description: name of VM
+  smp_name_2:
+    type: string
+    default: vSMP2
+    description: name of VM
+  ##smp_name_2:
+    ##type: string
+    ##default: vSMP2
+    ##description: name of VM
+  nee_name_0:
+    type: string
+    default: vNEE
+    description: name of VM
+
+  hostname_fe1:
+    type: string
+    description: FE1 Hostname (from Ulticom license)
+  hostid_fe1:
+    type: string
+    description: FE1 Hostid (from Ulticom license)
+
+  hostname_fe2:
+    type: string
+    description: FE2 Hostname (from Ulticom license)
+  hostid_fe2:
+    type: string
+    description: FE2 Hostid (from Ulticom license)
+
+  hostname_nee1:
+    type: string
+    description: NEE1 Hostname (from Ulticom license)
+  hostid_nee1:
+    type: string
+    description: NEE1 Hostid (from Ulticom license)
+
+  point_code_scp:
+    type: string
+    description: vSCP point code (in "zone-cluster-member" format)
+  point_code_stp:
+    type: string
+    description: STP virtual point code (in "zone-cluster-member" format)
+  point_code_stp1:
+    type: string
+    description: STP1 point code (in "zone-cluster-member" format)
+  point_code_stp2:
+    type: string
+    description: STP2 point code (in "zone-cluster-member" format)
+  ip_address_stp1:
+    type: string
+    description: STP1 IP address
+  ip_port_stp1:
+    type: string
+    description: STP1 IP port
+  ip_address_stp2:
+    type: string
+    description: STP2 IP address
+  ip_port_stp2:
+    type: string
+    description: STP2 IP port
+  ip_port_fe1:
+    type: string
+    description: FE1 IP port in SIGTRAN network
+  ip_port_fe2:
+    type: string
+    description: FE2 IP port in SIGTRAN network
+
+  global_title_scp:
+    type: string
+    description: vSCP Global Title address
+  global_title_stp:
+    type: string
+    description: STP Global Title address
+
+  security_group_name:
+    type: string
+    label: vSCP security group name
+    description: vSCP security group name
+
+  route_table_be:
+    type: string
+    description: Additional route table for BEs
+
+  route_table_fe1:
+    type: string
+    description: Additional route table for FE1
+
+  route_table_fe2:
+    type: string
+    description: Additional route table for FE2
+
+  ip_address_dra:
+    type: string
+    description: DRA VIP address
+
+  lab_name:
+    type: string
+    description: Lab name
+
+resources:
+  FE_SMP_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["affinity"]
+      name: abc
+  BE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["affinity"]
+      name: def
+  Multi_Anti_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+      name: def
+
+outputs:
+    fe_smp_affinity_param:
+      value: {get_resource: FE_SMP_Affinity}
+    be_affinity_param:
+      value: {get_resource: BE_Affinity}
+    multi_anti_affinity_param:
+      value: {get_resource: Multi_Anti_Affinity}

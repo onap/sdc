@@ -1,0 +1,127 @@
+heat_template_version: 2014-10-16
+
+description: |
+  nested DNS template for a single VM
+  all parameters are passed from calling heat template of resourcegroup
+
+parameters:
+  dns_image_name: 
+    type: string
+    description: server image
+  dns_flavor_name: 
+    type: string
+    description: server flavor
+  dns_key: 
+    type: string
+    description: server key
+  oam_protected_net_name:
+    type: string
+    description: OAM network where instaces will connect
+  int_bearer_net_name:
+    type: string
+    description: Bearer network where instaces will connect
+  dns_oam_protected_ips:
+    type: comma_delimited_list
+    description: DNS OAM IP list   
+  dns_int_bearer_ips:
+    type: comma_delimited_list
+    description: DNS Bearer IP list
+  dns_int_bearer_ipv6_ips:
+    type: comma_delimited_list
+    description: fixed IPv6 assignment for VM's on the Bearer network
+  dns_names:
+    type: comma_delimited_list
+    description: server name
+  route_eth0:
+    type: string
+    description: OAM network routes 
+  index:
+    type: number
+    description: index parameter
+  name_with_index:
+    type: string
+    description: name parameter which will include the index value
+  security_group:
+    type: string
+    description: security group
+  availability_zone_0:
+    type: string
+    description: availability zone ID or Name
+#  this parameter does not follow the D2 Guidelines.  This value will be az0 or az1.
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+    
+    
+resources:
+
+  dns_oam_protected_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+         str_replace:
+           template: VNF_NAME_dns_oam_port
+           params:
+               VNF_NAME: {get_param: vnf_name}
+      network: { get_param: oam_protected_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_oam_protected_ips, get_param: index ]}}]
+      security_groups: [{ get_param: security_group }]
+ 
+  dns_int_bearer_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dns_bearer_port
+          params:
+              VNF_NAME: {get_param: vnf_name}
+      network: { get_param: int_bearer_net_name }
+      fixed_ips: [{ "ip_address": { get_param: [ dns_int_bearer_ips, get_param: index ]}}, { "ip_address": { get_param: [ dns_int_bearer_ipv6_ips, get_param: index ]}}]
+      security_groups: [{ get_param: security_group }]
+
+  dns_servers:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ dns_names, get_param: index ] }
+      image: { get_param: dns_image_name }
+      flavor: { get_param: dns_flavor_name }
+      key_name: { get_param: dns_key }
+      availability_zone: { get_param: availability_zone_0 }
+      networks:
+        - port: { get_resource: dns_oam_protected_0_port }
+        - port: { get_resource: dns_int_bearer_0_port }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name  {get_param: vnf_name }  
+      user_data_format: RAW
+      user_data: { get_resource: server_interface_config } 
+
+  server_interface_config:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+          - path: /etc/sysconfig/network-scripts/route-eth0
+            permissions: "0644"
+#           content: { get_file: route-eth0 }    
+            content: { get_param: route_eth0 }
+ 
+#outputs:
+#  vm_name:
+#    description: VM name
+#    value: { get_attr: [ dns_servers, name] }
+#  networks:
+#    description: networks
+#    value: { get_attr: [ dns_servers, networks ] } 
+
+

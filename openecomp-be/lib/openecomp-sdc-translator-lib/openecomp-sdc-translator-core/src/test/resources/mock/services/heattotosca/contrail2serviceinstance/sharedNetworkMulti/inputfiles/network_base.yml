@@ -1,0 +1,47 @@
+heat_template_version: 2013-05-23
+
+description: ASC External Networks Template
+
+parameters:
+  Internal1_net_name:
+    type: string
+  Internal2_net_name:
+    type: string
+  Internal1_forwarding_mode:
+    type: string
+  Internal2_forwarding_mode:
+    type: string
+  Internal1_shared:
+    type: string
+  Internal2_shared:
+    type: string
+
+resources:
+  Internal1-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+
+  Internal2-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal2_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+
+  Internal3-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal2_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+
+outputs:
+    hsl_direct_net1:
+         value: { list_join: [':', { get_attr: [ Internal1-net, fq_name ] } ] }
+    hsl_direct_net2:
+         value: { get_attr: [ Internal2-net, fq_name ] }
+    hsl_direct_net3:
+         value: {get_resource: Internal3-net}

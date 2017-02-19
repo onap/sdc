@@ -1,0 +1,464 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-ppd_v1.0
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pcrf_ppd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pcrf_ppd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PD image name
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    pcrf_sp_net_ip:
+      label: Sp network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Sp network ip
+    pcrf_ppd_server_name:
+      label: PCRF PD server name
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF PD server name
+    pcrf_gx_net_ip:
+      label: Gx network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Gx network ip
+    pcrf_sy_net_name:
+      label: Sy network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sy network name
+    pcrf_sp_net_mask:
+      label: Sp network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sp network mask
+    pcrf_sd_net_ip:
+      label: Sd network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Sd network ip
+    pcrf_vnf_id:
+      label: PCRF VNF Id
+      hidden: false
+      immutable: false
+      type: string
+      description: PCRF VNF Id
+    pcrf_oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+    pcrf_oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    pcrf_cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    pcrf_gx_net_mask:
+      label: Gx network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Gx network mask
+    pcrf_sgi_sy_net_name:
+      label: Sgi Sy network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sgi Sy network name
+    pcrf_sd_net_name:
+      label: Sd network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sd network name
+    pcrf_oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    pcrf_rx_net_name:
+      label: Rx network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network name
+    pcrf_rx_net_ip:
+      label: Rx network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network ip
+    pcrf_sy_net_ip:
+      label: Sy network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Sy network ip
+    pcrf_sgi_sy_net_ip:
+      label: Sgi Sy network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: Sgi Sy network ip
+    pcrf_ppd_flavor_name:
+      label: PCRF PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF PD instance
+    pcrf_cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    pcrf_sy_net_mask:
+      label: Sy network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sy network mask
+    pcrf_cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    pcrf_oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    pcrf_lb_management_vip:
+      label: CPS OAM LB VIP
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS OAM LB VIP
+    pcrf_sgi_sy_net_mask:
+      label: Sgi Sy network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sgi Sy network mask
+    pcrf_lb_internal_vip:
+      label: CPS Internal LB VIP
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Internal LB VIP
+    pcrf_sd_net_mask:
+      label: Sd network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Sd network mask
+    pcrf_gx_net_name:
+      label: Gx network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Gx network name
+    pcrf_sp_net_name:
+      label: Sp network name
+      hidden: false
+      immutable: false
+      type: string
+      description: Sp network name
+    pcrf_rx_net_mask:
+      label: Rx network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: Rx network mask
+    pcrf_security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+  node_templates:
+    pcrf_ppd_port_5:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_rx_net_ip
+        network:
+          get_input: pcrf_rx_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_6:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_sd_net_ip
+        network:
+          get_input: pcrf_sd_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_sp_net_ip
+        network:
+          get_input: pcrf_sp_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_server_ppd:
+      type: org.openecomp.resource.vfc.nodes.heat.pcrf_ppd_server
+      properties:
+        flavor:
+          get_input: pcrf_ppd_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pcrf_ppd_image_name
+        config_drive: 'True'
+        metadata:
+          vnf_id:
+            get_input: pcrf_vnf_id
+        user_data_format: RAW
+        name:
+          get_input: pcrf_ppd_server_name
+    pcrf_ppd_port_4:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_sy_net_ip
+        network:
+          get_input: pcrf_sy_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_7:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_sgi_sy_net_ip
+        network:
+          get_input: pcrf_sgi_sy_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_oam_net_ip
+        allowed_address_pairs:
+        - ip_address:
+            get_input: pcrf_lb_management_vip
+        network:
+          get_input: pcrf_oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_gx_net_ip
+        network:
+          get_input: pcrf_gx_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+    pcrf_ppd_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: pcrf_security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: pcrf_cps_net_ip
+        allowed_address_pairs:
+        - ip_address:
+            get_input: pcrf_lb_internal_vip
+        network:
+          get_input: pcrf_cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcrf_server_ppd
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-ppd_v1.0:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-ppd_v1.0.yaml
+        description: heat template that creates PCRF Policy Director stack
+      members:
+      - pcrf_ppd_port_5
+      - pcrf_ppd_port_6
+      - pcrf_ppd_port_3
+      - pcrf_server_ppd
+      - pcrf_ppd_port_4
+      - pcrf_ppd_port_7
+      - pcrf_ppd_port_1
+      - pcrf_ppd_port_2
+      - pcrf_ppd_port_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
+    capabilities:
+      attachment_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - attachment
+      attachment_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - attachment
+      binding_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - binding
+      attachment_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - attachment
+      attachment_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - attachment
+      attachment_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - attachment
+      attachment_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - attachment
+      os_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - os
+      attachment_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - attachment
+      endpoint_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - endpoint
+      scalable_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - scalable
+      attachment_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - attachment
+      host_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - host
+    requirements:
+      link_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - link
+      link_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - link
+      local_storage_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - local_storage
+      link_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - link
+      link_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - link
+      link_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - link
+      link_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - link
+      link_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - link
+      link_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - link

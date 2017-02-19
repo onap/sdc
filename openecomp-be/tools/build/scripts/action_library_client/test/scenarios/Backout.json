@@ -1,0 +1,45 @@
+{
+      "name": "Backout",
+      "displayName": "Backout",
+      "description": "MCAP Backout",
+      "vendorList": ["BROCADE"],
+      "categoryList": ["Upgrade"],
+      "endpointURI": "engine-rest/process-definition/key/Backout/start",
+      "supportedModels": [{
+            "versionID": "AA56B177-9383-4934-8543-0F91A7A04971",
+            "versionInvariantUUID": "CC87B177-9383-4934-8543-0F91A7A07193",
+            "name": "vCE",
+            "version": "2.1",
+            "category": "cpe"
+      }],
+      "supportedComponents": [{
+            "ID": "BB47B177-9383-4934-8543-0F91A7A06448",
+            "componentName": "appc"
+      }],
+      "inputParameters": [{
+            "name": "VNF_NAME",
+            "description": "VNF name",
+            "type": "STRING",
+            "max-length": "50",
+            "optional": true,
+            "allowed_values": ["string1", "string2"]
+      }],
+      "outputParameters": [{
+            "name": "STATUS",
+            "defaultValue": "Default Value",
+            "type": "STRING",
+            "description": "The status of execution"
+      }],
+      "operationalData": {
+            "outageDuration": "0",
+            "approxDuration": "5",
+            "staticFields": {},
+            "updatableFields": {}
+      },
+      "serverList": [{
+            "name": "appcserver",
+            "hostName": "cm-server1.client.com",
+            "port": "666"
+      }],
+      "updatedBy": "AUTHusername"
+}

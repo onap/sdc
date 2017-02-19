@@ -1,0 +1,21 @@
+{
+  "name": "vMME_Small",
+  "description": "HOT template to create vmme 2 fsb 2 ncb 2 gbp 2 vlc",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "vmme_small.yml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "vmme_small.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "nimbus-ethernet.sh",
+      "type": "OTHER"
+    }
+  ]
+}

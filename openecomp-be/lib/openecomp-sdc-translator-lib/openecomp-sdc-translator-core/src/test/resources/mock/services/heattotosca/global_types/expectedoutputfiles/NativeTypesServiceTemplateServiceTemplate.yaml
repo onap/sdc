@@ -1,0 +1,205 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: NativeTypesServiceTemplate
+  template_version: 1.0.0
+description: TOSCA Native Node Types
+node_types:
+  tosca.nodes.Compute:
+    derived_from: tosca.nodes.Root
+    attributes:
+      private_address:
+        type: string
+        description: private address
+        status: SUPPORTED
+      public_address:
+        type: string
+        description: public_address
+        status: SUPPORTED
+      networks:
+        type: map
+        description: networks
+        status: SUPPORTED
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        description: ports
+        status: SUPPORTED
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+    - local_storage:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      scalable:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+  tosca.nodes.network.Port:
+    derived_from: tosca.nodes.Root
+    properties:
+      ip_range_end:
+        type: string
+        required: false
+        status: SUPPORTED
+      ip_range_start:
+        type: string
+        required: false
+        status: SUPPORTED
+      ip_address:
+        type: string
+        required: false
+        status: SUPPORTED
+      is_default:
+        type: boolean
+        required: false
+        default: false
+        status: SUPPORTED
+      order:
+        type: integer
+        required: true
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+    requirements:
+    - link:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding:
+        capability: tosca.capabilities.network.Bindable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+  tosca.nodes.Root:
+    attributes:
+      tosca_name:
+        type: string
+        description: tosca name
+        status: SUPPORTED
+      state:
+        type: string
+        description: state
+        status: SUPPORTED
+      tosca_id:
+        type: string
+        description: tosca id
+        status: SUPPORTED
+    interfaces: {
+      }
+  tosca.nodes.network.Network:
+    derived_from: tosca.nodes.Root
+    properties:
+      physical_network:
+        type: string
+        required: false
+        status: SUPPORTED
+      dhcp_enabled:
+        type: boolean
+        required: false
+        default: true
+        status: SUPPORTED
+      segmentation_id:
+        type: string
+        required: false
+        status: SUPPORTED
+      network_id:
+        type: string
+        required: false
+        status: SUPPORTED
+      ip_version:
+        type: integer
+        required: false
+        default: 4
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - 4
+          - 6
+      start_ip:
+        type: string
+        required: false
+        status: SUPPORTED
+      network_name:
+        type: string
+        required: false
+        status: SUPPORTED
+      cidr:
+        type: string
+        required: false
+        status: SUPPORTED
+      gateway_ip:
+        type: string
+        required: false
+        status: SUPPORTED
+      network_type:
+        type: string
+        required: false
+        status: SUPPORTED
+      end_ip:
+        type: string
+        required: false
+        status: SUPPORTED
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+  tosca.nodes.BlockStorage:
+    derived_from: tosca.nodes.Root
+    properties:
+      size:
+        type: scalar-unit.size
+        required: false
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 1 MB
+      volume_id:
+        type: string
+        required: false
+        status: SUPPORTED
+      snapshot_id:
+        type: string
+        required: false
+        status: SUPPORTED
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED

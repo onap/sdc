@@ -1,0 +1,94 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  pcm_server_names:
+    type: comma_delimited_list
+    label: PCRF CM server names
+    description: name of the PCRF CM instance
+  pcm_image_name:
+    type: string
+    label: PCRF CM image name
+    description: PCRF CM image name
+  pcm_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  oam_net_ips:
+    type: comma_delimited_list
+    label: OAM network ips
+    description: OAM network ips
+  oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  oam_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcm_volumes:
+    type: comma_delimited_list
+    label: CPS Cluman Cinder Volume
+    description: CPS Cluman Cinder Volume
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  compute_image_name:
+    type: string
+  net_name:
+    type: string
+
+resources:
+  server_pcm_001:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      security_group_name: { get_param: security_group_name }
+      pcm_vol: { get_param: [pcm_volumes, 0] }
+      cps_net_name: { get_param: cps_net_name }
+      cps_net_ip: { get_param: [cps_net_ips, 0] }
+      cps_net_mask: { get_param: cps_net_mask }
+      oam_net_name: { get_param: oam_net_name }
+      oam_net_ip: { get_param: [oam_net_ips, 0] }
+      oam_net_mask: { get_param: oam_net_mask }
+      oam_net_gw: { get_param: oam_net_gw }
+
+  server_compute_get_attr_test:
+    type: OS::Nova::Server
+    properties:
+      config_drive: {get_attr: [compute_port_0]}
+      name: { compute_name }
+      image: { get_param: compute_image_name }
+      flavor: { compute_flavor_name }
+      user_data_format: { get_attr: [server_pcm_001 , oam_net_gw] }
+      user_data: { get_attr: [server_pcm_001]}
+
+  compute_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net_name }

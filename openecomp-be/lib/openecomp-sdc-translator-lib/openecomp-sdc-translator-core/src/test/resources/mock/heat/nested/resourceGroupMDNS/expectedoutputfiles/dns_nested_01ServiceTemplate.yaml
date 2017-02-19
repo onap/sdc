@@ -1,0 +1,249 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: dns_nested_01
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.dns:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF module instance
+    name_with_index:
+      hidden: false
+      immutable: false
+      type: string
+      description: name parameter which will include the index value
+    dns_int_bearer_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: DNS Bearer IP list
+      entry_schema:
+        type: string
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+    index:
+      hidden: false
+      immutable: false
+      type: float
+      description: index parameter
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: security group
+    oam_protected_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network where instaces will connect
+    dns_oam_protected_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: DNS OAM IP list
+      entry_schema:
+        type: string
+    dns_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: server key
+    int_bearer_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Bearer network where instaces will connect
+    route_eth0:
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network routes
+    dns_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: server name
+      entry_schema:
+        type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability zone ID or Name
+    dns_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: server image
+    dns_int_bearer_ipv6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: fixed IPv6 assignment for VM's on the Bearer network
+      entry_schema:
+        type: string
+    dns_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: server flavor
+  node_templates:
+    dns_oam_protected_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_oam_protected_ips
+            - get_input: index
+        name:
+          str_replace:
+            template: VNF_NAME_dns_oam_port
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network:
+          get_input: oam_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_servers
+          relationship: tosca.relationships.network.BindsTo
+    dns_int_bearer_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - dns_int_bearer_ips
+            - get_input: index
+        - ip_address:
+            get_input:
+            - dns_int_bearer_ipv6_ips
+            - get_input: index
+        name:
+          str_replace:
+            template: VNF_NAME_dns_bearer_port
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network:
+          get_input: int_bearer_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: dns_servers
+          relationship: tosca.relationships.network.BindsTo
+    dns_servers:
+      type: org.openecomp.resource.vfc.nodes.heat.dns
+      properties:
+        flavor:
+          get_input: dns_flavor_name
+        key_name:
+          get_input: dns_key
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: dns_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_name  {get_param: vnf_name }
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - dns_names
+          - get_input: index
+  groups:
+    dns_nested_01:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/dns_nested_01.yaml
+        description: |
+          nested DNS template for a single VM
+          all parameters are passed from calling heat template of resourcegroup
+      members:
+      - dns_oam_protected_0_port
+      - dns_int_bearer_0_port
+      - dns_servers
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.dns_nested_01
+    capabilities:
+      host_dns_servers:
+      - dns_servers
+      - host
+      attachment_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - attachment
+      attachment_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - attachment
+      os_dns_servers:
+      - dns_servers
+      - os
+      endpoint_dns_servers:
+      - dns_servers
+      - endpoint
+      binding_dns_servers:
+      - dns_servers
+      - binding
+      scalable_dns_servers:
+      - dns_servers
+      - scalable
+    requirements:
+      local_storage_dns_servers:
+      - dns_servers
+      - local_storage
+      link_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - link
+      link_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - link

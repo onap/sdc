@@ -1,0 +1,120 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  pcm_server_name:
+    type: string
+    label: PCRF CM server name
+    description: PCRF CM server name
+  pcm_image_name:
+    type: string
+    label: image name
+    description: PCRF CM image name
+  pcm_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  cps_net_ip:
+    type: string
+    label: CPS network ip
+    description: CPS network ip
+  cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcm_vol:
+    type: string
+    label: CPS Cluman Cinder Volume
+    description: CPS Cluman Cinder Volume
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  oam_net_ip:
+    type: string
+resources:
+  network:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        write_files:
+          - path: /etc/sysconfig/network-scripts/ifcfg-eth0
+            permissions: "0644"
+            content:
+              str_replace:
+                template: { get_file: "file:///nimbus-ethernet" }
+                params:
+                  $dev: eth0
+                  $ip: { get_param: cps_net_ip }
+                  $netmask: { get_param: cps_net_mask }
+        runcmd:
+          - ifdown eth0 && ifup eth0
+          - ifdown eth1 && ifup eth1
+  script_init:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+  server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: { get_resource: network}
+      - config: { get_resource: script_init}
+
+  server_pcm:
+    type: OS::Nova::Server
+    properties:
+      config_drive: "True"
+      name: { get_param: pcm_server_name }
+      image: { get_param: pcm_image_name }
+      flavor: { get_param: pcm_flavor_name }
+      availability_zone: { get_param: availabilityzone_name }
+      networks:
+        - port: { get_resource: pcm_port_0}
+        - port: { get_resource: pcm_port_1}
+      block_device_mapping:
+        - device_name: vdb
+          volume_id: { get_param: pcm_vol}
+      user_data_format: RAW
+      user_data:
+        get_resource: server_init
+
+  pcm_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: cps_net_name }
+      fixed_ips:
+        - ip_address: { get_param: cps_net_ip }
+      security_groups: [{ get_param: security_group_name }]
+
+  pcm_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips:
+        - ip_address: { get_param: oam_net_ip }
+      security_groups: [{ get_param: security_group_name }]
+
+  #pcm_vol_attachment:
+  #  type: OS:: Cinder::VolumeAttachment
+  #  properties:
+  #    volume_id: { get_param: pcm_vol }
+  #    mountpoint: /dev/vdb
+  #    instance_uuid: { get_resource: server_pcm }
+outputs:
+  server_pcm_id:
+    description: the pcm nova service id
+    value: { get_resource: server_pcm }

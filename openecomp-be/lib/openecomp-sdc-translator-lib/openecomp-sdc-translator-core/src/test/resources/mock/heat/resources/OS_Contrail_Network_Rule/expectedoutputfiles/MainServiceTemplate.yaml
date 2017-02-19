@@ -1,0 +1,197 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    start_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of src port
+    private_net_1_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private network gateway address
+    private_net_2_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    private_net_2_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private network gateway address
+    policy_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual network id
+    private_net_1_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of private network to be created
+    private_net_2_pool_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start of private network IP address allocation pool
+    private_net_2_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private network address (CIDR notation)
+    private_net_1_pool_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End of private network IP address allocation pool
+    end_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of src port
+    apply_service:
+      hidden: false
+      immutable: false
+      type: string
+      description: service to apply
+    start_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of dst port
+    end_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of dst port
+    private_net_1_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Private network address (CIDR notation)
+    private_net_1_pool_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start of private network IP address allocation pool
+    private_net_2_pool_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End of private network IP address allocation pool
+    direction:
+      hidden: false
+      immutable: false
+      type: string
+      description: Direction of Policy
+  node_templates:
+    private_net_1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: private_net_1_name
+        subnets:
+          private_subnet_1:
+            cidr:
+              get_input: private_net_1_cidr
+            gateway_ip:
+              get_input: private_net_1_gateway
+            allocation_pools:
+            - start:
+                get_input: private_net_1_pool_start
+              end:
+                get_input: private_net_1_pool_end
+    private_policy:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        entries:
+          policy_rule:
+          - src_ports:
+            - start_port:
+                get_input: start_src_ports
+              end_port:
+                get_input: end_src_ports
+            protocol: any
+            action_list:
+              apply_service:
+              - get_input: apply_service
+            dst_addresses:
+            - virtual_network: private_net_1
+            dst_ports:
+            - start_port:
+                get_input: start_dst_ports
+              end_port:
+                get_input: end_dst_ports
+            src_addresses:
+            - virtual_network: private_net_2
+            direction:
+              get_input: direction
+        name:
+          get_input: policy_name
+      requirements:
+      - network:
+          capability: tosca.capabilities.Attachment
+          node: private_net_1
+          relationship: org.openecomp.relationships.AttachesTo
+      - network:
+          capability: tosca.capabilities.Attachment
+          node: private_net_2
+          relationship: org.openecomp.relationships.AttachesTo
+    private_net_2:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: private_net_2_name
+        subnets:
+          private_subnet_2:
+            cidr:
+              get_input: private_net_2_cidr
+            gateway_ip:
+              get_input: private_net_2_gateway
+            allocation_pools:
+            - start:
+                get_input: private_net_2_pool_start
+              end:
+                get_input: private_net_2_pool_end
+  groups:
+    network_policy_chain:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/network_policy_chain.yaml
+        description: |
+          HOT template to creates two virtual network with one subnet each.  Creates a network policy for applying service between two VNs created before. Attach the network policy to two virtual networks
+      members:
+      - private_net_1
+      - private_policy
+      - private_net_2

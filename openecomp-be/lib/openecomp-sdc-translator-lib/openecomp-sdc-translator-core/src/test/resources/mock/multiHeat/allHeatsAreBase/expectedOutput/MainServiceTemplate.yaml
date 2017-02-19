@@ -1,0 +1,4518 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+  ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+  CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+  ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+  AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+  NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+  NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+  CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+  ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+  ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+  NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+  NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+  ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.nems_be:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.lb:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.eca:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.arb:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.eca_trx:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.nems_fe:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.mmsc:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    lb_flavor_name:
+      label: Load balancer flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: the flavor name of MMSC load balancer instance
+      default: m1.xlarge
+    ha_net_local_ip2:
+      label: ha net network local ip2
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip2 of the ha network
+      default: 172.26.1.4
+    mmsc_dmz_protected_snat_ips:
+      label: mmsc dmz_protected snat ips
+      hidden: false
+      immutable: false
+      type: list
+      description: mmsc dmz_protected snat ips
+      default:
+      - 107.239.14.24
+      - 107.239.14.25
+      - 107.239.14.26
+      - 107.239.14.27
+      entry_schema:
+        type: string
+    ha_net_local_ip1:
+      label: ha net network local ip1
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip1 of the ha network
+      default: 172.26.1.3
+    mms_traffic_end:
+      label: mmsc traffic end IP
+      hidden: false
+      immutable: false
+      type: string
+      description: mmsc traffic end IP
+      default: 172.26.2.254
+    nems_traffic_end:
+      label: nems traffic end
+      hidden: false
+      immutable: false
+      type: string
+      description: nems traffic end
+      default: 172.26.3.254
+    mmsc_cinder_volume_size:
+      label: MMSC Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the MMSC Cinder volume
+      default: 480
+    nems_internal_cidr:
+      label: nems ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal cidr
+      default: 172.26.6.0/24
+    eca_mgmt_cidr:
+      label: eca management cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: eca management cidr
+      default: 172.25.137.192/26
+    nems_traffic_start:
+      label: nems traffic start
+      hidden: false
+      immutable: false
+      type: string
+      description: nems traffic start
+      default: 172.26.3.3
+    oam_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the OAM volume
+      default: 1800
+    eca_trx_names:
+      label: ECA_TRX server names
+      hidden: false
+      immutable: false
+      type: list
+      description: ECA_TRX server names
+      default:
+      - ZRDM1MMSC03TRX001
+      - ZRDM1MMSC03TRX002
+      - ZRDM1MMSC03TRX003
+      - ZRDM1MMSC03TRX004
+      - ZRDM1MMSC03TRX005
+      - ZRDM1MMSC03TRX006
+      - ZRDM1MMSC03TRX007
+      - ZRDM1MMSC03TRX008
+      - ZRDM1MMSC03TRX009
+      - ZRDM1MMSC03TRX010
+      - ZRDM1MMSC03TRX011
+      - ZRDM1MMSC03TRX012
+      - ZRDM1MMSC03TRX013
+      - ZRDM1MMSC03TRX014
+      - ZRDM1MMSC03TRX015
+      - ZRDM1MMSC03TRX016
+      - ZRDM1MMSC03TRX017
+      - ZRDM1MMSC03TRX018
+      - ZRDM1MMSC03TRX019
+      - ZRDM1MMSC03TRX020
+      entry_schema:
+        type: string
+    nems_internal_name:
+      label: nems internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal network name
+      default: int_mms_nems_internal_net_2
+    nems_traffic_net_local_ip1:
+      label: nems traffic network local ip1
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip1 of the nems traffic network
+      default: 172.26.3.3
+    nems_traffic_net_local_ip2:
+      label: nems traffic network local ip2
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip2 of the nems traffic network
+      default: 172.26.3.4
+    nems_fe_names:
+      label: NEMS_FE server names
+      hidden: false
+      immutable: false
+      type: list
+      description: NEMS_FE server names
+      default:
+      - ZRDM1MMSC03NFE001
+      - ZRDM1MMSC03NFE002
+      entry_schema:
+        type: string
+    eca_names:
+      label: oam servers names
+      hidden: false
+      immutable: false
+      type: list
+      description: the names of the OAM1,OAM2 VM instances
+      default:
+      - ZRDM1MMSC02OAM001
+      - ZRDM1MMSC02OAM002
+      entry_schema:
+        type: string
+    nems_be_nems_imap_net_ips:
+      label: nems imap_net IPs for NEMS_BE
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap net IPs for NEMS_BE
+      default: 172.26.7.13
+    nems_be_names:
+      label: NEMS_BE server names
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS_BE server names
+      default: ZRDM1MMSC03NBE001
+    nems_traffic_netmask:
+      label: NEMS traffic network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS traffic network subnet mask
+      default: 255.255.255.0
+    nems_fe_nems_imap_net_ips:
+      label: nems_imap_net IPs for NEMS_FE
+      hidden: false
+      immutable: false
+      type: list
+      description: nems_imap_net IPs for NEMS_FE
+      default:
+      - 172.26.7.11
+      - 172.26.7.12
+      entry_schema:
+        type: string
+    nems_fe_nems_user_web_net_ips:
+      label: nems_web_user_net IPs for NEMS_FE
+      hidden: false
+      immutable: false
+      type: list
+      description: nems_web_user_net IPs for NEMS_FE
+      default:
+      - 172.26.4.11
+      - 172.26.4.12
+      entry_schema:
+        type: string
+    nems_user_web_gateway:
+      label: NEMS user web network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS user web network gateway
+      default: 172.26.4.1
+    nems_imap_end:
+      label: nems imap end
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap end
+      default: 172.26.7.254
+    eca_traffic_net_local_ip1:
+      label: eca traffic network local ip1
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip1 of the eca traffic network
+      default: 172.26.5.3
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+      default: cmaui-5.0.2.5_v25
+    eca_traffic_net_local_ip2:
+      label: eca traffic network local ip2
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip2 of the eca traffic network
+      default: 172.26.5.4
+    nems_volume_size:
+      label: nems fe volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: nems fe volume size
+      default: 50
+    mms_traffic_start:
+      label: mmsc traffic start IP
+      hidden: false
+      immutable: false
+      type: string
+      description: mmsc traffic start IP
+      default: 172.26.2.3
+    ha_net_start:
+      label: ha net start
+      hidden: false
+      immutable: false
+      type: string
+      description: ha net start
+      default: 172.26.1.3
+    nems_imap_gateway:
+      label: nems imap gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap gateway
+      default: 172.26.7.1
+    mmsc_core_virtual_server_ips:
+      label: mmsc core virtual server ips
+      hidden: false
+      immutable: false
+      type: list
+      description: mmsc core virtual server ips
+      default:
+      - 172.31.10.21
+      - 172.31.10.22
+      entry_schema:
+        type: string
+    cmaui_oam_ips:
+      label: CMAUI oam_net IP addresses
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI oam_net IP addresses
+      default:
+      - 107.250.172.42
+      - 107.250.172.43
+      entry_schema:
+        type: string
+    CMAUI_volume_type:
+      label: CMAUI vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      default:
+      - ZRDM1MMSC02CMI001
+      - ZRDM1MMSC02CMI002
+      entry_schema:
+        type: string
+    eca_trx_eca_traffic_net_ips:
+      label: eca traffic net IPs for ECA_TRX
+      hidden: false
+      immutable: false
+      type: list
+      description: eca traffic net IPs for ECA_TRX
+      default:
+      - 172.26.5.11
+      - 172.26.5.12
+      - 172.26.5.13
+      - 172.26.5.14
+      - 172.26.5.15
+      - 172.26.5.16
+      - 172.26.5.17
+      - 172.26.5.18
+      - 172.26.5.19
+      - 172.26.5.20
+      - 172.26.5.21
+      - 172.26.5.22
+      - 172.26.5.23
+      - 172.26.5.24
+      - 172.26.5.25
+      - 172.26.5.26
+      - 172.26.5.27
+      - 172.26.5.28
+      - 172.26.5.29
+      - 172.26.5.30
+      entry_schema:
+        type: string
+    eca_trx_image:
+      label: Image for ECA TRX server
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for ECA TRX server
+      default: ECABASE
+    lb_names:
+      label: MMSC load balancer instance names
+      hidden: false
+      immutable: false
+      type: list
+      description: MMSC load balancer instance names
+      default:
+      - ZRDM1MMSC03ALB001
+      - ZRDM1MMSC03ALB002
+      entry_schema:
+        type: string
+    eca_mgmt_end:
+      label: eca management end
+      hidden: false
+      immutable: false
+      type: string
+      description: eca management end
+      default: 172.25.137.254
+    nems_user_web_end:
+      label: nems user web end
+      hidden: false
+      immutable: false
+      type: string
+      description: nems user web end
+      default: 172.26.4.254
+    ECA_OAM_volume_type:
+      label: eca oam vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    arb_eca_mgmt_ips:
+      label: eca_mgmt network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: internal eca_mgmt network ips for arb VM
+      default:
+      - 172.25.137.244
+      entry_schema:
+        type: string
+    eca_traffic_cidr:
+      label: eca traffic cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: eca traffic cidr
+      default: 172.26.5.0/24
+    ha_net_cidr:
+      label: ha net cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: ha net cidr
+      default: 172.26.1.0/24
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    ARB_volume_type:
+      label: arb vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    nems_fe_nems_internal_net_ips:
+      label: nems_internal_net IPs for NEMS_FE
+      hidden: false
+      immutable: false
+      type: list
+      description: nems_internal_net IPs for NEMS_FE
+      default:
+      - 172.26.6.11
+      - 172.26.6.12
+      entry_schema:
+        type: string
+    NEMS_FE_volume_type:
+      label: nems fe vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+      default: mmsc_security_group_1
+    nems_fe_nems_traffic_net_ips:
+      label: nems_traffic_net IPs for NEMS_FE
+      hidden: false
+      immutable: false
+      type: list
+      description: nems_traffic_net IPs for NEMS_FE
+      default:
+      - 172.26.3.11
+      - 172.26.3.12
+      entry_schema:
+        type: string
+    nems_imap_start:
+      label: nems imap start
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap start
+      default: 172.26.7.3
+    ha_net_name:
+      label: ha_failover network name
+      hidden: false
+      immutable: false
+      type: string
+      description: ha_failover network name
+      default: int_mms_ha_net_2
+    arb_names:
+      label: arbiter server names
+      hidden: false
+      immutable: false
+      type: list
+      description: the names of the arbiter VM instances
+      default:
+      - ZRDM1MMSC02ARB001
+      entry_schema:
+        type: string
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+      default: m1.large
+    eca_oam_gateway:
+      label: oam1 oam gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: the ip of oam gateway
+      default: 107.250.172.1
+    eca_traffic_start:
+      label: eca traffic start
+      hidden: false
+      immutable: false
+      type: string
+      description: eca traffic start
+      default: 172.26.5.3
+    NEMS_BE_volume_type:
+      label: nems be vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    lb_image_name:
+      label: MMSC load balancer image name
+      hidden: false
+      immutable: false
+      type: string
+      description: MMSC load balancer image name
+      default: BIGIP-11.5.3.0.0.163
+    nems_internal_start:
+      label: nems internal start
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal start
+      default: 172.26.6.3
+    nems_internal_gateway:
+      label: nems internal gw
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal gw
+      default: 172.26.6.1
+    arb_oam_ips:
+      label: oam network ips for arb VM
+      hidden: false
+      immutable: false
+      type: list
+      description: oam network ips for eca VM
+      default:
+      - 107.250.172.46
+      entry_schema:
+        type: string
+    dmz_protected_net_name:
+      label: UID of dmz_protected network
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of dmz_protected network
+      default: dmz_protected_net_0
+    nems_be_volume_size:
+      label: nems be volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: nems be volume size
+      default: 610
+    mms_traffic_netmask:
+      label: MMS traffic network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: MMS traffic network subnet mask
+      default: 255.255.255.0
+    nems_be_image:
+      label: Image for NEMS BE server
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for NEMS BE server
+      default: nems-2.1.2_v29
+    nems_user_web_net_local_ip1:
+      label: nems user web network local ip1
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip1 of the nems user web network
+      default: 172.26.4.3
+    eca_trx_mgmt_ips:
+      label: eca mgmt net IP for ECA_TRX
+      hidden: false
+      immutable: false
+      type: list
+      description: eca mgmt net IP for ECA_TRX
+      default:
+      - 172.25.137.202
+      - 172.25.137.203
+      - 172.25.137.204
+      - 172.25.137.205
+      - 172.25.137.206
+      - 172.25.137.207
+      - 172.25.137.208
+      - 172.25.137.209
+      - 172.25.137.210
+      - 172.25.137.211
+      - 172.25.137.212
+      - 172.25.137.213
+      - 172.25.137.214
+      - 172.25.137.215
+      - 172.25.137.216
+      - 172.25.137.217
+      - 172.25.137.218
+      - 172.25.137.219
+      - 172.25.137.220
+      - 172.25.137.221
+      entry_schema:
+        type: string
+    nems_user_web_cidr:
+      label: nems user web cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: nems user web cidr
+      default: 172.26.4.0/24
+    nems_user_web_net_local_ip2:
+      label: nems user web network local ip2
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip2 of the nems user web network
+      default: 172.26.4.4
+    nems_traffic_gateway:
+      label: NEMS traffic network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS traffic network gateway
+      default: 172.26.3.1
+    nems_imap_name:
+      label: nems imap name
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap name
+      default: int_mms_nems_imap_net_2
+    mms_traffic_net_floating_ip:
+      label: mmsc traffic floating ip
+      hidden: false
+      immutable: false
+      type: string
+      description: mmsc traffic floating ip
+      default: 172.26.2.5
+    nems_internal_netmask:
+      label: NEMS internal network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS internal network subnet mask
+      default: 255.255.255.0
+    nems_user_web_netmask:
+      label: NEMS user web network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: NEMS user web network subnet mask
+      default: 255.255.255.0
+    mms_traffic_net_local_ip1:
+      label: mmsc traffic network local ip1
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip1 of the mmsc traffic network
+      default: 172.26.2.3
+    mms_traffic_net_local_ip2:
+      label: mmsc traffic network local ip2
+      hidden: false
+      immutable: false
+      type: string
+      description: the local ip2 of the mmsc traffic network
+      default: 172.26.2.4
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: the OAM image name
+      default: ECABASE
+    oam_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+      default: oam_protected_net_0
+    external_ntp:
+      label: ntp server
+      hidden: false
+      immutable: false
+      type: string
+      description: ntp server
+      default: 155.165.194.100
+    mms_traffic_net_cidr:
+      label: MMS traffic network address (CIDR notation)
+      hidden: false
+      immutable: false
+      type: string
+      description: MMS traffic network address (CIDR notation)
+      default: 172.26.2.0/24
+    lb_dmz_protected_ips:
+      label: dmz protected network local ips for lb VM
+      hidden: false
+      immutable: false
+      type: list
+      description: local ips of the dmz protected network for lb VM
+      default:
+      - 107.239.14.19
+      - 107.239.14.20
+      entry_schema:
+        type: string
+    eca_mgmt_start:
+      label: eca management start
+      hidden: false
+      immutable: false
+      type: string
+      description: eca management start
+      default: 172.25.137.195
+    eca_oam_ips:
+      label: oam network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: the ips of oam networks for eca VM
+      default:
+      - 107.250.172.44
+      - 107.250.172.45
+      entry_schema:
+        type: string
+    MMSC_volume_type:
+      label: MMSC vm volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the target volume backend
+      default: Platinum
+    nems_fe_flavor:
+      label: Flavor for NEMS FE server
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for NEMS FE server
+      default: m1.large2
+    eca_mgmt_netmask:
+      label: ECA mgmt network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: ECA mgmt network subnet mask
+      default: 255.255.255.192
+    oam_network_netmask:
+      label: oam network netmask
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network gateway
+      default: 255.255.255.192
+    oam_network_route_1:
+      label: oam network route 1
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network route 1
+      default: 155.165.201.250/32,107.250.172.1
+    oam_network_route_2:
+      label: oam network route 2
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network route 2
+      default: 155.165.194.100/32,107.250.172.1
+    mms_traffic_net_name:
+      label: Name of MMS traffic network
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of MMS traffic network
+      default: int_mms_mms_traffic_net_2
+    nems_user_web_name:
+      label: nems user web name
+      hidden: false
+      immutable: false
+      type: string
+      description: nems user web name
+      default: int_mms_nems_web_net_2
+    eca_traffic_net_floating_ip:
+      label: eca traffic floating ip
+      hidden: false
+      immutable: false
+      type: string
+      description: eca traffic floating ip
+      default: 172.26.5.5
+    eca_traffic_end:
+      label: eca traffic end
+      hidden: false
+      immutable: false
+      type: string
+      description: eca traffic end
+      default: 172.26.5.254
+    eca_trx_flavor:
+      label: Flavor for ECA TRX server
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for ECA TRX server
+      default: m1.xlarge
+    lb_oam_ips:
+      label: management network ips for mmsc lb
+      hidden: false
+      immutable: false
+      type: list
+      description: the ips of the management network for mmsc lb
+      default:
+      - 107.250.172.50
+      - 107.250.172.51
+      entry_schema:
+        type: string
+    nems_fe_oam_ips:
+      label: OAM_net IP for NEMS_FE
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM_net IP for NEMS_FE
+      default:
+      - 107.250.172.64
+      - 107.250.172.65
+      entry_schema:
+        type: string
+    nems_be_flavor:
+      label: Flavor for NEMS BE server
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for NEMS BE server
+      default: m1.large2
+    lb_cor_direct_ips:
+      label: cor direct network local ips for lb VM
+      hidden: false
+      immutable: false
+      type: list
+      description: local ips of cor direct network for lb VM
+      default:
+      - 172.31.10.19
+      - 172.31.10.20
+      entry_schema:
+        type: string
+    nems_traffic_name:
+      label: nems traffic name
+      hidden: false
+      immutable: false
+      type: string
+      description: nems traffic name
+      default: int_mms_nems_traffic_net_2
+    timezone:
+      label: timezone
+      hidden: false
+      immutable: false
+      type: string
+      description: timezone
+      default: UTC
+    oam_flavor:
+      label: flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM flavor name
+      default: lc.xlarge4
+    cmaui_cinder_volume_size:
+      label: CMAUI Cinder volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the CMAUI Cinder volume
+      default: 55
+    nems_user_web_start:
+      label: nems user web start
+      hidden: false
+      immutable: false
+      type: string
+      description: nems user web end
+      default: 172.26.4.3
+    eca_eca_mgmt_ips:
+      label: eca_mgmt network ips for eca VM
+      hidden: false
+      immutable: false
+      type: list
+      description: internal eca_mgmt network ips for eca VM
+      default:
+      - 172.25.137.242
+      - 172.25.137.243
+      entry_schema:
+        type: string
+    mmsc_names:
+      label: MMSC server names
+      hidden: false
+      immutable: false
+      type: list
+      description: MMSC server names
+      default:
+      - ZRDM1MMSC03MMS001
+      - ZRDM1MMSC03MMS002
+      - ZRDM1MMSC03MMS003
+      - ZRDM1MMSC03MMS004
+      - ZRDM1MMSC03MMS005
+      entry_schema:
+        type: string
+    eca_mgmt_net_name:
+      label: internal network name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of the internal network
+      default: int_mms_eca_mgmt_net_1
+    eca_traffic_name:
+      label: eca traffic name
+      hidden: false
+      immutable: false
+      type: string
+      description: eca traffic name
+      default: int_mms_eca_traffic_net_2
+    nems_internal_end:
+      label: nems internal end
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal end
+      default: 172.26.6.254
+    nems_be_nems_internal_net_ips:
+      label: nems internal net IPs for NEMS_BE
+      hidden: false
+      immutable: false
+      type: string
+      description: nems internal net IPs for NEMS_BE
+      default: 172.26.6.13
+    arb_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: the size of the ARB volume
+      default: 40
+    mmsc_dmz_protected_virtual_server_ips:
+      label: mmsc dmz_protected virtual server ips
+      hidden: false
+      immutable: false
+      type: list
+      description: mmsc dmz_protected virtual server ips
+      default:
+      - 107.239.14.21
+      - 107.239.14.22
+      - 107.239.14.23
+      entry_schema:
+        type: string
+    cor_direct_net_name:
+      label: cor direct net UID
+      hidden: false
+      immutable: false
+      type: string
+      description: cor direct net
+      default: cor_direct_net_0
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_MMSC-CMAUI_id
+    oam_network_gateway:
+      label: oam network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: oam network gateway
+      default: 10.20.30.1
+    mmsc_flavor:
+      label: Flavor for MMSC server
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for MMSC server
+      default: lc.4xlarge4
+    ha_net_end:
+      label: ha net end
+      hidden: false
+      immutable: false
+      type: string
+      description: ha net end
+      default: 172.26.1.254
+    nems_imap_netmask:
+      label: nems imap subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap subnet mask
+      default: 255.255.255.0
+    external_dns:
+      label: dns server
+      hidden: false
+      immutable: false
+      type: string
+      description: dns server
+      default: 155.165.201.250
+    swift_eca_url:
+      label: Swift URL
+      hidden: false
+      immutable: false
+      type: string
+      description: Base URL for eca swift object store
+      default: http://object-store.rdm2.cci.com:8080/v1/AUTH_1bbab536a19b4756926e7d0ec1eb543c/eca
+    eca_traffic_net_gateway:
+      label: eca_traffic network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: eca_traffic network gateway
+      default: 172.26.5.1
+    nems_be_oam_ips:
+      label: OAM net IPs for NEMS_BE
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM net IPs for NEMS_BE
+      default: 107.250.172.66
+    eca_trx_oam_ips:
+      label: OAM net IP for ECA_TRX
+      hidden: false
+      immutable: false
+      type: list
+      description: OAM net IP for ECA_TRX
+      default:
+      - 107.250.172.70
+      - 107.250.172.71
+      - 107.250.172.72
+      - 107.250.172.73
+      - 107.250.172.74
+      - 107.250.172.75
+      - 107.250.172.76
+      - 107.250.172.77
+      - 107.250.172.78
+      - 107.250.172.79
+      - 107.250.172.80
+      - 107.250.172.81
+      - 107.250.172.82
+      - 107.250.172.83
+      - 107.250.172.84
+      - 107.250.172.85
+      - 107.250.172.86
+      - 107.250.172.87
+      - 107.250.172.88
+      - 107.250.172.89
+      entry_schema:
+        type: string
+    mmsc_image:
+      label: Image for MMSC server
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for MMSC server
+      default: mmsc-6.0.2_v5
+    arbiter_flavor:
+      label: flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: arbiter flavor name
+      default: m1.large2
+    nems_imap_cidr:
+      label: nems imap cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: nems imap cidr
+      default: 172.26.7.0/24
+    eca_traffic_netmask:
+      label: ECA traffic network subnet mask
+      hidden: false
+      immutable: false
+      type: string
+      description: ECA traffic network subnet mask
+      default: 255.255.255.0
+    nems_fe_node_roles:
+      label: nems fe node roles
+      hidden: false
+      immutable: false
+      type: list
+      description: nems fe node roles
+      default:
+      - FE0
+      - FE1
+      entry_schema:
+        type: string
+    mmsc_mms_traffic_net_ips:
+      label: MMSC mms_traffic_net IP addresses
+      hidden: false
+      immutable: false
+      type: list
+      description: MMSC mms_traffic_net IP addresses
+      default:
+      - 172.26.2.11
+      - 172.26.2.12
+      - 172.26.2.13
+      - 172.26.2.14
+      - 172.26.2.15
+      entry_schema:
+        type: string
+    nems_traffic_net_floating_ip:
+      label: nems traffic floating ip
+      hidden: false
+      immutable: false
+      type: string
+      description: nems traffic floating ip
+      default: 172.26.3.5
+    mms_traffic_net_gateway:
+      label: MMS traffic network gateway address
+      hidden: false
+      immutable: false
+      type: string
+      description: MMS traffic network gateway address
+      default: 172.26.2.1
+    nems_fe_image:
+      label: Image for NEMS FE server
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for NEMS FE server
+      default: nems-2.1.2_v29
+    mmsc_oam_ips:
+      label: MMSC oam_net IP addresses
+      hidden: false
+      immutable: false
+      type: list
+      description: MMSC oam_net IP addresses
+      default:
+      - 107.250.172.54
+      - 107.250.172.55
+      - 107.250.172.56
+      - 107.250.172.57
+      - 107.250.172.58
+      entry_schema:
+        type: string
+    eca_mgmt_name:
+      label: eca management name
+      hidden: false
+      immutable: false
+      type: string
+      description: eca management name
+      default: int_eca_mgmt_net_1
+    nems_traffic_cidr:
+      label: nems traffic cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: nems traffic cidr
+      default: 172.26.3.0/24
+    nems_be_node_roles:
+      label: nems node roles
+      hidden: false
+      immutable: false
+      type: string
+      description: nems node roles
+      default: BE0
+    mmsc_core_snat_ips:
+      label: mmsc core snat ips
+      hidden: false
+      immutable: false
+      type: list
+      description: mmsc core snat ips
+      default:
+      - 172.31.10.23
+      - 172.31.10.24
+      - 172.31.10.25
+      - 172.31.10.26
+      - 172.31.10.27
+      entry_schema:
+        type: string
+    nems_user_web_net_floating_ip:
+      label: nems user web floating ip
+      hidden: false
+      immutable: false
+      type: string
+      description: nems user web floating ip
+      default: 172.26.4.5
+  node_templates:
+    server_eca_trx9:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 8
+    server_eca_trx8:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 7
+    server_eca_trx7:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 6
+    server_eca_trx6:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 5
+    arb_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.arb
+      properties:
+        flavor:
+          get_input: arbiter_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - arb_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: arb_volume
+          relationship: arb_volume_attachment
+    server_eca_trx5:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 4
+    nems_internal_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_internal_name
+        subnets:
+          nems_internal_network_ip_subnet:
+            name:
+              get_input: nems_internal_name
+            cidr:
+              get_input: nems_internal_cidr
+            allocation_pools:
+            - start:
+                get_input: nems_internal_start
+              end:
+                get_input: nems_internal_end
+    server_eca_trx4:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 3
+    server_eca_trx3:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 2
+    server_eca_trx2:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 1
+    lb1_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb2_mms_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: mms_traffic_net_local_ip2
+        allowed_address_pairs:
+        - ip_address:
+            get_input: mms_traffic_net_floating_ip
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_traffic_net_ips
+            - 0
+        network: nems_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe1
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe2_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_internal_net_ips
+            - 1
+        network: nems_internal_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_internal_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe2
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx1:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 0
+    nems_fe1_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_user_web_net_ips
+            - 0
+        network: nems_user_web_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_user_web_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe1
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe2_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_user_web_net_ips
+            - 1
+        network: nems_user_web_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_user_web_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe2
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe2_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_traffic_net_ips
+            - 1
+        network: nems_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe2
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe1
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe2_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe2
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe1_port_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_internal_net_ips
+            - 0
+        network: nems_internal_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_internal_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe1
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe1_port_4:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_imap_net_ips
+            - 0
+        network: nems_imap_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_imap_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe1
+          relationship: tosca.relationships.network.BindsTo
+    nems_fe2_port_4:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - nems_fe_nems_imap_net_ips
+            - 1
+        network: nems_imap_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_imap_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_fe2
+          relationship: tosca.relationships.network.BindsTo
+    mms_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          get_input: security_group_name
+        description: mmsc security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: udp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+          port_range_min: 1
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+    mmsc4_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: MMSC_volume_type
+        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+    lb2_eca_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: eca_traffic_net_local_ip2
+        allowed_address_pairs:
+        - ip_address:
+            get_input: eca_traffic_net_floating_ip
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb2_ha_net_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: ha_net_local_ip2
+        network: ha_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: ha_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam2_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam2_instance
+          relationship: tosca.relationships.network.BindsTo
+    nems_user_web_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_user_web_name
+        subnets:
+          nems_user_web_network_ip_subnet:
+            name:
+              get_input: nems_user_web_name
+            cidr:
+              get_input: nems_user_web_cidr
+            allocation_pools:
+            - start:
+                get_input: nems_user_web_start
+              end:
+                get_input: nems_user_web_end
+    lb1_ha_net_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: ha_net_local_ip1
+        network: ha_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: ha_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    mmsc2_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: MMSC_volume_type
+        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+    cmaui1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    nems_traffic_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_traffic_name
+        subnets:
+          nems_traffic_network_ip_subnet:
+            name:
+              get_input: nems_traffic_name
+            cidr:
+              get_input: nems_traffic_cidr
+            allocation_pools:
+            - start:
+                get_input: nems_traffic_start
+              end:
+                get_input: nems_traffic_end
+    eca_trx16_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 15
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx16
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx19_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 18
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx19
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx16_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 15
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx16
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx19_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 18
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx19
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx15_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 14
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx15
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx19_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 18
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx19
+          relationship: tosca.relationships.network.BindsTo
+    lb1_nems_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_traffic_net_local_ip1
+        allowed_address_pairs:
+        - ip_address:
+            get_input: nems_traffic_net_floating_ip
+        network: nems_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    oam2_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.eca
+      properties:
+        flavor:
+          get_input: oam_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_names
+          - 1
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: oam2_volume
+          relationship: oam2_volume_attachment
+    eca_trx11_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 10
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx11
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx11_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 10
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx11
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx12_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 11
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx12
+          relationship: tosca.relationships.network.BindsTo
+    arb_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ARB_volume_type
+        size: '(get_input : arb_volume_size) * 1024'
+    eca_trx12_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 11
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx12
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx11_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 10
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx11
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx12_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 11
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx12
+          relationship: tosca.relationships.network.BindsTo
+    mmsc4_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_oam_ips
+            - 3
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc4
+          relationship: tosca.relationships.network.BindsTo
+    cmaui1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui1
+          relationship: tosca.relationships.network.BindsTo
+    mmsc3_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_oam_ips
+            - 2
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc3
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx15_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 14
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx15
+          relationship: tosca.relationships.network.BindsTo
+    mmsc3_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_mms_traffic_net_ips
+            - 2
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc3
+          relationship: tosca.relationships.network.BindsTo
+    mmsc4_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_mms_traffic_net_ips
+            - 3
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc4
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx15_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 14
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx15
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx16_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 15
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx16
+          relationship: tosca.relationships.network.BindsTo
+    arb_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - arb_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: arb_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb2_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    mmsc5_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: MMSC_volume_type
+        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+    eca_trx7_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 6
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx7
+          relationship: tosca.relationships.network.BindsTo
+    oam1_mgmt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam1_instance
+          relationship: tosca.relationships.network.BindsTo
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume
+          relationship: cmaui_volume_attachment
+    eca_trx7_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 6
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx7
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx7_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 6
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx7
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    eca_trx3_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 2
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx3
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx3_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 2
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx3
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx3_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 2
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx3
+          relationship: tosca.relationships.network.BindsTo
+    mmsc1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: MMSC_volume_type
+        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+    nems_imap_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_imap_name
+        subnets:
+          nems_imap_network_ip_subnet:
+            name:
+              get_input: nems_imap_name
+            cidr:
+              get_input: nems_imap_cidr
+            allocation_pools:
+            - start:
+                get_input: nems_imap_start
+              end:
+                get_input: nems_imap_end
+    server_cmaui1:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - cmaui_names
+          - 1
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: cmaui1_volume
+          relationship: cmaui1_volume_attachment
+    lb2_dmz_protected_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_dmz_protected_ips
+            - 1
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 3
+        network:
+          get_input: dmz_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb1_eca_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: eca_traffic_net_local_ip1
+        allowed_address_pairs:
+        - ip_address:
+            get_input: eca_traffic_net_floating_ip
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb1_dmz_protected_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_dmz_protected_ips
+            - 0
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_virtual_server_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_dmz_protected_snat_ips
+            - 3
+        network:
+          get_input: dmz_protected_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb1_mms_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: mms_traffic_net_local_ip1
+        allowed_address_pairs:
+        - ip_address:
+            get_input: mms_traffic_net_floating_ip
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_mgmt_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: eca_mgmt_name
+        subnets:
+          eca_mgmt_network_ip_subnet:
+            name:
+              get_input: eca_mgmt_name
+            cidr:
+              get_input: eca_mgmt_cidr
+            allocation_pools:
+            - start:
+                get_input: eca_mgmt_start
+              end:
+                get_input: eca_mgmt_end
+    eca_trx1_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 0
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx1
+          relationship: tosca.relationships.network.BindsTo
+    nems2_fe_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: NEMS_FE_volume_type
+        size: '(get_input : nems_volume_size) * 1024'
+    server_nems_be1:
+      type: org.openecomp.resource.vfc.nodes.heat.nems_be
+      properties:
+        flavor:
+          get_input: nems_be_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: nems_be_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: nems_be_names
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: nems_be_volume
+          relationship: nems_volume_attachment
+    server_nems_fe1:
+      type: org.openecomp.resource.vfc.nodes.heat.nems_fe
+      properties:
+        flavor:
+          get_input: nems_fe_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: nems_fe_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - nems_fe_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: nems1_fe_volume
+          relationship: nems1_fe_volume_attachment
+    oam2_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ECA_OAM_volume_type
+        size: '(get_input : oam_volume_size) * 1024'
+    server_nems_fe2:
+      type: org.openecomp.resource.vfc.nodes.heat.nems_fe
+      properties:
+        flavor:
+          get_input: nems_fe_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: nems_fe_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - nems_fe_names
+          - 1
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: nems2_fe_volume
+          relationship: nems2_fe_volume_attachment
+    oam1_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: ECA_OAM_volume_type
+        size: '(get_input : oam_volume_size) * 1024'
+    lb2_cor_direct_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_cor_direct_ips
+            - 1
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - mmsc_core_virtual_server_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_core_virtual_server_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 3
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 4
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx20_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 19
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx20
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx20_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 19
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx20
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx20_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 19
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx20
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx8_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 7
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx8
+          relationship: tosca.relationships.network.BindsTo
+    oam1_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_eca_mgmt_ips
+            - 0
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam1_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx6_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 5
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx6
+          relationship: tosca.relationships.network.BindsTo
+    lb2_nems_user_web_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_user_web_net_local_ip2
+        allowed_address_pairs:
+        - ip_address:
+            get_input: nems_user_web_net_floating_ip
+        network: nems_user_web_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_user_web_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    lb2_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.lb
+      properties:
+        flavor:
+          get_input: lb_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: lb_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - lb_names
+          - 1
+    eca_trx6_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 5
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx6
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx8_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 7
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx8
+          relationship: tosca.relationships.network.BindsTo
+    lb1_nems_user_web_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_user_web_net_local_ip1
+        allowed_address_pairs:
+        - ip_address:
+            get_input: nems_user_web_net_floating_ip
+        network: nems_user_web_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_user_web_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx6_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 5
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx6
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx8_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 7
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx8
+          relationship: tosca.relationships.network.BindsTo
+    arb_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - arb_eca_mgmt_ips
+            - 0
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: arb_instance
+          relationship: tosca.relationships.network.BindsTo
+    ha_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: ha_net_name
+        subnets:
+          ha_net_ip_subnet:
+            name:
+              get_input: ha_net_name
+            cidr:
+              get_input: ha_net_cidr
+            allocation_pools:
+            - start:
+                get_input: ha_net_start
+              end:
+                get_input: ha_net_end
+    server_mmsc1:
+      type: org.openecomp.resource.vfc.nodes.heat.mmsc
+      properties:
+        flavor:
+          get_input: mmsc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: mmsc_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - mmsc_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: mmsc1_volume
+          relationship: mmsc1_volume_attachment
+    nems_be1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_be_oam_ips
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_be1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx2_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx2
+          relationship: tosca.relationships.network.BindsTo
+    server_mmsc2:
+      type: org.openecomp.resource.vfc.nodes.heat.mmsc
+      properties:
+        flavor:
+          get_input: mmsc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: mmsc_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - mmsc_names
+          - 1
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: mmsc2_volume
+          relationship: mmsc2_volume_attachment
+    nems_be1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_be_nems_internal_net_ips
+        network: nems_internal_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_internal_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_be1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx2_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 1
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx2
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx4_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 3
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx4
+          relationship: tosca.relationships.network.BindsTo
+    server_mmsc3:
+      type: org.openecomp.resource.vfc.nodes.heat.mmsc
+      properties:
+        flavor:
+          get_input: mmsc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: mmsc_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - mmsc_names
+          - 2
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: mmsc3_volume
+          relationship: mmsc3_volume_attachment
+    nems_be1_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_be_nems_imap_net_ips
+        network: nems_imap_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_imap_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_nems_be1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx2_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 1
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx2
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx4_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 3
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx4
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx20:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 19
+    eca_trx4_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 3
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx4
+          relationship: tosca.relationships.network.BindsTo
+    nems_be_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: NEMS_BE_volume_type
+        size: '(get_input : nems_be_volume_size) * 1024'
+    server_mmsc4:
+      type: org.openecomp.resource.vfc.nodes.heat.mmsc
+      properties:
+        flavor:
+          get_input: mmsc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: mmsc_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - mmsc_names
+          - 3
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: mmsc4_volume
+          relationship: mmsc4_volume_attachment
+    server_mmsc5:
+      type: org.openecomp.resource.vfc.nodes.heat.mmsc
+      properties:
+        flavor:
+          get_input: mmsc_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: mmsc_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input:
+          - mmsc_names
+          - 4
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: mmsc5_volume
+          relationship: mmsc5_volume_attachment
+    oam2_int_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_eca_mgmt_ips
+            - 1
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: oam2_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx17_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 16
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx17
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx18_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 17
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx18
+          relationship: tosca.relationships.network.BindsTo
+    lb1_cor_direct_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - lb_cor_direct_ips
+            - 0
+        allowed_address_pairs:
+        - ip_address:
+            get_input:
+            - mmsc_core_virtual_server_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_core_virtual_server_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 0
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 1
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 2
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 3
+        - ip_address:
+            get_input:
+            - mmsc_core_snat_ips
+            - 4
+        network:
+          get_input: cor_direct_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb1_instance
+          relationship: tosca.relationships.network.BindsTo
+    mmsc1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx17_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 16
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx17
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx18_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 17
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx18
+          relationship: tosca.relationships.network.BindsTo
+    mmsc1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_mms_traffic_net_ips
+            - 0
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc1
+          relationship: tosca.relationships.network.BindsTo
+    mmsc2_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_mms_traffic_net_ips
+            - 1
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc2
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx17_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 16
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx17
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx18_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 17
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx18
+          relationship: tosca.relationships.network.BindsTo
+    mms_traffic_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: mms_traffic_net_name
+        subnets:
+          mms_traffic_ip_subnet:
+            name:
+              get_input: mms_traffic_net_name
+            cidr:
+              get_input: mms_traffic_net_cidr
+            allocation_pools:
+            - start:
+                get_input: mms_traffic_start
+              end:
+                get_input: mms_traffic_end
+    cmaui_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx10_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 9
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx10
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx13:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 12
+    lb1_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.lb
+      properties:
+        flavor:
+          get_input: lb_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: lb_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - lb_names
+          - 0
+    eca_trx10_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 9
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx10
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx14:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 13
+    server_eca_trx15:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 14
+    nems1_fe_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: NEMS_FE_volume_type
+        size: '(get_input : nems_volume_size) * 1024'
+    eca_trx10_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 9
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx10
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx16:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 15
+    server_eca_trx10:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 9
+    server_eca_trx11:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 10
+    server_eca_trx12:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 11
+    eca_trx14_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 13
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx14
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx13_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 12
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx13
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx14_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 13
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx14
+          relationship: tosca.relationships.network.BindsTo
+    mmsc5_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_mms_traffic_net_ips
+            - 4
+        network: mms_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: mms_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc5
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx13_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 12
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx13
+          relationship: tosca.relationships.network.BindsTo
+    mmsc5_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_oam_ips
+            - 4
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc5
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx13_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 12
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx13
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx14_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 13
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx14
+          relationship: tosca.relationships.network.BindsTo
+    mmsc2_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - mmsc_oam_ips
+            - 1
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_mmsc2
+          relationship: tosca.relationships.network.BindsTo
+    server_eca_trx17:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 16
+    server_eca_trx18:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 17
+    server_eca_trx19:
+      type: org.openecomp.resource.vfc.nodes.heat.eca_trx
+      properties:
+        flavor:
+          get_input: eca_trx_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: eca_trx_image
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_trx_names
+          - 18
+    eca_trx9_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 8
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx9
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx9_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 8
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx9
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx9_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 8
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx9
+          relationship: tosca.relationships.network.BindsTo
+    lb2_nems_traffic_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: nems_traffic_net_local_ip2
+        allowed_address_pairs:
+        - ip_address:
+            get_input: nems_traffic_net_floating_ip
+        network: nems_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: nems_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: lb2_instance
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx5_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_eca_traffic_net_ips
+            - 4
+        network: eca_traffic_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: eca_traffic_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx5
+          relationship: tosca.relationships.network.BindsTo
+    eca_traffic_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: eca_traffic_name
+        subnets:
+          eca_traffic_ip_subnet:
+            name:
+              get_input: eca_traffic_name
+            cidr:
+              get_input: eca_traffic_cidr
+            allocation_pools:
+            - start:
+                get_input: eca_traffic_start
+              end:
+                get_input: eca_traffic_end
+    eca_trx1_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 0
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx5_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_mgmt_ips
+            - 4
+        network:
+          get_input: eca_mgmt_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx5
+          relationship: tosca.relationships.network.BindsTo
+    oam1_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.eca
+      properties:
+        flavor:
+          get_input: oam_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: oam_image_name
+        metadata:
+          vnf_id:
+            get_input: vnf_id
+        name:
+          get_input:
+          - eca_names
+          - 0
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: oam1_volume
+          relationship: oam1_volume_attachment
+    eca_trx1_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 0
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx1
+          relationship: tosca.relationships.network.BindsTo
+    eca_trx5_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - eca_trx_oam_ips
+            - 4
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_eca_trx5
+          relationship: tosca.relationships.network.BindsTo
+    mmsc3_volume:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: MMSC_volume_type
+        size: '(get_input : mmsc_cinder_volume_size) * 1024'
+  relationship_templates:
+    mmsc1_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: mmsc1_volume
+        instance_uuid: server_mmsc1
+    mmsc4_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: mmsc4_volume
+        instance_uuid: server_mmsc4
+    arb_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: arb_volume
+        instance_uuid: arb_instance
+    cmaui_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: cmaui_volume
+        instance_uuid: server_cmaui
+    nems1_fe_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: nems1_fe_volume
+        instance_uuid: server_nems_fe1
+    mmsc3_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: mmsc3_volume
+        instance_uuid: server_mmsc3
+    oam2_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: oam2_volume
+        instance_uuid: oam2_instance
+    cmaui1_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: cmaui1_volume
+        instance_uuid: server_cmaui1
+    nems_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: nems_be_volume
+        instance_uuid: server_nems_be1
+    oam1_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: oam1_volume
+        instance_uuid: oam1_instance
+    nems2_fe_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: nems2_fe_volume
+        instance_uuid: server_nems_fe2
+    mmsc5_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: mmsc5_volume
+        instance_uuid: server_mmsc5
+    mmsc2_volume_attachment:
+      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      properties:
+        volume_id: mmsc2_volume
+        instance_uuid: server_mmsc2
+  groups:
+    MMSC_Capacity_Line:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/MMSC_Capacity_Line.yml
+        description: |
+          HOT template that creates internal networks, load balancers and servers for vMMSC capacity Line 1. #11/23: updated the network definition to meet the juniper best practices way of defining the gateway, DHCP enable for internal networks (L457-L547)
+      members:
+      - server_eca_trx9
+      - server_eca_trx8
+      - server_eca_trx7
+      - server_eca_trx6
+      - server_eca_trx5
+      - nems_internal_net
+      - server_eca_trx4
+      - server_eca_trx3
+      - server_eca_trx2
+      - lb1_mgmt_port
+      - lb2_mms_traffic_port
+      - nems_fe1_port_1
+      - nems_fe2_port_3
+      - server_eca_trx1
+      - nems_fe1_port_2
+      - nems_fe2_port_2
+      - nems_fe2_port_1
+      - nems_fe1_port_0
+      - nems_fe2_port_0
+      - nems_fe1_port_3
+      - nems_fe1_port_4
+      - nems_fe2_port_4
+      - mmsc4_volume
+      - lb2_eca_traffic_port
+      - lb2_ha_net_port
+      - nems_user_web_net
+      - lb1_ha_net_port
+      - mmsc2_volume
+      - nems_traffic_net
+      - eca_trx16_port_0
+      - eca_trx19_port_2
+      - eca_trx16_port_1
+      - eca_trx19_port_1
+      - eca_trx15_port_0
+      - eca_trx19_port_0
+      - lb1_nems_traffic_port
+      - eca_trx11_port_1
+      - eca_trx11_port_2
+      - eca_trx12_port_2
+      - eca_trx12_port_1
+      - eca_trx11_port_0
+      - eca_trx12_port_0
+      - mmsc4_port_0
+      - mmsc3_port_0
+      - eca_trx15_port_2
+      - mmsc3_port_1
+      - mmsc4_port_1
+      - eca_trx15_port_1
+      - eca_trx16_port_2
+      - lb2_mgmt_port
+      - mmsc5_volume
+      - eca_trx7_port_2
+      - eca_trx7_port_0
+      - eca_trx7_port_1
+      - eca_trx3_port_1
+      - eca_trx3_port_0
+      - eca_trx3_port_2
+      - mmsc1_volume
+      - nems_imap_net
+      - lb2_dmz_protected_port
+      - lb1_eca_traffic_port
+      - lb1_dmz_protected_port
+      - lb1_mms_traffic_port
+      - eca_trx1_port_2
+      - nems2_fe_volume
+      - server_nems_be1
+      - server_nems_fe1
+      - server_nems_fe2
+      - lb2_cor_direct_port
+      - eca_trx20_port_0
+      - eca_trx20_port_2
+      - eca_trx20_port_1
+      - eca_trx8_port_0
+      - eca_trx6_port_0
+      - lb2_nems_user_web_port
+      - lb2_instance
+      - eca_trx6_port_2
+      - eca_trx8_port_2
+      - lb1_nems_user_web_port
+      - eca_trx6_port_1
+      - eca_trx8_port_1
+      - ha_net
+      - server_mmsc1
+      - nems_be1_port_0
+      - eca_trx2_port_0
+      - server_mmsc2
+      - nems_be1_port_1
+      - eca_trx2_port_1
+      - eca_trx4_port_1
+      - server_mmsc3
+      - nems_be1_port_2
+      - eca_trx2_port_2
+      - eca_trx4_port_2
+      - server_eca_trx20
+      - eca_trx4_port_0
+      - nems_be_volume
+      - server_mmsc4
+      - server_mmsc5
+      - eca_trx17_port_0
+      - eca_trx18_port_2
+      - lb1_cor_direct_port
+      - mmsc1_port_0
+      - eca_trx17_port_2
+      - eca_trx18_port_0
+      - mmsc1_port_1
+      - mmsc2_port_1
+      - eca_trx17_port_1
+      - eca_trx18_port_1
+      - mms_traffic_net
+      - eca_trx10_port_1
+      - server_eca_trx13
+      - lb1_instance
+      - eca_trx10_port_0
+      - server_eca_trx14
+      - server_eca_trx15
+      - nems1_fe_volume
+      - eca_trx10_port_2
+      - server_eca_trx16
+      - server_eca_trx10
+      - server_eca_trx11
+      - server_eca_trx12
+      - eca_trx14_port_1
+      - eca_trx13_port_0
+      - eca_trx14_port_0
+      - mmsc5_port_1
+      - eca_trx13_port_1
+      - mmsc5_port_0
+      - eca_trx13_port_2
+      - eca_trx14_port_2
+      - mmsc2_port_0
+      - server_eca_trx17
+      - server_eca_trx18
+      - server_eca_trx19
+      - eca_trx9_port_0
+      - eca_trx9_port_1
+      - eca_trx9_port_2
+      - lb2_nems_traffic_port
+      - eca_trx5_port_2
+      - eca_traffic_net
+      - eca_trx1_port_1
+      - eca_trx5_port_1
+      - eca_trx1_port_0
+      - eca_trx5_port_0
+      - mmsc3_volume
+    eca_oam:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/eca_oam.yaml
+        description: This stack creates two ECA OAM VM and one ARB VM
+      members:
+      - arb_mgmt_port
+      - oam2_mgmt_port
+      - arb_instance
+      - arb_volume
+      - oam1_instance
+      - oam2_volume
+      - oam1_volume
+      - oam1_int_port
+      - oam1_mgmt_port
+      - arb_int_port
+      - oam2_int_port
+      - oam2_instance
+    SG_ECA_MGMT:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/SG_ECA_MGMT.yaml
+        description: |
+          HOT template that creates Security Group and ECA network
+      members:
+      - mms_security_group
+      - eca_mgmt_net
+    cmaui:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/cmaui.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui1
+      - server_cmaui
+      - cmaui1_port_0
+      - cmaui_volume
+      - cmaui1_volume
+      - cmaui_port_0

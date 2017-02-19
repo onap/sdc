@@ -1,0 +1,4 @@
+{
+  "org.openecomp.core.enrichment.factory.EnrichmentManagerFactory": "org.openecomp.sdc.enrichment.impl.EnrichmentManagerFactoryImpl",
+  "org.openecomp.core.enrichment.EnrichmentArtifactsServiceFactory": "org.openecomp.sdc.enrichment.EnrichmentArtifactsServiceFactoryImpl"
+}

@@ -1,0 +1,14 @@
+heat_template_version:  2013-05-23
+
+parameters:
+   not_null:
+     type: number
+     label: not_number
+
+
+resources: 
+   nove_001_vol:
+     type: OS::Cinder::Volume
+     properties:
+       not_null: not_null
+

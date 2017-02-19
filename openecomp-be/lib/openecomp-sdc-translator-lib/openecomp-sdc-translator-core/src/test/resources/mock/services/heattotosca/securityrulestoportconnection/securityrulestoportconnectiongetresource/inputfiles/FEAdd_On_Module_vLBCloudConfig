@@ -1,0 +1,41 @@
+#cloud-config
+  manage_etc_hosts: false
+  yum_repos:
+    Base_Repo:
+      baseurl: "https://%rpm_repo_ip_0%/repo/base"
+      enabled: true
+      gpgcheck: false
+      name: "Base Repo"
+      sslverify: 0
+      sslclientcert: /var/lib/yum/yum.cert
+      sslclientkey: /var/lib/yum/yum.key
+  ssh_authorized_keys:
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAnuJOkl2iGaFB+BCeRak67Chy+cATmvsqLPDYQ6GMRrGg0kBMcIRExshmTJQFGC+m2xiXeo41pSLaR1vt5fDB+3ewUSBcNtZrr5VxzBWzOab1VO+sCx4f8gOkSJ7plRJ/8xZqyhV+jTkb02peWbqtW+WqERTIyGul/eMNCDnwDNxznb8jMI3KWUd3ujWgFnk8EJ9c41y2unvk42XDOUlnuvR1/FW/qPRSNwPQGLEDlDje29xB3yaMQuJRL4Z86GWb1ZVeVh/+mIO1R4Ayj0HYspDruvFa9mECR4K1QhCN9mRE5sGBMiEOK0O/pf8Y3K2J9LQ6UYAt2yHzL7fAMAKOOw=="
+  runcmd:
+    - "sed -i \"s/GSSAPIAuthentication yes/GSSAPIAuthentication no/g\" /etc/ssh/sshd_config"
+    - "sed -i \"s/#UseDNS yes/UseDNS no/g\" /etc/ssh/sshd_config"
+    - "passwd -d deployment"
+    - "mkdir -pv /mnt/config"
+    - "mount /dev/disk/by-label/config-2 /mnt/config"
+    - "a=($(cat /mnt/config/openstack/latest/meta_data.json | /usr/local/bin/python2.7 -c 'import json,sys;obj=json.load(sys.stdin); print json.dumps(obj[\"files\"]);'));paths=0; values=0;counter=0;function remove_json_chars() { input=$1; echo $1 | sed 's/\\}//g' | sed 's/,//g' | sed 's/]//g'  | sed 's/\"//g'; };for data in ${a[@]} ; do index=$(( $counter % 4 )); if [[ \"$index\" == 1 ]];then b[$paths]=$(remove_json_chars $data); paths=$(( $paths + 1  )) ; fi; if [[ \"$index\" == 3 ]];then c[$values]=$(remove_json_chars $data); values=$(( $values + 1  )) ; fi; counter=$(( $counter + 1 )) ; done; path_counter=0; for file in ${c[@]} ; do cp /mnt/config/openstack${file} ${b[$path_counter]}; path_counter=$(( ${path_counter} + 1  )) ; done"
+    - "cat /mnt/config/openstack/latest/meta_data.json | /usr/local/bin/python2.7 -c 'import json,sys;obj=json.load(sys.stdin); print json.dumps(obj[\"meta\"]);' > /meta.js"
+    - "sed -i 's|_colon_|:|g' /meta.js"
+    - "sed -i 's|_slash_|/|g' /meta.js"
+    - "/usr/local/bin/python2.7 /tmp/wait_for_resources.py -m %manager_oam_direct_ip_0%"
+    - "chmod 0754 /root/call_home.py /root/RegisterStatus/register_status.py /root/CheckAvailability/check_availability.py"
+    - "/usr/local/bin/python2.7 /root/CheckAvailability/check_availability.py %manager_oam_direct_ip_0%"
+    - "echo MH vLB_id_number %vLB_id_number%"
+    - "echo MH probe_data %vLB_id_number%"
+    - "echo MH probe_log %vLB_log%"
+    - "echo MH probe_config %vLB_config%"
+    - "probe_id=`echo %vLB_id_number%`"
+    - "echo vLB_cluster_name %vLB_cluster_name%"
+    - "echo vLB_node_count %vLB_node_count%"
+    - "sed -i 's/VLB_CLUSTER_NAME/%vLB_cluster_name%/g' /root/dependencies.json"
+    - "sed -i 's/VPROBE_CLUSTER_NAME/%vProbe_cluster_name%/g' /root/dependencies.json"
+    - "sed -i 's/VLB_NODE_COUNT/%vLB_node_count%/g' /root/dependencies.json"
+    - "sed -i 's/MANAGER_INSTANCE_NAME/%manager_hostname%.%domain_name%/g' /root/dependencies.json"
+    - "sed -i 's/VLB_INSTANCE/%vLBInstance%/g' /root/dependencies.json"
+    - "echo \"${probe_id}\" > /etc/hostname"
+    - "mkdir -pv /radcom/software"
+    - "/usr/local/bin/python2.7 /root/call_home.py %manager_oam_direct_ip_0%"

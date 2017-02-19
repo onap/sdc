@@ -1,0 +1,4 @@
+{
+  "org.openecomp.core.utilities.applicationconfig.ApplicationConfigFactory":"org.openecomp.core.utilities.applicationconfig.impl.ApplicationConfigFactoryImpl",
+  "org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDaoFactory":"org.openecomp.core.utilities.applicationconfig.dao.impl.ApplicationConfigDaoFactoryImpl"
+}

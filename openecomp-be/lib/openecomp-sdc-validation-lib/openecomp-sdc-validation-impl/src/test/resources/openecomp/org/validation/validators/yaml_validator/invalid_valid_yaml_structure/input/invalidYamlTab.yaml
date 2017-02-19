@@ -1,0 +1,250 @@
+### Heat Template ###
+description: Generated template
+heat_template_version: 2013-05-23
+parameters: {}
+resources:
+  network_0:
+    properties:
+      admin_state_up: true
+      name: NET_167
+      shared: true
+    type: OS::Neutron::Net
+  network_1:
+    properties:
+    	admin_state_up: true
+      name: NET_169
+      shared: true
+    type: OS::Neutron::Net
+  network_2:
+    properties:
+      admin_state_up: true
+      name: NET_166
+      shared: true
+    type: OS::Neutron::Net
+  network_3:
+    properties:
+      admin_state_up: true
+      name: NET_168
+      shared: true
+    type: OS::Neutron::Net
+  network_4:
+    properties:
+      admin_state_up: true
+      name: NET_169
+      shared: true
+    type: OS::Neutron::Net
+  network_5:
+    properties:
+      admin_state_up: true
+      name: NET_170
+      shared: true
+    type: OS::Neutron::Net
+  network_6:
+    properties:
+      admin_state_up: true
+      name: NET_168
+      shared: true
+    type: OS::Neutron::Net
+  network_7:
+    properties:
+      admin_state_up: true
+      name: NET_170
+      shared: true
+    type: OS::Neutron::Net
+  network_8:
+    properties:
+      admin_state_up: true
+      name: NET_166
+      shared: true
+    type: OS::Neutron::Net
+  network_9:
+    properties:
+      admin_state_up: true
+      name: NET_167
+      shared: true
+    type: OS::Neutron::Net
+  security_group_0:
+    properties:
+      description: Default security group
+      name: _default
+      rules:
+      - direction: ingress
+        ethertype: IPv4
+        remote_ip_prefix: 0.0.0.0/0
+      - direction: egress
+        ethertype: IPv4
+        remote_ip_prefix: 0.0.0.0/0
+    type: OS::Neutron::SecurityGroup
+  security_group_1:
+    properties:
+      description: Default security group
+      name: _default
+      rules:
+      - direction: egress
+        ethertype: IPv4
+        remote_ip_prefix: 0.0.0.0/0
+      - direction: ingress
+        ethertype: IPv4
+        remote_ip_prefix: 0.0.0.0/0
+    type: OS::Neutron::SecurityGroup
+  subnet_0:
+    properties:
+      allocation_pools:
+      - end: 10.147.32.254
+        start: 10.147.32.130
+      cidr: 10.147.32.128/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_167
+      network_id:
+        get_resource: network_9
+    type: OS::Neutron::Subnet
+  subnet_1:
+    properties:
+      allocation_pools:
+      - end: 10.147.32.254
+        start: 10.147.32.130
+      cidr: 10.147.32.128/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_167
+      network_id:
+        get_resource: network_0
+    type: OS::Neutron::Subnet
+  subnet_2:
+    properties:
+      allocation_pools:
+      - end: 10.147.32.126
+        start: 10.147.32.2
+      cidr: 10.147.32.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_166
+      network_id:
+        get_resource: network_8
+    type: OS::Neutron::Subnet
+  subnet_3:
+    properties:
+      allocation_pools:
+      - end: 10.147.32.126
+        start: 10.147.32.2
+      cidr: 10.147.32.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_166
+      network_id:
+        get_resource: network_2
+    type: OS::Neutron::Subnet
+  subnet_4:
+    properties:
+      allocation_pools:
+      - end: 10.147.34.126
+        start: 10.147.34.2
+      cidr: 10.147.34.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_170
+      network_id:
+        get_resource: network_5
+    type: OS::Neutron::Subnet
+  subnet_5:
+    properties:
+      allocation_pools:
+      - end: 10.147.33.126
+        start: 10.147.33.2
+      cidr: 10.147.33.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_168
+      network_id:
+        get_resource: network_6
+    type: OS::Neutron::Subnet
+  subnet_6:
+    properties:
+      allocation_pools:
+      - end: 10.147.33.126
+        start: 10.147.33.2
+      cidr: 10.147.33.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_168
+      network_id:
+        get_resource: network_3
+    type: OS::Neutron::Subnet
+  subnet_7:
+    properties:
+      allocation_pools:
+      - end: 10.147.33.254
+        start: 10.147.33.130
+      cidr: 10.147.33.128/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_169
+      network_id:
+        get_resource: network_1
+    type: OS::Neutron::Subnet
+  subnet_8:
+    properties:
+      allocation_pools:
+      - end: 10.147.33.254
+        start: 10.147.33.130
+      cidr: 10.147.33.128/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_169
+      network_id:
+        get_resource: network_4
+    type: OS::Neutron::Subnet
+  subnet_9:
+    properties:
+      allocation_pools:
+      - end: 10.147.34.126
+        start: 10.147.34.2
+      cidr: 10.147.34.0/25
+      dns_nameservers:
+      - 10.147.4.18
+      - 10.247.5.11
+      enable_dhcp: true
+      host_routes: []
+      ip_version: 4
+      name: NET_170
+      network_id:
+        get_resource: network_7
+    type: OS::Neutron::Subnet
+

@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.openecomp.sdc</groupId>
+		<artifactId>openecomp-sdc-api</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<artifactId>openecomp-sdc-rest-webapp</artifactId>
+	<name>openecomp-sdc-rest-webapp</name>
+	<packaging>pom</packaging>
+
+
+
+	<modules>
+		<module>/openecomp-sdc-common-rest</module>
+		<module>/vendor-license-rest</module>
+		<module>/onboarding-rest-war</module>
+		<module>/vendor-software-products-rest</module>
+		<module>/sequence-rest</module>
+		<module>/validation-rest</module>
+		<module>/action-library-rest</module>
+		<module>/application-config-rest</module>
+	</modules>
+
+</project>

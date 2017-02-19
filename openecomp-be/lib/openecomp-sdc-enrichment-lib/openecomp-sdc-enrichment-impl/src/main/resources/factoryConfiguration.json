@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.enrichment.factory.EnricherHandlerFactory": "org.openecomp.sdc.enrichment.impl.EnricherHandlerFactoryImpl"
+}

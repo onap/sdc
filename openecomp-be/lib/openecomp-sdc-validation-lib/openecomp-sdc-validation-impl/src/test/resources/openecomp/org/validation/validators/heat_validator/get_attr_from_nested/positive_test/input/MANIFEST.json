@@ -1,0 +1,51 @@
+{
+  "name": "hot-mog",
+  "description": "HOT template to create hot mog server",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "hot-nimbus-pps_v1.0.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "hot-nimbus-pps_v1.0.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "hot-nimbus-psm_v1.0.yaml",
+      "type": "HEAT",
+      "data": [
+        {
+          "file": "hot-nimbus-psm_v1.0.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "nested-pps_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nested-psm_v1.0.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "mount_iso_script.sh",
+      "type": "SHELL"
+    },
+    {
+      "file": "cloud-nimbus.sh",
+      "type": "SHELL"
+    },
+    {
+      "file": "nimbus-ethernet",
+      "type": "OTHER"
+    },
+    {
+      "file": "nimbus-ethernet-gw",
+      "type": "OTHER"
+    }
+  ]
+}
