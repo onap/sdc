@@ -1,0 +1,11 @@
+{
+  "payloadName": "asdc.nodes.module.NEMS_FE.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.NEMS_FE",
+  "description": "The Front End of a Network Message Storage allows external multimedia content to use SMTP e-mail mechanism to submit MMS messages",
+  "resourceIconPath": "objectStorage",
+  "category": "Application Layer 4+/Application Servers",
+  "tags": [
+    "asdc.nodes.module.NEMS_FE", "MMSC", "vMMSC", "Network Message Storage", "Front End", "Mobility"
+  ]
+}

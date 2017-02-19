@@ -1,0 +1,234 @@
+.tlv-btn {
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-block;
+  font-family: omnes-medium, Sans-Serif;
+  height: 32px;
+  min-width: 96px;
+  line-height: 30px;
+  padding: 0 16px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+
+  &:disabled {
+    opacity: .4;
+    pointer-events: none;
+  }
+
+  &.blue {
+    background-color: #009fdb;
+    border: 1px solid #0091c8;
+    color: #fff;
+
+    &:hover {
+      background-color: #1ec2ff;
+    }
+
+    &:active {
+      background-color: #0091c7;
+      border: 1px solid #006186;
+      outline: none;
+    }
+
+    &:focus {
+      border-color: #009fdb;
+      box-shadow: inset 0 0 0 1px #fff;
+      outline: none;
+    }
+  }
+
+  &.white {
+    background-color: #fff;
+    border: 1px solid #d8d8d8;
+    color: @main_color_n;
+
+    &:hover {
+      border-color: #959595;
+    }
+
+    &:active {
+      background-color: #f2f2f2;
+      border: 1px solid #595959;
+      outline: none;
+    }
+
+    &:focus {
+      border-color: #959595;
+      box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #959595;
+      outline: none;
+
+    }
+
+  }
+
+  &.grey {
+    background-color: #f8f8f8;
+    border: 1px solid #d8d8d8;
+    color: #000;
+
+    &:hover {
+      border-color: #959595;
+    }
+
+    &:active {
+      background-color: #d7d7d7;
+      border: 1px solid #595959;
+      outline: none;
+    }
+
+    &:focus {
+      background-color: @tlv_color_t;
+      border-color: @main_color_n;
+      box-shadow: inset 0 0 0 1px @main_color_p, inset 0 0 0 2px @main_color_n;
+      outline: none;
+
+    }
+
+  }
+
+
+  &.green {
+    background-color: #4ca90c;
+    border: 1px solid #45a006;
+    color: #fff;
+
+    &:hover {
+      background-color: #5ec616;
+    }
+
+    &:active {
+      background-color: #3f8c0a;
+      border: 1px solid #2c6604;
+      outline: none;
+    }
+
+    &:focus {
+      box-shadow: inset 0 0 0 1px #fff;
+      outline: none;
+    }
+  }
+
+  &.red {
+    background-color: #fc2727;
+    border: 1px solid #a01a1a;
+    color: #fff;
+
+    &:hover {
+      background-color: #fc2727;
+    }
+
+    &:active {
+      background-color: #a01a1a;
+      border: 1px solid #730202;
+      outline: none;
+    }
+
+    &:focus {
+      box-shadow: inset 0 0 0 1px @main_color_p;
+      outline: none;
+    }
+  }
+
+
+  &.outline {
+    &.blue {
+      background-color: #fff;
+      border: 1px solid #009fdb;
+      color: #009fdb;
+
+      &:hover {
+        background-color: #e5f5fb;
+      }
+
+      &:active {
+        background-color: #b2e2f4;
+        border: 1px solid #009fdb;
+        outline: none;
+      }
+
+      &:focus {
+        background-color: #fff;
+        border-color: #009fdb;
+        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #009fdb;
+        outline: none;
+      }
+    }
+
+    &.grey {
+      background-color: #ffffff;
+      border: 1px solid #959595;
+      color: #5a5a5a;
+
+      &:hover {
+        background-color: #f4f4f4;
+        border-color: #959595;
+      }
+
+      &:active {
+        background-color: #dfdfdf;
+        border: 1px solid #959595;
+        outline: none;
+      }
+
+      &:focus {
+        background-color: #fff;
+        border-color: #959595;
+        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #959595;
+        outline: none;
+
+      }
+
+    }
+
+
+    &.green {
+      background-color: #ffffff;
+      border: 1px solid #4ca90c;
+      color: #4ca90c;
+
+      &:hover {
+        background-color: #edf6e6;
+        border-color: #4ca90c;
+      }
+
+      &:active {
+        background-color: #c9e5b6;
+        border: 1px solid #4ca90c;
+        outline: none;
+      }
+
+      &:focus {
+        background-color: #fff;
+        border-color: #4ca90c;
+        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #4ca90c;
+        outline: none;
+      }
+    }
+
+    &.red {
+      background-color: #ffffff;
+      border: 1px solid #cf2a2a;
+      color: #cf2a2a;
+
+      &:hover {
+        background-color: #fae9e9;
+        border-color: #cf2a2a;
+      }
+
+      &:active {
+        background-color: #c9e5b6;
+        border: 1px solid #cf2a2a;
+        outline: none;
+      }
+
+      &:focus {
+        background-color: #fff;
+        border-color: #cf2a2a;
+        box-shadow: inset 0 0 0 1px #fff, inset 0 0 0 2px #cf2a2a;
+        outline: none;
+      }
+    }
+  }
+}
+

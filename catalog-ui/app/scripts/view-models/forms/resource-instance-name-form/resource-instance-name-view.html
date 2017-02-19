@@ -1,0 +1,72 @@
+<sdc-modal modal="modalInstanceName" type="classic" class="w-sdc-modal-resource-instance-name modal-type-confirmation" buttons="footerButtons" header="Instance Name" show-close-button="true">
+
+    <form novalidate class="w-sdc-form" name="forms.editNameForm">
+        <div class="i-sdc-form-item" data-ng-class="{error:(editNameForm.componentInstanceName.$dirty && editNameForm.resourceInstanceName.$invalid)}">
+            <label class="i-sdc-form-label required">Instance Name</label>
+            <input class="w-sdc-modal-resource-instance-input i-sdc-form-input"
+                   name="componentInstanceName"
+                   data-ng-maxlength="50"
+                   data-ng-model="componentInstanceModel.name"
+                   type="text"
+                   data-required
+                   data-ng-pattern="validationPattern"
+                   maxlength="50"
+                   autofocus
+                   placeholder="Enter instance name..."
+                   data-tests-id="instanceName"
+                />
+
+            <div class="input-error" data-ng-show="forms.editNameForm.componentInstanceName.$dirty && forms.editNameForm.componentInstanceName.$invalid">
+                <span ng-show="forms.editNameForm.componentInstanceName.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Resource name' }"></span>
+                <span ng-show="forms.editNameForm.componentInstanceName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                <span ng-show="forms.editNameForm.componentInstanceName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+            </div>
+
+        </div>
+    </form>
+
+</sdc-modal>
+
+
+
+<!--
+
+<div class="w-sdc-modal w-sdc-modal-resource-instance-name">
+    <header>
+        <div class="w-sdc-modal-head">
+            Instance Name
+        </div>
+    </header>
+    <div>
+        <form novalidate class="w-sdc-modal-body w-sdc-form" name="editNameForm">
+            <div class="i-sdc-form-item" data-ng-class="{error:(editNameForm.componentInstanceName.$dirty && editNameForm.resourceInstanceName.$invalid)}">
+                <label class="i-sdc-form-label required">Instance Name</label>
+                <input class="w-sdc-modal-resource-instance-input i-sdc-form-input"
+                       name="componentInstanceName"
+                       data-ng-maxlength="50"
+                       data-ng-model="componentInstanceModel.name"
+                       type="text"
+                       data-required
+                       data-ng-pattern="validationPattern"
+                       maxlength="50"
+                       autofocus
+                       placeholder="Enter instance name..."
+                       data-tests-id="instanceName"
+                    />
+
+                <div class="input-error" data-ng-show="editNameForm.componentInstanceName.$dirty && editNameForm.componentInstanceName.$invalid">
+                    <span ng-show="editNameForm.componentInstanceName.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Resource name' }"></span>
+                    <span ng-show="editNameForm.componentInstanceName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                    <span ng-show="editNameForm.componentInstanceName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                </div>
+
+            </div>
+        </form>
+
+        <div class="w-sdc-modal-action">
+            <button class="w-sdc-btn-blue" data-ng-click="save()" type="button" data-ng-disabled="(!componentInstanceModel.name || componentInstanceModel.name === oldName) || isAlreadyPressed">Ok</button>
+            <button class="w-sdc-btn-dark-gray" data-ng-click="close()" type="button">Cancel</button>
+        </div>
+    </div>
+</div>
+-->

@@ -1,0 +1,17 @@
+<sdc-modal modal="modalInstanceError"
+           type="classic"
+           class="w-sdc-modal modal-type-error"
+           header="{{messageModalModel.title}}"
+           buttons="footerButtons"
+           show-close-button="true">
+
+    <perfect-scrollbar include-padding="true">
+        <div class="w-sdc-modal-icon w-sdc-modal-icon-{{messageModalModel.severity}}"></div>
+        <div class="w-sdc-modal-caption">
+            <div>Error code: {{messageModalModel.messageId}}</div>
+            <div>Status code: {{messageModalModel.status}}</div>
+        </div>
+        <div class="w-sdc-modal-body-content" data-ng-bind-html="messageModalModel.message" data-tests-id="message"></div>
+    </perfect-scrollbar>
+
+</sdc-modal>

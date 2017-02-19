@@ -1,0 +1,32 @@
+########################################################################################################
+###################### vCE_Brocade_VNF Node  TYPE  #####################################################
+########### IN THE ABSENCE OF NODE TEMPLATE, the vCE_Brocade_VNF Node Type is modeled as REQUIRING: #####
+########### 1. vce_Brocade_VDU Node               
+########### 2. oam_vlan_connector Node
+########### 3. ipag_vlan_connector Node
+########### 4. vpe_vlan_connector Node
+########################################################################################################
+
+  org.openecomp.resource.nfv.VNF.VCE_Brocade_VNF: 
+    derived_from: org.openecomp.resource.nfv.VNF
+    requirements: 
+      - vce_brocade_vdu: 
+          capability: org.openecomp.capabilities.nfv.VCE_Brocade_Routing
+          node: org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU
+          occurrences: [1, 1]
+          
+      - oam_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.OAM_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.OAM_VLAN_Connector
+          occurrences: [1, 1]
+          
+      - vpe_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.VPE_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.VPE_VLAN_Connector
+          occurrences: [1, 1]
+          
+      - ipag_vlan_connector: 
+          capability: org.openecomp.capabilities.nfv.IPAG_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.IPAG_VLAN_Connector
+          occurrences: [1, 1]
+

@@ -1,0 +1,85 @@
+<div class="activity-log">
+
+    <div class="title-wrapper">
+        <div class="top-search">
+            <input type="text"
+                   class="search-text"
+                   placeholder="Search"
+                   data-ng-model="searchBind"
+                   data-tests-id="main-menu-input-search"
+                   ng-model-options="{ debounce: 500 }" />
+            <span class="w-sdc-search-icon magnification"></span>
+        </div>
+    </div>
+
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+
+            <!-- Table headers -->
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-show="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+            </div>
+
+            <!-- Table body -->
+            <div class="body">
+                <perfect-scrollbar suppress-scroll-x="true" scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+
+                    <!-- In case the logs are empty -->
+                    <div data-ng-if="!activityLog || activityLog.length===0" class="no-row-text">
+                        There are no logs to display
+                    </div>
+
+                    <!-- Loop on logs list -->
+                    <div data-ng-repeat="item in activityLog | filter: searchBind | orderBy:sortBy:reverse track by $index"
+                         data-ng-init="item.dateFormat = ( item.TIMESTAMP.replace(' UTC', '') | stringToDateFilter | date: 'MM/dd/yyyy':'UTC')+' | '+(item.TIMESTAMP.replace(' UTC', '') | stringToDateFilter | date: 'shortTime':'UTC' )"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': component === selectedComponent}"
+                         data-ng-click="doSelectComponent(component);"
+                        >
+
+                        <!-- Date -->
+                        <div class="table-col-general flex-item" sdc-smart-tooltip>
+                            {{item.dateFormat}}
+                        </div>
+
+                        <!-- Action -->
+                        <div class="table-col-general flex-item" sdc-smart-tooltip>
+                            {{item.ACTION}}
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="table-col-general flex-item" sdc-smart-tooltip>
+                            {{item.COMMENT}}
+                        </div>
+
+                        <!-- Username -->
+                        <div class="table-col-general flex-item" sdc-smart-tooltip>
+                            {{item.MODIFIER}}
+                        </div>
+
+                        <!-- Status -->
+                        <div class="table-col-general flex-item" sdc-smart-tooltip>
+                            {{item.STATUS}}
+                            <span data-ng-class="{'success': item.STATUS>='200' && item.STATUS<='204','error': item.STATUS<'200' || item.STATUS>='300'}"></span>
+                        </div>
+
+                    </div>
+
+                </perfect-scrollbar>
+            </div><!-- End table body -->
+        </div><!-- End table -->
+    </div><!-- End table-container-flex -->
+
+</div>
+
+
+
+<!--<div ng-repeat="activityDate in  activityDateArray " class="w-sdc-component-viewer-right-activity-log" >
+    <div class="w-sdc-component-viewer-right-activity-log-date" >{{activityDate | date: 'longDate'}}</div>
+    <div ng-repeat="activity in activityLog[activityDate] | orderBy: '-TIMESTAMP'">
+        <div  class="w-sdc-component-viewer-right-activity-log-time">{{activity.TIMESTAMP.replace(" UTC", '') | stringToDateFilter | date: 'mediumTime':'UTC'}}</div>
+        <div class="w-sdc-component-viewer-right-activity-log-content">{{"Action: " + parseAction(activity.ACTION) + " Performed by: " + activity.MODIFIER + " Status: " + activity.STATUS}}</div>
+    </div>
+</div>-->

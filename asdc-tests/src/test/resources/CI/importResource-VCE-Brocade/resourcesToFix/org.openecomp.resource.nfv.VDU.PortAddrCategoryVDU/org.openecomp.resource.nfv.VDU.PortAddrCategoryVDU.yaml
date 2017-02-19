@@ -1,0 +1,10 @@
+##################################################################
+###################### PAT VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU: #paharoni - renamed from org.openecomp.resource.nfv.VDU.PortAddressTranslationCategoryVDU. Resource name can be up to 50 chars in ASDC
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      pat: 
+        type: org.openecomp.capabilities.nfv.VNF.PortAddressTranslationCapability
+        description: This capability has been introduced
+    ###############Further details described in PAT VNF TOSCA Model

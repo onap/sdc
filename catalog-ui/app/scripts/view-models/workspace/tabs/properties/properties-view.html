@@ -1,0 +1,62 @@
+<div class="workspace-properties">
+    <div id="left-top-bar">
+        <span id="properties-count">Total Properties: {{component.properties.length}}</span>
+        <input id="search-by-name" type="search" placeholder="Search"  data-ng-model-options="{debounce: 200}" data-ng-model="filterTerms"/>
+        <span class="sprite magnification-glass search-button"></span>
+    </div>
+    <div class="add-btn" data-tests-id="addGrey" ng-if="!isViewMode()"
+         data-ng-class="{'disabled': isDisableMode()}" data-ng-click="addOrUpdateProperty()">Add Property</div>
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-if="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item" ng-if="!isViewMode()"><span class="delete-col-header"></span></div>
+                <!--div class="table-no-text-header head-row flex-item"></div-->
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="component.properties.length === 0" class="no-row-text"  data-ng-class="{'disabled': isDisableMode()}">
+                        There are no properties to display <br>
+                        <span ng-if="!isViewMode()"> click <a data-ng-click="addOrUpdateProperty()">here</a> to add one </span>
+
+                    </div>
+                    <div data-ng-repeat="property in filteredProperties.properties=(component.properties | orderBy:sortBy:reverse | filter: {filterTerm:filterTerms}) track by $index"
+                         data-tests-id="propertyRow" data-ng-class="{'selected': property.selected}"
+                         class="flex-container data-row">
+
+                        <div class="table-col-general flex-item text">
+                            <a  data-tests-id="{{property.name}}"
+                                   tooltips tooltip-content="{{property.name}}"
+                                   data-ng-click="addOrUpdateProperty(property); $event.stopPropagation();"
+                                   data-ng-class="{'disabled': isViewMode()}">{{property.name}}</a>
+
+                        </div>
+
+                        <div class="table-col-general flex-item text"
+                             data-tests-id="{{property.type}}"
+                             tooltips tooltip-content="{{property.type}}"
+                             data-ng-bind="property.type">
+                        </div>
+                        <div class="table-col-general flex-item text"
+                             data-tests-id="{{property.schema.property.type}}"
+                             tooltips tooltip-content="{{property.schema.property.type}}"
+                             data-ng-bind="property.schema.property.type">
+                        </div>
+                        <div class="table-col-general flex-item text">
+                            <span tooltips tooltip-content="{{property.description}}" data-tests-id="{{property.description}}" data-ng-bind="property.description"></span>
+                        </div>
+                        <div class="table-btn-col flex-item" ng-if="!isViewMode()">
+                            <button class="table-delete-btn" data-tests-id="delete_{{property.name}}"  data-ng-if="property.parentUniqueId==component.uniqueId"
+                                    data-ng-click="delete(property); $event.stopPropagation();"  data-ng-class="{'disabled': isViewMode()}"> </button>
+                        </div>
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+
+</div>

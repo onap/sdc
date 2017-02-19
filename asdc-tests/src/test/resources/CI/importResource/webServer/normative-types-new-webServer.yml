@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  tosca.nodes.WebServer:
+    derived_from: tosca.nodes.SoftwareComponent
+    capabilities:
+      # Private, layer 4 endpoints 
+      data_endpoint: tosca.capabilities.Endpoint
+      admin_endpoint: tosca.capabilities.Endpoint.Admin
+      host: 
+        type: tosca.capabilities.Container
+        valid_source_types: [ tosca.nodes.WebApplication ]

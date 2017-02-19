@@ -1,0 +1,126 @@
+<sdc-modal modal="modalDitributionStatus"  type="classic" class="w-sdc-classic-top-line-modal" buttons="footerButtons" header="Distribution by Status" show-close-button="true">
+
+    <div class="w-sdc-distribution-view">
+        <div class="w-sdc-distribution-view-header">
+
+        </div>
+
+
+        <perfect-scrollbar include-padding="true" class="w-sdc-distribution-view-content">
+            <div class="w-sdc-distribution-view-content-section w-sdc-distribute-parent-block">
+                <ul>
+                    <li  class="w-sdc-distribute-parent-block" >
+                        <div class="w-sdc-distribute-row w-sdc-distribute-row-extends extends">
+
+                            <div class="w-sdc-distribute-row-content">
+                                <div class="w-sdc-distribute-content">
+                                    <div class="title-section item-1">
+                                        <div class="title">Distribution ID</div>
+                                        <div data-ng-bind="distribution.distributionID"></div>
+                                    </div>
+                                    <div class="title-section item-2">
+                                        <div class="title" translate="DISTRIBUTION_VIEW_TITLE_USER_ID"></div>
+                                        <div data-ng-bind="distribution.userId"></div>
+                                    </div>
+                                    <div class="title-section item-3">
+                                        <div class="title">Time[UTC]:</div>
+                                        <div
+                                            data-ng-bind="distribution.timestamp | stringToDateFilter | date: 'MM/dd/yyyy h:mma':'UTC'"></div>
+                                    </div>
+                                    <div class="title-section item-4">
+                                        <span class="sprite-new status-icon" data-ng-class="distribution.deployementStatus"></span>
+                                        <span class="sprite-new" data-ng-bind="distribution.deployementStatus"></span>
+                                    </div>
+                                </div>
+                                <div class="w-sdc-distribute-status-block" data-ng-show="distribution.statusCount">
+                                    <div class="status-item-1">Status: {{status}} <span data-ng-bind="(distribution.distributionComponents | filter:status:true).length"
+                                                                                     class="blue-font"></span></div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="w-sdc-distribute-components-block disable-hover">
+                            <li data-ng-repeat="(omfComponentID,omfComponentList) in distribution.distributionComponents | orderBy: '-timestamp' | filter:status:true | groupBy:'omfComponentID'"
+                                class="disable-hover">
+                                <div class="w-sdc-distribute-row omf-component-row w-sdc-distribute-row-extends "
+                                     data-ng-class="{'extends': omfComponentListExtends}">
+                                    <div class="w-sdc-distribution-arrow-btn" data-ng-click="omfComponentListExtends=!omfComponentListExtends"
+                                         ng-class="{'extends': omfComponentListExtends}"
+                                         data-ng-init="omfComponentListExtends=false"
+                                         ></div>
+                                    <div class="w-sdc-distribute-status-block">
+                                        <div class="status-item-1">{{omfComponentID}} <span class="blue-font">{{omfComponentList.length}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-ng-show="omfComponentListExtends"
+                                     class="w-sdc-distribute-omfComponent-block disable-hover">
+                                    <div class="w-sdc-distribute-row-extends disable-hover">
+                                        <div class="disable-hover">
+                                            <div class="w-sdc-distribute-row omfComponent-table-head">
+                                                <div class="title item-1">Component ID</div>
+                                                <div class="title item-2">Artifact Name</div>
+                                                <div class="title item-3">URL</div>
+                                                <div class="title item-4">Time(UTC)</div>
+                                                <div class="title item-5">Status</div>
+                                            </div>
+
+                                            <div class="w-sdc-distribute-row omfComponent-table-row"
+                                                 data-ng-repeat-start="(url,urlList) in omfComponentList | orderBy: '-timestamp' |  groupBy:'url'"
+                                                 data-ng-class="urlListExtends?'extends row-{{$index}}':'row-{{$index}}'" >
+                                                <div class="w-sdc-distribute-cell item-1">
+                                                    <div class="w-sdc-distribution-arrow-btn" data-ng-click="urlListExtends=!urlListExtends"
+                                                         data-ng-class="{'extends': urlListExtends}"
+                                                         data-ng-init="urlListListExtends=false"
+                                                         ></div>
+                                                    {{urlList[0].omfComponentID}}
+                                                </div>
+                                                <div class="w-sdc-distribute-cell item-2" sdc-smart-tooltip>
+                                                    {{getUrlName(urlList[0].url)}}
+                                                </div>
+                                                <div class="w-sdc-distribute-cell item-3 disable-hover">
+                                                    <div sdc-smart-tooltip class="distribution-url">{{urlList[0].url}}</div>
+                                                    <div sdc-smart-tooltip title="Copy url" clipboard text="urlList[0].url"
+                                                         class="sprite-new link-btn copy-link disable-hover"></div>
+                                                </div>
+                                                <div class="w-sdc-distribute-cell item-4"><span
+                                                    data-ng-bind="urlList[0].timestamp  | date: 'MM/dd/yyyy h:mma':'UTC'"></span>
+                                                </div>
+                                                <div class="w-sdc-distribute-cell item-5">{{urlList[0].status}}</div>
+                                            </div>
+
+
+                                            <div data-ng-repeat-end data-ng-show="urlListExtends" class="disable-hover">
+                                                <div class="w-sdc-distribute-row extends disable-hover">
+                                                    <ul data-ng-show="urlListExtends"
+                                                        class="w-sdc-distribute-url-block disable-hover">
+                                                        <li data-ng-repeat="distributionComponent in urlList | orderBy: '-timestamp'"
+                                                            class="disable-hover">
+                                                        <span
+                                                            data-ng-bind="distributionComponent.timestamp | date: 'MM/dd/yyyy h:mma':'UTC'"
+                                                            class="disable-hover"></span>
+                                                        <span
+                                                            class="disable-hover">{{distributionComponent.status}}</span>
+                                                           <span
+                                                               class="disable-hover reason" data-ng-show="distributionComponent.status == 'NOT_NOTIFIED'">Reason: Component has determined artifact is not needed.</span>
+                                                          <span
+                                                              class="disable-hover reason" data-ng-show="distributionComponent.errorReason">Reason: {{distributionComponent.errorReason}}</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+        </perfect-scrollbar>
+    </div>
+
+
+</sdc-modal>

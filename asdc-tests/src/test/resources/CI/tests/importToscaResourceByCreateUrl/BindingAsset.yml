@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+  org.openecomp.resource.cp:
+    derived_from: tosca.nodes.Root
+    properties:
+      type:
+        type: string
+        required: false
+    requirements: 
+     - VirtualBinding:
+          capability: tosca.capabilities.network.Bindable
+          relationship: tosca.relationships.network.BindsTo
+          occurrences: [0, UNBOUNDED]

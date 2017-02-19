@@ -1,0 +1,57 @@
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content relations">
+
+    <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.capabilities" class="w-sdc-designer-sidebar-section-title">
+            Capabilities
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content capabilities">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-group" data-ng-repeat="(key, value) in (isComponentInstanceSelected() ? currentComponent.selectedInstance.capabilities : selectedComponent.capabilities) track by $index">
+                    <div class="i-sdc-designer-sidebar-section-content-item-relations" data-ng-repeat="capability in value track by $index">
+                    <div class="i-sdc-designer-sidebar-section-content-item-relations-details">
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{capability.name}}&nbsp;
+                        <span ng-if="selectedComponent.isComplex() && capability.ownerName"
+                              class="i-sdc-designer-sidebar-section-content-item-relations-details-ownerName"
+                              tooltips tooltip-class="tooltip-custom break-word-tooltip"
+                              tooltip-content="{{capability.ownerName | resourceName}}">&nbsp;&nbsp;{{capability.ownerName | resourceName}}</span></div>
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-desc">{{capability.type}}</div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.requirements" class="w-sdc-designer-sidebar-section-title">
+            Requirements
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content requirements">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-group" data-ng-repeat="(key, value) in (isComponentInstanceSelected() ? currentComponent.selectedInstance.requirements : selectedComponent.requirements) track by $index">
+                    <div class="i-sdc-designer-sidebar-section-content-item-relations" data-ng-repeat="requirement in value track by $index">
+                    <div class="i-sdc-designer-sidebar-section-content-item-relations-details">
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{requirement.name}}&nbsp;
+                         <span ng-if="selectedComponent.isComplex() && requirement.ownerName"
+                               class="i-sdc-designer-sidebar-section-content-item-relations-details-ownerName"
+                               tooltips tooltip-class="tooltip-custom break-word-tooltip"
+                               tooltip-content="{{requirement.ownerName | resourceName}}">&nbsp;&nbsp;{{requirement.ownerName | resourceName}}</span></div>
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-desc">{{requirement.node}}
+                            <div data-ng-if="getRelation(requirement) != null">
+                                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-indent-box"></div>
+                                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-child">
+                                    <span class="i-sdc-designer-sidebar-section-content-item-relations-details-desc">{{getRelation(requirement).type}} <br/></span>
+                                    <span class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{getRelation(requirement).requirementName}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</perfect-scrollbar>

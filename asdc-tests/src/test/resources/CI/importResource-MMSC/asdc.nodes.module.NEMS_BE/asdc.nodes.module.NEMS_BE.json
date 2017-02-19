@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.module.NEMS_BE.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.NEMS_BE",
+  "description": "The Back End of a Network Message Storage allows external multimedia content to use SMTP e-mail mechanism to submit MMS messages",
+  "resourceIconPath": "applicationServer",
+  "category": "Application Layer 4+/Application Servers",
+  "tags": [
+    "asdc.nodes.module.NEMS_BE", "MMSC", "vMMSC", "Network Message Storage", "Back End", "Mobility"
+  ]
+}
+

@@ -1,0 +1,11 @@
+{
+  "payloadName": "WAN_Connector.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.Connector.WAN_Connector",
+  "description": "Represents a WAN_Connector Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "org.openecomp.asdc.nodes.Connector.WAN_Connector"
+  ]
+}

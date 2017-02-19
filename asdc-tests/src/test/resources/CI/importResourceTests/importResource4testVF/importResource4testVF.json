@@ -1,0 +1,17 @@
+{
+	"payloadName": "normative-types-new-importResource4testVF.yml",
+	"contactId": "jh0003",
+	"name": "importResource4test",
+	"description": "Represents a generic software component that can be managed and run by a Compute Node Type.",
+	"resourceIconPath": "defaulticon",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["importResource4test"],
+	"resourceType" : "VFC",
+	"vendorName": "ATT (Tosca)",
+	"vendorRelease": "1.0.0.wd03"
+}

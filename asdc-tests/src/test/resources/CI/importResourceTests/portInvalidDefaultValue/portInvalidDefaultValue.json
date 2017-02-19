@@ -1,0 +1,16 @@
+{
+	"payloadName": "normative-types-new-portInvalidDefaultValue.yml",
+	"contactId": "jh0003",
+	"name": "tosca.nodes.network.PortInvalidDefaultValue",
+	"description": "Represents a logical entity that associates between Compute and Network normative types.",
+	"resourceIconPath": "port",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Network Elements"
+		}]
+	}],
+	"tags": ["tosca.nodes.network.PortInvalidDefaultValue"],
+	"vendorName": "ATT (Tosca)",
+	"vendorRelease": "1.0.0.wd03"
+}

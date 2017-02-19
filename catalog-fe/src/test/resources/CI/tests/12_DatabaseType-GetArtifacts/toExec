@@ -1,0 +1,1 @@
+curl "http://172.20.43.124:8080/sdc2/rest/v1/catalog/resources/tosca.nodes.Database/1.0.0.wd03-SNAPSHOT/artifacts" -sL -w ":%{http_code}:%{size_request} BYTES:%{time_total} \n"

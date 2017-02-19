@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.validateProporties_type:
+    derived_from: tosca.nodes.Root
+    properties:
+      # domain-specific software component version
+      component_version: 
+        type: version
+        required: false
+      admin_credential: 
+        type: tosca.datatypes.Credential
+        required: false
+      myprop:
+        type: tosca.datatypes.network.PortInfoComplex
+        default:
+          addressesMap:
+            key1:
+                protocol: protocol1
+                token: token1
+            key2:
+                protocol: protocol2
+                token: token2
+          addressesList: 
+            - protocol: protocol1~!#@~$%^*()[];:'"|\/
+              token: token1
+            - protocol: protocol2~!#@~$%^*()[];:'"|\/
+              token: token2
+    requirements:
+      - host: 
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.Compute
+          relationship: tosca.relationships.HostedOn

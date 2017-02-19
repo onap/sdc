@@ -1,0 +1,10 @@
+<div class="sdc-tag">
+    <div class="tag" data-tests-id="i-sdc-tag-text" sdc-smart-tooltip data-ng-bind="tagData.tag"></div>
+    <div class="category" data-ng-hide="hideTooltip===true">
+        <span class="relation-categoty-icon" data-tooltips data-tooltip-side="bottom" data-tooltip="'<span class='tag-tooltip-wrap'>{{tagData.tooltip}}</span>'" data-tooltip-enable="false"></span>
+    </div>
+
+    <div class="delete" data-ng-if="!hideDelete && !sdcDisable" data-ng-click="delete()" data-tests-id="i-sdc-tag-delete">
+        <span class="delete-icon"></span>
+    </div>
+</div>

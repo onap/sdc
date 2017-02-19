@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  tosca.nodes.ObjectStorage:
+    derived_from: tosca.nodes.Root
+    properties:
+      name: 
+        type: string
+      size: 
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 0 GB
+      maxsize:
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 0 GB
+    capabilities:
+      storage_endpoint:
+        type: tosca.capabilities.Endpoint

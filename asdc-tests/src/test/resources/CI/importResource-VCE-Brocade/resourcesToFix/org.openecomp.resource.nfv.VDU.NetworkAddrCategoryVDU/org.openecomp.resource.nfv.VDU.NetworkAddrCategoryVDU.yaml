@@ -1,0 +1,10 @@
+##################################################################
+######################   ASDC  NAT VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.NetworkAddrCategoryVDU: #paharoni - renamed from org.openecomp.resource.nfv.VDU.NetworkAddressTranslationCategoryVDU. Resource name can be up to 50 chars in ASDC
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      nat: 
+        type: org.openecomp.capabilities.nfv.VNF.NetworkAddressTranslationCapability
+        description: This capability has been introduced
+    ###############Further details described in NAT VNF TOSCA Model

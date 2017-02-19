@@ -1,0 +1,115 @@
+.workspace-properties {
+
+    width: 93%;
+    display: inline-block;
+
+    #left-top-bar{
+        float: left;
+        width: 155px;
+        ::-webkit-input-placeholder {
+            font-style: italic;
+        }
+        :-moz-placeholder {
+            font-style: italic;
+        }
+        ::-moz-placeholder {
+            font-style: italic;
+        }
+        :-ms-input-placeholder {
+            font-style: italic;
+        }
+
+        #properties-count{
+            font-weight: bold;
+            float: left;
+        }
+
+        #search-by-name{
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+            width: 245px;
+            height: 32px;
+            line-height: 32px;
+            border: 1px solid @main_color_o;
+            text-indent: 10px;
+        }
+
+        .search-button{
+            .hand;
+            cursor: pointer;
+            float: right;
+            position: relative;
+            top: -22px;
+            right: -80px;
+        }
+    }
+
+    .add-btn {
+        margin: 36px 0 0 0;
+    }
+
+    .delete-col-header{
+        .sprite;
+        .sprite.e-sdc-small-icon-delete;
+    }
+
+    .w-sdc-classic-btn {
+        float: right;
+        margin-bottom: 10px;
+    }
+
+    .table{
+        height:490px;
+        margin-bottom: 0;
+    }
+
+    .data-row{
+        .table-delete-btn{
+            display: none !important;
+        }
+        &:hover{
+            .table-delete-btn{
+                display: inline-block !important;
+            }
+        }
+    }
+
+    .table-container-flex {
+        margin-top: 27px;
+
+        .text{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .flex-item:nth-child(1) {
+            flex-grow: 15;
+            a{
+                .hand
+            }
+        }
+
+        .flex-item:nth-child(2) {
+            flex-grow: 6;
+        }
+
+        .flex-item:nth-child(3) {
+            flex-grow: 6;
+        }
+
+        .flex-item:nth-child(4) {
+            flex-grow: 20;
+
+        }
+        .flex-item:nth-child(5) {
+            flex-grow: 3;
+            padding-top: 10px;
+        }
+
+
+    }
+
+}

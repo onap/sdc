@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="lifeCycle" >
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_cerificationCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceResourceLCSTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_UndoCheckOutCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_UndoCheckOutCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_StartCertificationCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_CheckinCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_CheckOutCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceCertWithResourceInstances"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.CrossCheckOutTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.CertifyVFWithNotCertRIs"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_request4CerCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.CleanupIntermediateReources"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_CheckOutCIT"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_cerificationCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.CertifyServiceWithNotCertRI"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCS_CheckInCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_request4CerCITest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.lifecycle.ServiceLCS_StartCertificationCITest"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- lifeCycle -->

@@ -1,0 +1,156 @@
+##################################################################
+###################### vCE_Brocade_VDU Node  TYPE  ###############
+##################################################################
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.nfv.vdu.VCE_Brocade_VDU:
+    derived_from: org.openecomp.resource.nfv.vdu.RoutingCategoryVDU
+    description: Definition of VCE Brocade VDU
+    properties: 
+      vnf_category: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      vce_type: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      vendor: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      version: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      image_id: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer -vCE image used to boot VM
+      flavor_id: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - VM Size, SMALL, MEDIUM, LARGE
+      username: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer -login user Id of Router
+      password: 
+        type: string
+        description: I Input provided at DESIGN TIME by Service Composer or Designer - password for login 
+      domain_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - login domain
+      time_zone: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - time zone to set for vCE
+      login_session_timeout: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - user login session timeout
+      ipag_vlan_bandwidth: 
+        type: integer
+        description: Input provided at DESIGN TIME by Service Composer or Designer - bandwidth  allocation of customer VLAN requested by customer
+      vpe_vlan_interface_qos_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - QoS Policy name to be applied to this interface
+      ipag_vlan_interface_qos_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - QoS Policy name to be applied to this interface
+      hostname: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Host VM is created first and this value is input when the vCE image is later on installed by Cloud-PO
+      host_ip: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Host VM IP
+      availability_zone: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Cloud availability zone where VM is created
+      oam_loopback_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - OAM Network is pre-created - already exists in Data Center
+      ipag_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - IPAG VLAN Network is created by Cloud-PO before the vCE is created or installed
+      vpe_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VPE VLAN Network is created by Cloud-PO before the vCE is created / installed
+      vpe_vlan_id: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply VPE QoS Policy
+      ipag_vlan_id: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply IPAG QoS Policy
+      oam_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+      vpe_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+      ipag_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+    #############ATTRIBUTES of vCE - These values are outputted by Cloud-PO when vCE is created / installed ##############
+    attributes: 
+      vce_name:
+        type: string
+        description: Name assigned to vCE by Cloud-PO
+      oam_loopback_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to OAM VLAN
+      ipag_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to IPAG VLAN
+      vpe_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to VPE VLAN
+      vnf_id: 
+        type: string
+        description: unique id assigned to VNF by Cloud-PO - used for AAI metadata
+    
+    #############CAPABILITIES of vCE - #########################
+    capabilities: 
+      ce_routing_capability: 
+        type: org.openecomp.capabilities.nfv.CERouting
+        description: This is the base capability of vCE
+        occurrences: [1, UNBOUNDED] # default
+        
+      static_routing: 
+        type: org.openecomp.capabilities.nfv.StaticRouting
+        description: This is the optional capability of the vCE
+        occurrences: [0, UNBOUNDED]
+        
+      bgp_routing: 
+        type: org.openecomp.capabilities.nfv.BGPRouting
+        description: This is the optional capability of the vCE
+        occurrences: [0, UNBOUNDED]
+      
+      virtual_bindable: 
+        type: org.openecomp.capabilities.nfv.vdu.VirtualBindable
+        description: This is the internal capability of the VDU to support Binding to Connection Points
+        occurrences: [1, UNBOUNDED]
+        
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.VCE_Brocade_Routing
+        description: This capability has been introduced to model VCE VDU as a component of VCE VNF, because Node Template is not supported by ASDC Team
+    
+    #############REQUIREMENTS of vdu - ###########################
+    requirements: 
+      - oam_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.OAM_VLAN_Connector
+          node: org.openecomp.resource.nfv.cp.OAM_VLAN_Connector
+          relationship: tosca.relationships.ConnectsTo
+          occurrences: [1, 1]
+          
+      - vpe_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.VPE_VLAN_Connector
+          node: org.openecomp.resource.nfv.cp.VPE_VLAN_Connector
+          relationship: tosca.relationships.ConnectsTo
+          occurrences: [1, 1]
+          
+      - ipag_vlan_connector: 
+          capability: org.openecomp.capabilities.nfv.IPAG_VLAN_Connector
+          node: org.openecomp.resource.nfv.cp.IPAG_VLAN_Connector
+          relationship: tosca.relationships.ConnectsTo
+          occurrences: [1, 1]
+          
+      - hosted_on:  # A vCE  needs to be hosted in a VM
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.Compute
+          relationship: tosca.relationships.HostedOn
+          occurrences: [1, 1] #default
+    
+        
+      

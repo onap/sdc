@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Webfonts Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+	    body, textarea { font-family:Arial, Sans-Serif; line-height:1.6em; font-size:13px; }
+	    h1 { font-size:3em; }
+	    h2, h3 { color:#999; }
+	    .content { width:780px; margin: 20px auto 40px; }
+	    .demo { font-weight:bold; font-style:normal; color: #999 }
+	    .fontdisplay {font-size:2em;line-height:150%;margin: 10px 40px 0px 0px;}
+	    .guidelines { color:#333; }
+	    pre { padding:0 0 0 20px; }
+	    hr { border:0; border-bottom:1px solid #537094; margin:20px 0; }
+	    .link { color: #537094;text-decoration:none; font-weight:bold;}
+	    .uc {text-transform:uppercase}
+    </style>
+    <style type="text/css">
+@font-face{
+font-family:"Omnes_ATT W02";
+src:url("Fonts/02b2af6d-a4c1-4c4b-8f11-baee44545140.eot?#iefix");
+src:url("Fonts/02b2af6d-a4c1-4c4b-8f11-baee44545140.eot?#iefix") format("eot"),url("Fonts/af464c29-9cea-4b8d-81cc-00cd08fabfe7.woff") format("woff"),url("Fonts/20058a45-f038-4d9e-bce0-1c9ccc432bad.ttf") format("truetype"),url("Fonts/2c4d0064-5285-4d7f-9d73-9c5b3daff7d0.svg#2c4d0064-5285-4d7f-9d73-9c5b3daff7d0") format("svg");
+}
+@font-face{
+font-family:"OmnesATT W02 Bold Italic";
+src:url("Fonts/9f7cc8cc-9e14-4f09-9e6c-6232451a64c0.eot?#iefix");
+src:url("Fonts/9f7cc8cc-9e14-4f09-9e6c-6232451a64c0.eot?#iefix") format("eot"),url("Fonts/0df984e0-565b-416a-abda-22069b9ef7b1.woff") format("woff"),url("Fonts/7a9da78b-7de6-44b0-a74c-0c613875df92.ttf") format("truetype"),url("Fonts/e7a56966-375b-4700-b47f-74def0db152f.svg#e7a56966-375b-4700-b47f-74def0db152f") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Italic";
+src:url("Fonts/6a5c02a4-edd9-4454-a231-1b68e1c8cab9.eot?#iefix");
+src:url("Fonts/6a5c02a4-edd9-4454-a231-1b68e1c8cab9.eot?#iefix") format("eot"),url("Fonts/bb3ddfa8-3131-4094-a60d-1677ed2de9a2.woff") format("woff"),url("Fonts/7a1df320-73f0-4877-95dd-3db53c979c64.ttf") format("truetype"),url("Fonts/bd6a4532-d1c6-4200-99fc-663f46a5c842.svg#bd6a4532-d1c6-4200-99fc-663f46a5c842") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Light Italic";
+src:url("Fonts/3021a9bb-7932-4845-b597-8abd29895a4b.eot?#iefix");
+src:url("Fonts/3021a9bb-7932-4845-b597-8abd29895a4b.eot?#iefix") format("eot"),url("Fonts/e085f067-0b0b-4e72-875b-2c4e928ed237.woff") format("woff"),url("Fonts/db0b8d3d-42f5-4560-9de0-085b0cb49164.ttf") format("truetype"),url("Fonts/cda8110c-0e81-428d-9882-3725f543b047.svg#cda8110c-0e81-428d-9882-3725f543b047") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Bold";
+src:url("Fonts/f6a9e81d-954e-414b-9f0b-23e854036e8f.eot?#iefix");
+src:url("Fonts/f6a9e81d-954e-414b-9f0b-23e854036e8f.eot?#iefix") format("eot"),url("Fonts/e2d6d300-111b-4caa-8ff8-192381da8b2b.woff") format("woff"),url("Fonts/130418a5-b1bf-4d14-9c79-f6c8fdca2e55.ttf") format("truetype"),url("Fonts/8177ad65-0a92-4dec-8648-e0f73461f572.svg#8177ad65-0a92-4dec-8648-e0f73461f572") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Medium Italic";
+src:url("Fonts/c6ddf40e-258b-4f6c-92ca-f8bacdfe6883.eot?#iefix");
+src:url("Fonts/c6ddf40e-258b-4f6c-92ca-f8bacdfe6883.eot?#iefix") format("eot"),url("Fonts/bd70a9c2-aae2-4d25-8c49-0913d41440fa.woff") format("woff"),url("Fonts/a4c39d18-abbe-4310-8ad7-b1c9a29675d2.ttf") format("truetype"),url("Fonts/94a9ebf3-400e-42d1-920c-ac205b5ea560.svg#94a9ebf3-400e-42d1-920c-ac205b5ea560") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Light";
+src:url("Fonts/74c219c7-aeb3-43de-828f-4f3e06cd2a16.eot?#iefix");
+src:url("Fonts/74c219c7-aeb3-43de-828f-4f3e06cd2a16.eot?#iefix") format("eot"),url("Fonts/e0d8e81b-5325-424c-8f04-b0dc028ba635.woff") format("woff"),url("Fonts/6cbee459-f642-43e9-bf8b-389945b8c9d1.ttf") format("truetype"),url("Fonts/14143264-9384-4609-907b-2824b4892587.svg#14143264-9384-4609-907b-2824b4892587") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Medium";
+src:url("Fonts/e2bed2c5-3d6e-499f-b875-c4a90ef54dd4.eot?#iefix");
+src:url("Fonts/e2bed2c5-3d6e-499f-b875-c4a90ef54dd4.eot?#iefix") format("eot"),url("Fonts/b7f5f2fd-530a-477b-9283-bb182b23baa4.woff") format("woff"),url("Fonts/bb594ac8-7f76-47c5-9954-a7da05208c2e.ttf") format("truetype"),url("Fonts/822f5de4-eb23-48fb-aa3e-7304b432a38d.svg#822f5de4-eb23-48fb-aa3e-7304b432a38d") format("svg");
+}
+</style>
+<script type="text/javascript">
+var MTIProjectId='f017728a-fdf1-487c-bc0a-8b9166706a0a';
+ (function() {
+        var mtiTracking = document.createElement('script');
+        mtiTracking.type='text/javascript';
+        mtiTracking.async='true';
+        mtiTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/t/trackingCode.js';
+        (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
+   })();
+</script>
+</head>
+<body>
+    <div class="content">
+        <h1 class="demo">Fonts.com Web fonts</h1>
+        <p style="margin-top: -10px; font-size: 1.5em; color: #666"><b>@font-face implementation instructions</b></p>
+        <p>The asynchronous script loads in the background allowing the other elements of your website to load first and undeterred.</p>
+        <hr />
+        <p class="uc">The fonts contained in this kit are:</p>
+        <div class="fontdisplay">
+            <div style="font-family:'Omnes_ATT W02 Italic';"> Omnes_ATT W02 Italic </div>
+<div style="font-family:'Omnes_ATT W02 Light';"> Omnes_ATT W02 Light </div>
+<div style="font-family:'Omnes_ATT W02 Light Italic';"> Omnes_ATT W02 Light Italic </div>
+<div style="font-family:'Omnes_ATT W02 Medium';"> Omnes_ATT W02 Medium </div>
+<div style="font-family:'Omnes_ATT W02 Medium Italic';"> Omnes_ATT W02 Medium Italic </div>
+<div style="font-family:'Omnes_ATT W02';"> Omnes_ATT W02 Regular </div>
+<div style="font-family:'Omnes_ATT W02 Bold';"> Omnes_ATT W02 Bold </div>
+<div style="font-family:'OmnesATT W02 Bold Italic';"> Omnes_ATT W02 Bold Italic </div>
+
+        </div>
+        <hr />
+        Click here for <a class="link uc" href="demo.htm">css only</a> web fonts implementation
+        <hr />
+        <div class="guidelines">
+            <h2>CSS Implementation Guidelines</h2>
+            <p>You and any third party web font hosting service are responsible for ensuring that the font software in the self-hosting kit, in its original format, can only be used on the Web Sites for which the self-hosting kit was downloaded and cannot be used or referenced by any other web site. This includes, but is not limited to installing adequate technical protection measures that restrict the use and/or access to the font software, for instance by utilizing JavaScript or access control mechanism for cross-origin resource sharing and protecting against use on web sites other than the Web Sites for which the self-hosting kit was downloaded by restricting domain access only to such Web Sites. You must also retain the pageview tracking code on any Web Site that you self-host. In the event this Agreement terminates for any reason, the font software included with the self-hosting kit must be deleted from the server and all copies must be destroyed or returned to Monotype Imaging.</p>
+            <p>View <a class="link" href="http://new.fonts.com/info/legal/eula/web-fonts" target="_blank">"WEB FONT SOFTWARE" LICENSE AGREEMENT</a></p>
+            <h2>Asynchronous Implementation (Requires JavaScript)</h2>
+            <p>Font file names have been obfuscated to protect the font software. You can identify font format based on file ending:</p>
+            <ul>
+                <li>1 - TrueType (ttf)</li>
+                <li>2 - Embedded OpenType (eot)</li>
+                <li>3 - Web Open Font Format (woff)</li>
+                <li>4 - Scalable Vector Graphics (svg)</li>
+            </ul>
+            <p class="uc" style="margin: 20px 0px -20px;"><b>Copy and paste following code in head section of the page</b></p>
+            <hr />
+            <textarea style="width: 830px; height: 350px; border: 1 #fff solid; background-color: #fcfcfc;"><style type="text/css">
+@font-face{
+font-family:"Omnes_ATT W02";
+src:url("Fonts/02b2af6d-a4c1-4c4b-8f11-baee44545140.eot?#iefix");
+src:url("Fonts/02b2af6d-a4c1-4c4b-8f11-baee44545140.eot?#iefix") format("eot"),url("Fonts/af464c29-9cea-4b8d-81cc-00cd08fabfe7.woff") format("woff"),url("Fonts/20058a45-f038-4d9e-bce0-1c9ccc432bad.ttf") format("truetype"),url("Fonts/2c4d0064-5285-4d7f-9d73-9c5b3daff7d0.svg#2c4d0064-5285-4d7f-9d73-9c5b3daff7d0") format("svg");
+}
+@font-face{
+font-family:"OmnesATT W02 Bold Italic";
+src:url("Fonts/9f7cc8cc-9e14-4f09-9e6c-6232451a64c0.eot?#iefix");
+src:url("Fonts/9f7cc8cc-9e14-4f09-9e6c-6232451a64c0.eot?#iefix") format("eot"),url("Fonts/0df984e0-565b-416a-abda-22069b9ef7b1.woff") format("woff"),url("Fonts/7a9da78b-7de6-44b0-a74c-0c613875df92.ttf") format("truetype"),url("Fonts/e7a56966-375b-4700-b47f-74def0db152f.svg#e7a56966-375b-4700-b47f-74def0db152f") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Italic";
+src:url("Fonts/6a5c02a4-edd9-4454-a231-1b68e1c8cab9.eot?#iefix");
+src:url("Fonts/6a5c02a4-edd9-4454-a231-1b68e1c8cab9.eot?#iefix") format("eot"),url("Fonts/bb3ddfa8-3131-4094-a60d-1677ed2de9a2.woff") format("woff"),url("Fonts/7a1df320-73f0-4877-95dd-3db53c979c64.ttf") format("truetype"),url("Fonts/bd6a4532-d1c6-4200-99fc-663f46a5c842.svg#bd6a4532-d1c6-4200-99fc-663f46a5c842") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Light Italic";
+src:url("Fonts/3021a9bb-7932-4845-b597-8abd29895a4b.eot?#iefix");
+src:url("Fonts/3021a9bb-7932-4845-b597-8abd29895a4b.eot?#iefix") format("eot"),url("Fonts/e085f067-0b0b-4e72-875b-2c4e928ed237.woff") format("woff"),url("Fonts/db0b8d3d-42f5-4560-9de0-085b0cb49164.ttf") format("truetype"),url("Fonts/cda8110c-0e81-428d-9882-3725f543b047.svg#cda8110c-0e81-428d-9882-3725f543b047") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Bold";
+src:url("Fonts/f6a9e81d-954e-414b-9f0b-23e854036e8f.eot?#iefix");
+src:url("Fonts/f6a9e81d-954e-414b-9f0b-23e854036e8f.eot?#iefix") format("eot"),url("Fonts/e2d6d300-111b-4caa-8ff8-192381da8b2b.woff") format("woff"),url("Fonts/130418a5-b1bf-4d14-9c79-f6c8fdca2e55.ttf") format("truetype"),url("Fonts/8177ad65-0a92-4dec-8648-e0f73461f572.svg#8177ad65-0a92-4dec-8648-e0f73461f572") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Medium Italic";
+src:url("Fonts/c6ddf40e-258b-4f6c-92ca-f8bacdfe6883.eot?#iefix");
+src:url("Fonts/c6ddf40e-258b-4f6c-92ca-f8bacdfe6883.eot?#iefix") format("eot"),url("Fonts/bd70a9c2-aae2-4d25-8c49-0913d41440fa.woff") format("woff"),url("Fonts/a4c39d18-abbe-4310-8ad7-b1c9a29675d2.ttf") format("truetype"),url("Fonts/94a9ebf3-400e-42d1-920c-ac205b5ea560.svg#94a9ebf3-400e-42d1-920c-ac205b5ea560") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Light";
+src:url("Fonts/74c219c7-aeb3-43de-828f-4f3e06cd2a16.eot?#iefix");
+src:url("Fonts/74c219c7-aeb3-43de-828f-4f3e06cd2a16.eot?#iefix") format("eot"),url("Fonts/e0d8e81b-5325-424c-8f04-b0dc028ba635.woff") format("woff"),url("Fonts/6cbee459-f642-43e9-bf8b-389945b8c9d1.ttf") format("truetype"),url("Fonts/14143264-9384-4609-907b-2824b4892587.svg#14143264-9384-4609-907b-2824b4892587") format("svg");
+}
+@font-face{
+font-family:"Omnes_ATT W02 Medium";
+src:url("Fonts/e2bed2c5-3d6e-499f-b875-c4a90ef54dd4.eot?#iefix");
+src:url("Fonts/e2bed2c5-3d6e-499f-b875-c4a90ef54dd4.eot?#iefix") format("eot"),url("Fonts/b7f5f2fd-530a-477b-9283-bb182b23baa4.woff") format("woff"),url("Fonts/bb594ac8-7f76-47c5-9954-a7da05208c2e.ttf") format("truetype"),url("Fonts/822f5de4-eb23-48fb-aa3e-7304b432a38d.svg#822f5de4-eb23-48fb-aa3e-7304b432a38d") format("svg");
+}
+</style>
+<script type="text/javascript">
+var MTIProjectId='f017728a-fdf1-487c-bc0a-8b9166706a0a';
+ (function() {
+        var mtiTracking = document.createElement('script');
+        mtiTracking.type='text/javascript';
+        mtiTracking.async='true';
+        mtiTracking.src=('https:'==document.location.protocol?'https:':'http:')+'//fast.fonts.net/t/trackingCode.js';
+        (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild( mtiTracking );
+   })();
+</script></textarea>
+            <h3>Licensing information should be included within the CSS</h3>
+<pre>/*
+This CSS resource incorporates links to font software which is the valuable copyrighted
+property of Monotype Imaging and/or its suppliers. You may not attempt to copy, install,
+redistribute, convert, modify or reverse engineer this font software. Please contact Monotype
+Imaging with any questions regarding Web Fonts:  http://webfonts.fonts.com
+*/</pre>
+        </div>
+    </div>
+</body>
+</html>

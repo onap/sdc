@@ -1,0 +1,15 @@
+{
+  "payloadName": "compute.yml",
+  "contactId": "jh0003",
+  "resourceName": "tosca.nodes.Compute",
+  "description": "Represents a real or virtual machine or server. Information specified on the Compute
+      node will be used to find the machine that fits the given requirements in the cloud
+      available machines. If no sizing information are specified the cloud provider default
+      machine will be used. It is strongly recommended to specify the required  CPUs and memory
+      at least.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "tosca.nodes.Compute"
+  ]
+}

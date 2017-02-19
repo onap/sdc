@@ -1,0 +1,31 @@
+<div>
+    <form name="popoverForm" class="w-sdc-form" data-tests-id="popover-form">
+        <span class="tlv-sprite tlv-x-btn close-popover-btn" data-tests-id="popover-x-button" ng-click="closePopover()"></span>
+        <div class="form-group">
+            <span class="popover-label" data-tests-id="popover-vfinstance-name" tooltips tooltip-content="{{module.vfInstanceName}}">{{module.vfInstanceName}}</span>
+            <div class="popover-input">
+                <div class="i-sdc-form-item" data-ng-class="{'error': validateField(popoverForm.heatName)}">
+                    <input type="text"
+                           data-ng-model="module.heatName"
+                           data-ng-maxlength="50"
+                           maxlength="50"
+                           name="heatName"
+                           placeholder="Enter Name"
+                           autocomplete="off"
+                           data-ng-init="onInit()"
+                           data-ng-pattern="heatNameValidationPattern"
+                           data-tests-id="popover-heat-name"
+                           class="form-control"
+                    />
+                </div>
+                <div class="input-error" data-ng-show="validateField(popoverForm.heatName)">
+                    <span ng-show="popoverForm.heatName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                    <span ng-show="popoverForm.heatName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                </div>
+            </div>
+            <span class="popover-label" data-tests-id="popover-module-name" tooltips tooltip-content="{{module.moduleName}}">{{module.moduleName}}</span>
+            <button class="tlv-btn grey popover-btn" data-tests-id="popover-close-button" data-ng-click="closePopover()">Cancel</button>
+            <button class="tlv-btn blue popover-btn" data-tests-id="popover-save-button" data-ng-class="{'disabled': (validateField(popoverForm.heatName) || popoverForm.heatName.$viewValue === originalName)}" data-ng-click="updateHeatName()">Save</button>
+        </div>
+    </form>
+</div>

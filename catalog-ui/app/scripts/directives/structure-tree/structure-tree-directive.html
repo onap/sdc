@@ -1,0 +1,54 @@
+<div class="structure-tree">
+    <div class="component-container">
+        <div class="{{component.iconSprite}} small" ng-class="structureTree.serviceRoot.icon"></div>
+        <div class="component-container-text" tooltip-class="tooltip-custom break-word-tooltip" tooltips tooltip-content="&#8203;{{structureTree.serviceRoot.name}}"> {{structureTree.serviceRoot.name}}</div>
+    </div>
+    <ul>
+        <li  data-ng-repeat="firstLevelResourcesInstances in structureTree.serviceRoot.resourceInstancesList">
+            <div class="component-container">
+                <div class="small {{firstLevelResourcesInstances.icon}}" ng-class="{'sprite-resource-icons': !component.isProduct(), 'sprite-services-icons': component.isProduct()}">
+                    <div data-ng-class="{'non-certified':!firstLevelResourcesInstances.certified}"
+                         tooltips tooltip-side="top" tooltip-content="Not certified">
+                    </div>
+                </div>
+                <div class="component-container-text"  tooltips tooltip-content="{{firstLevelResourcesInstances.name}}" >   {{firstLevelResourcesInstances.name}} </div>
+            </div>
+            <ul>
+                <li data-ng-repeat="secondLevelResourcesInstances in firstLevelResourcesInstances.resourceInstancesList">
+                    <div class="component-container">
+                        <div class="sprite-resource-icons small" ng-class="secondLevelResourcesInstances.icon">
+                            <div data-ng-class="{'non-certified':!secondLevelResourcesInstances.certified}"
+                                 tooltips tooltip-side="top" tooltip-content="Not certified">
+                            </div>
+                        </div>
+                        <div class="component-container-text" tooltips tooltip-content="{{secondLevelResourcesInstances.name}}">   {{secondLevelResourcesInstances.name}} </div>
+                    </div>
+                    <ul>
+                        <li data-ng-repeat="thirdLevelResourcesInstances in secondLevelResourcesInstances.resourceInstancesList">
+                            <div class="component-container">
+                                <div class="sprite-resource-icons small" ng-class="thirdLevelResourcesInstances.icon">
+                                    <div data-ng-class="{'non-certified':!thirdLevelResourcesInstances.certified}"
+                                         tooltips tooltip-side="top" tooltip-content="Not certified">
+                                    </div>
+                                </div>
+                                <div class="component-container-text" tooltips tooltip-content="{{thirdLevelResourcesInstances.name}}" >   {{thirdLevelResourcesInstances.name}} </div>
+                            </div>
+                            <ul>
+                                <li data-ng-repeat="forthLevelResourcesInstances in thirdLevelResourcesInstances.resourceInstancesList">
+                                    <div class="component-container">
+                                        <div class="sprite-resource-icons small" ng-class="forthLevelResourcesInstances.icon">
+                                            <div data-ng-class="{'non-certified':!forthLevelResourcesInstances.certified}"
+                                                 tooltips tooltip-side="top" tooltip-content="Not certified">
+                                            </div>
+                                        </div>
+                                        <div class="component-container-text" tooltips tooltip-content="{{forthLevelResourcesInstances.name}}">   {{forthLevelResourcesInstances.name}} </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

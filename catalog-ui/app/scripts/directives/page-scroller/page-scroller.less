@@ -1,0 +1,98 @@
+.sdc-page-scroller {
+
+    /****************** Navigation ***************/
+    nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        width: 100px;
+        bottom: 0;
+        background-color: #000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    nav ul {
+        list-style: none;
+        text-align: center;
+        margin-top: 0;
+        padding: 0;
+    }
+
+    nav ul li {
+        display: block;
+        margin-bottom: 15px;
+
+    }
+
+    nav ul li:last-child {
+
+    }
+
+    nav a {
+        display: block;
+        height: 6px;
+        width: 6px;
+        border-radius: 50%;
+        background-color: #4a4c4d;
+    }
+
+    nav a.active {
+        position: relative;
+    }
+
+    nav a.active::after {
+        content: '';
+        display: block;
+        position: absolute;
+        border: 2px solid #0198d1;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        top: -5px;
+        left: -5px;
+    }
+
+    /****************** Previous Next navigation ***************/
+    .go-prev, .go-next {
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .slides-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: hidden;
+        z-index: 10;
+    }
+
+    .slide {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .slide .centered {
+        width: 60%;
+        margin: 200px auto 0;
+    }
+
+    .slide .centered h1 {
+        text-align: center;
+    }
+
+    .slide .centered p {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 20px;
+    }
+
+}

@@ -1,0 +1,4 @@
+{
+    "run_list": [ "recipe[sdc-kibana::setup_kibana]" ]
+}
+

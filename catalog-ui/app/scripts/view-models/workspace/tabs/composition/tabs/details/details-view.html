@@ -1,0 +1,129 @@
+<perfect-scrollbar include-padding="true" class="w-sdc-designer-sidebar-tab-content details">
+
+    <div class="w-sdc-designer-sidebar-section">
+        <loader data-display="isLoading"></loader>
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.general" class="w-sdc-designer-sidebar-section-title">
+
+            General Info
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content general">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Type:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value"  data-tests-id="rightTab_componentType" data-ng-bind="selectedComponent.componentType"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isResource()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Resource Type:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-if="selectedComponent.isResource()" data-ng-bind="selectedComponent.resourceType"
+                      tooltips tooltip-content="&#8203;{{selectedComponent.resourceType | resourceTypeName}}"
+                      data-tests-id="rightTab_resourceType"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item">
+
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Version:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value"
+                      data-ng-if="!isComponentInstanceSelected() || selectedComponent.isVl()"  data-tests-id="rightTab_version" data-ng-bind="selectedComponent.version"></span>
+
+                <ng-form name="editForm" data-ng-if="isComponentInstanceSelected() && !selectedComponent.isVl()">
+                    <select data-ng-model="editResourceVersion.changeVersion" name="changeVersion" data-ng-disabled="$parent.isViewOnly"
+                            class="i-sdc-designer-sidebar-section-content-item-value i-sdc-form-select"
+                            data-ng-class="{'minor': (editResourceVersion.changeVersion)%1}"
+                            data-ng-change="changeResourceVersion()">
+                        <option class="select-instance-version" data-ng-class="{'minor': key%1}"
+                                ng-repeat="(key, value) in editResourceVersion.allVersions">{{key}}</option>
+                    </select></ng-form>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.categories && selectedComponent.categories[0]">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Category:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.categories[0].name"
+                        tooltips tooltip-content="&#8203;{{selectedComponent.categories[0].name}}"
+                        data-tests-id="rightTab_category"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.categories && selectedComponent.categories[0] && selectedComponent.categories[0].subcategories">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Sub Category:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.categories[0].subcategories[0].name"
+                      tooltips tooltip-content="&#8203;{{selectedComponent.categories[0].subcategories[0].name}}"
+                      data-tests-id="rightTab_subCategory"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Creation Date:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.creationDate | date: 'MM/dd/yyyy'"
+                      data-tests-id="rightTab_creationDate"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Author:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.creatorFullName"
+                      tooltips tooltip-content="&#8203;{{selectedComponent.creatorFullName}}"
+                      data-tests-id="rightTab_author">
+                </span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isService()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_PROJECT_CODE"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value"
+                      data-tests-id="rightTab_projectCode" data-ng-bind="selectedComponent.projectCode"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isResource()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Vendor Name:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.vendorName"
+                      tooltips tooltip-content="&#8203;{{selectedComponent.vendorName}}"
+                      data-tests-id="rightTab_vendorName">
+                </span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-if="selectedComponent.isResource()">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Vendor Release:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.vendorRelease"
+                      tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="&#8203;{{selectedComponent.vendorRelease}}"
+                      data-tests-id="rightTab_vendorRelease">
+                </span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <span class="i-sdc-designer-sidebar-section-content-item-label" translate="GENERAL_LABEL_CONTACT_ID"></span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value" data-ng-bind="selectedComponent.contactId"
+                      data-tests-id="rightTab_userId"></span>
+            </div>
+            <div class="i-sdc-designer-sidebar-section-content-item description">
+                <span class="i-sdc-designer-sidebar-section-content-item-label">Description:
+
+                    <span class="i-sdc-designer-sidebar-section-content-description-item-value" ellipsis="selectedComponent.description" max-chars="55"
+                          data-tests-id="rightTab_description"></span>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="w-sdc-designer-sidebar-section additionalInformation">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.additionalInformation" class="w-sdc-designer-sidebar-section-title">
+            Additional Information
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content additionalInformation">
+            <div class="i-sdc-designer-sidebar-section-content-item" data-ng-repeat="additionalInformation in selectedComponent.getAdditionalInformation() track by $index">
+                <span class="i-sdc-designer-sidebar-section-content-item-label additional-information" data-ng-bind="additionalInformation.key" tooltips tooltip-content="{{additionalInformation.key}}"></span>
+               <span class="i-sdc-designer-sidebar-section-content-item-label">:</span>
+                <span class="i-sdc-designer-sidebar-section-content-item-value additional-information" data-ng-bind="additionalInformation.value"
+                      tooltips tooltip-class="tooltip-custom break-word-tooltip" tooltip-content="{{additionalInformation.value}}"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="w-sdc-designer-sidebar-section tags">
+        <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.tags" class="w-sdc-designer-sidebar-section-title">
+            Tags
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content tags">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <span class="i-sdc-designer-sidebar-section-content-item-tag" data-ng-repeat="tag in selectedComponent.tags track by $index" data-ng-bind="tag"
+                data-tests-id="rightTab_tag" tooltips tooltip-content="{{tag}}"></span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</perfect-scrollbar>
+

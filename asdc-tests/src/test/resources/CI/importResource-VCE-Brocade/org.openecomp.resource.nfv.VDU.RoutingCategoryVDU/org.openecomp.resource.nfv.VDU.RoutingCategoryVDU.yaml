@@ -1,0 +1,7 @@
+##################################################################
+###################### ASDC Routing Category VDU #################
+##################################################################
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:   
+  org.openecomp.resource.nfv.vdu.RoutingCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU

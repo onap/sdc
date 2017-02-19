@@ -1,0 +1,199 @@
+// ---------------------------------------------------------------------------------------------------
+// Form
+// ---------------------------------------------------------------------------------------------------
+.w-sdc-form {
+    padding: 0;
+
+    .w-sdc-form-actions-container {
+        margin: 20px auto; // -10px;
+        width: 100%; // 320px;
+    }
+
+    .w-sdc-form-columns-wrapper {
+
+        display: flex;
+        justify-content: space-between;
+
+        .w-sdc-form-column {
+             width: 100%;
+             margin: 0;
+             padding: 0 6% 0 0;
+            text-align: left;
+
+            &:last-child {
+                padding: 0;
+            }
+         }
+
+    }
+
+    .i-sdc-form-item {
+        margin-bottom: 10px;
+        position: relative;
+        text-align: left;
+
+        &.error {
+            input[type="text"],
+            input[type="url"],
+            input[type="number"],
+            input[type="password"],
+            select,
+            textarea {
+                .h_1;
+                border-color: @main_color_g;
+                outline: none;
+                box-sizing: border-box;
+
+                &:hover {
+                    .h_1;
+                    border-color: @main_color_g;
+                }
+            }
+            label {
+                .m_14_m;
+            }
+        }
+
+        label {
+            .m_14_m;
+            margin: 0 0 2px 0;
+            padding: 0;
+            display: block;
+
+            &.required::before {
+                color: #f33;
+                content: '*';
+                margin: 0 4px 0 0;
+            }
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        input[type="password"],
+        select,
+        textarea {
+            .m_14_r;
+            background-color: @main_color_p;
+            .border-radius(2px);
+            margin: 0;
+            padding: 0;
+            border: solid 1px @main_color_o;
+            height: 30px;
+            width: 100%;
+            display: block;
+
+            &::-webkit-input-placeholder { font-style: italic; } /* Safari, Chrome and Opera */
+            &:-moz-placeholder { font-style: italic; } /* Firefox 18- */
+            &::-moz-placeholder { font-style: italic; } /* Firefox 19+ */
+            &:-ms-input-placeholder { font-style: italic; } /* IE 10+ */
+            &:-ms-input-placeholder { font-style: italic; } /* Edge */
+
+            &:disabled {
+                opacity: 0.4;
+            }
+            &.view-mode {
+                opacity: 1;
+                border: solid 1px @main_color_o;
+                background-color: #f8f8f8 !important;
+                pointer-events: none;
+                cursor: auto;
+            }
+
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        input[type="password"]  { padding: 4px 10px;}
+        select                  { padding: 4px 7px;}
+        textarea                { padding: 6px 10px;}
+
+        select {
+            optgroup {
+                color: @color_a;
+                option {
+                    color: @color_b;
+                }
+
+            }
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: none;
+        }
+
+    }
+
+    .i-sdc-form-item-error-icon {
+        .sprite;
+        .exclamation-mark-red-icon;
+        width: 13px;
+        height: 11px;
+        position: absolute;
+
+        .i-sdc-form-item-error-message {
+            .bg_h;
+            .c_3;
+            cursor: default;
+            position: absolute;
+            top: -10px;
+            left: -8px;
+            height: 30px;
+            padding: 6px 10px 6px 30px;
+            z-index: 999;
+            text-align: left;
+            .border-radius-top-right(4px);
+            .border-radius-bottom-right(4px);
+            .box-shadow(0px 1px 1px 0px rgba(24, 24, 25, 0.43));
+
+            &:before {
+                .arrow(5px, @color_h);
+            }
+
+            span {
+                white-space: nowrap;
+            }
+
+            span.error {
+                .sprite;
+                .exclamation-mark-red-icon;
+                position: absolute;
+                top: 9px;
+                left: 8px;
+            }
+
+            span.ok {
+                .c_3;
+                .hand;
+                position: absolute;
+                right: 10px;
+                text-decoration: underline;
+            }
+
+            .i-sdc-form-item-error-icon-open {
+                .sprite;
+                .exclamation-mark-white-icon;
+                width: 13px;
+                height: 11px;
+                position: absolute;
+                top: 9px;
+                left: 8px;
+            }
+
+        }
+
+    }
+
+    .input-error {
+        .q_12_m;
+        text-align: left;
+    }
+
+    .input-error-file-upload {
+        .input-error;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+}

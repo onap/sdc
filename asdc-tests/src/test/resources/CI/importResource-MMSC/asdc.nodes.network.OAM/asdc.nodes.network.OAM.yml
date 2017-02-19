@@ -1,0 +1,5 @@
+asdc.nodes.network.OAM:
+  derived_from: asdc.nodes.Network
+  capabilities:
+    oam_connection:
+      type: asdc.capabilities.NetworkInterface

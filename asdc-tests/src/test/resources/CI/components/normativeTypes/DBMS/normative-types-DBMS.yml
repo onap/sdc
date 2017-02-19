@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0_wd03
+
+template_name: tosca-normative-types-DBMS
+template_author: TOSCA TC
+template_version: 1.0.0.wd03-SNAPSHOT
+
+description: Contains the normative types definition.
+imports:
+  - "tosca-normative-types-root:1.0.0.wd03-SNAPSHOT"
+  - "tosca-normative-types-softwareComponent:1.0.0.wd03-SNAPSHOT"
+  
+node_types:
+  tosca.nodes.DBMS:
+    abstract: true
+    derived_from: tosca.nodes.SoftwareComponent
+    description: >
+      The TOSCA DBMS node represents a typical relational, SQL Database Management System software component or service.
+    tags:
+      icon: /images/relational_db.png
+    properties:
+      dbms_root_password:
+        type: string
+        required: false
+        description: the root password for the DBMS service.
+      dbms_port:
+        type: integer
+        required: false
+        description: the port the DBMS service will listen to for data and requests
+    capabilities:
+      host:
+        type: tosca.capabilities.Container
+        properties:
+          valid_node_types: [tosca.nodes.Database]
+      endpoint:
+        type: tosca.capabilities.DatabaseEndpoint
+

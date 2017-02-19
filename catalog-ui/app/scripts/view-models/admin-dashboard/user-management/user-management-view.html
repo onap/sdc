@@ -1,0 +1,102 @@
+<div ng-controller="Sdc.ViewModels.UserManagementViewModel">
+    <loader data-display="isLoading"></loader>
+    <div class="sdc-user-management-top-bar">
+        <div class="sdc-user-management-top-bar-search-container">
+            <label class="sdc-user-management-top-bar-search-text">Search User</label>
+            <input type="text" class="sdc-user-management-top-bar-form-input" placeholder="{{ USER_MANAGEMENT_SEARCH_LABEL | translate }}" data-ng-model="search.filterTerm" ng-model-options="{ debounce: 500 }" data-tests-id="searchbox" />
+            <span class="w-sdc-search-icon" data-ng-class="{'cancel':search.filterTerm, 'magnification':!search.filterTerm}" data-ng-click="search.filterTerm=''" ></span>
+        </div>
+        <div  class="vertical-border-container">
+            <div class="vertical-border"></div>
+        </div>
+        <form class="sdc-user-management-top-bar-create-user-container w-sdc-form" name="editForm">
+            <label class="sdc-user-management-top-bar-title">Create New User</label>
+            <div class="sdc-user-management-top-bar-wrapper">
+                <div class="i-sdc-form-item sdc-user-management-top-bar-form-container" data-ng-class="{error:(editForm.contactId.$dirty && editForm.contactId.$invalid)}">
+                    <input ng-focus="search.filterTerm=''" type="text"
+                           data-ng-model="newUser.resource.userId"
+                           class="i-sdc-form-input"
+                           placeholder="{{ USER_MANAGEMENT_SEARCH_TEXT | translate}}"
+                           data-ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 750, 'blur': 0 } }"
+                           name="contactId"
+                           data-ng-pattern="userIdValidationPattern"
+                           data-ng-change="clearForm()"
+                           data-ng-blur="clearForm()"
+                           data-required
+                           data-tests-id="newuserid" />
+
+                    <div class="input-error" data-ng-show="editForm.contactId.$dirty && editForm.contactId.$invalid">
+                        <span ng-show="editForm.contactId.$error.required" translate="NEW_USER_ERROR_USER_ID_REQUIRED"></span>
+                        <span ng-show="editForm.contactId.$error.pattern" translate="NEW_USER_ERROR_USER_ID_NOT_VALID"></span>
+                    </div>
+                </div>
+                <div class="i-sdc-form-item sdc-user-management-top-bar-form-container"  data-ng-class="{error:(editForm.role.$dirty && editForm.role.$invalid
+                                                                                                            && editForm.contactId.$viewValue)}">
+                    <select class="i-sdc-form-select capitalize"
+                            data-required
+                            name="role"
+                            data-tests-id="selectrole"
+                            data-ng-model = "newUser.resource.role"
+                            data-ng-options="role as (getTitle(role)) for role in roles | orderBy:'role'"
+                            ng-focus="search.filterTerm=''">
+                        <option value="">Select Role</option>
+                    </select>
+                    <div class="input-error" data-ng-show="editForm.role.$dirty && editForm.role.$invalid && editForm.contactId.$viewValue">
+                        <span ng-show="editForm.role.$error.required" translate="NEW_USER_ERROR_ROLE_REQUIRED"></span>
+                    </div>
+                </div>
+                <button data-tests-id="creategreen" data-ng-disabled="editForm.$invalid" class="sdc-user-management-top-bar-create-btn" ng-click="search.filterTerm = '' ; createUser()">Create</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div  class="sdc-user-management-table-container-flex">
+
+        <div class="sdc-user-management-table">
+            <div class="head sdc-user-management-flex-container">
+                <div class="sdc-user-management-table-header head-row hand sdc-user-management-flex-item" data-tests-id="th{{header.title}}" ng-repeat="header in tableHeadersList" ng-click="sort(header.property)">{{header.title}}
+                    <span  ng-if="sortBy === header.property" class="sdc-user-management-table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+              <div class="sdc-user-management-table-no-text-header head-row sdc-user-management-flex-item"></div>
+                <div class="sdc-user-management-table-no-text-header head-row sdc-user-management-flex-item"></div>
+            </div>
+
+            <div class="body">
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div ng-init="user.filterTerm = user.firstName + ' ' + user.lastName + ' ' + user.userId + ' ' + user.email + ' ' + user.role + ' ' + (user.lastLoginTime | date: 'MM/dd/yyyy')"
+                         ng-repeat="user in usersList | filter: search | orderBy:sortBy:reverse"
+                         data-ng-class="{'sdc-user-management-table-new-user-row': (isNewUser && $first), 'sdc-user-management-table-row-edit-mode': user.isInEditMode}"
+                         class="sdc-user-management-flex-container data-row" data-tests-id="tdRow">
+
+                        <div sdc-smart-tooltip class="sdc-user-management-table-col-general sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[0].title}}">{{user.firstName || '---'}}</div>
+                        <div sdc-smart-tooltip class="sdc-user-management-table-col-general sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[1].title}}">{{user.lastName || '---' }}</div>
+                        <div class="sdc-user-management-table-col-userid sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[2].title}}">{{user.userId || '---'}}</div>
+                        <div sdc-smart-tooltip class="sdc-user-management-table-col-general sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[3].title}}">{{user.email || '---'}}</div>
+                        <div class="sdc-user-management-table-col-general sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[4].title}}">
+                            <div class="sdc-user-management-table-role-select capitalize sdc-user-management-table-role-label"
+                                 data-ng-if="!user.isInEditMode"
+                                 data-ng-bind="getTitle(user.role)"></div>
+                            <select class="sdc-user-management-table-role-select capitalize"
+                                    data-tests-id="tdselectrole"
+                                    data-ng-if="user.isInEditMode"
+                                    data-ng-model="user.tempRole"
+                                    data-ng-options="role as (getTitle(role)) for role in roles | orderBy:'role'">
+                            </select>
+                        </div>
+                        <div class="sdc-user-management-table-col-general sdc-user-management-flex-item" data-tests-id="td{{tableHeadersList[5].title}}">{{user.lastLoginTime == 0 ? 'Waiting' :  (user.lastLoginTime | date:'MM/dd/yyyy')}}</div>
+                        <div class="sdc-user-management-table-btn-col sdc-user-management-flex-item">
+                            <button data-ng-disabled="user.isInEditMode" data-ng-hide="user.isInEditMode || currentUser.userId === user.userId"  class="sdc-user-management-table-edit-btn" ng-click="onEditUserPressed(user)" data-tests-id="updateuser{{user.userId}}"> </button>
+                            <button data-ng-show="user.isInEditMode" class="sdc-user-management-table-save-btn" ng-click="saveUserChanges(user)" data-tests-id="tdsave"> </button>
+                        </div>
+                        <div class="sdc-user-management-table-btn-col sdc-user-management-flex-item">
+                            <button data-ng-hide="currentUser.userId === user.userId"  class="sdc-user-management-table-delete-btn" ng-click="deleteUser(user.userId)" data-tests-id="delete{{user.userId}}"> </button>
+                        </div>
+
+                    </div>
+                </perfect-scrollbar>
+            </div>
+
+        </div>
+    </div>
+</div>

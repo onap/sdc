@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="uiSanity" configfailurepolicy="continue" verbose="2">
+	<parameter name="clean-type" value="FULL" /> <!--Valid Values are:  PARTIAL, FULL, NONE -->
+	<test name="Vfc Tests">
+		<classes>
+			<class name="org.openecomp.sdc.uici.tests.execute.vfc.VfcBasicTests">
+				<methods>
+					<include name="testImportVfc" />
+					<include name="testUpdateTypeForAttributeOfVfc" />
+				</methods>
+			</class>
+		</classes>
+	</test> 
+
+	<test name="VF Tests">
+		<classes>
+			<class name="org.openecomp.sdc.uici.tests.execute.vf.VfBasicTests">
+				<methods>
+					<include name="testImportVf" />
+					<include name="testUpdateInstanceAttributeValue" />
+					<include name="testVfCertification" /> 
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.uici.tests.execute.vf.VfCanvasTests">
+				<methods>
+					<include name="testCanvasVFSanity" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.uici.tests.execute.vf.VfDeploymentTests">
+				<methods>
+					<include name="testUpdateModuleNameSanity" />
+					<include name="testTabsViewSanity"/>
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Service Tests">
+		<classes>
+			<class name="org.openecomp.sdc.uici.tests.execute.service.ServiceBasicTests">
+				<methods>
+					<include name="testLinkTwoRI" />
+					<include name="testBuildServiceForDistribution" />
+				</methods>
+			</class>			
+			<class name="org.openecomp.sdc.uici.tests.execute.service.ServiceInputsTests">
+				<methods>
+					<include name="testInputsSanity" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite> 

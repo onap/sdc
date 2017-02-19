@@ -1,0 +1,81 @@
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content properties">
+    <div class="w-sdc-designer-sidebar-section">
+
+        <!--expand-collapse data-ng-if="isPropertyOwner() && !currentComponent.properties.length" expanded-selector=".w-sdc-composition-sidebar-section-content.{{currentComponent.name}}"
+                         class="w-sdc-composition-sidebar-section-title">
+            <span class="w-sdc-composition-sidebar-section-title-text" tooltips tooltip-content="{{currentComponent.name | resourceName}}&nbsp;Properties"
+                data-ng-bind="(currentComponent.name | resourceName)+ ' Properties'"></span>
+            <div class="w-sdc-composition-sidebar-section-title-icon"></div>
+        </expand-collapse-->
+
+
+        <!--properties-->
+        <expand-collapse data-ng-repeat-start="(key, group) in properties"
+                         expanded-selector=".w-sdc-designer-sidebar-section-content.properties.{{$index}}" class="w-sdc-designer-sidebar-section-title">
+            <span class="w-sdc-designer-sidebar-section-title-text" data-ng-bind="groupNameByKey(key) + ' Properties'"
+                  tooltips tooltip-content="{{groupNameByKey(key)}}&nbsp;Properties"></span>
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div data-ng-repeat-end="" class="w-sdc-designer-sidebar-section-content properties {{$index}}"> <!--data-ng-show="isShowDetailsSection" -->
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" data-tests-id="propertyRow"
+                     data-ng-repeat="property in group | orderBy: 'name' track by $index">
+                    <div>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                              data-ng-class="{'hand enabled': !$parent.isViewOnly}"
+                              tooltips tooltip-content="{{property.name}}"
+                              data-ng-click="!$parent.isViewOnly && updateProperty(property)">{{property.name}}</span>
+                    </div>
+                    <div>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-value" data-ng-if="isPropertyOwner()"
+                              tooltips tooltip-content="{{property.defaultValue}}">{{property.defaultValue}}</span>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-value" data-ng-if="!isPropertyOwner()"
+                              tooltips tooltip-content="{{property.value}}">{{property.value}}</span>
+                    </div>
+                    <button class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
+                            data-ng-if="!$parent.isViewOnly&&(isPropertyOwner() && !property.readonly)"
+                            data-ng-click="deleteProperty(property)" type="button"></button>
+                </div>
+            </div>
+
+        </div>
+        <div class="w-sdc-designer-sidebar-section-footer">
+            <button class="w-sdc-designer-sidebar-section-footer-action tlv-btn blue" data-ng-click="addProperty()" type="button" data-ng-if="!$parent.isViewOnly && isPropertyOwner()">
+                Add Property
+            </button>
+        </div>
+
+
+        <!--attributes-->
+        <expand-collapse data-ng-repeat-start="(key, group) in attributes"
+                         expanded-selector=".w-sdc-designer-sidebar-section-content.attributes.{{$index}}" class="w-sdc-designer-sidebar-section-title">
+            <span class="w-sdc-designer-sidebar-section-title-text" data-ng-bind="groupNameByKey(key) + ' Attributes'"
+                  tooltips tooltip-content="{{groupNameByKey(key)}}&nbsp;Attributes"></span>
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div data-ng-repeat-end="" class="w-sdc-designer-sidebar-section-content attributes {{$index}}"> <!--data-ng-show="isShowDetailsSection" -->
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute"
+                     data-ng-repeat="attribute in group | orderBy: 'name' track by $index">
+                    <div>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                              data-ng-class="{'hand enabled': !$parent.isViewOnly}"
+                              tooltips tooltip-content="{{attribute.name}}"
+                              data-ng-click="!$parent.isViewOnly && viewAttribute(attribute)"
+                              data-tests-id="{{attribute.name}}-attr">{{attribute.name}}</span>
+                    </div>
+                    <div>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-value" data-ng-if="isPropertyOwner()"
+                              tooltips tooltip-content="{{attribute.defaultValue}}">{{attribute.defaultValue}}</span>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-value" data-ng-if="!isPropertyOwner()"
+                              tooltips tooltip-content="{{attribute.value}}" data-tests-id="value-of-{{attribute.name}}">{{attribute.value}}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</perfect-scrollbar>

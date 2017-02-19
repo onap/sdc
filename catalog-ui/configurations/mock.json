@@ -1,0 +1,192 @@
+{
+    "sdcConfig": {
+        "api": {
+            "GET_user": "/v1/user/:id",
+            "GET_user_authorize": "/v1/user/authorize",
+            "GET_resource": "/v1/resource/:id",
+            "GET_resources_certified_not_abstract": "/v1/catalog/resources/certified/notabstract/:id",
+            "GET_resources_certified_abstract": "/v1/catalog/resources/certified/abstract/:id",
+            "GET_resource_property": "/v1/:type/:entityId/property/:id",
+            "GET_resource_artifact": "/v1/catalog/:type/:entityId/artifacts/:id",
+            "GET_service_artifact": "/v1/catalog/services/:serviceId/artifacts/:id",
+            "GET_resource_artifact_types": "/v1/artifactTypes",
+            "GET_resource_validate_name": "/v1/resource/validate-name/:name",
+            "GET_service": "/v1/catalog/services/:id",
+            "GET_service_validate_name": "/v1/catalog/services/validate-name/:name",
+            "GET_service_distributions":"/v1/catalog/services/:uuid/distribution",
+            "GET_service_distributions_components":"/v1/catalog/services/distribution/:distributionId",
+            "POST_service_distribution_deploy" : "/v1/catalog/services/:serviceId/distribution/:distributionId/markDeployed",
+            "GET_element": "/v1/followed",
+            "GET_catalog": "/v1/screen",
+            "GET_resource_category": "/v1/resourceCategories",
+            "GET_service_category": "/v1/serviceCategories",
+            "resource_instance": "/v1/catalog/services/:serviceId/resourceInstance/:id",
+            "GET_resource_instance_property": "/v1/catalog/services/:serviceId/resourceInstance/:resourceInstanceId/property/:propertyValueId",
+            "GET_relationship": "/v1/catalog/services/:serviceId/resourceInstance/:action",
+            "GET_lifecycle_state_resource": "/v1/catalog/:type/:id/lifecycleState/:action",
+            "GET_lifecycle_state_CHECKIN":"lifecycleState/CHECKIN",
+            "GET_lifecycle_state_CERTIFICATIONREQUEST":"lifecycleState/CERTIFICATIONREQUEST",
+            "GET_lifecycle_state_UNDOCHECKOUT":"lifecycleState/UNDOCHECKOUT",
+            "root": "http://localhost:9999"
+        },
+        "logConfig": {
+            "minLogLevel": "debug",
+            "prefix": "sdcApp"
+        },
+        "cookie": {
+            "junctionName": "IV_JCT",
+            "prefix": "AMWEBJCT!",
+            "userIdSuffix": "USER_ID",
+            "userFirstName": "HTTP_CSP_FIRSTNAME",
+            "userLastName": "HTTP_CSP_LASTNAME",
+            "userEmail": "HTTP_CSP_EMAIL",
+            "xEcompRequestId": " X-ECOMP-RequestID"
+        },
+        "userTypes": {
+            "admin": {
+                "userId": "jh0003",
+                "email": "mail@gmail.com",
+                "firstName": "Jimmy",
+                "lastName": "Hendrix",
+                "xEcompRequestId": "ccccc"
+            },
+            "designer": {
+                "userId": "cs0008",
+                "email": "designer@sdc.com",
+                "firstName": "Carlos",
+                "lastName": "Santana",
+                "xEcompRequestId": "ccccc"
+            },
+            "tester": {
+                "userId": "kb0004",
+                "email": "tester@sdc.com",
+                "firstName": "Kate",
+                "lastName": "Bush",
+                "xEcompRequestId": "ccccc"
+            },
+            "governor": {
+                "userId": "gv0001",
+                "email": "governor@sdc.com",
+                "firstName": "gover",
+                "lastName": "nor",
+                "xEcompRequestId": "ccccc"
+            },
+            "ops": {
+                "userId": "op0001",
+                "email": "ops@sdc.com",
+                "firstName": "op",
+                "lastName": "ss",
+                "xEcompRequestId": "ccccc"
+            },
+            "product_strategist": {
+				"userId": "ps0001",
+				"email": "product_strategist@sdc.com",
+				"firstName": "Orit",
+				"lastName": "Barda",
+				"xEcompRequestId": "ccccc"
+			},
+            "product_manager": {
+                "userId": "pm0001",
+                "email": "product_manager@sdc.com",
+                "firstName": "Orit",
+                "lastName": "Barda",
+                "xEcompRequestId": "ccccc"
+            }
+        },
+        "statuses": {
+            "inDesign": {
+                "name": "In Design",
+                "values": [
+                    "NOT_CERTIFIED_CHECKOUT",
+                    "NOT_CERTIFIED_CHECKIN"
+                ]
+            },
+            "readyForCertification": {
+                "name": "Ready for certification",
+                "values": "READY_FOR_CERTIFICATION"
+            },
+            "inCertification": {
+                "name": "In Certification",
+                "values": "CERTIFICATION_IN_PROGRESS"
+            },
+            "certified": {
+                "name": "Certified",
+                "values": "CERTIFIED"
+            },
+            "distributed": {
+                "name": "Distributed",
+                "values": "TBD"
+            }
+        },
+        "imagesPath": ""
+    },
+    "roles":{
+        "ADMIN":{
+            "pages":[],
+            "states":{
+                "NOT_CERTIFIED_CHECKOUT":[
+                    {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"},
+                    {"text":"View"    ,"action":"openViewerModal"},
+                    {"text":"Edit"    ,"action":"goToEntity"}
+                ],
+                "NOT_CERTIFIED_CHECKIN":[
+                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
+                    {"text":"View"    ,"action":"openViewerModal"}
+
+                ],
+                "READY_FOR_CERTIFICATION":[],
+                "CERTIFICATION_IN_PROGRESS":[],
+                "CERTIFIED":[]
+            }
+        },
+        "DESIGNER":{
+            "pages":[
+            ],
+            "states":{
+                "NOT_CERTIFIED_CHECKOUT":[
+                    {"text":"Edit"    ,"action":"goToEntity"},
+                    {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"},
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
+                    {"text":"View"    ,"action":"openViewerModal"}
+                ],
+                "NOT_CERTIFIED_CHECKIN":[
+                    {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
+                    {"text":"View"    ,"action":"openViewerModal"}
+                ],
+                "READY_FOR_CERTIFICATION":[
+                    {"text":"View"    ,"action":"openViewerModal"}
+                ],
+                "CERTIFICATION_IN_PROGRESS":[
+                    {"text":"View"    ,"action":"openViewerModal"}
+                ],
+                "CERTIFIED":[
+                    {"text":"View"    ,"action":"openViewerModal"}
+                ]
+            }
+
+        },
+        "TESTER":{
+            "pages":[],
+            "READY_FOR_CERTIFICATION":[],
+            "CERTIFICATION_IN_PROGRESS":[],
+            "CERTIFIED":[]
+
+        },
+        "OPS":{
+            "pages":[],
+            "READY_FOR_CERTIFICATION":[],
+            "CERTIFICATION_IN_PROGRESS":[],
+            "CERTIFIED":[]
+
+        },
+        "GOVERNOR":{
+            "pages":[],
+            "READY_FOR_CERTIFICATION":[],
+            "CERTIFICATION_IN_PROGRESS":[],
+            "CERTIFIED":[]
+
+        }
+    }
+}

@@ -1,0 +1,18 @@
+<div data-ng-class="{'w-sdc-modal': type===undefined, 'w-sdc-classic-modal': type==='classic'}">
+    <div class="w-sdc-modal-head">
+        <span data-ng-if="header" class="w-sdc-modal-head-text">{{header}}</span>
+        <span data-ng-if="headerTranslate" class="w-sdc-modal-head-text" translate="{{headerTranslate}}" translate-values="{{headerTranslateValues}}"></span>
+        <div data-ng-if="showCloseButton==='true'" class="w-sdc-modal-close" data-ng-click="cancel()"></div>
+    </div>
+    <div class="w-sdc-modal-body" data-ng-class="{'classic': type==='classic'}">
+        <ng-transclude></ng-transclude>
+    </div>
+    <div class="w-sdc-modal-footer" data-ng-if="type==='classic' && buttons!==undefined">
+        <button data-ng-repeat="button in buttons"
+                data-tests-id="{{button.name}}"
+                class="tlv-btn {{button.css}}"
+                data-ng-class="{'disabled': button.disabled===true}"
+                data-ng-disabled="button.disabled===true"
+                data-ng-click="button.callback()">{{button.name}}</button>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "payloadName": "router.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.Router",
+  "description": "Represents a Router Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "org.openecomp.asdc.nodes.Router"
+  ]
+}

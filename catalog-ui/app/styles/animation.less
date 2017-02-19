@@ -1,0 +1,51 @@
+.animation_flex (@value){
+    -webkit-animation: @value;
+    -moz-animation:    @value;
+    -o-animation:      @value;
+    -ms-transition:    @value;
+    animation:         @value;
+}
+
+.animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
+    -webkit-animation:  @name @duration @delay @ease;
+    -moz-animation:     @name @duration @delay @ease;
+    -o-animation:       @name @duration @delay @ease;
+    -ms-animation:      @name @duration @delay @ease;
+    animation:          @name @duration @delay @ease;
+}
+
+/* ============ flash ============ */
+.flash-frames () {
+    0% { opacity: 1; }
+    20% { opacity: 1; }
+    50% { opacity: 0; }
+    80% { opacity: 1; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes flash {.flash-frames;}     /* Safari, Chrome and Opera > 12.1 */
+@-moz-keyframes flash {.flash-frames;}        /* Firefox < 16 */
+@-o-keyframes flash {.flash-frames;}          /* Opera < 12.1 */
+@-ms-keyframes flash {.flash-frames;}         /* Internet Explorer */
+@keyframes flash {.flash-frames;}
+
+/* ============ fadein ============ */
+.fadein-frames () {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@-webkit-keyframes fadein {.fadein-frames;}     /* Safari, Chrome and Opera > 12.1 */
+@-moz-keyframes fadein {.fadein-frames;}        /* Firefox < 16 */
+@-o-keyframes fadein {.fadein-frames;}          /* Opera < 12.1 */
+@-ms-keyframes fadein {.fadein-frames;}         /* Internet Explorer */
+@keyframes fadein {.fadein-frames;}
+
+/* ============ fadeout ============ */
+.fadeout-frames () {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+@-webkit-keyframes fadeout {.fadeout-frames;}     /* Safari, Chrome and Opera > 12.1 */
+@-moz-keyframes fadeout {.fadeout-frames;}        /* Firefox < 16 */
+@-o-keyframes fadeout {.fadeout-frames;}          /* Opera < 12.1 */
+@-ms-keyframes fadeout {.fadeout-frames;}         /* Internet Explorer */
+@keyframes fadeout {.fadeout-frames;}

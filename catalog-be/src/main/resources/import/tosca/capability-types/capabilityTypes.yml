@@ -1,0 +1,204 @@
+tosca.capabilities.Root: 
+  description: The TOSCA root Capability Type all other TOSCA base Capability Types derive from
+tosca.capabilities.Attachment:
+  derived_from: tosca.capabilities.Root
+tosca.capabilities.Node:
+  derived_from: tosca.capabilities.Root
+tosca.capabilities.Container:
+  derived_from: tosca.capabilities.Root
+  properties:
+    num_cpus: 
+      type: integer
+      required: false
+      constraints:
+        - greater_or_equal: 1
+    cpu_frequency:
+      type: scalar-unit.frequency
+      required: false
+      constraints:
+        - greater_or_equal: 0.1 GHz
+    disk_size: 
+      type: scalar-unit.size
+      required: false
+      constraints:
+        - greater_or_equal: 0 MB
+    mem_size: 
+      type: scalar-unit.size
+      required: false
+      constraints:
+        - greater_or_equal: 0 MB
+tosca.capabilities.Endpoint:
+  derived_from: tosca.capabilities.Root
+  properties:
+    protocol:
+      type: string
+      default: tcp
+    port:
+      type: PortDef
+      required: false
+    secure:
+      type: boolean
+      default: false
+    url_path: 
+      type: string
+      required: false
+    port_name: 
+      type: string
+      required: false
+    network_name:
+      type: string
+      required: false 
+      default: PRIVATE
+    initiator:
+      type: string
+      default: source
+      constraints:
+        - valid_values: [ source, target, peer ]
+    ports:
+      type: map
+      required: false
+      constraints:
+        - min_length: 1
+      entry_schema:
+        type: PortSpec
+  attributes:
+    ip_address:
+      type: string
+tosca.capabilities.DatabaseEndpoint:
+  derived_from: tosca.capabilities.Endpoint
+tosca.capabilities.Endpoint.Public:
+  derived_from: tosca.capabilities.Endpoint
+  properties:
+    # Change the default network_name to use the first public network found
+    network_name: PUBLIC
+    floating:
+      description: > 
+        indicates that the public address should be allocated from a pool of floating IPs that are associated with the network.
+      type: boolean
+      default: false
+      status: experimental
+    dns_name:
+      description: The optional name to register with DNS 
+      type: string
+      required: false    
+      status: experimental
+tosca.capabilities.Endpoint.Admin:
+  derived_from: tosca.capabilities.Endpoint
+  # Change Endpoint secure indicator to true from its default of false
+  properties:
+    secure: true
+tosca.capabilities.Endpoint.Database:
+  derived_from: tosca.capabilities.Endpoint 
+tosca.capabilities.OperatingSystem:
+  derived_from: tosca.capabilities.Root
+  properties:
+    architecture:
+      type: string
+      required: false 
+    type:
+      type: string
+      required: false
+    distribution:
+      type: string
+      required: false
+    version:
+      type: version
+      required: false
+tosca.capabilities.Scalable:
+  derived_from: tosca.capabilities.Root
+  properties:
+    min_instances:
+      type: integer
+      default: 1
+    max_instances:
+      type: integer
+      default: 1
+    default_instances:
+      type: integer
+tosca.capabilities.network.Bindable:
+  derived_from: tosca.capabilities.Node
+
+
+tosca.capabilities.Container.Docker:
+  derived_from: tosca.capabilities.Container
+  properties:
+    version:
+      type: list
+      required: false
+      entry_schema: version
+    publish_all:
+      type: boolean
+      default: false
+      required: false
+    publish_ports:
+      type: list
+      entry_schema: PortSpec
+      required: false
+    expose_ports:
+      type: list
+      entry_schema: PortSpec
+      required: false
+    volumes:
+      type: list
+      entry_schema: string
+      required: false
+tosca.capabilities.network.Linkable:
+  derived_from: tosca.capabilities.Root
+tosca.capabilities.nfv.Metric:
+  derived_from: tosca.capabilities.Endpoint
+org.openecomp.capabilities.Metric:
+  derived_from: tosca.capabilities.nfv.Metric
+  description: A node type that includes the Metric capability indicates that it can be monitored.
+  properties:
+    unit:
+      type: string
+      description: Unit of the metric value
+      required: true
+      status: SUPPORTED
+    description:
+      type: string
+      description: Description of the metric
+      required: false
+      status: SUPPORTED
+    type:
+      type: string
+      description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+      required: true
+      status: SUPPORTED
+    category:
+      type: string
+      description: Category of the metric, for an example, compute, disk, network, storage and etc.
+      required: false
+      status: SUPPORTED
+  attributes:
+    value:
+      type: string
+      description: Runtime monitored value
+      status: SUPPORTED
+org.openecomp.capabilities.metric.Ceilometer:
+  derived_from: org.openecomp.capabilities.Metric
+  description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+  properties:
+    name:
+      type: string
+      description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+      required: true
+      status: SUPPORTED
+org.openecomp.capabilities.metric.SnmpPolling:
+  derived_from: org.openecomp.capabilities.Metric
+  description: A node type that includes the Metric capability indicates that it can be monitored using snmp polling.
+  properties:
+    oid:
+      type: string
+      description: Object Id of the metric
+      required: true
+      status: SUPPORTED
+org.openecomp.capabilities.metric.SnmpTrap:
+  derived_from: org.openecomp.capabilities.Metric
+  description: A node type that includes the Metric capability indicates that it can be monitored using snmp trap.
+  properties:
+    oid:
+      type: string
+      description: Object Id of the metric
+      required: true
+      status: SUPPORTED

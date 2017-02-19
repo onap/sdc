@@ -1,0 +1,11 @@
+{
+  "payloadName": "VNF.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.VNF",
+  "description": "Represents a VNF Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "org.openecomp.asdc.nodes.VNF"
+  ]
+}

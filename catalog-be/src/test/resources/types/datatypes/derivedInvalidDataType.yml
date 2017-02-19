@@ -1,0 +1,15 @@
+mytypes.phonenumber2:
+  description: my phone number datatype
+  properties:
+    countrycode:
+      type: integer
+    areacode:
+      type: integer
+    number:
+      type: integer
+      
+# define a new datatype that derives from existing type and extends it
+mytypes.phonenumber.extended:
+  derived_from: mytypes.phonenumber3
+  description: custom phone number type that extends the basic phonenumber type
+      

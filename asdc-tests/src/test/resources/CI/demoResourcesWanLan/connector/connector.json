@@ -1,0 +1,11 @@
+{
+  "payloadName": "connector.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.Connector",
+  "description": "Represents a connector Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Abstract",
+  "tags": [
+    "org.openecomp.asdc.nodes.Connector"
+  ]
+}

@@ -1,0 +1,27 @@
+<div class="tags-box" >
+    <input type="text"
+           name="{{elementName}}"
+           class="new-tag-input"
+           data-ng-class="{'view-mode':sdcDisabled}"
+           data-ng-change="validateName()"
+           data-ng-model="newTag"
+           data-ng-maxlength="50"
+           data-ng-pattern="pattern"
+           data-tests-id="i-sdc-tag-input"
+           maxlength="50"
+           sdc-keyboard-events
+           key-enter="addTag"
+
+        />
+    <perfect-scrollbar class="perfect-scrollbar tags-wrapper"  data-ng-class="{'view-mode':sdcDisabled}" include-padding="true">
+        <div data-tests-id="i-sdc-tags-wrapper" >
+            <div class="group-tag" data-ng-show="specialTag">
+                <sdc-tag data-hide-tooltip="true" data-hide-delete="true"
+                         data-tag-data="{tag: specialTag, id: specialTag }"></sdc-tag>
+            </div>
+            <div class="group-tag" ng-repeat="tag in tags track by $index">
+                <sdc-tag ng-if="tag != specialTag" data-on-delete="deleteTag(tag)" sdc-disable="sdcDisabled" data-hide-delete="sdcDisabled" data-hide-tooltip="true" data-tag-data="{tag: tag, id: tag }"></sdc-tag>
+            </div>
+        </div>
+    </perfect-scrollbar>
+</div>

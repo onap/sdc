@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.VL.yaml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.resource.nfv.VL",
+  "description": "Node Type that represents a Module",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "org.openecomp.resource.nfv.VL"
+  ]
+}

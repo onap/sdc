@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="User" >
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.AuthorizedUserApiTest_extend"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.AuthorizedUserApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.OpsWorkspaceApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.UserApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.GetAllAdminUsersApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.CRUDUserTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.CreateUserApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.GovernorWorkspaceApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.GetListsOfTesterUserApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.user.ActivateDeActivateDeleteUser"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- User -->

@@ -1,0 +1,89 @@
+services:
+    Mobility:
+      name: "Mobility"
+      icons: ['mobility']
+    Network_L1_3:
+      name: "Network L1-3"
+      icons: ['network_l_1-3']
+    Network_L4:
+      name: "Network L4+"
+      icons: ['network_l_4']
+    VoIP_Call_Control:
+      name: "VoIP Call Control"
+      icons: ['call_controll']
+resources:
+  NetworkLayer23:
+    name: "Network L2-3"
+    subcategories: 
+      Router:
+          name: "Router"
+          icons: ['router','vRouter']
+      Gateway:
+          name: "Gateway"
+          icons: ['gateway']
+      WAN_Connectors:
+          name: "WAN Connectors"
+          icons: ['network','connector','port']
+      LAN_Connectors:
+          name: "LAN Connectors"
+          icons: ['network','connector','port']
+      Infrastructure:
+                name: "Infrastructure"
+                icons: ['ucpe']
+  NetworkLayer4:
+    name: "Network L4+"
+    subcategories: 
+      Common_Network_Resources:
+          name: "Common Network Resources"
+          icons: ['network']
+  ApplicationLayer4:
+    name: "Application L4+"
+    subcategories: 
+      Border_Element:
+          name: "Border Element"
+          icons: ['borderElement']
+      Application_Server:
+          name: "Application Server"
+          icons: ['applicationServer']
+      Web_Server:
+          name: "Web Server"
+          icons: ['applicationServer']
+      Call_Control:
+          name: "Call Control"
+          icons: ['call_controll']
+      Media_Servers:
+          name: "Media Servers"
+          icons: ['applicationServer']
+      Load_Balancer:
+          name: "Load Balancer"
+          icons: ['loadBalancer']
+      Database:
+          name: "Database"
+          icons: ['database']
+      Firewall:
+          name: "Firewall"
+          icons: ['firewall']
+  Generic:
+    name: "Generic"
+    subcategories: 
+      Infrastructure:
+          name: "Infrastructure"
+          icons: ['connector']
+      Abstract:
+          name: "Abstract"
+          icons: ['objectStorage', 'compute']
+      Network_Elements:
+          name: "Network Elements"
+          icons: ['network', 'connector']
+      Database:
+          name: "Database"
+          icons: ['database']
+  NetworkConnectivity:
+    name: "Network Connectivity"
+    subcategories:
+      ConnectionPoints:
+          name: "Connection Points"
+          icons: ['cp']
+      VirtualLinks:
+          name: "Virtual Links"
+          icons: ['vl']

@@ -1,0 +1,43 @@
+uebServers:
+   - uebsb91kcdc.it.att.com:3904
+   - uebsb92kcdc.it.att.com:3904
+#   - uebsb93kcdc.it.att.com:3904
+
+uebPublicKey: 8F3MDAtMSBwwpSMy
+
+uebSecretKey: gzFmsTxSCtO5RQfAccM6PqqX
+
+distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
+distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
+
+initRetryIntervalSec: 5
+initMaxIntervalSec: 60
+
+distribNotifServiceArtifactTypes:
+  info:
+      - MURANO-PKG
+
+distribNotifResourceArtifactTypes:
+  lifecycle:
+      - HEAT
+      - DG-XML
+
+environments:
+   - PROD
+
+distributionStatusTopic:
+   pollingIntervalSec: 60
+   fetchTimeSec: 15
+   consumerGroup: asdc
+   consumerId: asdc-id
+
+distributionNotificationTopic:
+   minThreadPoolSize: 0
+   maxThreadPoolSize: 10
+   maxWaitingAfterSendingSeconds: 5
+
+createTopic:
+   partitionCount: 1
+   replicationCount: 1
+
+startDistributionEngine: true

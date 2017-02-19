@@ -1,0 +1,11 @@
+{
+  "payloadName": "asdc.nodes.Network.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.Network",
+  "description": "This is the default AT&T TOSCA Network Node Type that all other AT&T Network TOSCA nodes should extends.",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "asdc.nodes.Network", "Network"
+  ]
+}

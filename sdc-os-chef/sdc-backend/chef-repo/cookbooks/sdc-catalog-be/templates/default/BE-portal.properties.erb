@@ -1,0 +1,32 @@
+# Portal REST URL, ends "/auxapi"
+ecomp_rest_url = <%= @ecomp_rest_url %>
+
+# Java implementation of interface
+portal.api.impl.class = org.openecomp.sdc.be.ecomp.EcompIntImpl
+
+# CSP-SSO URL
+
+ecomp_redirect_url = <%= @ecomp_redirect_url %>
+
+# Comma-separated list of UEB server names
+
+ueb_url_list = <%= @ueb_url_list %>
+
+# UEB topic where Portal listens
+ecomp_portal_inbox_name = <%= @inbox_name %>
+
+# UEB key generated while on-boarding
+ueb_app_key = <%= @app_key %>
+
+# UEB secret generated while on-boarding
+ueb_app_secret = <%= @app_secret %>
+
+# UEB topic where App listens
+ueb_app_mailbox_name = <%= @app_topic_name %>
+
+# Consumer group name; most Apps should use {UUID}
+ueb_app_consumer_group_name = {UUID}
+
+ueb_listeners_enable = true
+
+decryption_key = <%= @decrypt_key %>

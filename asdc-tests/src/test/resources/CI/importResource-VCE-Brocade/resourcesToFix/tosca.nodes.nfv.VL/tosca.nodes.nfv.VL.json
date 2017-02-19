@@ -1,0 +1,11 @@
+{
+  "payloadName": "tosca.nodes.nfv.VL.yaml",
+  "contactId": "jh0003",
+  "resourceName": "tosca.nodes.nfv.VL",
+  "description": "TOSCA VL base element",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "tosca.nodes.nfv.VL"
+  ]
+}

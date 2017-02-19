@@ -1,0 +1,12 @@
+asdc.nodes.module.ECA_TRX:
+  derived_from: asdc.nodes.Module
+  requirements:
+    - oam_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.OAM
+    - traffic_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Traffic
+    - internal_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Internal

@@ -1,0 +1,19 @@
+{
+  "name": "elasticsearch",
+  "description": "Installation application - elasticsearch",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-elasticsearch::ES_1_setup_elasticsearch]",
+    "recipe[sdc-elasticsearch::ES_2_setup_logging]"
+  ],
+  "env_run_lists": {
+  }
+}
+

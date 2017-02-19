@@ -1,0 +1,125 @@
+.hierarchy-step {
+    margin-top: 35px;
+
+    .scrollbar-container{
+        max-height:400px;
+        .perfect-scrollbar;
+    }
+
+    .dropdown-container {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+
+        &:after{
+            top: 47%;
+            right: 1%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+            border-color: rgba(0, 0, 0, 0);
+            border-top-color: black;
+            border-width: 4px;
+            margin-left: -4px;
+        }
+
+        .dropdown-input-text {
+            width: 100%;
+            padding: 4px 10px;
+        }
+
+        .dropdown-content {
+            .perfect-scrollbar;
+            border: 1px solid #d8d8d8;
+            display: none;
+            position: absolute;
+            overflow: hidden;
+            width: 100%;
+            .bg_c;
+            max-height: 400px;
+            z-index: 999999;
+
+            .dropdown-option {
+                border-bottom: 1px solid #d8d8d8;
+                display: inline-block;
+                width: 100%;
+            }
+
+            .category-container{
+                width: 250px;
+                float: left;
+                padding-left: 5px;
+
+                .category {
+                    .bold;
+                    padding: 3px 3px 2px 3px;
+                    &:after{
+                      .sprite;
+                      .arrow-left;
+                        content: '';
+                        margin-left: 5px;
+                        transform: rotate(180deg);
+                    }
+                }
+                .subcategory {
+                    padding-left: 3px;
+                }
+            }
+
+            .groupings-container{
+                display: inline-block;
+                width: 424px;
+                border-left: 1px solid #d8d8d8;
+                min-height: 55px;
+                .group{
+                    padding: 3px 3px 3px 10px;
+                    &:hover{
+                        .hand;
+                        .bg_n;
+                    }
+                    &.disabled-group {
+                        opacity: 0.5;
+                        &:hover{
+                            cursor: auto;
+                            .bg_c;
+                        }
+                    }
+                }
+            }
+
+            .seperator {
+                height: 1px;
+                width: 100%;
+                .bg_j;
+                margin: 5px 0px;
+            }
+        }
+        .show {
+            display: block;
+        }
+    }
+
+    .hierarchy-groups-container{
+        .b_9;
+        width: 100%;
+        border: 1px solid #d8d8d8;
+        height: 425px;
+        padding: 15px;
+        text-align: center;
+
+        .no-group-text{
+            text-align: center;
+            margin-top:25px;
+            a {
+                cursor: pointer;
+            }
+        }
+        .group-tag{
+            display: inline-block;
+            float: left;
+        }
+    }
+}

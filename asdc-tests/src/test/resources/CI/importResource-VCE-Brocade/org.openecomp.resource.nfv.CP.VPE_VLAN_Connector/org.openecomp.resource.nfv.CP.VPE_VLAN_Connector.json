@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.cp.VPE_VLAN_Connector.yaml",
+  "contactId": "jh0003",
+  "name": "org.openecomp.resource.nfv.cp.VPE_VLAN_Connector",
+  "description": "Represents a virtual or physical interface between the NFV and the WAN.",
+  "resourceIconPath": "port",
+  "category": "Network Layer 2-3/WAN Connectors",
+  "tags": [
+    "org.openecomp.resource.nfv.cp.VPE_VLAN_Connector", "WAN Connector"
+  ]
+}

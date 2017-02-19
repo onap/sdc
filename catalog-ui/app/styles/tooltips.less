@@ -1,0 +1,110 @@
+// ---------------------------------------------------------------------------------------------------
+// tooltips
+// ---------------------------------------------------------------------------------------------------
+div.tooltips {
+    position: relative;
+    display: inline;
+    float: right;
+    z-index: 1;
+    top: 30px;
+    left: 85px;
+
+    span {
+        .bg_s;
+        position: absolute;
+        width: 230px;
+        color: @color_c;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 6px;
+        visibility: hidden;
+
+        &:after {
+            .arrow(8px, @color_s);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Qtip
+// ---------------------------------------------------------------------------------------------------
+.qtip-custom {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background-color: rgb(80,99,113);
+    border-color:rgb(80,99,113);
+    color:white;
+    font-size:14px;
+
+}
+
+
+.tooltip-custom {
+    background-color: rgba(80, 99, 113, 0.9);
+    z-index: 1100;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    max-width: 280px;
+    text-align: center;
+    word-break: normal;
+    word-wrap: break-word;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+._720kb-tooltip-caret:before
+    {
+      border: 6px solid rgba(80, 99, 113, 0.9);
+
+    }
+
+.tooltip-rightside{
+    right: 2px;
+    left: initial !important;
+
+    ._720kb-tooltip-caret:before{
+        right: 21px;
+        left: initial;
+    }
+}
+
+.tab-tooltip{
+    max-width: 220px;
+    white-space: nowrap;
+}
+.break-word-tooltip{
+    word-break: break-all;
+    margin-right: 2px;
+}
+
+.icon-tooltip{
+    margin-left: 12px;
+    right: initial !important;
+
+    ._720kb-tooltip-caret:before{
+        left: 44px;
+        right: initial;
+    }
+}
+
+.uib-custom-tooltip {
+    z-index: 999999;
+
+    .tooltip-inner {
+        background-color: rgba(80, 99, 113, 0.9);
+        padding: 5px 10px 5px 10px;
+        border-radius: 2px;
+        }
+}
+.tooltip {
+    &.bottom .tooltip-arrow {
+
+        margin-left: -6px !important;
+        border-width: 0 6px 6px !important;
+        border-bottom-color: rgba(80, 99, 113, 0.9) !important;
+    }
+}
+

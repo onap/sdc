@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:vnf-catalog xmlns:ns2="http://com/att/co/db-definition">
+	<ns2:part-number-list>
+		<ns2:part-number>FG-VM00*</ns2:part-number>
+		<ns2:vnf-type>FW</ns2:vnf-type>
+		<ns2:vendor-info>
+			<ns2:vendor-name>FORTINET</ns2:vendor-name>
+			<ns2:vendor-part-number>FG-VM00*</ns2:vendor-part-number>
+			<ns2:vendor-model>VM00</ns2:vendor-model>
+		</ns2:vendor-info>
+		<ns2:vcpu>
+			<ns2:vcpu-default>1</ns2:vcpu-default>
+			<ns2:vcpu-min>1</ns2:vcpu-min>
+			<ns2:vcpu-max>1</ns2:vcpu-max>
+		</ns2:vcpu>
+		<ns2:vmemory>
+			<ns2:vmemory-default>1</ns2:vmemory-default>
+			<ns2:vmemory-units>GB</ns2:vmemory-units>
+			<ns2:vmemory-min>1</ns2:vmemory-min>
+			<ns2:vmemory-max>1</ns2:vmemory-max>
+		</ns2:vmemory>
+		<ns2:vdisk>
+			<ns2:vdisk-default>20</ns2:vdisk-default>
+			<ns2:vdisk-units>GB</ns2:vdisk-units>
+			<ns2:vdisk-min>20</ns2:vdisk-min>
+			<ns2:vdisk-max>20</ns2:vdisk-max>
+		</ns2:vdisk>
+		<software-version-list>
+			<software-version>5.2.4</software-version>
+			<software-version-state>0</software-version-state>
+			<software-filename>fg-5.2.4.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.3</software-version>
+			<software-version-state>1</software-version-state>
+			<software-filename>fg-5.2.3.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.2</software-version>
+			<software-version-state>2</software-version-state>
+			<software-filename>fg-5.2.2.qcow</software-filename >
+		</software-version-list>
+		<vnf-features-list>
+			<vnf-feature>IPS-IDS</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>URLF</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>Anti-Virus</vnf-feature>
+		</vnf-features-list>
+		<supported-hardware-list>
+			<ucpe-model>U401</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U410</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U412</ucpe-model >
+		</supported-hardware-list>
+	</ns2:part-number-list>
+	<ns2:part-number-list>
+		<ns2:part-number>FG-VM01*</ns2:part-number>
+		<ns2:vnf-type>FW</ns2:vnf-type>
+		<ns2:vendor-info>
+			<ns2:vendor-name>   FORTINET</ns2:vendor-name>
+			<ns2:vendor-part-number>FG-VM01*</ns2:vendor-part-number>
+			<ns2:vendor-model>VM01</ns2:vendor-model>
+		</ns2:vendor-info>
+		<ns2:vcpu>
+			<ns2:vcpu-default>1</ns2:vcpu-default>
+			<ns2:vcpu-min>1</ns2:vcpu-min>
+			<ns2:vcpu-max>1</ns2:vcpu-max>
+		</ns2:vcpu>
+		<ns2:vmemory>
+			<ns2:vmemory-default>2</ns2:vmemory-default>
+			<ns2:vmemory-units>GB</ns2:vmemory-units>
+			<ns2:vmemory-min>1</ns2:vmemory-min>
+			<ns2:vmemory-max>2</ns2:vmemory-max>
+		</ns2:vmemory>
+		<ns2:vdisk>
+			<ns2:vdisk-default>20</ns2:vdisk-default>
+			<ns2:vdisk-units>GB</ns2:vdisk-units>
+			<ns2:vdisk-min>20</ns2:vdisk-min>
+			<ns2:vdisk-max>20</ns2:vdisk-max>
+		</ns2:vdisk>
+		<software-version-list>
+			<software-version>5.2.4</software-version>
+			<software-version-state>0</software-version-state>
+			<software-filename>fg-5.2.4.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.3</software-version>
+			<software-version-state>1</software-version-state>
+			<software-filename>fg-5.2.3.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.2</software-version>
+			<software-version-state>2</software-version-state>
+			<software-filename>fg-5.2.2.qcow</software-filename >
+		</software-version-list>
+		<vnf-features-list>
+			<vnf-feature>IPS-IDS</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>URLF</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>Anti-Virus</vnf-feature>
+		</vnf-features-list>
+		<supported-hardware-list>
+			<ucpe-model>U401</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U410</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U412</ucpe-model >
+		</supported-hardware-list>
+	</ns2:part-number-list>
+	<ns2:part-number-list>
+		<ns2:part-number>FG-VM02*</ns2:part-number>
+		<ns2:vnf-type>FW</ns2:vnf-type>
+		<ns2:vendor-info>
+			<ns2:vendor-name>   FORTINET</ns2:vendor-name>
+			<ns2:vendor-part-number>FG-VM02*</ns2:vendor-part-number>
+			<ns2:vendor-model>VM02</ns2:vendor-model>
+		</ns2:vendor-info>
+		<ns2:vcpu>
+			<ns2:vcpu-default>2</ns2:vcpu-default>
+			<ns2:vcpu-min>1</ns2:vcpu-min>
+			<ns2:vcpu-max>2</ns2:vcpu-max>
+		</ns2:vcpu>
+		<ns2:vmemory>
+			<ns2:vmemory-default>4</ns2:vmemory-default>
+			<ns2:vmemory-units>GB</ns2:vmemory-units>
+			<ns2:vmemory-min>1</ns2:vmemory-min>
+			<ns2:vmemory-max>4</ns2:vmemory-max>
+		</ns2:vmemory>
+		<ns2:vdisk>
+			<ns2:vdisk-default>20</ns2:vdisk-default>
+			<ns2:vdisk-units>GB</ns2:vdisk-units>
+			<ns2:vdisk-min>20</ns2:vdisk-min>
+			<ns2:vdisk-max>20</ns2:vdisk-max>
+		</ns2:vdisk>
+		<software-version-list>
+			<software-version>5.2.4</software-version>
+			<software-version-state>0</software-version-state>
+			<software-filename>fg-5.2.4.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.3</software-version>
+			<software-version-state>1</software-version-state>
+			<software-filename>fg-5.2.3.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.2</software-version>
+			<software-version-state>2</software-version-state>
+			<software-filename>fg-5.2.2.qcow</software-filename >
+		</software-version-list>
+		<vnf-features-list>
+			<vnf-feature>IPS-IDS</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>URLF</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>Anti-Virus</vnf-feature>
+		</vnf-features-list>
+		<supported-hardware-list>
+			<ucpe-model>U401</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U410</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U412</ucpe-model >
+		</supported-hardware-list>
+	</ns2:part-number-list>
+	<ns2:part-number-list>
+		<ns2:part-number>FG-VM04*</ns2:part-number>
+		<ns2:vnf-type>FW</ns2:vnf-type>
+		<ns2:vendor-info>
+			<ns2:vendor-name>FORTINET</ns2:vendor-name>
+			<ns2:vendor-part-number>FG-VM04*</ns2:vendor-part-number>
+			<ns2:vendor-model>VM04</ns2:vendor-model>
+		</ns2:vendor-info>
+		<ns2:vcpu>
+			<ns2:vcpu-default>4</ns2:vcpu-default>
+			<ns2:vcpu-min>1</ns2:vcpu-min>
+			<ns2:vcpu-max>4</ns2:vcpu-max>
+		</ns2:vcpu>
+		<ns2:vmemory>
+			<ns2:vmemory-default>6</ns2:vmemory-default>
+			<ns2:vmemory-units>GB</ns2:vmemory-units>
+			<ns2:vmemory-min>1</ns2:vmemory-min>
+			<ns2:vmemory-max>6</ns2:vmemory-max>
+		</ns2:vmemory>
+		<ns2:vdisk>
+			<ns2:vdisk-default>20</ns2:vdisk-default>
+			<ns2:vdisk-units>GB</ns2:vdisk-units>
+			<ns2:vdisk-min>20</ns2:vdisk-min>
+			<ns2:vdisk-max>20</ns2:vdisk-max>
+		</ns2:vdisk>
+		<software-version-list>
+			<software-version>5.2.4</software-version>
+			<software-version-state>0</software-version-state>
+			<software-filename>fg-5.2.4.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.3</software-version>
+			<software-version-state>1</software-version-state>
+			<software-filename>fg-5.2.3.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.2</software-version>
+			<software-version-state>2</software-version-state>
+			<software-filename>fg-5.2.2.qcow</software-filename >
+		</software-version-list>
+		<vnf-features-list>
+			<vnf-feature>IPS-IDS</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>URLF</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>Anti-Virus</vnf-feature>
+		</vnf-features-list>
+		<supported-hardware-list>
+			<ucpe-model>U401</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U410</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U412</ucpe-model >
+		</supported-hardware-list>
+	</ns2:part-number-list>
+	<ns2:part-number-list>
+		<ns2:part-number>FG-VM08*</ns2:part-number>
+		<ns2:vnf-type>FW</ns2:vnf-type>
+		<ns2:vendor-info>
+			<ns2:vendor-name>FORTINET</ns2:vendor-name>
+			<ns2:vendor-part-number>FG-VM08*</ns2:vendor-part-number>
+			<ns2:vendor-model>VM08</ns2:vendor-model>
+		</ns2:vendor-info>
+		<ns2:vcpu>
+			<ns2:vcpu-default>8</ns2:vcpu-default>
+			<ns2:vcpu-min>1</ns2:vcpu-min>
+			<ns2:vcpu-max>8</ns2:vcpu-max>
+		</ns2:vcpu>
+		<ns2:vmemory>
+			<ns2:vmemory-default>12</ns2:vmemory-default>
+			<ns2:vmemory-units>GB</ns2:vmemory-units>
+			<ns2:vmemory-min>1</ns2:vmemory-min>
+			<ns2:vmemory-max>12</ns2:vmemory-max>
+		</ns2:vmemory>
+		<ns2:vdisk>
+			<ns2:vdisk-default>20</ns2:vdisk-default>
+			<ns2:vdisk-units>GB</ns2:vdisk-units>
+			<ns2:vdisk-min>20</ns2:vdisk-min>
+			<ns2:vdisk-max>20</ns2:vdisk-max>
+		</ns2:vdisk>
+		<software-version-list>
+			<software-version>5.2.4</software-version>
+			<software-version-state>0</software-version-state>
+			<software-filename>fg-5.2.4.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.3</software-version>
+			<software-version-state>1</software-version-state>
+			<software-filename>fg-5.2.3.qcow</software-filename >
+		</software-version-list>
+		<software-version-list>
+			<software-version>5.2.2</software-version>
+			<software-version-state>2</software-version-state>
+			<software-filename>fg-5.2.2.qcow</software-filename >
+		</software-version-list>
+		<vnf-features-list>
+			<vnf-feature>IPS-IDS</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>URLF</vnf-feature>
+		</vnf-features-list>
+		<vnf-features-list>
+			<vnf-feature>Anti-Virus</vnf-feature>
+		</vnf-features-list>
+		<supported-hardware-list>
+			<ucpe-model>U401</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U410</ucpe-model >
+		</supported-hardware-list>
+		<supported-hardware-list>
+			<ucpe-model>U412</ucpe-model >
+		</supported-hardware-list>
+	</ns2:part-number-list>
+</ns2:vnf-catalog>

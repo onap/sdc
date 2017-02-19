@@ -1,0 +1,17 @@
+<div class="sdc-tabs-body">
+    <div class="sdc-tabs" ng-class="{'not-active': !isActive}">
+        <div class="sdc-tab-arrow" ng-click="isActive = !isActive">
+            <span class="sprite-new close-open-left-arrow" ng-class="{'close-open-right-arrow': !isActive}"></span>
+        </div>
+        <div ng-repeat="tab in tabs track by $index">
+            <div class="sdc-tab" ng-click="onTabSelected(tab)" data-tests-id="{{tab.name}}-tab" ng-mouseenter="hover = true"
+                 ng-mouseleave="hover = false"
+                 ng-class="{'last-tab':$last, 'first-tab': $first, 'selected' :tab.name === selectedTab.name }">
+                <div class="sdc-tab-icon sprite-new {{tab.icon}}"  ng-class="{'selected' :tab.name === selectedTab.name, 'hover': hover}"></div>
+            </div>
+        </div>
+    </div>
+    <div class="sdc-single-tab-content" ng-if="isActive">
+        <sdc-single-tab class="sdc-single-tab-content-body" ng-if="selectedTab" ctrl="selectedTab.controller" data-dests-id="selected-tab" single-tab="selectedTab" is-view-only="isViewOnly"></sdc-single-tab>
+    </div>
+</div>

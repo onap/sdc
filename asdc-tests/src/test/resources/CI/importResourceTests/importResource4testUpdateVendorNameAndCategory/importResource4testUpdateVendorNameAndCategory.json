@@ -1,0 +1,16 @@
+{
+	"payloadName": "normative-types-new-importResource4testUpdateVendorNameAndCategory.yml",
+	"contactId": "jh0003",
+	"name": "importResource4test",
+	"description": "Represents a generic software component that can be managed and run by a Compute Node Type.",
+	"resourceIconPath": "defaulticon",
+	"categories": [{
+		"name": "Network L2-3",
+		"subcategories": [{
+			"name": "Router"
+		}]
+	}],
+	"tags": ["importResource4test"],
+	"vendorName": "ATT (Tosaaaaaaaaaaaaa)",
+	"vendorRelease": "1.0.0.wd03"
+}

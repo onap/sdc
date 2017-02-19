@@ -1,0 +1,13 @@
+{
+  "payloadName": "asdc.nodes.Root.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.Root",
+  "description": "This is the default (root) AT&T TOSCA Node Type that all other AT&T TOSCA nodes should extends.
+    This allows all AT&T TOSCA nodes to have a consistent set of features for modeling and management (e.g, consistent definitions for requirements, capabilities, and lifecycle interfaces).",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "asdc.nodes.Root"
+  ]
+}
+

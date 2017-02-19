@@ -1,0 +1,55 @@
+.icons-step {
+
+    .w-sdc-form {
+        padding-top: 0px;
+        padding-bottom:  0px;
+        .selected-icon-container {
+            text-align: left;
+            border: 1px solid #cfcfcf;
+            clear: both;
+            margin-bottom: 15px;
+            padding-left: 3px;
+            padding-bottom: 3px;
+            .selected-icon {
+                margin: 8px 5px 0px 6px;
+            }
+        }
+
+        .suggested-icons-container {
+            text-align: left;
+            border: 1px solid #cfcfcf;
+            clear: both;
+            padding-left: 3px;
+            height: 340px;
+            margin-bottom: 0px;
+
+            .suggested-icon-wrapper {
+                margin: 8px 5px 0px 6px;
+                display: inline-block;
+
+                &.selected {
+                    border: 1px solid @color_p;
+                    border-radius: 25px;
+                    box-shadow: 0 0 2px #888;
+                    display: inline-block;
+                    line-height: 0px;
+                    padding: 2px;
+                }
+
+            }
+            .suggested-icon {
+                // margin: 8px 5px 0px 6px;
+                display: inline-block;
+                &.disable{
+                    opacity: 0.4;
+                }
+            }
+
+
+        }
+
+        .icons-label {
+            float: left;
+        }
+    }
+}
