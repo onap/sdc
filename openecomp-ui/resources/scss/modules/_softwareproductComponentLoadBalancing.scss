@@ -1,0 +1,43 @@
+.vsp-components-load-balancing {
+  .halb-data {
+    .load-balancing-page-title {
+      @extend .section-title;
+      &:first-child {
+        padding: 0 0 40px 0;
+      }
+    }
+    .question {
+      padding-top: 10px;
+      &:first-child {
+        padding-top: 0;
+      }
+    }
+    .title {
+      @extend .body-1-medium;
+      cursor: pointer;
+      margin-bottom: 8px;
+      .fa {
+        @include transition(transform 0.3s);
+        margin-right: 5px;
+        font-size: $icon-font-size;
+        position: relative;
+        top: -1px;
+      }
+    }
+    .row {
+      padding-left: 24px;
+    }
+    .col-md-9 {
+      padding-left: 8px;
+    }
+    .add-padding {
+      padding-bottom: 20px;
+    }
+    .new-line {
+      margin-left: 16px;
+    }
+    textarea.form-control {
+      height: 90px;
+    }
+  }
+}

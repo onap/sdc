@@ -9,12 +9,12 @@
     </parent>
 
     <artifactId>openecomp-common-lib</artifactId>
-    <groupId>org.openecomp.core</groupId>
+    
     <name>openecomp-common-lib</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

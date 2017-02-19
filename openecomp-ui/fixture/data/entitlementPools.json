@@ -1,0 +1,36 @@
+{
+  "results":[
+    {
+      "name": "ep1",
+      "description": "string",
+      "thresholdValue": 75,
+      "thresholdUnits": "%",
+      "entitlementMetric": {"choice": "User", "other":""},
+      "increments": "string",
+      "aggregationFunction": {"choice": "Average", "other": ""},
+      "operationalScope": {"choices": ["VM"], "other": ""},
+      "time": {"choice": "Hour", "other": ""},
+      "sku": "DEF2-385A-4521-AAAA",
+      "id": "1",
+      "referencingFeatureGroups": ["1","2"],
+      "partNumber": "51529"
+    },
+    {
+      "name": "ep2",
+      "description": "string",
+      "thresholdValue": 99,
+      "thresholdUnits": "%",
+      "entitlementMetric": {"choice": "User", "other":""},
+      "increments": "string",
+      "aggregationFunction": {"choice": "Average", "other": ""},
+      "operationalScope": {"choices": ["Other"], "other": "blabla"},
+      "time": {"choice": "Hour", "other": ""},
+      "sku": "DEF2-385A-4521-AAAA",
+      "id": "2",
+      "refCount": 0,
+      "partNumber": "51529",
+      "referencingFeatureGroups": []
+    }
+  ]
+}
+

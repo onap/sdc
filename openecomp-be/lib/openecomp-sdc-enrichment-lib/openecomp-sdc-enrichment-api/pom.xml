@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-facade-core</artifactId>
             <version>${project.version}</version>
         </dependency>

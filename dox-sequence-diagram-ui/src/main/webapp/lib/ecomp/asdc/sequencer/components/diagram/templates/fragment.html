@@ -1,0 +1,18 @@
+<g class="asdcs-diagram-fragment" data-id="<%-id%>" data-type="fragment">
+
+    <rect x="<%-x%>" y="<%-y%>" height="<%-height%>" width="<%-width%>"></rect>
+
+    <path d="M<%-x%>,<%-(y+80)%> L<%-(x+100)%>,<%-(y+80)%> L<%-(x+120)%>,<%-(y+60)%> L<%-(x+120)%>,<%-y%>"/>
+
+    <text x="<%-(x+20)%>" y="<%-(y+50)%>" class="asdcs-diagram-fragment-operation"><%-operator%></text>
+
+    <rect class="asdcs-diagram-fragment-guard-bg"
+          x="0" y="0" height="0" width="0"
+          rx="5" ry="5" ></rect>
+
+    <text class="asdcs-diagram-fragment-guard" x="<%-(x+160)%>" y="<%-(y+10)%>"><%
+        for (var lineIndex = 0; lineIndex < lines.length ; lineIndex++) {
+        %><tspan x="<%-(x+160)%>" dy="40px"><%- lines[lineIndex] %></tspan><%
+        }%></text>
+
+</g>

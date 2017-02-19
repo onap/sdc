@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   id="svg4406"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="save.svg">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 100 100 L 100 900 L 900 900 L 900 236.84375 C 879.41881 236.69254 862.78125 219.96058 862.78125 199.34375 C 862.78125 178.72692 879.41881 161.99496 900 161.84375 L 900 100 L 100 100 z M 500 400 C 555.22847 400 600 444.77152 600 500 C 600 555.22847 555.22847 600 500 600 C 444.77153 600 400 555.22847 400 500 C 400 444.77152 444.77153 400 500 400 z M 500 650 C 522.16 650 540 667.84 540 690 L 540 810 C 540 832.16 522.16 850 500 850 C 477.84 850 460 832.16 460 810 L 460 690 C 460 667.84 477.84 650 500 650 z "
+       id="rect2987" />
+  </g>
+</svg>

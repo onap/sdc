@@ -1,0 +1,96 @@
+{
+  "name": "VSP5",
+  "version": "0.1",
+  "id": "4730033D16C64E3CA556AB0AC4478218",
+  "description": "A software model for Fortigate. Nam hendrerit sollicitudin semper. Aenean consectetur nisi sit amet ante sodales consectetur. Nullam rutrum massa in pellentesque ' +elementum. Aliquam efficitur tellus lacus, eget iaculis justo iaculis eu. ",
+  "categoryId": "category",
+  "vendorId": "1",
+  "checkinStatus": "CHECK_OUT",
+  "licensingData": "test data",
+  "validationData": {
+    "logicalStructure": [
+      {
+        "type": "PPD",
+        "catalogInstances": [
+          {
+            "name": "PPD1",
+            "artifacts": [
+              {
+                "name": "chopstick.py"
+              },
+              {
+                "name": "bread.py"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "importStructure": {
+      "HEAT": [
+        {
+          "fileName": "sushi.yml",
+          "env": "soy.env",
+          "nested": [
+            {
+              "fileName": "salmon.yml",
+              "env": "skin.env",
+              "artifacts": [
+                {
+                  "name": "rice.py",
+                  "status": "OK"
+                },
+                {
+                  "name": "tuna.py",
+                  "status": "Missing"
+                }
+              ]
+            }
+          ],
+          "artifacts": [
+            {
+              "name": "chopstick.py",
+              "status": "OK"
+            },
+            {
+              "name": "bread.py",
+              "status": "Missing"
+            }
+          ],
+          "volume": [
+            {
+              "fileName": "fishtank.yml",
+              "env": "middletown.env"
+            }
+          ],
+          "network": [
+            {
+              "fileName": "fishnet.yml",
+              "env": "ship.env"
+            }
+          ]
+        }
+      ],
+      "volume": [
+        {
+          "fileName": "vol1.yml",
+          "env": "e1.env"
+        },
+        {
+          "fileName": "vol2.yml",
+          "env": "e2.env"
+        }
+      ],
+      "network": [
+        {
+          "fileName": "net1.yml",
+          "env": "env1.env"
+        },
+        {
+          "fileName": "net2.yml",
+          "env": "env2.env"
+        }
+      ]
+    }
+  }
+}

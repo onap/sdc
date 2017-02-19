@@ -1,0 +1,25 @@
+/* Fonts */
+@font-face {
+  font-family: Omnes-Light;
+  src: url('ecomp/asdc/common/fonts/omnes-att-light.otf');
+}
+
+@font-face {
+  font-family: Omnes-Regular;
+  src: url('ecomp/asdc/common/fonts/omnes-att-regular.otf');
+}
+
+@font-face {
+  font-family: Omnes-Medium;
+  src: url('ecomp/asdc/common/fonts/omnes-att-medium.otf');
+}
+
+@font-face {
+  font-family: Omnes-Bold;
+  src: url('ecomp/asdc/common/fonts/omnes-att-bold.otf');
+}
+
+$base-font-regular: omnes-regular, "Omnes-Regular";
+$base-font-light: omnes-light, "Omnes-Light";
+$base-font-medium: omnes-medium, "Omnes-Medium";
+$base-font-bold: omnes-bold, "Omnes-Bold";

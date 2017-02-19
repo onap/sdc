@@ -8,35 +8,35 @@
   },
   "basePath" : "/onboarding-api",
   "tags" : [ {
-    "name" : "Vendor License Models"
-  }, {
-    "name" : "Vendor License Model - Entitlement Pools"
-  }, {
-    "name" : "Vendor Software Product Processes"
-  }, {
-    "name" : "Application Configuration"
-  }, {
-    "name" : "Actions"
-  }, {
-    "name" : "Vendor License Model - License Key Groups"
+    "name" : "Vendor Software Product Component NICs"
   }, {
     "name" : "Vendor Software Product Component Processes"
   }, {
-    "name" : "Vendor Software Product Components"
-  }, {
-    "name" : "Validation"
-  }, {
     "name" : "Vendor Software Product Component MIB Uploads"
+  }, {
+    "name" : "Vendor License Model - License Key Groups"
+  }, {
+    "name" : "Application Configuration"
   }, {
     "name" : "Vendor License Model - License Agreements"
   }, {
-    "name" : "Vendor Software Product Networks"
+    "name" : "Vendor License Model - Feature Groups"
+  }, {
+    "name" : "Vendor Software Product Processes"
+  }, {
+    "name" : "Actions"
+  }, {
+    "name" : "Validation"
+  }, {
+    "name" : "Vendor Software Product Components"
   }, {
     "name" : "Vendor Software Products"
   }, {
-    "name" : "Vendor Software Product Component NICs"
+    "name" : "Vendor Software Product Networks"
   }, {
-    "name" : "Vendor License Model - Feature Groups"
+    "name" : "Vendor License Model - Entitlement Pools"
+  }, {
+    "name" : "Vendor License Models"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
@@ -3513,14 +3513,14 @@
         "contentType" : {
           "$ref" : "#/definitions/MediaType"
         },
+        "contentId" : {
+          "type" : "string"
+        },
         "contentDisposition" : {
           "$ref" : "#/definitions/ContentDisposition"
         },
         "dataHandler" : {
           "$ref" : "#/definitions/DataHandler"
-        },
-        "contentId" : {
-          "type" : "string"
         }
       }
     },
@@ -4343,11 +4343,11 @@
             "type" : "string"
           }
         },
-        "wildcardSubtype" : {
+        "wildcardType" : {
           "type" : "boolean",
           "default" : false
         },
-        "wildcardType" : {
+        "wildcardSubtype" : {
           "type" : "boolean",
           "default" : false
         }

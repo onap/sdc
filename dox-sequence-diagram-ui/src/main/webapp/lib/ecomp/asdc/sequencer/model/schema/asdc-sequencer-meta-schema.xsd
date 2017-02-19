@@ -1,0 +1,166 @@
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://ns.ecomp.com/asdc/sequencer"
+        xmlns:s="http://ns.ecomp.com/asdc/sequencer"
+        attributeFormDefault="unqualified"
+        elementFormDefault="unqualified">
+
+    <!--
+
+        https://github.com/highsource/jsonix-schema-compiler/wiki/JSON-Schema-Generation
+
+        npm install -x-save-dev json-schema-generation
+
+        java -jar node_modules/jsonix-schema-compiler/lib/jsonix-schema-compiler-full.jar \
+              -generateJsonSchema \
+              -d ./src/main/webapp/lib/ecomp/asdc/sequencer/schema/ \
+              -p asdc_sequencer_schema \
+              ./src/main/webapp/lib/ecomp/asdc/sequencer/schema/asdc-sequencer-meta-schema.xsd
+
+    -->
+
+    <xs:element name="diagram">
+        <xs:annotation>
+            <xs:documentation>
+
+                Diagram meta-schema, defining what diagram documents may look like.
+
+                The main difference between the metaschema (this) and the schema, is that
+                the metaschema describes what's *allowed* rather than what *is*.
+
+                Specific differences:
+
+                1. The metaschema exists primarily to constrain lifelines; to declare any
+                    that are predefined, to prescribe cardinality, order and whether or not
+                    ad hoc lifelines may be created by the user.
+                2. The metaschema doesn't constrain messages at all. This may come along later,
+                    but for now they're freetext, and can be defined between any legal pair
+                    of lifelines.
+                3. The metaschema doesn't have @ref attributes; its @id attributes are the
+                    target of @ref attributes in the instance schema.m
+
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="metadata" type="s:metadataType"/>
+                <xs:element name="lifelines" type="s:lifelinesType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="entityType" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Common attributes, most importantly @id, which every entity must have.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="notes" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="note" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Schema definition identifier.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" use="required" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Human-readable name.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="metadataType">
+        <xs:annotation>
+            <xs:documentation>
+                Diagram metadata, including:
+                 - Unique ID, referenced by @ref attributes in instance documents.
+                 - Human-readable description, displayed on-screen.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="lifelineType">
+        <xs:annotation>
+            <xs:documentation>
+                Metadata concerning a single lifeline.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType">
+                <xs:attribute name="mandatory" type="xs:boolean" use="optional" default="false">
+                    <xs:annotation>
+                        <xs:documentation>
+                            Whether an instance may omit this lifeline. Only takes effect
+                            where the lifelines setting is @delete=true.
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- /////////////////////////////////////////////////////////////////////////////////////// -->
+
+    <xs:complexType name="lifelinesType">
+        <xs:annotation>
+            <xs:documentation>
+                Metadata concerning allowed lifelines. Somewhat more strict that
+                instance data.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="s:entityType">
+                <xs:sequence>
+                    <xs:element name="lifeline" type="s:lifelineType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="constraints">
+                        <xs:complexType>
+                            <xs:attribute name="create" type="xs:boolean" use="required">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Whether the user may create their own lifelines.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="delete" type="xs:boolean" use="required">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Whether declared lifelines may be deleted.
+                                        See also @mandatory on lifeline.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="reorder" type="xs:boolean" use="required">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Whether lifelines may be reordered.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,61 @@
+$transitionLength: 0.5s;
+
+@mixin expand-transition($tl){
+	transition: width $tl, background-color $tl, cursor $tl;
+}
+
+@mixin color-transition($tl){
+	transition: color $tl;
+}
+
+.expandable-input-wrapper {
+  display: flex;
+	&:hover{
+		.form-control {
+			border-color: $gray;
+		}
+	}
+  .expandable-input-control {
+    flex: 1 1;
+    margin: 0;
+    .form-control {
+			border-radius: 20px;
+    }
+		align-self: center;
+  }
+	.expandable-active {
+		@include expand-transition($transitionLength);
+		width: 215px;
+		cursor: text;
+	}
+	.expandable-not-active {
+		@include expand-transition($transitionLength);
+		width: 28px;
+		cursor: pointer;
+		background-color: transparent;
+		color: transparent;
+	}
+
+  .expandable-icon {
+		@include color-transition($transitionLength);
+    position: relative;
+    left: -20px;
+    align-self: center;
+    width: 0;
+		cursor: pointer;
+		color: $dark-gray;
+  }
+
+	.expandable-close-button{
+		@extend .expandable-icon;
+		color: $gray;
+		opacity: 0.5;
+		&:hover {
+			opacity: 1;
+		}
+	}
+	.expandable-icon-active {
+		@include color-transition($transitionLength);
+		color: $blue;
+	}
+}

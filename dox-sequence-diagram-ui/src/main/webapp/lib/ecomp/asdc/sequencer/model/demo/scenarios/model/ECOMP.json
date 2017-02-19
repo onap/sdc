@@ -1,0 +1,514 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "ECOMP1",
+      "name": "Detailed flow in Ecomp1",
+      "ref": "ECOMP"
+    },
+    "lifelines": [
+      {
+        "id": "L01",
+        "name": "Customer"
+      },
+      {
+        "id": "L02",
+        "name": "MSO"
+      },
+      {
+        "id": "L03",
+        "name": "SDN"
+      },
+      {
+        "id": "L04",
+        "name": "A&AI"
+      },
+      {
+        "id": "L05",
+        "name": "IPE TOR"
+      },
+      {
+        "id": "L06",
+        "name": "ORM"
+      },
+      {
+        "id": "L07",
+        "name": "ORD"
+      },
+      {
+        "id": "L08",
+        "name": "Heat"
+      },
+      {
+        "id": "L09",
+        "name": "NovaAPI"
+      },
+      {
+        "id": "L10",
+        "name": "Ntrn Contrl"
+      },
+      {
+        "id": "L11",
+        "name": "RO"
+      },
+      {
+        "id": "L12",
+        "name": "Nova Agent"
+      },
+      {
+        "id": "L13",
+        "name": "VF Agent"
+      },
+      {
+        "id": "L14",
+        "name": "Hypervisor"
+      },
+      {
+        "id": "L15",
+        "name": "VF"
+      }
+    ],
+    "steps": [
+      {
+        "message": {
+          "id": "M01",
+          "from": "L01",
+          "to": "L02",
+          "name": "Create",
+          "type": "request",
+          "notes": [
+            "This note is short."
+          ],
+          "occurrences": {
+            "start": ["L01", "L02"],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M02",
+          "from": "L02",
+          "to": "L04",
+          "name": "Check Tenant",
+          "type": "request",
+          "occurrences": {
+            "start": ["L02"],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M03",
+          "from": "L02",
+          "to": "L06",
+          "name": "Create Tenant",
+          "type": "request",
+          "fragment": {
+            "operator": "alt",
+            "start": true,
+            "guard": "Does not exist"
+          },
+          "occurrences": {
+            "start": ["L06"],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M04",
+          "from": "L06",
+          "to": "L07",
+          "name": "Distribute",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M05",
+          "from": "L06",
+          "to": "L02",
+          "name": "Async Response",
+          "type": "response",
+          "asynchronous": true,
+          "fragment": {
+            "stop": true
+          },
+          "occurrences": {
+            "start": [],
+            "stop": ["L02", "L06"]
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M06",
+          "from": "L07",
+          "to": "L08",
+          "name": "Push",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M07",
+          "from": "L08",
+          "to": "L02",
+          "name": "Tenant Complete",
+          "type": "response",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M08",
+          "from": "L02",
+          "to": "L03",
+          "name": "Service Topology",
+          "type": "request",
+          "occurrences": {
+            "start": ["L03"],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M09",
+          "from": "L03",
+          "to": "L05",
+          "name": "Pre-configs",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M10",
+          "from": "L03",
+          "to": "L04",
+          "name": "Retrieve and populate",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": ["L03"]
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M11",
+          "from": "L02",
+          "to": "L08",
+          "name": "VNF PreRequisite Heat Template",
+          "type": "request",
+          "notes": [
+            "I got up and made coffee and read my emails and answered them until I got frustrated and made a mental note to answer the others later and then looked out of the window for a while and then made more coffee."
+          ],
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M12",
+          "from": "L08",
+          "to": "L10",
+          "name": "Provider and OAM nw",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M13",
+          "from": "L02",
+          "to": "L08",
+          "name": "Get Stack Status",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M14",
+          "from": "L08",
+          "to": "L02",
+          "name": "Status complete",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M15",
+          "from": "L11",
+          "to": "L04",
+          "name": "Provider and OAM Inventory",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M16",
+          "from": "L02",
+          "to": "L08",
+          "name": "VNF Server Heat Template",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M17",
+          "from": "L08",
+          "to": "L10",
+          "name": "Show Port",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M18",
+          "from": "L11",
+          "to": "L02",
+          "name": "Async Response with Stack ID",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M19",
+          "from": "L10",
+          "to": "L08",
+          "name": "Response",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M20",
+          "from": "L08",
+          "to": "L09",
+          "name": "Nova VM",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M21",
+          "from": "L09",
+          "to": "L12",
+          "name": "Scheduler Picks Nova Agent",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M22",
+          "from": "L12",
+          "to": "L14",
+          "name": "Picks VF",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M23",
+          "from": "L12",
+          "to": "L10",
+          "name": "Retrieves Port Info",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M24",
+          "from": "L12",
+          "to": "L13",
+          "name": "Calls CF Agent",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M25",
+          "from": "L13",
+          "to": "L15",
+          "name": "Configure VF",
+          "type": "response",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M26",
+          "from": "L15",
+          "to": "L13",
+          "name": "Response",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M27",
+          "from": "L13",
+          "to": "L12",
+          "name": "Complete",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M28",
+          "from": "L12",
+          "to": "L08",
+          "name": "Response Complete",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M29",
+          "from": "L11",
+          "to": "L04",
+          "name": "VServer and Show Port Inventory",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M30",
+          "from": "L02",
+          "to": "L08",
+          "name": "Get Stack Status",
+          "type": "request",
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M31",
+          "from": "L08",
+          "to": "L02",
+          "name": "Stack Status Complete",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": []
+          }
+        }
+      },
+      {
+        "message": {
+          "id": "M32",
+          "from": "L02",
+          "to": "L01",
+          "name": "Done",
+          "type": "response",
+          "asynchronous": true,
+          "occurrences": {
+            "start": [],
+            "stop": ["L01", "L02"]
+          }
+        }
+      }
+    ]
+  }
+}

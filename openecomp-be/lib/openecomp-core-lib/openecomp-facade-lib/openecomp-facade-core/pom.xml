@@ -11,21 +11,21 @@
 
     <artifactId>openecomp-facade-core</artifactId>
     <name>openecomp-facade-core</name>
-    <groupId>org.openecomp.core</groupId>
+    
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-facade-api</artifactId>
             <version>${project.version}</version>
         </dependency>

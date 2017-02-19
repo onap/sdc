@@ -1,0 +1,29 @@
+
+.notification-modal {
+
+  .modal-content {
+    .modal-header {
+      padding: 15px 10px 10px;
+      .modal-title {
+        @extend .heading-5-medium;
+      }
+    }
+    .modal-body {
+      padding: 30px 15px;
+      @extend .body-1-medium;
+    }
+  }
+
+  &.danger {
+    .modal-content .modal-header {
+      border-top: 3px solid $red;
+    }
+  }
+
+  &.warning {
+    .modal-content .modal-header {
+      border-top: 3px solid $yellow;
+    }
+  }
+
+}

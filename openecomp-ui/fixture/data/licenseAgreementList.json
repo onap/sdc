@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "name": "name0",
+      "description": "description0",
+      "licenseTerm": {"choice": "Other", "other": "blabla"},
+      "requirementsAndConstrains": "requirementsAndConstrains0",
+      "featureGroupsIds": [],
+      "id": "0"
+    },
+    {
+      "name": "name1",
+      "description": "description1",
+      "licenseTerm": {"choice": "Fixed_Term", "other": ""},
+      "requirementsAndConstrains": "requirementsAndConstrains1",
+      "featureGroupsIds": [
+        "1"
+      ],
+      "id": "1"
+    },
+    {
+      "name": "name2",
+      "description": "description2",
+      "licenseTerm": {"choice": "Unlimited", "other": ""},
+      "requirementsAndConstrains": "requirementsAndConstrains2",
+      "featureGroupsIds": [
+        "2"
+      ],
+      "id": "2"
+    }
+  ],
+  "listCount": 3
+}

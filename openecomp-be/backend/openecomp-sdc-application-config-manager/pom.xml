@@ -28,7 +28,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-config-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

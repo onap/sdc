@@ -1,0 +1,155 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "es6": true,
+    "jquery": true,
+    "node": true,
+    "mocha": true
+  },
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "ecmaFeatures": {
+    "jsx": true,
+    "classes": true,
+    "modules": true
+  },
+  "globals": {
+    "Event": true,
+    "window": true,
+    "navigator": true,
+    "System": true,
+    "document": true,
+    "localStorage": true,
+    "sessionStorage": true,
+    "Image": true,
+    "requestAnimationFrame": true,
+    "cancelAnimationFrame": true,
+    "DEBUG": true,
+    "SVGElement": true,
+    "FormData": true,
+    "DEV": true,
+    "Blob": true,
+    "XMLHttpRequest": true,
+    "URL": true,
+    "PunchOutRegistry": true,
+    "it": true,
+    "describe": true
+  },
+  "rules": {
+    "linebreak-style": 0,
+    "no-unused-vars": 2,
+    "no-bitwise": 0,
+    "no-eq-null": 2,
+    "eqeqeq": 2,
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "no-unused-expressions": 2,
+    "indent": [
+      1,
+      "tab",
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "no-use-before-define": 2,
+    "new-cap": [
+      2,
+      {
+        "capIsNewExceptions": [
+          "DataTable",
+          "V"
+        ]
+      }
+    ],
+    "no-caller": 2,
+    "no-empty": 2,
+    "no-undef": 2,
+    "quotes": [
+      2,
+      "single",
+      "avoid-escape"
+    ],
+    "jsx-quotes": [
+      2,
+      "prefer-single"
+    ],
+    "no-plusplus": 0,
+    "no-cond-assign": [
+      2,
+      "except-parens"
+    ],
+    "comma-style": [
+      2,
+      "last"
+    ],
+    "no-invalid-this": 0,
+    "dot-notation": 0,
+    "max-len": [
+      1,
+      200
+    ],
+    "camelcase": [
+      2,
+      {
+        "properties": "never"
+      }
+    ],
+    "curly": 2,
+    "brace-style": 0,
+    "semi": [
+      2,
+      "always"
+    ],
+    "space-in-brackets": [
+      0,
+      "never"
+    ],
+    "space-infix-ops": 2,
+    "import/default": 0,
+    "import/no-unresolved": 0,
+    "import/no-named-as-default": 2,
+    "import/no-duplicates": 0,
+    "import/imports-first": 2,
+    "import/export": 2,
+    "react/display-name": 0,
+    "react/forbid-prop-types": 0,
+    "react/jsx-boolean-value": 0,
+    "react/jsx-closing-bracket-location": [
+      1,
+      {
+        "nonEmpty": "after-props",
+        "selfClosing": "after-props"
+      }
+    ],
+    "react/jsx-curly-spacing": 0,
+    "react/jsx-indent-props": [
+      1,
+      "tab"
+    ],
+    "react/jsx-max-props-per-line": 0,
+    "react/jsx-no-duplicate-props": 1,
+    "react/jsx-no-literals": 0,
+    "react/jsx-no-undef": 1,
+    "react/jsx-sort-prop-types": 0,
+    "react/jsx-sort-props": 0,
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1,
+    "react/no-danger": 1,
+    "react/no-did-mount-set-state": 2,
+    "react/no-did-update-set-state": 2,
+    "react/no-direct-mutation-state": 1,
+    "react/no-multi-comp": 0,
+    "react/no-set-state": 0,
+    "react/no-unknown-property": 1,
+    "react/prop-types": 0,
+    "react/react-in-jsx-scope": 1,
+    "react/require-extension": 1,
+    "react/self-closing-comp": 1,
+    "react/sort-comp": 0,
+    "react/wrap-multilines": 1
+  }
+}

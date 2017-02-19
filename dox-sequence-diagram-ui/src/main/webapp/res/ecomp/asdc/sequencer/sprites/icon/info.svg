@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000"
+   height="1000"
+   id="svg4406"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="info.svg">
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 500 100 C 279.0861 100 100 279.08611 100 500 C 100 720.91389 279.0861 900 500 900 C 720.9139 900 900 720.91389 900 500 C 900 279.08611 720.9139 100 500 100 z M 450.53125 300.53125 L 549.46875 300.53125 L 549.46875 370.53125 L 450.53125 370.53125 L 450.53125 300.53125 z M 453.125 411.53125 L 546.875 411.53125 L 546.875 699.46875 L 453.125 699.46875 L 453.125 411.53125 z "
+       id="path2991" />
+  </g>
+</svg>

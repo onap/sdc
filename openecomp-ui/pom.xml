@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.openecomp.sdc</groupId>
+		<artifactId>sdc-main</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.openecomp.sdc.onboarding</groupId>
+	<artifactId>onboarding-fe</artifactId>
+	<name>onboarding-ui-war</name>
+
+	<packaging>war</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webXml>webapp-onboarding\WEB-INF\web.xml</webXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>rackspace</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>rackspace-public</id>
+					<name>Rackspace</name>
+					<url>https://10.208.197.75:8443/repository/maven-public/</url>
+					<layout>default</layout>
+				</repository>
+
+				<repository>
+					<id>virtuos</id>
+					<name>Virtuos</name>
+					<url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
+					<layout>default</layout>
+				</repository>
+
+				<repository>
+					<id>apache-public</id>
+					<name>Apache-Public</name>
+					<url>https://repository.apache.org/content/groups/public/</url>
+					<layout>default</layout>
+				</repository>
+
+				<repository>
+					<id>elasticsearch-releases</id>
+					<url>https://maven.elasticsearch.org/releases</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+
+			<distributionManagement>
+				<snapshotRepository>
+					<id>rackspace-snapshots</id>
+					<name>Rackspace-Snapshots</name>
+					<url>https://10.208.197.75:8443/repository/maven-snapshots/</url>
+				</snapshotRepository>
+
+				<repository>
+					<id>rackspace-public</id>
+					<name>Rackspace</name>
+					<url>https://10.208.197.75:8443/repository/maven-releases/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
+</project>

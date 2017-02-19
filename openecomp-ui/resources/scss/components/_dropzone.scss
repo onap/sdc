@@ -1,0 +1,8 @@
+
+.active-dragging {
+  border: 3px dashed $dark-blue;
+  border-radius: 20px;
+  .draggable-wrapper {
+    opacity: 0.5;
+  }
+}

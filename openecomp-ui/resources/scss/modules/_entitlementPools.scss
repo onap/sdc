@@ -1,0 +1,65 @@
+
+.entitlement-pools-list-editor {
+
+  .list-editor-view-list {
+    .list-editor-item-view {
+      min-height: 110px;
+      height: 110px;
+    }
+    .list-editor-item-view-field {
+
+      .entitlement-pools-count, .entitlement-parameters, .contract-number, .type{
+        color: $purple;
+      }
+      .entitlement-parameters {
+        @include ellipsis;
+        margin-bottom: 2px;
+      }
+      .entitlement-pools-count {
+        @extend .heading-1;
+        margin-top: -10px;
+
+      }
+    }
+  }
+}
+
+.entitlement-pools-modal {
+  .validation-form-content {
+    padding: 50px;
+  }
+  .modal-body {
+    padding: 0;
+  }
+  .entitlement-pools-form {
+    .tab-content {
+      padding: 50px;
+    }
+    .entitlement-pools-form-row {
+
+      display: flex;
+      justify-content: space-between;
+      & > * {
+        flex: 0 1 47%;
+      }
+      .validation-input-wrapper {
+        .form-group {
+          textarea {
+            height: 184px;
+          }
+          .entitlement-pools-form-row-threshold-value {
+            margin-top: 23px;
+            margin-left: 10px;
+            width: 189px;
+          }
+          .dropdown-multi-select .Select {
+            z-index: 1080;
+          }
+        }
+      }
+    }
+  }
+  .validation-buttons {
+    padding: 20px 50px;
+  }
+}

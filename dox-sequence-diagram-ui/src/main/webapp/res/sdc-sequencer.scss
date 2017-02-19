@@ -1,0 +1,87 @@
+@import 'ecomp/asdc/sequencer/sequencer-common.scss';
+
+.asdcs-control {
+
+    width: 100%;
+    height: 100%;
+    min-height: $asdcsApplicationMinHeight;
+
+    * {
+        outline: none;
+        line-height: initial;
+        text-align: initial;
+    }
+
+    p, div, span, td, input, select, option {
+        font-size: $asdcsFontSize;
+        color: $asdcsColorOneDark;
+        padding: 0;
+        margin: 0;
+    }
+
+    table {
+        border-collapse: initial;
+        border-spacing: initial;
+    }
+
+    // SVG always fills its container.
+
+    svg {
+        height:100%;
+        width: 100%;
+    }
+
+    button {
+
+        border-radius: 4px;
+        background-color: $asdcsColorButtonBG;
+        padding: 4px;
+        border: none;
+        color: $asdcsColorWhitish;
+        min-width: 30px;
+        min-height: 30px;
+        text-align: center;
+        vertical-align: middle;
+
+        &:hover {
+            cursor: pointer;
+            background-color: $asdcsColorEmphasisHover;
+            color: $asdcsColorWhite;
+            @include transition(background-color 250ms ease);
+        }
+
+        &:disabled {
+            cursor: default;
+            background-color:gray;
+            color:darkGray;
+        }
+
+    }
+
+    form {
+        display: none;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 0;
+        background-color: $asdcsColorOneLight;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 6px;
+        margin:1px;
+        background-color: $asdcsColorOne;
+    }
+}
+
+@import 'ecomp/asdc/sequencer/sequencer-controls.scss';
+@import 'ecomp/asdc/sequencer/sequencer-diagram.scss';
+@import 'ecomp/asdc/sequencer/sequencer-editor.scss';
+@import 'ecomp/asdc/sequencer/sequencer-dialog.scss';
+@import 'ecomp/asdc/sequencer/sequencer-designer.scss';
+@import 'ecomp/asdc/sequencer/sequencer-actions.scss';
+

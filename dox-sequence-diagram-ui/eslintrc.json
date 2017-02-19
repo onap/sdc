@@ -1,0 +1,32 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "browser": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "airbnb"
+  ],
+  "rules": {
+    "padded-blocks": 0,
+    "max-len": ["error", 160, 4],
+    "no-underscore-dangle": 0,
+    "global-require": 0,
+    "react/sort-comp": 0,
+    "new-cap": 0
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "0.14.8"
+    }
+  }
+}

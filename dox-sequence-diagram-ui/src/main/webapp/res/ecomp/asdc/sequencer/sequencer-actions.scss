@@ -1,0 +1,120 @@
+.asdcs-control {
+
+    .asdcs-actions {
+
+        @include drop-shadow();
+
+        * {
+            @include noselect();
+        }
+
+        $asdcsActionMenuWidth: 275px;
+        $asdcsActionMenuSpanIndent: 20px;
+
+        position: fixed;
+        display: none;
+        top: 0;
+        left: 0;
+
+        background: $asdcsColorOneLight;
+        border: 1px solid $asdcsColorWhitish;
+        border-radius: $asdcsPopupBorderRadius;
+        width: $asdcsActionMenuWidth;
+        z-index: 10000;
+
+        .asdcs-actions-header {
+            padding: 5px;
+            height: 20px;
+            pointer-events: none;
+            .asdcs-actions-icon {
+                height: $asdcsSmallIconSize;
+                width: $asdcsSmallIconSize;
+                fill: $asdcsColorTwo;
+            }
+        }
+
+        .asdcs-actions-footer {
+            height: 10px;
+        }
+
+        div.asdcs-actions-options {
+
+            div.asdcs-actions-state {
+                float: right;
+                height: $asdcsSmallIconSize;
+                width: $asdcsSmallIconSize;
+                .asdcs-actions-icon {
+                    fill: $asdcsColorOneDark;
+                }
+            }
+
+            .asdcs-icon-action {
+                display: none;
+                fill: $asdcsColorOneDark;
+                height: 20px;
+                width: 20px;
+            }
+
+            span.asdcs-annotation {
+                color: $asdcsColorOneDark;
+            }
+
+            .asdcs-actions-option {
+                padding: 8px;
+                border-top: 1px solid $asdcsColorOne;
+                border-collapse: collapse;
+                cursor: pointer;
+                &:hover {
+                    background-color: lighten($asdcsColorOneLight, 5%);
+                    @include transition(background-color $asdcsTransitionTime ease);
+                }
+            }
+
+            .asdcs-icon {
+                fill: $asdcsColorOneDark;
+                &:hover {
+                    fill: $asdcsColorEmphasisHover;
+                    @include transition(fill $asdcsTransitionTime ease);
+                }
+            }
+
+            .asdcs-actions-optiongroup-occurrence {
+                .asdcs-actions-option-occurrence-from,
+                .asdcs-actions-option-occurrence-to {
+                    span.asdcs-label {
+                        padding-left: $asdcsActionMenuSpanIndent;
+                    }
+                }
+                .asdcs-actions-option-occurrence-toggle {
+                    background-color: $asdcsColorOneLight;
+                }
+            }
+
+            .asdcs-actions-optiongroup-fragment {
+                .asdcs-actions-fragment-toggle {
+                    background-color: $asdcsColorOneLight;
+                }
+            }
+
+            .asdcs-actions-fragment-operator,
+            .asdcs-actions-fragment-guard {
+                div.asdcs-label {
+                    display: table-cell;
+                    width: 100px;
+                }
+                div.asdcs-value {
+                    display: table-cell;
+                    width: 150px;
+                    input {
+                        width: 90%;
+                        border-color: $asdcsColorOne;
+                    }
+                    .asdcs-editable-select {
+                        border: 1px solid $asdcsColorOne;
+                    }
+                }
+            }
+        }
+    }
+
+}

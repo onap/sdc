@@ -1,0 +1,16 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "BLANK",
+      "name": "Blank"
+    },
+    "lifelines": {
+      "lifelines": [],
+      "constraints": {
+        "create": true,
+        "delete": true,
+        "reorder": true
+      }
+    }
+  }
+}

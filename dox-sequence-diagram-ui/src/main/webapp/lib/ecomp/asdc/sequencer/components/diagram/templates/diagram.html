@@ -1,0 +1,56 @@
+<svg height="100%" width="100%" viewBox="<%-(x-25)%> <%-(y-25)%> <%-(width+50)%> <%-(height+50)%>" preserveAspectRatio="xMinYMin">
+    <defs>
+
+        <filter id="asdcsSvgHighlight" height="50" width="50" x="-25" y="-25">
+            <morphology in="SourceAlpha" operator="dilate" radius="25"></morphology>
+            <feGaussianBlur result="blur" stdDeviation="20"></feGaussianBlur>
+            <feComposite in2="SourceAlpha" k2="1" k3="-1" operator="arithmetic" result="hlDiff"></feComposite>
+            <feFlood flood-color="<%-floodColor%>" flood-opacity="1"></feFlood>
+            <feComposite in2="hlDiff" operator="in"></feComposite>
+            <feComposite in2="SourceGraphic" operator="over" result="withGlow"></feComposite>
+        </filter>
+
+        <marker id="asdcsDiagramArrowOpen"
+                viewBox="0 0 15 15"
+                refX="12"
+                refY="4"
+                markerWidth="15"
+                markerHeight="20"
+                orient="auto">
+            <path d="M0,0 L12,4 L0,8"  class="asdcs-diagram-arrow asdcs-diagram-arrow-open" />
+        </marker>
+
+        <marker id="asdcsDiagramArrowClosed"
+                viewBox="0 0 15 15"
+                refX="12"
+                refY="4"
+                markerWidth="15"
+                markerHeight="20"
+                orient="auto">
+            <path d="M0,0 L12,4 L0,8 Z"  class="asdcs-diagram-arrow asdcs-diagram-arrow-open" />
+        </marker>
+
+        <marker id="asdcsDiagramArrowSolid"
+                viewBox="0 0 15 15"
+                refX="12"
+                refY="4"
+                markerWidth="15"
+                markerHeight="20"
+                orient="auto">
+            <path d="M0,0 L12,4 L0,8 Z"  class="asdcs-diagram-arrow asdcs-diagram-arrow-solid" />
+        </marker>
+
+        <!--
+        <marker id="asdcsDiagramArrowSolid"
+                viewBox="0 0 20 20"
+                refX="20"
+                refY="6"
+                markerWidth="20"
+                markerHeight="20"
+                orient="auto">
+            <path d="M0,0 L18,6 L0,12 Z"  class="asdcs-diagram-arrow asdcs-diagram-arrow-solid" />
+        </marker>
+        -->
+
+    </defs>
+</svg>

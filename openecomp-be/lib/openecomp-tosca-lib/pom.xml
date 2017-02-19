@@ -10,14 +10,14 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.openecomp.core</groupId>
+    
     <artifactId>openecomp-tosca-lib</artifactId>
     <name>openecomp-tosca-lib</name>
 
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -27,7 +27,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

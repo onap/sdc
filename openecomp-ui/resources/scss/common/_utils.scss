@@ -1,0 +1,299 @@
+
+
+/* Prefix */
+
+$box-sizing-prefix: webkit moz spec;
+$border-radius-prefix: webkit spec;
+$box-shadow-radius-prefix: webkit moz spec;
+$text-shadow-radius-prefix: spec;
+$text-shadow-prefix: spec;
+$box-shadow-prefix: all;
+$linear-gradient-prefix: all;
+$transition-prefix: webkit moz o spec;
+$flex-prefix: webkit spec;
+$browserPrefixes: webkit moz o ms;
+
+@mixin prefix($property, $value, $prefixeslist: 'all') {
+  @if $prefixeslist == all {
+	-webkit-#{$property}: $value;
+	-moz-#{$property}: $value;
+	-ms-#{$property}: $value;
+	-o-#{$property}: $value;
+	#{$property}: $value;
+  } @else {
+	@each $prefix in $prefixeslist {
+	  @if $prefix == webkit {
+		-webkit-#{$property}: $value;
+	  } @else if $prefix == moz {
+		-moz-#{$property}: $value;
+	  } @else if $prefix == ms {
+		-ms-#{$property}: $value;
+	  } @else if $prefix == o {
+		-o-#{$property}: $value;
+	  } @else if $prefix == spec {
+		#{$property}: $value;
+	  } @else {
+		@warn "No such prefix: #{$prefix}";
+	  }
+	}
+  }
+}
+
+/* Value Prefix*/
+@mixin value-suffix-with-range($property, $valuesuffix, $from, $to, $prefixeslist) {
+
+  @if $prefixeslist == all {
+	#{property} : -webkit-#{$valuesuffix}($from, $to);
+	#{property} : -moz-#{$valuesuffix}($from, $to);
+	#{property} : -o-#{$valuesuffix}($from, $to);
+	#{property} : -ms-#{$valuesuffix}($from, $to);
+
+  } @else {
+	@each $prefix in $prefixeslist {
+	  @if $prefix == webkit {
+		#{property} : -webkit-#{$valuesuffix}($from, $to);
+	  } @else if $prefix == moz {
+		#{property} : -moz-#{$valuesuffix}($from, $to);
+	  } @else if $prefix == ms {
+		#{property} : -ms-#{$valuesuffix}($from, $to);
+	  } @else if $prefix == o {
+		#{property} : -o-#{$valuesuffix}($from, $to);
+	  } @else {
+		@warn "No such prefix: #{$prefix}";
+	  }
+	}
+  }
+}
+
+/* Box sizing */
+@mixin box-sizing($value: border-box) {
+  @include prefix(box-sizing, $value, $box-sizing-prefix);
+}
+
+/* Borders & Shadows */
+@mixin box-shadow($value) {
+  @include prefix(box-shadow, $value, $box-shadow-radius-prefix);
+}
+
+@mixin text-shadow($value) {
+  @include prefix(text-shadow, $value, $text-shadow-radius-prefix);
+}
+
+@mixin border-radius($value, $positions: all) {
+  @if ($positions == all) {
+	@include prefix(border-radius, $value, $border-radius-prefix);
+  } @else {
+	@each $position in $positions {
+	  @include prefix(border-#{$position}-radius, $value, $border-radius-prefix);
+	}
+  }
+
+}
+
+@mixin transition($value) {
+  @include prefix(transition, $value, $transition-prefix);
+}
+
+/* Opacity */
+@mixin opacity($alpha) {
+  $ie-opacity: round($alpha * 100);
+  opacity: $alpha;
+  filter: unquote("alpha(opacity = #{$ie-opacity})");
+}
+
+/* Ellipsis */
+@mixin ellipsis() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+@mixin gradient($from, $to) {
+  /* fallback/image non-cover color */
+  background-color: $from;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from($from), to($to));
+  @include value-suffix-with-range(background-color, linear-gradient, $from, $to, $linear-gradient-prefix);
+}
+
+/* Vertical placement of multuple lines of text */
+@mixin vertical-text($height) {
+  position: absolute;
+  top: 50%;
+  margin-top: -$height/2;
+}
+
+@mixin multiline-ellipsis($height, $lineheight, $ellipsiswidth: 3em) {
+
+  $ellipsiswidth: 3em !default;
+
+  .ellipsis {
+	overflow: hidden;
+	height: $height;
+	line-height: $lineheight;
+  }
+
+  .ellipsis:before {
+	content: "";
+	float: left;
+	width: 5px;
+	height: $height;
+  }
+
+  .ellipsis > *:first-child {
+	float: right;
+	width: 100%;
+	margin-left: -5px;
+  }
+
+  .ellipsis:after {
+	content: "\02026";
+
+	float: right;
+	position: relative;
+	top: -25px;
+	left: 100%;
+	width: $ellipsiswidth;
+	margin-left: -$ellipsiswidth;
+	padding-right: 5px;
+
+	text-align: right;
+  }
+
+}
+
+@mixin text-vertical-align($align: middle) {
+  display: table;
+  width: 100%;
+
+  & > * {
+	vertical-align: $align;
+	display: table-cell;
+  }
+}
+
+@mixin center-element($width) {
+  width: $width;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin center-content($width) {
+  & > * {
+	@include center-element($width);
+  }
+}
+
+/* transform-rotate */
+// @mixin
+//	   Defines a 2D rotation, the angle is specified in the parameter
+// @param
+//     $deg - angle in degrees
+@mixin transform-rotate($deg) {
+  transform: rotate($deg + deg); /* IE10 and Mozilla */
+  -ms-transform: rotate($deg + deg); /* IE 9 */
+  -webkit-transform: rotate($deg + deg); /* Safari and Chrome */
+}
+
+/* transform-translate */
+// @mixin
+//	   Defines a 2D rotation, the angle is specified in the parameter
+// @param
+//     $deg - angle in degrees
+@mixin transform-translate($x, $y) {
+	transform: translate($x, $y); /* IE10 and Mozilla */
+	-ms-transform: translate($x, $y); /* IE 9 */
+	-webkit-transform: translate($x, $y); /* Safari and Chrome */
+}
+
+/* transform-scale */
+// @mixin
+//	   Defines a 2D scale transformation, changing the elements width and height
+// @param
+//     $width - width
+// @param
+//     $height - height
+@mixin transform-scale($width, $height) {
+  transform: scale($width, $height); /* IE10 and Mozilla */
+  -ms-transform: scale($width, $height); /* IE 9 */
+  -webkit-transform: scale($width, $height); /* Safari and Chrome */
+}
+
+@mixin scrollable() {
+  ::-webkit-scrollbar {
+	width: 8px;
+  }
+}
+
+/**/
+@mixin keyframe-animation($animationType, $properties, $fromValue, $toValue) {
+
+  @keyframes #{$animationType} {
+    from {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($fromValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+    to {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($toValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+  }
+  @-moz-keyframes #{$animationType}{
+    /* Firefox */
+    from {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($fromValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+    to {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($toValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+  }
+  @-webkit-keyframes #{$animationType} {
+    /* Safari and Chrome */
+    from {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($fromValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+    to {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($toValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+  }
+  @-o-keyframes #{$animationType} {
+    /* Opera */
+    from {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($fromValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+    to {
+      $startIndex: 1;
+      @each $property in $properties {
+        #{$property}: nth($toValue, $startIndex);
+        $startIndex: $startIndex + 1;
+      }
+    }
+  }
+}

@@ -24,7 +24,7 @@
 		<module>sdc-os-chef</module>
 
 		<module>openecomp-be</module>
-		<!--<module>openecomp-ui</module>-->
+		<module>openecomp-ui</module>
 
 	</modules>
 

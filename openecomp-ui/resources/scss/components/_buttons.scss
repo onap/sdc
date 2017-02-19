@@ -1,0 +1,46 @@
+
+$plus-circle-icon-size: 18px;
+.plus-icon-button {
+  background: url($plus-circle-icon) no-repeat;
+  background-size: $plus-circle-icon-size;
+  width: $plus-circle-icon-size;
+  height: $plus-circle-icon-size;
+  cursor: pointer;
+  &.small {
+    background-size: $plus-circle-icon-size - 6;
+    width: $plus-circle-icon-size - 6;
+    height: $plus-circle-icon-size - 6;
+  }
+}
+
+.primary-btn{
+  border: 1px solid;
+  border-color: $blue;
+  color: $blue;
+  font-weight: bolder;
+  @extend .body-1;
+  text-align: center;
+  padding: 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: center;
+  background-color: $white;
+  .primary-btn-text {
+    width: 100%;
+  }
+  &:hover {
+    color: $blue;
+    border-color: $blue;
+    background-color: $tlv-hover;
+    &:active {
+      color: $blue;
+      border-color: $blue;
+    }
+  }
+
+  &:focus:not(:hover) {
+    color: $blue;
+    border-color: $blue;
+    background-color: $white;
+  }
+}

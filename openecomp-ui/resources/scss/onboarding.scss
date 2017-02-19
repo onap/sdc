@@ -1,0 +1,10 @@
+.dox-ui {
+	@import "bootstrap";
+
+	@import "../css/font-awesome.min.css";
+	@import "~react-select/dist/react-select.min.css";
+
+	@import "common";
+	@import "components";
+	@import "modules";
+}

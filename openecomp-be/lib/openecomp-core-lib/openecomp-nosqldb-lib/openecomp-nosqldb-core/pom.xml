@@ -9,14 +9,13 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <groupId>org.openecomp.core</groupId>
     <artifactId>openecomp-nosqldb-core</artifactId>
     <name>openecomp-nosqldb-core</name>
 
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-nosqldb-api</artifactId>
             <version>${project.version}</version>
         </dependency>

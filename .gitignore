@@ -97,3 +97,7 @@ asdc-tests/test-output/**
 asdc-chef/cookbooks/Deploy-SDandC/attributes/version.rb
 asdc-tests/ExtentReport/ASDC_CI_Extent_Report.html
 
+
+**/*.log
+sdctool.tar
+asdc-tests.tar

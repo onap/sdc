@@ -1,0 +1,16 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "DIMENSIONS",
+      "name": "Dimensions"
+    },
+    "lifelines": {
+      "lifelines": [],
+      "constraints": {
+        "create": true,
+        "delete": true,
+        "reorder": true
+      }
+    }
+  }
+}

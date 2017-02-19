@@ -1,0 +1,153 @@
+.software-product-attachments {
+  @extend .body-1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .software-product-attachments-tree {
+    display: flex;
+    border-right: 1px solid $light-gray;
+    margin: 0px;
+    padding: 5px 3px 10px 3px;
+    overflow: auto;
+    height: 100%;
+
+    .tree-wrapper {
+      flex: 1 1;
+      position: relative;
+      padding-bottom: 10px;
+
+      .tree-block-inside {
+        padding-left: 17px;
+        padding-top: 8px;
+        padding-bottom: 1px;
+        .tree-node-row {
+          cursor: default;
+          white-space: nowrap;
+          &.tree-node-selected::before {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 20px;
+            display: inline-block;
+            content: ' ';
+            background-color: $light-gray;
+          }
+
+          &.tree-node-clicked::before {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            height: 20px;
+            display: inline-block;
+            content: ' ';
+            font-weight: bold;
+            background-color: $white;
+          }
+
+          .tree-node-expander {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            .fa {
+              position: absolute;
+              left: -7px;
+              top: -11px;
+              @include transition(transform 0.3s);
+            }
+            &.tree-node-expander-collapsed .fa {
+              @include transform-rotate(-90);
+            }
+          }
+
+          .tree-node-icon {
+            margin: 0 7px;
+            color: $text-black;
+            opacity: .5;
+            .tree-node-validation-error::after {
+              content: "!";
+              font-weight: bold;
+              position: absolute;
+              color: $red;
+              font-size: large;
+              left: -7px;
+              bottom: -5px;
+            }
+          }
+
+          .error-status {
+            color: $red;
+            &.error-status-selected {
+              font-weight: bold;
+            }
+            &.error-status-hovered {
+              font-weight: bold;
+              background-color: $blue;
+            }
+          }
+
+          .tree-element-text {
+            @extend %noselect;
+            position: relative;
+            padding-right: 5px;
+            &.error-status-selected {
+              font-weight: bold;
+            }
+          }
+        }
+
+      }
+    }
+  }
+  .software-product-attachments-separator {
+    border: 1px solid $tlv-light-gray;
+    height: 100%;
+    width: 5px;
+    cursor: e-resize;
+  }
+
+  .software-product-attachments-error-list {
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-content: flex-start;
+    flex-direction: column;
+    padding-left: 70px;
+    padding-right: 50px;
+    overflow: auto;
+    margin-bottom: 70px;
+    .error-item {
+      &.selected {
+        background-color: $light-gray;
+      }
+      &.clicked {
+        color: $blue;
+      }
+      &.shifted {
+        margin-top: 20px;
+      }
+      text-align: left;
+      .error-item-file-name {
+        font-weight: bold;
+      }
+      .error-item-file-type {
+        margin-right: 5px;
+        &.strong {
+          font-weight: bold;
+        }
+        &.ERROR {
+          color: $red;
+        }
+        &.WARNING {
+          color: $yellow;
+        }
+      }
+    }
+
+    .error-item:hover {
+      cursor: default;
+      background-color: $tlv-hover;
+    }
+  }
+
+}

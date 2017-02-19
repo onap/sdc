@@ -1,0 +1,46 @@
+.vsp-components-network {
+  .network-data {
+    .network-data-title {
+      @extend .body-2-medium;
+      padding-bottom: 20px;
+      padding-left: 15px;
+    }
+    .single-col {
+      .validation-input-wrapper {
+        label {
+          max-width: 230px;
+        }
+      }
+    }
+  }
+  .list-editor-view {
+    margin-top: 50px;
+  }
+}
+.network-nic-modal {
+  .modal-body {
+    padding: 0;
+  }
+  .vsp-components-network-editor {
+    .editor-data {
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 20px;
+      height: 500px;
+      overflow-y: auto;
+      .part-title {
+        @extend .heading-5;
+        padding-bottom: 10px;
+        padding-left: 14px;
+      }
+      .part-title-small {
+        @extend .heading-3;
+        padding-bottom: 10px;
+        padding-left: 14px;
+      }
+      .network-radio label {
+        font-size: 15px;
+      }
+    }
+  }
+}

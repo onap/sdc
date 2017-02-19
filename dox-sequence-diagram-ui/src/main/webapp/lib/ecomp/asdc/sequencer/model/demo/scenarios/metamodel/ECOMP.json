@@ -1,0 +1,62 @@
+{
+  "diagram": {
+    "metadata": {
+      "id": "ECOMP",
+      "name": "ECOMP"
+
+    },
+    "lifelines": {
+      "lifelines": [{
+        "id": "1",
+        "name": "Customer"
+      }, {
+        "id": "2",
+        "name": "MSO"
+      }, {
+        "id": "3",
+        "name": "SDN"
+      }, {
+        "id": "4",
+        "name": "A&AI"
+      }, {
+        "id": "5",
+        "name": "IPE TOR"
+      }, {
+        "id": "6",
+        "name": "ORM"
+      }, {
+        "id": "7",
+        "name": "ORD"
+      }, {
+        "id": "8",
+        "name": "Heat"
+      }, {
+        "id": "9",
+        "name": "NovaAPI"
+      }, {
+        "id": "10",
+        "name": "Ntrn Contrl"
+      }, {
+        "id": "11",
+        "name": "RO"
+      }, {
+        "id": "12",
+        "name": "Nova Agent"
+      }, {
+        "id": "13",
+        "name": "VF Agent"
+      }, {
+        "id": "14",
+        "name": "Hypervisor"
+      }, {
+        "id": "15",
+        "name": "VF"
+      }],
+      "constraints": {
+        "create": true,
+        "delete": true,
+        "reorder": true
+      }
+    }
+  }
+}

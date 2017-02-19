@@ -1,0 +1,189 @@
+// Separate to allow for SVG-only styles, for application by Batik
+// to exported SVG on the service-side.
+
+svg {
+
+    text {
+        text-anchor: middle;
+        color: $asdcsTextColor;
+        stroke: none;
+    }
+
+    g.asdcs-diagram-title {
+        text {
+            font-size: 40pt;
+        }
+    }
+
+    rect.asdcs-diagram-occurrence {
+        stroke: $asdcsSVGStrokeColor;
+        stroke-width: $asdcsSVGStrokeWidth;
+        fill: $asdcsColorWhite;
+    }
+
+    g.asdcs-diagram-message-container {
+
+        text.asdcs-diagram-message-label {
+            fill: $asdcsSVGTextColorMessage;
+            pointer-events: none;
+            font-size: 28pt;
+        }
+
+        rect.asdcs-diagram-message-label-bg {
+            pointer-events: none;
+            stroke: none;
+            fill: $asdcsColorWhite;
+            fill-opacity: 0.75;
+        }
+
+        path.asdcs-diagram-message-selectable {
+            stroke: $asdcsSVGSelectableColor;
+            stroke-width: $asdcsSVGSelectableWidth;
+            fill: none;
+            opacity: $asdcsSVGSelectableOpacity;
+            cursor: pointer;
+        }
+
+        path.asdcs-diagram-message {
+            pointer-events: none;
+            stroke: $asdcsSVGStrokeColorMessage;
+            stroke-width: $asdcsSVGStrokeWidth;
+            fill: none;
+            &.asdcs-diagram-message-response {
+                stroke-dasharray: 30, 10;
+            }
+        }
+
+        rect.asdcs-diagram-message-bg {
+            stroke: none;
+            fill: $asdcsColorWhite;
+        }
+
+        &.asdcs-active {
+            path.asdcs-diagram-message {
+                stroke: $asdcsSVGStrokeActiveColor;
+                stroke-width: $asdcsSVGStrokeActiveWidth;
+            }
+            rect.asdcs-diagram-message-bg {
+                // Not FF:
+                // filter: url(#asdcsSvgHighlight);
+            }
+            rect.asdcs-diagram-message-label-bg {
+                fill: #fafafa;
+            }
+        }
+
+        .asdcs-diagram-notes-container {
+            display: none;
+            path {
+                fill:none;
+                stroke: $asdcsSVGStrokeColor;
+                stroke-width: 6px;
+            }
+            text {
+                font-weight: bold;
+                font-size: 40px;
+                text-anchor: start;
+            }
+        }
+
+        &.asdcs-active {
+            .asdcs-diagram-notes-container {
+                display: block;
+            }
+        }
+
+    }
+
+    g.asdcs-diagram-lifeline-container {
+
+        rect.asdcs-diagram-lifeline-heading-box {
+            stroke: $asdcsColorThree;
+            stroke-width: $asdcsSVGStrokeWidth;
+            fill: $asdcsColorWhite;
+            cursor: pointer;
+        }
+
+        text.asdcs-diagram-lifeline-heading-label {
+            font-size: 36px;
+            pointer-events: none;
+        }
+
+        path.asdcs-diagram-lifeline-selectable {
+            stroke: $asdcsSVGSelectableColor;
+            stroke-width: $asdcsSVGSelectableWidth;
+            opacity: $asdcsSVGSelectableOpacity;
+            cursor: pointer;
+        }
+
+        path.asdcs-diagram-lifeline {
+            pointer-events: none;
+            fill: $asdcsSVGStrokeColor;
+            stroke: $asdcsSVGStrokeColorLifeline;
+            stroke-width: $asdcsSVGStrokeWidth;
+            stroke-dasharray: 40, 10;
+        }
+
+        rect.asdcs-diagram-lifeline-bg {
+            stroke: none;
+            fill:white;
+        }
+
+        &.asdcs-active {
+            rect.asdcs-diagram-lifeline-heading-box, path.asdcs-diagram-lifeline {
+                stroke: $asdcsSVGStrokeActiveColor;
+                stroke-width: $asdcsSVGStrokeActiveWidth;
+            }
+            rect {
+                // Not supported by FF:
+                // filter:url(#asdcsSvgHighlight);
+            }
+        }
+    }
+
+    .asdcs-diagram-fragment {
+
+        rect {
+            stroke: $asdcsSVGStrokeColorFragment;
+            stroke-width: $asdcsSVGStrokeWidth;
+            fill: none;
+        }
+
+        rect.asdcs-diagram-fragment-guard-bg {
+            pointer-events: none;
+            stroke: none;
+            fill: $asdcsColorWhite;
+            fill-opacity: 0.75;
+        }
+
+        text {
+            font-size: 28pt;
+            text-anchor: start;
+            &.asdcs-diagram-fragment-guard {
+                fill: #888;
+            }
+        }
+
+        path {
+            stroke: $asdcsSVGStrokeColor;
+            stroke-width: $asdcsSVGStrokeWidth;
+            fill: none;
+        }
+    }
+
+    #asdcsDiagramArrowOpen, #asdcsDiagramArrowClosed, #asdcsDiagramArrowSolid {
+        stroke: $asdcsSVGStrokeColor;
+    }
+
+    #asdcsDiagramArrowOpen {
+        fill:none;
+    }
+
+    #asdcsDiagramArrowClosed {
+        fill:white;
+    }
+
+    #asdcsDiagramArrowSolid {
+        fill:$asdcsSVGStrokeColor;
+    }
+}

@@ -1,0 +1,54 @@
+.license-key-groups-list-editor {
+  .list-editor-view-list {
+    .list-editor-item-view {
+      min-height: 110px;
+      height: 110px;
+    }
+    .list-editor-item-view-field {
+
+      .operational-scope, .type {
+        color: $orange;
+      }
+      .operational-scope {
+        margin-bottom: 0px;
+        @include ellipsis;
+      }
+    }
+  }
+}
+
+.license-key-groups-modal {
+  .modal-body {
+    padding: 0;
+  }
+  .license-key-groups-form {
+    .validation-form-content {
+      padding: 50px;
+      .field-section {
+        @extend .body-2-medium;
+        margin-bottom: 23px;
+        width: 400px;
+        color: $black;
+      }
+      .license-key-groups-form-row {
+        display: flex;
+        justify-content: space-between;
+        .options-input-form-row {
+          width: 370px;
+        }
+        .validation-input-wrapper {
+          flex: 0 1 45%;
+          .form-group {
+            textarea {
+              height: 100px;
+            }
+
+          }
+        }
+      }
+    }
+    .validation-buttons {
+      padding: 20px 50px;
+    }
+  }
+}

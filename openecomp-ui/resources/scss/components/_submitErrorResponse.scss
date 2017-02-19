@@ -1,0 +1,23 @@
+
+.submit-error-response-view {
+  max-height: 500px;
+  overflow: auto;
+  .list-group-item {
+    border-top: none;
+  }
+  .panel-title {
+    a {
+      &:after {
+
+        content: "(details)";
+        color: $link-blue;
+        float: right;
+
+      }
+      &:hover {
+        color: $blue;
+        text-decoration: underline;
+      }
+    }
+  }
+}

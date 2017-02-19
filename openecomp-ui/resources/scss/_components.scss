@@ -1,0 +1,73 @@
+@import "components/punchOut";
+@import "components/buttons";
+@import "components/forms";
+@import "components/validationForm";
+@import "components/slidePanel";
+@import "components/dualListBox";
+@import "components/listEditorView";
+@import "components/toggleInput";
+@import "components/notifications";
+@import "components/inputOptions";
+@import "components/progressBar";
+@import "components/versionController";
+@import "components/sequenceDiagram";
+@import "components/navigationSideBar";
+@import "components/loader";
+@import "components/dropzone";
+@import "components/submitErrorResponse";
+@import "components/expandableInput";
+
+%noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.next-to-icon-label {
+  $margin: 10px;
+  margin-left: $margin;
+  &.right {
+    margin-left: 0;
+    margin-right: $margin;
+  }
+}
+
+.search-wrapper {
+  display: flex;
+  .search-input-control {
+    flex: 1 1;
+    margin: 0;
+    .form-control {
+      font-style: italic;
+    }
+  }
+  .search-icon {
+    position: relative;
+    left: -20px;
+    align-self: center;
+    width: 0;
+    color: $dark-gray;
+  }
+  .filter-icon {
+    position: relative;
+    left: -20px;
+    align-self: center;
+    width: 0;
+    background-color: $white;
+  }
+}
+
+.warning-icon {
+  margin-left: 50%;
+  color: $yellow;
+}
