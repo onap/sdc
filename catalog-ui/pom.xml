@@ -5,7 +5,7 @@
 
 	<groupId>org.openecomp.sdc</groupId>
 	<artifactId>catalog-ui</artifactId>
-    <packaging>pom</packaging>
+	<packaging>pom</packaging>
 
 
 	<parent>
@@ -25,34 +25,118 @@
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.6.1</version>
-                <executions>
-                    <execution>
-                        <id>clean.fe.webapp.folder</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
+				<executions>
+					<execution>
+						<id>clean.fe.webapp.folder</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
 
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.parent.basedir}/catalog-fe/src/main/webapp</directory>
-                                    <includes>
-                                        <include>**/*</include>
-                                        <include>*</include>
-                                    </includes>
-                                    <excludes>
-                                        <exclude>META-INF/*</exclude>
-                                        <exclude>WEB-INF/*</exclude>
-                                    </excludes>
-                                    <followSymlinks>false</followSymlinks>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
+							<filesets>
+								<fileset>
+									<directory>${project.parent.basedir}/catalog-fe/src/main/webapp</directory>
+									<includes>
+										<include>**/*</include>
+										<include>*</include>
+									</includes>
+									<excludes>
+										<exclude>META-INF/*</exclude>
+										<exclude>WEB-INF/*</exclude>
+									</excludes>
+									<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.3</version>
+				<configuration>
+					<nodeVersion>v7.5.0</nodeVersion>
+					<nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+					<npmDownloadRoot>https://nodejs.org/dist/npm/</npmDownloadRoot>
+					<installDirectory>./</installDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+
+					<execution>
+						<id>npm install bower</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+
+						<phase>generate-resources</phase>
+
+						<configuration>
+							<arguments>install bower</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>npm install grunt-cli</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+
+						<phase>generate-resources</phase>
+
+						<configuration>
+							<arguments>install grunt-cli</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+
+						<phase>generate-resources</phase>
+
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>bower install</id>
+						<goals>
+							<goal>bower</goal>
+						</goals>
+
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>grunt build</id>
+						<goals>
+							<goal>grunt</goal>
+						</goals>
+
+						<phase>generate-resources</phase>
+
+						<configuration>
+							<arguments>build</arguments>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
 
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -79,11 +163,42 @@
 		</plugins>
 	</build>
 
-
-
 	<profiles>
 		<profile>
-			<id>CI</id>
+			<id>WINDOWS_ONLY</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>exec-maven-plugin</artifactId>
+						<groupId>org.codehaus.mojo</groupId>
+						<version>1.4.0</version>
+						<executions>
+							<execution>
+								<id>execute grant build</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>build_catalog_ui.bat</executable>
+									<workingDirectory>${basedir}</workingDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
+			<id>not-minified</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -100,12 +215,27 @@
 								<goals>
 									<goal>copy-resources</goal>
 								</goals>
-
 								<configuration>
 									<outputDirectory>${project.parent.basedir}/catalog-fe/src/main/webapp</outputDirectory>
 									<resources>
 										<resource>
-											<directory>${project.basedir}/app/dist</directory>
+											<directory>${project.basedir}/app</directory>
+											<includes>
+												<include>languages/**</include>
+												<include>scripts/**</include>
+												<include>styles/**</include>
+												<include>third-party/**</include>
+												<include>index.html</include>
+												<include>robots.txt</include>
+												<include>favicon.png</include>
+											</includes>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${project.basedir}</directory>
+											<includes>
+												<include>bower_components/**</include>
+											</includes>
 											<filtering>false</filtering>
 										</resource>
 									</resources>
@@ -113,119 +243,9 @@
 							</execution>
 						</executions>
 					</plugin>
-
-
-
-					<!--  ============================================= -->
-					<!--  Build the UI module node code                 -->
-					<!--  ============================================= -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.4.0</version>
-						<executions>
-							<execution>
-								<id>execute grant build</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-
-								<configuration>
-									<executable>./build_catalog_ui.sh</executable>
-									<workingDirectory>${project.basedir}</workingDirectory>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
-
-
-
-		<profile>
-			<id>WINDOWS_ONLY</id>
-			<activation>
-				<os>
-					<family>Windows</family>
-				</os>
-			</activation>
-
-			<build>
-				<plugins>
-					<plugin>
-					  <artifactId>exec-maven-plugin</artifactId>
-					  <groupId>org.codehaus.mojo</groupId>
-                      <version>1.4.0</version>
-					  <executions>
-						<execution>
-						  <id>execute grant build</id>
-						  <phase>generate-sources</phase>
-						  <goals>
-							<goal>exec</goal>
-						  </goals>
-						  <configuration>
-							<executable>build_catalog_ui.bat</executable>
-							<workingDirectory>${basedir}</workingDirectory>
-						  </configuration>
-						</execution>
-					  </executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-
-        <profile>
-            <id>not-minified</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.7</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.parent.basedir}/catalog-fe/src/main/webapp</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.basedir}/app</directory>
-                                            <includes>
-                                                <include>languages/**</include>
-                                                <include>scripts/**</include>
-                                                <include>styles/**</include>
-                                                <include>third-party/**</include>
-                                                <include>index.html</include>
-                                                <include>robots.txt</include>
-                                                <include>favicon.png</include>
-                                            </includes>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.basedir}</directory>
-                                            <includes>
-                                                <include>bower_components/**</include>
-                                            </includes>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 	</profiles>
 </project>
 
