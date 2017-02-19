@@ -52,12 +52,5 @@
   "engines": {
     "node": ">=5.1",
     "npm": ">=3.3"
-  },
-  "scripts": {
-    "prepublish": "npm run build",
-    "buildbabel": "babel src -d lib && node tools/copy-assets",
-    "build": "webpack",
-    "start": "webpack-dev-server",
-    "lint": "eslint . --ext .js --ext .jsx --cache"
   }
 }
