@@ -1,0 +1,12 @@
+{
+  "artifacts": [
+    {
+      "name": "start_apache.sh",
+      "url": "http://.*/v1/catalog/resources/alien.nodes.Apache/2.0.0-SNAPSHOT/artifacts/start_apache.sh"
+    },
+    {
+      "name": "install_apache.sh",
+      "url": "http://.*/v1/catalog/resources/alien.nodes.Apache/2.0.0-SNAPSHOT/artifacts/install_apache.sh"
+    }
+  ]
+}

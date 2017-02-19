@@ -1,0 +1,13 @@
+--- 
+users: 
+  jh0003: 
+    firstName: Jimmy
+    lastName: Hendrix
+    role: ADMIN
+    email: admin@att.com
+  jh0006: 
+    firstName: Jimmy
+    lastName: Hendrix
+    role: DESIGNER1 
+    email: admin@att.com
+

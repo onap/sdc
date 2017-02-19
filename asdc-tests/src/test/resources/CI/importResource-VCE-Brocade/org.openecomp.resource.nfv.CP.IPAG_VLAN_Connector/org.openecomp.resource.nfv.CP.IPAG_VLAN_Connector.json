@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.cp.IPAG_VLAN_Connector.yaml",
+   "contactId": "jh0003",
+  "name": "org.openecomp.resource.nfv.cp.IPAG_VLAN_Connector",
+  "description": "Represents a virtual or physical interface between the NFV and the LAN.",
+  "resourceIconPath": "port",
+  "category": "Network Layer 2-3/LAN Connectors",
+  "tags": [
+    "org.openecomp.resource.nfv.cp.IPAG_VLAN_Connector", "LAN Connector"
+  ]
+}

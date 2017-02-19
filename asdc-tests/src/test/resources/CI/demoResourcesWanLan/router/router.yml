@@ -1,0 +1,13 @@
+org.openecomp.asdc.nodes.Router:
+  #The Router node has a property "routing_table" which is a list. The entry of the routing_table is the customized data type "RoutingTableEntry"
+    derived_from: org.openecomp.asdc.nodes.Root
+    properties: 
+      routing_table: 
+        type: list
+      entry_schema:
+      #"entry_schema" is the TOSCA spec to describe the type of the list item
+        type: RoutingTableEntry
+    capabilities:
+      connectTo: 
+        #The "connectTo" capability allows other TOSCA nodes (connectors) that requires such a capability to connect to this node.    
+        type: org.openecomp.asdc.capabilities.Endpoint

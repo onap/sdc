@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.module.ECA_OAM.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.ECA_OAM",
+  "description": "Operation, Administration & Management of vMMSC ECA TRX",
+  "resourceIconPath": "applicationServer",
+  "category": "Application Layer 4+/Application Servers",
+  "tags": [
+    "asdc.nodes.module.ECA_OAM", "MMSC OAM", "ECA", "MMSC", "vMMSC", "Mobility"
+  ]
+}
+

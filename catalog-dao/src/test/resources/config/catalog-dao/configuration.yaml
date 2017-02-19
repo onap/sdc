@@ -1,0 +1,120 @@
+identificationHeaderFields:
+   - HTTP_IV_USER
+   - HTTP_CSP_FIRSTNAME
+   - HTTP_CSP_LASTNAME
+   - HTTP_IV_REMOTE_ADDRESS
+   - HTTP_CSP_WSTYPE
+
+
+# catalog backend hostname
+beFqdn: 172.20.43.124:8080
+
+
+# catalog backend http port
+beHttpPort: 8080
+
+# catalog backend http context
+beContext: /sdc/rest/config/get
+
+# catalog backend protocol
+beProtocol: http
+
+# catalog backend ssl port
+beSslPort: 8443
+
+version: 1.0
+released: 2012-11-30
+
+titanCfgFile: src/main/resources/config/titan.properties
+titanInMemoryGraph: true
+titanLockTimeout: 30
+
+# Protocols
+protocols:
+   - http
+   - https
+
+# Users
+users:
+    tom: passwd
+    bob: passwd
+#Neoj4
+neo4j:
+    host: neo4jhost
+    port: 7474
+    user: neo4j
+    password: "12345"
+    maxHttpConnection: 100
+    maxHttpPerRoute: 20
+
+cassandraConfig:
+    cassandraHosts: ['mtanjv9sdcg44']
+    localDataCenter:
+    reconnectTimeout : 30000
+    authenticate: false
+    username: koko
+    password: bobo
+    ssl: false
+    truststorePath : /path/path
+    truststorePassword : 123123
+    keySpaces:
+        - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+        - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
+
+#Application-specific settings of ES
+elasticSearch:
+    # Mapping of index prefix to time-based frame. For example, if below is configured:
+    #
+    # - indexPrefix: auditingevents
+    #    creationPeriod: minute
+    #
+    # then ES object of type which is mapped to "auditingevents-*" template, and created on 2015-12-23 13:24:54, will enter "auditingevents-2015-12-23-13-24" index.
+    # Another object created on 2015-12-23 13:25:54, will enter "auditingevents-2015-12-23-13-25" index.
+    # If creationPeriod: month, both of the above will enter "auditingevents-2015-12" index.
+    #
+    # Legal values for creationPeriod - year, month, day, hour, minute, none (meaning no time-based behaviour).
+    #
+    # If no creationPeriod is configured for indexPrefix, default behavour is creationPeriod: month.
+ 
+    indicesTimeFrequency:
+      - indexPrefix: auditingevents
+        creationPeriod: month
+
+switchoverDetector:
+    gBeFqdn: AIO-BE.ecomp.idns.cip
+    gFeFqdn: AIO-FE.ecomp.idns.cip
+    beVip: 1.2.3.4
+    feVip: 1.2.3.4
+    beResolveAttempts: 3
+    feResolveAttempts: 3
+    enabled: false
+    interval: 60
+    changePriorityUser: ecompasdc
+    changePriorityPassword: ecompasdc123
+    publishNetworkUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
+    publishNetworkBody: '{"note":"publish network"}'
+    groups:
+      beSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip?user=root",
+               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.cip","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
+      feSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip?user=root",
+               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.cip","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip"}'}
+
+applicationL1Cache:
+    datatypes:
+        enabled: true
+        firstRunDelay: 10
+        pollIntervalInSec: 60
+
+applicationL2Cache:
+    enabled: true
+    catalogL1Cache:
+        enabled: true
+        resourcesSizeInCache: 300
+        servicesSizeInCache: 200
+        productsSizeInCache: 100
+    queue:
+        syncIntervalInSecondes: 60
+        waitOnShutDownInMinutes: 30
+        numberOfCacheWorkers: 4
+toscaValidators:
+    stringMaxLength: 1024

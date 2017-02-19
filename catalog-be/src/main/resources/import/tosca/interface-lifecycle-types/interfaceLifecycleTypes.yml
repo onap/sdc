@@ -1,0 +1,11 @@
+tosca.interfaces.node.lifecycle.Standard:
+  create:
+    description: Standard lifecycle create operation.
+  configure:
+    description: Standard lifecycle configure operation.
+  start:
+    description: Standard lifecycle start operation.
+  stop:
+    description: Standard lifecycle stop operation.
+  delete:
+    description: Standard lifecycle delete operation.

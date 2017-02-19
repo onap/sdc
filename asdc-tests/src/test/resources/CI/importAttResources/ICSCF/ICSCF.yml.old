@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+description: >
+  Interrogating-CSCF (I-CSCF) is a SIP function located at the edge of an administrative domain.
+  Its IP address is published in the Domain Name System (DNS) of the domain
+  (using NAPTR and SRV type of DNS records), so that remote servers can find it, 
+  and use it as a forwarding point (e.g., registering) for SIP packets to this domain.
+  It queries the HSS to retrieve the address of the S-CSCF and assign it to a user performing SIP 
+  registration. It also forwards SIP request or response to the S-CSCF.
+  
+node_types:
+  att.nodes.ims.ICSCF:
+    derived_from: tosca.nodes.SoftwareComponent
+    capabilities:
+      pcscf_endpoint:
+        type: tosca.capabilities.Endpoint
+        relationship: tosca.relationships.ConnectTo
+        occurrences: [0, UNBOUNDED]  
+        description: Connection with one ore more P-CSCF functions 
+    requirements:
+      hss_endpoint: 
+        capability: tosca.capabilities.Endpoint  
+        node: att.nodes.ims.HSS
+        relationship: tosca.relationships.ConnectsTo

@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.module.MMSC.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.MMSC",
+  "description": "Accepts MMS messages via F5 and distributes among MMSCs. Messages are from user mobile device or from another Message Service",
+  "resourceIconPath": "applicationServer",
+  "category": "Application Layer 4+/Application Servers",
+  "tags": [
+    "asdc.nodes.module.MMSC", "MMSC", "vMMSC", "Mobility"
+  ]
+}
+

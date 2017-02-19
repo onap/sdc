@@ -1,0 +1,5 @@
+  asdc.nodes.network.Internal:
+    derived_from: asdc.nodes.Network
+    capabilities:
+      dmz_connection:
+        type: asdc.capabilities.NetworkInterface

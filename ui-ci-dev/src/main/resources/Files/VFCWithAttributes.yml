@@ -1,0 +1,43 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+  org.openecomp.resource.vfc.VFC:
+    derived_from: tosca.nodes.Root
+    properties: 
+      jcp-memory:
+        type: integer
+        description: GB
+      jcp-disk:
+        type: integer
+        description: GB
+      jcp-version:
+        type: version
+    attributes:
+      my_attr:
+        type: integer
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    capabilities: 
+      vnf_hosting: 
+        type: tosca.capabilities.Container
+        description: Provides hosting capability for VNFs   
+      WAN_connectivity:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types: [org.openecomp.cp.Wan]
+        description: external WAN1 n/w interface
+        occurrences: [1,2]
+      LAN_connectivity:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types: [org.openecomp.cp.Lan]
+        description: external LAN n/w interface
+        occurrences: [1,8]

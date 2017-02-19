@@ -1,0 +1,17 @@
+{
+	"payloadName": "normative-types-new-importResource4testUpdateWithoutReqCap.yml",
+	"contactId": "cs0004",
+	"name": "importResource4test",
+	"description": "Represents a generic software component that can be managed and run by a Compute Node Type.Update",
+	"resourceIconPath": "defaulticon",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["importResource4test",
+	"updatedTag"],
+	"vendorName": "ATT (Tosca)",
+	"vendorRelease": "1.0.0.3.33"
+}

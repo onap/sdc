@@ -1,0 +1,834 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+tosca_default_namespace: Need to figure out the namespace
+description: vCEBrocade and Base Types for VNF, Connection Point, Virtual Link, etc based on VNF Modeling Guidelines
+
+metadata: 
+  template_name: VCE_Brocade.yaml
+  template_author: Kazi Farooqui (KF6593)
+  template_version: "0.1"
+
+#####################################################################
+############################  Data Types  ###########################
+#####################################################################
+#data_types:
+
+###########################################################################################
+###################### NODE TYPE DEFINITIONS   ############################################
+###########################################################################################
+
+node_types:   
+  ##################################################################
+  ###################   TOSCA   VNF Node  ##########################
+  ##################################################################
+  tosca.nodes.nfv.VNF:
+    derived_from: tosca.nodes.Root
+    properties:
+      vnf_category: 
+        type: string
+        description: Router, FW, LB, DNS are example categories
+      id:
+        type: string
+        description: ID of this VNF
+      vendor:
+        type: string
+        description: name of the vendor who provides this VNF
+      version:
+        type: version
+        description: version of the software for this VNF
+      #device_config: 
+       # type: map
+        #entry_schema: 
+         # type: string
+        #default: 
+         # p1: 1
+         # p2: 2
+          #p3: 3
+    #requirements:
+     # - virtualLink:
+          #capability: tosca.capabilities.nfv.VirtualLinkable
+          #occurrences: [1, UNBOUNDED]
+  
+  ##################################################################
+  ###################   ASDC    VNF Node  ##########################
+  ##################################################################
+  org.openecomp.resource.nfv.VNF:
+    derived_from: tosca.nodes.nfv.VNF
+  
+  
+  ##################################################################
+  ###################### TOSCA  VDU Node  ##########################
+  ##################################################################
+  
+  tosca.nodes.nfv.VDU: 
+    derived_from: tosca.nodes.SoftwareComponent
+    #properties: 
+    
+    capabilities: 
+      high_availability: 
+        type: tosca.capabilities.nfv.HA
+        occurrences: [1, UNBOUNDED] # this is default
+      
+      virtual_binding: 
+        type: tosca.capabilities.nfv.VDU.VirtualBindable
+        occurrences: [1, UNBOUNDED] # this is default
+       
+    requirements: 
+      - high_availability: 
+          capability: tosca.capabilities.nfv.HA
+          occurrences: [0,1]
+        
+      - host: ##Is hosted in a VM
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.Compute
+          relationship: tosca.relationships.HostedOn
+          occurrences: [1, 1] #this is default
+  
+  ##################################################################
+  ###################### ASDC VDU Node######  ######################
+  ##################################################################
+  org.openecomp.resource.nfv.VDU:
+    derived_from: tosca.nodes.nfv.VDU
+    description: A VDU is a compute component of VNF      
+
+  ##################################################################
+  ####################### TOSCA CP Node   ##########################
+  ##################################################################
+  tosca.nodes.nfv.CP: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      type: 
+        type: string
+        required: false
+    requirements: 
+      - virtualbinding: 
+          capability: tosca.capabilities.nfv.VDU.VirtualBindable
+          occurrences: [1, 1] #this is default
+        
+      - virtuallink: 
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          occurrences: [1, 1] #this is default
+        
+    attributes: 
+      ip_address: 
+        type: string
+        # required: false
+        
+  ##################################################################
+  ############################ ASDC CP Node   #####################
+  ##################################################################
+  org.openecomp.resource.nfv.CP: 
+    derived_from: tosca.nodes.nfv.CP
+    
+  ##################################################################
+  ############### IPAG VLAN Connector CP Node   #####################
+  ##################################################################
+  org.openecomp.resource.nfv.CP.IPAG_VLAN_Connector: 
+    derived_from: org.openecomp.resource.nfv.CP
+    properties: 
+      ipag_network_name: 
+        type: string
+      
+      ipag_network_type: 
+        type: string
+      
+      ipag_network_uuid: 
+        type: string
+      
+      vlan_segment_ids: 
+        type: list
+        entry_schema:
+          type: string
+          description: list of segmentation Ids.
+        
+      
+    #attributes: 
+    capabilities: 
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.IPAG_VLAN_Connector
+        description: This capability has been introduced to model this Connector as a component of VCE VNF, because Node Template is not supported by ASDC Team
+    
+    requirements: 
+      - virtualBindingRequirement: 
+          capability: org.openecomp.capabilities.nfv.VDU.VirtualBindable
+          #node: org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU
+          relationship: org.openecomp.relationships.nfv.VirtualBindsTo
+          occurrences: [1, 1] #default
+          
+      - virtualLinkingrequirement: 
+          capability: org.openecomp.capabilities.nfv.VirtualLinkable
+          #node: org.openecomp.resource.nfv.VL
+          relationship: org.openecomp.relationships.nfv.VirtualLinksTo
+          occurrences: [1, 1] #default
+          
+    #interfaces: 
+      #standard: 
+        #configure: 
+          #implementation: configure.sh
+         
+  ##################################################################
+  ############### VPE VLAN Connector CP Node   #####################
+  ##################################################################
+  org.openecomp.resource.nfv.CP.VPE_VLAN_Connector: 
+    derived_from: org.openecomp.resource.nfv.CP
+    properties: 
+      vpe_network_name: 
+        type: string
+      
+      vpe_network_type: 
+        type: string
+      
+      vpe_network_uuid: 
+        type: string
+      
+      vlan_segment_ids: 
+        type: list
+        entry_schema:
+          type: string
+          description: list of segmentation Ids.
+        
+      
+    #attributes: 
+    capabilities: 
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.VPE_VLAN_Connector
+        description: This capability has been introduced to model this Connector as a component of VCE VNF, because Node Template is not supported by ASDC Team
+    
+    requirements: 
+      - virtualBindingRequirement: 
+          capability: org.openecomp.capabilities.nfv.VDU.VirtualBindable
+          #node: org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU
+          relationship: org.openecomp.relationships.nfv.VirtualBindsTo
+          occurrences: [1, 1] #default
+          
+      - virtualLinkingrequirement: 
+          capability: org.openecomp.capabilities.nfv.VirtualLinkable
+          #node: org.openecomp.resource.nfv.VL
+          relationship: org.openecomp.relationships.nfv.VirtualLinksTo
+          occurrences: [1, 1] #default
+          
+    #interfaces: 
+      #standard: 
+        #configure: 
+          #implementation: configure.sh
+  ##################################################################
+  ############### OAM VLAN Connector CP Node   #####################
+  ##################################################################
+  org.openecomp.resource.nfv.CP.OAM_VLAN_Connector: 
+    derived_from: org.openecomp.resource.nfv.CP
+    properties: 
+      oam_network_name: 
+        type: string
+      
+      oam_network_type: 
+        type: string
+      
+      oam_network_uuid: 
+        type: string
+      
+      vlan_segment_ids: 
+        type: list
+        entry_schema:
+          type: string
+          description: list of segmentation Ids.
+        
+      
+    #attributes: 
+    capabilities: 
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.OAM_VLAN_Connector
+        description: This capability has been introduced to model this Connector as a component of VCE VNF, because Node Template is not supported by ASDC Team
+        
+    requirements: 
+      - virtualBindingRequirement: 
+          capability: org.openecomp.capabilities.nfv.VDU.VirtualBindable
+          #node: org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU
+          relationship: org.openecomp.relationships.nfv.VirtualBindsTo
+          occurrences: [1, 1] #default
+          
+      - virtualLinkingrequirement: 
+          capability: org.openecomp.capabilities.nfv.VirtualLinkable
+          #node: org.openecomp.resource.nfv.VL
+          relationship: org.openecomp.relationships.nfv.VirtualLinksTo
+          occurrences: [1, 1] #default
+          
+    #interfaces: 
+      #standard: 
+        #configure: 
+          #implementation: configure.sh       
+         
+  ##################################################################
+  ############## TOSCA   VL Node Type        #######################
+  ##################################################################
+  tosca.nodes.nfv.VL: 
+    derived_from: tosca.nodes.Root
+    properties: 
+      vendor: 
+        type: string
+        required: false
+        description: name of the vendor who provides this VL
+        
+    capabilities: 
+      virtuallinkable: 
+        type: tosca.capabilities.nfv.VirtualLinkable
+        occurrences: [1, UNBOUNDED] # this is default
+        
+##################################################################
+###################### ASDC VL Node  TYPE  ######################
+##################################################################
+  org.openecomp.resource.nfv.VL:
+    derived_from: tosca.nodes.nfv.VL
+    
+    
+##################################################################
+###################### ASDC VNF Node TYPE   ######################
+##################################################################
+  org.openecomp.resource.nfv.VNF: 
+    derived_from: tosca.nodes.nfv.VNF
+    
+##################################################################
+###################### ASDC Routing Category VDU #################
+##################################################################
+    
+  org.openecomp.resource.nfv.VDU.RoutingCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU
+    
+##################################################################
+###################### vCE_Brocade_VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU:#paharoni - renamed from org.openecomp.resource.v/VCE_Brocade_VDU to keep convention
+    derived_from: org.openecomp.resource.nfv.VDU.RoutingCategoryVDU
+    description: Definition of VCE Brocade VDU
+    properties: 
+      vnf_category: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      vce_type: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      vendor: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      version: 
+        type: string
+        description: input provided at RESOURCE INJECTION TIME in ASDC TOOL
+      image_id: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer -vCE image used to boot VM
+      flavor_id: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - VM Size, SMALL, MEDIUM, LARGE
+      username: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer -login user Id of Router
+      password: 
+        type: string
+        description: I Input provided at DESIGN TIME by Service Composer or Designer - password for login 
+      domain_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - login domain
+      time_zone: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - time zone to set for vCE
+      login_session_timeout: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - user login session timeout
+      ipag_vlan_bandwidth: 
+        type: integer
+        description: Input provided at DESIGN TIME by Service Composer or Designer - bandwidth  allocation of customer VLAN requested by customer
+      vpe_vlan_interface_qos_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - QoS Policy name to be applied to this interface
+      ipag_vlan_interface_qos_name: 
+        type: string
+        description: Input provided at DESIGN TIME by Service Composer or Designer - QoS Policy name to be applied to this interface
+      hostname: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Host VM is created first and this value is input when the vCE image is later on installed by Cloud-PO
+      host_ip: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Host VM IP
+      availability_zone: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - Cloud availability zone where VM is created
+      oam_loopback_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - OAM Network is pre-created - already exists in Data Center
+      ipag_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - IPAG VLAN Network is created by Cloud-PO before the vCE is created or installed
+      vpe_vlan_ip_address: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VPE VLAN Network is created by Cloud-PO before the vCE is created / installed
+      vpe_vlan_id: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply VPE QoS Policy
+      ipag_vlan_id: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply IPAG QoS Policy
+      oam_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+      vpe_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+      ipag_vlan_interface_name: 
+        type: string
+        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+    #############ATTRIBUTES of vCE - These values are outputted by Cloud-PO when vCE is created / installed ##############
+    attributes: 
+      vce_name:
+        type: string
+        description: Name assigned to vCE by Cloud-PO
+      oam_loopback_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to OAM VLAN
+      ipag_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to IPAG VLAN
+      vpe_vlan_ipaddres:
+        type: string
+        description: IP Address assigned by Cloud-PO to VPE VLAN
+      vnf_id: 
+        type: string
+        description: unique id assigned to VNF by Cloud-PO - used for AAI metadata
+    
+    #############CAPABILITIES of vCE - #########################
+    capabilities: 
+      ce_routing_capability: 
+        type: org.openecomp.capabilities.nfv.CERouting
+        description: This is the base capability of vCE
+        occurrences: [1, UNBOUNDED] # default
+        
+      static_routing: 
+        type: org.openecomp.capabilities.nfv.StaticRouting
+        description: This is the optional capability of the vCE
+        occurrences: [0, UNBOUNDED]
+        
+      bgp_routing: 
+        type: org.openecomp.capabilities.nfv.BGPRouting
+        description: This is the optional capability of the vCE
+        occurrences: [0, UNBOUNDED]
+      
+      virtual_bindable: 
+        type: org.openecomp.capabilities.nfv.VDU.VirtualBindable# paharoni - changed to org.openecomp.capabilities.nfv.vdu.VirtualBindable from tosca.capabilities.nfv.VDU.VirtualBindable - was it intentional??
+        description: This is the internal capability of the VDU to support Binding to Connection Points
+        occurrences: [1, UNBOUNDED]
+        
+      dummy_capability: 
+        type: org.openecomp.capabilities.nfv.VCE_Brocade_Routing
+        description: This capability has been introduced to model VCE VDU as a component of VCE VNF, because Node Template is not supported by ASDC Team
+    
+    #############REQUIREMENTS of vCE - ###########################
+    requirements: 
+      - nat: # A vCE  may have a requirement to connect to a VNF offering this capability, during service composition
+          capability: org.openecomp.capabilities.nfv.VNF.NetworkAddressTranslationCapability
+          node: org.openecomp.resource.nfv.VDU.NetworkAddrCategoryVDU
+          relationship: org.openecomp.relationships.nfv.CnnectsToNAT
+          occurrences: [0, 1]
+          
+      - pat: # A vCE  may have a requirement to connect to a VNF offering this capability, during service composition
+          capability: org.openecomp.capabilities.nfv.VNF.PortAddressTranslationCapability
+          node: org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU #paharoni - renamed from org.openecomp.resource.nfv.VDU.PortAddressTranslationCategoryVDU. Resource name can be up to 50 chars
+          relationship: org.openecomp.relationships.nfv.CnnectsToPAT
+          occurrences: [0, 1]
+          
+      
+      - firewall: # A vCE  may have a requirement to connect to a VNF offering this capability, during service composition
+          capability: org.openecomp.capabilities.nfv.VNF.FirewallCapability  
+          node: org.openecomp.resource.nfv.VDU.FirewallCategoryVDU 
+          relationship: org.openecomp.relationships.nfv.CnnectsToFirewall
+          occurrences: [0, 1]     
+          
+      - dhcp:  # A vCE  may have a requirement to connect to a VNF offering this capability, during service composition
+          capability: org.openecomp.capabilities.nfv.VNF.DHCPCapability
+          node: org.openecomp.resource.nfv.VDU.DHCPCategoryVDU
+          relationship: org.openecomp.relationships.nfv.CnnectsToDHCP
+          occurrences: [0, 1]
+          
+      - dns:  # A vCE  may have a requirement to connect to a VNF offering this capability, during service composition
+          capability: org.openecomp.capabilities.nfv.VNF.DNSCapability
+          node: org.openecomp.resource.nfv.VDU.DNSCategoryVDU
+          relationship: org.openecomp.relationships.nfv.CnnectsToDNS
+          occurrences: [0, 1]
+          
+      - hosted_on:  # A vCE  needs to be hosted in a VM
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.Compute
+          relationship: tosca.relationships.HostedOn
+          occurrences: [1, 1] #default
+    
+        
+      
+          
+########################################################################################################
+###################### vCE_Brocade_VNF Node  TYPE  #####################################################
+########### IN THE ABSENCE OF NODE TEMPLATE, the vCE_Brocade_VNF Node Type is modeled as REQUIRING: #####
+########### 1. vce_Brocade_VDU Node               
+########### 2. oam_vlan_connector Node
+########### 3. ipag_vlan_connector Node
+########### 4. vpe_vlan_connector Node
+########################################################################################################
+
+  org.openecomp.resource.nfv.VNF.VCE_Brocade_VNF: 
+    derived_from: org.openecomp.resource.nfv.VNF
+    requirements: 
+      - vce_brocade_vdu: 
+          capability: org.openecomp.capabilities.nfv.VCE_Brocade_Routing
+          node: org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU
+          occurrences: [1, 1]
+          
+      - oam_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.OAM_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.OAM_VLAN_Connector
+          occurrences: [1, 1]
+          
+      - vpe_vlan_connector:
+          capability: org.openecomp.capabilities.nfv.VPE_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.VPE_VLAN_Connector
+          occurrences: [1, 1]
+          
+      - ipag_vlan_connector: 
+          capability: org.openecomp.capabilities.nfv.IPAG_VLAN_Connector
+          node: org.openecomp.resource.nfv.CP.IPAG_VLAN_Connector
+          occurrences: [1, 1]
+
+##################################################################
+######################   ASDC  NAT VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.NetworkAddrCategoryVDU: #paharoni - renamed from org.openecomp.resource.nfv.VDU.NetworkAddressTranslationCategoryVDU. Resource name can be up to 50 chars in ASDC
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      nat: 
+        type: org.openecomp.capabilities.nfv.VNF.NetworkAddressTranslationCapability
+        description: This capability has been introduced
+    ###############Further details described in NAT VNF TOSCA Model
+
+##################################################################
+###################### PAT VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU: #paharoni - renamed from org.openecomp.resource.nfv.VDU.PortAddressTranslationCategoryVDU. Resource name can be up to 50 chars in ASDC
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      pat: 
+        type: org.openecomp.capabilities.nfv.VNF.PortAddressTranslationCapability
+        description: This capability has been introduced
+    ###############Further details described in PAT VNF TOSCA Model
+    
+##################################################################
+###################### Firewall  VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.FirewallCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      firewall: 
+        type: org.openecomp.capabilities.nfv.VNF.FirewallCapability
+        description: This capability has been introduced
+    ###############Further details described in Firewall VNF TOSCA Model
+
+##################################################################
+###################### DHCP  VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.DHCPCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      dhcp: 
+        type: org.openecomp.capabilities.nfv.VNF.DHCPCapability
+        description: This capability has been introduced
+    ###############Further details described in DHCP VNF TOSCA Model
+
+##################################################################
+###################### DNS  VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.DNSCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      dns: 
+        type: org.openecomp.capabilities.nfv.VNF.DNSCapability
+        description: This capability has been introduced
+    ###############Further details described in DNS VNF TOSCA Model
+
+
+###########################################################################################
+###################### CAPABILITY TYPE DEFINITIONS   ######################################
+###########################################################################################
+
+capability_types:   
+  #####################################################################################
+  ###################### TOSCA Capability: VirtualBindable   ##########################
+  #####################################################################################
+  tosca.capabilities.nfv.VDU.VirtualBindable: 
+    derived_from: tosca.capabilities.Root 
+    valid_source_types: [tosca.nodes.nfv.VDU]
+    
+  #####################################################################################
+  ############################ ASDC Capability: VirtualBindable   #####################
+  #####################################################################################
+  org.openecomp.capabilities.nfv.VDU.VirtualBindable: 
+    derived_from: tosca.capabilities.nfv.VDU.VirtualBindable
+    valid_source_types: [org.openecomp.resource.nfv.VDU]
+  
+  #####################################################################################
+  ##################### TOSCA  Capability: VirtualLinkable   ##########################
+  #####################################################################################
+  tosca.capabilities.nfv.VirtualLinkable: 
+    derived_from: tosca.capabilities.Root ##paharoni - changed from tosca.capabilities.nfv.VirtualLinkable - cannot derive from itself
+    valid_source_types: [org.openecomp.resource.nfv.VL]
+    
+  #####################################################################################
+  ############################ ASDC Capability: VirtualLinkable   #####################
+  #####################################################################################
+  org.openecomp.capabilities.nfv.VirtualLinkable: 
+    derived_from: tosca.capabilities.Root 
+    valid_source_types: [tosca.nodes.nfv.VL]
+   
+  #####################################################################################
+  ############################ Capability: HighAvailability  ##########################
+  #####################################################################################  
+  tosca.capabilities.nfv.HA: 
+    derived_from: tosca.capabilities.Root
+    valid_source_types: [tosca.nodes.nfv.VDU]
+  
+  #####################################################################################
+  ######################Capability: Generic asdc capability  ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.Root:
+    derived_from: tosca.capabilities.Root
+  
+  #####################################################################################
+  ############################ Capability: GENERIC ROUTING  ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.RoutingCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      routing_type: 
+        type: string
+        description: some basic routing descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.RoutingCategoryVDU]
+  
+  #####################################################################################
+  ############################ Capability: CE ROUTING        ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.CERouting: 
+    derived_from: org.openecomp.capabilities.nfv.RoutingCapability
+    
+  #####################################################################################
+  ############################ Capability: PE ROUTING        ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.PERouting: 
+    derived_from: org.openecomp.capabilities.nfv.RoutingCapability
+  
+  #####################################################################################
+  ############################ Capability: P ROUTING        ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.PRouting: 
+    derived_from: org.openecomp.capabilities.nfv.RoutingCapability
+    
+  #####################################################################################
+  ############################ Capability: BGP ROUTING        ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.BGPRouting: 
+    derived_from: org.openecomp.capabilities.nfv.RoutingCapability
+    
+  #####################################################################################
+  ############################ Capability: STATIC ROUTING  ##########################
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.StaticRouting: 
+    derived_from: org.openecomp.capabilities.nfv.RoutingCapability
+    
+  #####################################################################################
+  ############################ Capability: Network Address Translation  ###############
+  #####################################################################################    
+  org.openecomp.capabilities.nfv.VNF.NetworkAddressTranslationCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      nat_type: 
+        type: string
+        description: some basic NAT descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.NetworkAddrCategoryVDU]
+  
+  #####################################################################################
+  ############################ Capability: Port Address Translation  ###############
+  #####################################################################################    
+  org.openecomp.capabilities.nfv.VNF.PortAddressTranslationCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      pat_type: 
+        type: string
+        description: some basic PAT descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU]  
+    
+  #####################################################################################
+  ############################ Capability: FIREWALL                     ###############
+  #####################################################################################    
+  org.openecomp.capabilities.nfv.VNF.FirewallCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      firewall_type: 
+        type: string
+        description: some basic Firewall Capability descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.FirewallCategoryVDU]  
+    
+  #####################################################################################
+  ############################ Capability: DHCP                         ###############
+  #####################################################################################    
+  org.openecomp.capabilities.nfv.VNF.DHCPCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      dhcp_type: 
+        type: string
+        description: some basic DHCP  Capability descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.DHCPCategoryVDU]  
+
+  #####################################################################################
+  ############################ Capability: DNS                          ###############
+  #####################################################################################    
+  org.openecomp.capabilities.nfv.VNF.DNSCapability: 
+    derived_from: org.openecomp.capabilities.Root
+    properties:
+      dns_type: 
+        type: string
+        description: some basic DNS  Capability descriptor, if any???
+        constraints: 
+          - valid_values: [TBD1, TBDn]
+    #attributes: ???
+    valid_source_types: [org.openecomp.resource.nfv.VDU.DNSCategoryVDU]  
+
+  #####################################################################################
+  ############################ Capability: vCE Brocade ROUTING        ################# DUMMY
+  ############## THIS IS CAPABILITY IS ONLY OFFERED BY SPECIFIC BROCADE VDU ###########
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.vCE_Brocade_Routing: 
+    derived_from: org.openecomp.capabilities.nfv.CERouting
+    valid_source_types: [org.openecomp.resource.nfv.VDU.VCE_Brocade_VDU]
+    
+  #####################################################################################
+  ############################ Capability: OAM VLAn Connector        ################# DUMMY
+  ############## THIS IS CAPABILITY IS ONLY OFFERED BY SPECIFIC Connector ###########
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.OAM_VLAN_Connector: 
+    derived_from: org.openecomp.capabilities.Root
+    valid_source_types: [org.openecomp.resource.nfv.CP.OAM_VLAN_Connector]
+    
+  #####################################################################################
+  ############################ Capability: IPAG VLAn Connector        ################# DUMMY
+  ############## THIS IS CAPABILITY IS ONLY OFFERED BY SPECIFIC Connector ###########
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.IPAG_VLAN_Connector: 
+    derived_from: org.openecomp.capabilities.Root
+    valid_source_types: [org.openecomp.resource.nfv.CP.IPAG_VLAN_Connector]
+    
+  #####################################################################################
+  ############################ Capability: VPE VLAn Connector        ################# DUMMY
+  ############## THIS IS CAPABILITY IS ONLY OFFERED BY SPECIFIC Connector ###########
+  #####################################################################################  
+  org.openecomp.capabilities.nfv.VPE_VLAN_Connector: 
+    derived_from: org.openecomp.capabilities.Root
+    valid_source_types: [org.openecomp.resource.nfv.CP.VPE_VLAN_Connector]
+   
+###########################################################################################
+###################### RELATIONSHIP TYPE DEFINITIONS   ###################################
+###########################################################################################
+    
+relationship_types:
+#####################################################################################
+######################TOSCA Relationship: VirtualBindsTo   ##########################
+##################################################################################### 
+  tosca.relationships.nfv.VirtualBindsTo:   
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between VDU and CP Node Types
+    valid_target_types: [tosca.capabilities.nfv.VDU.VirtualBindable]
+    
+#####################################################################################
+######################ASDC  Relationship: VirtualBindsTo   ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.VirtualBindsTo:   
+    derived_from: tosca.relationships.nfv.VirtualBindsTo
+    description: Represents the relationsHIP between VDU and CP Node Types
+    valid_target_types: [org.openecomp.capabilities.nfv.VDU.VirtualBindable]
+    
+#####################################################################################
+##################### TOSCA  Relationship: VirtualLinksTo  ##########################
+##################################################################################### 
+  tosca.relationships.nfv.VirtualLinksTo: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between CP and VL Node Types
+    valid_target_types: [tosca.capabilities.nfv.VirtualLinkable] 
+    
+#####################################################################################
+##################### ASDC   Relationship: VirtualLinksTo  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.VirtualLinksTo: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between CP and VL Node Types
+    valid_target_types: [org.openecomp.capabilities.nfv.VirtualLinkable] 
+    
+#####################################################################################
+######################  ASDC Relationship: ConnectsToNAT  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.CnnectsToNAT: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between a VNF and NAT capable Node
+    #properties: 
+    #attributes: 
+    #interfaces: 
+    valid_target_types: [org.openecomp.capabilities.nfv.VNF.NetworkAddressTranslationCapability] 
+    
+#####################################################################################
+######################  ASDC Relationship: ConnectsToPAT  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.CnnectsToPAT: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between a VNF and PAT capable Node
+    #properties: 
+    #attributes: 
+    #interfaces: 
+    valid_target_types: [org.openecomp.capabilities.nfv.VNF.PortAddressTranslationCapability] 
+    
+#####################################################################################
+######################  ASDC Relationship: ConnectsToFirewall  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.CnnectsToFirewall: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between a VNF and Firewall capable Node
+    #properties: 
+    #attributes: 
+    #interfaces: 
+    valid_target_types: [org.openecomp.capabilities.nfv.VNF.FirewallCapability]    
+    
+#####################################################################################
+######################  ASDC Relationship: ConnectsToDNS  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.CnnectsToDNS: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between a VNF and DNS capable Node
+    #properties: 
+    #attributes: 
+    #interfaces: 
+    valid_target_types: [org.openecomp.capabilities.nfv.VNF.DNSCapability]  
+    
+#####################################################################################
+######################  ASDC Relationship: ConnectsToDHCP  ##########################
+##################################################################################### 
+  org.openecomp.relationships.nfv.CnnectsToDHCP: 
+    derived_from: tosca.relationships.ConnectsTo
+    description: Represents the relationsHIP between a VNF and DHCP capable Node
+    #properties: 
+    #attributes: 
+    #interfaces: 
+    valid_target_types: [org.openecomp.capabilities.nfv.VNF.DHCPCapability] 
+    

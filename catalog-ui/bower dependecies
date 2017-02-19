@@ -1,0 +1,29 @@
+{
+  "name": "catalog-ui",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.3.x",
+    "angular-base64": "~2.0.5", //for translate base 64
+    "angular-base64-upload": "~0.1.8", //upload file base 64
+    "angular-bootstrap": "~0.13.0",
+    "angular-dragdrop": "~1.0.11", //for drag & drop elements in canvas
+    "angular-filter": "~0.5.6", // for filter categories
+    "angular-md5": "~0.1.7", //translate from & to md5
+    "angular-perfect-scrollbar": "~0.0.4", // fir design cross browser scrollbar
+    "angular-qtip2-directive": "~0.1.2", // for design tooltips
+    "angular-resource": "~1.3.15", // for restfully Api
+    "angular-sanitize": "~1.4.4", //https://docs.angularjs.org/api/ngSanitize/service/$sanitize
+    "angular-ui-router": "~0.2.14",
+    "angular-uuid4": "~0.3.0",
+    "bootstrap": "3.3.4", // dependency for angular bootstrap
+    "checklist-model": "~0.2.4", // for categories check list model
+    "jquery": "~1.11.1",
+    "lodash": "~3.7.0", // js utils functions
+    "angular-translate": "~2.8.0", // dependencies for  language  support
+    "angular-translate-loader-static-files": "~2.8.0" // for language  support
+  },
+  "resolutions": {
+    "angular": "~1.3.x",
+    "jquery": "~2.0.3"
+  }
+}

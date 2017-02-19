@@ -1,0 +1,10 @@
+<div>
+    <span class="sprite-new info-icon hand" data-ng-click="showMessage=!showMessage"></span>
+    <div class="info-tooltip" data-ng-show="showMessage">
+        <div class="info-tooltip-arrow"></div>
+        <div class="info-tooltip-content" data-ng-class="direction">
+            <span class="close-tooltip sprite-new close-info-tooltip-button" data-ng-click="showMessage=false"></span>
+            <p class="info-tooltip-message" translate="{{infoMessageTranslate}}"></p>
+        </div>
+    </div>
+</div>

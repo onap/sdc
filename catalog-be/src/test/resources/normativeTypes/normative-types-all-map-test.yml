@@ -1,0 +1,30 @@
+tosca.nodes.BlockStorage:
+  allTestTag: tosca.nodes.Root
+  properties:
+    mapTestTag: 
+      stringTestTag: stringVal1
+      listTestTag:
+        - allTestTag: 1 MB
+        - listTestTag: 2 MB
+        - stringTestTag: stringVal2
+    volume_id:
+      type: string
+      required: false
+      allTestTag:
+          - greater_or_equal: 1 MB
+          - stringTestTag: stringVal3
+    allTestTag:
+      mapTestTag: string
+      required: true
+    snapshot_id:
+      stringTestTag: stringVal4
+      required: false
+      listTestTag:
+        - testTag1: 1 MB
+        - mapTestTag:
+          - testTag1: 1 MB
+          - type: stringVal2
+  capabilities:
+    mapTestTag: 
+      type: tosca.capabilities.Attachment
+      allTestTag: false

@@ -1,0 +1,12 @@
+{
+  "payloadName": "asdc.nodes.module.ECA_TRX.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.module.ECA_TRX",
+  "description": "External Content Adaption Transcoder. Transcodes and adapts MMS content according to the capabilities of receiving MS or UE.",
+  "resourceIconPath": "applicationServer",
+  "category": "Application Layer 4+/Application Servers",
+  "tags": [
+    "asdc.nodes.module.ECA_TRX", "Content Adaptation Transcoder", "MMSC", "vMMSC", "Mobility"
+  ]
+}
+

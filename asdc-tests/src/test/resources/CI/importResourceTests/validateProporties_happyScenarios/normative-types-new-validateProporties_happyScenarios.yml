@@ -1,0 +1,39 @@
+validateProporties_happyScenarios:
+  derived_from: tosca.nodes.Root
+  properties:
+    # domain-specific software component version
+    component_version: 
+      type: version
+      required: false
+    admin_credential: 
+      type: tosca.datatypes.Credential
+      required: false
+    validation_test1: 
+      type: boolean
+      required: false
+      default: true
+    validation_test2: 
+      type: boolean
+      required: false
+      default: false
+    validation_test3: 
+      type: integer
+      required: false
+      default: 1234
+    validation_test4: 
+      type: float
+      required: false
+      default: 123.123
+    validation_test5: 
+      type: string
+      required: false
+      default: cooolString
+    validation_test6: 
+      type: scalar-unit.size
+      required: false
+      default: cooolString		  	  
+  requirements:
+    - host: 
+        capability: tosca.capabilities.Container
+        node: tosca.nodes.Compute
+        relationship: tosca.relationships.HostedOn

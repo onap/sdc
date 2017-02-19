@@ -1,0 +1,20 @@
+{
+  "payloadName": "normative-types-new-containerApplication.yml",
+  "contactId": "jh0003",
+  "name": "Application",
+  "description": "Represents an application that requires Container-level virtualization technology.",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Application"
+  ]
+}

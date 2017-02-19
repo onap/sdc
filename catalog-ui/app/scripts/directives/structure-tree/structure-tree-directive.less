@@ -1,0 +1,68 @@
+.structure-tree{
+    padding: 9px 0px 10px 30px;
+    position: relative;
+    ul{
+        position: relative;
+        list-style: none;
+        padding-left:25px;
+        ::before{
+            content: "";
+            position: absolute;
+            left: -27px;
+        }
+        ::after{
+            content: "";
+            position: absolute;
+            left: -27px;
+        }
+        li{
+            position: relative;
+            &::before{
+                border-top: 1px solid #666666;
+                top: 20px;
+                width: 10px;
+                height: 0;
+            }
+            &::after{
+                border-left: 1px solid #666666;
+                height: 100%;
+                width: 0px;
+                top: -2px;
+            }
+            &:last-child::after{
+                height: 23px
+            }
+        }
+    }
+    .component-container{
+        display: inline-block;
+        margin: 6px 0px 0px -16px;
+    }
+    .component-container-icon{
+        display: inline-block;
+    }
+    .component-container-text{
+        padding-left: 8px;
+        float: right;
+
+        text-overflow: ellipsis;
+        max-width:120px;
+        display: inline-block;
+        white-space: nowrap;
+        font-size: 13px;
+        color: #666666;;
+        overflow: hidden;
+        line-height: 28px;
+        float: none;
+    }
+
+    .non-certified{
+        position: relative;
+        left: 18px;
+        bottom: 8px;
+        .sprite;
+        .s-sdc-state-non-certified;
+        display:block;
+    }
+
+}

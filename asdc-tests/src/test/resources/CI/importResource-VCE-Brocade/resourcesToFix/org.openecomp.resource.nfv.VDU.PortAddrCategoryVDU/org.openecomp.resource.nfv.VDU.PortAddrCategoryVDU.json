@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU.yaml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU",
+  "description": "Node Type that represents a Module",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Network Elements",
+  "tags": [
+    "org.openecomp.resource.nfv.VDU.PortAddrCategoryVDU"
+  ]
+}

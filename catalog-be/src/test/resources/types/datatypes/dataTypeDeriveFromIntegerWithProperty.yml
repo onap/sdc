@@ -1,0 +1,8 @@
+integer:
+  
+mytypes.phonenumber:
+  derived_from: integer
+  description: my phone number datatype
+  properties:
+    countrycode:
+      type: integer

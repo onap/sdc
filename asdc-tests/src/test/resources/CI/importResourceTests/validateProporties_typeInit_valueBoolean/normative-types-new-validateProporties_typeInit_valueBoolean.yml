@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.validateProporties_typeInit_valueBoolean:
+    derived_from: tosca.nodes.Root
+    properties:
+      # domain-specific software component version
+      component_version: 
+        type: version
+        required: false
+      admin_credential: 
+        type: tosca.datatypes.Credential
+        required: false
+      validation_test: 
+        type: integer
+        required: false
+        default: true	    
+    requirements:
+      - host: 
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.Compute
+          relationship: tosca.relationships.HostedOn

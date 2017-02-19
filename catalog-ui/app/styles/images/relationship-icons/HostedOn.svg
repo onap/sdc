@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="25" height="25" viewBox="0 0 25 25">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #3b7b9b;
+      }
+
+      .cls-2, .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        stroke: #fff;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+        fill-opacity: 0;
+      }
+    </style>
+  </defs>
+  <g>
+    <ellipse cx="12.578" cy="12.516" rx="11.422" ry="11.266" class="cls-1"/>
+    <circle cx="12.594" cy="12.594" r="3.5" class="cls-2"/>
+    <circle cx="12.5" cy="12.5" r="7.5" class="cls-3"/>
+  </g>
+</svg>

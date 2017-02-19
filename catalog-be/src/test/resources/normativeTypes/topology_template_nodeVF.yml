@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: >
+  This TOSCA simple profile deploys nodejs, mongodb, each on a separate server
+  with monitoring enabled for nodejs server where a sample nodejs application is running. 
+
+topology_template:
+  node_templates:
+    my_node:
+      type: org.openecomp.resource.vf.Resource19
+    nodejs:
+      type: tosca.nodes.WebServer      
+      requirements:
+        - host:
+            node: app_server      
+    mongo_db:
+      type: tosca.nodes.Database
+      requirements:
+        - host: mongo_dbms     
+    mongo_dbms:
+      type: tosca.nodes.DBMS
+      requirements:
+        - host: mongo_server      
+    app_server:
+      type: tosca.nodes.Compute  
+    mongo_server:
+      type: tosca.nodes.Compute
+     
+  
+
+  outputs:
+    nodejs_url:
+      description: URL for the nodejs server, http://<IP>:3000
+      value: { get_attribute: [ app_server, private_address ] }
+    mongodb_url:
+      description: URL for the mongodb server.
+      value: { get_attribute: [ mongo_server, private_address ] }
+   

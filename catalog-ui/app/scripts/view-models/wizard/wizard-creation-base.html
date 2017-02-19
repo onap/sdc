@@ -1,0 +1,12 @@
+<loader data-display="isLoading"></loader>
+<div class="sdc-wizard-name-type-label" data-ng-if="assetName!==undefined"><span class="sprite sprite-green-tick animated flash"></span><span class="name">{{assetName}}</span>&nbsp;|&nbsp;<span class="type">{{assetType}}</span></div>
+<sdc-modal modal="modalInstance" type="classic" get-close-modal-response="getComponent" buttons="footerButtons" class="sdc-wizard" header="{{modalTitle}}" show-close-button="true">
+    <div class="sdc-wizard-wrapper">
+        <div class="sdc-wizard-left-content">
+            <sdc-wizard-step steps="directiveSteps" control="assetCreationControl" class="wizard-steps-line"></sdc-wizard-step>
+        </div>
+        <div class="sdc-wizard-right-content">
+            <ng-include src="templateUrl" class="sdc-wizard-right-include"></ng-include>
+        </div>
+    </div>
+</sdc-modal>

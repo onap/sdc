@@ -1,0 +1,35 @@
+uebServers:
+   - ueb.fqdn.1:8888
+   - ueb.fqdn.2:8888
+   - ueb.fqdn.3:8888
+
+uebPublicKey: fff
+
+uebSecretKey: ffff
+
+distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
+distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
+
+initRetryIntervalSec: 5
+initMaxIntervalSec: 60
+
+distribNotifServiceArtifactTypes:
+  info:
+      - MURANO-PKG
+
+distribNotifResourceArtifactTypes:
+  lifecycle:
+      - HEAT
+      - DG_XML
+
+environments:
+   - PROD
+
+distributionStatusTopic:
+   pollingIntervalSec: 60
+   fetchTimeSec: 15
+   consumerGroup: asdc
+
+createTopic:
+   partitionCount: 1
+   replicationCount: 1

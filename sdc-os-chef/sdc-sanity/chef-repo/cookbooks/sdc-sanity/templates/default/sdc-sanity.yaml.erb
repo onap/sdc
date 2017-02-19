@@ -1,0 +1,82 @@
+outputFolder: <%= @target_path %>
+reportName: index.html
+esHost:         eshost
+disributionClientHost: disClient
+catalogFeHost:  <%= @webportal_ip %>
+catalogFePort:  <%= @webportal_port %>
+catalogBeHost:  <%= @catalogBE_ip %>
+catalogBePort:  <%= @catalogBE_port %>
+disributionClientPort: 8181
+esPort: 9200
+
+
+resourceConfigDir: <%= @tests_path_ci %>
+componentsConfigDir: <%= @components_path %>
+importResourceConfigDir: <%= @importResourceConfigDir %>
+importResourceTestsConfigDir: <%= @importResourceTestsConfigDir %>
+errorConfigurationFile: <%= @errorConfigurationFile %>
+configurationFile: <%= @ConfigurationFile %>
+importTypesConfigDir: <%= @importTypesDir %>
+titanPropertiesFile: <%= @titan_file %>
+
+cassandraHost: <%= @CASSANDRA_IP %>
+cassandraAuthenticate: true
+cassandraUsername: <%= @CASSANDRA_USR %>
+cassandraPassword: <%= @CASSANDRA_PWD %>
+cassandraSsl: false
+cassandraTruststorePath : /tmp/.truststore
+cassandraTruststorePassword : Aa123456
+cassandraAuditKeySpace: sdcAudit
+cassandraArtifactKeySpace: sdcArtifact
+
+stopOnClassFailure: false
+
+#List of non-abstract resources to keep during titan cleanup between tests
+#Only 1.0 version will be kept
+resourcesNotToDelete:
+     - Compute
+     - Database
+     - ObjectStorage
+     - BlockStorage
+     - LoadBalancer
+     - Port
+     - Network
+     - Root
+     - ContainerApplication
+     - ContainerRuntime
+     - DBMS
+     - SoftwareComponent
+     - WebApplication
+     - WebServer
+     - CinderVolume
+     - ContrailVirtualNetwork
+     - NeutronNet
+     - NeutronPort
+     - NovaServer
+     - AbstractSubstitute
+     - ContrailAbstractSubstitute
+     - ContrailCompute
+     - ContrailNetworkRules
+     - ContrailPort
+     - ContrailV2NetworkRules
+     - ContrailV2VirtualMachineInterface
+     - ContrailV2VirtualNetwork
+     - ContrailVirtualNetwork
+     - VL ELINE
+     - SecurityRules
+     - VL
+#Resource categories to keep (including all their subcategories)
+resourceCategoriesNotToDelete:
+     - Generic
+     - Network L2-3
+     - Network L4+
+     - Application L4+
+     - Network Connectivity
+     - DcaeComponent
+
+#Service categories to keep
+serviceCategoriesNotToDelete:
+     - Mobility
+     - Network L1-3
+     - Network L4+
+     - VoIP Call Control

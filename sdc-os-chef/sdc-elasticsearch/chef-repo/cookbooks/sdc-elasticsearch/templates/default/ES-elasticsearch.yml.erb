@@ -1,0 +1,16 @@
+network.host: 0.0.0.0
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.enabled: true
+#discovery.zen.ping.unicast.hosts: <%= @ES_IP %>
+
+cluster.name: <%= @cluster_name %>
+node.name: <%= @node_name %>
+elasticSearch.transportclient: true
+
+transport.client.initial_nodes:
+   - <%= @ES_IP %>:9300
+
+index.number_of_shards: <%= @num_of_shards %>
+index.number_of_replicas: <%= @num_of_replicas %>
+
+path.logs: /usr/share/elasticsearch/logs

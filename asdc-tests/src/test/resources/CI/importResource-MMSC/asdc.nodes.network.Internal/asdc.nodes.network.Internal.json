@@ -1,0 +1,11 @@
+{
+  "payloadName": "asdc.nodes.network.Internal.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.network.Internal",
+  "description": "Represents Internal Network",
+  "resourceIconPath": "network",
+  "category": "Generic/Network Elements",
+  "tags": [
+    "asdc.nodes.network.Internal", "Network", "Cloud"
+  ]
+}

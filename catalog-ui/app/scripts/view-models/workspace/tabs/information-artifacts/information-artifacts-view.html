@@ -1,0 +1,57 @@
+<div class="workspace-information-artifact">
+    <div data-tests-id="add-information-artifact-button"  ng-if="!isViewMode()"
+         data-ng-class="{'disabled': isDisableMode()}"
+         data-tests-id="addGrey" class="add-btn" data-ng-click="addOrUpdate({})" type="button">Add </div>
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-show="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item"></div>
+            </div>
+            <div class="body">
+                <perfect-scrollbar suppress-scroll-x="true" scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="showNoArtifactMessage()" class="no-row-text" data-ng-class="{'disabled': isDisableMode()}">
+                        There are no information artifacts to display
+                    </div>
+                    <div data-ng-repeat-start="artifact in artifacts| orderBy:sortBy:reverse track by $index" data-tests-id="InformationalArtifactRow"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': artifact.selected}"
+                         data-ng-if="artifact.esId">
+
+                        <div class="table-col-general flex-item"  data-ng-click="artifact.selected = !artifact.selected">
+                            <span class="sprite table-arrow" data-ng-class="{'opened': artifact.selected}" data-tests-id="{{artifact.artifactDisplayName}}"></span>
+                            {{artifact.artifactDisplayName}}
+                        </div>
+
+                        <div class="table-col-general flex-item"  data-ng-click="artifact.selected = !artifact.selected" data-tests-id="{{artifact.artifactType}}">
+                            {{artifact.artifactType}}
+                        </div>
+
+                        <div class="table-btn-col flex-item">
+                            <button class="table-edit-btn" data-tests-id="edit_{{artifact.artifactDisplayName}}"  data-ng-if="!isViewMode() && !artifact.isThirdParty()"  data-ng-click="addOrUpdate(artifact)" data-ng-class="{'disabled': isDisableMode()}"></button>
+                            <button class="table-delete-btn" data-tests-id="delete_{{artifact.artifactDisplayName}}" data-ng-if="!isViewMode() && !artifact.isThirdParty()"  data-ng-click="delete(artifact)" data-ng-class="{'disabled': isDisableMode()}"> </button>
+                            <button class="table-download-btn" download-artifact  data-tests-id="download_{{artifact.artifactDisplayName}}"
+                                    data-ng-if="artifact.artifactName" component="component" artifact="artifact"></button>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" data-ng-if="artifact.selected" class="item-opened" data-tests-id="{{artifact.artifactDisplayName}}Description" data-ng-bind="artifact.description"></div>
+                    <button class="add-button" data-ng-repeat="artifact in artifacts track by $index"
+                            data-ng-show="!artifact.esId"
+                            data-tests-id="{{artifact.artifactDisplayName}}"
+                            ng-if="!isViewMode()"
+                            data-ng-class="{'disabled': isDisableMode()}"
+                            translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_HEAT"
+                            translate-values="{'name': '{{artifact.artifactDisplayName}}'}"
+                            data-ng-click="addOrUpdate(artifact)"></button>
+                    <button class="add-button"
+                            ng-if="!isViewMode()"
+                            data-ng-class="{'disabled': isDisableMode()}"
+                            translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER"
+                            data-ng-click="addOrUpdate({})"></button>
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+</div>

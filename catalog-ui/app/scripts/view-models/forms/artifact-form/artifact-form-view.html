@@ -1,0 +1,169 @@
+<sdc-modal modal="modalInstanceArtifact" type="classic" class="sdc-add-artifact" buttons="footerButtons" header="{{getFormTitle()}}" show-close-button="true" get-close-modal-response="close">
+
+    <loader data-display="isLoading"></loader>
+
+    <div class="sdc-edit-artifact-form-container"
+         data-ng-class="{'mandatory-artifact': (editArtifactResourceModel.artifactResource.mandatory && artifactType !=='deployment') || artifactType === 'api'}">
+        <form novalidate class="w-sdc-form" name="forms.editForm">
+
+            <!--------------------- ARTIFACT FILE START-------------------->
+            <div class="i-sdc-form-item">
+                <label class="required">Upload File</label>
+                <file-upload id="fileUploadElement"
+                             form-element="forms.editForm"
+                             element-required="{{::fileUploadRequired()}}"
+                             element-name="myArtifactFile"
+                             file-model="editArtifactResourceModel.artifactFile"
+                             extensions="{{fileExtensions()}}"
+                             element-disabled="{{!editArtifactResourceModel.artifactResource.artifactType}}"
+                             data-ng-class="{'error': forms.editForm.myArtifactFile.$dirty && forms.editForm.myArtifactFile.$invalid}"></file-upload>
+
+                <div class="input-error-file-upload" data-ng-show="forms.editForm.myArtifactFile.$dirty && forms.editForm.myArtifactFile.$invalid">
+                    <span ng-show="forms.editForm.myArtifactFile.$error.required  && !forms.editForm.myArtifactFile.$error.emptyFile" translate="ADD_ARTIFACT_ERROR_FILE_REQUIRED"></span>
+                    <span ng-show="forms.editForm.myArtifactFile.$error.maxsize" translate="VALIDATION_ERROR_MAX_FILE_SIZE"></span>
+                    <span ng-if="artifactType === 'deployment'" ng-show="forms.editForm.myArtifactFile.$error.filetype" translate="ADD_ARTIFACT_ERROR_VALID_EXTENSIONS" translate-values="{'extensions': '{{fileExtensions()}}' }"></span>
+                    <span ng-show="forms.editForm.myArtifactFile.$error.emptyFile" translate="VALIDATION_ERROR_EMPTY_FILE"></span>
+                </div>
+            </div>
+            <!--------------------- ARTIFACT FILE END -------------------->
+
+            <div class="w-sdc-form-columns-wrapper">
+
+                <div class="w-sdc-form-column" data-ng-if="artifactType === 'deployment' || (!editArtifactResourceModel.artifactResource.mandatory && artifactType !== 'api')">
+
+                    <div class="i-sdc-form-item"
+                         data-ng-class="{error:(forms.editForm.artifactLabel.$dirty && forms.editForm.artifactLabel.$invalid)}"
+                         data-ng-if="!isDeploymentHeat()">
+                        <label class="i-sdc-form-label required">Artifact Label</label>
+                        <input class="i-sdc-form-input"
+                               data-ng-maxlength="25"
+                               data-ng-model="editArtifactResourceModel.artifactResource.artifactLabel"
+                               type="text"
+                               name="artifactLabel"
+                               data-required
+                               data-ng-model-options="{ debounce: 200 }"
+                               data-ng-pattern="labelValidationPattern"
+                               maxlength="25"
+                               data-ng-disabled="!isNew"
+                               data-tests-id="artifact-label"
+                               autofocus/>
+
+                        <div class="input-error" data-ng-show="forms.editForm.artifactLabel.$dirty && forms.editForm.artifactLabel.$invalid">
+                            <span ng-show="forms.editForm.artifactLabel.$error.required" translate="ADD_ARTIFACT_ERROR_LABEL_REQUIRED"></span>
+                            <span ng-show="forms.editForm.artifactLabel.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
+                            <span ng-show="forms.editForm.artifactLabel.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.type.$dirty && forms.editForm.type.$invalid)}">
+                        <label class="i-sdc-form-label required">Type</label>
+                        <select class="i-sdc-form-select"
+                                data-required
+                                name="type"
+                                data-ng-disabled="!isNew"
+                                data-ng-change="setDefaultTimeout()"
+                                data-ng-model="editArtifactResourceModel.artifactResource.artifactType"
+                                data-ng-options="type as type for type in editArtifactResourceModel.artifactTypes track by type | uppercase"
+                                data-tests-id="artifacttype">
+                            <option value="">Choose Type</option>
+                        </select>
+
+                        <div class="input-error" data-ng-show="forms.editForm.type.$dirty && forms.editForm.type.$invalid">
+                            <span ng-show="forms.editForm.type.$error.required" translate="ADD_ARTIFACT_ERROR_TYPE_REQUIRED"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.timeout.$dirty && forms.editForm.timeout.$invalid)}" data-ng-if="isDeploymentHeat()">
+                        <label class="i-sdc-form-label">Deployment Timeout (minutes)</label>
+                        <input class="i-sdc-form-input"
+                               data-ng-maxlength="25"
+                               data-ng-model="editArtifactResourceModel.artifactResource.timeout"
+                               type="number"
+                               name="timeout"
+                               min="1"
+                               max="2147483647"
+                               data-ng-disabled="'HEAT_ENV'==editArtifactResourceModel.artifactResource.artifactType"
+                               data-ng-model-options="{ debounce: 200 }"
+                               data-ng-pattern="integerValidationPattern"
+                               data-ng-init="setDefaultTimeout()"
+                               data-ng-change="setDefaultTimeout()"
+                               maxlength="25"
+                               data-tests-id="timeout" />
+
+                        <div class="input-error" data-ng-show="forms.editForm.timeout.$dirty && forms.editForm.timeout.$invalid">
+                            <span ng-show="forms.editForm.timeout.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
+                            <span ng-show="forms.editForm.timeout.$error.pattern" translate="ADD_ARTIFACT_ERROR_TIMEOUT_PATTERN"></span>
+                            <span ng-show="forms.editForm.timeout.$error.min" translate="ADD_ARTIFACT_ERROR_TIMEOUT_MIN"></span>
+                        </div>
+
+                    </div>
+
+                </div><!-- w-sdc-form-column -->
+
+                <div class="w-sdc-form-column i-sdc-form-url" data-ng-if="artifactType==='api'">
+
+                    <div class="i-sdc-form-item"
+                         data-ng-class="{error:(forms.editForm.apiUrl.$dirty && forms.editForm.apiUrl.$invalid)}">
+                        <label class="i-sdc-form-label required">URL</label>
+                        <input class="i-sdc-form-input"
+                               data-ng-maxlength="100"
+                               data-ng-model="editArtifactResourceModel.artifactResource.apiUrl"
+                               data-ng-model-options="{ debounce: 200 }"
+                               type="url"
+                               name="apiUrl"
+                               data-required
+                               ng-pattern="urlValidationPattern"
+                               maxlength="100"
+                               autofocus
+                               invalid-characters=',#?&@$<>~^`\[]{}|")(*!+=;%' />
+
+                        <div class="input-error" data-ng-show="forms.editForm.apiUrl.$dirty && forms.editForm.apiUrl.$invalid">
+                            <span ng-show="forms.editForm.apiUrl.$error.required" translate="ADD_ARTIFACT_ERROR_APIURL_REQUIRED"></span>
+                            <span ng-show="forms.editForm.apiUrl.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '100' }"></span>
+                            <span ng-show="forms.editForm.apiUrl.$error.url || forms.editForm.apiUrl.$error.pattern || forms.editForm.apiUrl.$error.invalidCharacters" translate="ADD_ARTIFACT_ERROR_APIURL_URL"></span>
+                        </div>
+
+                    </div>
+
+                </div><!-- w-sdc-form-column -->
+
+                <div class="w-sdc-form-column">
+
+                    <div class="i-sdc-form-item"
+                         data-ng-class="{error:(forms.editForm.description.$dirty && forms.editForm.description.$invalid)}">
+                        <label class="i-sdc-form-label required">Description</label>
+                        <textarea class="i-sdc-form-textarea"
+                                  data-ng-maxlength="256"
+                                  maxlength="256"
+                                  data-required
+                                  name="description"
+                                  data-ng-model="editArtifactResourceModel.artifactResource.description"
+                                  data-ng-model-options="{ debounce: 200 }"
+                                  data-ng-pattern="commentValidationPattern"
+                                  data-tests-id="description"></textarea>
+
+                        <div class="input-error" data-ng-show="forms.editForm.description.$dirty && forms.editForm.description.$invalid">
+                            <span ng-show="forms.editForm.description.$error.required" translate="ADD_ARTIFACT_ERROR_DESCRIPTION_REQUIRED"></span>
+                            <span ng-show="forms.editForm.description.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
+                            <span ng-show="forms.editForm.description.$error.pattern" translate="ADD_ARTIFACT_ERROR_DESCRIPTION_PATTERN"></span>
+                        </div>
+
+                        <div class="w-sdc-form-column artifact-info" data-ng-show="!isNew && editArtifactResourceModel.artifactResource.esId">
+                            UUID <span data-ng-bind="editArtifactResourceModel.artifactResource.artifactUUID"></span>
+                            <br />
+                            Version <span data-ng-bind="editArtifactResourceModel.artifactResource.artifactVersion"></span>
+                        </div>
+                    </div>
+
+                </div><!-- w-sdc-form-column -->
+
+            </div><!-- w-sdc-form-columns-wrapper -->
+
+            <span class="w-sdc-form-note" data-ng-show="forms.editForm.$invalid && false" translate="LABEL_ALL_FIELDS_ARE_MANDATORY"></span>
+
+        </form>
+    </div>
+</sdc-modal>
+

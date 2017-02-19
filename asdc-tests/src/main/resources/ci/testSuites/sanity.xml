@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Sanity" configfailurepolicy="continue" verbose="2">
+
+   <listeners>
+        <listener class-name="org.openecomp.sdc.ci.tests.run.ExtentReporterNG" />
+    </listeners>
+
+	<test name="sanityE2Eflows">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.sanity.CrudE2E" />
+		</classes>
+	</test>
+
+	<test name="General">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.general.BasicHttpAuthenticationTest">
+				<methods>
+					<include name="sendAuthenticatedRequestTest_success" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.general.ManageEcompConsumerCredentials">
+				<methods>
+					<include name="deleteEcompCredentialsMethodDelete" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest">
+				<methods>
+					<include name="testE2EUuidHeaderReturnedAndPreserved" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="ArtifactOnInstance">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.CrudArt">
+				<methods>
+					<include name="addDcaeInventoryToscaArtifactToResourceInstanceAndCertify" />
+					<include name="addDcaeInventoryJsonArtifactToResourceInstanceAndCertify" />
+					<include name="addDcaeInventoryPolicyArtifactToResourceInstanceAndCertify" />
+					<include name="addDcaeInventoryDocArtifactToResourceInstanceAndCertify" />
+					<include name="addDcaeInventoryBluePrintArtifactToResourceInstanceAndCertify" />
+					<include name="addDcaeInventoryEventArtifactToResourceInstanceAndCertify" />
+					<include name="updateArtifactDescriptionToResourceInstance" />
+					<include name="deleteArtifactToResourceInstance" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Artifact">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ArtifactServletTest">
+				<methods>
+					<include name="upadteArtifactWithPayLoadToResourcseTest" />
+					<include name="createAndUpdateArtifactToInterface" />
+				</methods>
+			</class>
+
+			<class name="org.openecomp.sdc.ci.tests.execute.artifacts.CrudArt">
+				<methods>
+					<include name="addHeatArtifactToResourceAndCertify" />
+				</methods>
+			</class>
+
+		
+
+			<class name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateArtResponse" />
+			
+			
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt">
+				<methods>
+					<include name="downloadArtifactFromResourceTest" />
+					<include name="downloadArtifactFromServiceTest" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Service">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.GetComponentAuditApiTest">
+				<methods>
+					<include name="testServiceAuditCertifiedVersion" />
+				</methods>
+			</class>
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.service.ServiceApiTest"> 
+				<methods> <include name="createServiceTest" /> <include name="getFollowedServicesTester" 
+				/> </methods> </class> -->
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.service.ServiceInformationalArtifactApiTest"> 
+				<methods> <include name="addArtifactSuccessfuly" /> <include name="deleteArtifact" 
+				/> <include name="updateArtifactMetadataSuccessfully" /> </methods> </class> -->
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.UpdateServiceMetadataTest">
+				<methods>
+					<include name="updateServiceSuccessfully" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Resource">
+		<classes>
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.GetAllLatestVersionNonAbstarctResources"> 
+				<methods> <include name="resourceCertifiedTwiceCoutCinCout" /> </methods> 
+				</class> -->
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.GetAllResourceVersions">
+				<methods>
+					<include name="getResourceAllVersions_version15" />
+				</methods>
+			</class>
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.GetFollwedElementsTest"> 
+				<methods> <include name="getResourcesListBolongsToSpecificDesigner" /> </methods> 
+				</class> -->
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.GetResourceAbstractApiTest"> 
+				<methods> <include name="getAbstractResourceList" /> </methods> </class> -->
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.GetResourceNotAbstractApiTest">
+				<methods>
+					<include name="getNotAbstractResourceList" />
+				</methods>
+			</class>
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.GetResourceTagsApiTest"> 
+				<methods> <include name="getModifiedResourceTagsList" /> </methods> </class> -->
+
+			<class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest">
+				<methods>
+					<include name="updateResourceMetadataSuccess" />
+				</methods>
+			</class>
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceInstanceNameCRUD"> 
+				<methods> <include name="updateResourceInstanceNameAfterServiceCertification"/> 
+				</methods> </class> -->
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceInstanceServletTest"> 
+				<methods> <include name="updateRI_suc"/> </methods> </class> -->
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+				<methods>
+					<include name="UpdateDerivedFromSuccess" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<test name="Product">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+				<methods>
+					<include name="checkInProductByCreator" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest">
+				<methods>
+					<include name="changeServiceInstanceVersionByPm" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest">
+				<methods>
+					<include name="checkOutProductByPmNotInContacts" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest">
+				<methods>
+					<include name="createServiceInstanceTest" />
+					<include name="deleteServiceInstanceByPm" />
+					<include name="updateServiceInstanceNameByPm" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest">
+				<methods>
+					<include name="createManyGroupingsDiffCategories" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest">
+				<methods>
+					<include name="followedPageTest" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+				<methods>
+					<include name="undoCheckOutProductByPm" />
+				</methods>
+			</class>
+			<!-- Product tests end -->
+		</classes>
+	</test>
+	<test name="Catalog">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest" />
+		</classes>
+	</test>
+
+	<test name="distribution">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests">
+				<methods>
+					<include name="downloadServiceArtifactSuccessWithAutantication" />
+				</methods>
+			</class>
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+				<methods>
+					<include name="downloadResourceArtifactSuccess" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Category">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.execute.category.ElementsApiTest">
+				<methods>
+					<include name="getAllArtifactTypes" />
+					<include name="getConfiguration" />
+					<include name="getAllPropertyScopesSuccess" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Imports">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.imports.ImportGenericResourceCITest">
+				<methods>
+					<include name="importAllTestResources" />
+					<include name="testImportCheckoutAndUpdateUserResource" />
+					<include name="testImportWithUpdateNormativeType" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.imports.ImportNewResourceCITest">
+				<methods>
+					<include name="importAllTestResources_toValidateNewAPI" />
+				</methods>
+			</class>
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaResourceTest">
+				<methods>
+					<include name="importToscaResource" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaCapabilitiesWithProperties">
+				<methods>
+					<include name="importNodeTypeWithCapabilityWithPropertiesFromYmlSucceed" />
+					<!--
+					This test require the onboarding simulator. 
+					<include name="importResourceWithCapabilityWithPropertiesOverridingCapTypePropertiesSucceed" /> 
+					-->
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.imports.CsarUtilsTest">
+			</class>
+		</classes>
+	</test> <!-- Test -->
+
+	<test name="attribute">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.attribute.ComponentInstanceAttributeTest">
+				<methods>
+					<include name="testUpdateAttributeOnResourceInstance" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="inputs">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.inputs.InputsApiTests">
+				<methods>
+					<include name="testInputsMainFunctionality" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="property">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.property.AdditionalInformationServletTest">
+				<methods>
+					<include name="createResourceAdditionalInformationTestDuringLifecycle" />
+					<include name="updateResourceAdditionalInformationTest" />
+					<include name="deleteResourceAdditionalInformationTest" />
+				</methods>
+			</class>
+
+			<class name="org.openecomp.sdc.ci.tests.execute.property.PropertyApisTest">
+				<methods>
+					<include name="testPropertyApis" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.property.ComponentInstancePropertyTest">
+				<methods>
+					<include name="nestedVfResourceProperty3Levels" />
+				</methods>
+			</class>
+
+
+
+			<!-- <class name="org.openecomp.sdc.ci.tests.execute.property.PropertyServletTest"> 
+				<methods> <include name="createCascadeVfResource" /> <include name="createPropertyTestSetClearDefaultValueInetegr" 
+				/> </methods> </class> -->
+		</classes>
+	</test>
+
+	<test name="User">
+		<classes>
+
+			<!-- class
+				name="org.openecomp.sdc.ci.tests.execute.user.ActivateDeActivateDeleteUser">
+				<methods>
+					<include name="authorizeDeActivatedUser" />
+				</methods>
+			</class-->
+
+			<class name="org.openecomp.sdc.ci.tests.execute.user.CreateUserApiTest">
+				<methods>
+					<include name="createUser" />
+				</methods>
+			</class>
+
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.user.GovernorWorkspaceApiTest">
+				<methods>
+					<include name="governorList_AllCertifiedVersionsOfService" />
+				</methods>
+			</class>
+
+		</classes>
+	</test>
+	
+	<test name="ExternalApis">
+		<classes>
+			<class name="org.openecomp.sdc.externalApis.GetAssetServlet" >
+				<methods>
+					<include name="getResourceAssetSuccess" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet">
+				<methods>
+					<include name="getResourceAssetBySpecifiedCategoryAndSubCategory" />
+					<include name="getServiceAssetBySpecifiedCategoryAndDistributionStatus" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet">
+				<methods>
+					<include name="getResourceAssetMetadataWithResourceInstancesSuccess" />
+					<include name="getServiceAssetMetadataWithCertifiedResourceInstancesAndArtifactsOnRIsAndServiceSuccess" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+
+
+
+
+
+
+</suite> 

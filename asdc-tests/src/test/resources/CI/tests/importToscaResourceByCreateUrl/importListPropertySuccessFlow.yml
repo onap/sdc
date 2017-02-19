@@ -1,0 +1,198 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.vl.LinkTest:
+      derived_from: tosca.nodes.Root
+      properties:
+        my_boolean:
+          type: list
+          description : another description
+          default:
+            - false
+            - true
+          entry_schema:
+            description: This is my property
+            type: boolean
+        my_boolean_array:
+          type: list
+          description : another description
+          default: [ true , false ]
+          entry_schema:
+            description: This is my property
+            type: boolean
+        duplicate_boolean_values:
+          type: list
+          description : another description
+          default: [ true , false , true ]
+          entry_schema:
+            description: This is my property
+            type: boolean
+        boolean_null_value:
+          type: list
+          description : another description
+          default:
+            - true
+            -
+            - false
+          entry_schema:
+            description: This is my property
+            type: boolean
+        my_integers:
+          type: list
+          description : another description
+          default:
+            - 0
+            - 1000
+            - -1000
+            - 50
+          entry_schema:
+            description: This is my property
+            type: integer
+        my_integers_array:
+          type: list
+          description : another description
+          default: [ 10 , -1000, 0 ]
+          entry_schema:
+            description: This is my property
+            type: integer
+        duplicate_integers_values:
+          type: list
+          description : another description
+          default: [ 10 , 10, -1000, 0 ]
+          entry_schema:
+            description: This is my property
+            type: integer
+        integer_null_value:
+          type: list
+          description : another description
+          default:
+            - 1000
+            -
+            - 2000
+          entry_schema:
+            description: This is my property
+            type: integer
+        my_string:
+          type: list
+          description : another description
+          default:
+            - <b>asdc<b>
+            - $?^@ecomp$!#%()_-~@+*^...;;/w#
+            - uc
+          entry_schema:
+            description: This is my property
+            type: string
+        my_string_array:
+          type: list
+          description : another description
+          default: [  <b>AAA</b>, ~$~#bbb%^*_-, qwe , 1.3 , <b>500</b> , true ]
+          entry_schema:
+            description: This is my property
+            type: string
+        string_null_value:
+          type: list
+          description : another description
+          default:
+            - <b>asdc<b>
+            -
+            - uc
+          entry_schema:
+            description: This is my property
+            type: string
+        string_space_value:
+          type: list
+          description : another description
+          default:
+            - <b>  asdc<b>
+            -    
+            -     uc
+          entry_schema:
+            description: This is my property
+            type: string
+        duplicate_string_values:
+          type: list
+          description : another description
+          default:
+            - asdc
+            - asdc
+            - uc
+          entry_schema:
+            description: This is my property
+            type: string
+        my_float:
+          type: list
+          description : another description
+          default:
+            - 6
+            - 1000.000001
+            - -3.0f
+          entry_schema:
+            description: This is my property
+            type: float
+        my_float_array:
+          type: list
+          description : another description
+          default: [ 0.01 , -5.0 , 2.1f ]
+          entry_schema:
+            description: This is my property
+            type: float
+        duplicate_float_values:
+          type: list
+          description : another description
+          default:
+            - 0.0
+            - 0.0
+            - 4.555555
+          entry_schema:
+            description: This is my property
+            type: float
+        float_no_default_values:
+          type: list
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: float
+        float_null_value:
+          type: list
+          description : another description
+          default:
+            - 6
+            -
+            - -3.0f
+          entry_schema:
+            description: This is my property
+            type: float
+        float_space_value:
+          type: list
+          description : another description
+          default:
+            - 6
+            - 
+            - -3.0f
+          entry_schema:
+            description: This is my property
+            type: float
+        integer_no_default_values:
+          type: list
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: integer
+        string_no_default_values:
+          type: list
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: string
+        boolean_no_default_values:
+          type: list
+          description : another description
+          default:
+          entry_schema:
+            description: This is my property
+            type: boolean
+      capabilities:
+        link:
+          type: tosca.capabilities.network.Linkable

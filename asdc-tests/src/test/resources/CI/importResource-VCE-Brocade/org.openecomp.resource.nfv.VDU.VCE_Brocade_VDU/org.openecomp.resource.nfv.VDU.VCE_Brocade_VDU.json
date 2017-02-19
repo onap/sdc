@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.vdu.VCE_Brocade_VDU.yaml",
+  "contactId": "jh0003",
+  "name": "org.openecomp.resource.nfv.vdu.VCE_Brocade_VDU",
+  "description": "Brocade Vyatta 5600 vRouter used as Virtual Customer Edge (vCE) delivers high throughput on general-purpose x86 server. it is based on open standards, open protocols and is fully compatible with legacy networks. It has advanced functionality to be able to deploy in a variety of network environments.",
+  "resourceIconPath": "brocade",
+  "category": "Network Layer 2-3/Router",
+  "tags": [
+    "org.openecomp.resource.nfv.vdu.VCE_Brocade_VDU", "vCE", "Brocade", "Gamma"
+  ]
+}

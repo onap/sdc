@@ -1,0 +1,11 @@
+{
+  "payloadName": "SCSCF.yml",
+  "resourceName": "att.nodes.ims.SCSCF",
+  "description": "A Serving-CSCF (S-CSCF) is the central node of the signaling plane. It is a SIP server, but performs session control too. It is always located in the home network. It uses Diameter Cx and Dx interfaces to the HSS to download user profiles and upload user-to-S-CSCF associations (the user profile is only cached locally for processing reasons only and is not changed). All necessary subscriber profile information is loaded from the HSS.",
+  "resourceIconPath": "defaulticon",
+  "category": "IMS",
+  "contactId": jh0003,
+  "tags": [
+    "att.nodes.ims.SCSCF", "IMS_TAG"
+  ]
+}

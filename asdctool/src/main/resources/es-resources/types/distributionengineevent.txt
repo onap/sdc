@@ -1,0 +1,13 @@
+{
+             "action": "ACTION",
+             "timestamp": "TIMESTAMP",
+             "requestId": "REQUEST_ID",
+             "serviceInstanceId": "SERVICE_INSTANCE_ID",
+             "desc": "DESC",
+             "status": "STATUS",
+             "consumerId": "CONSUMER_ID",
+             "role": "ROLE",
+             "topicName": "TOPIC_NAME",
+             "apiKey": "API_KEY",
+             "environmentName": "D_ENV"
+}

@@ -1,0 +1,5 @@
+asdc.nodes.network.Cinder:
+  derived_from: asdc.nodes.Network
+  capabilities:
+    cinder_connection:
+      type: asdc.capabilities.NetworkInterface

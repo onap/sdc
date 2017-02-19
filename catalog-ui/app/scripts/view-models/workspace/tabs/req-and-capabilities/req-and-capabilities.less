@@ -1,0 +1,196 @@
+.workspace-req-and-cap {
+
+    width: 93%;
+    display: inline-block;
+
+    .tabs{
+        float: left;
+        position: relative;
+        top: 6px;
+        button{
+            float: left;
+            width: 233px;
+            height: 38px;
+            background-color: @tlv_color_t;
+            border: 1px solid @main_color_o;
+            color: black;
+            &:nth-child(1){
+                border-radius: 10px 0 0 0;
+            }
+            &:nth-child(2){
+                border-radius: 0 10px 0 0;
+            }
+            &.selected{
+                background-color: @main_color_a;
+                border: 1px solid @main_color_a;
+                color: white;
+            }
+        }
+    }
+    .search{
+        margin-bottom: 12px;
+        float: right;
+        ::-webkit-input-placeholder {
+            font-style: italic;
+        }
+        :-moz-placeholder {
+            font-style: italic;
+        }
+        ::-moz-placeholder {
+            font-style: italic;
+        }
+        :-ms-input-placeholder {
+            font-style: italic;
+        }
+        #search-box{
+             -webkit-border-radius: 2px 0 0 2px;
+             -moz-border-radius: 2px 0 0 2px;
+             border-radius: 2px 0 0 2px;
+             width: 213px;
+             height: 32px;
+             line-height: 32px;
+             border: 1px solid @main_color_o;
+             text-indent: 10px;
+             float: left;
+        }
+        .search-icon-container{
+            background-color: @main_color_a;
+            height: 32px;
+            width: 32px;
+            border-radius: 0 2px 2px 0;
+            float: left;
+            .search-icon{
+                position: relative;
+                top: 9px;
+            }
+        }
+    }
+    .expand-collapse-buttons{
+        float: right;
+        width: 44px;
+        margin-left: 11px;
+        margin-top: 10px;
+        span{
+            vertical-align: bottom;
+            .hand;
+        }
+    }
+
+
+
+    .table{
+        height:490px;
+        margin-bottom: 0;
+    }
+
+    .arrow-up-small{
+        &.opened{
+            .arrow-up-small-hover;
+        }
+    }
+
+    .item-opened{
+        background-color: @tlv_color_t;
+    }
+
+    .properties-title{
+        margin:0;
+        font-weight: bold;
+    }
+
+    .table-container-flex {
+        margin-top: 10px;
+
+        .text{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        &.requirements-table{
+            border-top: 4px solid @main_color_a;
+            .flex-item:nth-child(1) {
+                flex-grow: 20;
+            }
+
+            .flex-item:nth-child(2) {
+                flex-grow: 20;
+            }
+
+            .flex-item:nth-child(3) {
+                flex-grow: 20;
+            }
+
+            .flex-item:nth-child(4) {
+                flex-grow: 20;
+            }
+
+            .flex-item:nth-child(5) {
+                flex-grow: 20;
+            }
+
+            .flex-item:nth-child(6) {
+                flex-grow: 20;
+            }
+        }
+
+        &.capabilities-table{
+            border-top: 4px solid @main_color_a;
+            .selected{
+                .flex-item:nth-child(1) {
+                    border-left: 4px solid @main_color_a;
+                    padding-right: 11px;
+                }
+            }
+            .flex-item:nth-child(1) {
+                flex-grow: 10;
+            }
+
+            .flex-item:nth-child(2) {
+                flex-grow: 10;
+            }
+
+            .flex-item:nth-child(3) {
+                flex-grow: 10;
+            }
+
+            .flex-item:nth-child(4) {
+                flex-grow: 10;
+            }
+
+            .flex-item:nth-child(5) {
+                flex-grow: 10;
+            }
+
+        }
+
+        &.properties-table{
+            .table{
+                height: auto;
+            }
+
+            .flex-item:nth-child(1) {
+                flex-grow: 15;
+                a{
+                    .hand
+                }
+            }
+
+            .flex-item:nth-child(2) {
+                flex-grow: 6;
+            }
+
+            .flex-item:nth-child(3) {
+                flex-grow: 6;
+            }
+
+            .flex-item:nth-child(4) {
+                flex-grow: 20;
+
+            }
+        }
+
+    }
+
+}

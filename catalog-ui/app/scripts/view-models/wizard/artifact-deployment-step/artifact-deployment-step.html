@@ -1,0 +1,137 @@
+<div class="artifact-deployment-step" data-ng-controller="Sdc.ViewModels.Wizard.ArtifactDeploymentStepViewModel">
+
+    <div data-tests-id="add-deployment-artifact-button" data-tests-id="addGrey" class="w-sdc-classic-btn gray" data-ng-click="addOrUpdate({})">Add</div>
+
+    <div class="table-container-flex">
+
+        <div class="table">
+
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-if="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item"></div>
+            </div>
+
+            <form class="body" name="editForm">
+
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+
+                    <!-- Artifact row -->
+                    <div ng-if="noArtifactsToShow()" class="no-row-text" translate="DEPLOYMENT_ARTIFACT_NO_ARTIFACTS_TO_DISPLAY"></div>
+                    <div data-ng-repeat-start="artifact in artifacts | orderBy:sortBy:reverse track by $index"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': artifact.selected || undefined==artifact.selected && updateInProgress}"
+                         data-ng-if="artifact.esId">
+
+                        <div class="table-col-general flex-item"  data-ng-click="update(artifact)">
+                            <loader data-display="isLoading"></loader>
+                            <span class="sprite table-arrow" data-tests-id="{{artifact.artifactDisplayName}}" data-ng-class="{'opened': artifact.selected || undefined==artifact.selected && updateInProgress}"></span>
+                            {{artifact.artifactDisplayName}}
+                        </div>
+
+                        <div class="table-col-general flex-item" data-tests-id="{{artifact.artifactType}}">
+                            {{artifact.artifactType}}
+                        </div>
+                        <div class="table-col-general flex-item" data-tests-id="{{artifact.timeout}}">
+                            {{artifact.timeout? artifact.timeout:''}}
+                        </div>
+
+                        <div class="table-btn-col flex-item"  sdc-keyboard-events>
+                            <button class="table-edit-btn" data-ng-click="addOrUpdate(artifact)"></button>
+                            <button class="table-delete-btn" data-ng-click="delete(artifact)"> </button>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" data-ng-if="artifact.selected || undefined==artifact.selected && updateInProgress" class="w-sdc-form item-opened">
+                    <!-- Artifact panel opened -->
+
+                        <!-- Description field -->
+                        <div class="w-sdc-form-item" ng-form="descriptionForm" data-ng-class="{error:(descriptionForm.$dirty && descriptionForm.$invalid)}">
+                            <label class="i-sdc-env-form-label required">Description</label>
+                                <textarea class="i-sdc-form-textarea {{$index}}"
+                                        data-ng-maxlength="256"
+                                        maxlength="256"
+                                        data-ng-required="true"
+                                        name="description"
+                                        data-ng-model="artifact.description"
+                                        data-ng-model-options="{ debounce: 200 }"
+                                        data-ng-pattern="getValidationPattern('string')"
+                                        data-tests-id="description">
+                                </textarea>
+
+                            <div class="input-error" data-ng-show="descriptionForm.$dirty && descriptionForm.$invalid">
+                                <span ng-show="descriptionForm.$error.required" translate="ADD_ARTIFACT_ERROR_DESCRIPTION_REQUIRED"></span>
+                                <span ng-show="descriptionForm.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
+                                <span ng-show="descriptionForm.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                            </div>
+
+                        </div>
+
+                        <!-- Parameters in 2 columns -->
+                        <div class="w-sdc-form-columns-wrapper" data-ng-if="artifact.heatParameters">
+                            <!-- Left column -->
+                            <div class="w-sdc-form-column">
+                                <div class="i-sdc-form-item" ng-form="parameterForm" data-ng-repeat="parameter in artifact.heatParameters.slice(0, artifact.heatParameters.length%2+artifact.heatParameters.length/2) | orderBy: 'name' track by $index">
+                                    <label class="i-sdc-env-form-label" data-ng-class="{required:parameter.defaultValue}" tooltip-side="top" sdc-smart-tooltip>{{parameter.name +' (' + parameter.type + ')'}}</label>
+                                    <span class="parameter-description" tooltips tooltip-side="top" tooltip-content="{{parameter.description}}">?</span>
+                                    <input class="i-sdc-form-input" data-ng-class="{error:(parameterForm.currentValue.$invalid)}"
+                                           data-ng-model-options="{ debounce: 200 }"
+                                           data-ng-model="parameter.currentValue"
+                                           type="text"
+                                           name="currentValue"
+                                           data-ng-pattern="getValidationPattern(parameter.type, 'heat')"
+                                           data-ng-required="parameter.defaultValue"
+                                           data-ng-change="'json'==parameter.type && parameterForm.currentValue.$setValidity('pattern', validateJson(parameter.currentValue))"
+                                           data-ng-blur="!parameterForm.currentValue.$error.pattern && resetValue(parameter)"
+                                    />
+
+                                    <div class="input-error" data-ng-show="parameterForm.currentValue.$invalid">
+                                        <span ng-show="parameterForm.currentValue.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Value'}"></span>
+                                        <span ng-show="parameterForm.currentValue.$error.pattern && parameter.type==='string'" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                                        <span ng-show="parameterForm.currentValue.$error.pattern && !(parameter.type==='string')" translate="VALIDATION_ERROR_TYPE" translate-values="{'type': '{{parameter.type}}'}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right column -->
+                            <div class="w-sdc-form-column">
+                                <div class="i-sdc-form-item" ng-form="parameterForm" data-ng-repeat="parameter in artifact.heatParameters.slice(artifact.heatParameters.length%2+artifact.heatParameters.length/2) | orderBy: 'name' track by $index">
+                                    <label class="i-sdc-env-form-label" data-ng-class="{required:parameter.defaultValue}" tooltip-side="top" sdc-smart-tooltip>{{parameter.name +' (' + parameter.type + ')'}}</label>
+                                    <span class="parameter-description" tooltips tooltip-side="top" tooltip-content="{{parameter.description}}">?</span>
+                                    <input class="i-sdc-form-input" data-ng-class="{error:(parameterForm.currentValue.$invalid)}"
+                                           data-ng-model-options="{ debounce: 200 }"
+                                           data-ng-model="parameter.currentValue"
+                                           type="text"
+                                           name="currentValue"
+                                           data-ng-pattern="getValidationPattern(parameter.type, 'heat')"
+                                           data-ng-required="parameter.defaultValue"
+                                           data-ng-change="'json'==parameter.type && parameterForm.currentValue.$setValidity('pattern', validateJson(parameter.currentValue))"
+                                           data-ng-blur="!parameterForm.currentValue.$error.pattern && resetValue(parameter)"
+                                    />
+
+                                    <div class="input-error" data-ng-show="parameterForm.currentValue.$invalid">
+                                        <span ng-show="parameterForm.currentValue.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Value'}"></span>
+                                        <span ng-show="parameterForm.currentValue.$error.pattern && parameter.type==='string'" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                                        <span ng-show="parameterForm.currentValue.$error.pattern && !(parameter.type==='string')" translate="VALIDATION_ERROR_TYPE" translate-values="{'type': '{{parameter.type}}'}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- Close: Parameters in 2 columns -->
+                    </div><!-- Close: Artifact panel opened -->
+
+                    <!-- Add artifacts buttons -->
+                    <button class="add-button" data-ng-repeat="artifact in artifacts track by $index"
+                            data-ng-show="!artifact.esId"
+                            data-tests-id="{{artifact.artifactDisplayName}}"
+                            translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_HEAT"
+                            translate-values="{'name': '{{artifact.artifactDisplayName}}'}"
+                            data-ng-click="addOrUpdate(artifact)"></button>
+
+                    <!-- Top add button -->
+                    <button class="add-button" translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER" data-ng-click="addOrUpdate({})"></button>
+                </perfect-scrollbar>
+            </form>
+        </div>
+    </div>
+</div>

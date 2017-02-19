@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0_wd03
+
+template_name: tosca-normative-types-objectStorage
+template_author: TOSCA TC
+template_version: 1.0.0.wd03-SNAPSHOT
+
+description: Contains the normative types definition.
+imports:
+  - "tosca-normative-types-root:1.0.0.wd03-SNAPSHOT"
+
+node_types:
+  tosca.nodes.ObjectStorage:
+    abstract: true
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA ObjectStorage node represents storage that provides the ability to store data as objects (or BLOBs of data)
+      without consideration for the underlying filesystem or devices.
+    tags:
+      icon: /images/objectstore.png
+    properties:
+      store_name:
+        type: string
+        description: The logical name of the object store (or container).
+      store_size:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        description: The requested initial storage size in Gigabytes.
+      store_maxsize:
+        type: integer
+        required: false
+        constraints:
+          - greater_than: 0
+        description: The requested maximum storage size in Gigabytes.

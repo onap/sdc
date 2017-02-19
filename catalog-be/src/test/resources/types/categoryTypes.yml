@@ -1,0 +1,74 @@
+services:
+    Mobility:
+      name: "Mobility"
+      icons: ['mobility']
+    Network_L1_3:
+      name: "Network L1-3"
+      icons: ['network_l_1-3']
+    Network_L4:
+      name: "Network L4"
+      icons: ['network_l_4']
+    VoIP_Call_Control:
+      name: "VoIP Call Control"
+      icons: ['call_controll']
+resources:
+  NetworkLayer23:
+    name: "Network Layer 2-3"
+    subcategories: 
+      Router:
+          name: "Router"
+          icons: ['router']
+      Gateway:
+          name: "Gateway"
+          icons: ['gateway']
+      WAN_Connectors:
+          name: "WAN Connectors"
+          icons: ['connector']
+      LAN_Connectors:
+          name: "LAN Connectors"
+          icons: ['connector']
+  NetworkLayer4:
+    name: "Network Layer 4+"
+    subcategories: 
+      Common_Network_Resources:
+          name: "Common Network Resources"
+          icons: ['network', 'loadBalancer']
+  ApplicationLayer4:
+    name: "Application Layer 4+"
+    subcategories: 
+      Border_Elements:
+          name: "Border Elements"
+          icons: ['borderElement']
+      Application_Servers:
+          name: "Application Servers"
+          icons: ['applicationServer', 'server']
+      Web_Server:
+          name: "Web Server"
+          icons: ['applicationServer', 'server']
+      Call_Control:
+          name: "Call Control"
+          icons: ['call_controll']
+      Media_Servers:
+          name: "Media Servers"
+          icons: ['applicationServer', 'server']
+      Load_Balancer:
+          name: "Load Balancer"
+          icons: ['loadBalancer']
+      Database:
+          name: "Database"
+          icons: ['database']
+  Generic:
+    name: "Generic"
+    subcategories: 
+      Infrastructure:
+          name: "Infrastructure"
+          icons: ['objectStorage', 'compute']
+      Abstract:
+          name: "Abstract"
+          icons: ['objectStorage', 'compute']
+      Network_Elements:
+          name: "Network Elements"
+          icons: ['port', 'network', 'router']
+      Database:
+          name: "Database"
+          icons: ['database']

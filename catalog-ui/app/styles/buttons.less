@@ -1,0 +1,274 @@
+.w-sdc-btn {
+    .c_4;
+    .hand;
+    .border-radius(5px);
+    border: 0;
+    height: 38px;
+    line-height: 38px;
+    width: 195px;
+    margin: 0 6px;
+    padding: 0;
+    vertical-align: middle;
+    outline: none;
+    &:disabled { .bg_e; }
+}
+
+.w-sdc-btn-small {
+    .c_9;
+    .hand;
+    .border-radius(5px);
+    border: 0;
+    height: 30px;
+    line-height: 30px;
+    width: 71px;
+    margin: 0 6px;
+    padding: 0;
+    outline: none;
+    vertical-align: middle;
+    position: relative;
+    &:disabled { .bg_e; }
+}
+
+
+
+.w-sdc-btn-red-small{
+
+    .w-sdc-btn-small;
+    .bg_h;
+    &:hover:enabled { .bg_h_hover; }
+    padding-left: 15px;
+
+    span {
+        position: absolute;
+        top: 7px;
+        left: 10px;
+    }
+}
+
+.w-sdc-btn-green-small{
+    .w-sdc-btn-small;
+    .bg_z;
+    &:hover:enabled { .bg_z_hover; }
+
+}
+
+
+.w-sdc-btn-light-green {
+    .w-sdc-btn;
+    .bg_z;
+    &:hover:enabled { .bg_z_hover; }
+}
+
+.w-sdc-btn-green {
+    .w-sdc-btn;
+    .bg_d;
+    &:hover:enabled { .bg_d_hover; }
+}
+
+.w-sdc-btn-blue {
+    .w-sdc-btn;
+    .bg_a;
+    &:hover:enabled { .bg_a_hover; }
+}
+
+.w-sdc-btn-dark-gray {
+    .w-sdc-btn;
+    .bg_i;
+    &:hover:enabled { .bg_i_hover; }
+}
+
+.w-sdc-form-action {
+    .c_6;
+    //.bg_d;
+    background-color: #28bd6e; //TO DO: add to variables
+    .border-radius(5px);
+    .hand;
+    border: 0;
+    height: 38px;
+    line-height: 38px;
+    width: 264px;
+
+    &:hover { background-color: #23aa63; } //TO DO: add to variables
+    &:disabled { background-color: #93deb6; } //TO DO: add to variables
+}
+
+/*
+CLASSIC BUTTON
+Examples:
+-------------------------------------------------------------------
+<button class="w-sdc-classic-btn blue">Text 1</button>
+<button class="w-sdc-classic-btn green">Text 1</button>
+<button class="w-sdc-classic-btn gray">Text 1</button>
+<button class="w-sdc-classic-btn white">Text 1</button>
+<button class="w-sdc-classic-btn blue disabled">Text 5</button>
+*/
+.w-sdc-classic-btn {
+    .p_14_m;
+    text-align: center;
+    .border-radius(2px);
+    border-style: solid;
+    border-width: 1px;
+    width: 94px;
+    height: 30px;
+    display: block;
+    vertical-align: middle;
+    line-height: 30px;
+    cursor: pointer;
+    text-decoration: none;
+    box-sizing: border-box;
+    .noselect;
+    position: relative;
+
+    &:focus,
+    &:active:focus {
+        outline: 0 none;
+    }
+
+    &.primary {
+        border-color: @main_color_b;
+        background-color:  @main_color_a;
+        color: @main_color_p;
+
+        &:hover     {
+            background-color:  #1ec2ff;
+        }
+    }
+
+    &.white {
+
+    }
+
+    &.grey {
+
+    }
+
+    &.positive {
+
+    }
+
+    &.negative {
+
+    }
+
+    &.blue {
+        .c_7;
+        ._w-sdc-classic-btn-configuration(#036698, #3b7b9b, #023c59);                   // Normal
+        &:hover     { ._w-sdc-classic-btn-configuration(#036698, #458eb2, #023c59); }   // Hover
+        &:active    { ._w-sdc-classic-btn-configuration(#036698, #336c88, #023c59); }   // Pressed
+        &:focus     { &:before { ._w-sdc-classic-btn-focus(#ffffff, 0px); } }                // Focus
+        &:disabled,
+        &.disabled {
+            .c_7;
+            opacity: 0.3;
+            ._w-sdc-classic-btn-configuration(#036698, #3b7b9b, #023c59);                // Disabled
+        }
+    }
+
+    &.green {
+        .c_7;
+        ._w-sdc-classic-btn-configuration(#25a762, #28bd6e, #235600);                   // Normal
+        &:hover     { ._w-sdc-classic-btn-configuration(#25a762, #2bcd77, #235600); }   // Hover
+        &:active    { ._w-sdc-classic-btn-configuration(#45a006, #24a862, #235600); }   // Pressed
+        &:focus     { &:before { ._w-sdc-classic-btn-focus(#ffffff, 0px); } }                // Focus
+        &:disabled,
+        &.disabled {
+            .c_7;
+            opacity: 0.3;
+            ._w-sdc-classic-btn-configuration(#45a006, #28bd6e, #235600);                // Disabled
+        }
+    }
+
+    &.gray {
+        .b_7;
+        ._w-sdc-classic-btn-configuration(#d8d8d8, #f6f6f6, #aaaaaa);                   // Normal
+        &:hover     { ._w-sdc-classic-btn-configuration(#d8d8d8, #ececec, #aaaaaa); }   // Hover
+        &:active    { ._w-sdc-classic-btn-configuration(#d8d8d8, #d7d7d7, #aaaaaa); }   // Pressed
+        &:focus     { &:before { ._w-sdc-classic-btn-focus(#666666, -1px); } }          // Focus
+        &:disabled,
+        &.disabled {
+            .b_7;
+            opacity: 0.3;
+            ._w-sdc-classic-btn-configuration(#d8d8d8, #f6f6f6, #aaaaaa);                // Disabled
+        }
+    }
+
+    &.white {
+        .b_7;
+        ._w-sdc-classic-btn-configuration(#d8d8d8, #ffffff, #aaaaaa);                   // Normal
+        &:hover     { ._w-sdc-classic-btn-configuration(#d8d8d8, #f6f6f6, #aaaaaa); }   // Hover
+        &:active    { ._w-sdc-classic-btn-configuration(#d8d8d8, #ececec, #aaaaaa); }   // Pressed
+        &:focus     { &:before { ._w-sdc-classic-btn-focus(#666666, -1px); } }                // Focus
+        &:disabled,
+        &.disabled {
+            .b_7;
+            opacity: 0.3;
+            ._w-sdc-classic-btn-configuration(#d8d8d8, #ffffff, #aaaaaa);                // Disabled
+        }
+    }
+}
+
+._w-sdc-classic-btn-configuration(@border-color; @background-color; @shadow-color) {
+    border-color:  @border-color;
+    background-color:  @background-color;
+    .box-shadow(0px 1px 0.99px 0.01px @shadow-color);
+}
+
+._w-sdc-classic-btn-focus(@border-color, @position) {
+    content: " ";
+    position: absolute;
+    top: @position;
+    left: @position;
+    right: @position;
+    bottom: -1px + @position;
+    border: 1px solid @border-color;
+    z-index: 1;
+    .border-radius(2px);
+}
+
+/*
+WIZARD STEP CIRCLE BUTTON
+Examples:
+-------------------------------------------------------------------
+<button class="w-sdc-wizard-step-btn">1</button>
+<button class="w-sdc-wizard-step-btn selected">2</button>
+<button class="w-sdc-wizard-step-btn valid">3</button>
+<button class="w-sdc-wizard-step-btn">4</button>
+<button class="w-sdc-wizard-step-btn disabled">5</button>
+*/
+.w-sdc-wizard-step-btn {
+    ._w-sdc-wizard-step-btn(18px);
+}
+._w-sdc-wizard-step-btn(@circle-radius) {
+    // I'm not using border, so the text inside will be vertical aligned.
+    .circle(@circle-radius * 2, #f6f6f6);
+    .noselect;
+    outline: 0 none;
+    position: relative;
+    vertical-align: top;
+    cursor: pointer;
+    vertical-align: middle;
+    border: none;
+    .box-shadow(inset 0px 0px 0px 1px #d8d8d8);
+    .b_17;
+
+    &:active    { .box-shadow(none); background-color: #eaeaea;}    // Pressed
+    &.disabled  { color: #a8b3b9; cursor: default; }
+    &.disabled:active { .box-shadow(inset 0px 0px 0px 1px #d8d8d8); background-color: #f6f6f6; }
+    &.valid {
+        .circle(@circle-radius * 2, #ffffff);
+        .box-shadow(inset 0px 0px 0px 2px #28bd6e);
+        .b_17;
+    }
+    &.selected  {
+        .c_17;
+        background-color: #3b7b9b;
+        .box-shadow(none);
+        &:active    {background-color: #336c88;}    // Pressed
+    }
+}
+
+
+
+
+
+

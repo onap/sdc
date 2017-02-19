@@ -1,0 +1,11 @@
+{
+  "payloadName": "ICSCF.yml",
+  "contactId": "jh0003",
+  "resourceName": "att.nodes.ims.ICSCF",
+  "description": "Interrogating-CSCF (I-CSCF) is a SIP function located at the edge of an administrative domain. Its IP address is published in the Domain Name System (DNS) of the domain(using NAPTR and SRV type of DNS records), so that remote servers can find it, and use it as a forwarding point (e.g., registering) for SIP packets to this domain.It queries the HSS to retrieve the address of the S-CSCF and assign it to a user performing SIP  registration. It also forwards SIP request or response to the S-CSCF.",
+  "resourceIconPath": "defaulticon",
+  "category": "IMS",
+  "tags": [
+    "att.nodes.ims.ICSCF", "IMS_TAG"
+  ]
+}

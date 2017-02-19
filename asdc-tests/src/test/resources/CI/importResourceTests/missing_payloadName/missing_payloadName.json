@@ -1,0 +1,15 @@
+{
+	"contactId": "jh0003",
+	"name": "tosca.nodes.missing_payloadName",
+	"description": "Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.",
+	"resourceIconPath": "defaulticon",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["tosca.nodes.missing_payloadName"],
+	"vendorName": "ATT (Tosca)",
+	"vendorRelease": "1.0.0.wd03"
+}

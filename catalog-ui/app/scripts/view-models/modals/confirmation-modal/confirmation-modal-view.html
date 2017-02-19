@@ -1,0 +1,29 @@
+<sdc-modal modal="modalInstanceConfirmation" type="classic" class="w-sdc-modal-confirmation modal-type-{{confirmationModalModel.type}}" header="{{confirmationModalModel.title}}" show-close-button="true">
+    <form novalidate class="w-sdc-form" name="editForm">
+        <label class="i-sdc-form-label required w-sdc-modal-label" data-ng-bind-html="confirmationModalModel.message"></label>
+
+        <div class="i-sdc-form-item">
+            <textarea class="w-sdc-modal-body-comment"
+                      data-tests-id="checkindialog"
+                      autofocus="autofocus"
+                      data-ng-show="confirmationModalModel.showComment===true"
+                      data-ng-model="comment.text"
+                      placeholder="Comment..."
+                      maxlength="256"
+                      data-required
+                      name="comment1"
+                      data-ng-pattern="commentValidationPattern"
+                      data-ng-maxlength="256"></textarea>
+
+            <div class="input-error" data-ng-show="editForm.comment1.$dirty && editForm.comment1.$invalid">
+                <span ng-show="editForm.comment1.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                <span ng-show="editForm.comment1.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Comment' }"></span>
+            </div>
+        </div>
+    </form>
+    <div class="w-sdc-modal-footer classic">
+        <button class="tlv-btn {{okButtonColor}}" data-tests-id="OK" data-ng-click="ok()" data-ng-disabled="confirmationModalModel.showComment===true && (!comment.text || comment.text && comment.text.length===0)">OK</button>
+        <button class="tlv-btn grey" data-ng-if="hideCancelButton===false" data-tests-id="Cancel" data-ng-click="cancel()" >Cancel</button>
+        <button class="tlv-btn blue add-property-add-another" data-ng-if="isNew" data-ng-click="saveAndAnother()" type="reset" data-ng-disabled="editForm.$invalid">Add Another</button>
+    </div>
+</sdc-modal>

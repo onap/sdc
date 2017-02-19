@@ -1,0 +1,9 @@
+<div class="w-sdc-header-user-container" data-tests-id="ffff">
+    <div class="w-sdc-header-user-icon"></div>
+    <div class="w-sdc-header-user-details">
+        <div sdc-smart-tooltip class="w-sdc-header-user-name" data-ng-bind="user.getName()"></div>
+        <div class="w-sdc-header-user-role" data-ng-bind="user.getRoleToView()"></div>
+        <div class="w-sdc-header-user-last-login" data-ng-show="user.getLastLogin()!==''">Last Login: {{user.getLastLogin() | date: 'MMM dd &nbsp; hh:mm a' : 'UTC'}}&nbsp;UTC</div>
+    </div>
+    <!--<div class="w-sdc-header-logout-icon"></div>-->
+</div>

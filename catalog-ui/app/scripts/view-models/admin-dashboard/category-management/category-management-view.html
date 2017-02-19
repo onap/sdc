@@ -1,0 +1,53 @@
+<div data-ng-controller="Sdc.ViewModels.CategoryManagementViewModel" class="category-management">
+
+    <loader data-display="isLoading"></loader>
+
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <h4>
+                <span class="hand selected" data-ng-click="selectType(SERVICE)" data-tests-id="servicecategoryheader"
+                      data-ng-class="{'selected': type === SERVICE}" translate="SERVICE_CATEGORY_HEADER"></span>
+                <span class="hand" data-ng-click="selectType(RESOURCE)" data-tests-id="resourcecategoryheader"
+                      data-ng-class="{'selected': type === RESOURCE}" translate="RESOURCE_CATEGORY_HEADER"></span>
+            </h4>
+            <span data-ng-click="createCategoryModal(null)" translate="ADD_CATEGORY" data-tests-id="newcategory"></span>
+
+            <perfect-scrollbar class="perfect-scrollbar">
+                <ul>
+                    <li data-ng-repeat="category in categoriesToShow"
+                        data-ng-class="{'selected': selectedCategory === category, 'gray': selectedSubCategory}"
+                        data-ng-click="selectCategory(category)"
+                        data-tests-id="{{ type === SERVICE ? 'servicecategory' : 'resourcecategory' }}">
+                        {{category.name}}
+
+                        <!--<button class="sprite e-sdc-small-icons-delete" data-ng-click="deleteCategory(category, null)" type="button"></button>-->
+                        <!--button class="sprite e-sdc-small-icons-pad" data-ng-click="" type="button"></button-->
+                    </li>
+                </ul>
+            </perfect-scrollbar>
+        </div>
+
+        <div class="col-sm-6">
+
+            <h4><span translate="SUBCATEGORY_HEADER" data-tests-id="subcategoryheader"></span></h4>
+            <span data-ng-if="type === RESOURCE && selectedCategory" data-ng-click="selectedCategory ? createCategoryModal(selectedCategory) : ''" translate="ADD_SUBCATEGORY" data-tests-id="newsubcategory"></span>
+
+            <perfect-scrollbar class="perfect-scrollbar">
+                <ul>
+                    <li data-ng-repeat="subcategory in selectedCategory.subcategories"
+                        data-ng-class="{'selected': selectedSubCategory === subcategory}"
+                        data-ng-click="selectSubCategory(subcategory)"
+                        data-tests-id="subcategory">
+                        {{subcategory.name}}
+
+                        <!--<button class="sprite e-sdc-small-icons-delete" data-ng-click="deleteCategory(selectedCategory, subcategory)" type="button"></button>-->
+                        <!--button class="sprite e-sdc-small-icon-pad" data-ng-click="" type="button"></button-->
+                    </li>
+                </ul>
+            </perfect-scrollbar>
+        </div>
+
+    </div>
+</div>

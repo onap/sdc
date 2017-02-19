@@ -1,0 +1,5 @@
+asdc.nodes.network.Core:
+    derived_from: asdc.nodes.Network
+    capabilities:
+      core_connection:
+        type: asdc.capabilities.NetworkInterface

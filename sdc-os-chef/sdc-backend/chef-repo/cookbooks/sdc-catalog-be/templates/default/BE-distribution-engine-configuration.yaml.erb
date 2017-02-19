@@ -1,0 +1,44 @@
+uebServers:
+    <% node['UEB']['fqdn'].each do |conn| -%>
+        - <%= conn %>
+    <% end -%>
+
+uebPublicKey: <%= node['UEB']['PublicKey'] %>
+uebSecretKey: <%= node['UEB']['SecretKey'] %>
+
+distributionNotifTopicName:  SDC-DISTR-NOTIF-TOPIC
+distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
+
+initRetryIntervalSec: 5
+initMaxIntervalSec: 60
+
+distribNotifServiceArtifactTypes:
+  info:
+      - MURANO-PKG
+
+distribNotifResourceArtifactTypes:
+  lifecycle:
+      - HEAT
+      - DG-XML
+
+environments:
+   - <%= node.chef_environment %>
+
+distributionStatusTopic:
+   pollingIntervalSec: 60
+   fetchTimeSec: 15
+   consumerGroup: sdc-<%= node.chef_environment %>
+   consumerId: sdc-<%= node.chef_environment %>1
+
+
+distributionNotificationTopic:
+   minThreadPoolSize: 0
+   maxThreadPoolSize: 10
+   maxWaitingAfterSendingSeconds: 5
+
+createTopic:
+   partitionCount: 1
+   replicationCount: 1
+
+startDistributionEngine: true
+

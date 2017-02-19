@@ -1,0 +1,11 @@
+{
+  "payloadName": "org.openecomp.resource.nfv.VDU.yaml",
+  "contactId": "jh0003",
+  "name": "org.openecomp.resource.nfv.VDU",
+  "description": "Node Type that represents a Module",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "org.openecomp.resource.nfv.VDU"
+  ]
+}

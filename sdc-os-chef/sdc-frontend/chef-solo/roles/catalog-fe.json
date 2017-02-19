@@ -1,0 +1,23 @@
+{
+  "name": "catalog-be",
+  "description": "Installation application - catalogFE",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[sdc-catalog-fe::FE_1_cleanup_jettydir]",
+    "recipe[sdc-catalog-fe::FE_2_setup_configuration]",
+    "recipe[sdc-catalog-fe::FE_3_errors_config]",
+    "recipe[sdc-catalog-fe::FE_4_logback]",
+    "recipe[sdc-catalog-fe::FE_5_rest_configuration]",
+	"recipe[sdc-catalog-fe::FE_6_create_jetty_modules]"
+  ],
+  "env_run_lists": {
+  }
+}
+

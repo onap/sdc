@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property scope="system" name="ECOMP-component-name" value="ASDC" />
+	<property scope="system" name="ECOMP-subcomponent-name" value="ASDC-TOOL" />
+	<property name="default-log-pattern"
+		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{uuid}|%X{serviceInstanceID}|%thread||${ECOMP-subcomponent-name}|%X{userId}|%level|%X{alarmSeverity}|%X{localAddr}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+	
+	<appender name="DEBUG_ROLLING"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${HOME}/asdctool/logs/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log</file>
+
+		<!-- accept DEBUG and TRACE level -->
+		<!--<filter class="ch.qos.logback.core.filter.EvaluatorFilter">-->
+			<!--<evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator">-->
+				<!--<expression>-->
+					<!--e.level.toInt() &lt;= DEBUG.toInt()-->
+				<!--</expression>-->
+			<!--</evaluator>-->
+			<!--<OnMismatch>DENY</OnMismatch>-->
+			<!--<OnMatch>NEUTRAL</OnMatch>-->
+		<!--</filter>-->
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${HOME}/asdctool/logs/${ECOMP-component-name}/${ECOMP-subcomponent-name}/debug.log.%i
+			</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>20MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>${default-log-pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<root level="DEBUG">
+		<appender-ref ref="DEBUG_ROLLING" />
+	</root>
+	<logger name="org.openecomp.sdc" level="DEBUG" />
+
+</configuration>

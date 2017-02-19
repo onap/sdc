@@ -1,0 +1,10 @@
+{
+             "action": "ACTION",
+             "timestamp": "TIMESTAMP",
+             "requestId": "REQUEST_ID",
+             "serviceInstanceId": "SERVICE_INSTANCE_ID",
+             "desc": "DESC",
+             "status": "STATUS",
+             "userUid": "USER_UID",
+             "userName": "USER_NAME"
+}

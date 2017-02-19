@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="25" height="25" viewBox="0 0 25 25">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #3b7b9b;
+      }
+
+      .cls-2 {
+        fill: #fff;
+        stroke: #fff;
+        stroke-linejoin: round;
+        stroke-width: 2px;
+        filter: url(#drop-shadow-1);
+        fill-opacity: 0;
+      }
+    </style>
+
+    <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx="1.714" dy="1.03" in="SourceAlpha"/>
+      <feGaussianBlur result="dropBlur"/>
+      <feFlood flood-opacity="0"/>
+      <feComposite operator="in" in2="dropBlur" result="dropShadowComp"/>
+      <feComposite in="SourceGraphic" result="shadowed"/>
+    </filter>
+  </defs>
+  <g>
+    <circle cx="12.578" cy="12.109" r="11.422" class="cls-1"/>
+    <g style="fill: #fff; filter: url(#drop-shadow-1)">
+      <circle cx="15.5" cy="12.5" r="2.5" id="circle-1" style="stroke: inherit; filter: none; fill: inherit" class="cls-2"/>
+    </g>
+    <use xlink:href="#circle-1" style="stroke: #fff; filter: none; fill: none"/>
+    <g style="fill: #fff; filter: url(#drop-shadow-1)">
+      <circle cx="9.5" cy="12.5" r="2.5" id="circle-2" style="stroke: inherit; filter: none; fill: inherit" class="cls-2"/>
+    </g>
+    <use xlink:href="#circle-2" style="stroke: #fff; filter: none; fill: none"/>
+  </g>
+</svg>

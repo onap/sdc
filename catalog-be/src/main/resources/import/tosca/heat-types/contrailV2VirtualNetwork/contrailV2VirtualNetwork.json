@@ -1,0 +1,21 @@
+{
+  "payloadName": "contrailV2VirtualNetwork.yml",
+  "contactId": "jh0003",
+  "name": "ContrailV2VirtualNetwork",
+  "description": "Represents a network service with optional subnets and advanced configurations for contrail V2.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],
+  "tags": [
+    "ContrailV2VirtualNetwork"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "payloadName": "tosca.nodes.nfv.VNF.yaml",
+  "contactId": "jh0003",
+  "resourceName": "tosca.nodes.nfv.VNF",
+  "description": "TOSCA VNF base element",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "tosca.nodes.nfv.VNF"
+  ]
+}

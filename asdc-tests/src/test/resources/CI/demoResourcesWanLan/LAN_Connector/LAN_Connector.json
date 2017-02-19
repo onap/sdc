@@ -1,0 +1,11 @@
+{
+  "payloadName": "LAN_Connector.yml",
+  "contactId": "jh0003",
+  "resourceName": "org.openecomp.asdc.nodes.Connector.LAN_Connector",
+  "description": "Represents a LAN_Connector Node Type.",
+  "resourceIconPath": "defaulticon",
+  "category": "Infrastructure",
+  "tags": [
+    "org.openecomp.asdc.nodes.Connector.LAN_Connector"
+  ]
+}

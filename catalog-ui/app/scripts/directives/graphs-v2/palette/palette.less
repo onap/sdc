@@ -1,0 +1,92 @@
+.drag-icon-border{
+  border: 7px solid red;
+  border-radius: 500px;
+  -webkit-border-radius: 500px;
+  -moz-border-radius: 500px;
+  width: 53px;
+  height: 53px;
+}
+
+.drag-icon-circle{
+  width: 60px;
+  height: 60px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  position: relative;
+
+}
+
+
+@green-shadow: rgba(29, 154, 149, 0.3);
+@red-shadow: rgba(218, 31, 61, 0.3);
+.drag-icon-circle .sprite-resource-icons {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.drag-icon-circle.red {
+  background: @red-shadow;
+}
+
+.drag-icon-circle.green {
+  background: @green-shadow;
+}
+
+
+.node-substitute {
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  text-align: center;
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  img {
+    height: 40px;
+    width: 40px;
+    box-shadow: 0 0 0 10px @green-shadow;
+    border-radius: 50%;
+
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    user-drag: none;
+  }
+  &.red img {
+    box-shadow: 0 0 0 10px @red-shadow;
+  }
+  &.bounce img {
+    -moz-animation:bounceOut 0.3s linear;
+    -webkit-animation:bounceOut 0.3s linear;
+    animation:bounceOut 0.3s linear;
+  }
+}
+
+@keyframes bounceOut {
+  0%{ box-shadow: 0 0 0 10px @green-shadow; width: 40px; height: 40px; }
+  60%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+  85%{ box-shadow: 0 0 0 0px @green-shadow; width: 75px; height: 75px; }
+  100%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+}
+
+@-moz-keyframes bounceOut {
+  0%{ box-shadow: 0 0 0 10px @green-shadow; width: 40px; height: 40px; }
+  60%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+  85%{ box-shadow: 0 0 0 0px @green-shadow; width: 75px; height: 75px; }
+  100%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+}
+
+@-webkit-keyframes bounceOut {
+  0%{ box-shadow: 0 0 0 10px @green-shadow; width: 40px; height: 40px; }
+  60%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+  85%{ box-shadow: 0 0 0 0px @green-shadow; width: 75px; height: 75px; }
+  100%{ box-shadow: 0 0 0 0px @green-shadow; width: 60px; height: 60px; }
+}

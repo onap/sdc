@@ -1,0 +1,10 @@
+##################################################################
+###################### Firewall  VDU Node  TYPE  ###############
+##################################################################
+  org.openecomp.resource.nfv.VDU.FirewallCategoryVDU: 
+    derived_from: org.openecomp.resource.nfv.VDU
+    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+      firewall: 
+        type: org.openecomp.capabilities.nfv.VNF.FirewallCapability
+        description: This capability has been introduced
+    ###############Further details described in Firewall VNF TOSCA Model

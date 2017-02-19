@@ -1,0 +1,178 @@
+.table-container-flex {
+    /* height: 650px; */
+    margin-top: 35px;
+    clear: both;
+    .table {
+        width: 100%;
+        border: 1px solid #d8d8d8;
+        .head {
+            background-color: #eaeaea;
+            .head-row {
+                color: #333333;
+                font-weight: bold;
+                text-align: center;
+                border-right: 1px solid @border_color_d;
+                padding: 8px 15px;
+
+                &:last-child {
+                    border-right: none;
+                }
+
+                .table-header-sort-arrow {
+                    display: inline-block;
+                    background-color: transparent;
+                    border: none;
+                    color: #AAA;
+                    margin: 8px 0 0 5px;
+                    &.up {
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-bottom: 5px solid;
+                    }
+                    &.down {
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-top: 5px solid;
+                    }
+                }
+            }
+        }
+        .body {
+            .scrollbar-container {
+                max-height: 430px;
+                .perfect-scrollbar;
+            }
+            .b_9;
+
+            .data-row {
+                border-bottom: 1px solid @border_color_d;
+                div {
+
+                    border-right: 1px solid @border_color_d;
+
+
+                    &:last-child {
+                        border-right: none;
+                    }
+
+                    .table-role-select {
+                        background-color: transparent;
+                        border: 0;
+                        width: 100%;
+
+                    }
+                    .table-role-label {
+                        margin-left:4px;
+                    }
+
+                }
+
+                &.selected {
+                    background-color:  #e6f6fb;
+                }
+
+                & + div.item-opened {
+                    border-bottom: 1px solid @border_color_d;
+                    padding: 10px 23px;
+                    text-align: left;
+                    word-break: break-all;
+                }
+            }
+            .data-row:hover {
+                .bg_j;
+            }
+
+
+            button.add-button {
+                margin: 10px auto;
+                display: block;
+                border:  1px solid #eaeaea;
+                background-color:  @func_color_r;
+                box-shadow: 0px 1px 1px 0px rgba(24, 24, 25, 0.05);
+                width: 297px;
+                height: 39px;
+                color:  #666666;
+                font-size: 14px;
+                font-weight: bold;
+
+                &:before {
+                    .sprite-new;
+                    .add-icon-blue;
+                    float: left;
+                    margin-left: 5px;
+                    content: "";
+                }
+            }
+        }
+
+        .no-row-text{
+            text-align: center;
+            margin-top:25px;
+
+            a {
+                cursor: pointer;
+            }
+        }
+
+        .table-btn-col {
+
+            line-height: 0px;
+            text-align: center;
+            .table-delete-btn {
+                background-color: transparent;
+                border: none;
+                .sprite;
+                .sprite.e-sdc-small-icon-delete;
+                opacity: 0.8;
+
+            }
+            .table-edit-btn {
+                background-color: transparent;
+                border: none;
+                .sprite;
+                .e-sdc-small-icon-pencil;
+                opacity: 0.8;
+                margin-right: 10px;
+            }
+            .table-save-btn {
+                background-color: transparent;
+                border: none;
+                .sprite;
+                .sprite.e-sdc-green-save;
+            }
+            .table-download-btn {
+                background-color: transparent;
+                border: none;
+                .hand;
+                margin-left: 10px;
+                opacity: 0.8;
+                .sprite;
+                .sprite.e-sdc-small-download;
+            }
+        }
+
+    }
+
+    .no-row-text {
+        text-align: center;
+        font-size: 15px;
+        border-bottom: 1px solid #d8d8d8;
+        width: 300px;
+        margin: 26px auto;
+        padding-bottom: 22px;
+    }
+
+    .flex-container {
+        display: flex;
+    }
+
+    .flex-item {
+        width:10px;
+        line-height: 25px;
+        padding: 5px 15px;
+        flex-grow: 1;
+        text-align: left;
+
+    }
+
+}

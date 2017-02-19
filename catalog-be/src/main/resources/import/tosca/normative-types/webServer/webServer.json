@@ -1,0 +1,20 @@
+{
+  "payloadName": "webServer.yml",
+  "contactId": "jh0003",
+  "name": "WebServer",
+  "description": "Represents an abstract software component or service that is capable of hosting and providing management operations for one or more Web Application nodes.",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "WebServer"
+  ]
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Product" >
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductLifecycleTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest"/>      
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Product -->

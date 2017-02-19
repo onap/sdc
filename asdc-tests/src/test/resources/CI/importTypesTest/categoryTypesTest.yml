@@ -1,0 +1,23 @@
+services:
+    Mobility:
+      name: "Mobility1"
+      icons: ['mobility']
+    Network_L1_3:
+      name: "Network L1-31"
+      icons: ['network_l_1-3']
+resources:
+  NetworkLayer23:
+    name: "Network Layer 2-31"
+    subcategories: 
+      Router:
+          name: "Router"
+          icons: ['router']
+      Gateway:
+          name: "Gateway"
+          icons: ['gateway']
+      WAN_Connectors:
+          name: "WAN Connectors"
+          icons: ['connector']
+      LAN_Connectors:
+          name: "LAN Connectors"
+          icons: ['connector']

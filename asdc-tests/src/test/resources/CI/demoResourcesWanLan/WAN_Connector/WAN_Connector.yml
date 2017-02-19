@@ -1,0 +1,25 @@
+org.openecomp.asdc.nodes.Connector.WAN_Connector:
+  #The WAN_Connector node only connects to Router
+    derived_from: org.openecomp.asdc.nodes.Connector
+    properties: 
+      customer_id: 
+        type: string
+        required: true
+      vpn_id: 
+        type: string 
+        required: true
+      vpn_name:
+        type: string 
+        required: true
+      network_type:
+      #The technology types used by WAN connector
+        type: string
+    attributes:
+      network_ip_address:
+        #ip address is generated only after the node is instantiated at run-time
+        type: string
+    requirements:
+      - connectTo :
+          capability: org.openecomp.asdc.capabilities.Endpoint
+          node: org.openecomp.asdc.nodes.Router
+      #This explicit requirement specifies WAN_Connector has only one "connectTo" to connect to the node of Router type

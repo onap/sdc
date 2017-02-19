@@ -1,0 +1,4 @@
+# define a new datatype that derives from existing type and extends it
+mytypes.phonenumber.extended:
+  derived_from: tosca.datatypes.Root
+  description: custom phone number type that extends the basic phonenumber type

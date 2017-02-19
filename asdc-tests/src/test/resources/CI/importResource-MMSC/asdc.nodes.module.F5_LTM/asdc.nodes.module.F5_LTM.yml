@@ -1,0 +1,12 @@
+asdc.nodes.module.F5_LTM:
+  derived_from: asdc.nodes.Module
+  requirements:
+    - core_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Core
+    - dmz_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.DMZ
+    - traffic_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Traffic        

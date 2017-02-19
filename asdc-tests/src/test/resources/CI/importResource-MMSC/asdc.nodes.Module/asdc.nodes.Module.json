@@ -1,0 +1,11 @@
+{
+  "payloadName": "asdc.nodes.Module.yml",
+  "contactId": "jh0003",
+  "name": "asdc.nodes.Module",
+  "description": "Node Type that represents a Module",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "asdc.nodes.Module", "module"
+  ]
+}

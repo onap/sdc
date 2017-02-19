@@ -1,0 +1,10 @@
+org.openecomp.asdc.nodes.VNF_Container:
+  #The VNF_Container node provides the capability to host VNFs. 
+    derived_from: org.openecomp.asdc.nodes.Root
+    capabilities:
+      host:
+      #The "host" capability allows other TOSCA nodes (VNF) that requires such a capability to connect to this node
+        type: org.openecomp.asdc.capabilities.Container
+      connectTo: 
+      #The "connectTo" capability allows other TOSCA nodes (connectors) that requires such a capability to connect to this node.    
+        type: org.openecomp.asdc.capabilities.Endpoint

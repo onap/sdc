@@ -1,0 +1,15 @@
+asdc.nodes.module.NEMS_FE:
+  derived_from: asdc.nodes.Module
+  requirements:
+    - oam_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.OAM
+    - cinder_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Cinder
+    - traffic_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Traffic
+    - internal_connection:
+        capability: asdc.capabilities.NetworkInterface
+        node: asdc.nodes.network.Internal

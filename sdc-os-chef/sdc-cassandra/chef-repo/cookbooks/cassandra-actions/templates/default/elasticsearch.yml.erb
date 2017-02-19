@@ -1,0 +1,11 @@
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.enabled: true
+node.name: asdc-01
+cluster.name: elasticsearch
+node.master: false
+node.data: false
+http.cors.enabled: true
+path.home: "/var/lib/jetty/config"
+elasticSearch.transportclient: true
+transport.client.initial_nodes:
+   - <%= @elastic_ip %>:9300

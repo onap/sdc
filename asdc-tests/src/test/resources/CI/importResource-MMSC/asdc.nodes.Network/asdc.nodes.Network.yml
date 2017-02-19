@@ -1,0 +1,2 @@
+asdc.nodes.Network:
+  derived_from: tosca.nodes.Root

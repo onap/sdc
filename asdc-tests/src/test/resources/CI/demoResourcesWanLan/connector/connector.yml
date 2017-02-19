@@ -1,0 +1,10 @@
+org.openecomp.asdc.nodes.Connector:
+  #Connector is the parent node of both WAN and LAN connectors. 
+    derived_from: org.openecomp.asdc.nodes.Root
+    requirements:
+      - connectTo: 
+          capability: org.openecomp.asdc.capabilities.Endpoint
+          #the requirement can establish the relationship with a node providing such capability
+          relationship: org.openecomp.asdc.relationships.ConnectsTo
+          #occurrences means how many times this requirement can appear in one node. 
+          occurrences: [1, UNBOUNDED]

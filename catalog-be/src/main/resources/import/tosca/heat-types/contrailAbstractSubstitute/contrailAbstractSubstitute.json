@@ -1,0 +1,17 @@
+{
+	"payloadName": "contrailAbstractSubstitute.yml",
+	"contactId": "jh0003",
+	"name": "ContrailAbstractSubstitute",
+	"description": "Abstract node to be derived by contrail nested elements when using Contrail Service Instance",
+	"resourceIconPath": "defaulticon",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+        "subcategories": [
+        {
+          "name": "Abstract"
+        }
+    ]
+	}],
+	"tags": ["ContrailAbstractSubstitute"]
+}

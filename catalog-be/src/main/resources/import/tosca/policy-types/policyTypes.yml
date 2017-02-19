@@ -1,0 +1,94 @@
+tosca.policies.Root:
+  description: The TOSCA Policy Type all other TOSCA Policy Types derive from
+tosca.policies.Placement:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to govern placement of TOSCA nodes or groups of nodes.
+tosca.policies.Scaling:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to govern scaling of TOSCA nodes or groups of nodes.
+tosca.policies.Update:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to govern update of TOSCA nodes or groups of nodes.
+tosca.policies.Performance:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to declare performance requirements for TOSCA nodes or groups of nodes.
+org.openecomp.policies.placement.Antilocate:
+  derived_from: tosca.policy.placement
+  description: My placement policy for separation based upon container type value
+  properties:
+    name:
+      type: string
+      description: The name of the policy
+      required: false
+      status: SUPPORTED
+    container_type:
+      type: string
+      description: container type
+      required: false
+      status: SUPPORTED
+      constraints:
+      - valid_values:
+        - host
+        - region
+        - compute
+org.openecomp.policies.placement.Colocate:
+  derived_from: tosca.policy.placement
+  description: Keep associated nodes (groups of nodes) based upon affinity value
+  properties:
+    name:
+      type: string
+      description: The name of the policy
+      required: false
+      status: SUPPORTED
+    affinity:
+      type: string
+      description: affinity
+      required: true
+      status: SUPPORTED
+      constraints:
+      - valid_values:
+        - host
+        - region
+        - compute
+org.openecomp.policies.placement.valet.Diversity:
+  derived_from: tosca.policy.placement
+  description: Valet Diversity
+  properties:
+    level:
+      type: string
+      description: diversity
+      required: false
+      default: host
+      status: SUPPORTED
+      constraints:
+      - valid_values:
+        - host
+        - rack
+org.openecomp.policies.placement.valet.Exclusivity:
+  derived_from: tosca.policy.placement
+  description: Valet Exclusivity
+  properties:
+    level:
+      type: string
+      description: exclusivity
+      required: false
+      default: host
+      status: SUPPORTED
+      constraints:
+      - valid_values:
+        - host
+        - rack
+org.openecomp.policies.placement.valet.Affinity:
+  derived_from: tosca.policy.placement
+  description: Valet Affinity
+  properties:
+    level:
+      type: string
+      description: affinity
+      required: false
+      default: host
+      status: SUPPORTED
+      constraints:
+      - valid_values:
+        - host
+        - rack

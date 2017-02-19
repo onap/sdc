@@ -1,0 +1,11 @@
+{
+  "payloadName": "tosca.nodes.nfv.VDU.yaml",
+  "contactId": "jh0003",
+  "name": "tosca.nodes.nfv.VDU",
+  "description": "TOSCA VDU base element",
+  "resourceIconPath": "defaulticon",
+  "category": "Generic/Abstract",
+  "tags": [
+    "tosca.nodes.nfv.VDU"
+  ]
+}

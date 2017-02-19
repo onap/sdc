@@ -1,0 +1,20 @@
+{
+  "payloadName": "normative-types-new-DBMS.yml",
+  "contactId": "jh0003",
+  "name": "DBMS",
+  "description": "Represents a typical relational, SQL Database Management System software component or service.",
+  "resourceIconPath": "defaulticon",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "DBMS"
+  ]
+}

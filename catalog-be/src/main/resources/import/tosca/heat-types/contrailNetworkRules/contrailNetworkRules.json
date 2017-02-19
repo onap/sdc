@@ -1,0 +1,21 @@
+{
+  "payloadName": "contrailNetworkRules.yml",
+  "contactId": "jh0003",
+  "name": "ContrailNetworkRules",
+  "description": "Configuration of policy rules to be applied over the network.",
+  "resourceIconPath": "networkrules",
+  "resourceType": "VFC",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Rules"
+      }
+    ]
+  }
+],
+  "tags": [
+    "ContrailNetworkRules"
+  ]
+}

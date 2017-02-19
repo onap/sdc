@@ -1,0 +1,18 @@
+att.nodes.ims.HSS:
+  derived_from: tosca.nodes.SoftwareComponent
+  capabilities:
+    icscf_endpoint:
+      type: tosca.capabilities.Endpoint
+      relationship: tosca.relationships.ConnectTo
+      occurrences: [0, UNBOUNDED]  
+      description: Connection with one ore more I-CSCF functions 
+    scscf_endpoint:
+      type: tosca.capabilities.Endpoint
+      relationship: tosca.relationships.ConnectTo
+      occurrences: [0, UNBOUNDED]  
+      description: Connection with one ore more S-CSCF functions
+  requirements:
+    database_endpoint: 
+      capability: tosca.capabilities.Endpoint.Database  
+      node: tosca.nodes.Database
+      relationship: tosca.relationships.ConnectsTo
