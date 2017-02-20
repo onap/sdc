@@ -10,3 +10,4 @@ sed -i '/^set -e/aTMPDIR=${JETTY_BASE}\/temp' /docker-entrypoint.sh
 
 cd /var/lib/jetty
 /docker-entrypoint.sh 
+

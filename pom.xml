@@ -577,6 +577,15 @@
 					</dependencies>
 				</plugin>
 
+			<plugin>
+				<groupId>io.wcm.maven.plugins</groupId>
+				<artifactId>nodejs-maven-plugin</artifactId>
+				<configuration>
+					<npmVersion>4.3.0</npmVersion>
+					<nodeJsVersion>7.5.0</nodeJsVersion>
+					<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
+				</configuration>
+			</plugin>			
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -808,6 +817,11 @@
                           <id>ecomp-staging</id>
                           <name>Staging Repository</name>
                           <url>${nexus.proxy}/content/repositories/staging/</url>
+           </repository>
+           <repository>
+           	<id>node</id>
+           	<name>Node</name>
+           	<url>https://maven-nodejs-proxy.pvtool.org/</url>
            </repository>
 			<repository>
 				<id>ecomp-snapshots</id>

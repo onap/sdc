@@ -13,13 +13,6 @@
 	<name>onboarding-ui-war</name>
 
 	<packaging>war</packaging>
-	<repositories>
-		<repository>
-			<id>node</id>
-			<name>Node</name>
-			<url>https://maven-nodejs-proxy.pvtool.org/</url>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 
@@ -36,9 +29,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<npmVersion>4.3.0</npmVersion>
-					<nodeJsVersion>7.5.0</nodeJsVersion>
-					<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
 					<tasks>
 						<npmInstallTask>
 							<workingDirectory>${session.executionRootDirectory}/dox-sequence-diagram-ui</workingDirectory>
