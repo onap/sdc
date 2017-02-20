@@ -84,9 +84,9 @@
 									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
 									<resources>
 										<resource>
-											<directory>${project.parent.basedir}/openecomp-ui/dist</directory>
+											<directory>${project.parent.basedir}/openecomp-ui/target</directory>
 											<includes>
-												<include>onboarding*.war</include>
+												<include>onboarding-fe-${project.version}.war</include>
 											</includes>
 										</resource>
 									</resources>
@@ -152,7 +152,7 @@
 									</build>
 								</image>
 
-								<!-- Build cassandra image
+								<!-- Build cassandra image -->
 								<image>
 									<name>openecomp/sdc-cassandra:%l</name>
 									<alias>sdc-cassandra</alias>
@@ -162,7 +162,6 @@
 										<dockerFile>../../../sdc-cassandra/Dockerfile</dockerFile>
 									</build>
 								</image>
-                                -->
 
 							</images>
 						</configuration>
