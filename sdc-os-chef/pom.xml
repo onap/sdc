@@ -100,7 +100,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<version>0.16.5</version>
+						<version>0.19.1</version>
 
 						<configuration>
 							<verbose>true</verbose>
@@ -114,8 +114,7 @@
 									<alias>sdc-backend</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>sdc-backend</dockerFileDir>
-										<dockerFile>../../../sdc-backend/Dockerfile</dockerFile>
+										<dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
 									</build>
 								</image>
 
@@ -125,8 +124,7 @@
 									<alias>sdc-frontend</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>sdc-frontend</dockerFileDir>
-										<dockerFile>../../../sdc-frontend/Dockerfile</dockerFile>
+										<dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
 									</build>
 								</image>
 
@@ -136,8 +134,7 @@
 									<alias>sdc-elasticsearch</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>sdc-elasticsearch</dockerFileDir>
-										<dockerFile>../../../sdc-elasticsearch/Dockerfile</dockerFile>
+										<dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
 									</build>
 								</image>
 
@@ -147,8 +144,7 @@
 									<alias>sdc-kibana</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>sdc-kibana</dockerFileDir>
-										<dockerFile>../../../sdc-kibana/Dockerfile</dockerFile>
+										<dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
 									</build>
 								</image>
 
@@ -158,8 +154,7 @@
 									<alias>sdc-cassandra</alias>
 									<build>
 										<cleanup>try</cleanup>
-										<dockerFileDir>sdc-cassandra</dockerFileDir>
-										<dockerFile>../../../sdc-cassandra/Dockerfile</dockerFile>
+										<dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
 									</build>
 								</image>
 
