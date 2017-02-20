@@ -10,6 +10,8 @@
 
 
 	<modules>
+				<module>catalog-ui</module>
+					<module>openecomp-ui</module>
 		<module>security-utils</module>
 		<module>common-app-api</module>
 		<module>common-be</module>
@@ -17,13 +19,13 @@
 		<module>catalog-model</module>
 		<module>catalog-be</module>
 		<module>asdctool</module>
-		<module>catalog-ui</module>
+
 		<module>catalog-fe</module>
 		<module>asdc-tests</module>
 		<module>ui-ci</module>
 		
 		<module>openecomp-be</module>
-		<module>openecomp-ui</module>
+	
 
 		<module>sdc-os-chef</module>
 
@@ -577,6 +579,15 @@
 					</dependencies>
 				</plugin>
 
+			<plugin>
+				<groupId>io.wcm.maven.plugins</groupId>
+				<artifactId>nodejs-maven-plugin</artifactId>
+				<configuration>
+					<npmVersion>4.3.0</npmVersion>
+					<nodeJsVersion>7.5.0</nodeJsVersion>
+					<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
+				</configuration>
+			</plugin>			
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -808,6 +819,11 @@
                           <id>ecomp-staging</id>
                           <name>Staging Repository</name>
                           <url>${nexus.proxy}/content/repositories/staging/</url>
+           </repository>
+           <repository>
+           	<id>node</id>
+           	<name>Node</name>
+           	<url>https://maven-nodejs-proxy.pvtool.org/</url>
            </repository>
 			<repository>
 				<id>ecomp-snapshots</id>
