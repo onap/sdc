@@ -17,3 +17,4 @@ chef-solo -c solo.rb -o recipe[sdc-elasticsearch::ES_5_create_monitoring_templat
 chef-solo -c solo.rb -o recipe[sdc-elasticsearch::ES_6_create_kibana_dashboard_virtualization]
 
 while true; do sleep 2; done
+

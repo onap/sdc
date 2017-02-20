@@ -34,3 +34,4 @@ grep -v "^\-" ${FILE} |grep -v ^CONT| awk 'BEGIN {
    print $1" "d" "$3" "$8
    next
 }' > `echo ${FILE}|awk -F"." '{ print $1".csv"}'`
+

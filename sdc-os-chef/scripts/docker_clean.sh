@@ -4,3 +4,4 @@ for X in ${docker_ids}
 do
    docker rm -f ${X}
 done
+

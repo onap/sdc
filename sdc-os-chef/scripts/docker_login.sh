@@ -6,3 +6,4 @@ if [ -z "$docker_ids" ]; then
 else 
    docker exec -it ${docker_ids} bash
 fi
+

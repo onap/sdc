@@ -20,3 +20,4 @@ then
     exit ${res}
 fi
 echo "check user existance: OK"
+
