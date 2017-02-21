@@ -14,7 +14,7 @@ RUN python /root/chef-solo/cookbooks/sdc-normatives/files/default/get-pip.py
 RUN pip install pycurl
 
 # install chef-solo
-RUN curl -L https://www.opscode.com/chef/install.sh | bash
+RUN curl -L http://www.opscode.com/chef/install.sh | bash
 
 ADD onboarding-be-__SDC-RELEASE__.war          ${JETTY_BASE}/webapps/
 ADD catalog-be-__SDC-RELEASE__.war             ${JETTY_BASE}/webapps/

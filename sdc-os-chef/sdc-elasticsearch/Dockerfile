@@ -12,7 +12,7 @@ COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
 ENV BASE_NEXUS zl999y:ChangeMe@10.208.197.75:8443/repository/maven-public/org/openecomp/sdc
 
 # install chef-solo
-RUN curl -L https://www.opscode.com/chef/install.sh | bash
+RUN curl -L http://www.opscode.com/chef/install.sh | bash
 
 COPY startup.sh /root/
 
