@@ -9,7 +9,9 @@ function usage
 
 RELEASE=1.0.0-SNAPSHOT
 [ -f /opt/config/env_name.txt ] && DEP_ENV=$(cat /opt/config/env_name.txt) || DEP_ENV=__ENV-NAME__
-PORT=51212
+[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
+[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
+[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=ecomp-nexus:${PORT}
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -36,10 +38,6 @@ while [ "$1" != "" ]; do
     shift
 done
 
-[ -f /opt/config/nexus_username.txt ] && NEXUS_USERNAME=$(cat /opt/config/nexus_username.txt)    || NEXUS_USERNAME=release
-[ -f /opt/config/nexus_password.txt ] && NEXUS_PASSWD=$(cat /opt/config/nexus_password.txt)      || NEXUS_PASSWD=sfWU3DFVdBr7GVxB85mTYgAW
-[ -f /opt/config/nexus_docker_repo.txt ] && NEXUS_DOCKER_REPO=$(cat /opt/config/nexus_docker_repo.txt) || NEXUS_DOCKER_REPO=ecomp-nexus:${PORT}
-
 [ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
 
@@ -57,14 +55,14 @@ echo ""
 
 # Elastic-Search
 echo "docker run sdc-elasticsearch..."
-docker pull openecomp-nexus:${PORT}/openopenecomp/sdc-elasticsearch:${RELEASE}
-docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 openecomp-nexus:${PORT}/openecomp/sdc-elasticsearch:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openopenecomp/sdc-elasticsearch:${RELEASE}
+docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${NEXUS_DOCKER_REPO}/openecomp/sdc-elasticsearch:${RELEASE}
 
 
 # cassandra
 echo "docker run sdc-cassandra..."
-docker pull ecomp-nexus:${PORT}/openecomp/sdc-cassandra:${RELEASE}
-docker run --detach --name sdc-cs --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ecomp-nexus:${PORT}/openecomp/sdc-cassandra:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-cassandra:${RELEASE}
+docker run --detach --name sdc-cs --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${NEXUS_DOCKER_REPO}/openecomp/sdc-cassandra:${RELEASE}
 
 
 echo "please wait while CS is starting..."
@@ -81,14 +79,14 @@ echo -e ""
 
 # kibana
 echo "docker run sdc-kibana..."
-docker pull ecomp-nexus:${PORT}/openecomp/sdc-kibana:${RELEASE}
-docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/environments:/root/chef-solo/environments --publish 5601:5601 ecomp-nexus:${PORT}/openecomp/sdc-kibana:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-kibana:${RELEASE}
+docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/environments:/root/chef-solo/environments --publish 5601:5601 ${NEXUS_DOCKER_REPO}/openecomp/sdc-kibana:${RELEASE}
 
 
 # Back-End
 echo "docker run sdc-backend..."
-docker pull ecomp-nexus:${PORT}/openecomp/sdc-backend:${RELEASE}
-docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 4g --memory-swap=4g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/BE/:/var/lib/jetty/logs  --volume /data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ecomp-nexus:${PORT}/openecomp/sdc-backend:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-backend:${RELEASE}
+docker run --detach --name sdc-BE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 4g --memory-swap=4g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/logs/BE/:/var/lib/jetty/logs  --volume /data/environments:/root/chef-solo/environments --publish 8443:8443 --publish 8080:8080 ${NEXUS_DOCKER_REPO}/openecomp/sdc-backend:${RELEASE}
 
 echo "please wait while BE is starting..."
 echo ""
@@ -104,8 +102,8 @@ echo -e ""
 
 # Front-End
 echo "docker run sdc-frontend..."
-docker pull ecomp-nexus:${PORT}/openecomp/sdc-frontend:${RELEASE}
-docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume /data/logs/FE/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ecomp-nexus:${PORT}/openecomp/sdc-frontend:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-frontend:${RELEASE}
+docker run --detach --name sdc-FE --env HOST_IP=${IP} --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro  --volume /data/logs/FE/:/var/lib/jetty/logs --volume /data/environments:/root/chef-solo/environments --publish 9443:9443 --publish 8181:8181 ${NEXUS_DOCKER_REPO}/openecomp/sdc-frontend:${RELEASE}
 
 
 
