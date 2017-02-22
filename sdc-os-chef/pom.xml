@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -162,15 +162,15 @@
 						</configuration>
 						<executions>
 							<execution>
-                                <id>clean-images</id>
-                                <phase>pre-clean</phase>
-                                <goals>
-                                <goal>remove</goal>
-                                </goals>
-                                <configuration>
-                                <removeAll>true</removeAll>
-                                <image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
-                                </configuration>
+								<id>clean-images</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+									<removeAll>true</removeAll>
+									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+								</configuration>
 							</execution>
 
 							<execution>
@@ -182,15 +182,14 @@
 							</execution>
 
 							<execution>
-                                <id>push-images</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                <goal>build</goal>
-                                <goal>push</goal>
-                                </goals>
-                                <configuration>
-                                <image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
-                                </configuration>
+								<id>push-images</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>push</goal>
+								</goals>
+								<configuration>
+									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+								</configuration>
 							</execution>
 						</executions>
 
