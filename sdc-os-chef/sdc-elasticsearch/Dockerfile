@@ -13,7 +13,9 @@ ENV BASE_NEXUS zl999y:ChangeMe@10.208.197.75:8443/repository/maven-public/org/op
 
 # install chef-solo
 #RUN curl -L http://www.opscode.com/chef/install.sh | bash
-RUN bash chef-install.sh
+COPY chef-install.sh /root/
+RUN chmod 770 /root/chef-install.sh
+RUN bash /root/chef-install.sh
 
 COPY startup.sh /root/
 

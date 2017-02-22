@@ -12,7 +12,9 @@ COPY chef-repo/cookbooks/. /root/chef-solo/cookbooks/
 
 # install chef-solo
 #RUN curl -L http://www.opscode.com/chef/install.sh | bash
-RUN bash chef-install.sh
+COPY chef-install.sh /root/
+RUN chmod 770 /root/chef-install.sh
+RUN bash /root/chef-install.sh
 
 COPY startup.sh /root/
 
