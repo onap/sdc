@@ -15,7 +15,7 @@ RUN pip install pycurl
 
 # install chef-solo
 #RUN curl -L http://www.opscode.com/chef/install.sh | bash
-bash chef-install.sh
+RUN bash chef-install.sh
 
 ADD onboarding-be-__SDC-RELEASE__.war          ${JETTY_BASE}/webapps/
 ADD catalog-be-__SDC-RELEASE__.war             ${JETTY_BASE}/webapps/
