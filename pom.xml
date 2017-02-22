@@ -167,21 +167,22 @@
 
 		<!--cassandra -->
 		<cassandra.driver.version>3.0.0</cassandra.driver.version>
-        
+
 		<!-- Sonar properties -->
-		<sonar.login>sonaruser</sonar.login>
+		<!-- <sonar.login>sonaruser</sonar.login>
 		<sonar.password>us7USi0Htu93nFY91DPuQLFo6ebKcKXv</sonar.password>
-		<sonar.host.url>http://104.239.145.8:9000</sonar.host.url>
+		<sonar.host.url>http://104.239.145.8:9000</sonar.host.url> -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
 		<sonar.skipDesign>true</sonar.skipDesign>
 		<sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
-        <sonar.sources>.</sonar.sources>
+		<sonar.sources>.</sonar.sources>
 		<sonar.exclusions>**/scripts/**/*</sonar.exclusions>
-        <sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
-        <sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
-        
-        <!--nexus-->
-        <nexus.proxy>https://nexus.openecomp.org</nexus.proxy>
+		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
+		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
+
+		<!--nexus-->
+		<nexus.proxy>https://nexus.openecomp.org</nexus.proxy>
+		<staging.profile.id>176c31dfe190a</staging.profile.id>
 	</properties>
 
 	<reporting>
@@ -577,15 +578,15 @@
 					</dependencies>
 				</plugin>
 
-			<plugin>
-				<groupId>io.wcm.maven.plugins</groupId>
-				<artifactId>nodejs-maven-plugin</artifactId>
-				<configuration>
-					<npmVersion>4.3.0</npmVersion>
-					<nodeJsVersion>7.5.0</nodeJsVersion>
-					<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
-				</configuration>
-			</plugin>			
+				<plugin>
+					<groupId>io.wcm.maven.plugins</groupId>
+					<artifactId>nodejs-maven-plugin</artifactId>
+					<configuration>
+						<npmVersion>4.3.0</npmVersion>
+						<nodeJsVersion>7.5.0</nodeJsVersion>
+						<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
+					</configuration>
+				</plugin>			
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -711,8 +712,18 @@
 				</executions>
 			</plugin>
 
-
-
+			<!-- Staging Plugin -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<nexusUrl>${nexus.proxy}</nexusUrl>
+					<stagingProfileId>${staging.profile.id}</stagingProfileId>
+					<serverId>ecomp-staging</serverId>
+				</configuration>
+			</plugin>
 			
 			<!-- license plugin -->
 			<plugin>
@@ -780,69 +791,69 @@
 
 
 
-    <repositories>
-        <repository>
-            <id>virtuos</id>
-            <name>Virtuos</name>
-            <url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>apache-public</id>
-            <name>Apache-Public</name>
-            <url>https://repository.apache.org/content/groups/public/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>elasticsearch-releases</id>
-            <url>https://maven.elasticsearch.org/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-           <repository>
-                          <id>central</id>
-                          <name>Official Maven repository</name>
-                          <url>http://repo2.maven.org/maven2/</url>
-           </repository>
-           <repository>
-                          <id>ecomp-releases</id>
-                          <name>Release Repository</name>
-                          <url>${nexus.proxy}/content/repositories/releases/</url>
-           </repository>
-           <repository>
-                          <id>ecomp-staging</id>
-                          <name>Staging Repository</name>
-                          <url>${nexus.proxy}/content/repositories/staging/</url>
-           </repository>
-           <repository>
-           	<id>node</id>
-           	<name>Node</name>
-           	<url>https://maven-nodejs-proxy.pvtool.org/</url>
-           </repository>
-			<repository>
-				<id>ecomp-snapshots</id>
-				<name>Snapshots Repository</name>
-				<url>${nexus.proxy}/content/repositories/snapshots/</url>
-			</repository>
-      </repositories>
+ 	<repositories>
+ 		<repository>
+ 			<id>virtuos</id>
+ 			<name>Virtuos</name>
+ 			<url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
+ 			<layout>default</layout>
+ 		</repository>
+ 		<repository>
+ 			<id>apache-public</id>
+ 			<name>Apache-Public</name>
+ 			<url>https://repository.apache.org/content/groups/public/</url>
+ 			<layout>default</layout>
+ 		</repository>
+ 		<repository>
+ 			<id>elasticsearch-releases</id>
+ 			<url>https://maven.elasticsearch.org/releases</url>
+ 			<releases>
+ 				<enabled>true</enabled>
+ 			</releases>
+ 			<snapshots>
+ 				<enabled>false</enabled>
+ 			</snapshots>
+ 		</repository>
+ 		<repository>
+ 			<id>central</id>
+ 			<name>Official Maven repository</name>
+ 			<url>http://repo2.maven.org/maven2/</url>
+ 		</repository>
+ 		<repository>
+ 			<id>ecomp-releases</id>
+ 			<name>Release Repository</name>
+ 			<url>${nexus.proxy}/content/repositories/releases/</url>
+ 		</repository>
+ 		<repository>
+ 			<id>ecomp-staging</id>
+ 			<name>Staging Repository</name>
+ 			<url>${nexus.proxy}/content/repositories/staging/</url>
+ 		</repository>
+ 		<repository>
+ 			<id>ecomp-snapshots</id>
+ 			<name>Snapshots Repository</name>
+ 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
+ 		</repository>
+ 		<repository>
+ 			<id>node</id>
+ 			<name>Node</name>
+ 			<url>https://maven-nodejs-proxy.pvtool.org/</url>
+ 		</repository>
+ 	</repositories>
 
-      <distributionManagement>
+ 	<distributionManagement>
 
-               <repository>
-                              <id>ecomp-releases</id>
-                              <name>Release Repository</name>
-                              <url>${nexus.proxy}/content/repositories/releases/</url>
-               </repository>
-               <snapshotRepository>
-                              <id>ecomp-snapshots</id>
-                              <name>Snapshot Repository</name>
-                              <url>${nexus.proxy}/content/repositories/snapshots/</url>
-               </snapshotRepository>
+ 		<repository>
+ 			<id>ecomp-releases</id>
+ 			<name>Release Repository</name>
+ 			<url>${nexus.proxy}/content/repositories/releases/</url>
+ 		</repository>
+ 		<snapshotRepository>
+ 			<id>ecomp-snapshots</id>
+ 			<name>Snapshot Repository</name>
+ 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
+ 		</snapshotRepository>
 
-      </distributionManagement>
-</project>
+ 	</distributionManagement>
+ </project>
 
