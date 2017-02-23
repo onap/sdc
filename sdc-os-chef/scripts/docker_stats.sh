@@ -30,6 +30,10 @@ grep -v "^\-" ${FILE} |grep -v ^CONT| awk 'BEGIN {
   d=$6"-"$2"-"substr("00",0,2-length($3))$3"-"substr($4,0,5)
   next
 }
+/MiB/ {
+   print $1" "d" "$3/1024" "$8
+   next
+}
 /GiB/ {
    print $1" "d" "$3" "$8
    next
