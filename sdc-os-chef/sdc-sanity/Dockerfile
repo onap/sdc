@@ -11,10 +11,7 @@ COPY chef-repo/cookbooks/. /root/chef-solo/cookbooks/
 
 
 # install chef-solo
-#RUN curl -L http://www.opscode.com/chef/install.sh | bash
-COPY chef-install.sh /root/
-RUN chmod 770 /root/chef-install.sh
-RUN bash /root/chef-install.sh
+RUN curl -L https://omnitruck.chef.io/install.sh | bash
 
 COPY startup.sh /root/
 

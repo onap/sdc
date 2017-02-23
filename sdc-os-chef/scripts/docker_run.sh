@@ -1,9 +1,25 @@
 #!/bin/bash
 
 
-function usage
-{
+function usage {
     echo "usage: docker_run.sh [ -r|--release <RELEASE-NAME> ]  [ -e|--environment <ENV-NAME> ] [ -p|--port <Docker-hub-port>] [ -h|--help ]"
+}
+
+
+function cleanup {
+	echo "performing old dockers cleanup"
+	docker_ids=`docker ps -a | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
+	for X in ${docker_ids}
+	do
+	   docker rm -f ${X}
+	done
+}
+
+
+function dir_perms {
+	mkdir -p /data/logs/BE/ASDC/ASDC-BE
+	mkdir -p /data/logs/FE/ASDC/ASDC-FE
+	chmod -R 775 /data/logs
 }
 
 
@@ -41,13 +57,8 @@ done
 [ -f /opt/config/nexus_username.txt ] && docker login -u $NEXUS_USERNAME -p $NEXUS_PASSWD $NEXUS_DOCKER_REPO
 
 
-# cleanup
-echo "performing old dockers cleanup"
-docker_ids=`docker ps -a | egrep "ecomp-nexus:${PORT}/sdc|sdc|Exit" | awk '{print $1}'`
-for X in ${docker_ids}
-do
-   docker rm -f ${X}
-done
+cleanup
+
 
 export IP=`ifconfig eth0 | awk -F: '/inet addr/ {gsub(/ .*/,"",$2); print $2}'`
 
@@ -82,6 +93,7 @@ echo "docker run sdc-kibana..."
 docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-kibana:${RELEASE}
 docker run --detach --name sdc-kbn --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --memory 2g --memory-swap=2g --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/environments:/root/chef-solo/environments --publish 5601:5601 ${NEXUS_DOCKER_REPO}/openecomp/sdc-kibana:${RELEASE}
 
+dir_perms
 
 # Back-End
 echo "docker run sdc-backend..."

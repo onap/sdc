@@ -14,10 +14,7 @@ RUN python /root/chef-solo/cookbooks/sdc-normatives/files/default/get-pip.py
 RUN pip install pycurl
 
 # install chef-solo
-#RUN curl -L http://www.opscode.com/chef/install.sh | bash
-COPY chef-install.sh /root/
-RUN chmod 770 /root/chef-install.sh
-RUN bash /root/chef-install.sh
+RUN curl -L https://omnitruck.chef.io/install.sh | bash
 
 ADD onboarding-be-__SDC-RELEASE__.war          ${JETTY_BASE}/webapps/
 ADD catalog-be-__SDC-RELEASE__.war             ${JETTY_BASE}/webapps/

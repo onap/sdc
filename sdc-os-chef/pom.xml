@@ -92,6 +92,25 @@
 									</resources>
 								</configuration>
 							</execution>
+							<execution>
+								<id>copy-resources-sanity</id>
+								<!-- here the phase you need -->
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/openecomp-ui/target</directory>
+											<includes>
+												<include>onboarding-fe-${project.version}.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 
@@ -157,6 +176,16 @@
 										<dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
 									</build>
 								</image>
+								
+								<!-- Build sanity image -->
+								<image>
+									<name>openecomp/sdc-sanity:%l</name>
+									<alias>sdc-sanity</alias>
+									<build>
+										<cleanup>try</cleanup>
+										<dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
+									</build>
+								</image>
 
 							</images>
 						</configuration>
@@ -169,7 +198,7 @@
 								</goals>
 								<configuration>
 									<removeAll>true</removeAll>
-									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l,openecomp/sdc-sanity:%l</image>
 								</configuration>
 							</execution>
 
@@ -188,7 +217,7 @@
 									<goal>push</goal>
 								</goals>
 								<configuration>
-									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l</image>
+									<image>openecomp/sdc-backend:%l,openecomp/sdc-frontend:%l,openecomp/sdc-elasticsearch:%l,openecomp/sdc-kibana:%l,openecomp/sdc-sanity:%l</image>
 								</configuration>
 							</execution>
 						</executions>
