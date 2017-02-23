@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export CHEFNAME=${ENVNAME}
 cd /root/chef-solo

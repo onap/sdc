@@ -66,7 +66,7 @@ echo ""
 
 # Elastic-Search
 echo "docker run sdc-elasticsearch..."
-docker pull ${NEXUS_DOCKER_REPO}/openopenecomp/sdc-elasticsearch:${RELEASE}
+docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-elasticsearch:${RELEASE}
 docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --memory 1g --memory-swap=1g --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro -e ES_HEAP_SIZE=1024M --volume /data/ES:/usr/share/elasticsearch/data --volume /data/environments:/root/chef-solo/environments --publish 9200:9200 --publish 9300:9300 ${NEXUS_DOCKER_REPO}/openecomp/sdc-elasticsearch:${RELEASE}
 
 
