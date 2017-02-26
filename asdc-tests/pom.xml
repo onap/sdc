@@ -251,14 +251,14 @@
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>sdc-distribution-client</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.openecomp.ecompsdkos</groupId>
 			<artifactId>ecompFW</artifactId>
-			<version>${ecomp.version}</version>
+			<version>1.0.0</version>
 			<scope>compile</scope>
             <exclusions>
                 <exclusion>

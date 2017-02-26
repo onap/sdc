@@ -169,14 +169,15 @@
 		<cassandra.driver.version>3.0.0</cassandra.driver.version>
 
 		<!-- Sonar properties -->
-		<!-- <sonar.login>sonaruser</sonar.login>
-		<sonar.password>us7USi0Htu93nFY91DPuQLFo6ebKcKXv</sonar.password>
-		<sonar.host.url>http://104.239.145.8:9000</sonar.host.url> -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
 		<sonar.skipDesign>true</sonar.skipDesign>
 		<sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
 		<sonar.sources>.</sonar.sources>
-		<sonar.exclusions>**/scripts/**/*</sonar.exclusions>
+		<sonar.exclusions>**/scripts/**/*,
+			openecomp-ui/src/nfvo-utils/ErrorResponseHandler.js,
+			openecomp-ui/src/nfvo-utils/json/JSONPointer.js,
+			openecomp-ui/src/sdc-app/AppStore.js,
+			openecomp-ui/src/sdc-app/config/Configuration.js</sonar.exclusions>
 		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
 		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
 

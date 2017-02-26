@@ -11,8 +11,8 @@
 	<groupId>org.openecomp.sdc.onboarding</groupId>
 	<artifactId>onboarding-fe</artifactId>
 	<name>onboarding-ui-war</name>
+	<packaging>pom</packaging>
 
-	<packaging>war</packaging>
 	<build>
 		<plugins>
 
@@ -52,11 +52,53 @@
 			</plugin>
 
 			<plugin>
+        <groupId>com.coderplus.maven.plugins</groupId>
+        <artifactId>copy-rename-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>copy-file</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <sourceFile>${project.basedir}/dist/onboarding.war</sourceFile>
+              <destinationFile>${project.basedir}/target/onboarding-fe-${project.version}.war</destinationFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+      	<groupId>org.codehaus.mojo</groupId>
+      	<artifactId>build-helper-maven-plugin</artifactId>
+      	<version>1.7</version>
+      	<executions>
+      		<execution>
+      			<id>attach-artifacts</id>
+      			<phase>compile</phase>
+      			<goals>
+      				<goal>attach-artifact</goal>
+      			</goals>
+      			<configuration>
+      				<artifacts>
+      					<artifact>
+      						<file>${project.basedir}/target/onboarding-fe-${project.version}.war</file>
+      						<type>war</type>                           
+      					</artifact>
+      				</artifacts>
+      			</configuration>
+      		</execution>
+      	</executions>
+      </plugin>
+
+<!-- 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<webXml>webapp-onboarding\WEB-INF\web.xml</webXml>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 
