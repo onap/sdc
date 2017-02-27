@@ -372,20 +372,6 @@
 			</dependency>
 
 			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.2.1-SNAPSHOT</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>2.0-SNAPSHOT</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.12</version>
