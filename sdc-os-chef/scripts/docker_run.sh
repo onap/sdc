@@ -19,7 +19,7 @@ function cleanup {
 function dir_perms {
 	mkdir -p /data/logs/BE/ASDC/ASDC-BE
 	mkdir -p /data/logs/FE/ASDC/ASDC-FE
-	chmod -R 775 /data/logs
+	chmod -R 777 /data/logs
 }
 
 
