@@ -173,11 +173,7 @@
 		<sonar.skipDesign>true</sonar.skipDesign>
 		<sonar.projectBaseDir>${project.basedir}</sonar.projectBaseDir>
 		<sonar.sources>.</sonar.sources>
-		<sonar.exclusions>**/scripts/**/*,
-			openecomp-ui/src/nfvo-utils/ErrorResponseHandler.js,
-			openecomp-ui/src/nfvo-utils/json/JSONPointer.js,
-			openecomp-ui/src/sdc-app/AppStore.js,
-			openecomp-ui/src/sdc-app/config/Configuration.js</sonar.exclusions>
+		<sonar.exclusions>**/scripts/**/*</sonar.exclusions>
 		<sonar.test.exclusions>**/test/**/*,**/tests/**/*</sonar.test.exclusions>
 		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
 
