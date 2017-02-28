@@ -296,13 +296,6 @@
 				<scope>compile</scope>
 			</dependency>
 
-			<!-- yaml to object converter -->
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>1.14</version>
-				<scope>provided</scope>
-			</dependency>
 
 			<!-- listen to file changes -->
 			<dependency>
