@@ -7,9 +7,9 @@
   <version>0.0.1-SNAPSHOT</version>
 
 <parent>
-<groupId>org.openecomp.sdc</groupId>
-<artifactId>sdc-main</artifactId>
-<version>1610.2.4</version>
+	<groupId>org.openecomp.sdc</groupId>
+	<artifactId>sdc-main</artifactId>
+	<version>1610.2.4</version>
 </parent>
 
   
