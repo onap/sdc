@@ -24,6 +24,14 @@
 
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.9.10</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -131,12 +139,14 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -181,12 +191,14 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>1.7.10</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -204,7 +216,9 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version><!--$NO-MVN-MAN-VER$ -->
+			<!--<version>${mockito.version}</version>&lt;!&ndash;$NO-MVN-MAN-VER$ &ndash;&gt;-->
+			<version>1.10.19</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -232,12 +246,14 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
+			<version>${httpcore.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -253,6 +269,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -305,6 +322,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+			<version>${lang3.version}</version>
 			<scope>provided</scope>
 		</dependency>
 

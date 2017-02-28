@@ -14,6 +14,27 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.9.10</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${lang3.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<!--<dependency>-->
 			<!--<groupId>org.springframework</groupId>-->
 			<!--<artifactId>spring-beans</artifactId>-->
@@ -160,24 +181,28 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>1.7.10</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
+			<version>${groovy.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -282,11 +307,13 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
+			<version>${httpcore.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<!-- Spring 4 dependencies -->
