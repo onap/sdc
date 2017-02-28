@@ -312,14 +312,6 @@
 				<scope>provided</scope>
 			</dependency>
 
-			<!-- Gson -->
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>2.3.1</version>
-				<scope>provided</scope>
-			</dependency>
-
 			<!-- http client -->
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
