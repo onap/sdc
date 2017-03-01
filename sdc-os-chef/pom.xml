@@ -148,14 +148,14 @@
 								</image>
 
 								<!-- Build elastic search image -->
-								<!--<image>
+								<image>
 									<name>openecomp/sdc-elasticsearch:%l</name>
 									<alias>sdc-elasticsearch</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
 									</build>
-								</image>-->
+								</image>
 
 								<!-- Build kibana image -->
 								<image>
