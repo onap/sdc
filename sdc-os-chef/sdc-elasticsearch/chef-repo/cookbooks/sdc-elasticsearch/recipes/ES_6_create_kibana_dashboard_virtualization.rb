@@ -1,11 +1,3 @@
-cookbook_file "/usr/share/elasticsearch/config/kibana_dashboard_virtualization.json" do
-   source "kibana_dashboard_virtualization.json"
-   owner "elasticsearch"
-   group "elasticsearch"
-   mode "0755"
-end
-
-
 
 ruby_block "check_ElasticSearch_Cluster_Health" do
     block do
