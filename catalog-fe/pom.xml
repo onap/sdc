@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 
@@ -327,7 +327,7 @@
 			<dependency>
 				<groupId>org.openecomp.ecompsdkos</groupId>
 				<artifactId>ecompFW</artifactId>
-				<version>1.0.0</version>
+				<version>${ecomp.version}</version>
 				<scope>compile</scope>
 				<exclusions>
 					<exclusion>
