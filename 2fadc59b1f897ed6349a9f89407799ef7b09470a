@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Michael Lando <ml636r@att.com>
+Submitted-by: Michael Lando <ml636r@att.com>
+Submitted-at: Thu, 23 Mar 2017 11:51:21 +0000
+Reviewed-on: http://gerrit.openecomp.org/r/2321
+Project: sdc
+Branch: refs/heads/release-1.0.0
