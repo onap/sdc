@@ -133,7 +133,7 @@
 									<alias>sdc-backend</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
@@ -147,7 +147,7 @@
 									<alias>sdc-frontend</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
@@ -161,7 +161,7 @@
 									<alias>sdc-elasticsearch</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
@@ -175,7 +175,7 @@
 									<alias>sdc-kibana</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
@@ -189,7 +189,7 @@
 									<alias>sdc-cassandra</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
@@ -203,7 +203,7 @@
 									<alias>sdc-sanity</alias>
 									<build>
 										<tags>
-											<tag>${project.version}-STAGING-${maven.build.timestamp}</tag>
+											<tag>1.0-STAGING-latest</tag>
 											<tag>latest</tag>
 										</tags>
 										<cleanup>try</cleanup>
