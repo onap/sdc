@@ -132,6 +132,10 @@
 									<name>openecomp/sdc-backend:%l</name>
 									<alias>sdc-backend</alias>
 									<build>
+										<tags>
+											<tag>1.1-STAGING-latest</tag>
+											<tag>latest</tag>
+										</tags>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
 									</build>
@@ -142,6 +146,10 @@
 									<name>openecomp/sdc-frontend:%l</name>
 									<alias>sdc-frontend</alias>
 									<build>
+										<tags>
+											<tag>1.1-STAGING-latest</tag>
+											<tag>latest</tag>
+										</tags>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
 									</build>
@@ -162,6 +170,10 @@
 									<name>openecomp/sdc-kibana:%l</name>
 									<alias>sdc-kibana</alias>
 									<build>
+										<tags>
+											<tag>1.1-STAGING-latest</tag>
+											<tag>latest</tag>
+										</tags>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
 									</build>
@@ -172,6 +184,10 @@
 									<name>openecomp/sdc-cassandra:%l</name>
 									<alias>sdc-cassandra</alias>
 									<build>
+										<tags>
+											<tag>1.1-STAGING-latest</tag>
+											<tag>latest</tag>
+										</tags>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
 									</build>
@@ -182,6 +198,10 @@
 									<name>openecomp/sdc-sanity:%l</name>
 									<alias>sdc-sanity</alias>
 									<build>
+										<tags>
+											<tag>1.1-STAGING-latest</tag>
+											<tag>latest</tag>
+										</tags>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
 									</build>
