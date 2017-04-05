@@ -181,6 +181,7 @@
 
 		<!--nexus-->
 		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
+		<sitePath>/content/sites/site/org/openecomp/sdc/${project.version}</sitePath>
 		<staging.profile.id>176c31dfe190a</staging.profile.id>
 		<!--maven-->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
@@ -620,7 +621,10 @@
  			<name>Snapshot Repository</name>
  			<url>${nexus.proxy}/content/repositories/snapshots/</url>
  		</snapshotRepository>
-
+    <site>
+        <id>ecomp-site</id>
+        <url>dav:${nexus.proxy}${sitePath}</url>
+    </site>
  	</distributionManagement>
  </project>
 
