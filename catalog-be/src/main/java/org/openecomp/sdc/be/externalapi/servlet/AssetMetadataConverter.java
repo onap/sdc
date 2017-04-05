@@ -345,7 +345,7 @@ public class AssetMetadataConverter {
 			metadata.setResourceInstanceName(componentInstance.getName());
 			metadata.setResourceName(componentInstance.getComponentName());
 			metadata.setResourceVersion(componentInstance.getComponentVersion());
-			metadata.setResoucreType(componentInstance.getOriginType().getValue());
+			metadata.setResourceType(componentInstance.getOriginType().getValue());
 			metadata.setResourceUUID(componentInstance.getComponentUid());
 
 			Collection<ArtifactDefinition> values = componentInstance.getDeploymentArtifacts().values();

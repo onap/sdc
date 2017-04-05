@@ -147,7 +147,7 @@ public class ServiceDistributionArtifactsBuilder {
 		List<JsonContainerResourceInstance> ret = new ArrayList<JsonContainerResourceInstance>();
 		if (service.getComponentInstances() != null) {
 			for (ComponentInstance resourceInstance : service.getComponentInstances()) {
-				String resoucreType = "VF";
+				String resourceType = "VF";
 				List<ArtifactDefinition> artifactsDefList = getArtifactsWithPayload(resourceInstance);
 				List<ArtifactInfoImpl> artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(service, resourceInstance, artifactsDefList);
 				Either<String, StorageOperationStatus> responseResult = resourceOperation.getInvariantUUID(NodeTypeEnum.Resource, resourceInstance.getComponentUid(), false);
@@ -157,7 +157,7 @@ public class ServiceDistributionArtifactsBuilder {
 				} else {
 					resourceInvariantUUID = responseResult.left().value();
 				}
-				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resourceInvariantUUID, resoucreType, artifacts);
+				JsonContainerResourceInstance jsonContainer = new JsonContainerResourceInstance(resourceInstance, resourceInvariantUUID, resourceType, artifacts);
 				ret.add(jsonContainer);
 			}
 

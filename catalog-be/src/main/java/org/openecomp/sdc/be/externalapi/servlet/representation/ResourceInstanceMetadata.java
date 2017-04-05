@@ -27,7 +27,7 @@ public class ResourceInstanceMetadata {
 	private String resourceName;
 	private String resourceInvariantUUID;
 	private String resourceVersion;
-	private String resoucreType;
+	private String resourceType;
 	private String resourceUUID;
 	private List<ArtifactMetadata> artifacts;
 
@@ -63,12 +63,12 @@ public class ResourceInstanceMetadata {
 		this.resourceVersion = resourceVersion;
 	}
 
-	public String getResoucreType() {
-		return resoucreType;
+	public String getResourceType() {
+		return resourceType;
 	}
 
-	public void setResoucreType(String resoucreType) {
-		this.resoucreType = resoucreType;
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
 	}
 
 	public String getResourceUUID() {
