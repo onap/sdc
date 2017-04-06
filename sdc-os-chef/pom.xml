@@ -13,6 +13,7 @@
 
 	<properties>
 		<docker.tag>${project.version}-SNAPSHOT-${maven.build.timestamp}</docker.tag>
+		<docker.latest.tag>${project.version}-SNAPSHOT-latest</docker.latest.tag>
 	</properties>
 
 	<build>
@@ -52,7 +53,8 @@
 		<profile>
 			<id>docker-staging</id>
 			<properties>
-				<docker.tag>${project.version}-STAGING</docker.tag>
+				<docker.tag>${project.version}-STAGING-${maven.build.timestamp}</docker.tag>
+				<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
 			</properties>
 		</profile>
 		<profile>
@@ -138,78 +140,84 @@
 
 								<!-- Build backend image -->
 								<image>
-									<name>openecomp/sdc-backend:%l</name>
+									<name>openecomp/sdc-backend</name>
 									<alias>sdc-backend</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-backend</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
 
 								<!-- Build frontend image -->
 								<image>
-									<name>openecomp/sdc-frontend:%l</name>
+									<name>openecomp/sdc-frontend</name>
 									<alias>sdc-frontend</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-frontend</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
 
 								<!-- Build elastic search image -->
 								<image>
-									<name>openecomp/sdc-elasticsearch:%l</name>
+									<name>openecomp/sdc-elasticsearch</name>
 									<alias>sdc-elasticsearch</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-elasticsearch</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
 
 								<!-- Build kibana image -->
 								<image>
-									<name>openecomp/sdc-kibana:%l</name>
+									<name>openecomp/sdc-kibana</name>
 									<alias>sdc-kibana</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-kibana</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
 
 								<!-- Build cassandra image -->
 								<image>
-									<name>openecomp/sdc-cassandra:%l</name>
+									<name>openecomp/sdc-cassandra</name>
 									<alias>sdc-cassandra</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-cassandra</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
 								
 								<!-- Build sanity image -->
 								<image>
-									<name>openecomp/sdc-sanity:%l</name>
+									<name>openecomp/sdc-sanity</name>
 									<alias>sdc-sanity</alias>
 									<build>
 										<cleanup>try</cleanup>
 										<dockerFileDir>${project.basedir}/sdc-sanity</dockerFileDir>
 										<tags>
 											<tag>${docker.tag}</tag>
+											<tag>${docker.latest.tag}</tag>
 										</tags>
 									</build>
 								</image>
