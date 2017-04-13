@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.model.operations.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.annotation.Resource;
 
@@ -178,9 +177,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 
 	@Override
 	public Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyType(String uniqueId, boolean inTransaction) {
-		Function<String, Either<PolicyTypeDefinition, TitanOperationStatus>> policyTypeGetter = uId -> getPolicyTypeByUid(
-				uId);
-		return getElementType(policyTypeGetter, uniqueId, inTransaction);
+		return getElementType(this::getPolicyTypeByUid, uniqueId, inTransaction);
 
 	}
 

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import javax.annotation.Resource;
 
@@ -159,9 +158,7 @@ public class GroupTypeOperation extends AbstractOperation implements IGroupTypeO
 
 	@Override
 	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction) {
-		Function<String, Either<GroupTypeDefinition, TitanOperationStatus>> groupTypeGetter = uId -> getGroupTypeByUid(
-				uId);
-		return getElementType(groupTypeGetter, uniqueId, inTransaction);
+		return getElementType(this::getGroupTypeByUid, uniqueId, inTransaction);
 
 	}
 

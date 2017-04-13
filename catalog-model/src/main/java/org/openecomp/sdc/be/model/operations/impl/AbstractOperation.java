@@ -21,11 +21,11 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -118,7 +118,6 @@ public abstract class AbstractOperation {
 
 		log.debug("Before adding {} to graph. data = {}", defName, someData);
 
-		@SuppressWarnings("unchecked")
 		Either<TitanVertex, TitanOperationStatus> eitherSomeData = titanGenericDao.createNode(someData);
 
 		log.debug("After adding {} to graph. status is = {}", defName, eitherSomeData);
@@ -284,27 +283,15 @@ public abstract class AbstractOperation {
 
 		PropertyTypeValidator validator = type.getValidator();
 
-		boolean isValid = validator.isValid(value, innerType, dataTypes);
-		if (true == isValid) {
-			return true;
-		} else {
-			return false;
-		}
-
+		return validator.isValid(value, innerType, dataTypes);
 	}
 
 	public boolean isEmptyValue(String value) {
-		if (value == null) {
-			return true;
-		}
-		return false;
+		return value == null;
 	}
 
 	public boolean isNullParam(String value) {
-		if (value == null) {
-			return true;
-		}
-		return false;
+		return value == null;
 	}
 
 	protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
@@ -339,11 +326,7 @@ public abstract class AbstractOperation {
 		if (jsonElement == null || jsonElement.isJsonNull()) {
 			value = EMPTY_VALUE;
 		} else {
-			if (jsonElement.toString().isEmpty()) {
-				value = "";
-			} else {
-				value = jsonElement.toString();
-			}
+			value = jsonElement.toString();
 		}
 
 		return value;
@@ -376,18 +359,11 @@ public abstract class AbstractOperation {
 	 */
 	public List<String> convertConstraintsToString(List<PropertyConstraint> constraints) {
 
-		List<String> result = null;
-
-		if (constraints != null && false == constraints.isEmpty()) {
-			result = new ArrayList<String>();
-			for (PropertyConstraint propertyConstraint : constraints) {
-				String constraint = gson.toJson(propertyConstraint);
-				result.add(constraint);
-			}
-
+		if (constraints == null || constraints.isEmpty()) {
+			return null;
 		}
 
-		return result;
+		return constraints.stream().map(gson::toJson).collect(Collectors.toList());
 	}
 
 	public List<PropertyConstraint> convertConstraints(List<String> constraints) {
@@ -396,18 +372,13 @@ public abstract class AbstractOperation {
 			return null;
 		}
 
-		List<PropertyConstraint> list = new ArrayList<PropertyConstraint>();
 		Type constraintType = new TypeToken<PropertyConstraint>() {
 		}.getType();
 
 		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
 
-		for (String constraintJson : constraints) {
-			PropertyConstraint propertyConstraint = gson.fromJson(constraintJson, constraintType);
-			list.add(propertyConstraint);
-		}
+		return constraints.stream().map(c -> gson.fromJson(c, PropertyConstraint.class)).collect(Collectors.toList());
 
-		return list;
 	}
 
 }
