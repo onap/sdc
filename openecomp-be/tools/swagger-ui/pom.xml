@@ -91,6 +91,7 @@
                     <descriptor>assembly/swagger.xml</descriptor>
                     <finalName>${plugin.name}</finalName>
                     <outputDirectory>${package.dir}</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
