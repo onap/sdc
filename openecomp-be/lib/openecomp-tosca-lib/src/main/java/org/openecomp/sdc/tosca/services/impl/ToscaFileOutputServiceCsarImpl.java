@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.tosca.services.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
@@ -153,6 +154,6 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
   }
 
   private void writeBytesToZip(ZipOutputStream zos, InputStream is) throws IOException {
-    FileUtils.copy(is, zos);
+    IOUtils.copy(is, zos);
   }
 }
