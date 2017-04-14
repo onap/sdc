@@ -36,7 +36,6 @@ import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.client.Client;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
-import org.openecomp.sdc.be.dao.utils.Exceptions;
 import org.openecomp.sdc.exception.IndexingServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +94,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 		try {
 			ret = (T) jsonMapper.readValue(response.getSourceAsString(), clazz);
 		} catch (IOException e) {
-			Exceptions.convertToRuntimeEx(e);
+			throw new RuntimeException(e);
 		}
 		return ret;
 	}
@@ -119,7 +118,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 					val = jsonMapper.readValue(getItemResponse.getResponse().getSourceAsString(), clazz);
 					result.add(val);
 				} catch (IOException e) {
-					Exceptions.convertToRuntimeEx(e);
+					throw new RuntimeException(e);
 				}
 			}
 		}
