@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.vendorlicense.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
-public class VendorLicenseModelNotFoundErrorBuilder {
+public class VendorLicenseModelNotFoundErrorBuilder extends BaseErrorBuilder {
 
   private static final String VENDOR_LICENSE_MODEL_NOT_FOUND_MSG =
       "Vendor license model with id %s not found.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Vendor license model not found error builder.
@@ -39,10 +38,5 @@ public class VendorLicenseModelNotFoundErrorBuilder {
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(VENDOR_LICENSE_MODEL_NOT_FOUND_MSG, vendorLicenseModelId));
   }
-
-  public ErrorCode build() {
-    return builder.build();
-  }
-
 
 }

@@ -20,17 +20,15 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
-public class ResourceNotFoundInHeatFileErrorBuilder {
+public class ResourceNotFoundInHeatFileErrorBuilder extends BaseErrorBuilder {
 
   private static final String RESOURCE_NOT_FOUND_IN_FILE_ERR_ID =
       "RESOURCE_NOT_FOUND_IN_FILE_ERR_ID";
   private static final String RESOURCE_NOT_FOUND_IN_FILE_ERR_MSG =
       "resource with id = %s was not found in heat file = %s.";
-
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Resource not found in heat file error builder.
@@ -43,10 +41,6 @@ public class ResourceNotFoundInHeatFileErrorBuilder {
     builder.withCategory(ErrorCategory.APPLICATION);
     builder
         .withMessage(String.format(RESOURCE_NOT_FOUND_IN_FILE_ERR_MSG, resourceId, heatfileName));
-  }
-
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

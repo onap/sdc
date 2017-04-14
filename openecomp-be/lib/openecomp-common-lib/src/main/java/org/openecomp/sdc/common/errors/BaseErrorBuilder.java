@@ -21,9 +21,9 @@
 package org.openecomp.sdc.common.errors;
 
 public abstract class BaseErrorBuilder {
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
+  protected final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  public ErrorCode build() {
+  final public ErrorCode build() {
     return builder.build();
   }
 

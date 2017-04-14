@@ -22,15 +22,14 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_NOT_FOUND;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * The type Vendor software product not found error builder.
  */
-public class VendorSoftwareProductNotFoundErrorBuilder {
+public class VendorSoftwareProductNotFoundErrorBuilder extends BaseErrorBuilder {
   private static final String VSP_FOUND_MSG = "Vendor software product with Id %s not found.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Vendor software product not found error builder.
@@ -43,12 +42,4 @@ public class VendorSoftwareProductNotFoundErrorBuilder {
     builder.withMessage(String.format(VSP_FOUND_MSG, vendorSoftwareProductId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

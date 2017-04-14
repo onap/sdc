@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * The type Tosca missing substitution mapping for req cap error builder.
  */
-public class ToscaMissingSubstitutionMappingForReqCapErrorBuilder {
+public class ToscaMissingSubstitutionMappingForReqCapErrorBuilder extends BaseErrorBuilder {
 
   private static final String MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP_MSG =
       "Invalid Substitution, Missing Substitution Mapping for %s with Id %s.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca missing substitution mapping for req cap error builder.
@@ -44,15 +43,6 @@ public class ToscaMissingSubstitutionMappingForReqCapErrorBuilder {
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String
         .format(MISSING_SUBSTITUTION_MAPPING_FOR_REQ_CAP_MSG, exposedEntry.getDisplayName(), id));
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
   /**

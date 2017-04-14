@@ -20,15 +20,14 @@
 
 package org.openecomp.sdc.vendorlicense.errors;
 
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
-
 import java.util.List;
 
-public class LicensingDataInvalidErrorBuilder {
+import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
+import org.openecomp.sdc.common.errors.ErrorCategory;
+
+public class LicensingDataInvalidErrorBuilder extends BaseErrorBuilder {
   private static final String LICENSING_DATA_INVALID_MSG = "Invalid licensing data: %s";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Licensing data invalid error builder.
@@ -40,10 +39,6 @@ public class LicensingDataInvalidErrorBuilder {
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(LICENSING_DATA_INVALID_MSG,
         CommonMethods.listToSeparatedString(licensingDataErrors, ',')));
-  }
-
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

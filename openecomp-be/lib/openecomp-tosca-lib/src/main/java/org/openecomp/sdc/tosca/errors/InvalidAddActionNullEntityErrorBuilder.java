@@ -20,18 +20,16 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * The type Invalid add action null entity error builder.
  */
-public class InvalidAddActionNullEntityErrorBuilder {
+public class InvalidAddActionNullEntityErrorBuilder extends BaseErrorBuilder {
 
   private static final String INVALID_ACTION_NULL_ENTITY_ERR_MSG =
       "Invalid action, can't add '%s' to '%s', '%s' entity is NULL.";
-
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Invalid add action null entity error builder.
@@ -44,15 +42,6 @@ public class InvalidAddActionNullEntityErrorBuilder {
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(
         String.format(INVALID_ACTION_NULL_ENTITY_ERR_MSG, addedData, updatedEntity, updatedEntity));
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

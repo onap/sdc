@@ -20,20 +20,19 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 
 
 /**
  * The type Tosca invalid substitute node template properties error builder.
  */
-public class ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder {
+public class ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder extends BaseErrorBuilder {
 
   private static final String INVALID_SUBSTITUTE_NODE_TEMPLATE_MSG =
       "Invalid Substitute Node Template %s, mandatory map property %s with mandatory "
           + "key %s must be defined.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca invalid substitute node template properties error builder.
@@ -48,12 +47,4 @@ public class ToscaInvalidSubstituteNodeTemplatePropertiesErrorBuilder {
         ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

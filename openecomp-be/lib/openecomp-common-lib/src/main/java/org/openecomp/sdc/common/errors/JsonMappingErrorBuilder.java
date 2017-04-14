@@ -23,14 +23,11 @@ package org.openecomp.sdc.common.errors;
 /**
  * The type Json mapping error builder.
  */
-public class JsonMappingErrorBuilder {
+public class JsonMappingErrorBuilder extends BaseErrorBuilder {
 
   private static final String JSON_MAPPING_ERROR_ERR_ID = "JSON_MAPPING_ERROR_ERR_ID";
   private static final String JSON_MAPPING_ERROR_ERR_ERR_MSG =
       "Error occurred while parsing the JSON input/body. Further info can be found in the log";
-
-
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Json mapping error builder.
@@ -39,15 +36,6 @@ public class JsonMappingErrorBuilder {
     builder.withId(JSON_MAPPING_ERROR_ERR_ID);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(JSON_MAPPING_ERROR_ERR_ERR_MSG));
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

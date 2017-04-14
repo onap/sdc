@@ -22,19 +22,18 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_INVALID;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 
 /**
  * The type Vendor software product invalid error builder.
  */
-public class VendorSoftwareProductInvalidErrorBuilder {
+public class VendorSoftwareProductInvalidErrorBuilder extends BaseErrorBuilder {
   private static final String VSP_INVALID_MSG =
       "Vendor software product with Id %s and version %s is invalid - does not contain "
           + "service model.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Vendor software product invalid error builder.
@@ -49,12 +48,4 @@ public class VendorSoftwareProductInvalidErrorBuilder {
         .withMessage(String.format(VSP_INVALID_MSG, vendorSoftwareProductId, version.toString()));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

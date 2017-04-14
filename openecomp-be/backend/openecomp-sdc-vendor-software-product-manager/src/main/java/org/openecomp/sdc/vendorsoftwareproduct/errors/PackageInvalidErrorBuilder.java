@@ -23,18 +23,17 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
     .PACKAGE_INVALID;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 /**
  * The type Package invalid error builder.
  */
-public class PackageInvalidErrorBuilder {
+public class PackageInvalidErrorBuilder extends BaseErrorBuilder {
   private static final String PACKAGE_INVALID_MSG =
       "Package for vendor software product with Id %s and version %s is invalid "
           + "(does not contain translated data).";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Package invalid error builder.
@@ -49,12 +48,4 @@ public class PackageInvalidErrorBuilder {
         String.format(PACKAGE_INVALID_MSG, vendorSoftwareProductId, version.toString()));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

@@ -23,12 +23,11 @@ package org.openecomp.sdc.common.errors;
 /**
  * The type General error builder.
  */
-public class GeneralErrorBuilder {
+public class GeneralErrorBuilder extends BaseErrorBuilder {
 
   private static final String GENERAL_ERROR_REST_ID = "GENERAL_ERROR_REST_ID";
   private static final String GENERAL_ERROR_REST_MSG = "An error has occurred: %s";
 
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new General error builder.
@@ -39,15 +38,6 @@ public class GeneralErrorBuilder {
     builder.withId(GENERAL_ERROR_REST_ID);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(GENERAL_ERROR_REST_MSG, detailedError));
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

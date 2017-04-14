@@ -20,14 +20,13 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
-public class ToscaNodeTypeNotFoundErrorBuilder {
+public class ToscaNodeTypeNotFoundErrorBuilder extends BaseErrorBuilder {
   private static final String ENTRY_NOT_FOUND_MSG =
       "NodeType '%s' or one of its derivedFrom node type hierarchy, "
           + "is not defined in tosca service model";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca node type not found error builder.
@@ -40,7 +39,4 @@ public class ToscaNodeTypeNotFoundErrorBuilder {
     builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, nodeType));
   }
 
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

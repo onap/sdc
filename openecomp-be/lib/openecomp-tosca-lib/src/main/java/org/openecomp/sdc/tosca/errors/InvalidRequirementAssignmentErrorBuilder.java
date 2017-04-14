@@ -20,19 +20,17 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * The type Invalid requirement assignment error builder.
  */
-public class InvalidRequirementAssignmentErrorBuilder {
+public class InvalidRequirementAssignmentErrorBuilder extends BaseErrorBuilder {
 
   private static final String INVALID_REQ_ASSIGNMENT_ERR_ID = "INVALID_REQ_ASSIGNMENT_ERR_ID";
   private static final String INVALID_REQ_ASSIGNMENT_ERR_MSG =
       "Invalid Requirement Assignment, Node value is NULL, Requirement ID '%s'.";
-
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Invalid requirement assignment error builder.
@@ -43,15 +41,6 @@ public class InvalidRequirementAssignmentErrorBuilder {
     builder.withId(INVALID_REQ_ASSIGNMENT_ERR_ID);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(INVALID_REQ_ASSIGNMENT_ERR_MSG, requirementId));
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

@@ -20,17 +20,16 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 /**
  * The type Tosca invalid entry not found error builder.
  */
-public class ToscaInvalidEntryNotFoundErrorBuilder {
+public class ToscaInvalidEntryNotFoundErrorBuilder extends BaseErrorBuilder {
   //
   private static final String ENTRY_NOT_FOUND_MSG =
       "Invalid Tosca model data, missing '%s' entry for '%s' id %s";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca invalid entry not found error builder.
@@ -44,12 +43,4 @@ public class ToscaInvalidEntryNotFoundErrorBuilder {
     builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, entryName, entryName, entryId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

@@ -22,19 +22,18 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 /**
  * The type Package not found error builder.
  */
-public class PackageNotFoundErrorBuilder {
+public class PackageNotFoundErrorBuilder extends BaseErrorBuilder {
   private static final String PACKAGE_VERSION_NOT_FOUND_MSG =
       "Package for vendor software product with Id %s and version %s does not exist.";
   private static final String PACKAGE_NOT_FOUND_MSG =
       "Package for vendor software product with Id %s does not exist.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Package not found error builder.
@@ -60,12 +59,4 @@ public class PackageNotFoundErrorBuilder {
     builder.withMessage(String.format(PACKAGE_NOT_FOUND_MSG, vendorSoftwareProductId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

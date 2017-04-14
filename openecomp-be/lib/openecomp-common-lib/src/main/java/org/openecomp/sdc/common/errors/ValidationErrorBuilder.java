@@ -23,7 +23,7 @@ package org.openecomp.sdc.common.errors;
 /**
  * The type Validation error builder.
  */
-public class ValidationErrorBuilder {
+public class ValidationErrorBuilder extends BaseErrorBuilder {
 
   /**
    * The constant FIELD_VALIDATION_ERROR_ERR_ID.
@@ -34,8 +34,6 @@ public class ValidationErrorBuilder {
   private static final String FIELD_VALIDATION_ERROR_ERR_MSG_USE_PREDEFINED_FOR_FIELD = "%s";
   private static final String FIELD_WITH_PREDEFINED_MESSAGE = "arg\\d";
 
-
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Validation error builder.
@@ -54,15 +52,6 @@ public class ValidationErrorBuilder {
       builder
           .withMessage(String.format(FIELD_VALIDATION_ERROR_ERR_MSG, fieldName, detailedMessage));
     }
-  }
-
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
   }
 
 }

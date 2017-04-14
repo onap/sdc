@@ -20,19 +20,18 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 
 /**
  * The type Tosca invalid substitution service template error builder.
  */
-public class ToscaInvalidSubstitutionServiceTemplateErrorBuilder {
+public class ToscaInvalidSubstitutionServiceTemplateErrorBuilder extends BaseErrorBuilder {
 
   private static final String INVALID_SUBSTITUTION_SERVICE_TEMPLATE_MSG =
       "Invalid Substitution Service Template %s, missing mandatory file 'Node type' "
           + "in substitution mapping.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca invalid substitution service template error builder.
@@ -46,12 +45,4 @@ public class ToscaInvalidSubstitutionServiceTemplateErrorBuilder {
         String.format(INVALID_SUBSTITUTION_SERVICE_TEMPLATE_MSG, serviceTemplateFileName));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }

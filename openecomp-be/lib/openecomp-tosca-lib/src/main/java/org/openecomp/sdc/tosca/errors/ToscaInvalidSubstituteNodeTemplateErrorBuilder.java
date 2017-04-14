@@ -20,18 +20,17 @@
 
 package org.openecomp.sdc.tosca.errors;
 
+import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-import org.openecomp.sdc.common.errors.ErrorCode;
 
 
 /**
  * The type Tosca invalid substitute node template error builder.
  */
-public class ToscaInvalidSubstituteNodeTemplateErrorBuilder {
+public class ToscaInvalidSubstituteNodeTemplateErrorBuilder extends BaseErrorBuilder {
   private static final String INVALID_SUBSTITUTE_NODE_TEMPLATE_MSG =
       "Invalid substitute node template, directives with substitutable value must be defined. "
           + "node template id %s";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
    * Instantiates a new Tosca invalid substitute node template error builder.
@@ -44,12 +43,4 @@ public class ToscaInvalidSubstituteNodeTemplateErrorBuilder {
     builder.withMessage(String.format(INVALID_SUBSTITUTE_NODE_TEMPLATE_MSG, nodeTemplateId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
-  public ErrorCode build() {
-    return builder.build();
-  }
 }
