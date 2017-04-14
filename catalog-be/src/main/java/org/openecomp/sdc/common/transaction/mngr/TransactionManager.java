@@ -20,20 +20,22 @@
 
 package org.openecomp.sdc.common.transaction.mngr;
 
-import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Resource;
 
 import org.openecomp.sdc.be.dao.impl.ESCatalogDAO;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.common.datastructure.CapList;
 import org.openecomp.sdc.common.transaction.api.ITransactionSdnc;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils;
 import org.openecomp.sdc.common.transaction.api.TransactionUtils.ActionTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Queues;
 
 @Component("transactionManager")
 public class TransactionManager {
@@ -42,7 +44,7 @@ public class TransactionManager {
 
 	private AtomicInteger transactionIDCounter = new AtomicInteger(0);
 
-	private List<ITransactionSdnc> transactions;
+	private Queue<ITransactionSdnc> transactions;
 	@Resource
 	private ESCatalogDAO esCatalogDao;
 	@Resource
@@ -91,7 +93,10 @@ public class TransactionManager {
 	private synchronized void init() {
 		if (transactions == null) {
 			log.info("TransactionManager Initialized");
-			transactions = new CapList<>(TransactionUtils.MAX_SIZE_TRANSACTION_LIST);
+			EvictingQueue<ITransactionSdnc> queue = EvictingQueue
+					.<ITransactionSdnc>create(TransactionUtils.MAX_SIZE_TRANSACTION_LIST);
+			// make thread-safe
+			transactions = Queues.synchronizedQueue(queue);
 		}
 	}
 
