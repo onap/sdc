@@ -20,14 +20,16 @@
 
 package org.openecomp.core.utilities.file;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.logging.types.LoggerConstants;
 import org.openecomp.sdc.logging.types.LoggerErrorDescription;
 import org.slf4j.MDC;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -179,48 +181,15 @@ public class FileUtils {
    * @return the byte [ ]
    */
   public static byte[] toByteArray(InputStream input) {
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    if (input == null) {
+      return new byte[0];
+    }
     try {
-      copy(input, output);
+      return IOUtils.toByteArray(input);
     } catch (IOException exception) {
       throw new RuntimeException(
           "error will convertion input stream to byte array:" + exception.getMessage());
     }
-    return output.toByteArray();
-  }
-
-  /**
-   * Copy int.
-   *
-   * @param input  the input
-   * @param output the output
-   * @return the int
-   * @throws IOException the io exception
-   */
-  public static int copy(InputStream input, OutputStream output) throws IOException {
-    long count = copyLarge(input, output);
-    return count > 2147483647L ? -1 : (int) count;
-  }
-
-  private static long copyLarge(InputStream input, OutputStream output) throws IOException {
-    return copyLarge(input, output, new byte[4096]);
-  }
-
-  private static long copyLarge(InputStream input, OutputStream output, byte[] buffer)
-      throws IOException {
-    long count = 0L;
-
-    int n1;
-    if (input == null) {
-      return count;
-    }
-    for (; -1 != (n1 = input.read(buffer)); count += (long) n1) {
-      output.write(buffer, 0, n1);
-    }
-
-    return count;
-
-
   }
 
   /**
