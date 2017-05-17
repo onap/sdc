@@ -148,6 +148,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -162,6 +163,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -176,6 +178,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -190,6 +193,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -204,6 +208,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -218,6 +223,7 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
+											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
