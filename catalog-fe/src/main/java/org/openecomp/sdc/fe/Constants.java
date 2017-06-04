@@ -11,5 +11,7 @@ public class Constants {
 	public static String HTTP_CSP_EMAIL = "HTTP_CSP_EMAIL";
 	
 	public static final String WEBSEAL_USER_ID_HEADER = "csp-attuid";
+
+
 	
 }
