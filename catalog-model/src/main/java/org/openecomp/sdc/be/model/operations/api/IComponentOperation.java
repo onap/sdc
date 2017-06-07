@@ -28,23 +28,23 @@ import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
 
 import fj.data.Either;
 
 public interface IComponentOperation {
 	public <T extends Component> Either<T, StorageOperationStatus> getComponent(String id, Class<T> clazz);
 
-	public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId,
-			NodeTypeEnum parentType, boolean inTransacton);
+	public Either<List<ArtifactDefinition>, StorageOperationStatus> getComponentArtifactsForDelete(String parentId, NodeTypeEnum parentType, boolean inTransacton);
 
 	public <T> Either<T, StorageOperationStatus> getLightComponent(String id, boolean inTransaction);
 
 	public <T> Either<T, StorageOperationStatus> getComponent(String id, boolean inTransaction);
+	
+	public <T> Either<T, StorageOperationStatus> getComponent(String id, ComponentParametersView componentParametersView, boolean inTransaction);
 
-	public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters,
-			boolean inTranscation);
+	public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, boolean inTranscation);
 
-	public <T extends GraphNode> Either<T, StorageOperationStatus> getComponentByLabelAndId(String uniqueId,
-			NodeTypeEnum nodeType, Class<T> clazz);
+	public <T extends GraphNode> Either<T, StorageOperationStatus> getComponentByLabelAndId(String uniqueId, NodeTypeEnum nodeType, Class<T> clazz);
 
 }

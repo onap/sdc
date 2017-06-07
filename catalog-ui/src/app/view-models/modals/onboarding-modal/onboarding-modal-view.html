@@ -1,0 +1,144 @@
+<sdc-modal modal="modalOnboarding" class="w-sdc-modal-onboarding w-sdc-classic-top-line-modal" buttons="footerButtons" header="Import VF" show-close-button="true">
+    <info-tooltip class="general-info-button" info-message-translate="ON_BOARDING_GENERAL_INFO "></info-tooltip>
+    <div class="title-wrapper">
+        <div>
+            <p class="sub-title">Select one of the software product component below:</p>
+        </div>
+
+        <div class="top-search">
+            <input type="text"
+                   class="search-text"
+                   placeholder="Search"
+                   data-ng-model="searchBind"
+                   data-tests-id="onboarding-search"
+                   ng-model-options="{ debounce: 500 }" />
+            <span class="w-sdc-search-icon magnification"></span>
+        </div>
+    </div>
+
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+
+            <!-- Table headers -->
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)" data-tests-id="{{header.title}}">{{header.title}}
+                    <span data-ng-show="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+            </div>
+
+            <!-- Table body -->
+            <div class="body">
+                <perfect-scrollbar suppress-scroll-x="true" scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container" id="onboarding-modal-scrollbar-container">
+
+                    <!-- In case the component list is empty -->
+                    <div data-ng-if="!componentsList || componentsList.length===0" class="no-row-text">
+                        There are no software product component to display
+                    </div>
+
+                    <div infinite-scroll-disabled='allItemsDisplayed'  infinite-scroll="increaseNumItemsToDisplay()" infinite-scroll-container="'#onboarding-modal-scrollbar-container'">
+
+                    <!-- Loop on components list -->
+                    <div data-ng-repeat-start="component in componentsList | filter: searchBind | orderBy:sortBy:reverse | limitTo:numberOfItemsToDisplay track by $index"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': component === selectedComponent}"
+                         data-ng-click="doSelectComponent(component);"
+                         data-tests-id="csar-row"
+                         >
+
+                        <!-- Name -->
+                        <div class="table-col-general flex-item"  sdc-smart-tooltip>
+                            <span class="sprite table-arrow" data-ng-class="{'opened': component === selectedComponent}" data-tests-id="{{component.name}}"></span>
+                            {{component.name}}
+                        </div>
+
+                        <!-- Vendor -->
+                        <div class="table-col-general flex-item" data-tests-id="{{component.vendorName}}" sdc-smart-tooltip>
+                            {{component.vendorName}}
+                        </div>
+
+                        <!-- Category -->
+                        <div class="table-col-general flex-item"  sdc-smart-tooltip>
+                            {{component.categories[0].name}}&nbsp;{{component.categories[0].subcategories[0].name}}
+                        </div>
+
+                        <!-- Version -->
+                        <div class="table-col-general flex-item"  sdc-smart-tooltip>
+                            {{component.csarVersion}}
+                        </div>
+
+                        <!-- Import And Update -->
+                        <div class="table-col-general flex-item"  sdc-smart-tooltip></div>
+
+                    </div>
+
+                    <div data-ng-repeat-end="" data-ng-if="component===selectedComponent" class="item-opened">
+
+                        <div class="item-opened-description">
+                            <div class="item-opened-description-title">VSP Description:</div>
+                            {{component.description}}
+                        </div>
+
+                        <div class="item-opened-metadata1">
+                            <div data-ng-if="isCsarComponentExists===true">
+                                <div class="item-opened-metadata-title">VF'S Meta Data:</div>
+                                <div><span class="th">Name:</span> {{componentFromServer.name}}</div>
+                                <div><span class="th">Lifecycle:</span> {{componentFromServer.lifecycleState}}</div>
+                                <div><span class="th">Creator:</span> {{componentFromServer.creatorFullName}}</div>
+                            </div>
+                        </div>
+
+                        <div class="item-opened-metadata2">
+                            <div data-ng-if="isCsarComponentExists===true">
+                                <div class="item-opened-metadata-title">&nbsp;</div>
+                                <div><span class="th">UUID:</span> {{componentFromServer.uuid}}</div>
+                                <div><span class="th">Version:</span> {{componentFromServer.version}}</div>
+                                <div><span class="th">Modifier:</span> {{componentFromServer.lastUpdaterFullName}}</div>
+                                <div data-ng-if="componentFromServer.lifecycleState==='NOT_CERTIFIED_CHECKOUT' && componentFromServer.lastUpdaterUserId !== user.userId">
+                                    <span class="note">Designers cannot update a VSP if the VF is checked out by another user.</span>
+                                </div>
+                                <div data-ng-if="componentFromServer.lifecycleState==='READY_FOR_CERTIFICATION'">
+                                    <span class="note">Designers cannot update a VSP if the VF is in Ready for testing state.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item-opened-metadata3">
+                            <info-tooltip class="info-button" info-message-translate="{{isCsarComponentExists?'ON_BOARDING_UPDATE_INFO':'ON_BOARDING_IMPORT_INFO'}}" direction="left"></info-tooltip>
+                        </div>
+
+                        <div class="item-opened-icon">
+                            <span data-ng-if="isCsarComponentExists!==true"
+                                 class="sprite-new import-file-btn"
+                                 data-ng-click="doImportCsar()"
+                                 uib-tooltip="Import VSP"
+                                 tooltip-class="uib-custom-tooltip"
+                                 tooltip-placement="bottom"
+                                 data-tests-id="import-csar"></span>
+
+                            <span data-ng-if="isCsarComponentExists===true"
+                                 class="sprite-new refresh-file-btn"
+                                 uib-tooltip="Update VSP"
+                                 tooltip-class="uib-custom-tooltip"
+                                 tooltip-placement="bottom"
+                                 data-ng-class="{'disabled': (componentFromServer.lifecycleState==='NOT_CERTIFIED_CHECKOUT' && componentFromServer.lastUpdaterUserId!==user.userId) || componentFromServer.lifecycleState==='READY_FOR_CERTIFICATION'}"
+                                 data-ng-click="doUpdateCsar()"
+                                 data-tests-id="update-csar"></span>
+
+                            <span data-ng-click="downloadCsar(component.packageId)"
+                                 class="sprite-new download-file-btn hand"
+                                 uib-tooltip="Download VSP"
+                                 tooltip-class="uib-custom-tooltip"
+                                 tooltip-placement="bottom"
+                                 data-tests-id="download-csar"></span>
+                        </div>
+                        <loader data-display="isLoading" relative="true" size="small"></loader>
+                    </div>
+                    </div>
+
+                </perfect-scrollbar>
+            </div><!-- End table body -->
+        </div><!-- End table -->
+    </div><!-- End table-container-flex -->
+    <div class="w-sdc-modal-footer classic"></div>
+
+</sdc-modal>

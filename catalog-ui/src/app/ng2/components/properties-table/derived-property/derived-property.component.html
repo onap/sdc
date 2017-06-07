@@ -1,0 +1,24 @@
+<!-- TODO: refactor this to be dynamic -->
+<div class="derived-property-row" *ngIf="propertyObj.isDeclared || propertyObj.derivedDataType == derivedPropertyTypes.SIMPLE">
+    <div class="table-cell" [ngClass]="{'iltered':propertyObj.name === propertyNameSearchText}"><checkbox [label]="propertyObj.name" [(checked)]="propertyObj.isSelected" [disabled]="propertyObj.isDisabled ||propertyObj.isDeclared" (checkedChange)="checkedChange($event)"></checkbox></div>
+
+    <div class="table-cell simple">
+        <input type="text" [(ngModel)]="propertyObj.value" [disabled]="propertyObj.isDisabled || propertyObj.isDeclared" (change)="valueChanged.emit()" />
+    </div>
+</div>
+<div class="derived-property-row" *ngIf="!propertyObj.isDeclared && propertyObj.derivedDataType == derivedPropertyTypes.COMPLEX">
+    <div class="table-cell" [ngClass]="{'filtered':propertyObj.name === propertyNameSearchText}"><checkbox [label]="propertyObj.name" [(checked)]="propertyObj.isSelected" [disabled]="propertyObj.isDisabled ||propertyObj.isDeclared" (checkedChange)="checkedChange($event)"></checkbox></div>
+    <div class="table-cell complex">
+        <span class="datatype-text">{{propertyObj.type | contentAfterLastDot }}</span>
+        <span (click)="expandChildById(propertyObj.propertiesName)" class="expand-icon" [class.expanded]="expanded">V</span>
+    </div>
+</div>
+<div class="derived-property-row" *ngIf="!propertyObj.isDeclared && propertyObj.derivedDataType == derivedPropertyTypes.SIMPLELIST ||propertyObj.derivedDataType == derivedPropertyTypes.SIMPLEMAP">
+    <div class="table-cell">
+        <span [ngClass]="{'filtered':propertyObj.name === propertyNameSearchText}">{{propertyObj.name}}</span>
+    </div>
+    <div class="table-cell simple2">
+        <div class="sprite-new add-item-icon" (click)="addRows(propertyObj)"></div>
+    </div>
+</div>
+

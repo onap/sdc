@@ -1,0 +1,53 @@
+{
+  "project": {
+    "name": "SDC APP",
+    "ejected": true
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "dist",
+      "assets": [
+        "assets/styles/fonts",
+        "assets/styles/images",
+        "assets/styles/app.css"
+      ],
+      "index": "index.html",
+      "main": "main.ts",
+      "polyfills": "polyfills.ts",
+      "tsconfig": "tsconfig.json",
+      "testTsconfig": "tsconfig.json",
+      "prefix": "app",
+      "styles": [
+        "styles.css"
+      ],
+      "scripts": [
+        "../node_modules/angular/angular.min.js",
+        "../node_modules/angular-ui-router/release/angular-ui-router.min.js",
+        "../node_modules/restangular/dist/restangular.min.js",
+        "../node_modules/angular-filter/dist/angular-filter.min.js",
+        "../node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js",
+        "../node_modules/angular-bootstrap/ui-bootstrap.min.js",
+        "../node_modules/angular-resource/angular-resource.min.js",
+        "../node_modules/angular-base64/angular-base64.min.js",
+        "../node_modules/angular-uuid4/angular-uuid4.min.js"
+      ],
+      "environmentSource": "environments/environment.ts",
+      "environments": {
+        "dev": "environments/environment.ts",
+        "prod": "environments/environment.prod.ts"
+      }
+    }
+  ],
+  "defaults": {
+    "styleExt": "css",
+    "class": {
+      "spec": false
+    },
+    "component": {
+      "spec": true,
+      "inlineStyle": false,
+      "inlineTemplate": false
+    }
+  }
+}

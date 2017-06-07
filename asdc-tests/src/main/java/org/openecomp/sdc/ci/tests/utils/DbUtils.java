@@ -29,15 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
-import org.openecomp.sdc.ci.tests.api.Urls;
-import org.openecomp.sdc.ci.tests.config.Config;
-import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
-import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
-import org.openecomp.sdc.ci.tests.users.UserAuditJavaObject;
-import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -51,27 +43,26 @@ import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.ElementHelper;
+import org.openecomp.sdc.ci.tests.api.Urls;
+import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
+import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.users.UserAuditJavaObject;
+import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
+
 public class DbUtils {
 
 	private static String titanConfigFilePath;
 	private static TitanGraph titanGraph;
 
 	public static void cleanAllAudits() throws IOException {
-		// utils.deleteFromEsDbByPattern("_all");
-		// deleteFromEsDbByPattern("auditingevents-*");
 		CassandraUtils.truncateAllTables("sdcaudit");
-
-		// List <EsIndexTypeIdToDelete> auditIdArray = new
-		// ArrayList<EsIndexTypeIdToDelete>();
-		// auditIdArray = buildObjectArrayListByTypesIndex("auditingevents*",
-		// "useraccessevent");
-		//
-		// logger.info("Starting to delete all service topologies from ES");
-		// for (int i = 0; i < auditIdArray.size(); i ++){
-		// EsIndexTypeIdToDelete esIndexTypeIdToDelete = auditIdArray.get(i);
-		// utils.deleteFromEsDbByPattern(esIndexTypeIdToDelete.getIndex()+"/"+esIndexTypeIdToDelete.getType()+"/"+esIndexTypeIdToDelete.getId());
-		//
-		// }
 	}
 
 	public static RestResponse deleteFromEsDbByPattern(String patternToDelete) throws IOException {
@@ -81,8 +72,6 @@ public class DbUtils {
 		HttpRequest httpRequest = new HttpRequest();
 		RestResponse restResponse = httpRequest.httpSendDelete(url, null);
 		restResponse.getErrorCode();
-		// System.out.println("URL to delete" + url);
-		// System.out.println("response code" + restResponse.getErrorCode());
 		cleanAllAudits();
 
 		return restResponse;
@@ -94,9 +83,7 @@ public class DbUtils {
 		HttpRequest httpRequest = new HttpRequest();
 		RestResponse restResponse = httpRequest.httpSendGet(url, null);
 		restResponse.getErrorCode();
-		// System.out.println("URL to get" + url);
-		// System.out.println("response code" + restResponse.getErrorCode());
-
+		
 		return restResponse;
 	}
 
@@ -137,7 +124,6 @@ public class DbUtils {
 
 	}
 
-	//
 	private static TitanGraph getTitanGraph() {
 		if (titanGraph == null) {
 			titanGraph = TitanFactory.open(titanConfigFilePath);
@@ -288,8 +274,7 @@ public class DbUtils {
 		JsonObject jSourceObject = (JsonObject) jHitObject.get("_source");
 
 		auditParsedResp = gson.fromJson(jSourceObject, UserAuditJavaObject.class);
-		// logger.debug("auditParsedResp: {}", auditParsedResp);
-
+		
 		return auditParsedResp;
 
 	}

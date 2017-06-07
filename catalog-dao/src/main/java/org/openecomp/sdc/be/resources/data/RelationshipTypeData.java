@@ -27,21 +27,21 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.datatypes.elements.RelationshipTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import com.google.gson.reflect.TypeToken;
 
 public class RelationshipTypeData extends GraphNode {
 
-	RelationshipTypeDataDefinition relationshipTypeDataDefinition;
+	RelationshipInstDataDefinition relationshipTypeDataDefinition;
 
 	public RelationshipTypeData() {
 		super(NodeTypeEnum.RelationshipType);
-		relationshipTypeDataDefinition = new RelationshipTypeDataDefinition();
+		relationshipTypeDataDefinition = new RelationshipInstDataDefinition();
 	}
 
-	public RelationshipTypeData(RelationshipTypeDataDefinition relationshipTypeDataDefinition) {
+	public RelationshipTypeData(RelationshipInstDataDefinition relationshipTypeDataDefinition) {
 		super(NodeTypeEnum.RelationshipType);
 		this.relationshipTypeDataDefinition = relationshipTypeDataDefinition;
 	}
@@ -107,11 +107,11 @@ public class RelationshipTypeData extends GraphNode {
 		return map;
 	}
 
-	public RelationshipTypeDataDefinition getRelationshipTypeDataDefinition() {
+	public RelationshipInstDataDefinition getRelationshipTypeDataDefinition() {
 		return relationshipTypeDataDefinition;
 	}
 
-	public void setRelationshipTypeDataDefinition(RelationshipTypeDataDefinition relationshipTypeDataDefinition) {
+	public void setRelationshipTypeDataDefinition(RelationshipInstDataDefinition relationshipTypeDataDefinition) {
 		this.relationshipTypeDataDefinition = relationshipTypeDataDefinition;
 	}
 

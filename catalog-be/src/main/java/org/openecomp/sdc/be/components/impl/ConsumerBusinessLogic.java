@@ -87,7 +87,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 		if (!lockResult.equals(StorageOperationStatus.OK)) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedLockObjectError, "createConsumer");
 			BeEcompErrorManager.getInstance().logBeFailedLockObjectError("createConsumer", NodeTypeEnum.ConsumerCredentials.getName(), consumerName);
-			log.debug("Failed to lock consumer {} error - {}", consumerName, lockResult);
+			log.debug("Failed to lock consumer: {} error - {}", consumerName, lockResult);
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
 
 			componentsUtils.auditConsumerCredentialsEvent(AuditingActionEnum.ADD_ECOMP_USER_CREDENTIALS, consumer, responseFormat, user);
@@ -123,7 +123,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 	private Either<User, ResponseFormat> validateUser(User user, ConsumerDefinition consumer, AuditingActionEnum auditAction) {
 
 		if (user.getUserId() == null || user.getUserId().trim().isEmpty()) {
-			log.debug("createEcompUser method - user is missing. userId={}", user.getUserId());
+			log.debug("createEcompUser method - user is missing. userId= {}", user.getUserId());
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION);
 			log.debug("audit before sending response");
 			componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);
@@ -132,7 +132,7 @@ public class ConsumerBusinessLogic extends BaseBusinessLogic {
 		log.debug("get user from DB");
 		Either<User, ActionStatus> eitherCreator = userAdmin.getUser(user.getUserId(), false);
 		if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
-			log.debug("createEcompUser method - user is not listed. userId={}", user.getUserId());
+			log.debug("createEcompUser method - user is not listed. userId= {}", user.getUserId());
 			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_ACCESS);
 			log.debug("audit before sending response");
 			componentsUtils.auditConsumerCredentialsEvent(auditAction, consumer, responseFormat, user);

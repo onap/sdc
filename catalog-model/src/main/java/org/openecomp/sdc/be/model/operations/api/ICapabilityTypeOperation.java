@@ -30,11 +30,9 @@ public interface ICapabilityTypeOperation {
 	 * @param capabilityTypeDefinition
 	 * @return
 	 */
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(
-			CapabilityTypeDefinition capabilityTypeDefinition);
+	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition);
 
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(
-			CapabilityTypeDefinition capabilityTypeDefinition, boolean inTransaction);
+	public Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType(CapabilityTypeDefinition capabilityTypeDefinition, boolean inTransaction);
 
 	/**
 	 * @param uniqueId
@@ -42,6 +40,5 @@ public interface ICapabilityTypeOperation {
 	 */
 	public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId);
 
-	public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId,
-			boolean inTransaction);
+	public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
 }

@@ -64,8 +64,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 		return getLatestPolicyTypeByType(policyTypeName, false);
 	}
 
-	private Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type,
-			boolean inTransaction) {
+	private Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type, boolean inTransaction) {
 		Map<String, Object> mapCriteria = new HashMap<>();
 		mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
 		mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
@@ -79,8 +78,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 	}
 
 	@Override
-	public Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyTypeDef,
-			boolean inTransaction) {
+	public Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyTypeDef, boolean inTransaction) {
 
 		Either<PolicyTypeDefinition, StorageOperationStatus> result = null;
 
@@ -89,10 +87,8 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 			Either<PolicyTypeData, TitanOperationStatus> eitherStatus = addPolicyTypeToGraph(policyTypeDef);
 
 			if (eitherStatus.isRight()) {
-				BeEcompErrorManager.getInstance().logBeFailedCreateNodeError(CREATE_FLOW_CONTEXT,
-						policyTypeDef.getType(), eitherStatus.right().value().name());
-				result = Either
-						.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+				BeEcompErrorManager.getInstance().logBeFailedCreateNodeError(CREATE_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
 
 			} else {
 				PolicyTypeData policyTypeData = eitherStatus.left().value();
@@ -101,8 +97,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 				Either<PolicyTypeDefinition, StorageOperationStatus> policyTypeRes = this.getPolicyType(uniqueId, true);
 
 				if (policyTypeRes.isRight()) {
-					BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError(GET_FLOW_CONTEXT,
-							policyTypeDef.getType(), eitherStatus.right().value().name());
+					BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError(GET_FLOW_CONTEXT, policyTypeDef.getType(), eitherStatus.right().value().name());
 				}
 
 				result = policyTypeRes;
@@ -126,20 +121,18 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 
 		log.debug("Before adding policy type to graph. policyTypeData = {}", policyTypeData);
 
-		Either<PolicyTypeData, TitanOperationStatus> eitherPolicyTypeData = titanGenericDao.createNode(policyTypeData,
-				PolicyTypeData.class);
+		Either<PolicyTypeData, TitanOperationStatus> eitherPolicyTypeData = titanGenericDao.createNode(policyTypeData, PolicyTypeData.class);
 		log.debug("After adding policy type to graph. status is = {}", eitherPolicyTypeData);
 
 		if (eitherPolicyTypeData.isRight()) {
 			TitanOperationStatus operationStatus = eitherPolicyTypeData.right().value();
-			log.error("Failed to add policy type {} to graph. Status is {}", policyTypeDef.getType(), operationStatus);
+			log.error("Failed to add policy type {} to graph. status is {}", policyTypeDef.getType(), operationStatus);
 			return Either.right(operationStatus);
 		}
 
 		PolicyTypeData resultCTD = eitherPolicyTypeData.left().value();
 		List<PropertyDefinition> properties = policyTypeDef.getProperties();
-		Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToPolicyType = propertyOperation
-				.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.PolicyType, properties);
+		Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToPolicyType = propertyOperation.addPropertiesToElementType(resultCTD.getUniqueId(), NodeTypeEnum.PolicyType, properties);
 		if (addPropertiesToPolicyType.isRight()) {
 			log.error("Failed add properties {} to policy {}", properties, policyTypeDef.getType());
 			return Either.right(addPropertiesToPolicyType.right().value());
@@ -148,8 +141,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 		return Either.left(eitherPolicyTypeData.left().value());
 	}
 
-	public Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByCriteria(String type,
-			Map<String, Object> properties, boolean inTransaction) {
+	public Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByCriteria(String type, Map<String, Object> properties, boolean inTransaction) {
 		Either<PolicyTypeDefinition, StorageOperationStatus> result = null;
 		try {
 			if (type == null || type.isEmpty()) {
@@ -158,14 +150,11 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 				return result;
 			}
 
-			Either<List<PolicyTypeData>, TitanOperationStatus> eitherPolicyData = titanGenericDao
-					.getByCriteria(NodeTypeEnum.PolicyType, properties, PolicyTypeData.class);
+			Either<List<PolicyTypeData>, TitanOperationStatus> eitherPolicyData = titanGenericDao.getByCriteria(NodeTypeEnum.PolicyType, properties, PolicyTypeData.class);
 			if (eitherPolicyData.isRight()) {
-				result = Either
-						.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherPolicyData.right().value()));
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherPolicyData.right().value()));
 			} else {
-				PolicyTypeDataDefinition dataDefinition = eitherPolicyData.left().value().stream()
-						.map(e -> e.getPolicyTypeDataDefinition()).findFirst().get();
+				PolicyTypeDataDefinition dataDefinition = eitherPolicyData.left().value().stream().map(e -> e.getPolicyTypeDataDefinition()).findFirst().get();
 				result = getPolicyType(dataDefinition.getUniqueId(), inTransaction);
 			}
 
@@ -178,8 +167,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 
 	@Override
 	public Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyType(String uniqueId, boolean inTransaction) {
-		Function<String, Either<PolicyTypeDefinition, TitanOperationStatus>> policyTypeGetter = uId -> getPolicyTypeByUid(
-				uId);
+		Function<String, Either<PolicyTypeDefinition, TitanOperationStatus>> policyTypeGetter = uId -> getPolicyTypeByUid(uId);
 		return getElementType(policyTypeGetter, uniqueId, inTransaction);
 
 	}
@@ -187,21 +175,18 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 	private Either<PolicyTypeDefinition, TitanOperationStatus> getPolicyTypeByUid(String uniqueId) {
 		Either<PolicyTypeDefinition, TitanOperationStatus> result = null;
 
-		Either<PolicyTypeData, TitanOperationStatus> eitherPolicyTypeData = titanGenericDao
-				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), uniqueId, PolicyTypeData.class);
+		Either<PolicyTypeData, TitanOperationStatus> eitherPolicyTypeData = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), uniqueId, PolicyTypeData.class);
 
 		if (eitherPolicyTypeData.isRight()) {
 			TitanOperationStatus status = eitherPolicyTypeData.right().value();
-			log.debug("Policy type {} cannot be found in graph. Status is {}", uniqueId, status);
+			log.debug("Policy type {} cannot be found in graph. status is {}", uniqueId, status);
 			return Either.right(status);
 		}
 
 		PolicyTypeData policyTypeData = eitherPolicyTypeData.left().value();
-		PolicyTypeDefinition policyTypeDefinition = new PolicyTypeDefinition(
-				policyTypeData.getPolicyTypeDataDefinition());
+		PolicyTypeDefinition policyTypeDefinition = new PolicyTypeDefinition(policyTypeData.getPolicyTypeDataDefinition());
 
-		TitanOperationStatus propertiesStatus = propertyOperation.fillProperties(uniqueId,
-				propList -> policyTypeDefinition.setProperties(propList));
+		TitanOperationStatus propertiesStatus = propertyOperation.fillProperties(uniqueId, propList -> policyTypeDefinition.setProperties(propList));
 		if (propertiesStatus != TitanOperationStatus.OK) {
 			log.error("Failed to fetch properties of policy type {}", uniqueId);
 			return Either.right(propertiesStatus);

@@ -1,0 +1,56 @@
+<div>
+    <div data-ng-repeat="i in getNumber(mapKeys.length) track by $index" class="map-item" data-ng-class="{'primitive-value-map':!isSchemaTypeDataType}">
+        <div class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapKey'+fieldsPrefixName+$index].$dirty && parentFormObj['mapKey'+fieldsPrefixName+$index].$invalid)}">
+            <label class="i-sdc-form-label required">Key</label>
+            <input class="i-sdc-form-input"
+                   data-tests-id="mapKey{{fieldsPrefixName}}{{$index}}"
+                   data-ng-model="mapKeys[$index]"
+                   type="text"
+                   data-ng-maxlength="50"
+                   maxlength="50"
+                   name="mapKey{{fieldsPrefixName}}{{$index}}"
+                   data-ng-model-options="{ debounce: 200 }"
+                   data-ng-change="changeKeyOfMap(mapKeys[$index], $index,'mapKey'+fieldsPrefixName+$index);$event.stopPropagation();"
+                   data-ng-disabled="readOnly"
+                   data-required
+                   autofocus/>
+        </div>
+        <div data-ng-if="!isSchemaTypeDataType" class="i-sdc-form-item map-item-field" data-ng-class="{error:(parentFormObj['mapValue'+fieldsPrefixName+$index].$dirty && parentFormObj['mapValue'+fieldsPrefixName+$index].$invalid)}">
+            <label class="i-sdc-form-label required">Value</label>
+            <input class="i-sdc-form-input"
+                   ng-if="!((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
+                   data-ng-disabled="readOnly"
+                   data-ng-model="valueObjRef[mapKeys[$index]]"
+                   type="text"
+                   name="mapValue{{fieldsPrefixName}}{{$index}}"
+                   data-tests-id="mapValue{{fieldsPrefixName}}{{$index}}"
+                   data-ng-change="!parentFormObj['mapValue'+fieldsPrefixName+$index].$error.pattern && parseToCorrectType(valueObjRef, key, (schemaProperty.simpleType||schemaProperty.type))"
+                   data-ng-model-options="{ debounce: 200 }"
+                   data-ng-maxlength="maxLength"
+                   maxlength="{{maxLength}}"
+                   data-required
+                   autofocus />
+            <select class="i-sdc-form-select"
+                    data-tests-id="mapValue{{fieldsPrefixName}}{{$index}}"
+                    ng-if="(schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    data-ng-disabled="readOnly"
+                    name="mapValue{{fieldsPrefixName}}{{$index}}"
+                    data-ng-model="valueObjRef[mapKeys[$index]]"
+                    data-required>
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+        </div>
+        <div data-ng-if="isSchemaTypeDataType" class="i-sdc-form-item map-item-field">
+            <label class="i-sdc-form-label">Value</label>
+            <select-fields-structure value-obj-ref="valueObjRef[mapKeys[$index]]"
+                              type-name="schemaProperty.type"
+                              parent-form-obj="parentFormObj"
+                              fields-prefix-name="'mapValue'+fieldsPrefixName+''+$index"
+                              read-only="readOnly">
+                                     <!--path="{{path + '#' + mapKeys[$index]}}"-->
+            </select-fields-structure>
+        </div>
+    </div>
+</div>
+

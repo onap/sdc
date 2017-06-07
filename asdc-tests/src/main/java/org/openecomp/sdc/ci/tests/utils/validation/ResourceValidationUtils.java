@@ -167,7 +167,7 @@ public class ResourceValidationUtils {
 				resourceRespJavaObject.getCreatorUserId());
 		validateField(map, RespJsonKeysEnum.CREATOR_FULL_NAME.getRespJsonKeyName(),
 				resourceRespJavaObject.getCreatorFullName());
-		validateField(map, RespJsonKeysEnum.LAST_UPDATER_ATT_UID.getRespJsonKeyName(),
+		validateField(map, RespJsonKeysEnum.LAST_UPDATER_USER_ID.getRespJsonKeyName(),
 				resourceRespJavaObject.getLastUpdaterUserId());
 		validateField(map, RespJsonKeysEnum.LAST_UPDATER_FULL_NAME.getRespJsonKeyName(),
 				resourceRespJavaObject.getLastUpdaterFullName());
@@ -220,6 +220,10 @@ public class ResourceValidationUtils {
 			assertTrue("expected " + expectedValue + " not equal to actual " + foundValue,
 					foundValue.equals(expectedValue));
 		}
+		/*
+		 * else if( expectedValue instanceof Number){ assertTrue(foundValue
+		 * instanceof Number); assertTrue(foundValue == expectedValue); }
+		 */
 		else if (expectedValue instanceof Boolean) {
 			assertTrue(foundValue instanceof Boolean);
 			assertTrue(foundValue == expectedValue);
@@ -270,7 +274,7 @@ public class ResourceValidationUtils {
 
 		if (interfaze != null) {
 			interfaces = resource.getInterfaces();
-			Map<String, Operation> operation = interfaces.get(interfaze).getOperations();
+			Map<String, Operation> operation = interfaces.get(interfaze).getOperationsMap();
 			// operation.get("configure").getUniqueId();
 		}
 
@@ -298,7 +302,7 @@ public class ResourceValidationUtils {
 				resourceRespJavaObject.getCreatorUserId());
 		validateField(map, RespJsonKeysEnum.CREATOR_FULL_NAME.getRespJsonKeyName(),
 				resourceRespJavaObject.getCreatorFullName());
-		validateField(map, RespJsonKeysEnum.LAST_UPDATER_ATT_UID.getRespJsonKeyName(),
+		validateField(map, RespJsonKeysEnum.LAST_UPDATER_USER_ID.getRespJsonKeyName(),
 				resourceRespJavaObject.getLastUpdaterUserId());
 		validateField(map, RespJsonKeysEnum.LAST_UPDATER_FULL_NAME.getRespJsonKeyName(),
 				resourceRespJavaObject.getLastUpdaterFullName());

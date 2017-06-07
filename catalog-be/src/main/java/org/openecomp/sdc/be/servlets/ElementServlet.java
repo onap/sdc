@@ -57,6 +57,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
@@ -126,6 +127,33 @@ public class ElementServlet extends BeGenericServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
+	
+	@GET
+	@Path("/categories")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Retrieve the all resource, service and product categories", httpMethod = "GET", notes = "Retrieve the all resource, service and product categories", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Returns categories Ok"), @ApiResponse(code = 403, message = "Missing information"),
+			@ApiResponse(code = 409, message = "Restricted operation"), @ApiResponse(code = 500, message = "Internal Server Error") })
+	public Response getAllCategories(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+		try {
+			ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
+			Either<UiCategories, ResponseFormat> either = elementBL.getAllCategories(userId);
+			if (either.isRight()) {
+				log.debug("No categories were found");
+				return buildErrorResponse(either.right().value());
+			} else {
+				return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), either.left().value());
+			}
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get All Categories");
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get All Categories");
+			log.debug("getAllCategories failed with exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+
 
 	@POST
 	@Path("/category/{componentType}")
@@ -388,7 +416,7 @@ public class ElementServlet extends BeGenericServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Returns artifactTypes Ok"), @ApiResponse(code = 404, message = "No artifactTypes were found"), @ApiResponse(code = 500, message = "Internal Server Error") })
 	public Response getArtifactTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("(getArtifactTypes) Start handle request of {}", url);
+		log.debug("(GET - getArtifactTypes) Start handle request of {}", url);
 
 		try {
 			ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
@@ -568,7 +596,7 @@ public class ElementServlet extends BeGenericServlet {
 
 		NodeTypeEnum nodeType = NodeTypeEnum.getByNameIgnoreCase(componentType);
 		if (nodeType == null) {
-			log.info("componentType is not valid: {}", componentType);
+			log.info("componentType is not valid: {]", componentType);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
 		}
 

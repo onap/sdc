@@ -41,9 +41,7 @@ public interface IPropertyOperation {
 	 * @param id
 	 * @return
 	 * 
-	 * 		public Either<PropertyDefinition, StorageOperationStatus>
-	 *         addPropertyToResource( String propertyName, PropertyDefinition
-	 *         propertyDefinition, NodeTypeEnum nodeType, String id);
+	 * 		public Either<PropertyDefinition, StorageOperationStatus> addPropertyToResource( String propertyName, PropertyDefinition propertyDefinition, NodeTypeEnum nodeType, String id);
 	 */
 
 	/**
@@ -55,8 +53,7 @@ public interface IPropertyOperation {
 	 *            - resource unique id
 	 * @return
 	 */
-	public Either<PropertyDefinition, StorageOperationStatus> getPropertyOfResource(String propertyName,
-			String resourceId);
+	public Either<PropertyDefinition, StorageOperationStatus> getPropertyOfResource(String propertyName, String resourceId);
 
 	/**
 	 * Delete all properties of resource
@@ -65,16 +62,13 @@ public interface IPropertyOperation {
 	 * @param uniqueId
 	 * @return
 	 */
-	public Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllPropertiesAssociatedToNode(
-			NodeTypeEnum nodeType, String uniqueId);
+	public Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllPropertiesAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
 
-	public boolean isPropertyDefaultValueValid(IComplexDefaultValue propertyDefinition,
-			Map<String, DataTypeDefinition> dataTypes);
+	public boolean isPropertyDefaultValueValid(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 
 	public boolean isPropertyTypeValid(IComplexDefaultValue propertyDefinition);
 
-	public ImmutablePair<String, Boolean> isPropertyInnerTypeValid(IComplexDefaultValue propertyDefinition,
-			Map<String, DataTypeDefinition> dataTypes);
+	public ImmutablePair<String, Boolean> isPropertyInnerTypeValid(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 
 	/**
 	 * @param dataTypeDefinition
@@ -82,8 +76,7 @@ public interface IPropertyOperation {
 	 */
 	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition,
-			boolean inTransaction);
+	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction);
 
 	/**
 	 * @param name
@@ -93,18 +86,14 @@ public interface IPropertyOperation {
 
 	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, boolean inTransaction);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name,
-			boolean inTransaction);
+	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name, boolean inTransaction);
 
 	public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name);
 
-	public StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition,
-			Map<String, DataTypeDefinition> dataTypes);
+	public StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition,
-			DataTypeDefinition oldDataTypeDefinition, boolean inTransaction);
+	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition, boolean inTransaction);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition,
-			DataTypeDefinition oldDataTypeDefinition);
+	public Either<DataTypeDefinition, StorageOperationStatus> updateDataType(DataTypeDefinition newDataTypeDefinition, DataTypeDefinition oldDataTypeDefinition);
 
 }

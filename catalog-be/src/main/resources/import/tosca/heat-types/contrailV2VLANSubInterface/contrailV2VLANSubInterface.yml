@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface:
+    derived_from: org.openecomp.resource.cp.nodes.network.SubInterface
+    properties:
+      virtual_machine_interface_refs:
+        description: List of virtual machine interface.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      name:
+        description: Virtual Machine Sub Interface VLAN name
+        type: string
+        status: SUPPORTED
+        required: false
+      virtual_network_refs:
+        description: List of virtual networks.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_machine_interface_properties:
+        description: virtual machine interface properties.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.Properties
+        status: SUPPORTED
+        required: false
+      virtual_machine_interface_allowed_address_pairs:
+        description: Virtual Machine Sub Interface allowed address pairs.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        status: SUPPORTED
+        required: false
+      virtual_machine_interface_mac_addresses:
+        description: List of mac addresses.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress
+        status: SUPPORTED
+        required: false
+      security_group_refs:
+        description: List of security groups.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      port_tuple_refs:
+        description: List of port tuples.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+    attributes:
+      fq_name:
+        description: The FQ name of the Virtual Network.
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes.
+        type: string
+        status: SUPPORTED
+    requirements:
+    - binding:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1

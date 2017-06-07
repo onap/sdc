@@ -21,7 +21,9 @@
 package org.openecomp.sdc.be.model.tosca.converters;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -33,6 +35,7 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -63,6 +66,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 			ToscaPropertyType innerToscaType = ToscaPropertyType.isValidType(innerType);
 			ToscaValueConverter innerConverter = null;
 			boolean isScalar = true;
+			List<PropertyDefinition> allPropertiesRecursive = new ArrayList<>();
 			if (innerToscaType != null) {
 				innerConverter = innerToscaType.getValueConverter();
 			} else {
@@ -74,9 +78,14 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 						innerConverter = toscaPropertyType.getValueConverter();
 					} else {
 						isScalar = false;
+						allPropertiesRecursive.addAll(dataTypeDefinition.getProperties());
+						DataTypeDefinition derivedFrom = dataTypeDefinition.getDerivedFrom();
+						while ( !derivedFrom.getName().equals("tosca.datatypes.Root") ){
+							allPropertiesRecursive.addAll(derivedFrom.getProperties());
+							derivedFrom = derivedFrom.getDerivedFrom();
+						}
 					}
 				} else {
-					// TODO handle getinput
 					log.debug("inner Tosca Type is null");
 					return value;
 				}
@@ -105,21 +114,47 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 			final boolean isScalarF = isScalar;
 			final ToscaValueConverter innerConverterFinal = innerConverter;
 			entrySet.forEach(e -> {
-				log.debug("try convert element {}", e.getValue());
-				Object convertedValue = convertDataTypeToToscaMap(innerType, dataTypes, innerConverterFinal, isScalarF,
-						e.getValue());
-				toscaMap.put(e.getKey(), convertedValue);
+				convertEntry(innerType, dataTypes, allPropertiesRecursive, toscaMap, isScalarF, innerConverterFinal, e);
 			});
 			return toscaMap;
 		} catch (JsonParseException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
 			return null;
 		}
 	}
 
-	public Object convertDataTypeToToscaMap(String innerType, Map<String, DataTypeDefinition> dataTypes,
-			ToscaValueConverter innerConverter, final boolean isScalarF, JsonElement entryValue) {
+	private void convertEntry(String innerType, Map<String, DataTypeDefinition> dataTypes, List<PropertyDefinition> allPropertiesRecursive, Map<String, Object> toscaMap, final boolean isScalarF, final ToscaValueConverter innerConverterFinal,
+			Entry<String, JsonElement> e) {
+		log.debug("try convert element {}", e.getValue());
+		boolean scalar = false;
+		String propType = null; 
+		ToscaValueConverter innerConverterProp = innerConverterFinal;
+		if ( isScalarF ){
+			scalar = isScalarF;
+			propType = innerType;
+		}else{
+			for ( PropertyDefinition pd : allPropertiesRecursive ){
+				if ( pd.getName().equals(e.getKey()) ){
+					propType = pd.getType();
+					DataTypeDefinition pdDataType = dataTypes.get(propType);
+					ToscaPropertyType toscaPropType = isScalarType(pdDataType);
+					if ( toscaPropType == null ){
+						scalar = false;
+					}else{
+						scalar = true;
+						propType = toscaPropType.getType();
+						innerConverterProp = toscaPropType.getValueConverter();
+					}
+					break;
+				}
+			}
+		}
+		Object convertedValue = convertDataTypeToToscaObject(propType, dataTypes, innerConverterProp, scalar, e.getValue());
+		toscaMap.put(e.getKey(), convertedValue);
+	}
+
+	public Object convertDataTypeToToscaObject(String innerType, Map<String, DataTypeDefinition> dataTypes, ToscaValueConverter innerConverter, final boolean isScalarF, JsonElement entryValue) {
 		Object convertedValue = null;
 		if (isScalarF && entryValue.isJsonPrimitive()) {
 			log.debug("try convert scalar value {}", entryValue.getAsString());
@@ -129,25 +164,52 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 				convertedValue = innerConverter.convertToToscaValue(entryValue.getAsString(), innerType, dataTypes);
 			}
 		} else {
-			JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
-			Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
+			if ( entryValue.isJsonPrimitive() ){
+				return handleComplexJsonValue(entryValue);
+			}
+			
+			// Tal G ticket 228696523 created   / DE272734 / Bug 154492 Fix
+			if(entryValue instanceof JsonArray) {
+				ArrayList<Object> toscaObjectPresentationArray = new ArrayList<>();
+				JsonArray jsonArray = entryValue.getAsJsonArray();
+				
+				for (JsonElement jsonElement : jsonArray) {
+					Object convertedDataTypeToToscaMap = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, jsonElement);
+					toscaObjectPresentationArray.add(convertedDataTypeToToscaMap);
+				}
+				convertedValue = toscaObjectPresentationArray;
+			} else {
+				convertedValue = convertDataTypeToToscaMap(innerType, dataTypes, isScalarF, entryValue);				
+			}
+		}
+		return convertedValue;
+	}
 
-			DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
-			Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
-			Map<String, Object> toscaObjectPresentation = new HashMap<>();
+	private Object convertDataTypeToToscaMap(String innerType, Map<String, DataTypeDefinition> dataTypes,
+			final boolean isScalarF, JsonElement entryValue) {
+		Object convertedValue;
+		JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
+		Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
 
-			for (Entry<String, JsonElement> entry : entrySetIn) {
-				String propName = entry.getKey();
+		DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
+		Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
+		Map<String, Object> toscaObjectPresentation = new HashMap<>();
 
-				JsonElement elementValue = entry.getValue();
-				Object convValue;
-				if (isScalarF == false) {
-					PropertyDefinition propertyDefinition = allProperties.get(propName);
-					if (propertyDefinition == null && isScalarF) {
-						log.debug("The property {} was not found under data type {}", propName, dataTypeDefinition.getName());
-						continue;
+		for (Entry<String, JsonElement> entry : entrySetIn) {
+			String propName = entry.getKey();
+
+			JsonElement elementValue = entry.getValue();
+			Object convValue;
+			if (isScalarF == false) {
+				PropertyDefinition propertyDefinition = allProperties.get(propName);
+				if (propertyDefinition == null) {
+					log.trace("The property {} was not found under data type . Parse as map", propName);
+					if (elementValue.isJsonPrimitive()) {
+						convValue = elementValue.getAsString();
+					} else {
+						convValue = handleComplexJsonValue(elementValue);
 					}
-
+				} else {
 					String type = propertyDefinition.getType();
 					ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
 					if (propertyType != null) {
@@ -165,19 +227,21 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 							}
 						}
 					} else {
-						convValue = convertToToscaValue(elementValue.getAsString(), type, dataTypes);
-					}
-				} else {
-					if (elementValue.isJsonPrimitive()) {
-						convValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
-					} else {
-						convValue = handleComplexJsonValue(elementValue);
+						convValue = convertToToscaValue(elementValue.toString(), type, dataTypes);
 					}
 				}
+			} else {
+				if (elementValue.isJsonPrimitive()) {
+					convValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
+				} else {
+					convValue = handleComplexJsonValue(elementValue);
+				}
+			}
+			if(!isEmptyObjectValue(convValue)){
 				toscaObjectPresentation.put(propName, convValue);
 			}
-			convertedValue = toscaObjectPresentation;
 		}
+		convertedValue = toscaObjectPresentation;
 		return convertedValue;
 	}
 

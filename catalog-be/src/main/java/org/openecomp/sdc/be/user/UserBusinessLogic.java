@@ -90,7 +90,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		Either<User, ActionStatus> eitherCreator = getUser(modifierUserId, false);
 		if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
-			log.debug("createUser method - user is not listed. userId={}", modifier.getUserId());
+			log.debug("createUser method - user is not listed. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 			return Either.right(responseFormat);
@@ -98,7 +98,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		modifier = eitherCreator.left().value();
 		if (!modifier.getRole().equals(UserRoleEnum.ADMIN.getName())) {
-			log.debug("createUser method - user is not admin={}", modifier.getUserId());
+			log.debug("createUser method - user is not admin = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 			return Either.right(responseFormat);
@@ -120,7 +120,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			// isUserAlreadyExist = true;
 			if (userFromDb.getStatus() == UserStatusEnum.ACTIVE) {
 				responseFormat = componentsUtils.getResponseFormatByUserId(ActionStatus.USER_ALREADY_EXIST, newUser.getUserId());
-				log.debug("createUser method - user already exist with id: {}", modifier.getUserId(), userFromDb.getUserId());
+				log.debug("createUser method - user with id {} already exist with id: {}", modifier.getUserId(), userFromDb.getUserId());
 				handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 				return Either.right(responseFormat);
 			}
@@ -130,7 +130,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		// validate Email
 		if (newUser.getEmail() != null && !userAdminValidator.validateEmail(newUser.getEmail())) {
-			log.debug("createUser method - user has invalid email={}", modifier.getUserId());
+			log.debug("createUser method - user has invalid email = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_EMAIL_ADDRESS, newUser.getEmail());
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 			return Either.right(responseFormat);
@@ -141,7 +141,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			newUser.setRole(Role.DESIGNER.name());
 		} else {
 			if (!userAdminValidator.validateRole(newUser.getRole())) {
-				log.debug("createUser method - user has invalid role={}", modifier.getUserId());
+				log.debug("createUser method - user has invalid role = {}", modifier.getUserId());
 				responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_ROLE, newUser.getRole());
 				handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 				return Either.right(responseFormat);
@@ -168,8 +168,9 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			addOrUpdateUserReq = userAdminOperation.updateUserData(newUser);
 
 		} else { // user not exist - create new user
+
 			if (newUser.getUserId() != null && !userAdminValidator.validateUserId(newUser.getUserId())) {
-				log.debug("createUser method - user has invalid userId={}", modifier.getUserId());
+				log.debug("createUser method - user has invalid userId = {}", modifier.getUserId());
 				responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_USER_ID, newUser.getUserId());
 				handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.ADD_USER);
 				return Either.right(responseFormat);
@@ -204,7 +205,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		Either<User, ActionStatus> eitherCreator = getUser(modifierUserId, false);
 		if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
-			log.debug("updateUserRole method - user is not listed. userId={}", modifier.getUserId());
+			log.debug("updateUserRole method - user is not listed. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.UPDATE_USER);
 			return Either.right(responseFormat);
@@ -212,14 +213,14 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		modifier = eitherCreator.left().value();
 		if (!modifier.getRole().equals(UserRoleEnum.ADMIN.getName())) {
-			log.debug("updateUserRole method - user is not admin. userId={}", modifier.getUserId());
+			log.debug("updateUserRole method - user is not admin. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.UPDATE_USER);
 			return Either.right(responseFormat);
 		}
 
 		if (modifier.getUserId().equals(userIdToUpdate)) {
-			log.debug("updateUserRole method - admin role can only be updated by other admin. userId={}", modifier.getUserId());
+			log.debug("updateUserRole method - admin role can only be updated by other admin. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.UPDATE_USER_ADMIN_CONFLICT);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.UPDATE_USER);
 			return Either.right(responseFormat);
@@ -227,14 +228,14 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		Either<User, ActionStatus> userToUpdateReq = getUser(userIdToUpdate, false);
 		if (userToUpdateReq.isRight() || userToUpdateReq.left().value() == null) {
-			log.debug("updateUserRole method - user not found. userId={}", modifier.getUserId());
+			log.debug("updateUserRole method - user not found. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.USER_NOT_FOUND, userIdToUpdate);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.UPDATE_USER);
 			return Either.right(responseFormat);
 		}
 
 		if (!userAdminValidator.validateRole(userRole)) {
-			log.debug("updateUserRole method - user has invalid role={}", modifier.getUserId());
+			log.debug("updateUserRole method - user has invalid role = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_ROLE, userRole);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.UPDATE_USER);
 			return Either.right(responseFormat);
@@ -267,7 +268,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		Either<User, StorageOperationStatus> updateUserReq = userAdminOperation.updateUserData(newUser);
 
 		if (updateUserReq.isRight() || updateUserReq.left().value() == null) {
-			log.debug("updateUser method - failed to update user data. userId={}", modifier.getUserId());
+			log.debug("updateUser method - failed to update user data. userId = {}", modifier.getUserId());
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateUserReq.right().value())));
 		}
 
@@ -374,7 +375,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		Either<User, ActionStatus> eitherCreator = getUser(userId, false);
 		if (eitherCreator.isRight() || eitherCreator.left().value() == null) {
-			log.debug("deActivateUser method - user is not listed. userId={}", modifier.getUserId());
+			log.debug("deActivateUser method - user is not listed. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.DELETE_USER);
 			return Either.right(responseFormat);
@@ -383,14 +384,14 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		modifier = eitherCreator.left().value();
 
 		if (!modifier.getRole().equals(UserRoleEnum.ADMIN.getName())) {
-			log.debug("deActivateUser method - user is not admin. userId={}", modifier.getUserId());
+			log.debug("deActivateUser method - user is not admin. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.DELETE_USER);
 			return Either.right(responseFormat);
 		}
 
 		if (modifier.getUserId().equals(userUniuqeIdToDeactive)) {
-			log.debug("deActivateUser deActivateUser - admin can only be deactivate by other admin. userId={}", modifier.getUserId());
+			log.debug("deActivateUser deActivateUser - admin can only be deactivate by other admin. userId = {}", modifier.getUserId());
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.DELETE_USER_ADMIN_CONFLICT);
 			handleAuditing(modifier, null, null, responseFormat, AuditingActionEnum.DELETE_USER);
 			return Either.right(responseFormat);
@@ -706,7 +707,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			log.debug("Functional menu fetched is {}", functionalMenu);
 
 		} catch (UebException e) {
-			log.debug("Failed to fetch 'functional menu' of user {} from ecomp portal(via UEB). {}", userId, e);
+			log.debug("Failed to fetch 'functional menu' of user {} from ecomp portal(via UEB)", userId, e);
 			BeEcompErrorManager.getInstance().logInternalFlowError("FetchFunctionalMenu", "Failed to fetch 'functional menu'", ErrorSeverity.ERROR);
 		}
 		return functionalMenu;

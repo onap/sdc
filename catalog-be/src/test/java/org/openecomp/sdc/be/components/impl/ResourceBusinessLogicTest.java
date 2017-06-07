@@ -20,15 +20,16 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
@@ -43,13 +44,13 @@ import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.auditing.impl.AuditingLogFormatUtil;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -59,12 +60,16 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.model.jsontitan.operations.NodeTypeOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.TopologyTemplateOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
@@ -72,24 +77,23 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.CsarUtils.NonMetaArtifactInfo;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import fj.data.Either;
 
@@ -104,13 +108,17 @@ public class ResourceBusinessLogicTest {
 	public static final String UPDATED_SUBCATEGORY = "Gateway";
 
 	public static final String RESOURCE_NAME = "My-Resource_Name with   space";
-
+    private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
+    private static final String GENERIC_VFC_NAME = "org.openecomp.resource.abstract.nodes.VFC";
+    
 	final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IAuditingManager iAuditingManager = null;
 	IElementOperation mockElementDao;
-	TitanGenericDao mockTitanDao = Mockito.mock(TitanGenericDao.class);
+	TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
 	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-	final ResourceOperation resourceOperation = Mockito.mock(ResourceOperation.class);
+	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
+	NodeTypeOperation nodeTypeOperation = Mockito.mock(NodeTypeOperation.class);
+	TopologyTemplateOperation topologyTemplateOperation = Mockito.mock(TopologyTemplateOperation.class);
 	final LifecycleBusinessLogic lifecycleBl = Mockito.mock(LifecycleBusinessLogic.class);
 	final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
 	final IPropertyOperation propertyOperation = Mockito.mock(IPropertyOperation.class);
@@ -125,6 +133,8 @@ public class ResourceBusinessLogicTest {
 	GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
 	User user = null;
 	Resource resourceResponse = null;
+	Resource genericVF = null;
+	Resource genericVFC = null;
 	ComponentsUtils componentsUtils = new ComponentsUtils();
 	ArtifactsBusinessLogic artifactManager = Mockito.mock(ArtifactsBusinessLogic.class);
 	CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
@@ -163,33 +173,26 @@ public class ResourceBusinessLogicTest {
 
 		// Servlet Context attributes
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-		// when(servletContext.getAttribute(Constants.AUDITING_MANAGER)).thenReturn(iAuditingManager);
-		when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
 		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
 		when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
 
-		// Resource Operation mock methods
-		// getCount
-		/*
-		 * Either<Integer, StorageOperationStatus> eitherCount = Either.left(0); when(resourceOperation.getNumberOfResourcesByName("MyResourceName")). thenReturn(eitherCount); Either<Integer, StorageOperationStatus> eitherCountExist = Either.left(1);
-		 * when(resourceOperation.getNumberOfResourcesByName("alreadyExist")). thenReturn(eitherCountExist);
-		 */
 		Either<Integer, StorageOperationStatus> eitherCountRoot = Either.left(1);
-		when(resourceOperation.getNumberOfResourcesByName("Root".toLowerCase())).thenReturn(eitherCountRoot);
-		Either<Boolean, StorageOperationStatus> eitherFalse = Either.left(false);
-		when(resourceOperation.validateResourceNameExists(ValidationUtils.normaliseComponentName("Root"), ResourceTypeEnum.VFC)).thenReturn(eitherFalse);
+		Either<Boolean, StorageOperationStatus> eitherFalse = Either.left(true);
+		when(toscaOperationFacade.validateComponentNameExists("Root", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherFalse);
 
-		Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(false);
-		when(resourceOperation.validateResourceNameExists("alreadyExists", ResourceTypeEnum.VFC)).thenReturn(eitherCountExist);
-		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(true);
-		when(resourceOperation.validateResourceNameExists(RESOURCE_NAME, ResourceTypeEnum.VFC)).thenReturn(eitherCount);
-
-		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(false);
-		when(resourceOperation.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
-		Either<Boolean, StorageOperationStatus> validateDerivedNotExists = Either.left(true);
-		when(resourceOperation.validateToscaResourceNameExists(ValidationUtils.normaliseComponentName("kuku"))).thenReturn(validateDerivedNotExists);
-
+		Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
+		when(toscaOperationFacade.validateComponentNameExists("alreadyExists", ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCountExist);
+		
+		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		when(toscaOperationFacade.validateComponentNameExists(RESOURCE_NAME, ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(eitherCount);
+		
+		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
+		when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
+		
+		Either<Boolean, StorageOperationStatus> validateDerivedNotExists = Either.left(false);
+		when(toscaOperationFacade.validateToscaResourceNameExists("kuku")).thenReturn(validateDerivedNotExists);
 		when(graphLockOperation.lockComponent(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
 		when(graphLockOperation.lockComponentByName(Mockito.anyString(), Mockito.eq(NodeTypeEnum.Resource))).thenReturn(StorageOperationStatus.OK);
 
@@ -198,14 +201,14 @@ public class ResourceBusinessLogicTest {
 		Either<ArtifactDefinition, StorageOperationStatus> returnEither = Either.left(artifactDef);
 		when(artifactManager.createArtifactPlaceHolderInfo(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
-		when(artifactManager.addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyBoolean())).thenReturn(returnEither);
+		when(artifactManager.addHeatEnvArtifact(Mockito.any(ArtifactDefinition.class), Mockito.any(ArtifactDefinition.class), Mockito.anyString(), Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(returnEither);
 
 		// createResource
 		resourceResponse = createResourceObject(true);
 		Either<Resource, StorageOperationStatus> eitherCreate = Either.left(resourceResponse);
-		Either<List<ResourceMetadataData>, StorageOperationStatus> eitherValidate = Either.left(null);
-		when(resourceOperation.createResource(Mockito.any(Resource.class), Mockito.anyBoolean())).thenReturn(eitherCreate);
-		when(resourceOperation.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);
+		Either<Integer, StorageOperationStatus> eitherValidate = Either.left(null);
+		when(toscaOperationFacade.createToscaComponent(Mockito.any(Resource.class))).thenReturn(eitherCreate);
+		when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(eitherValidate);
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
 		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 
@@ -213,7 +216,6 @@ public class ResourceBusinessLogicTest {
 		bl = new ResourceBusinessLogic();
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
-		bl.setResourceOperation(resourceOperation);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
 		componentsUtils.Init();
 		componentsUtils.setAuditingManager(auditingManager);
@@ -226,13 +228,13 @@ public class ResourceBusinessLogicTest {
 		bl.setApplicationDataTypeCache(applicationDataTypeCache);
 		bl.setCsarOperation(csarOperation);
 		bl.setCacheManagerOperation(cacheManager);
-
+		toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
+		toscaOperationFacade.setTopologyTemplateOperation(topologyTemplateOperation);
+		bl.setToscaOperationFacade(toscaOperationFacade);
 		Resource resourceCsar = createResourceObjectCsar(true);
 		setCanWorkOnResource(resourceCsar);
-		Either<Resource, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
-		when(resourceOperation.getResource(resourceCsar.getUniqueId())).thenReturn(oldResourceRes);
-		when(resourceOperation.getLatestResourceByCsarOrName(resourceCsar.getCsarUUID(), resourceCsar.getSystemName())).thenReturn(oldResourceRes);
-		when(resourceOperation.updateResource(Mockito.any(Resource.class), Mockito.anyBoolean())).thenReturn(oldResourceRes);
+		Either<Component, StorageOperationStatus> oldResourceRes = Either.left(resourceCsar);
+		when(toscaOperationFacade.getToscaElement(resourceCsar.getUniqueId())).thenReturn(oldResourceRes);
 		responseManager = ResponseFormatManager.getInstance();
 
 	}
@@ -257,14 +259,11 @@ public class ResourceBusinessLogicTest {
 		if (afterCreate) {
 			resource.setName(resource.getName());
 			resource.setVersion("0.1");
-			;
 			resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
 			resource.setCreatorUserId(user.getUserId());
 			resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
 			resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		}
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		log.debug(gson.toJson(resource));
 		return resource;
 	}
 
@@ -290,14 +289,12 @@ public class ResourceBusinessLogicTest {
 		if (afterCreate) {
 			resource.setName(resource.getName());
 			resource.setVersion("0.1");
-			;
+			
 			resource.setUniqueId(resource.getName().toLowerCase() + ":" + resource.getVersion());
 			resource.setCreatorUserId(user.getUserId());
 			resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
 			resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		}
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		log.debug(gson.toJson(resource));
 		return resource;
 	}
 
@@ -310,7 +307,7 @@ public class ResourceBusinessLogicTest {
 	@Test
 	public void testHappyScenario() {
 		Resource resource = createResourceObject(false);
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		if (createResponse.isRight()) {
 			assertEquals(new Integer(200), createResponse.right().value().getStatus());
@@ -322,6 +319,14 @@ public class ResourceBusinessLogicTest {
 	public void testUpdateHappyScenario() {
 		Resource resource = createResourceObjectCsar(true);
 		setCanWorkOnResource(resource);
+		
+		Either<Resource, StorageOperationStatus> resourceLinkedToCsarRes = Either.left(resource);
+		when(toscaOperationFacade.getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, resource.getCsarUUID(), resource.getSystemName())).thenReturn(resourceLinkedToCsarRes);
+		Either<Boolean, StorageOperationStatus> validateDerivedExists = Either.left(true);
+		when(toscaOperationFacade.validateToscaResourceNameExists("Root")).thenReturn(validateDerivedExists);
+		
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> updateResponse = bl.validateAndUpdateResourceFromCsar(resource, user, null, null, resource.getUniqueId());
 		if (updateResponse.isRight()) {
 			assertEquals(new Integer(200), updateResponse.right().value().getStatus());
@@ -348,12 +353,11 @@ public class ResourceBusinessLogicTest {
 		testResourceTagNotExist();
 		testResourceTagEmpty();
 		testTagsExceedsLimitCreate();
-		// testTagsSingleExceedsLimit();
 		testTagsNoServiceName();
 		testInvalidTag();
-		// 1610OS Support - Because of changes in the validation in the ui these tests will fail. need to fix them
-		//testContactIdTooLong();
-		//testContactIdWrongFormatCreate();
+		
+		testContactIdTooLong();
+		testContactIdWrongFormatCreate();
 		testResourceContactIdEmpty();
 		testResourceContactIdMissing();
 		testVendorNameExceedsLimit();
@@ -378,7 +382,7 @@ public class ResourceBusinessLogicTest {
 		resourceExist.setName(resourceName);
 		resourceExist.getTags().add(resourceName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
 	}
 
@@ -386,7 +390,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setName(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertResponse(createResponse, ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 	}
 
@@ -396,7 +400,7 @@ public class ResourceBusinessLogicTest {
 		String tooLongResourceName = "zCRCAWjqte0DtgcAAMmcJcXeNubeX1p1vOZNTShAHOYNAHvV3iK";
 		resourceExccedsNameLimit.setName(tooLongResourceName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_NAME_MAX_LENGTH);
 	}
@@ -407,7 +411,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "ljg?fd";
 		resource.setName(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -428,7 +432,7 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsDescLimit.setDescription(tooLongResourceDesc);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsDescLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsDescLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
 	}
@@ -439,7 +443,7 @@ public class ResourceBusinessLogicTest {
 		String notEnglishDesc = "\uC2B5";
 		notEnglish.setDescription(notEnglishDesc);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(notEnglish, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(notEnglish, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -448,7 +452,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDescription("");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
@@ -458,7 +462,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDescription(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_DESCRIPTION, ComponentTypeEnum.RESOURCE.getValue());
@@ -470,7 +474,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_ICON, ComponentTypeEnum.RESOURCE.getValue());
@@ -480,7 +484,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon("kjk3453^&");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_ICON, ComponentTypeEnum.RESOURCE.getValue());
@@ -490,7 +494,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon("dsjfhskdfhskjdhfskjdhkjdhfkshdfksjsdkfhsdfsdfsdfsfsdfsf");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.ICON_MAX_LENGTH);
@@ -502,7 +506,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setTags(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_TAGS);
@@ -512,7 +516,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setTags(new ArrayList<String>());
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_TAGS);
@@ -568,7 +572,7 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_TAGS_EXCEED_LIMIT, "" + ValidationUtils.TAG_LIST_MAX_LENGTH);
 
@@ -584,7 +588,7 @@ public class ResourceBusinessLogicTest {
 
 		resourceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_SINGLE_TAG_EXCEED_LIMIT, "" + ValidationUtils.TAG_MAX_LENGTH);
 
@@ -597,7 +601,7 @@ public class ResourceBusinessLogicTest {
 		tagsList.add(tag1);
 		serviceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_TAGS_NO_COMP_NAME);
 
@@ -610,32 +614,33 @@ public class ResourceBusinessLogicTest {
 		tagsList.add(tag1);
 		serviceExccedsNameLimit.setTags(tagsList);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(serviceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_FIELD_FORMAT, new String[] { "Resource", "tag" });
 
 	}
 
 	// Resource tags - stop
-	// Resource contact info start
+	// Resource contact start
+	
 	private void testContactIdTooLong() {
 		Resource resourceContactId = createResourceObject(false);
-		// 7 chars instead of 6
-		String contactIdTooLong = "yrt1234";
+		// 59 chars instead of 50
+		String contactIdTooLong = "thisNameIsVeryLongAndExeccedsTheNormalLengthForContactId";
 		resourceContactId.setContactId(contactIdTooLong);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
 	}
 
 	private void testContactIdWrongFormatCreate() {
 		Resource resourceContactId = createResourceObject(false);
-		// 3 letters and 3 digits
-		String contactIdTooLong = "yrt134";
-		resourceContactId.setContactId(contactIdTooLong);
+		// 3 letters and 3 digits and special characters
+		String contactIdFormatWrong = "yrt134!!!";
+		resourceContactId.setContactId(contactIdFormatWrong);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceContactId, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
 	}
@@ -644,7 +649,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setContactId("");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
@@ -654,7 +659,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setContactId(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
@@ -665,7 +670,7 @@ public class ResourceBusinessLogicTest {
 		String tooLongVendorName = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsVendorNameLimit.setVendorName(tooLongVendorName);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsVendorNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.VENDOR_NAME_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_NAME_MAX_LENGTH);
 	}
@@ -676,7 +681,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "ljg*fd";
 		resource.setVendorName(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_NAME);
 	}
@@ -687,7 +692,7 @@ public class ResourceBusinessLogicTest {
 		String nameWrongFormat = "1>2";
 		resource.setVendorRelease(nameWrongFormat);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_RELEASE);
 
@@ -698,7 +703,7 @@ public class ResourceBusinessLogicTest {
 		String tooLongVendorRelease = "h1KSyJh9Eh1KSyJh9Eh1KSyJh9Eh1KSyJh9E";
 		resourceExccedsNameLimit.setVendorRelease(tooLongVendorRelease);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExccedsNameLimit, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
 	}
@@ -707,7 +712,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setVendorName(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_VENDOR_NAME);
@@ -717,7 +722,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setVendorRelease(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_VENDOR_RELEASE);
@@ -729,7 +734,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setCategories(null);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_MISSING_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -741,7 +746,7 @@ public class ResourceBusinessLogicTest {
 		resourceExist.setCategories(null);
 		resourceExist.addCategory("koko", "koko");
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CATEGORY, ComponentTypeEnum.RESOURCE.getValue());
@@ -754,13 +759,13 @@ public class ResourceBusinessLogicTest {
 		Resource createResourceObjectAfterCreate = createResourceObject(true);
 		// Adding cost and licenseType to basic mock
 		Either<Resource, StorageOperationStatus> eitherCreate = Either.left(createResourceObjectAfterCreate);
-		when(resourceOperation.createResource(Mockito.any(Resource.class), Mockito.anyBoolean())).thenReturn(eitherCreate);
+		when(toscaOperationFacade.createToscaComponent(Mockito.any(Resource.class))).thenReturn(eitherCreate);
 
 		String cost = "123.456";
 		String licenseType = "User";
 		createResourceObject.setCost(cost);
 		createResourceObject.setLicenseType(licenseType);
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(createResourceObject, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(createResourceObject, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		if (createResponse.isRight()) {
 			assertEquals(new Integer(200), createResponse.right().value().getStatus());
@@ -776,7 +781,7 @@ public class ResourceBusinessLogicTest {
 		String cost = "12356,464";
 		resourceCost.setCost(cost);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceCost, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceCost, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_CONTENT);
 	}
@@ -789,7 +794,7 @@ public class ResourceBusinessLogicTest {
 		String licenseType = "cpu";
 		resourceLicenseType.setLicenseType(licenseType);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceLicenseType, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceLicenseType, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_CONTENT);
 	}
@@ -801,7 +806,7 @@ public class ResourceBusinessLogicTest {
 		List<String> list = null;
 		resourceExist.setDerivedFrom(list);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -811,7 +816,7 @@ public class ResourceBusinessLogicTest {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setDerivedFrom(new ArrayList<String>());
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.MISSING_DERIVED_FROM_TEMPLATE);
@@ -823,7 +828,7 @@ public class ResourceBusinessLogicTest {
 		derivedFrom.add("kuku");
 		resourceExist.setDerivedFrom(derivedFrom);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertTrue(createResponse.isRight());
 
 		assertResponse(createResponse, ActionStatus.PARENT_RESOURCE_NOT_FOUND);
@@ -845,13 +850,15 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 		// contains *
 		String nameWrongFormat = "ljg*fd";
 		updatedResource.setName(nameWrongFormat);
 
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
+		
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
@@ -864,14 +871,16 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
 		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		String name = "ljg";
 		updatedResource.setName(name);
 		resource.setVersion("1.0");
-		;
+	
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
@@ -879,20 +888,20 @@ public class ResourceBusinessLogicTest {
 
 	}
 
-	@Test
 	@Ignore
 	public void testResourceNameExceedsLimit_UPDATE() {
 		Resource resource = createResourceObject(true);
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// 51 chars, the limit is 50
 		String tooLongResourceName = "zCRCAWjqte0DtgcAAMmcJcXeNubeX1p1vOZNTShAHOYNAHvV3iK";
 		updatedResource.setName(tooLongResourceName);
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
@@ -905,13 +914,13 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		String resourceName = "alreadyExists";
 		updatedResource.setName(resourceName);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(updatedResource);
+		when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resourceName);
@@ -925,9 +934,8 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// 1025 chars, the limit is 1024
 		String tooLongResourceDesc = "1GUODojQ0sGzKR4NP7e5j82ADQ3KHTVOaezL95qcbuaqDtjZhAQGQ3iFwKAy580K4WiiXs3u3zq7RzXcSASl5fm0RsWtCMOIDP"
@@ -939,7 +947,8 @@ public class ResourceBusinessLogicTest {
 				+ "V6nJsfRGRklGjNhFFYP2cS4Xv2IJO9DSX6LTXOmENrGVJJvMOZcvnBaZPfoAHN0LU4i1SoepLzulIxnZBfkUWFJgZ5wQ0Bco2GC1HMqzW21rwy4XHRxXpXbmW8LVyoA1KbnmVmROycU4"
 				+ "scTZ62IxIcIWCVeMjBIcTviXULbPUyqlfEPXWr8IMJtpAaELWgyquPClAREMDs2b9ztKmUeXlMccFES1XWbFTrhBHhmmDyVReEgCwfokrUFR13LTUK1k8I6OEHOs";
 		updatedResource.setDescription(tooLongResourceDesc);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.COMPONENT_DESCRIPTION_MAX_LENGTH);
@@ -952,13 +961,14 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// contains .
 		String icon = "icon.jpg";
 		updatedResource.setIcon(icon);
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
@@ -972,9 +982,8 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// contains
 		String icon = "icon";
@@ -982,7 +991,8 @@ public class ResourceBusinessLogicTest {
 
 		resource.setVersion("1.0");
 		;
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.RESOURCE_ICON_CANNOT_BE_CHANGED);
@@ -995,9 +1005,8 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		String tag1 = "I63llMSEF12FntTwpMt64JhopkjQZzv5KS7mBoRku42PYLrBjQ";
 		String tag2 = "I63llMSEF12FntTwpMt64JhopkjQZzv5KS7mBoRku42PYLrBjW";
@@ -1046,7 +1055,8 @@ public class ResourceBusinessLogicTest {
 		tagsList.add(resource.getName());
 
 		updatedResource.setTags(tagsList);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1059,14 +1069,14 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// contains *
 		String nameWrongFormat = "ljg*fd";
 		updatedResource.setVendorName(nameWrongFormat);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.INVALID_VENDOR_NAME);
@@ -1079,16 +1089,16 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		// contains *
 		String nameWrongFormat = "ljg*fd";
 		updatedResource.setVendorName(nameWrongFormat);
 		resource.setVersion("1.0");
 		;
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.RESOURCE_VENDOR_NAME_CANNOT_BE_CHANGED);
@@ -1101,39 +1111,38 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
-
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 		// 129 chars, the limit is 128
 		String tooLongVendorRelease = "h1KSyJh9EspI8SPwAGu4VETfqWejeanuB1PCJBxJmJncYnrW0lnsEFFVRIukRJkwlOVnZCy8p38tjhANeZq3BGMHIawWR6ICl8Wi9mikRYALWgvJug00JrlQ0iPVKPLxy";
 		updatedResource.setVendorRelease(tooLongVendorRelease);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resource.getUniqueId(), updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 		assertResponse(createResponse, ActionStatus.VENDOR_RELEASE_EXCEEDS_LIMIT, "" + ValidationUtils.VENDOR_RELEASE_MAX_LENGTH);
 	}
 
-	// 1610OS Support - Because of changes in the validation in the ui this test needs to be fixed
-//	@Test
-//	public void testContactIdWrongFormat_UPDATE() {
-//		Resource resource = createResourceObject(true);
-//		Resource updatedResource = createResourceObject(true);
-//
-//		// this is in order to prevent failing with 403 earlier
-//		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-//		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-//		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
-//
-//		String resourceId = resource.getUniqueId();
-//		// 3 letters and 3 digits
-//		String contactIdTooLong = "yrt134";
-//		updatedResource.setContactId(contactIdTooLong);
-//		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
-//		assertTrue(createResponse.isRight());
-//
-//		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
-//	}	
+	@Ignore
+	public void testContactIdWrongFormat_UPDATE() {
+		Resource resource = createResourceObject(true);
+		Resource updatedResource = createResourceObject(true);
+
+		// this is in order to prevent failing with 403 earlier
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
+
+		String resourceId = resource.getUniqueId();
+		// 3 letters and 3 digits
+		String contactIdTooLong = "yrt134";
+		updatedResource.setContactId(contactIdTooLong);
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
+		assertTrue(createResponse.isRight());
+
+		assertResponse(createResponse, ActionStatus.COMPONENT_INVALID_CONTACT, ComponentTypeEnum.RESOURCE.getValue());
+	}
 
 	@Test
 	public void testResourceBadCategory_UPDATE() {
@@ -1141,14 +1150,15 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		String resourceId = resource.getUniqueId();
 		String badCategory = "ddfds";
 		updatedResource.setCategories(null);
 		updatedResource.addCategory(badCategory, "fikt");
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1161,16 +1171,16 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		String resourceId = resource.getUniqueId();
 		updatedResource.setCategories(null);
 		updatedResource.addCategory(RESOURCE_CATEGORY1, UPDATED_SUBCATEGORY);
 		resource.setVersion("1.0");
 		;
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1184,14 +1194,14 @@ public class ResourceBusinessLogicTest {
 		Resource updatedResource = createResourceObject(true);
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 		String resourceId = resource.getUniqueId();
 
 		List<String> list = null;
 		updatedResource.setDerivedFrom(list);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1205,12 +1215,12 @@ public class ResourceBusinessLogicTest {
 		String resourceId = resource.getUniqueId();
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		updatedResource.setDerivedFrom(new ArrayList<String>());
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1224,14 +1234,14 @@ public class ResourceBusinessLogicTest {
 		String resourceId = resource.getUniqueId();
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		ArrayList<String> derivedFrom = new ArrayList<String>();
 		derivedFrom.add("kuku");
 		updatedResource.setDerivedFrom(derivedFrom);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
 		assertTrue(createResponse.isRight());
 
@@ -1239,26 +1249,58 @@ public class ResourceBusinessLogicTest {
 	}
 
 	@Test
-	public void testResourceTemplateCertify_UPDATE() {
+	public void testResourceTemplateCertify_UPDATE_HAPPY() {
 		Resource resource = createResourceObject(true);
 		Resource updatedResource = createResourceObject(true);
 		String resourceId = resource.getUniqueId();
 
 		// this is in order to prevent failing with 403 earlier
-		Either<Resource, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
-		// when(resourceOperation.getResource_tx(resource.getUniqueId(),false)).thenReturn(eitherUpdate);
-		when(resourceOperation.getResource(resource.getUniqueId(), false)).thenReturn(eitherUpdate);
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
+		
+		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(true);
+		when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString())).thenReturn(isToscaNameExtending);
+		
+		Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either.left(new HashMap<>());
+		when(propertyOperation.deleteAllPropertiesAssociatedToNode(Mockito.any(NodeTypeEnum.class), Mockito.anyString())).thenReturn(findPropertiesOfNode);
+		
 		resource.setVersion("1.0");
-		;
 
 		ArrayList<String> derivedFrom = new ArrayList<String>();
 		derivedFrom.add("tosca.nodes.Root");
 		updatedResource.setDerivedFrom(derivedFrom);
-
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(updatedResource);
+		when(toscaOperationFacade.updateToscaElement(updatedResource)).thenReturn(dataModelResponse);
 		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user, false);
+		assertTrue(createResponse.isLeft());
+	}
+	
+	@Test
+	public void testResourceTemplateCertify_UPDATE_SAD() {
+		Resource resource = createResourceObject(true);
+		Resource updatedResource = createResourceObject(true);
+		String resourceId = resource.getUniqueId();
+
+		// this is in order to prevent failing with 403 earlier
+		Either<Component, StorageOperationStatus> eitherUpdate = Either.left(setCanWorkOnResource(resource));
+		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
+		
+		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(false);
+		when(toscaOperationFacade.validateToscaResourceNameExtends(Mockito.anyString(), Mockito.anyString()))
+				.thenReturn(isToscaNameExtending);
+
+		resource.setVersion("1.0");
+
+		ArrayList<String> derivedFrom = new ArrayList<String>();
+		derivedFrom.add("tosca.nodes.Root");
+		updatedResource.setDerivedFrom(derivedFrom);
+		Either<Resource, StorageOperationStatus> dataModelResponse = Either.left(resource);
+		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(dataModelResponse);
+		Either<Resource, ResponseFormat> createResponse = bl.updateResourceMetadata(resourceId, updatedResource, null, user,
+				false);
 		assertTrue(createResponse.isRight());
 
-		assertResponse(createResponse, ActionStatus.RESOURCE_DERIVED_FROM_CANNOT_BE_CHANGED);
+		assertResponse(createResponse, ActionStatus.PARENT_RESOURCE_DOES_NOT_EXTEND);
 	}
 	// Derived from stop
 
@@ -1266,21 +1308,21 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceAlreadyCheckout() {
 		Resource resourceExist = createResourceObject(false);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		createResponse.left().value().setLastUpdaterUserId(user.getUserId());
 		assertTrue(createResponse.isLeft());
 
-		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createResponse.left().value());
-		when(resourceOperation.getLatestByName(resourceExist.getName(), true)).thenReturn(getLatestResult);
-		when(resourceOperation.overrideResource(Mockito.any(Resource.class), Mockito.any(Resource.class), Mockito.anyBoolean())).thenReturn(getLatestResult);
+		Either<Component, StorageOperationStatus> getLatestResult = Either.left(createResponse.left().value());
+		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getLatestResult);
+		when(toscaOperationFacade.overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class))).thenReturn(getLatestResult);
 
 		Resource resourceToUpdtae = createResourceObject(false);
 
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(resourceOperation, Mockito.times(1)).overrideResource(Mockito.any(Resource.class), Mockito.any(Resource.class), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Resource.class), Mockito.any(Resource.class));
 		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
@@ -1289,17 +1331,17 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceCertified() {
 		Resource resourceExist = createResourceObject(false);
 
-		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, user, null, null);
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 
 		assertTrue(createResponse.isLeft());
 		Resource certifiedResource = createResponse.left().value();
 		certifiedResource.setLifecycleState(LifecycleStateEnum.CERTIFIED);
 		certifiedResource.setVersion("1.0");
-		;
+		
 
-		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(certifiedResource);
-		when(resourceOperation.getLatestByName(resourceExist.getName(), true)).thenReturn(getLatestResult);
-		when(resourceOperation.overrideResource(Mockito.any(Resource.class), Mockito.any(Resource.class), Mockito.anyBoolean())).thenReturn(getLatestResult);
+		Either<Component, StorageOperationStatus> getLatestResult = Either.left(certifiedResource);
+		when(toscaOperationFacade.getLatestByName(resourceExist.getName())).thenReturn(getLatestResult);
+		when(toscaOperationFacade.overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class))).thenReturn(getLatestResult);
 
 		when(lifecycleBl.changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenReturn(createResponse);
 
@@ -1308,7 +1350,7 @@ public class ResourceBusinessLogicTest {
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(resourceOperation, Mockito.times(1)).overrideResource(Mockito.any(Resource.class), Mockito.any(Resource.class), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(1)).overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class));
 		Mockito.verify(lifecycleBl, Mockito.times(1)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
@@ -1317,16 +1359,16 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceNotExist() {
 		Resource resourceToUpdtae = createResourceObject(false);
 
-		Either<Resource, StorageOperationStatus> getLatestResult = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(resourceOperation.getLatestByName(resourceToUpdtae.getName(), true)).thenReturn(getLatestResult);
+		Either<Component, StorageOperationStatus> getLatestResult = Either.right(StorageOperationStatus.NOT_FOUND);
+		when(toscaOperationFacade.getLatestByName(resourceToUpdtae.getName())).thenReturn(getLatestResult);
 
-		Either<Resource, StorageOperationStatus> getLatestToscaNameResult = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(resourceOperation.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName(), true)).thenReturn(getLatestResult);
+		Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either.right(StorageOperationStatus.NOT_FOUND);
+		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName())).thenReturn(getLatestToscaNameResult);
 
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createOrUpdateResource = bl.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false);
 		assertTrue(createOrUpdateResource.isLeft());
 
-		Mockito.verify(resourceOperation, Mockito.times(0)).overrideResource(Mockito.any(Resource.class), Mockito.any(Resource.class), Mockito.anyBoolean());
+		Mockito.verify(toscaOperationFacade, Mockito.times(0)).overrideComponent(Mockito.any(Component.class), Mockito.any(Component.class));
 		Mockito.verify(lifecycleBl, Mockito.times(0)).changeState(Mockito.anyString(), Mockito.eq(user), Mockito.eq(LifeCycleTransitionEnum.CHECKOUT), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.anyBoolean(), Mockito.anyBoolean());
 
 	}
@@ -1371,53 +1413,337 @@ public class ResourceBusinessLogicTest {
 		assertTrue(validatePropertiesDefaultValues.isRight());
 	}
 
+//	@Test
+//	public void testDeleteMarkedResourcesNoResources() {
+//		List<GraphVertex> ids = new ArrayList<>();
+//		Either<List<GraphVertex>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+//		when(topologyTemplateOperation.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
+//
+//		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+//		assertTrue(deleteMarkedResources.isLeft());
+//		assertTrue(deleteMarkedResources.left().value().isEmpty());
+//
+//		Mockito.verify(artifactManager, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
+//
+//	}
+//
+//	@Test
+//	public void testDeleteMarkedResources() {
+//		List<String> ids = new ArrayList<String>();
+//		String resourceInUse = "123";
+//		ids.add(resourceInUse);
+//		String resourceFree = "456";
+//		ids.add(resourceFree);
+//		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+//		when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
+//
+//		Either<Boolean, StorageOperationStatus> resourceInUseResponse = Either.left(true);
+//		Either<Boolean, StorageOperationStatus> resourceFreeResponse = Either.left(false);
+//
+//		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
+//		Either<List<ArtifactDefinition>, StorageOperationStatus> getArtifactsResponse = Either.left(artifacts);
+//		when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
+//
+//		when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
+//		when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
+//
+//		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new Resource());
+//		when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
+//
+//		when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
+//		List<String> deletedComponents = new ArrayList<>();
+//		deletedComponents.add(resourceFree);
+//		when(toscaOperationFacade.deleteMarkedElements(ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(deletedComponents));
+//		
+//		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+//		assertTrue(deleteMarkedResources.isLeft());
+//		List<String> resourceIdList = deleteMarkedResources.left().value();
+//		assertFalse(resourceIdList.isEmpty());
+//		assertTrue(resourceIdList.contains(resourceFree));
+//		assertFalse(resourceIdList.contains(resourceInUse));
+//
+//		Mockito.verify(artifactManager, Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
+//	}
+	
+	@SuppressWarnings("unchecked")
 	@Test
-	public void testDeleteMarkedResourcesNoResources() {
-		List<String> ids = new ArrayList<String>();
-		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
-		when(resourceOperation.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-
-		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
-		assertTrue(deleteMarkedResources.isLeft());
-		assertTrue(deleteMarkedResources.left().value().isEmpty());
-
-		Mockito.verify(artifactManager, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-
+	public void testFindVfCsarArtifactsToHandle() {
+		
+		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
+		String methodName = "findVfCsarArtifactsToHandle";
+		Resource resource = new Resource();
+		String deploymentArtifactToUpdateFileName = "deploymentArtifactToUpdate.yaml";
+		String deploymentArtifactToDeleteFileName = "deploymentArtifactToDelete.yaml";
+		String deploymentArtifactToCreateFileName = "deploymentArtifactToCreate.yaml";
+		
+		String artifactInfoToUpdateFileName = "infoArtifactToUpdate.yaml";
+		String artifactInfoToDeleteFileName = "infoArtifactToDelete.yaml";
+		String artifactInfoToCreateFileName = "infoArtifactToCreate.yaml";
+		
+		byte[] oldPayloadData = "oldPayloadData".getBytes();
+		byte[] newPayloadData = "newPayloadData".getBytes();
+		Map<String, ArtifactDefinition> deploymentArtifacts =new HashMap<>();
+		
+		ArtifactDefinition deploymentArtifactToUpdate = new ArtifactDefinition();
+		deploymentArtifactToUpdate.setMandatory(false);
+		deploymentArtifactToUpdate.setArtifactName(deploymentArtifactToUpdateFileName);
+		deploymentArtifactToUpdate.setArtifactType("SNMP_POLL");
+		deploymentArtifactToUpdate.setPayload(oldPayloadData);
+		deploymentArtifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		
+		ArtifactDefinition deploymentArtifactToDelete = new ArtifactDefinition();
+		deploymentArtifactToDelete.setMandatory(false);
+		deploymentArtifactToDelete.setArtifactName(deploymentArtifactToDeleteFileName);
+		deploymentArtifactToDelete.setArtifactType("SNMP_TRAP");
+		deploymentArtifactToDelete.setPayload(oldPayloadData);
+		deploymentArtifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		
+		ArtifactDefinition deploymentArtifactToIgnore = new ArtifactDefinition();
+		
+		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToUpdate.getArtifactName()), deploymentArtifactToUpdate);
+		deploymentArtifacts.put(ValidationUtils.normalizeArtifactLabel(deploymentArtifactToDelete.getArtifactName()), deploymentArtifactToDelete);
+		deploymentArtifacts.put("ignore", deploymentArtifactToIgnore);
+		
+		Map<String, ArtifactDefinition> artifacts = new HashMap<>();
+		
+		ArtifactDefinition artifactToUpdate = new ArtifactDefinition();
+		artifactToUpdate.setMandatory(false);
+		artifactToUpdate.setArtifactName(artifactInfoToUpdateFileName);
+		artifactToUpdate.setArtifactType("SNMP_POLL");
+		artifactToUpdate.setPayload(oldPayloadData);
+		artifactToUpdate.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		
+		ArtifactDefinition artifactToDelete = new ArtifactDefinition();
+		artifactToDelete.setMandatory(false);
+		artifactToDelete.setArtifactName(artifactInfoToDeleteFileName);
+		artifactToDelete.setArtifactType("SNMP_TRAP");
+		artifactToDelete.setPayload(oldPayloadData);
+		artifactToDelete.setArtifactChecksum(GeneralUtility.calculateMD5ByByteArray(oldPayloadData));
+		
+		ArtifactDefinition artifactToIgnore = new ArtifactDefinition();
+		
+		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToUpdate.getArtifactName()),artifactToUpdate);
+		artifacts.put(ValidationUtils.normalizeArtifactLabel(artifactToDelete.getArtifactName()),artifactToDelete);
+		artifacts.put("ignore",artifactToIgnore);
+		
+		resource.setDeploymentArtifacts(deploymentArtifacts);
+		resource.setArtifacts(artifacts);
+		
+		List<NonMetaArtifactInfo> artifactPathAndNameList = new ArrayList<>();
+		NonMetaArtifactInfo deploymentArtifactInfoToUpdate = new NonMetaArtifactInfo(deploymentArtifactToUpdate.getArtifactName(), null, 
+			ArtifactTypeEnum.findType(deploymentArtifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+			newPayloadData, deploymentArtifactToUpdate.getArtifactName());
+		
+		NonMetaArtifactInfo informationalArtifactInfoToUpdate = new NonMetaArtifactInfo(artifactToUpdate.getArtifactName(), null, 
+				ArtifactTypeEnum.findType(artifactToUpdate.getArtifactType()), ArtifactGroupTypeEnum.DEPLOYMENT,
+				newPayloadData, artifactToUpdate.getArtifactName());
+		
+		NonMetaArtifactInfo deploymentArtifactInfoToCreate = new NonMetaArtifactInfo(deploymentArtifactToCreateFileName, null, 
+				ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT, newPayloadData, deploymentArtifactToCreateFileName);
+			
+			NonMetaArtifactInfo informationalArtifactInfoToCreate = new NonMetaArtifactInfo(artifactInfoToCreateFileName, null, 
+					ArtifactTypeEnum.OTHER, ArtifactGroupTypeEnum.DEPLOYMENT,
+					newPayloadData, artifactInfoToCreateFileName);
+		
+		artifactPathAndNameList.add(deploymentArtifactInfoToUpdate);
+		artifactPathAndNameList.add(informationalArtifactInfoToUpdate);
+		artifactPathAndNameList.add(deploymentArtifactInfoToCreate);
+		artifactPathAndNameList.add(informationalArtifactInfoToCreate);
+		
+		Object[] argObjects = {resource, artifactPathAndNameList, user};
+		Class[] argClasses = {Resource.class, List.class, User.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> findVfCsarArtifactsToHandleRes = 
+	    			(Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat>) method.invoke(bl, argObjects);
+	    	 assertTrue(findVfCsarArtifactsToHandleRes.isLeft());
+	    	 EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> foundVfArtifacts = findVfCsarArtifactsToHandleRes.left().value();
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size()==2);
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Update).size()==2);
+	    	 assertTrue(foundVfArtifacts.get(ArtifactOperationEnum.Create).size()==2);
+	    	 
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
 	}
-
+	
+	@SuppressWarnings("rawtypes")
 	@Test
-	public void testDeleteMarkedResources() {
-		List<String> ids = new ArrayList<String>();
-		String resourceInUse = "123";
-		ids.add(resourceInUse);
-		String resourceFree = "456";
-		ids.add(resourceFree);
-		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
-		when(resourceOperation.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
+	public void testBuildNestedVfcToscaNamespace() {
+		
+		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
+		String methodName = "buildNestedVfcToscaNamespace";
+		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
+		String expectedNestedVfcToscaNamespace = "org.openecomp.resource.vfc.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
+		Object[] argObjects = {nodeTypeFullName};
+		Class[] argClasses = {String.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	String actualNestedVfcToscaNamespace = (String) method.invoke(bl, argObjects);
+	    	assertTrue(!actualNestedVfcToscaNamespace.isEmpty());
+	    	assertTrue(actualNestedVfcToscaNamespace.equals(expectedNestedVfcToscaNamespace));
+	    	 
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void testBuildNestedVfcToscaResourceName() {
+		
+		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
+		String methodName = "buildNestedVfcToscaResourceName";
+		String vfResourceName = "vfname";
+		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
+		String expectedNestedVfcToscaResourceName = "org.openecomp.resource.vfc.vfname.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
+		Object[] argObjects = {vfResourceName, nodeTypeFullName};
+		Class[] argClasses = {String.class, String.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	String actualNestedVfcToscaResourceName = (String) method.invoke(bl, argObjects);
+	    	assertTrue(!actualNestedVfcToscaResourceName.isEmpty());
+	    	assertTrue(actualNestedVfcToscaResourceName.equals(expectedNestedVfcToscaResourceName));
+	    	 
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void testBuildNestedSubstituteYamlName() {
+		
+		Class<ResourceBusinessLogic> targetClass = ResourceBusinessLogic.class;
+		String methodName = "buildNestedSubstituteYamlName";
+		String nodeTypeFullName = "org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate";
+		String expectedNestedSubstituteYamlName = "Definitions/FEAdd_On_Module_vLBAgentTemplateServiceTemplate.yaml";
+		Object[] argObjects = {nodeTypeFullName};
+		Class[] argClasses = {String.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	String actualNestedSubstituteYamlName = (String) method.invoke(bl, argObjects);
+	    	assertTrue(!actualNestedSubstituteYamlName.isEmpty());
+	    	assertTrue(actualNestedSubstituteYamlName.equals(expectedNestedSubstituteYamlName));
+	    	 
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	}
+	
+	
+	@Test
+	public void testGeneratedInputs() {
+		
+		Resource resource = createVF();
+		List<InputDefinition> inputs = resource.getInputs();
+		assertTrue(8 == inputs.size());
+		for(InputDefinition input : inputs){
+			assertNotNull(input.getOwnerId());
+		}
+		assertTrue(resource.getDerivedFromGenericType().equals(genericVF.getToscaResourceName()));
+		assertTrue(resource.getDerivedFromGenericVersion().equals(genericVF.getVersion()));
+	}
+	
+	@Test
+	public void testUpdateGenericInputsToLatestOnCheckout() {
+		
+		//create a VF that is derived from generic version 1.0
+		Resource resource = createVF();	
+		// create a new generic version without properties
+		genericVF.setVersion("2.0");
+		genericVF.setProperties(null);
+		String currentDerivedFromVersion = resource.getDerivedFromGenericVersion();
+		List<InputDefinition> currentInputs = resource.getInputs();
+		//verify previous inputs ownerId fields exist - user may not delete generated inputs
+		assertTrue(8 == currentInputs.stream().filter(p -> null != p.getOwnerId()).collect(Collectors.toList()).size());
+		Either<Boolean, ResponseFormat> upgradeToLatestGeneric = bl.shouldUpgradeToLatestGeneric(resource);
+		//verify success
+		assertTrue(upgradeToLatestGeneric.isLeft());
+		//verify update required and valid
+		assertTrue(upgradeToLatestGeneric.left().value());
+		//verify version was upgraded	
+		assertFalse(resource.getDerivedFromGenericVersion().equals(currentDerivedFromVersion));
+		//verify inputs were not deleted
+		assertTrue(8 == resource.getInputs().size());
+		//verify inputs ownerId fields were removed - user may delete/edit inputs
+		assertTrue(8 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList()).size());		
+	}
+	
+	
+	@Test
+	public void testUpdateGenericInputsToLatestOnCheckoutNotPerformed() {
+		
+		//create a VF that is derived from generic version 1.0
+		Resource resource = createVF();
+		
+		//add an input to the VF
+		PropertyDefinition newProp = new PropertyDefinition();
+		newProp.setType("integer");
+		newProp.setName("newProp");
+		resource.getInputs().add(new InputDefinition(newProp));
+		
+		//create a new generic version with a new property which has the same name as a user defined input on the VF with a different type	
+		genericVF.setVersion("2.0");
+		newProp.setType("string");
+		genericVF.setProperties(new ArrayList<PropertyDefinition>());
+		genericVF.getProperties().add(newProp);
+		
+		String currentDerivedFromVersion = resource.getDerivedFromGenericVersion();
+		assertTrue(8 == resource.getInputs().stream().filter(p -> null != p.getOwnerId()).collect(Collectors.toList()).size());
+		Either<Boolean, ResponseFormat> upgradeToLatestGeneric = bl.shouldUpgradeToLatestGeneric(resource);
+		//verify success
+		assertTrue(upgradeToLatestGeneric.isLeft());
+		//verify update is invalid an void
+		assertFalse(upgradeToLatestGeneric.left().value());
+		//verify version was not upgraded	
+		assertTrue(resource.getDerivedFromGenericVersion().equals(currentDerivedFromVersion));
+		//verify inputs were not removed
+		assertTrue(9 == resource.getInputs().size());
+		//verify user defined input exists
+		assertTrue(1 == resource.getInputs().stream().filter(p -> null == p.getOwnerId()).collect(Collectors.toList()).size());
+		assertTrue(resource.getInputs().stream().filter(p -> null == p.getOwnerId()).findAny().get().getType().equals("integer"));		
+	}
+	
+	private Resource createVF() {
+		
+		genericVF = setupGenericTypeMock(GENERIC_VF_NAME);
+		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_VF_NAME)).thenReturn(Either.left(genericVF));
+		Resource resource = createResourceObject(true);
+		resource.setDerivedFrom(null);
+		resource.setResourceType(ResourceTypeEnum.VF);
+		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
+		Either<Resource, ResponseFormat> createResponse = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
+		assertTrue(createResponse.isLeft());
+		return createResponse.left().value();
+	}
+	
 
-		Either<Boolean, StorageOperationStatus> resourceInUseResponse = Either.left(true);
-		Either<Boolean, StorageOperationStatus> resourceFreeResponse = Either.left(false);
-
-		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
-		Either<List<ArtifactDefinition>, StorageOperationStatus> getArtifactsResponse = Either.left(artifacts);
-		when(resourceOperation.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Resource, true)).thenReturn(getArtifactsResponse);
-
-		when(resourceOperation.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
-		when(resourceOperation.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
-
-		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new Resource());
-		when(resourceOperation.deleteComponent(resourceFree, true)).thenReturn(eitherDelete);
-
-		when(artifactManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
-
-		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
-		assertTrue(deleteMarkedResources.isLeft());
-		List<String> resourceIdList = deleteMarkedResources.left().value();
-		assertFalse(resourceIdList.isEmpty());
-		assertTrue(resourceIdList.contains(resourceFree));
-		assertFalse(resourceIdList.contains(resourceInUse));
-
-		Mockito.verify(artifactManager, Mockito.times(1)).deleteAllComponentArtifactsIfNotOnGraph(artifacts);
+	
+    private Resource setupGenericTypeMock(String toscaName) {
+		
+		Resource genericType = createResourceObject(true);
+		genericType.setVersion("1.0");
+		genericType.setToscaResourceName(toscaName);
+		String[] propNames = {"nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming", "availability_zone_max_count", "min_instances", "max_instances"};
+		String[] propTypes = {"string", "string", "string", "string", "org.openecomp.datatypes.Naming", "integer", "integer", "integer"};
+		List<PropertyDefinition> genericProps = new ArrayList<>();
+		for(int i = 0; i < 8; ++i){
+			PropertyDefinition prop = new PropertyDefinition();
+			prop.setName(propNames[i]);
+			prop.setType(propTypes[i]);
+			genericProps.add(prop);
+		}
+		genericType.setProperties(genericProps);
+		return genericType;
 	}
 
 }

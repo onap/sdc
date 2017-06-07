@@ -34,6 +34,10 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
+/**
+ * This class Represents the Audit for External API 
+ *
+ */
 @Table(keyspace = AuditingTypesConstants.AUDIT_KEYSPACE, name = AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE)
 public class ExternalApiEvent extends AuditingGenericEvent {
 	@PartitionKey
@@ -64,9 +68,24 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 
 	@Column(name = "service_instance_id")
 	protected String serviceInstanceId;
+	
+	@Column(name = "invariant_uuid")
+	protected String invariantUuid;
 
 	@Column(name = "modifier")
 	private String modifier;
+	
+	@Column(name = "prev_version")
+	protected String prevVersion;
+	
+	@Column(name = "curr_version")
+	private String currVersion;
+	
+	@Column(name = "prev_state")
+	protected String prevState;
+
+	@Column(name = "curr_state")
+	protected String currState;
 
 	@Column(name = "prev_artifact_uuid")
 	private String prevArtifactUuid;
@@ -119,10 +138,35 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 		if (value != null) {
 			setServiceInstanceId((String) value);
 		}
+		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID);
+		if (value != null) {
+			setInvariantUuid((String) value);
+		}
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID);
 		if (value != null) {
 			setModifier((String) value);
 		}
+		
+		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION);
+		if (value != null) {
+			setPrevVersion((String) value);
+		}
+		
+		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION);
+		if (value != null) {
+			setCurrVersion((String) value);
+		}
+		
+		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE);
+		if (value != null) {
+			setPrevState((String) value);
+		}
+		
+		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE);
+		if (value != null) {
+			setCurrState((String) value);
+		}
+
 		value = auditingFields.get(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID);
 		if (value != null) {
 			setPrevArtifactUuid((String) value);
@@ -140,6 +184,7 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 	@Override
 	public void fillFields() {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID.getDisplayName(), getServiceInstanceId());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID.getDisplayName(), getInvariantUuid());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName(), getAction());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_STATUS.getDisplayName(), getStatus());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_DESC.getDisplayName(), getDesc());
@@ -151,6 +196,12 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME.getDisplayName(), getResourceName());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE.getDisplayName(), getResourceType());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID.getDisplayName(), getModifier());
+		
+		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION.getDisplayName(), getPrevVersion());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION.getDisplayName(), getCurrVersion());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE.getDisplayName(), getPrevState());
+		fields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE.getDisplayName(), getCurrState());
+		
 		fields.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID.getDisplayName(), getPrevArtifactUuid());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID.getDisplayName(), getCurrArtifactUuid());
 		fields.put(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA.getDisplayName(), getArtifactData());
@@ -235,6 +286,14 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 	public void setServiceInstanceId(String serviceInstanceId) {
 		this.serviceInstanceId = serviceInstanceId;
 	}
+	
+	public String getInvariantUuid() {
+		return invariantUuid;
+	}
+
+	public void setInvariantUuid(String invariantUuid) {
+		this.invariantUuid = invariantUuid;
+	}
 
 	public String getModifier() {
 		return modifier;
@@ -273,7 +332,42 @@ public class ExternalApiEvent extends AuditingGenericEvent {
 		return "ExternalApiEvent [timebaseduuid=" + timebaseduuid + ", timestamp1=" + timestamp1 + ", action=" + action
 				+ ", status=" + status + ", desc=" + desc + ", consumerId=" + consumerId + ", resourceURL="
 				+ resourceURL + ", resourceName=" + resourceName + ", resourceType=" + resourceType
-				+ ", serviceInstanceId=" + serviceInstanceId + ", modifier=" + modifier + ", prevArtifactUuid="
+				+ ", serviceInstanceId=" + serviceInstanceId + ", invariantUuid=" + invariantUuid + ", modifier=" + modifier 
+				+ ", prevVersion=" + prevVersion+ ", currVersion=" + currVersion
+				+ ", prevState=" + prevState + ", currState=" + currState
+				+ ", prevArtifactUuid="
 				+ prevArtifactUuid + ", currArtifactUuid=" + currArtifactUuid + ", artifactData=" + artifactData + "]";
+	}
+
+	public String getPrevVersion() {
+		return prevVersion;
+	}
+
+	public void setPrevVersion(String prevVersion) {
+		this.prevVersion = prevVersion;
+	}
+
+	public String getCurrVersion() {
+		return currVersion;
+	}
+
+	public void setCurrVersion(String currVersion) {
+		this.currVersion = currVersion;
+	}
+
+	public String getPrevState() {
+		return prevState;
+	}
+
+	public void setPrevState(String prevState) {
+		this.prevState = prevState;
+	}
+
+	public String getCurrState() {
+		return currState;
+	}
+
+	public void setCurrState(String currState) {
+		this.currState = currState;
 	}
 }

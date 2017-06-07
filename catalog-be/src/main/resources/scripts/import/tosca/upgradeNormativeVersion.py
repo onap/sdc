@@ -83,56 +83,20 @@ def main(argv):
 
 
 	##########################################################################
-    #---------------------------------for release 1610---------------------- #
+    #---------------------------------for release 1702---------------------- #
     ##########################################################################
 
-	fileLocation = baseFileLocation + "normative-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "compute", updateversion)
-	results.append(result)
-
-	fileLocation = baseFileLocation + "normative-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "network", updateversion)
-	results.append(result)
-
 	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "abstractSubstitute", updateversion)
+	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailV2VirtualMachineInterface", updateversion)
 	results.append(result)
-
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailAbstractSubstitute", updateversion)
-	results.append(result)
-
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailNetworkRules", updateversion)
-	results.append(result)
-
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "novaServer", updateversion)
-	results.append(result)
-
+	
 	fileLocation = baseFileLocation + "heat-types/"
 	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "neutronPort", updateversion)
 	results.append(result)
 
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailVirtualNetwork", updateversion)
-	results.append(result)
 
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "neutronNet", updateversion)
-	results.append(result)
 
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "vl", updateversion)
-	results.append(result)
 
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "contrailV2VirtualNetwork", updateversion)
-	results.append(result)
-
-	fileLocation = baseFileLocation + "heat-types/"
-	result = createNormativeType(beHost, bePort, adminUser, fileLocation, "securityRules", updateversion)
-	results.append(result)
 
 	handleResults(results, 'false')
 

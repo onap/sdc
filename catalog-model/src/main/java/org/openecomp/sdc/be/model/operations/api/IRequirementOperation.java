@@ -42,17 +42,13 @@ public interface IRequirementOperation {
 	 * @param uniqueId
 	 * @return
 	 */
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName,
-			RequirementDefinition reqDefinition, String resourceId);
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName, RequirementDefinition reqDefinition, String resourceId);
 
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName,
-			RequirementDefinition reqDefinition, String resourceId, boolean inTransaction);
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName, RequirementDefinition reqDefinition, String resourceId, boolean inTransaction);
 
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName,
-			RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId);
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName, RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId);
 
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName,
-			RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId, boolean inTransaction);
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName, RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId, boolean inTransaction);
 
 	/**
 	 * get requirement of resource
@@ -61,25 +57,19 @@ public interface IRequirementOperation {
 	 * @param resourceId
 	 * @return
 	 */
-	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName,
-			String resourceId);
+	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName, String resourceId);
 
-	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName,
-			String resourceId, boolean inTransaction);
+	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName, String resourceId, boolean inTransaction);
 
-	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(
-			String resourceId, boolean inTransaction);
+	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(String resourceId, boolean inTransaction);
 
-	Either<Map<String, List<RequirementDefinition>>, StorageOperationStatus> getAllRequirementsOfResourceOnly(
-			String resourceId, boolean inTransaction);
+	Either<Map<String, List<RequirementDefinition>>, StorageOperationStatus> getAllRequirementsOfResourceOnly(String resourceId, boolean inTransaction);
 
 	public Either<Map<String, RequirementDefinition>, TitanOperationStatus> getResourceRequirements(String resourceId);
 
-	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> deleteAllRequirements(String resourceId,
-			boolean inTransaction);
+	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> deleteAllRequirements(String resourceId, boolean inTransaction);
 
 	public Either<RequirementDefinition, TitanOperationStatus> getRequirement(String uniqueId);
 
-	StorageOperationStatus addRequirementToResource(TitanVertex metadataVertex, String reqName,
-			RequirementDefinition reqDefinition, String resourceId, boolean inTransaction);
+	StorageOperationStatus addRequirementToResource(TitanVertex metadataVertex, String reqName, RequirementDefinition reqDefinition, String resourceId, boolean inTransaction);
 }

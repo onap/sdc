@@ -25,36 +25,44 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.tosca.model.IToscaMetadata;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
@@ -67,7 +75,6 @@ import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTopolgyTemplate;
 import org.openecomp.sdc.be.tosca.model.VfModuleToscaMetadata;
-import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,31 +101,56 @@ public class ToscaExportHandler {
 	private ApplicationDataTypeCache dataTypeCache;
 
 	@Autowired
-	private IResourceOperation resourceOperation;
+	private ToscaOperationFacade toscaOperationFacade;
 
 	private CapabiltyRequirementConvertor capabiltyRequirementConvertor = CapabiltyRequirementConvertor.getInstance();
 	private PropertyConvertor propertyConvertor = PropertyConvertor.getInstance();
 
+	
 	private static Logger log = LoggerFactory.getLogger(ToscaExportHandler.class.getName());
 
 	public static final String TOSCA_VERSION = "tosca_simple_yaml_1_0";
 	public static final String SERVICE_NODE_TYPE_PREFIX = "org.openecomp.service.";
 	public static final String IMPORTS_FILE_KEY = "file";
 	public static final String TOSCA_TEMPLATE_NAME = "-template.yml";
+	public static final String TOSCA_INTERFACE_NAME = "-interface.yml";
 	public static final String ASSET_TOSCA_TEMPLATE = "assettoscatemplate";
 	public static final String VF_MODULE_TYPE_KEY = "vf_module_type";
 	public static final String VF_MODULE_DESC_KEY = "vf_module_description";
 	public static final String VOLUME_GROUP_KEY = "volume_group";
 	public static final String VF_MODULE_TYPE_BASE = "Base";
 	public static final String VF_MODULE_TYPE_EXPANSION = "Expansion";
-
+	public static final List<Map<String, Map<String, String>>> DEFAULT_IMPORTS = ConfigurationManager.getConfigurationManager().getConfiguration().getDefaultImports();
+	
+	
+	
 	public Either<ToscaRepresentation, ToscaError> exportComponent(Component component) {
 
 		Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertToToscaTemplate(component);
 		if (toscaTemplateRes.isRight()) {
 			return Either.right(toscaTemplateRes.right().value());
 		}
+		
+		ToscaTemplate toscaTemplate = toscaTemplateRes.left().value();
+		ToscaRepresentation toscaRepresentation = this.createToscaRepresentation(toscaTemplate);
+		return Either.left(toscaRepresentation);
+	}
 
+	public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component) {
+		ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
+		toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
+		Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+		Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(component, toscaTemplate, nodeTypes);
+		if (toscaTemplateRes.isRight()) {
+			return Either.right(toscaTemplateRes.right().value());
+		}	
+		
+		toscaTemplate = toscaTemplateRes.left().value();
+		ToscaRepresentation toscaRepresentation = this.createToscaRepresentation(toscaTemplate);
+		return Either.left(toscaRepresentation);
+	}
+
+	public ToscaRepresentation createToscaRepresentation(ToscaTemplate toscaTemplate) {
 		CustomRepresenter representer = new CustomRepresenter();
 		DumperOptions options = new DumperOptions();
 		options.setAllowReadOnlyProperties(false);
@@ -127,7 +159,6 @@ public class ToscaExportHandler {
 		options.setDefaultFlowStyle(FlowStyle.FLOW);
 		options.setCanonical(false);
 
-		ToscaTemplate toscaTemplate = toscaTemplateRes.left().value();
 		representer.addClassTag(toscaTemplate.getClass(), Tag.MAP);
 
 		representer.setPropertyUtils(new UnsortedPropertyUtils());
@@ -143,13 +174,14 @@ public class ToscaExportHandler {
 		ToscaRepresentation toscaRepresentation = new ToscaRepresentation();
 		toscaRepresentation.setMainYaml(sb.toString());
 		toscaRepresentation.setDependencies(toscaTemplate.getDependencies());
-
-		return Either.left(toscaRepresentation);
+		
+		return toscaRepresentation;
 	}
-
+	
 	public Either<ToscaTemplate, ToscaError> getDependencies(Component component) {
 		ToscaTemplate toscaTemplate = new ToscaTemplate(null);
-		Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports = fillImports(component, toscaTemplate);
+		Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports = fillImports(component,
+				toscaTemplate);
 		if (fillImports.isRight()) {
 			return Either.right(fillImports.right().value());
 		}
@@ -157,17 +189,17 @@ public class ToscaExportHandler {
 	}
 
 	private Either<ToscaTemplate, ToscaError> convertToToscaTemplate(Component component) {
-		log.debug("start tosca export for {}", component.getUniqueId());
+		log.trace("start tosca export for {}", component.getUniqueId());
 		ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
 
-		toscaTemplate.setMetadata(convertMetadata(component, false));
-
-		Map<String, ToscaNodeType> node_types = new HashMap<>();
-		if (ToscaUtils.isNodeType(component)) {
-			log.debug("convert component as node type");
-			return convertNodeType(component, toscaTemplate, node_types);
+		toscaTemplate.setMetadata(convertMetadata(component));
+		toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
+		Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
+		if (ToscaUtils.isAtomicType(component)) {
+			log.trace("convert component as node type");
+			return convertNodeType(component, toscaTemplate, nodeTypes);
 		} else {
-			log.debug("convert component as topology template");
+			log.trace("convert component as topology template");
 			return convertToscaTemplate(component, toscaTemplate);
 		}
 
@@ -175,7 +207,8 @@ public class ToscaExportHandler {
 
 	private Either<ToscaTemplate, ToscaError> convertToscaTemplate(Component component, ToscaTemplate toscaNode) {
 
-		Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> importsRes = fillImports(component, toscaNode);
+		Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> importsRes = fillImports(component,
+				toscaNode);
 		if (importsRes.isRight()) {
 			return Either.right(importsRes.right().value());
 		}
@@ -189,47 +222,50 @@ public class ToscaExportHandler {
 		}
 		Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
 
-		ToscaTopolgyTemplate topology_template = new ToscaTopolgyTemplate();
+		ToscaTopolgyTemplate topologyTemplate = new ToscaTopolgyTemplate();
 
-		Either<ToscaTopolgyTemplate, ToscaError> inputs = fillInputs(component, topology_template, dataTypes);
+		Either<ToscaTopolgyTemplate, ToscaError> inputs = fillInputs(component, topologyTemplate, dataTypes);
 		if (inputs.isRight()) {
 			return Either.right(inputs.right().value());
 		}
-		topology_template = inputs.left().value();
+		topologyTemplate = inputs.left().value();
 
 		List<ComponentInstance> componentInstances = component.getComponentInstances();
-		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
+		Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component
+				.getComponentInstancesProperties();
 		List<GroupDefinition> groups = component.getGroups();
 		if (componentInstances != null && !componentInstances.isEmpty()) {
 
-			Either<Map<String, ToscaNodeTemplate>, ToscaError> node_templates = convertNodeTemplates(component, componentInstances, componentInstancesProperties, componentCache, dataTypes);
-			if (node_templates.isRight()) {
-				return Either.right(node_templates.right().value());
+			Either<Map<String, ToscaNodeTemplate>, ToscaError> nodeTemplates = convertNodeTemplates(component,
+					componentInstances, componentInstancesProperties, componentCache, dataTypes, topologyTemplate);
+			if (nodeTemplates.isRight()) {
+				return Either.right(nodeTemplates.right().value());
 			}
 			log.debug("node templates converted");
 
-			topology_template.setNode_templates(node_templates.left().value());
+			topologyTemplate.setNode_templates(nodeTemplates.left().value());
 		}
+		Map<String, ToscaGroupTemplate> groupsMap = null;
 		if (groups != null && !groups.isEmpty()) {
-			Map<String, ToscaGroupTemplate> groupsMap = new HashMap<String, ToscaGroupTemplate>();
+			groupsMap = new HashMap<String, ToscaGroupTemplate>();
 			for (GroupDefinition group : groups) {
-				ToscaGroupTemplate toscaGroup = convertGroup(group, component);
+				ToscaGroupTemplate toscaGroup = convertGroup(group);
 				groupsMap.put(group.getName(), toscaGroup);
 
 			}
-			topology_template.setGroups(groupsMap);
 			log.debug("groups converted");
-
+			topologyTemplate.addGroups(groupsMap);
 		}
-
 		SubstitutionMapping substitutionMapping = new SubstitutionMapping();
 		String toscaResourceName = null;
 		switch (component.getComponentType()) {
 		case RESOURCE:
-			toscaResourceName = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName();
+			toscaResourceName = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition()
+					.getMetadataDataDefinition()).getToscaResourceName();
 			break;
 		case SERVICE:
-			toscaResourceName = SERVICE_NODE_TYPE_PREFIX + component.getComponentMetadataDefinition().getMetadataDataDefinition().getSystemName();
+			toscaResourceName = SERVICE_NODE_TYPE_PREFIX
+					+ component.getComponentMetadataDefinition().getMetadataDataDefinition().getSystemName();
 			break;
 		default:
 			log.debug("Not supported component type {}", component.getComponentType());
@@ -237,25 +273,27 @@ public class ToscaExportHandler {
 		}
 		substitutionMapping.setNode_type(toscaResourceName);
 
-		Either<SubstitutionMapping, ToscaError> capabilities = convertCapabilities(component, substitutionMapping, dataTypes);
+		Either<SubstitutionMapping, ToscaError> capabilities = convertCapabilities(component, substitutionMapping,
+				dataTypes);
 		if (capabilities.isRight()) {
 			return Either.right(capabilities.right().value());
 		}
 		substitutionMapping = capabilities.left().value();
 
-		Either<SubstitutionMapping, ToscaError> requirements = capabiltyRequirementConvertor.convertRequirements(component, substitutionMapping);
+		Either<SubstitutionMapping, ToscaError> requirements = capabiltyRequirementConvertor.convertSubstitutionMappingRequirements(component, substitutionMapping);
 		if (requirements.isRight()) {
 			return Either.right(requirements.right().value());
 		}
 		substitutionMapping = requirements.left().value();
 
-		topology_template.setSubstitution_mappings(substitutionMapping);
+		topologyTemplate.setSubstitution_mappings(substitutionMapping);
 
-		toscaNode.setTopology_template(topology_template);
+		toscaNode.setTopology_template(topologyTemplate);
 		return Either.left(toscaNode);
 	}
 
-	private Either<ToscaTopolgyTemplate, ToscaError> fillInputs(Component component, ToscaTopolgyTemplate topology_template, Map<String, DataTypeDefinition> dataTypes) {
+	private Either<ToscaTopolgyTemplate, ToscaError> fillInputs(Component component,
+			ToscaTopolgyTemplate topologyTemplate, Map<String, DataTypeDefinition> dataTypes) {
 		if (log.isDebugEnabled())
 			log.debug("fillInputs for component {}", component.getUniqueId());
 		List<InputDefinition> inputDef = component.getInputs();
@@ -266,14 +304,19 @@ public class ToscaExportHandler {
 				ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);
 				inputs.put(i.getName(), property);
 			});
-			if (inputs != null && !inputs.isEmpty()) {
-				topology_template.setInputs(inputs);
+			if (!inputs.isEmpty()) {
+				topologyTemplate.setInputs(inputs);
 			}
 		}
-		return Either.left(topology_template);
+		return Either.left(topologyTemplate);
 	}
 
-	private ToscaMetadata convertMetadata(Component component, boolean isInstance) {
+	private ToscaMetadata convertMetadata(Component component) {
+		return convertMetadata(component, false, null);
+	}
+
+	private ToscaMetadata convertMetadata(Component component, boolean isInstance,
+			ComponentInstance componentInstance) {
 		ToscaMetadata toscaMetadata = new ToscaMetadata();
 		toscaMetadata.setName(component.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
 		toscaMetadata.setInvariantUUID(component.getInvariantUUID());
@@ -286,6 +329,7 @@ public class ToscaExportHandler {
 
 		if (isInstance) {
 			toscaMetadata.setVersion(component.getVersion());
+			toscaMetadata.setCustomizationUUID(componentInstance.getCustomizationUUID());
 		}
 		switch (component.getComponentType()) {
 		case RESOURCE:
@@ -300,8 +344,10 @@ public class ToscaExportHandler {
 		case SERVICE:
 			toscaMetadata.setType(component.getComponentType().getValue());
 			if (!isInstance) {
-				toscaMetadata.setServiceEcompNaming(false);
-				toscaMetadata.setServiceHoming(false);
+				// DE268546	
+				toscaMetadata.setServiceEcompNaming(((Service)component).isEcompGeneratedNaming());
+				toscaMetadata.setEcompGeneratedNaming(((Service)component).isEcompGeneratedNaming());
+				toscaMetadata.setNamingPolicy(((Service)component).getNamingPolicy());				
 			}
 			break;
 		default:
@@ -310,38 +356,59 @@ public class ToscaExportHandler {
 		return toscaMetadata;
 	}
 
-	private Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports(Component component, ToscaTemplate toscaTemplate) {
+	private Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports(Component component,
+			ToscaTemplate toscaTemplate) {
 		Map<String, Component> componentCache = new HashMap<>();
-		if (!ToscaUtils.isNodeType(component)) {
+
+		if (!ToscaUtils.isAtomicType(component)) {
 			List<ComponentInstance> componentInstances = component.getComponentInstances();
 			if (componentInstances != null && !componentInstances.isEmpty()) {
-				List<Map<String, Map<String, String>>> imports = new LinkedList<Map<String, Map<String, String>>>();
+				
+				List<Map<String, Map<String, String>>> additionalImports = 
+						toscaTemplate.getImports() == null ? new ArrayList<>(DEFAULT_IMPORTS) : new ArrayList<>(toscaTemplate.getImports());
+				
 				List<Triple<String, String, Component>> dependecies = new ArrayList<>();
 
+				Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
+				ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
+				
+				Map<String, Map<String, String>> importsListMember = new HashMap<>();
+				Map<String, String> interfaceFiles = new HashMap<>();
+				interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactDefinition.getArtifactName()));
+				StringBuilder keyNameBuilder = new StringBuilder();
+				keyNameBuilder.append(component.getComponentType().toString().toLowerCase());
+				keyNameBuilder.append("-");
+				keyNameBuilder.append(component.getName());
+				keyNameBuilder.append("-interface");
+				importsListMember.put(keyNameBuilder.toString(), interfaceFiles);
+				additionalImports.add(importsListMember);
+				
 				componentInstances.forEach(ci -> {
-					createDependency(componentCache, imports, dependecies, ci);
+					createDependency(componentCache, additionalImports, dependecies, ci);
 				});
-				toscaTemplate.setImports(imports);
 				toscaTemplate.setDependencies(dependecies);
+				toscaTemplate.setImports(additionalImports);
 			}
 		} else {
 			log.debug("currently imports supported for VF and service only");
-		}
+		}	
 		return Either.left(new ImmutablePair<ToscaTemplate, Map<String, Component>>(toscaTemplate, componentCache));
 	}
 
-	private void createDependency(Map<String, Component> componentCache, List<Map<String, Map<String, String>>> imports, List<Triple<String, String, Component>> dependecies, ComponentInstance ci) {
+	private void createDependency(Map<String, Component> componentCache, List<Map<String, Map<String, String>>> imports,
+			List<Triple<String, String, Component>> dependecies, ComponentInstance ci) {
 		Map<String, String> files = new HashMap<>();
 		Map<String, Map<String, String>> importsListMember = new HashMap<>();
+		StringBuilder keyNameBuilder;
 
 		Component componentRI = componentCache.get(ci.getComponentUid());
 		if (componentRI == null) {
 			// all resource must be only once!
-			Either<Resource, StorageOperationStatus> resource = resourceOperation.getResource(ci.getComponentUid(), true);
+			Either<Component, StorageOperationStatus> resource = toscaOperationFacade.getToscaFullElement(ci.getComponentUid());
 			if (resource.isRight()) {
 				log.debug("Failed to fetch resource with id {} for instance {}");
 			}
-			Resource fetchedComponent = resource.left().value();
+			Component fetchedComponent = resource.left().value();
 			componentCache.put(fetchedComponent.getUniqueId(), fetchedComponent);
 			componentRI = fetchedComponent;
 
@@ -350,16 +417,34 @@ public class ToscaExportHandler {
 			if (artifactDefinition != null) {
 				String artifactName = artifactDefinition.getArtifactName();
 				files.put(IMPORTS_FILE_KEY, artifactName);
-				importsListMember.put(ci.getComponentName(), files);
-				dependecies.add(new ImmutableTriple<String, String, Component>(artifactName, artifactDefinition.getEsId(), fetchedComponent));
+				keyNameBuilder = new StringBuilder();
+				keyNameBuilder.append(fetchedComponent.getComponentType().toString().toLowerCase());
+				keyNameBuilder.append("-");
+				keyNameBuilder.append(ci.getComponentName());
+				importsListMember.put(keyNameBuilder.toString(), files);
+				imports.add(importsListMember);
+				dependecies.add(new ImmutableTriple<String, String, Component>(artifactName,
+						artifactDefinition.getEsId(), fetchedComponent));
+				
+				if(!ToscaUtils.isAtomicType(componentRI)) {
+					importsListMember = new HashMap<>();
+					Map<String, String> interfaceFiles = new HashMap<>();
+					interfaceFiles.put(IMPORTS_FILE_KEY, getInterfaceFilename(artifactName));
+					keyNameBuilder.append("-interface");
+					importsListMember.put(keyNameBuilder.toString(), interfaceFiles);
+					imports.add(importsListMember);
+				}
 			}
-		}
-		if (!importsListMember.isEmpty()) {
-			imports.add(importsListMember);
 		}
 	}
 
-	private Either<ToscaTemplate, ToscaError> convertNodeType(Component component, ToscaTemplate toscaNode, Map<String, ToscaNodeType> node_types) {
+	public static String getInterfaceFilename(String artifactName) {
+		String interfaceFileName = artifactName.substring(0, artifactName.lastIndexOf('.')) + ToscaExportHandler.TOSCA_INTERFACE_NAME;
+		return interfaceFileName;
+	}
+
+	private Either<ToscaTemplate, ToscaError> convertNodeType(Component component, ToscaTemplate toscaNode,
+			Map<String, ToscaNodeType> nodeTypes) {
 		log.debug("start convert node type for {}", component.getUniqueId());
 		ToscaNodeType toscaNodeType = createNodeType(component);
 
@@ -370,13 +455,51 @@ public class ToscaExportHandler {
 		}
 
 		Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
-		Either<ToscaNodeType, ToscaError> properties = propertyConvertor.convertProperties(component, toscaNodeType, dataTypes);
+		Either<ToscaNodeType, ToscaError> properties = propertyConvertor.convertProperties(component, toscaNodeType,
+				dataTypes);
 		if (properties.isRight()) {
 			return Either.right(properties.right().value());
 		}
 		toscaNodeType = properties.left().value();
 		log.debug("Properties converted for {}", component.getUniqueId());
 
+		//Extracted to method for code reuse
+		return convertReqCapAndTypeName(component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+	}
+	
+	private Either<ToscaTemplate, ToscaError> convertInterfaceNodeType(Component component, ToscaTemplate toscaNode,
+			Map<String, ToscaNodeType> nodeTypes) {
+		log.debug("start convert node type for {}", component.getUniqueId());
+		ToscaNodeType toscaNodeType = createNodeType(component);
+
+		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> dataTypesEither = dataTypeCache.getAll();
+		if (dataTypesEither.isRight()) {
+			log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
+			return Either.right(ToscaError.GENERAL_ERROR);
+		}
+
+		Map<String, DataTypeDefinition> dataTypes = dataTypesEither.left().value();
+		
+		List<InputDefinition> inputDef = component.getInputs();
+		Map<String, ToscaProperty> inputs = new HashMap<>();
+
+		if (inputDef != null) {
+			inputDef.forEach(i -> {
+				ToscaProperty property = propertyConvertor.convertProperty(dataTypes, i, false);
+				inputs.put(i.getName(), property);
+			});
+			if (!inputs.isEmpty()) {
+				toscaNodeType.setProperties(inputs);
+			}
+		}
+
+		//Extracted to method for code reuse
+		return convertReqCapAndTypeName(component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+	}
+
+	private Either<ToscaTemplate, ToscaError> convertReqCapAndTypeName(Component component, ToscaTemplate toscaNode,
+			Map<String, ToscaNodeType> nodeTypes, ToscaNodeType toscaNodeType,
+			Map<String, DataTypeDefinition> dataTypes) {
 		Either<ToscaNodeType, ToscaError> capabilities = convertCapabilities(component, toscaNodeType, dataTypes);
 		if (capabilities.isRight()) {
 			return Either.right(capabilities.right().value());
@@ -384,150 +507,323 @@ public class ToscaExportHandler {
 		toscaNodeType = capabilities.left().value();
 		log.debug("Capabilities converted for {}", component.getUniqueId());
 
-		Either<ToscaNodeType, ToscaError> requirements = capabiltyRequirementConvertor.convertRequirements(component, toscaNodeType);
+		Either<ToscaNodeType, ToscaError> requirements = capabiltyRequirementConvertor.convertRequirements(component,
+				toscaNodeType);
 		if (requirements.isRight()) {
 			return Either.right(requirements.right().value());
 		}
 		toscaNodeType = requirements.left().value();
 		log.debug("Requirements converted for {}", component.getUniqueId());
 
-		String toscaResourceName = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName();
-		node_types.put(toscaResourceName, toscaNodeType);
-		toscaNode.setNode_types(node_types);
+		
+		String toscaResourceName;
+		switch (component.getComponentType()) {
+		case RESOURCE:
+			toscaResourceName = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition()
+					.getMetadataDataDefinition()).getToscaResourceName();
+			break;
+		case SERVICE:
+			toscaResourceName = SERVICE_NODE_TYPE_PREFIX
+					+ component.getComponentMetadataDefinition().getMetadataDataDefinition().getSystemName();
+			break;
+		default:
+			log.debug("Not supported component type {}", component.getComponentType());
+			return Either.right(ToscaError.NOT_SUPPORTED_TOSCA_TYPE);
+		}
+
+		nodeTypes.put(toscaResourceName, toscaNodeType);
+		toscaNode.setNode_types(nodeTypes);
 		log.debug("finish convert node type for {}", component.getUniqueId());
 		return Either.left(toscaNode);
 	}
 
-	private Either<Map<String, ToscaNodeTemplate>, ToscaError> convertNodeTemplates(Component component, List<ComponentInstance> componentInstances, Map<String, List<ComponentInstanceProperty>> componentInstancesProperties,
-			Map<String, Component> componentCache, Map<String, DataTypeDefinition> dataTypes) {
-		log.debug("start convert topology template for {} for type {}", component.getUniqueId(), component.getComponentType());
-		Map<String, ToscaNodeTemplate> node_templates = new HashMap<>();
+	private Either<Map<String, ToscaNodeTemplate>, ToscaError> convertNodeTemplates(Component component,
+			List<ComponentInstance> componentInstances,
+			Map<String, List<ComponentInstanceProperty>> componentInstancesProperties,
+			Map<String, Component> componentCache, Map<String, DataTypeDefinition> dataTypes,
+			ToscaTopolgyTemplate topologyTemplate) {
 
+		Either<Map<String, ToscaNodeTemplate>, ToscaError> convertNodeTemplatesRes = null;
+		log.debug("start convert topology template for {} for type {}", component.getUniqueId(),
+				component.getComponentType());
+		Map<String, ToscaNodeTemplate> nodeTemplates = new HashMap<>();
+		Map<String, List<ComponentInstanceInput>> componentInstancesInputs = component.getComponentInstancesInputs();
+
+		Map<String, ToscaGroupTemplate> groupsMap = null;
 		for (ComponentInstance componentInstance : componentInstances) {
 			ToscaNodeTemplate nodeTemplate = new ToscaNodeTemplate();
 			nodeTemplate.setType(componentInstance.getToscaComponentName());
 
-			Either<ToscaNodeTemplate, ToscaError> requirements = convertComponentInstanceRequirements(component, componentInstance, component.getComponentInstancesRelations(), nodeTemplate);
+			Either<ToscaNodeTemplate, ToscaError> requirements = convertComponentInstanceRequirements(component,
+					componentInstance, component.getComponentInstancesRelations(), nodeTemplate);
 			if (requirements.isRight()) {
-				return Either.right(requirements.right().value());
+				convertNodeTemplatesRes = Either.right(requirements.right().value());
+				break;
 			}
-			log.debug("Component instance Requirements converted for instance {}", componentInstance.getUniqueId());
+			String instanceUniqueId = componentInstance.getUniqueId();
+			log.debug("Component instance Requirements converted for instance {}", instanceUniqueId);
 
 			nodeTemplate = requirements.left().value();
 
 			Component componentOfInstance = componentCache.get(componentInstance.getComponentUid());
-			nodeTemplate.setMetadata(convertMetadata(componentOfInstance, true));
+			nodeTemplate.setMetadata(convertMetadata(componentOfInstance, true, componentInstance));
 
-			Either<ToscaNodeTemplate, ToscaError> capabilties = capabiltyRequirementConvertor.convertComponentInstanceCapabilties(componentInstance, dataTypes, nodeTemplate);
+			Either<ToscaNodeTemplate, ToscaError> capabilties = capabiltyRequirementConvertor
+					.convertComponentInstanceCapabilties(componentInstance, dataTypes, nodeTemplate);
 			if (capabilties.isRight()) {
-				return Either.right(requirements.right().value());
+				convertNodeTemplatesRes = Either.right(requirements.right().value());
+				break;
 			}
-			log.debug("Component instance Capabilties converted for instance {}", componentInstance.getUniqueId());
+			log.debug("Component instance Capabilties converted for instance {}", instanceUniqueId);
 
 			nodeTemplate = capabilties.left().value();
+			Map<String, Object> props = new HashMap<>();
 
-			if (componentInstancesProperties.containsKey(componentInstance.getUniqueId())) {
-				Map<String, Object> props = null;
-				List<ComponentInstanceProperty> propList = componentInstancesProperties.get(componentInstance.getUniqueId());
-				List<ComponentInstanceProperty> collect = propList.stream().filter(e -> e.getValueUniqueUid() != null && !e.getValueUniqueUid().isEmpty()).collect(Collectors.toList());
-				if (collect != null && !collect.isEmpty()) {
-					props = new HashMap<String, Object>();
-					for (ComponentInstanceProperty prop : collect) {
-						Object convertedValue = convertInstanceProperty(dataTypes, componentInstance, prop);
-						props.put(prop.getName(), convertedValue);
-					}
+			if (componentOfInstance.getComponentType() == ComponentTypeEnum.RESOURCE) {
+				// Adds the properties of parent component to map
+				addPropertiesOfParentComponent(dataTypes, componentInstance, componentOfInstance, props);
+			}
+
+			if (null != componentInstancesProperties && componentInstancesProperties.containsKey(instanceUniqueId)) {
+				addPropertiesOfComponentInstance(componentInstancesProperties, dataTypes, componentInstance,
+						instanceUniqueId, props);
+			}
+
+			if (componentInstancesInputs != null && componentInstancesInputs.containsKey(instanceUniqueId)) {
+				addComponentInstanceInputs(dataTypes, componentInstancesInputs, componentInstance, instanceUniqueId,
+						props);
+			}
+			if (props != null && !props.isEmpty()) {
+				nodeTemplate.setProperties(props);
+			}
+
+			List<GroupInstance> groupInstances = componentInstance.getGroupInstances();
+			if (groupInstances != null) {
+				if (groupsMap == null) {
+					groupsMap = new HashMap<>();
 				}
-				if (props != null && !props.isEmpty()) {
-					nodeTemplate.setProperties(props);
+				for (GroupInstance groupInst : groupInstances) {
+					ToscaGroupTemplate toscaGroup = convertGroupInstance(groupInst);
+					String keyName = groupInst.getGroupName();
+
+					groupsMap.put(keyName, toscaGroup);
 				}
 			}
-			node_templates.put(componentInstance.getName(), nodeTemplate);
+
+			nodeTemplates.put(componentInstance.getName(), nodeTemplate);
 		}
-		log.debug("finish convert topology template for {} for type {}", component.getUniqueId(), component.getComponentType());
-		return Either.left(node_templates);
+		if (groupsMap != null) {
+			log.debug("instance groups added");
+			topologyTemplate.addGroups(groupsMap);
+		}
+
+		if (convertNodeTemplatesRes == null) {
+			convertNodeTemplatesRes = Either.left(nodeTemplates);
+		}
+		log.debug("finish convert topology template for {} for type {}", component.getUniqueId(),
+				component.getComponentType());
+		return convertNodeTemplatesRes;
 	}
 
-	private Object convertInstanceProperty(Map<String, DataTypeDefinition> dataTypes, ComponentInstance componentInstance, ComponentInstanceProperty prop) {
-		log.debug("Convert property {} for instance {}", prop.getName(), componentInstance.getUniqueId());
-		String propertyType = prop.getType();
+	private void addComponentInstanceInputs(Map<String, DataTypeDefinition> dataTypes,
+			Map<String, List<ComponentInstanceInput>> componentInstancesInputs, ComponentInstance componentInstance,
+			String instanceUniqueId, Map<String, Object> props) {
+
+		List<ComponentInstanceInput> instanceInputsList = componentInstancesInputs.get(instanceUniqueId);
+		if (instanceInputsList != null) {
+			instanceInputsList.forEach(input -> {
+				Supplier<String> supplier = () -> input.getValue();
+				convertAndAddValue(dataTypes, componentInstance, props, input, supplier);
+			});
+		}
+	}
+
+	private void addPropertiesOfComponentInstance(
+			Map<String, List<ComponentInstanceProperty>> componentInstancesProperties,
+			Map<String, DataTypeDefinition> dataTypes, ComponentInstance componentInstance, String instanceUniqueId,
+			Map<String, Object> props) {
+
+		if (!MapUtils.isEmpty(componentInstancesProperties)) {
+			componentInstancesProperties.get(instanceUniqueId).stream()
+					// Filters out properties with empty ValueUniqueUid
+					.filter(e -> e.getValue() != null && !e.getValue().isEmpty() )
+					// Collects filtered properties to List
+					.collect(Collectors.toList()).stream()
+					// Converts and adds each value to property map
+					.forEach(prop -> convertAndAddValue(dataTypes, componentInstance, props, prop,
+							() -> prop.getValue()));
+		}
+	}
+
+	private void addPropertiesOfParentComponent(Map<String, DataTypeDefinition> dataTypes,
+			ComponentInstance componentInstance, Component componentOfInstance, Map<String, Object> props) {
+
+		List<PropertyDefinition> componentProperties = ((Resource) componentOfInstance).getProperties();
+		if (!CollectionUtils.isEmpty(componentProperties)) {
+			componentProperties.stream()
+					// Filters out properties with empty default values
+					.filter(prop -> !StringUtils.isEmpty(prop.getDefaultValue()))
+					// Collects filtered properties to List
+					.collect(Collectors.toList()).stream()
+					// Converts and adds each value to property map
+					.forEach(prop -> convertAndAddValue(dataTypes, componentInstance, props, prop,
+							() -> prop.getDefaultValue()));
+		}
+	}
+
+	/**
+	 * @param dataTypes
+	 * @param componentInstance
+	 * @param props
+	 * @param prop
+	 * @param supplier
+	 */
+	private void convertAndAddValue(Map<String, DataTypeDefinition> dataTypes, ComponentInstance componentInstance,
+			Map<String, Object> props, PropertyDefinition prop, Supplier<String> supplier) {
+		Object convertedValue = convertValue(dataTypes, componentInstance, prop, supplier);
+		if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
+			props.put(prop.getName(), convertedValue);
+		}
+	}
+
+	private <T extends PropertyDefinition> Object convertValue(Map<String, DataTypeDefinition> dataTypes,
+			ComponentInstance componentInstance, T input, Supplier<String> supplier) {
+		log.debug("Convert property or input value {} for instance {}", input.getName(),
+				componentInstance.getUniqueId());
+		String propertyType = input.getType();
 		String innerType = null;
-		if (prop.getSchema() != null && prop.getSchema().getProperty() != null) {
-			innerType = prop.getSchema().getProperty().getType();
+		if (input.getSchema() != null && input.getSchema().getProperty() != null) {
+			innerType = input.getSchema().getProperty().getType();
 		}
-		Object convertedValue = propertyConvertor.convertToToscaObject(propertyType, prop.getValue(), innerType, dataTypes);
-		return convertedValue;
+		return propertyConvertor.convertToToscaObject(propertyType, supplier.get(), innerType, dataTypes);
 	}
 
-	private ToscaGroupTemplate convertGroup(GroupDefinition group, Component component) {
+	private ToscaGroupTemplate convertGroup(GroupDefinition group) {
 		ToscaGroupTemplate toscaGroup = new ToscaGroupTemplate();
 		Map<String, String> members = group.getMembers();
-		toscaGroup.setType(group.getType());
 		if (members != null)
 			toscaGroup.setMembers(new ArrayList(members.keySet()));
 
-		boolean isVfModule = group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) ? true : false;
+		Supplier<String> supplGroupType = () -> group.getType();
+		Supplier<String> supplDescription = () -> group.getDescription();
+		Supplier<List<? extends GroupProperty>> supplProperties = () -> group.convertToGroupProperties();
+		Supplier<String> supplgroupName = () -> group.getName();
+		Supplier<String> supplInvariantUUID = () -> group.getInvariantUUID();
+		Supplier<String> supplGroupUUID = () -> group.getGroupUUID();
+		Supplier<String> supplVersion = () -> group.getVersion();
+
+		IToscaMetadata toscaMetadata = fillGroup(toscaGroup, supplProperties, supplDescription, supplgroupName,
+				supplInvariantUUID, supplGroupUUID, supplVersion, supplGroupType);
+		toscaGroup.setMetadata(toscaMetadata);
+		return toscaGroup;
+	}
+
+	private ToscaGroupTemplate convertGroupInstance(GroupInstance groupInstance) {
+		ToscaGroupTemplate toscaGroup = new ToscaGroupTemplate();
+
+		Supplier<String> supplGroupType = () -> groupInstance.getType();
+		Supplier<String> supplDescription = () -> groupInstance.getDescription();
+		Supplier<List<? extends GroupProperty>> supplProperties = () -> groupInstance.convertToGroupInstancesProperties();
+		Supplier<String> supplgroupName = () -> groupInstance.getGroupName();
+		Supplier<String> supplInvariantUUID = () -> groupInstance.getInvariantUUID();
+		Supplier<String> supplGroupUUID = () -> groupInstance.getGroupUUID();
+		Supplier<String> supplVersion = () -> groupInstance.getVersion();
+
+		IToscaMetadata toscaMetadata = fillGroup(toscaGroup, supplProperties, supplDescription, supplgroupName,
+				supplInvariantUUID, supplGroupUUID, supplVersion, supplGroupType);
+
+		toscaMetadata.setCustomizationUUID(groupInstance.getCustomizationUUID());
+		toscaGroup.setMetadata(toscaMetadata);
+		return toscaGroup;
+	}
+
+	private IToscaMetadata fillGroup(ToscaGroupTemplate toscaGroup, Supplier<List<? extends GroupProperty>> props,
+			Supplier<String> description, Supplier<String> groupName, Supplier<String> invariantUUID,
+			Supplier<String> groupUUID, Supplier<String> version, Supplier<String> groupType) {
+		boolean isVfModule = groupType.get().equals(Constants.DEFAULT_GROUP_VF_MODULE) ? true : false;
+		toscaGroup.setType(groupType.get());
+
 		IToscaMetadata toscaMetadata;
 		if (!isVfModule) {
 			toscaMetadata = new ToscaMetadata();
 		} else {
 			toscaMetadata = new VfModuleToscaMetadata();
-			Map<String, Object> properties = new HashMap<>();
 
-			for (GroupProperty gp : group.getProperties()) {
+			Map<String, Object> properties = fillGroupProperties(props.get());
+
+			properties.put(VF_MODULE_DESC_KEY, description.get());
+			toscaGroup.setProperties(properties);
+		}
+		toscaMetadata.setName(groupName.get());
+		toscaMetadata.setInvariantUUID(invariantUUID.get());
+		toscaMetadata.setUUID(groupUUID.get());
+		toscaMetadata.setVersion(version.get());
+		return toscaMetadata;
+	}
+
+	private Map<String, Object> fillGroupProperties(List<? extends GroupProperty> groupProps) {
+		Map<String, Object> properties = new HashMap<>();
+		if(groupProps != null){
+			for (GroupProperty gp : groupProps) {
 				if (gp.getName().equals(Constants.IS_BASE)) {
 					Boolean isBase = Boolean.parseBoolean(gp.getValue());
 					String type = isBase ? VF_MODULE_TYPE_BASE : VF_MODULE_TYPE_EXPANSION;
 					properties.put(VF_MODULE_TYPE_KEY, type);
-					break;
-				}
-			}
-			properties.put(VF_MODULE_DESC_KEY, group.getDescription());
-			boolean isVolume = false;
-			List<String> artifactsList = group.getArtifacts();
-			if (artifactsList != null && !artifactsList.isEmpty()) {
-
-				for (String artifactId : artifactsList) {
-					Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
-					Optional<ArtifactDefinition> findFirst = deploymentArtifacts.values().stream().filter(p -> p.getUniqueId().equals(artifactId)).findFirst();
-					if (findFirst.isPresent()) {
-						ArtifactDefinition artifactDefinition = findFirst.get();
-						if (artifactDefinition.getArtifactType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType())) {
-							isVolume = true;
-							break;
+				} else {
+					Object value = null;
+					String type = gp.getType();
+	
+					switch (type) {
+					case "integer":
+						if (gp.getValue() != null) {
+							value = Integer.valueOf(gp.getValue());
 						}
+						break;
+					case "boolean":
+						if (gp.getValue() != null) {
+							value = Boolean.valueOf(gp.getValue());
+						}
+						break;
+	
+					default:
+						value = gp.getValue();
+						break;
 					}
+					properties.put(gp.getName(), value);
 				}
 			}
-			properties.put(VOLUME_GROUP_KEY, isVolume);
-			toscaGroup.setProperties(properties);
 		}
-		toscaMetadata.setName(group.getName());
-		toscaMetadata.setInvariantUUID(group.getInvariantUUID());
-		toscaMetadata.setUUID(group.getGroupUUID());
-		toscaMetadata.setVersion(group.getVersion());
-		toscaGroup.setMetadata(toscaMetadata);
-		return toscaGroup;
+		return properties;
 	}
 
 	private ToscaNodeType createNodeType(Component component) {
 		ToscaNodeType toscaNodeType = new ToscaNodeType();
-		if (ToscaUtils.isNodeType(component) && ((Resource) component).getDerivedFrom() != null) {
-			toscaNodeType.setDerived_from(((Resource) component).getDerivedFrom().get(0));
+		if (ToscaUtils.isAtomicType(component)){
+			if (((Resource) component).getDerivedFrom() != null){
+				toscaNodeType.setDerived_from(((Resource) component).getDerivedFrom().get(0));
+			}
+			toscaNodeType.setDescription(component.getDescription()); // or name??
+		} else {
+			String derivedFrom = null != component.getDerivedFromGenericType()? component.getDerivedFromGenericType() : "tosca.nodes.Root"; 
+			toscaNodeType.setDerived_from(derivedFrom);
 		}
-		toscaNodeType.setDescription(component.getDescription()); // or name??
 		return toscaNodeType;
 	}
-
-	private Either<ToscaNodeTemplate, ToscaError> convertComponentInstanceRequirements(Component component, ComponentInstance componentInstance, List<RequirementCapabilityRelDef> relations, ToscaNodeTemplate nodeTypeTemplate) {
+	
+	private Either<ToscaNodeTemplate, ToscaError> convertComponentInstanceRequirements(Component component,
+			ComponentInstance componentInstance, List<RequirementCapabilityRelDef> relations,
+			ToscaNodeTemplate nodeTypeTemplate) {
 
 		List<ComponentInstance> instancesList = component.getComponentInstances();
 		List<Map<String, ToscaTemplateRequirement>> toscaRequirements = new ArrayList<>();
 		Map<String, List<RequirementDefinition>> reqMap = componentInstance.getRequirements();
 
 		relations.stream().filter(p -> componentInstance.getUniqueId().equals(p.getFromNode())).forEach(req -> {
-			ComponentInstance toComponentInstance = instancesList.stream().filter(i -> req.getToNode().equals(i.getUniqueId())).findFirst().orElse(null);
+			ComponentInstance toComponentInstance = instancesList.stream()
+					.filter(i -> req.getToNode().equals(i.getUniqueId())).findFirst().orElse(null);
 			if (toComponentInstance == null) {
-				log.debug("Faild to create relation between node {} to node {}", componentInstance.getName(), req.getToNode());
+				log.debug("Faild to create relation between node {} to node {}", componentInstance.getName(),
+						req.getToNode());
 				return;
 
 			}
@@ -535,12 +831,14 @@ public class ToscaExportHandler {
 			ToscaTemplateRequirement toscaRequirement = new ToscaTemplateRequirement();
 			toscaRequirement.setRelationship(reqAndRelationshopPair.getRelationship().getType());
 			toscaRequirement.setNode(toComponentInstance.getName());
-			Optional<RequirementDefinition> findAny = reqMap.values().stream().flatMap(e -> e.stream()).filter(e -> e.getName().equals(reqAndRelationshopPair.getRequirement())).findAny();
+			Optional<RequirementDefinition> findAny = reqMap.values().stream().flatMap(e -> e.stream())
+					.filter(e -> e.getName().equals(reqAndRelationshopPair.getRequirement())).findAny();
 			if (findAny.isPresent()) {
 				RequirementDefinition regDefinition = findAny.get();
 				toscaRequirement.setCapability(regDefinition.getCapability());
 			} else {
-				log.debug("Faild to find relation between node {} to node {}", componentInstance.getName(), req.getToNode());
+				log.debug("Faild to find relation between node {} to node {}", componentInstance.getName(),
+						req.getToNode());
 				return;
 			}
 			Map<String, ToscaTemplateRequirement> reqmap = new HashMap<String, ToscaTemplateRequirement>();
@@ -557,7 +855,8 @@ public class ToscaExportHandler {
 	}
 
 	private Either<SubstitutionMapping, ToscaError> convertCapabilities(Component component, SubstitutionMapping substitutionMapping, Map<String, DataTypeDefinition> dataTypes) {
-		Map<String, ToscaCapability> toscaCapabilities = capabiltyRequirementConvertor.convertCapabilities(component, dataTypes);
+		Map<String, String[]> toscaCapabilities = capabiltyRequirementConvertor.convertSubstitutionMappingCapabilities(component, dataTypes);
+		
 		if (!toscaCapabilities.isEmpty()) {
 			substitutionMapping.setCapabilities(toscaCapabilities);
 		}
@@ -566,8 +865,10 @@ public class ToscaExportHandler {
 		return Either.left(substitutionMapping);
 	}
 
-	private Either<ToscaNodeType, ToscaError> convertCapabilities(Component component, ToscaNodeType nodeType, Map<String, DataTypeDefinition> dataTypes) {
-		Map<String, ToscaCapability> toscaCapabilities = capabiltyRequirementConvertor.convertCapabilities(component, dataTypes);
+	private Either<ToscaNodeType, ToscaError> convertCapabilities(Component component, ToscaNodeType nodeType,
+			Map<String, DataTypeDefinition> dataTypes) {
+		Map<String, ToscaCapability> toscaCapabilities = capabiltyRequirementConvertor.convertCapabilities(component,
+				dataTypes);
 		if (!toscaCapabilities.isEmpty()) {
 			nodeType.setCapabilities(toscaCapabilities);
 		}
@@ -586,7 +887,8 @@ public class ToscaExportHandler {
 		}
 
 		@Override
-		protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
+		protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue,
+				Tag customTag) {
 			if (propertyValue == null) {
 				return null;
 			} else {
@@ -596,7 +898,8 @@ public class ToscaExportHandler {
 				}
 				NodeTuple defaultNode = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
 
-				return property.getName().equals("_defaultp_") ? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;
+				return property.getName().equals("_defaultp_")
+						? new NodeTuple(representData("default"), defaultNode.getValueNode()) : defaultNode;
 			}
 		}
 
@@ -619,10 +922,10 @@ public class ToscaExportHandler {
 
 	private static class UnsortedPropertyUtils extends PropertyUtils {
 		@Override
-		protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bAccess) throws IntrospectionException {
+		protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bAccess)
+				throws IntrospectionException {
 			Collection<Property> fields = getPropertiesMap(type, BeanAccess.FIELD).values();
-			Set<Property> result = new LinkedHashSet<Property>(fields);
-			return result;
+			return new LinkedHashSet<Property>(fields);
 		}
 	}
 

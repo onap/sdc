@@ -29,7 +29,6 @@ public class ContentDisposiotionDelegator extends FormDataContentDisposition {
 	public ContentDisposiotionDelegator(String type, String name, String fileName, Date creationDate,
 			Date modificationDate, Date readDate, long size) {
 		super(type, name, fileName, creationDate, modificationDate, readDate, size);
-		// TODO Auto-generated constructor stub
 	}
 
 }

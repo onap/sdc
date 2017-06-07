@@ -9,14 +9,10 @@ RUN mkdir -p /var/chef/nodes
 COPY chef-solo /root/chef-solo/
 COPY chef-repo/cookbooks /root/chef-solo/cookbooks/
 
-ENV BASE_NEXUS zl999y:ChangeMe@10.208.197.75:8443/repository/maven-public/org/openecomp/sdc
-
 # install chef-solo
 RUN curl -L https://omnitruck.chef.io/install.sh | bash
 
-
 COPY startup.sh /root/
-
 RUN chmod 770 /root/startup.sh
 
 ENTRYPOINT [ "/root/startup.sh" ]

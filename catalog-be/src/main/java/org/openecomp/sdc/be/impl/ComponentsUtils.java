@@ -41,9 +41,9 @@ import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -454,51 +454,57 @@ public class ComponentsUtils {
 		getAuditingManager().auditEvent(auditingFields);
 	}
 
-	public void auditExternalCrudApiArtifact(ResponseFormat responseFormat, String componentType, String actionEnum, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
+	public void auditExternalCrudApi(ResponseFormat responseFormat, String componentType, String actionEnum, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
 		log.trace("Inside auditing for audit action {}", actionEnum);
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
-		int status = responseFormat.getStatus();
-		String message = "";
 		EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-		if (responseFormat.getMessageId() != null) {
-			message = responseFormat.getMessageId() + ": ";
+		int status = 0;
+		String message = "";
+		if(responseFormat != null){
+			status = responseFormat.getStatus();
+			if (responseFormat.getMessageId() != null) {
+				message = responseFormat.getMessageId() + ": ";
+			}
+			message += responseFormat.getFormattedMessage();
 		}
-		message += responseFormat.getFormattedMessage();
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_ACTION, actionEnum);
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, requestURI);
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType);
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_STATUS, status);
 		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_DESC, message);
-
+		
 		if (additionalParams != null) {
 			auditingFields.putAll(additionalParams);
+			if(!additionalParams.containsKey(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME)){
+				auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, "");
+			}
 		}
 
 		getAuditingManager().auditEvent(auditingFields);
 	}
 
 	public void auditExternalDownloadArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
-		auditExternalCrudApiArtifact(responseFormat, componentType, AuditingActionEnum.DOWNLOAD_ARTIFACT.getName(), request, additionalParams);
+		auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.DOWNLOAD_ARTIFACT.getName(), request, additionalParams);
 	}
 
 	public void auditExternalUploadArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-		auditExternalCrudApiArtifact(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API.getName(), request, additionalParams);
+		auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPLOAD_BY_API.getName(), request, additionalParams);
 	}
 
 	public void auditExternalUpdateArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-		auditExternalCrudApiArtifact(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPDATE_BY_API.getName(), request, additionalParams);
+		auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_UPDATE_BY_API.getName(), request, additionalParams);
 	}
 
 	public void auditExternalDeleteArtifact(ResponseFormat responseFormat, String componentType, HttpServletRequest request, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID, request.getHeader(Constants.USER_ID_HEADER));
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID, "");
-		auditExternalCrudApiArtifact(responseFormat, componentType, AuditingActionEnum.ARTIFACT_DELETE_BY_API.getName(), request, additionalParams);
+		auditExternalCrudApi(responseFormat, componentType, AuditingActionEnum.ARTIFACT_DELETE_BY_API.getName(), request, additionalParams);
 	}
 
 	public void auditCategory(ResponseFormat responseFormat, User modifier, String categoryName, String subCategoryName, String groupingName, AuditingActionEnum actionEnum, String componentType) {
@@ -602,6 +608,9 @@ public class ComponentsUtils {
 			break;
 		case CATEGORY_NOT_FOUND:
 			responseEnum = ActionStatus.COMPONENT_CATEGORY_NOT_FOUND;
+			break;
+		case INVALID_PROPERTY:
+			responseEnum = ActionStatus.INVALID_PROPERTY;
 			break;
 		default:
 			responseEnum = ActionStatus.GENERAL_ERROR;

@@ -37,6 +37,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
@@ -49,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -61,6 +63,7 @@ import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
@@ -101,10 +104,16 @@ public class ResourceImportManager {
 
 	@Autowired
 	protected CapabilityTypeOperation capabilityTypeOperation;
+	@Autowired
+	protected ToscaOperationFacade toscaOperationFacade; 
 
 	private ResponseFormatManager responseFormatManager;
 
 	private static Logger log = LoggerFactory.getLogger(ResourceImportManager.class.getName());
+
+	public void setToscaOperationFacade(ToscaOperationFacade toscaOperationFacade) {
+		this.toscaOperationFacade = toscaOperationFacade;
+	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importNormativeResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
 
@@ -112,18 +121,28 @@ public class ResourceImportManager {
 		lifecycleChangeInfo.setUserRemarks("certification on import");
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
 
-		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock);
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null);
+	}
+	
+	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData, User creator, boolean createNewVersion, boolean needLock) {
+
+		LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
+		lifecycleChangeInfo.setUserRemarks("certification on import");
+		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+
+		return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, false, createNewVersion, needLock, null, null);
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> importCertifiedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator, Function<Resource, Either<Boolean, ResponseFormat>> validationFunction,
-			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock) {
+			LifecycleChangeInfoWithAction lifecycleChangeInfo, boolean isInTransaction, boolean createNewVersion, boolean needLock, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
 		Resource resource = new Resource();
-		ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<Resource, ActionStatus>(resource, ActionStatus.CREATED);
+		ImmutablePair<Resource, ActionStatus> responsePair = new ImmutablePair<>(resource, ActionStatus.CREATED);
 		Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> response = Either.left(responsePair);
 
 		String latestCertifiedResourceId = null;
 		try {
-			setConstantMetaData(resource);
+			boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty() ? true : false;
+			setConstantMetaData(resource, shouldBeCertified);
 			setMetaDataFromJson(resourceMetaData, resource);
 
 			Either<Boolean, ResponseFormat> validateResourceFromYaml = populateResourceFromYaml(resourceYml, resource, isInTransaction);
@@ -138,21 +157,30 @@ public class ResourceImportManager {
 			if (isValidResource.isLeft()) {
 				// The flag createNewVersion if false doesn't create new version
 				if (!createNewVersion) {
-					Either<Resource, StorageOperationStatus> latestByName = resourceOperation.getLatestByName(resource.getName(), isInTransaction);
+					Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resource.getName());
 					if (latestByName.isLeft()) {
 						return Either.right(componentsUtils.getResponseFormatByResource(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resource));
 					}
 				}
 
 				response = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock);
+				Either<Resource, ResponseFormat> changeStateResponse;
 				if (response.isLeft()) {
 					resource = response.left().value().left;
+					
+					if(nodeTypeArtifactsToHandle !=null && !nodeTypeArtifactsToHandle.isEmpty()){
+						Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = 
+								resourceBusinessLogic.handleNodeTypeArtifacts(resource, nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, creator, isInTransaction);
+						if(handleNodeTypeArtifactsRes.isRight()){
+							return Either.right(handleNodeTypeArtifactsRes.right().value());
+						}
+					}
 					latestCertifiedResourceId = getLatestCertifiedResourceId(resource);
-					Either<Resource, ResponseFormat> certificationResponse = resourceBusinessLogic.propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock);
-					if (certificationResponse.isRight()) {
-						response = Either.right(certificationResponse.right().value());
+					changeStateResponse = resourceBusinessLogic.propagateStateToCertified(creator, resource, lifecycleChangeInfo, isInTransaction, needLock);
+					if (changeStateResponse.isRight()) {
+						response = Either.right(changeStateResponse.right().value());
 					} else {
-						responsePair = new ImmutablePair<Resource, ActionStatus>(certificationResponse.left().value(), response.left().value().right);
+						responsePair = new ImmutablePair<>(changeStateResponse.left().value(), response.left().value().right);
 						response = Either.left(responsePair);
 					}
 				}
@@ -490,7 +518,8 @@ public class ResourceImportManager {
 			String derivedFrom = toscaDerivedFromElement.left().value();
 			log.debug("Derived from TOSCA name is {}", derivedFrom);
 			resource.setDerivedFrom(Arrays.asList(new String[] { derivedFrom }));
-			Either<Resource, StorageOperationStatus> latestByToscaResourceName = resourceOperation.getLatestByToscaResourceName(derivedFrom, inTransaction);
+			Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade.getLatestByToscaResourceName(derivedFrom);
+			
 			if (latestByToscaResourceName.isRight()) {
 				StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
 				if (operationStatus.equals(StorageOperationStatus.NOT_FOUND)) {
@@ -775,10 +804,18 @@ public class ResourceImportManager {
 
 	}
 
-	private void setConstantMetaData(Resource resource) {
-		resource.setVersion(ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION);
-		;
-		resource.setLifecycleState(ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE);
+	private void setConstantMetaData(Resource resource, boolean shouldBeCertified) {
+		String version;
+		LifecycleStateEnum state;
+		if(shouldBeCertified){
+			version = ImportUtils.Constants.FIRST_CERTIFIED_VERSION_VERSION;
+			state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE;
+		}else{
+			version = ImportUtils.Constants.FIRST_NON_CERTIFIED_VERSION;
+			state = ImportUtils.Constants.NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT;
+		}
+		resource.setVersion(version);
+		resource.setLifecycleState(state);
 		resource.setHighestVersion(ImportUtils.Constants.NORMATIVE_TYPE_HIGHEST_VERSION);
 		resource.setVendorName(ImportUtils.Constants.VENDOR_NAME);
 		resource.setVendorRelease(ImportUtils.Constants.VENDOR_RELEASE);
@@ -833,7 +870,7 @@ public class ResourceImportManager {
 			}
 
 			if (maxOccurrences <= 0 || maxOccurrences < minOccurrences) {
-				log.debug("Invalid occurrenses format.  min occurrence is {}. Max occurrence is {}", minOccurrences, maxOccurrences);
+				log.debug("Invalid occurrenses format.  min occurrence is {}, Max occurrence is {}", minOccurrences, maxOccurrences);
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_OCCURRENCES);
 				return Either.right(responseFormat);
 			}

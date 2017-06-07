@@ -98,7 +98,6 @@ public class ArtifactDaoTest {
 		// clearIndex(ICatalogDAO.RESOURCES_INDEX, ArtifactData.class);
 		// clearIndex(ICatalogDAO.RESOURCES_INDEX, ServiceArtifactData.class);
 		// } catch (InterruptedException e) {
-		// TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
 
@@ -152,8 +151,7 @@ public class ArtifactDaoTest {
 	 * imageData.setResourceCreator("Marina");
 	 * imageData.setResourceLastUpdater("Marina"); ResourceUploadStatus status =
 	 * daoUploader.saveImage(imageData, true); assertEquals(status,
-	 * ResourceUploadStatus.OK); } catch (IOException e) { // TODO
-	 * Auto-generated catch block e.printStackTrace(); }
+	 * ResourceUploadStatus.OK); } catch (IOException e) { e.printStackTrace(); }
 	 * 
 	 * 
 	 * }
@@ -456,7 +454,7 @@ public class ArtifactDaoTest {
 	 * status = daoUploader.saveServiceArtifact(serviceArData1, true);
 	 * 
 	 * 
-	 * } catch (Exception e) { // TODO Auto-generated catch block
+	 * } catch (Exception e) {
 	 * e.printStackTrace(); }
 	 * 
 	 * }
@@ -561,7 +559,7 @@ public class ArtifactDaoTest {
 	 * status = daoUploader.saveServiceArtifact(serviceArData1, true);
 	 * 
 	 * 
-	 * } catch (Exception e) { // TODO Auto-generated catch block
+	 * } catch (Exception e) {
 	 * e.printStackTrace(); }
 	 * 
 	 * }

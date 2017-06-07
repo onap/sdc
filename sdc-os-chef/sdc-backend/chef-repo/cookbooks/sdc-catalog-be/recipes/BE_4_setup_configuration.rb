@@ -10,8 +10,8 @@ template "titan.properties" do
       :CASSANDRA_IP => node['Nodes']['CS'],
       :CASSANDRA_PWD => node['cassandra'][:cassandra_password],
       :CASSANDRA_USR => node['cassandra'][:cassandra_user],
-      :DC_NAME => "DC-"+node.chef_environment,
-	  :rep_factor => replication_factor	 
+      :rep_factor => replication_factor,
+      :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment
    })
 end
 
@@ -28,7 +28,7 @@ template "catalog-be-config" do
       :ssl_port     => node['BE'][:https_port],
       :cassandra_ip => node['Nodes']['CS'],
       :rep_factor   => 1,
-      :DC_NAME      => "DC-"+node.chef_environment
+      :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment
    })
 end
 

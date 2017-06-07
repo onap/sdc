@@ -130,7 +130,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 	protected void saveResourceData(String typeName, Object data, String id) throws JsonProcessingException {
 		String indexName = getIndexForType(typeName);
 
-		log.debug("ESGenericIdDAO saveResourceData resource indexName: {} typeName is: {}", indexName, typeName);
+		log.debug("ESGenericIdDAO saveResourceData resource indexName: {} | typeName is: {}", indexName, typeName);
 
 		String json = getJsonMapper().writeValueAsString(data);
 		log.debug("ESGenericIdDAO saveResourceData resource id is: {}", id);
@@ -138,7 +138,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 			getClient().prepareIndex(indexName, typeName, id).setSource(json).setRefresh(true).execute().actionGet();
 		} catch (Exception e) {
 			log.error("failed to write data with id {} to elasticsearch type {}. error: {}", id, typeName,
-					e.getMessage());
+					e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -160,7 +160,7 @@ public abstract class ESGenericIdDAO implements IGenericIdDAO {
 
 	private void assertIdNotNullFor(String id, String operation) {
 		if (id == null || id.trim().isEmpty()) {
-			log.error("Null or empty Id is not allowed for operation <" + operation + ">.");
+			log.error("Null or empty Id is not allowed for operation <{}>.", operation);
 			throw new IndexingServiceException("Null or empty Id is not allowed for operation <" + operation + ">.");
 		}
 	}

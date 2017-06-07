@@ -33,6 +33,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -108,7 +109,11 @@ public class ResourceApiTest extends ComponentBaseTest {
 		resourceDetails.setIcon(resourceRespJavaObject.getIcon());
 		resourceDetails.setName(resourceRespJavaObject.getName());
 		resourceDetails.setDerivedFrom(resourceRespJavaObject.getDerivedFrom());
-		
+
+		// ResourceReqDetails resourceDetails = new
+		// ResourceReqDetails(resourceName, description, resourceTags, category,
+		// derivedFrom, vendorName, vendorRelease, contactId, null);
+
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(resourceDetails);
 		HttpRequest http = new HttpRequest();
@@ -211,7 +216,8 @@ public class ResourceApiTest extends ComponentBaseTest {
 
 			httpget.addHeader(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 
-			httpget.addHeader(HttpHeaderEnum.USER_ID.getValue(), ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+			httpget.addHeader(HttpHeaderEnum.USER_ID.getValue(),
+					ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
 
 			// System.out.println("Executing request " +
 			// httpget.getRequestLine());

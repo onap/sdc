@@ -35,21 +35,29 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.lifecycle.CertificationRequestTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.tosca.ToscaRepresentation;
+import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
@@ -60,22 +68,20 @@ public class CertificationRequestTest extends LifecycleTestBase {
 
 	protected ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder = Mockito.mock(ServiceDistributionArtifactsBuilder.class);
 	protected ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
-	protected ResourceOperation resourceOperation = Mockito.mock(ResourceOperation.class);
 	protected CapabilityOperation capabilityOperation = Mockito.mock(CapabilityOperation.class);
 	protected ToscaExportHandler toscaExportUtils = Mockito.mock(ToscaExportHandler.class);
 	@InjectMocks
-	private CertificationRequestTransition rfcObj = new CertificationRequestTransition(componentsUtils, lcOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils);
+	private CertificationRequestTransition rfcObj = new CertificationRequestTransition(componentsUtils, toscaElementLifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils,  toscaOperationFacade,  titanDao);
 
 	protected ToscaRepresentation toscaRepresentation = Mockito.mock(ToscaRepresentation.class);
 
 	@Before
 	public void setup() {
-		Mockito.reset(resourceOperation);
 		MockitoAnnotations.initMocks(this);
 		super.setup();
 
 		// checkout transition object
-		rfcObj.setLifeCycleOperation(lcOperation);
+		rfcObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 		// checkoutObj.setAuditingManager(iAuditingManager);
 		rfcObj.setConfigurationManager(configurationManager);
 		componentsUtils.Init();
@@ -85,6 +91,26 @@ public class CertificationRequestTest extends LifecycleTestBase {
 
 	}
 
+	@Test
+	public void testVFCMTStateValidation(){
+		Either<? extends Component, ResponseFormat> changeStateResult;
+		Resource resource = createResourceVFCMTObject();
+		
+		resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
+		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(resource, ComponentTypeEnum.RESOURCE);
+		assertTrue(ownerResponse.isLeft());
+		User owner = ownerResponse.left().value();
+		
+		User user = new User();
+		user.setUserId("cs0008");
+		user.setFirstName("Carlos");
+		user.setLastName("Santana");
+		user.setRole(Role.TESTER.name());
+		
+		changeStateResult = rfcObj.changeState(ComponentTypeEnum.RESOURCE, resource, serviceBusinessLogic, user, owner, false, false);
+		assertEquals(changeStateResult.isLeft(), true);
+	}
+	
 	@Test
 	public void testCheckoutStateValidation() {
 		Either<? extends Component, ResponseFormat> changeStateResult;
@@ -203,16 +229,33 @@ public class CertificationRequestTest extends LifecycleTestBase {
 		assertTrue(responseFormat.getMessageId().equals("SVC4559"));
 
 	}
+	
+	@Test
+	public void testDeploymentArtifactRestriction() {
+		Either<? extends Component, ResponseFormat> changeStateResult;
+		Service service = createServiceObject(false);
+		service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+		
+		Either<User, ResponseFormat> ownerResponse = rfcObj.getComponentOwner(service, ComponentTypeEnum.SERVICE);
+		assertTrue(ownerResponse.isLeft());
+		User owner = ownerResponse.left().value();
+		
+		Either<Service, ResponseFormat> result = Either.left(service);
+		Either<ToscaElement, StorageOperationStatus> reqCertRes = Either.left(ModelConverter.convertToToscaElement(service));
+		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> resultArtifacts = Either.left(Either.left(new ArtifactDefinition()));
+		when(serviceBusinessLogic.generateHeatEnvArtifacts(service, owner, false)).thenReturn(result);
+		when(serviceBusinessLogic.generateVfModuleArtifacts(service, owner, false)).thenReturn(result);
+		when(serviceBusinessLogic.populateToscaArtifacts(service, owner, true, false, false)).thenReturn(resultArtifacts);
+		when(toscaElementLifecycleOperation.requestCertificationToscaElement(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(reqCertRes);
+		changeStateResult = rfcObj.changeState(ComponentTypeEnum.SERVICE, service, serviceBusinessLogic, user, owner, false, false);
+		assertEquals(changeStateResult.isLeft(), true);
+	}
 
 	private void simulateCertifiedVersionExistForRI() {
-		Resource dummyResource = new Resource();
-		Either<List<Resource>, StorageOperationStatus> result = Either.left(new ArrayList<Resource>() {
-			{
-				add(dummyResource);
-			}
-		});
-		Mockito.when(resourceOperation.getResource(Mockito.anyString())).thenReturn(Either.left(dummyResource));
-		Mockito.when(resourceOperation.findLastCertifiedResourceByUUID(Mockito.any(Resource.class))).thenReturn(result);
+		Component dummyResource = new Resource();
+		Either<Component, StorageOperationStatus> result = Either.left(dummyResource);
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.left(dummyResource));
+		Mockito.when(toscaOperationFacade.findLastCertifiedToscaElementByUUID(Mockito.any(Component.class))).thenReturn(result);
 	}
 
 	private Resource createVFWithRI(String riVersion) {

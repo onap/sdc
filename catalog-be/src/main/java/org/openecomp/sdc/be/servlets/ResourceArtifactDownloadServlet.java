@@ -56,41 +56,6 @@ public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
 
 	private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	// @GET
-	// @Path("/{resourceName}/{resourceVersion}/artifacts")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// public Response getResourceArtifactList(@PathParam("resourceName") final
-	// String resourceName,
-	// @PathParam("resourceVersion") final String resourceVersion,
-	// @Context final HttpServletRequest request){
-	//
-	//
-	// String url = request.getMethod() + " " + request.getRequestURI();
-	// log.info("Start handle request of {}", url);
-	//
-	// Response response = null;
-	//
-	// // get artifact list from dao
-	// IResourceUploader resourceDao =
-	// getResourceUploader(request.getSession().getServletContext());
-	// if (resourceDao == null){
-	// log.error("resource dao cannot be found");
-	// response = buildResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR,
-	// "Resource dao cannot be found");
-	// return response;
-	// }
-	// Either<List<ESArtifactData>, ResourceUploadStatus> getArtifactsStatus =
-	// resourceDao.getArtifacts(resourceName, resourceVersion);
-	//
-	// response =
-	// getLogic(request.getSession().getServletContext()).createArtifactListResponse(resourceName,
-	// getArtifactsStatus, getServletPath(request));
-	//
-	// log.info("Finish handle request of {} | result = {}", url, response.getStatus() );
-	// return response;
-	//
-	// }
-
 	@GET
 	@Path("/{resourceName}/{resourceVersion}/artifacts/{artifactName}")
 	// @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -118,7 +83,7 @@ public class ResourceArtifactDownloadServlet extends ToscaDaoServlet {
 			}
 			response = logic.downloadArtifact(resourceName, resourceVersion, artifactName, getArtifactStatus, artifactId);
 
-			log.info("Finish handle request of  {} | result = {}", url, response.getStatus());
+			log.info("Finish handle request of {} | result = {}", url, response.getStatus());
 			return response;
 
 		} catch (Exception e) {

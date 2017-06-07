@@ -1,0 +1,135 @@
+
+
+<div class="properties-table">
+    <div class="table-header">
+        <div class="table-cell col1">Property Name</div>
+        <div class="table-cell col2">Type</div>
+        <div class="table-cell col3">ES</div>
+        <div class="table-cell valueCol">Value</div>
+    </div>
+    <div class="table-body">
+        <div class="no-data" *ngIf="!feInstancesNames">No data to display</div>
+
+        <div *ngFor="let instanceName of feInstancesNames; trackBy:instanceName">
+            <div class="table-rows-header">{{instanceName | contentAfterLastDot}}</div>
+
+            <div class="table-row" *ngFor="let property of fePropertiesMap[instanceName]; trackBy:property?.name" (click)="onClickPropertyRow(property, instanceName, $event)" [ngClass]="{'selected': selectedPropertyId === property.uniqueId}">
+                <div class="table-cell col1">
+                <checkbox [label]="property.name"
+                          [(checked)]="property.isSelected"
+                          [disabled]="property.isDisabled || property.isDeclared"
+                          (checkedChange)="propertyChecked(property)"
+                          tooltip="{{property.name}}"></checkbox>
+                    <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"></span>
+                </div>
+                <div class="table-cell col2">{{property.type | contentAfterLastDot}}</div>
+                <div class="table-cell col3">{{property.schema && property.schema.property && property.schema.property.type ? (property.schema.property.type
+                    | contentAfterLastDot) : ''}}</div>
+                <div class="table-cell valueCol">
+                    <!-- [ngClass]="{'filtered':property.name === propertyNameSearchText}" (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" [propType]="property.type" [propSchema]="property.schema" [propKey]="" [propValue]="property.value"-->
+                    <dynamic-property
+                        [selectedPropertyId]="selectedPropertyId"
+                        [canBeDeclared]="true"
+                        [property]="property"
+                        [expandedChildId]="property.expandedChildPropertyId"
+                        [propChildren]="property.flattenedChildren | filterChildProperties : property.expandedChildPropertyId"
+                        (valueChanged)="propValueChanged(property);"
+                        (expandChild)="property.updateExpandedChildPropertyId($event)"
+                        (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceName)"
+                        (checkProperty)="propertyChecked(property, $event)"
+                        >
+                    </dynamic-property>
+
+                </div>
+            </div>
+<!--
+                <div *ngIf="!property.isSimpleType && !property.isDeclared" class="table-cell valueCol child-property-container">
+
+                    <div class="child-property-row" *ngFor="let flatProperty of property.flattenedChildren | filterChildProperties : property.expandedChildPropertyId"
+                        [ngClass]="{'selected': selectedPropertyId === flatProperty.uniqueId}" (click)="clickOnPropertyRow(flatProperty, instanceName, $event)" [@fadeIn]="''">
+                        <derived-property [propertyObj]="flatProperty"  [propertyNameSearchText]="propertyNameSearchText" [expanded]="flatProperty.propertiesName == property.expandedChildPropertyId"
+                                    (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" (valueChanged)="propValueChanged(property)" (expandChild)="property.updateExpandedChildPropertyId($event)"></derived-property>
+                    </div>
+
+                </div>
+                <!--
+
+
+                <property [propertyObj]="flatProperty"
+                        [expanded]="flatProperty.parentName == property.expandedChildPropertyId"
+                        (valueChanged)="propValueChanged($event)"
+                        (selectChildProperty)="onChildPropertySelected($event)"></property>
+                <list-property *ngIf="property.type == 'list'"
+                                    [property]="property"
+                            [selectedPropertyId]="selectedPropertyId"
+                                    (valueChanged)="propValueChanged($event)"
+                            (selectChildProperty)="onChildPropertySelected($event)"></list-property>
+                <map-property *ngIf="property.type == 'map'"
+                            [property]="property"
+                            [selectedPropertyId]="selectedPropertyId"
+                            (valueChanged)="propValueChanged($event)"
+                            (selectChildProperty)="onChildPropertySelected($event)"></map-property>
+                <properties-value-inner-table *ngIf="property.isDataType"
+                                            [property]="property"
+                                            [selectedPropertyId]="selectedPropertyId"
+                                            (selectChildProperty)="onChildPropertySelected($event)"
+                                            (valueChanged)="propValueChanged($event)"></properties-value-inner-table>
+                -->
+
+
+
+        </div>
+
+    </div>
+</div>
+<!--
+<div class="properties-table" style="display:block">
+    <div class="table-header">
+        <div class="table-cell col1">Property Name</div>
+        <div class="table-cell col2">Type</div>
+        <div class="table-cell col3">ES</div>
+        <div class="table-cell valueCol">Value</div>
+    </div>
+    <div class="table-body">
+        <div class="no-data" *ngIf="!properties || !properties.length">No data to display</div>
+        <div class="table-row" *ngFor="let property of properties" (click)="clickOnPropertyRow(property)">
+            <div class="table-cell col1"><checkbox [label]="property.name" [(checked)]="property.isSelected" (checkedChange)="propSelected(property)" [disabled]="property.isDisabled"></checkbox></div>
+            <div class="table-cell col2">{{property.type | contentAfterLastDot}}</div>
+            <div class="table-cell col3">{{property.schema && property.schema.property && property.schema.property.type ? (property.schema.property.type | contentAfterLastDot) : ''}}</div>
+            <div class="table-cell valueCol" [class.inner-table-container]="property.childrenProperties || !property.isSimpleType">
+                <!--<input class="value-input" *ngIf="property.isSimpleType"
+                       type="property.derivedFromSimpleTypeName || property.type"
+                       [(ngModel)]="property.value"
+                        (change)="putDefaultValueInEmptyProperty(property);propValueChanged(property);"
+                       pattern="validationUtils.getValidationPattern(property.type)"/>
+                <dynamic-element
+                    class="value-input"
+                    *ngIf="property.isSimpleType"
+                    [(value)]="property.value"
+                    (valueChange)="putDefaultValueInEmptyProperty(property);propValueChanged(property);"
+                    [type]="property.derivedFromSimpleTypeName || property.type"
+                    [name]="property.name">
+                </dynamic-element>
+                <list-property *ngIf="property.type == 'list'"
+                                      [property]="property"
+                               [selectedPropertyId]="selectedPropertyId"
+                                      (valueChanged)="propValueChanged($event)"
+                               (selectChildProperty)="onChildPropertySelected($event)"></list-property>
+                <map-property *ngIf="property.type == 'map'"
+                               [property]="property"
+                              [selectedPropertyId]="selectedPropertyId"
+                               (valueChanged)="propValueChanged($event)"
+                               (selectChildProperty)="onChildPropertySelected($event)"></map-property>
+                <properties-value-inner-table *ngIf="property.isDataType"
+                                              [property]="property"
+                                              [selectedPropertyId]="selectedPropertyId"
+                                              (selectChildProperty)="onChildPropertySelected($event)"
+                                              (valueChanged)="propValueChanged($event)"></properties-value-inner-table>
+            </div>
+
+        </div>
+    </div>
+</div> -->
+
+
+

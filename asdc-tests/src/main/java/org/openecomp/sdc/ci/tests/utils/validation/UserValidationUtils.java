@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class UserValidationUtils {
 
 		String actualUserId = actual.getUserId();
 		String expectedUserId = expected.getUserId();
-		assertEquals("check user userId - ", expectedUserId, actualUserId);
+		assertEquals("check user UserId - ", expectedUserId, actualUserId);
 
 		String actualEmail = actual.getEmail();
 		String expectedEmail = expected.getEmail();
@@ -203,10 +203,6 @@ public class UserValidationUtils {
 		}
 
 		assertEquals("check audit user desc - ", expected, auditJavaObject.getDESC());
-
-		// expected = sdncUserDetails.getUserId();
-		// assertEquals(expected, auditJavaObject.getUSER());
-
 	}
 
 	public static void validateUserDetailsOnResponse(User sdncUserDetails, String userDetailsOnResponse) {
@@ -221,7 +217,7 @@ public class UserValidationUtils {
 
 		String actualUserId = Utils.getJsonObjectValueByKey(userDetailsOnResponse, "userId");
 		String expectedUserId = sdncUserDetails.getUserId();
-		assertEquals("check user userId - ", expectedUserId, actualUserId);
+		assertEquals("check user UserId - ", expectedUserId, actualUserId);
 
 		String actualEmail = Utils.getJsonObjectValueByKey(userDetailsOnResponse, "email");
 		String expectedEmail = sdncUserDetails.getEmail();

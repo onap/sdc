@@ -1,6 +1,10 @@
 #!/bin/bash
 
 cd /root/chef-solo
+mkdir -p /root/chef-solo/cookbooks/cassandra-actions/attributes
+echo "normal['version'] = \"${RELEASE}\""  > /root/chef-solo/cookbooks/cassandra-actions/attributes/default.rb
+echo "normal['HOST_IP'] = \"${HOST_IP}\"" >> /root/chef-solo/cookbooks/cassandra-actions/attributes/default.rb
+
 export CHEFNAME=${ENVNAME}
 
 sed -i "s/HOSTIP/${HOST_IP}/g" /root/chef-solo/cookbooks/cassandra-actions/recipes/02-createCsUser.rb
@@ -15,14 +19,9 @@ echo "########### starting cassandra ###########"
 # start cassandra
 /docker-entrypoint.sh cassandra -f &
 
+sleep 10
+
 chef-solo -c solo.rb  -E ${CHEFNAME}
 
-cd /tmp/
-/tmp/create_cassandra_user.sh
-/tmp/create_dox_keyspace.sh
-/bin/chmod +x sdctool/scripts/*.sh
-./sdctool/scripts/schemaCreation.sh /tmp/sdctool/config
-
 while true; do sleep 2; done
-
 

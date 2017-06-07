@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.lifecycle.CheckinTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -49,8 +50,8 @@ public class CheckinTest extends LifecycleTestBase {
 		super.setup();
 
 		// checkout transition object
-		checkinObj = new CheckinTransition(componentsUtils, lcOperation);
-		checkinObj.setLifeCycleOperation(lcOperation);
+		checkinObj = new CheckinTransition(componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade,  titanDao);
+		checkinObj.setLifeCycleOperation(toscaElementLifecycleOperation);
 		checkinObj.setConfigurationManager(configurationManager);
 		componentsUtils.Init();
 	}

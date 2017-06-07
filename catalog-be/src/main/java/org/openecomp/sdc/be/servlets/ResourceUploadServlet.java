@@ -71,11 +71,12 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
 
 	private static Logger log = LoggerFactory.getLogger(ResourceUploadServlet.class.getName());
 	public static final String NORMATIVE_TYPE_RESOURCE = "multipart";
+	public static final String CSAR_TYPE_RESOURCE = "csar";
 	public static final String USER_TYPE_RESOURCE = "user-resource";
 	public static final String USER_TYPE_RESOURCE_UI_IMPORT = "user-resource-ui-import";
 
 	public enum ResourceAuthorityTypeEnum {
-		NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true, true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false, true);
+		NORMATIVE_TYPE_BE(NORMATIVE_TYPE_RESOURCE, true, false), USER_TYPE_BE(USER_TYPE_RESOURCE, true, true), USER_TYPE_UI(USER_TYPE_RESOURCE_UI_IMPORT, false, true), CSAR_TYPE_BE(CSAR_TYPE_RESOURCE, true, true);
 
 		private String urlPath;
 		private boolean isBackEndImport, isUserTypeResource;
@@ -150,9 +151,11 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
 			fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString, resourceAuthorityEnum, file);
 
 			// PayLoad Validations
-			commonPayloadValidations(responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement());
+			if(!resourceAuthorityEnum.equals(ResourceAuthorityTypeEnum.CSAR_TYPE_BE)){
+				commonPayloadValidations(responseWrapper, yamlStringWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement());
 
-			specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, resourceInfoJsonString, resourceAuthorityEnum);
+				specificResourceAuthorityValidations(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request, resourceInfoJsonString, resourceAuthorityEnum);
+			}
 
 			if (responseWrapper.isEmpty()) {
 				handleImport(responseWrapper, userWrapper.getInnerElement(), uploadResourceInfoWrapper.getInnerElement(), yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, createNewVersion, null);

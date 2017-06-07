@@ -304,7 +304,7 @@ public class ToscaArtifactsAlignment extends AbstractOperation {
 				if (optionalError.isPresent()) {
 					ArtifactDefinition toscaArtifact = optionalError.get().getLeft();
 					StorageOperationStatus storageError = optionalError.get().getRight();
-					log.error("{} When adding tosca artifact of type {} to component {} of type:{} " + "with uniqueId:{} a storageError occurred:{}", ERROR_PREFIX, toscaArtifact.getArtifactType(), component.getMetadataDataDefinition().getName(),
+					log.error("{} When adding tosca artifact of type {} to component {} of type:{} with uniqueId:{} a storageError occurred:{}", ERROR_PREFIX, toscaArtifact.getArtifactType(), component.getMetadataDataDefinition().getName(),
 							nodeType.getName(), component.getMetadataDataDefinition().getUniqueId(), storageError.name());
 
 					result = storageError;

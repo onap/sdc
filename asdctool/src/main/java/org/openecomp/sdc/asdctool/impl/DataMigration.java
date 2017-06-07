@@ -608,7 +608,7 @@ public class DataMigration {
 						Files.delete(file.toPath());
 					}
 				} catch (IOException e) {
-					log.error("failed to delete output file " + file.getAbsolutePath(), e);
+					log.error("failed to delete output file {}", file.getAbsolutePath(), e);
 					return null;
 				}
 				file = new File(outputDir + "/" + table.getTableDescription().getTableName());
@@ -617,7 +617,7 @@ public class DataMigration {
 				try {
 					file.createNewFile();
 				} catch (IOException e) {
-					log.error("failed to create output file " + file.getAbsolutePath(), e);
+					log.error("failed to create output file {}", file.getAbsolutePath(), e);
 					return null;
 				}
 			}
@@ -662,11 +662,11 @@ public class DataMigration {
 	 */
 	private boolean createOutPutFolder(File outputDir) {
 		if (!outputDir.exists()) {
-			log.info("creating output dir" + outputDir.getAbsolutePath());
+			log.info("creating output dir {}", outputDir.getAbsolutePath());
 			try {
 				Files.createDirectories(outputDir.toPath());
 			} catch (IOException e) {
-				log.error("failed to create output dir" + outputDir.getAbsolutePath(), e);
+				log.error("failed to create output dir {}", outputDir.getAbsolutePath(), e);
 				return false;
 			}
 		}

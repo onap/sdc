@@ -83,54 +83,6 @@
 				name="org.openecomp.sdc.ci.tests.execute.resource.ValidateExtendedVfData" />
 		</classes>
 	</test>
-	<test name="Product">
-		<classes>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
-				<methods>
-					<exclude name="undoCheckOutNotExist" />
-				</methods>
-			</class>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest">
-				<methods>
-					<exclude name="createServiceInstanceNameIsNull" />
-				</methods>
-			</class>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest">
-				<methods>
-					<exclude name="changeServiceInstanceVersionToNonExisitingServiceVersion" />
-				</methods>
-			</class>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest" />
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ProductToscaYamlGenerationTest" />
-			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
-				<methods>
-					<exclude name="checkInProductNotExist" />
-				</methods>
-			</class>
-			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest" />
-			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest">
-				<methods>
-					<exclude name="updateProductDescriptionRemoveSpacesFromBeginning" />
-					<exclude name="updateProductDescriptionRemoveSpacesFromTheEnd" />
-					<exclude name="updateProductDescriptionValidCharacters02" />
-				</methods>
-			</class>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.product.ProductCreateWithValidationsTest">
-				<methods>
-					<exclude name="createProductDescriptionRemoveSpacesFromBeginning" />
-					<exclude name="createProductDescriptionRemoveSpacesFromTheEnd" />
-					<exclude name="createProductDescriptionValidCharacters01" />
-					<exclude name="createProductDescriptionValidCharacters02" />
-				</methods>
-			</class>
-		</classes>
-	</test>
 	<test name="Service">
 		<classes>
 			<class
@@ -177,7 +129,7 @@
 					<exclude name="dissociateOnceAgainTest" />
 					<exclude name="dissociateRelationNotFoundTest" />
 					<exclude name="dissoicateRelationWhileInstanceNotFound" />
-					<exclude name="dissoicateWithEmptyUserIdsHeaderTest" />
+					<exclude name="dissoicateWithEmptyUserIdHeaderTest" />
 					<exclude name="relationDeletedAfterDeletingResourceInstanceTest" />
 				</methods>
 			</class>

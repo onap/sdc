@@ -2,7 +2,7 @@
   "payloadName": "asdc.nodes.network.OAM.yml",
   "contactId": "jh0003",
   "name": "asdc.nodes.network.OAM",
-  "description": "Represents AT&T Operation, Administration and Management (OA&M) network.",
+  "description": "Represents Operation, Administration and Management (OA&M) network.",
   "resourceIconPath": "network",
   "category": "Generic/Network Elements",
   "tags": [

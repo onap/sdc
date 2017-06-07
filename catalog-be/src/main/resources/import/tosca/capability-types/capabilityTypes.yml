@@ -144,6 +144,8 @@ tosca.capabilities.Container.Docker:
       required: false
 tosca.capabilities.network.Linkable:
   derived_from: tosca.capabilities.Root
+org.openecomp.capabilities.AllottedResource:
+  derived_from: tosca.capabilities.Root
 tosca.capabilities.nfv.Metric:
   derived_from: tosca.capabilities.Endpoint
 org.openecomp.capabilities.Metric:

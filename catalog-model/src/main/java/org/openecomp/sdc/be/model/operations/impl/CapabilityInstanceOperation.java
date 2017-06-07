@@ -74,24 +74,6 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	private CapabilityOperation capabilityOperation;
 
 	/**
-	 * String constants for logger
-	 */
-	private String statusIs = ". status is ";
-	private String dot = ".";
-	private String onGraph = " on graph ";
-	private String ofRI = " of resource instance ";
-	private String toCapability = " to capability ";
-	private String toCI = " to capability instance ";
-	private String toProperty = " to property ";
-	private String forRI = " for resource instance ";
-	private String failedCreateCI = "Failed to create capability instance of capability ";
-	private String failedAddProperties = "Failed to add properties to capability instance ";
-	private String ofCI = " of component instance ";
-	private String failedDeletePropertyValues = "Failed to delete property values of capability instance ";
-	private String toValue = " to property value ";
-	private String fromRI = " from resource instance ";
-
-	/**
 	 * create capability instance of capability with property values for resource instance
 	 * 
 	 * @param resourceInstanceId
@@ -184,13 +166,13 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	private Either<List<PropertyValueData>, TitanOperationStatus> addPropertyValueToCapabilityInstance(String resourceInstanceId, List<ComponentInstanceProperty> propertyValues, Wrapper<TitanOperationStatus> errorWrapper,
 			Either<CapabilityInstData, TitanOperationStatus> createCapabilityRes, Wrapper<Map<String, PropertyDefinition>> defaultPropertiesWrapper, Wrapper<String> createdCapabilityInstanceIdWrapper) {
 		Either<List<PropertyValueData>, TitanOperationStatus> addPropertyValuesRes;
-		log.debug("Before adding property values to capability instance {} dot", createdCapabilityInstanceIdWrapper.getInnerElement());
+		log.debug("Before adding property values to capability instance {}.",createdCapabilityInstanceIdWrapper.getInnerElement());
 		addPropertyValuesRes = addPropertyValuesToCapabilityInstance(createCapabilityRes.left().value(), propertyValues, defaultPropertiesWrapper.getInnerElement());
 		if (addPropertyValuesRes.isRight()) {
 			errorWrapper.setInnerElement(addPropertyValuesRes.right().value());
-			log.debug("failedAddProperties {} ofRI {} statusIs {} dot", createdCapabilityInstanceIdWrapper.getInnerElement(), resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to add properties to capability instance {} of resource instance {}. status is {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After adding property values to capability instance {} status is {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
+		log.debug("After adding property values to capability instance {}. status is {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
 		return addPropertyValuesRes;
 	}
 
@@ -200,9 +182,9 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		TitanOperationStatus addPropertyValuesRes = addPropertyValuesToCapabilityInstance(createCapabilityRes.left().value(), propertyValues, defaultPropertiesWrapper.getInnerElement());
 		if (!addPropertyValuesRes.equals(TitanOperationStatus.OK)) {
 			errorWrapper.setInnerElement(addPropertyValuesRes);
-			log.debug("Failed to add properties to capability instance {} {} {} {} {}", createdCapabilityInstanceIdWrapper.getInnerElement(), ofRI, resourceInstanceId, statusIs, errorWrapper.getInnerElement());
+			log.debug("Failed to add properties to capability instance {} of resource instance {}. status is {}", createdCapabilityInstanceIdWrapper.getInnerElement(), resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.trace("After adding property values to capability instance {} {} {}", createdCapabilityInstanceIdWrapper.getInnerElement(), statusIs, errorWrapper.getInnerElement());
+		log.trace("After adding property values to capability instance {}. status is {}", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
 		return addPropertyValuesRes;
 	}
 
@@ -214,18 +196,19 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		createdCapabilityInstanceIdWrapper.setInnerElement(createdCapabilityInstance.getUniqueId());
 		Map<String, PropertyDefinition> defaultProperties = overrideCapabilityDefinitionWrapper.getInnerElement().getProperties().stream().collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
 		defaultPropertiesWrapper.setInnerElement(defaultProperties);
-		log.debug("Before validating property values of capability instance {}.", createdCapabilityInstanceIdWrapper.getInnerElement());
+		log.debug("Before validating property values of capability instance {}",createdCapabilityInstanceIdWrapper.getInnerElement());
 		Either<Boolean, TitanOperationStatus> result = validateCapabilityInstanceProperties(defaultProperties, propertyValues);
 		if (result.isRight()) {
 			errorWrapper.setInnerElement(result.right().value());
-			log.debug("failedAddProperties {} ofRI {} statusIs {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to add properties to capability instance {} of resource instance {}. status is {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After validating property values of capability instance {} status is {}.", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
+		log.debug("After validating property values of capability instance {}. status is {}", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
 		return createdCapabilityInstance;
 	}
 
 	private TitanVertex validateCapabilityInstancePropertiesByVertex(String resourceInstanceId, List<ComponentInstanceProperty> propertyValues, Wrapper<TitanOperationStatus> errorWrapper,
 			Wrapper<CapabilityDefinition> overrideCapabilityDefinitionWrapper, TitanVertex createCapabilityRes, Wrapper<Map<String, PropertyDefinition>> defaultPropertiesWrapper, Wrapper<String> createdCapabilityInstanceIdWrapper) {
+
 		String id = (String) titanGenericDao.getProperty(createCapabilityRes, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		createdCapabilityInstanceIdWrapper.setInnerElement(id);
 		Map<String, PropertyDefinition> defaultProperties = overrideCapabilityDefinitionWrapper.getInnerElement().getProperties().stream().collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
@@ -234,9 +217,9 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Either<Boolean, TitanOperationStatus> result = validateCapabilityInstanceProperties(defaultProperties, propertyValues);
 		if (result.isRight()) {
 			errorWrapper.setInnerElement(result.right().value());
-			log.debug("Failed to add properties to capability instance {} {} {} {} {}", createdCapabilityInstanceIdWrapper.getInnerElement(), ofRI, resourceInstanceId, statusIs, errorWrapper.getInnerElement());
+			log.debug("Failed to add properties to capability instance {} of resource instance {}, status is {}", createdCapabilityInstanceIdWrapper.getInnerElement(),  resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.trace("After validating property values of capability instance {} {} {}", createdCapabilityInstanceIdWrapper.getInnerElement(), statusIs, errorWrapper.getInnerElement());
+		log.trace("After validating property values of capability instance {}, status is {}", createdCapabilityInstanceIdWrapper.getInnerElement(), errorWrapper.getInnerElement());
 		return createCapabilityRes;
 	}
 
@@ -249,46 +232,46 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		createCapabilityRes = createCapabilityInstanceOnGraph(resourceInstanceId, overrideCapabilityDataWrapper.getInnerElement(), capabilityInstance);
 		if (createCapabilityRes.isRight()) {
 			errorWrapper.setInnerElement(createCapabilityRes.right().value());
-			log.debug("failedCreateCI {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to create capability instance of capability {} of resource instance {}, status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After creating capability instance of capability {} on graph. Status is {}", capabilityId, errorWrapper.getInnerElement());
+		log.debug("After creating capability instance of capability {} on graph, status is {}", capabilityId, errorWrapper.getInnerElement());
 		return createCapabilityRes;
 	}
 
 	private Either<TitanVertex, TitanOperationStatus> createCapabilityInstanceOnGraphByVertex(TitanVertex riVertex, String resourceInstanceId, String capabilityId, Wrapper<TitanOperationStatus> errorWrapper,
 			Wrapper<TitanVertex> overrideCapabilityDataWrapper, Wrapper<CapabilityDefinition> overrideCapabilityDefinitionWrapper, Either<CapabilityDefinition, TitanOperationStatus> getCapabilityDefinitionRes) {
 		Either<TitanVertex, TitanOperationStatus> createCapabilityRes;
-		log.trace("Before creating capability instance of capability {} {}", capabilityId, onGraph);
+		log.trace("Before creating capability instance of capability {} on graph", capabilityId);
 		overrideCapabilityDefinitionWrapper.setInnerElement(getCapabilityDefinitionRes.left().value());
 		CapabilityInstData capabilityInstance = buildCapabilityInstanceData(resourceInstanceId, overrideCapabilityDefinitionWrapper.getInnerElement());
 		createCapabilityRes = createCapabilityInstanceOnGraph(riVertex, resourceInstanceId, overrideCapabilityDataWrapper.getInnerElement(), capabilityInstance);
 		if (createCapabilityRes.isRight()) {
 			errorWrapper.setInnerElement(createCapabilityRes.right().value());
-			log.debug("Failed to create capability instance of capability {} {} {} {} {} ", capabilityId, ofRI, resourceInstanceId, statusIs, errorWrapper.getInnerElement());
+			log.debug("Failed to create capability instance of capability {} of resource instance {}, status is {} ", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After creating capability instance of capability {} {} {} {} {}", capabilityId, onGraph, statusIs, errorWrapper.getInnerElement());
+		log.debug("After creating capability instance of capability {} on graph, status is {}", capabilityId, errorWrapper.getInnerElement());
 		return createCapabilityRes;
 	}
 
 	private Either<CapabilityDefinition, TitanOperationStatus> getCapabiityDefinition(String resourceInstanceId, String capabilityId, Wrapper<TitanOperationStatus> errorWrapper, Wrapper<CapabilityData> overrideCapabilityDataWrapper,
 			Either<ImmutablePair<CapabilityData, GraphEdge>, TitanOperationStatus> getCapabilityRes) {
 		Either<CapabilityDefinition, TitanOperationStatus> getCapabilityDefinitionRes;
-		log.debug("Before getting capability definition {} forRI {}.", capabilityId, resourceInstanceId);
+		log.debug("Before getting capability definition {} for resource instance {}", capabilityId, resourceInstanceId);
 		CapabilityData overrideCapabilityData = getCapabilityRes.left().value().getLeft();
 		overrideCapabilityDataWrapper.setInnerElement(overrideCapabilityData);
 		getCapabilityDefinitionRes = capabilityOperation.getCapabilityByCapabilityData(overrideCapabilityData);
 		if (getCapabilityDefinitionRes.isRight()) {
 			errorWrapper.setInnerElement(getCapabilityDefinitionRes.right().value());
-			log.debug("Failed to retrieve capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to retrieve capability {} of resource instance {}, status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After getting capability definition for {} forRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+		log.debug("After getting capability definition for {} for resource instance {}, status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		return getCapabilityDefinitionRes;
 	}
 
 	private Either<CapabilityDefinition, TitanOperationStatus> getCapabiityDefinitionByVertex(String resourceInstanceId, String capabilityId, Wrapper<TitanOperationStatus> errorWrapper, Wrapper<TitanVertex> overrideCapabilityDataWrapper,
 			Either<ImmutablePair<TitanVertex, Edge>, TitanOperationStatus> getCapabilityRes) {
 		Either<CapabilityDefinition, TitanOperationStatus> getCapabilityDefinitionRes;
-		log.trace("Before getting capability definition {} {} {}", capabilityId, forRI, resourceInstanceId);
+		log.trace("Before getting capability definition {} for resource instance {}", capabilityId, resourceInstanceId);
 
 		TitanVertex overrideCapabilityData = getCapabilityRes.left().value().getLeft();
 
@@ -296,90 +279,90 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		getCapabilityDefinitionRes = capabilityOperation.getCapabilityByCapabilityData(overrideCapabilityData);
 		if (getCapabilityDefinitionRes.isRight()) {
 			errorWrapper.setInnerElement(getCapabilityDefinitionRes.right().value());
-			log.debug("Failed to retrieve capability {} ofRI {} statusIs {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to retrieve capability {} of resource instance {}, status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After getting capability definition for {} forRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+		log.debug("After getting capability definition for {} for resource instance {} status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		return getCapabilityDefinitionRes;
 	}
 
 	private Either<ImmutablePair<CapabilityData, GraphEdge>, TitanOperationStatus> getCapabilitiesOfResourceInstance(String resourceInstanceId, String capabilityId, String capabilityName, Wrapper<TitanOperationStatus> errorWrapper) {
 		Either<ImmutablePair<CapabilityData, GraphEdge>, TitanOperationStatus> getCapabilityRes;
-		log.debug("Before getting capability {} forRI {}.", capabilityId, resourceInstanceId);
+		log.debug("Before getting capability {} for resource instance {}", capabilityId, resourceInstanceId);
 		Map<String, Object> props = new HashMap<>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), capabilityName);
 		getCapabilityRes = titanGenericDao.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId, GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class, props);
 		if (getCapabilityRes.isRight()) {
 			errorWrapper.setInnerElement(getCapabilityRes.right().value());
-			log.debug("Failed to get capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to get capability {} of resource instance {}, status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.debug("After getting capability for {} forRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+		log.debug("After getting capability for {} for resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		return getCapabilityRes;
 	}
 
 	private Either<ImmutablePair<TitanVertex, Edge>, TitanOperationStatus> getCapabilitiesOfResourceInstance(TitanVertex instanceVertex, String resourceInstanceId, String capabilityId, String capabilityName,
 			Wrapper<TitanOperationStatus> errorWrapper) {
 		Either<ImmutablePair<TitanVertex, Edge>, TitanOperationStatus> getCapabilityRes;
-		log.trace("Before getting capability {} {} {}", capabilityId, forRI, resourceInstanceId);
+		log.trace("Before getting capability {} {} {}", capabilityId, " for resource instance ", resourceInstanceId);
 		Map<String, Object> props = new HashMap<>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), capabilityName);
 		getCapabilityRes = titanGenericDao.getChildByEdgeCriteria(instanceVertex, GraphEdgeLabels.CALCULATED_CAPABILITY, props);
 		if (getCapabilityRes.isRight()) {
 			errorWrapper.setInnerElement(getCapabilityRes.right().value());
-			log.debug("Failed to get capability {} {} {} {} {}", capabilityId, ofRI, resourceInstanceId, statusIs, errorWrapper.getInnerElement());
+			log.debug("Failed to get capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		}
-		log.trace("After getting capability for {} {} {} {} {}", capabilityId, forRI, resourceInstanceId, statusIs, errorWrapper.getInnerElement());
+		log.trace("After getting capability for {} for resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		return getCapabilityRes;
 	}
 
 	private void validateCapabilityInstanceExistence(String resourceInstanceId, String capabilityId, Wrapper<TitanOperationStatus> errorWrapper) {
-		log.debug("Before validation of existence of capability instance of capability {} forRI {}.", capabilityId, resourceInstanceId);
+		log.debug("Before validation of existence of capability instance of capability {} for resource instance {}", capabilityId, resourceInstanceId);
 		boolean capabilityInstOfCapabilityAlreadyExists;
 		Either<Boolean, TitanOperationStatus> validateCapabilityInstExistenceRes = validateCapabilityInstExistence(resourceInstanceId, capabilityId);
 		if (validateCapabilityInstExistenceRes.isRight()) {
 			errorWrapper.setInnerElement(validateCapabilityInstExistenceRes.right().value());
-			log.debug("Failed to validate uniqueness of capability instance of capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to validate uniqueness of capability instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		} else {
 			capabilityInstOfCapabilityAlreadyExists = validateCapabilityInstExistenceRes.left().value();
 			if (capabilityInstOfCapabilityAlreadyExists) {
 				errorWrapper.setInnerElement(TitanOperationStatus.ALREADY_EXIST);
-				log.debug("failedCreateCI {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+				log.debug("Failed to create capability instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 			}
 		}
-		log.debug("After validation of existence of capability instance of capability {} forRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+		log.debug("After validation of existence of capability instance of capability {} for resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 	}
 
 	private void validateCapabilityInstanceExistence(TitanVertex resourceInstanceVertex, String resourceInstanceId, String capabilityId, Wrapper<TitanOperationStatus> errorWrapper) {
-		log.trace("Before validation of existence of capability instance of capability {} {} {}", capabilityId, forRI, resourceInstanceId);
+		log.trace("Before validation of existence of capability instance of capability {} for resource instance {}", capabilityId, resourceInstanceId);
 		boolean capabilityInstOfCapabilityAlreadyExists;
 		Either<Boolean, TitanOperationStatus> validateCapabilityInstExistenceRes = validateCapabilityInstExistence(resourceInstanceId, capabilityId);
 		if (validateCapabilityInstExistenceRes.isRight()) {
 			errorWrapper.setInnerElement(validateCapabilityInstExistenceRes.right().value());
-			log.debug("Failed to validate uniqueness of capability instance of capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+			log.debug("Failed to validate uniqueness of capability instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 		} else {
 			capabilityInstOfCapabilityAlreadyExists = validateCapabilityInstExistenceRes.left().value();
 			if (capabilityInstOfCapabilityAlreadyExists) {
 				errorWrapper.setInnerElement(TitanOperationStatus.ALREADY_EXIST);
-				log.debug("failedCreateCI {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+				log.debug("Failed to create capability instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 			}
 		}
-		log.debug("After validation of existence of capability instance of capability {} forRI {} statusIs {}.", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
+		log.debug("After validation of existence of capability instance of capability {} for resource instance {}. status is {}", capabilityId, resourceInstanceId, errorWrapper.getInnerElement());
 	}
 
 	private Either<List<PropertyValueData>, TitanOperationStatus> addPropertyValuesToCapabilityInstance(CapabilityInstData createdCapabilityInstance, List<ComponentInstanceProperty> propertyValues, Map<String, PropertyDefinition> defaultProperties) {
 		TitanOperationStatus error = null;
 		List<PropertyValueData> createdPropertyValues = new ArrayList<>();
 		for (ComponentInstanceProperty property : propertyValues) {
-			log.debug("Before adding property value {} toCI {}.", property.getName(), createdCapabilityInstance.getUniqueId());
+			log.debug("Before adding property value {} to capability instance {}", property.getName(), createdCapabilityInstance.getUniqueId());
 			PropertyValueData propertyData = buildPropertyValueData(property.getName(), property.getType(), property.getValue(), createdCapabilityInstance.getUniqueId());
 			Either<PropertyValueData, TitanOperationStatus> addPropertyValueRes = addPropertyValueToCapabilityInstance(createdCapabilityInstance, propertyData, defaultProperties.get(property.getName()));
 			if (addPropertyValueRes.isRight()) {
 				error = addPropertyValueRes.right().value();
-				log.debug("Failed to add property to capability instance {} ofRI. StatusIs {}.", createdCapabilityInstance.getUniqueId(), error);
+				log.debug("Failed to add property to capability instance {} of resource instance, status is {}", createdCapabilityInstance.getUniqueId(), error);
 				break;
 			} else {
 				createdPropertyValues.add(addPropertyValueRes.left().value());
 			}
-			log.debug("After adding property value {} toCI {} statusIs {}", property.getName(), createdCapabilityInstance.getUniqueId(), error);
+			log.debug("After adding property value {} to capability instance {}. status is {}", property.getName(), createdCapabilityInstance.getUniqueId(), error);
 		}
 		if (error == null) {
 			return Either.left(createdPropertyValues);
@@ -391,15 +374,15 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		TitanOperationStatus error = null;
 		String id = (String) titanGenericDao.getProperty(createdCapabilityInstancevertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		for (ComponentInstanceProperty property : propertyValues) {
-			log.trace("Before adding property value {} {} {}", property.getName(), toCI, id);
+			log.trace("Before adding property value {} to capability instance {}", property.getName(), id);
 			PropertyValueData propertyData = buildPropertyValueData(property.getName(), property.getType(), property.getValue(), id);
 			TitanOperationStatus addPropertyValueRes = addPropertyValueToCapabilityInstance(createdCapabilityInstancevertex, propertyData, defaultProperties.get(property.getName()), id);
 			if (!addPropertyValueRes.equals(TitanOperationStatus.OK)) {
 				error = addPropertyValueRes;
-				log.debug("Failed to add property to capability instance {} {} {} {}", id, ofRI, statusIs, error);
+				log.debug("Failed to add property to capability instance {} of resource instance. status is {}", id, error);
 				break;
 			}
-			log.debug("After adding property value {} {} {} {} {}", property.getName(), toCI, id, statusIs, error);
+			log.debug("After adding property value {} to capability instance {}. status is {}", property.getName(), id, error);
 		}
 		if (error == null) {
 			return TitanOperationStatus.OK;
@@ -424,15 +407,15 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Map<String, Object> props = null;
 		Either<GraphRelation, TitanOperationStatus> createRelationRes;
 		PropertyValueData createdValue = null;
-		log.debug("Before creating property value node {} onGraph.", propertyValue.getUniqueId());
+		log.debug("Before creating property value node {} on graph", propertyValue.getUniqueId());
 		Either<PropertyValueData, TitanOperationStatus> createValueRes = titanGenericDao.createNode(propertyValue, PropertyValueData.class);
 		if (createValueRes.isRight()) {
 			error = createValueRes.right().value();
-			log.debug("Failed to create property value for capability instance {} ofRI statusIs {}.", createdCapabilityInstance.getUniqueId(), error);
+			log.debug("Failed to create property value for capability instance {} of resource instance. status is {}", createdCapabilityInstance.getUniqueId(), error);
 		}
-		log.debug("After creating property value node {} onGraph statusIs {}.", propertyValue.getUniqueId(), error);
+		log.debug("After creating property value node {} on graph. status is {}", propertyValue.getUniqueId(), error);
 		if (error == null) {
-			log.debug("Before creating relation from property value node {} toCI {}.", propertyValue.getUniqueId(), createdCapabilityInstance.getUniqueId());
+			log.debug("Before creating relation from property value node {} to capability instance {}", propertyValue.getUniqueId(), createdCapabilityInstance.getUniqueId());
 			createdValue = createValueRes.left().value();
 			props = new HashMap<>();
 			props.put(GraphPropertiesDictionary.PROPERTY_NAME.name(), propertyDefinition.getName());
@@ -440,18 +423,18 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			createRelationRes = titanGenericDao.createRelation(createdCapabilityInstance, createdValue, GraphEdgeLabels.PROPERTY_VALUE, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to create relation from capability instance {} toValue {} statusIs {}.", createdCapabilityInstance.getUniqueId(), createdValue.getUniqueId(), error);
+				log.debug("Failed to create relation from capability instance {} to property value {}. status is {}", createdCapabilityInstance.getUniqueId(), createdValue.getUniqueId(), error);
 			}
-			log.debug("After creating relation from property value node {} toCI {}  statusIs {}.", propertyValue.getUniqueId(), createdCapabilityInstance.getUniqueId(), error);
+			log.debug("After creating relation from property value node {} to capability instance {}. status is {}", propertyValue.getUniqueId(), createdCapabilityInstance.getUniqueId(), error);
 		}
 		if (error == null) {
-			log.debug("Before creating relation from property value node {} toProperty {}.", propertyValue.getUniqueId(), propertyDefinition.getUniqueId());
+			log.debug("Before creating relation from property value node {} to property {}", propertyValue.getUniqueId(), propertyDefinition.getUniqueId());
 			createRelationRes = titanGenericDao.createRelation(propertyValue, new PropertyData(propertyDefinition, null), GraphEdgeLabels.PROPERTY_IMPL, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to create relation from property value {} toProperty {} statusIs {}.", createdValue.getUniqueId(), propertyDefinition.getUniqueId(), error);
+				log.debug("Failed to create relation from property value {} to property {}. status is {}", createdValue.getUniqueId(), propertyDefinition.getUniqueId(), error);
 			}
-			log.debug("After creating relation from property value node {} toProperty statusIs {}.", propertyValue.getUniqueId(), propertyDefinition.getUniqueId(), error);
+			log.debug("After creating relation from property value node {} to property {}. status is {}", propertyValue.getUniqueId(), propertyDefinition.getUniqueId(), error);
 		}
 		if (error == null) {
 			return Either.left(createdValue);
@@ -467,15 +450,13 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Either<TitanVertex, TitanOperationStatus> createValueRes = titanGenericDao.createNode(propertyValue);
 		if (createValueRes.isRight()) {
 			error = createValueRes.right().value();
-			if (log.isDebugEnabled()){
-				log.debug("Failed to create property value for capability instance {} {} {} {}", id, ofRI, statusIs, error);
-			}
+			log.debug("Failed to create property value for capability instance {} of resource instance. status is {}", id, error);
 		}
 		log.trace("After creating property value node {}  on graph status is {}", propertyValue.getUniqueId(), error);
 		TitanVertex createdPropVertex = null;
 		String createdId = null;
 		if (error == null) {
-			log.trace("Before creating relation from property value node {} {} {} ", propertyValue.getUniqueId(), toCI, id);
+			log.trace("Before creating relation from property value node {} to capability instance {} ", propertyValue.getUniqueId() , id);
 			props = new HashMap<>();
 			props.put(GraphPropertiesDictionary.PROPERTY_NAME.name(), propertyDefinition.getName());
 			props.put(GraphPropertiesDictionary.PROPERTY_ID.name(), propertyDefinition.getUniqueId());
@@ -484,22 +465,18 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
 				createdId = (String) titanGenericDao.getProperty(createdPropVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
-				if (log.isDebugEnabled()) {
-					log.debug("Failed to create relation from capability instance {} {} {} {} {}", id, toValue, createdId, statusIs, error);
-				}
+				log.debug("Failed to create relation from capability instance {} to property value {}. status is {}", id, createdId, error);
 			}
-			if (log.isTraceEnabled()){
-				log.trace("After creating relation from property value node {} {} {} {} {}", propertyValue.getUniqueId(), toCI, id, statusIs, error);
-			}
+			log.trace("After creating relation from property value node {} to capability instance {}. status is {}", propertyValue.getUniqueId(), id, error);
 		}
 		if (error == null) {
-			log.trace("Before creating relation from property value node {} {} {}", propertyValue.getUniqueId(), toProperty, propertyDefinition.getUniqueId());
+			log.trace("Before creating relation from property value node {} to property {}", propertyValue.getUniqueId(), propertyDefinition.getUniqueId());
 			createRelationRes = titanGenericDao.createEdge(createdPropVertex, new PropertyData(propertyDefinition, null), GraphEdgeLabels.PROPERTY_IMPL, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				log.debug("Failed to create relation from property value {} {} {} {} {}", createdId, toProperty, propertyDefinition.getUniqueId(), statusIs, error);
+				log.debug("Failed to create relation from property value {} to property {}. status is {}", createdId, propertyDefinition.getUniqueId(), error);
 			}
-			log.debug("After creating relation from property value node {} {} {} {} {}", propertyValue.getUniqueId(), toProperty, propertyDefinition.getUniqueId(), statusIs, error);
+			log.debug("After creating relation from property value node {} to property {}. status is {}", propertyValue.getUniqueId(), propertyDefinition.getUniqueId(), error);
 		}
 		if (error == null) {
 			return TitanOperationStatus.OK;
@@ -537,7 +514,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 				Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
 				if (allDataTypes.isRight()) {
 					TitanOperationStatus status = allDataTypes.right().value();
-					log.debug("Failed to update property value statusIs {}.", status);
+					log.debug("Failed to update property value. status is {}", status);
 					result = Either.right(status);
 				}
 				if (result == null) {
@@ -582,7 +559,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			if (error.equals(TitanOperationStatus.NOT_FOUND)) {
 				result = Either.left(false);
 			} else {
-				log.debug("Failed to get outgoing edge for resource instance {} statusIs {}.", resourceInstanceId, error);
+				log.debug("Failed to get outgoing edge for resource instance {}. status is {}.", resourceInstanceId, error);
 				result = Either.right(error);
 			}
 		}
@@ -604,7 +581,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			if (error.equals(TitanOperationStatus.NOT_FOUND)) {
 				result = Either.left(false);
 			} else {
-				log.debug("Failed to get outgoing edge for resource instance {} {} {}", resourceInstanceId, statusIs, error);
+				log.debug("Failed to get outgoing edge for resource instance {} status is {}", resourceInstanceId, error);
 				result = Either.right(error);
 			}
 		}
@@ -615,7 +592,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	}
 
 	private Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceOnGraph(String resourceInstanceId, CapabilityData overrideCapabilityData, CapabilityInstData capabilityInstance) {
-		log.debug("Before creation of capability instance of capability {} forRI {}.", overrideCapabilityData.getUniqueId(), resourceInstanceId);
+		log.debug("Before creation of capability instance of capability {} for resource instance {}", overrideCapabilityData.getUniqueId(), resourceInstanceId);
 
 		Either<GraphRelation, TitanOperationStatus> createRelationRes;
 		CapabilityInstData createdCapabilityInstance = null;
@@ -624,9 +601,9 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceRes = titanGenericDao.createNode(capabilityInstance, CapabilityInstData.class);
 		if (createCapabilityInstanceRes.isRight()) {
 			error = createCapabilityInstanceRes.right().value();
-			log.debug("failedCreateCI {} forRI {} statusIs {}.", overrideCapabilityData.getUniqueId(), resourceInstanceId, error);
+			log.debug("Failed to create capability instance of capability {} for resource instance {}. status is {}.", overrideCapabilityData.getUniqueId(), resourceInstanceId, error);
 		}
-		log.debug("After creation of capability instance of capability {} forRI {} statusIs {}.", overrideCapabilityData.getUniqueId(), resourceInstanceId, error);
+		log.debug("After creation of capability instance of capability {} for resource instance {}. status is {}.", overrideCapabilityData.getUniqueId(), resourceInstanceId, error);
 		if (error == null) {
 			createdCapabilityInstance = createCapabilityInstanceRes.left().value();
 			capabilityInstanceId = createdCapabilityInstance.getUniqueId();
@@ -637,20 +614,20 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			createRelationRes = titanGenericDao.createRelation(resourceInstanceIdData, capabilityInstance, GraphEdgeLabels.CAPABILITY_INST, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to assotiate resource instance {} toCI {} statusIs {}.", resourceInstanceId, capabilityInstanceId, error);
+				log.debug("Failed to assotiate resource instance {} to capability instance {}. status is {}", resourceInstanceId, capabilityInstanceId, error);
 			}
-			log.debug("After associating resource instance {} to CI {} statusIs {}.", resourceInstanceId, capabilityInstanceId, error);
+			log.debug("After associating resource instance {} to capability instance {}. status is {}", resourceInstanceId, capabilityInstanceId, error);
 		}
 		if (error == null) {
-			log.debug("Before associating capability instance {} toCapability {}.", capabilityInstanceId, overrideCapabilityData.getUniqueId());
+			log.debug("Before associating capability instance {} to capability {}.", capabilityInstanceId, overrideCapabilityData.getUniqueId());
 			Map<String, Object> props = new HashMap<>();
 			props.put(GraphPropertiesDictionary.CAPABILITY_ID.getProperty(), overrideCapabilityData.getUniqueId());
 			createRelationRes = titanGenericDao.createRelation(createdCapabilityInstance, overrideCapabilityData, GraphEdgeLabels.INSTANCE_OF, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to associate capability instance {} toCapability statusIs {}.", capabilityInstanceId, overrideCapabilityData.getUniqueId(), error);
+				log.debug("Failed to associate capability instance {} to capability {}. status is {}", capabilityInstanceId, overrideCapabilityData.getUniqueId(), error);
 			}
-			log.debug("After associating capability instance {} toCapability statusIs {}.", capabilityInstanceId, overrideCapabilityData.getUniqueId(), error);
+			log.debug("After associating capability instance {} to capability {}. status is {}.", capabilityInstanceId, overrideCapabilityData.getUniqueId(), error);
 		}
 		if (error == null) {
 			return createCapabilityInstanceRes;
@@ -660,7 +637,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 
 	private Either<TitanVertex, TitanOperationStatus> createCapabilityInstanceOnGraph(TitanVertex riVertex, String resourceInstanceId, TitanVertex overrideCapabilityDataVertex, CapabilityInstData capabilityInstance) {
 		String overrideCapabilityDataId = (String) titanGenericDao.getProperty(overrideCapabilityDataVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
-		log.trace("Before creation of capability instance of capability {} {} {}", overrideCapabilityDataVertex, forRI, resourceInstanceId);
+		log.trace("Before creation of capability instance of capability {} for resource instance {}", overrideCapabilityDataVertex, resourceInstanceId);
 
 		TitanOperationStatus createRelationRes;
 		TitanVertex createdCapabilityInstance = null;
@@ -669,9 +646,9 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Either<TitanVertex, TitanOperationStatus> createCapabilityInstanceRes = titanGenericDao.createNode(capabilityInstance);
 		if (createCapabilityInstanceRes.isRight()) {
 			error = createCapabilityInstanceRes.right().value();
-			log.debug("Failed to create capability instance of capability {} {} {} {} {}", overrideCapabilityDataId, forRI, resourceInstanceId, statusIs, error);
+			log.debug("Failed to create capability instance of capability {} for resource instance {} status is {}", overrideCapabilityDataId, resourceInstanceId, error);
 		}
-		log.trace("After creation of capability instance of capability {} {} {} {} {}", overrideCapabilityDataId, forRI, resourceInstanceId, statusIs, error);
+		log.trace("After creation of capability instance of capability {} for resource instance {} status is {}", overrideCapabilityDataId, resourceInstanceId, error);
 		if (error == null) {
 			createdCapabilityInstance = createCapabilityInstanceRes.left().value();
 			capabilityInstanceId = (String) titanGenericDao.getProperty(createdCapabilityInstance, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
@@ -682,22 +659,22 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			createRelationRes = titanGenericDao.createEdge(riVertex, capabilityInstance, GraphEdgeLabels.CAPABILITY_INST, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				log.debug("Failed to assotiate resource instance {} {} {} {} {}", resourceInstanceId, toCI, capabilityInstanceId, statusIs, error);
+				log.debug("Failed to assotiate resource instance {} to capability instance {} status is {}", resourceInstanceId, capabilityInstanceId, error);
 			}
 			if (log.isTraceEnabled()) {
-				log.trace("After associating resource instance {} {} {} {} {}", resourceInstanceId, toCI, capabilityInstanceId, statusIs, error);
+				log.trace("After associating resource instance {} to capability instance {}. status is {}", resourceInstanceId, capabilityInstanceId, error);
 			}
 		}
 		if (error == null) {
-			log.trace("Before associating capability instance {} {} {}", capabilityInstanceId, toCapability, overrideCapabilityDataId);
+			log.trace("Before associating capability instance {} to capability {}", capabilityInstanceId, overrideCapabilityDataId);
 			Map<String, Object> props = new HashMap<>();
 			props.put(GraphPropertiesDictionary.CAPABILITY_ID.getProperty(), overrideCapabilityDataId);
 			createRelationRes = titanGenericDao.createEdge(createdCapabilityInstance, overrideCapabilityDataVertex, GraphEdgeLabels.INSTANCE_OF, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				log.debug("Failed to associate capability instance {} {} {} {} {}", capabilityInstanceId, toCapability, overrideCapabilityDataId, statusIs, error);
+				log.debug("Failed to associate capability instance {} to capability {} status is {}", capabilityInstanceId, overrideCapabilityDataId, error);
 			}
-			log.debug("After associating capability instance {} {} {} {} {}", capabilityInstanceId, toCapability, overrideCapabilityDataId, statusIs, error);
+			log.debug("After associating capability instance {} to capability {}. status is {}", capabilityInstanceId, overrideCapabilityDataId, error);
 		}
 		if (error == null) {
 			return createCapabilityInstanceRes;
@@ -726,23 +703,23 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	 */
 	@Override
 	public Either<CapabilityInstData, TitanOperationStatus> deleteCapabilityInstanceFromResourceInstance(String resourceInstanceId, String capabilityInstanceId) {
-		log.debug("Before deleting of capability instance {} fromRI {}.", capabilityInstanceId, resourceInstanceId);
+		log.debug("Before deleting of capability instance {} from resource instance {}.", capabilityInstanceId, resourceInstanceId);
 
 		Either<CapabilityInstData, TitanOperationStatus> deleteCapabilityInstRes = null;
 		TitanOperationStatus error = null;
 		Either<Boolean, TitanOperationStatus> deleteProperyValuesRes = deleteAllPropertyValuesOfCapabilityInstance(resourceInstanceId, capabilityInstanceId);
 		if (deleteProperyValuesRes.isRight()) {
 			error = deleteProperyValuesRes.right().value();
-			log.debug("failedDeletePropertyValues {} for RI {} statusIs {}.", capabilityInstanceId, resourceInstanceId, error);
+			log.debug("Failed to delete property values of capability instance {} for resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 		}
 		if (error == null) {
 			deleteCapabilityInstRes = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst), capabilityInstanceId, CapabilityInstData.class);
 			if (deleteCapabilityInstRes.isRight()) {
 				error = deleteCapabilityInstRes.right().value();
-				log.debug("Failed to delete capability instance {} forRI {} statusIs {}", capabilityInstanceId, resourceInstanceId, error);
+				log.debug("Failed to delete capability instance {} for resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 			}
 		}
-		log.debug("After deleting of capability instance {} fromRI {} statusIs {}.", capabilityInstanceId, resourceInstanceId, error);
+		log.debug("After deleting of capability instance {} from resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 		if (error == null) {
 			return Either.left(deleteCapabilityInstRes.left().value());
 		}
@@ -750,14 +727,14 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	}
 
 	private Either<Boolean, TitanOperationStatus> deleteAllPropertyValuesOfCapabilityInstance(String resourceInstanceId, String capabilityInstanceId) {
-		log.debug("Before deleting all property values of capability instance {} fromRI {}.", capabilityInstanceId, resourceInstanceId);
+		log.debug("Before deleting all property values of capability instance {} from resource instance {}", capabilityInstanceId, resourceInstanceId);
 		TitanOperationStatus error = null;
 		List<ImmutablePair<PropertyValueData, GraphEdge>> deletePropertiesPairs;
 		Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> getPropertyValuesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst), capabilityInstanceId,
 				GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue, PropertyValueData.class);
 		if (getPropertyValuesRes.isRight()) {
 			error = getPropertyValuesRes.right().value();
-			log.debug("Failed to retrieve property values of capability instance {} forRI {} status {}.", capabilityInstanceId, resourceInstanceId, error);
+			log.debug("Failed to retrieve property values of capability instance {} for resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 		}
 		if (error == null) {
 			deletePropertiesPairs = getPropertyValuesRes.left().value();
@@ -765,12 +742,12 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 				Either<PropertyValueData, TitanOperationStatus> deletePropertyRes = titanGenericDao.deleteNode(propertyPair.getLeft(), PropertyValueData.class);
 				if (deletePropertyRes.isRight()) {
 					error = deletePropertyRes.right().value();
-					log.debug("failedDeletePropertyValues {} forRI {} statusIs {}.", capabilityInstanceId, resourceInstanceId, error);
+					log.debug("Failed to delete property values of capability instance {} for resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 					break;
 				}
 			}
 		}
-		log.debug("After deleting all property values of capability instance {} fromRI {} statusIs {}.", capabilityInstanceId, resourceInstanceId, error);
+		log.debug("After deleting all property values of capability instance  from resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 		if (error == null) {
 			return Either.left(true);
 		}
@@ -786,15 +763,15 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	 */
 	@Override
 	public Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getAllCapabilityInstancesOfResourceInstance(String resourceInstanceId) {
-		log.debug("Before deleting all capability instances of resource instance {}.", resourceInstanceId);
+		log.debug("Before deleting all capability instances of resource instance {}", resourceInstanceId);
 		TitanOperationStatus error = null;
 		Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getCapabilityInstancesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId,
 				GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst, CapabilityInstData.class);
 		if (getCapabilityInstancesRes.isRight()) {
 			error = getCapabilityInstancesRes.right().value();
-			log.debug("Failed to retrieve capability Instances of resource instance {} statusIs {}.", resourceInstanceId, error);
+			log.debug("Failed to retrieve capability Instances of resource instance {}. status is {}", resourceInstanceId, error);
 		}
-		log.debug("After deleting all capability instances of resource instance {} statusIs {}", resourceInstanceId, error);
+		log.debug("After deleting all capability instances of resource instance {}. status is {}", resourceInstanceId, error);
 		if (error == null) {
 			return getCapabilityInstancesRes;
 		}
@@ -817,7 +794,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 				GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst, CapabilityInstData.class, props);
 		if (getCapabilityInstanceRes.isRight()) {
 			error = getCapabilityInstanceRes.right().value();
-			log.debug("Failed to retrieve capability Instance of capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+			log.debug("Failed to retrieve capability Instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 		}
 		if (error == null) {
 			return Either.left(getCapabilityInstanceRes.left().value().getLeft());
@@ -835,7 +812,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 	 */
 	@Override
 	public Either<List<PropertyValueData>, TitanOperationStatus> updateCapabilityPropertyValues(String resourceInstanceId, String capabilityId, List<ComponentInstanceProperty> propertyValues) {
-		log.debug("Before updating property values of capability {} ofRI {}.", capabilityId, resourceInstanceId);
+		log.debug("Before updating property values of capability {} of resource instance {}.", capabilityId, resourceInstanceId);
 		TitanOperationStatus error = null;
 		Map<String, Object> props = new HashMap<>();
 		CapabilityInstData capabilityInstance = null;
@@ -849,47 +826,47 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		Either<List<PropertyValueData>, TitanOperationStatus> addPropertyValuesRes = null;
 		Either<CapabilityDefinition, TitanOperationStatus> getCapabilityDefinitionRes = null;
 
-		log.debug("Before getting all capability instances of RI {}.", resourceInstanceId);
+		log.debug("Before getting all capability instances of resource instance {}.", resourceInstanceId);
 		props.put(GraphPropertiesDictionary.CAPABILITY_ID.getProperty(), capabilityId);
 		Either<ImmutablePair<CapabilityInstData, GraphEdge>, TitanOperationStatus> getCapabilityInstancesRes = titanGenericDao.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId,
 				GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst, CapabilityInstData.class, props);
 		if (getCapabilityInstancesRes.isRight()) {
 			error = getCapabilityInstancesRes.right().value();
-			log.debug("Failed to retrieve capability Instances of capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+			log.debug("Failed to retrieve capability Instances of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 		}
-		log.debug("After getting all capability instances ofRI {} statusIs {}.", resourceInstanceId, error);
+		log.debug("After getting all capability instances of resource instance {}. status is {}.", resourceInstanceId, error);
 		if (error == null) {
-			log.debug("Before deleting all capability instances ofRI {}.", resourceInstanceId);
+			log.debug("Before deleting all capability instances of resource instance {}.", resourceInstanceId);
 			capabilityInstance = getCapabilityInstancesRes.left().value().getLeft();
 			capabilityInstanceId = capabilityInstance.getUniqueId();
 			deleteProperyValuesRes = deleteAllPropertyValuesOfCapabilityInstance(resourceInstanceId, capabilityInstanceId);
 			if (deleteProperyValuesRes.isRight()) {
 				error = deleteProperyValuesRes.right().value();
-				log.debug("failedDeletePropertyValues {} forRI {} statusIs {}", capabilityInstanceId, resourceInstanceId, statusIs, error);
+				log.debug("Failed to delete property values of capability instance {} for resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 			}
-			log.debug("After deleting all capability instances ofRI {} statusIs {}.", resourceInstanceId, error);
+			log.debug("After deleting all capability instances of resource instance {}. status is {}", resourceInstanceId, error);
 		}
 		if (error == null) {
-			log.debug("Before getting capability {} ofRI {}.", capabilityId, resourceInstanceId);
+			log.debug("Before getting capability {} of resource instance {}", capabilityId, resourceInstanceId);
 			getCapabilityDataRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), resourceInstanceId, GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class);
 			if (getCapabilityDataRes.isRight()) {
 				error = getCapabilityDataRes.right().value();
-				log.debug("Failed to get capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+				log.debug("Failed to get capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 			}
-			log.debug("After getting capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+			log.debug("After getting capability {} of resource instance {}. status is {}.", capabilityId, resourceInstanceId, error);
 		}
 		if (error == null) {
-			log.debug("Before getting capability definition for capability {} ofRI {}.", capabilityId, resourceInstanceId);
+			log.debug("Before getting capability definition for capability {} of resource instance {}.", capabilityId, resourceInstanceId);
 			overrideCapabilityData = getCapabilityDataRes.left().value().getLeft();
 			getCapabilityDefinitionRes = capabilityOperation.getCapabilityByCapabilityData(overrideCapabilityData);
 			if (getCapabilityDefinitionRes.isRight()) {
 				error = getCapabilityDefinitionRes.right().value();
-				log.debug("Failed to retrieve capability {} ofRI {} statusIs {}", capabilityId, resourceInstanceId, error);
+				log.debug("Failed to retrieve capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 			}
-			log.debug("After getting capability definition for capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+			log.debug("After getting capability definition for capability {} of resource instance {}. status is {}.", capabilityId, resourceInstanceId, error);
 		}
 		if (error == null) {
-			log.debug("Before validating capability properties of capability instance {} ofRI {}.", capabilityInstanceId, resourceInstanceId);
+			log.debug("Before validating capability properties of capability instance {} of resource instance {}.", capabilityInstanceId, resourceInstanceId);
 			overrideCapabilityDefinition = getCapabilityDefinitionRes.left().value();
 			if (overrideCapabilityDefinition.getProperties() != null) {
 				defaultProperties = overrideCapabilityDefinition.getProperties().stream().collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
@@ -897,20 +874,20 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			Either<Boolean, TitanOperationStatus> result = validateCapabilityInstanceProperties(defaultProperties, propertyValues);
 			if (result.isRight()) {
 				error = result.right().value();
-				log.debug("failedAddProperties {} ofRI {} statusIs {}.", capabilityInstance.getUniqueId(), resourceInstanceId, error);
+				log.debug("Failed to add properties to capability instance {} of resource instance {}. status is {}", capabilityInstance.getUniqueId(), resourceInstanceId, error);
 			}
-			log.debug("After validating capability properties of capability instance {} of RI {} statusIs {}.", capabilityInstanceId, resourceInstanceId, error);
+			log.debug("After validating capability properties of capability instance {} of resource instance {}. status is {}.", capabilityInstanceId, resourceInstanceId, error);
 		}
 		if (error == null) {
-			log.debug("Before adding property values toCI {} ofRI {}.", capabilityInstanceId, resourceInstanceId);
+			log.debug("Before adding property values to capability instance {} of resource instance {}.", capabilityInstanceId, resourceInstanceId);
 			addPropertyValuesRes = addPropertyValuesToCapabilityInstance(capabilityInstance, propertyValues, defaultProperties);
 			if (addPropertyValuesRes.isRight()) {
 				error = addPropertyValuesRes.right().value();
-				log.debug("failedAddProperties {} ofRI {} statusIs {}.", capabilityInstance.getUniqueId(), resourceInstanceId, error);
+				log.debug("Failed to add properties to capability instance {} of resource instance {}. status is {}", capabilityInstance.getUniqueId(), resourceInstanceId, error);
 			}
-			log.debug("Before adding property values toCI {} ofRI {}.", capabilityInstanceId, resourceInstanceId);
+			log.debug("Before adding property values to capability instance {} of resource instance {}.", capabilityInstanceId, resourceInstanceId);
 		}
-		log.debug("After updating property values of capability {} ofRI {} statusIs {}.", capabilityId, resourceInstanceId, error);
+		log.debug("After updating property values of capability {} of resource instance {}. status is {}.", capabilityId, resourceInstanceId, error);
 		if (error == null) {
 			return addPropertyValuesRes;
 		}
@@ -933,33 +910,33 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		String componentInstanceId = createdComponentInstance.getUniqueId();
 		String capabilityInstanceId = capabilityInstPair.getLeft().getUniqueId();
 
-		log.debug("Before cloning capability instance with property values of capability instance {} ofRI {}.", capabilityInstanceId, componentInstanceId);
+		log.debug("Before cloning capability instance with property values of capability instance {} of resource instance {}.", capabilityInstanceId, componentInstanceId);
 		List<ImmutablePair<PropertyValueData, GraphEdge>> propertyValuePairs;
 		List<PropertyValueData> newPropertyValues = new ArrayList<>();
 		CapabilityInstData cloneCapabilityInstance = null;
 		Either<CapabilityInstData, TitanOperationStatus> cloneCapabilityInstanceNodeRes = null;
 
-		log.debug("Before getting all property values ofCI {} ofRI {}.", capabilityInstanceId, componentInstanceId);
+		log.debug("Before getting all property values of component instance {} of resource instance {}.", capabilityInstanceId, componentInstanceId);
 		Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> getPropertyValuesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst), capabilityInstPair.getLeft().getUniqueId(),
 				GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue, PropertyValueData.class);
 		if (getPropertyValuesRes.isRight()) {
 			error = getPropertyValuesRes.right().value();
-			log.debug("Failed to retrieve property values of capability instance {} ofCI {} statusIs {}.", capabilityInstPair.getLeft().getUniqueId(), componentInstanceId ,error);
+			log.debug("Failed to retrieve property values of capability instance {} of component instance {}. status is {}", capabilityInstPair.getLeft().getUniqueId(), componentInstanceId, error);
 		}
-		log.debug("After getting all property values ofCI {} ofRI {} statusIs {}.", capabilityInstanceId, componentInstanceId, error);
+		log.debug("After getting all property values of component instance {} of resource instance {}. status is {}.", capabilityInstanceId, componentInstanceId, error);
 		if (error == null) {
 			CapabilityInstData cloneCapabilityInst = buildCapabilityInstanceData(componentInstanceId, capability);
-			log.debug("Before creating capability instance node {} onGraph.", cloneCapabilityInst.getUniqueId());
+			log.debug("Before creating capability instance node {} on graph.", cloneCapabilityInst.getUniqueId());
 			cloneCapabilityInstanceNodeRes = titanGenericDao.createNode(cloneCapabilityInst, CapabilityInstData.class);
 			if (cloneCapabilityInstanceNodeRes.isRight()) {
 				error = cloneCapabilityInstanceNodeRes.right().value();
-				log.debug("Failed to create capability instance of capability {} ofCI {} statusIs {}.", capability.getUniqueId(), componentInstanceId, error);
+				log.debug("Failed to create capability instance of capability {} of component instance {}. status is {}", capability.getUniqueId(), componentInstanceId, error);
 			}
-			log.debug("After creating capability instance node {} onGraph. statusIs {}", cloneCapabilityInst.getUniqueId(), error);
+			log.debug("After creating capability instance node {} on graph. status is {}.", cloneCapabilityInst.getUniqueId(), error);
 		}
 
 		if (error == null) {
-			log.debug("Before creating relation from capability instance {} toCapability {} onGraph.", cloneCapabilityInstanceNodeRes.left().value().getUniqueId(), capability.getUniqueId());
+			log.debug("Before creating relation from capability instance {} to capability {} on graph.", cloneCapabilityInstanceNodeRes.left().value().getUniqueId(), capability.getUniqueId());
 			cloneCapabilityInstance = cloneCapabilityInstanceNodeRes.left().value();
 			CapabilityData capabilityData = buildCapabilityData(capability);
 			Map<String, Object> props = new HashMap<>();
@@ -967,29 +944,27 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			Either<GraphRelation, TitanOperationStatus> createRelationRes = titanGenericDao.createRelation(cloneCapabilityInstance, capabilityData, GraphEdgeLabels.INSTANCE_OF, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to associate capability instance {} toCapability {} statusIs {}.", cloneCapabilityInstance.getUniqueId(), capability.getUniqueId(), error);
+				log.debug("Failed to associate capability instance {} to capability {}. status is {}", cloneCapabilityInstance.getUniqueId(), capability.getUniqueId(), error);
 			}
-			log.debug("After creating relation from capability instance {} toCapability {} onGraph. statusIs {}.", cloneCapabilityInstanceNodeRes.left().value().getUniqueId(), capability.getUniqueId(), error);
+			log.debug("After creating relation from capability instance {} to capability {} on graph. status is.", cloneCapabilityInstanceNodeRes.left().value().getUniqueId(), capability.getUniqueId(), error);
 		}
 
 		if (error == null) {
-			log.debug("Before cloning property values ofCI {}.", capabilityInstanceId);
+			log.debug("Before cloning property values of component instance {}.", capabilityInstanceId);
 			propertyValuePairs = getPropertyValuesRes.left().value();
 			for (ImmutablePair<PropertyValueData, GraphEdge> propertyValuePair : propertyValuePairs) {
 				Either<PropertyValueData, TitanOperationStatus> clonePropertyValueRes = cloneAssociatePropertyValue(cloneCapabilityInstance, propertyValuePair);
 				if (clonePropertyValueRes.isRight()) {
 					error = clonePropertyValueRes.right().value();
-					if (log.isDebugEnabled()) {
-						log.debug("Failed to clone property value {} ofCapability {} ofCI {}. statusIs {}.", propertyValuePair.getLeft().getUniqueId(), capability.getUniqueId(), componentInstanceId, error);
-					}
+					log.debug("Failed to clone property value {} of capability {} of component instance {}. status is {}", propertyValuePair.getLeft().getUniqueId(), capability.getUniqueId(), componentInstanceId, error);
 					break;
 				} else {
 					newPropertyValues.add(clonePropertyValueRes.left().value());
 				}
 			}
-			log.debug("After cloning property values of CI {} statusIs {}.", capabilityInstanceId, error);
+			log.debug("After cloning property values of component instance {}. status is {}.", capabilityInstanceId, error);
 		}
-		log.debug("After cloning capability instance with property values of capability instance {} ofRI {} statusIs {}.", capabilityInstanceId, componentInstanceId, error);
+		log.debug("After cloning capability instance with property values of capability instance {} of resource instance {}. status is {}.", capabilityInstanceId, componentInstanceId, error);
 		if (error == null) {
 			return Either.left(new ImmutablePair<CapabilityInstData, List<PropertyValueData>>(cloneCapabilityInstance, newPropertyValues));
 		}
@@ -1003,44 +978,40 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		String capabilityInstanceId = capabilityInstPair.getLeft().getUniqueId();
 
 		if (log.isTraceEnabled()) {
-			log.trace("Before cloning capability instance with property values of capability instance {} {} {}", capabilityInstanceId, ofRI, componentInstanceId);
+			log.trace("Before cloning capability instance with property values of capability instance {} of resource instance {}", capabilityInstanceId, componentInstanceId);
 		}
 		List<ImmutablePair<TitanVertex, Edge>> propertyValuePairs;
 		Either<TitanVertex, TitanOperationStatus> cloneCapabilityInstanceNodeRes = null;
 
 		if (log.isTraceEnabled()) {
-			log.trace("Before getting all property values {} {} {} {}", ofCI, capabilityInstanceId, ofRI, componentInstanceId);
+			log.trace("Before getting all property values of component instance {} of resource instance {}", capabilityInstanceId, componentInstanceId);
 		}
 		Either<List<ImmutablePair<TitanVertex, Edge>>, TitanOperationStatus> getPropertyValuesRes = titanGenericDao.getChildrenVertecies(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst), capabilityInstPair.getLeft().getUniqueId(),
 				GraphEdgeLabels.PROPERTY_VALUE);
 		if (getPropertyValuesRes.isRight()) {
 			error = getPropertyValuesRes.right().value();
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to retrieve property values of capability instance {} {} {} {} {}", capabilityInstPair.getLeft().getUniqueId(), ofCI, componentInstanceId, statusIs, error);
-			}
+			log.debug("Failed to retrieve property values of capability instance {} of component instance {}. status is {}", capabilityInstPair.getLeft().getUniqueId(), componentInstanceId, error);
 		}
 		if (log.isTraceEnabled()) {
-			log.trace("After getting all property values {} {} {} {} {} {}", ofCI, capabilityInstanceId, ofRI, componentInstanceId, statusIs, error);
+			log.trace("After getting all property values of component instance {} of resource instance {}. status is {}", capabilityInstanceId, componentInstanceId, error);
 		}
 		if (error == null) {
 			CapabilityInstData cloneCapabilityInst = buildCapabilityInstanceData(componentInstanceId, capability);
-			log.trace("Before creating capability instance node {} {} ", cloneCapabilityInst.getUniqueId(), onGraph);
+			log.trace("Before creating capability instance node {} on graph", cloneCapabilityInst.getUniqueId());
 			cloneCapabilityInstanceNodeRes = titanGenericDao.createNode(cloneCapabilityInst);
 			if (cloneCapabilityInstanceNodeRes.isRight()) {
 				error = cloneCapabilityInstanceNodeRes.right().value();
-				if (log.isDebugEnabled()) {
-					log.debug("Failed to create capability instance of capability {} {} {} {} {}", capability.getUniqueId(), ofCI, componentInstanceId, statusIs, error);
-				}
+				log.debug("Failed to create capability instance of capability {} of component instance {}. status is {}", capability.getUniqueId(), componentInstanceId, error);
 			}
 			if (log.isTraceEnabled()) {
-				log.trace("After creating capability instance node {} {} {} {}", cloneCapabilityInst.getUniqueId(), onGraph, statusIs, error);
+				log.trace("After creating capability instance node {} on graph. status is {}", cloneCapabilityInst.getUniqueId(), error);
 			}
 		}
 		CapabilityData capabilityData;
 		TitanVertex cloneCapabilityInstance = null;
 		if (error == null) {
 			if (log.isTraceEnabled()) {
-				log.trace("Before creating relation from capability instance {} {} {} {}", capability.getUniqueId(), toCapability, capability.getUniqueId(), onGraph);
+				log.trace("Before creating relation from capability instance {} to capability {} on graph", capability.getUniqueId(), capability.getUniqueId());
 			}
 			capabilityData = buildCapabilityData(capability);
 			Map<String, Object> props = new HashMap<>();
@@ -1049,33 +1020,25 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 			TitanOperationStatus createRelationRes = titanGenericDao.createEdge(cloneCapabilityInstance, capabilityData, GraphEdgeLabels.INSTANCE_OF, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				if (log.isDebugEnabled()) {
-					log.debug("Failed to associate capability instance {} {} {} {} {}", capabilityData.getUniqueId(), toCapability, capability.getUniqueId(), statusIs, createRelationRes);
-				}
+				log.debug("Failed to associate capability instance {} to capability {}. status is {}", capabilityData.getUniqueId(), capability.getUniqueId(), createRelationRes);
 			}
-			if (log.isTraceEnabled()) {
-				log.trace("After creating relation from capability instance {} {} {} {} {} {}", capabilityData.getUniqueId(), toCapability, capability.getUniqueId(), onGraph, statusIs, error);
-			}
+			log.trace("After creating relation from capability instance {} to capability {} on graph. status is {}", capabilityData.getUniqueId(), capability.getUniqueId(), error);
 		}
 
 		if (error == null) {
-			log.trace("Before cloning property values {} {} ", ofCI, capabilityInstanceId);
+			log.trace("Before cloning property values of component instance {} ", capabilityInstanceId);
 			propertyValuePairs = getPropertyValuesRes.left().value();
 			for (ImmutablePair<TitanVertex, Edge> propertyValuePair : propertyValuePairs) {
 				TitanOperationStatus clonePropertyValueRes = cloneAssociatePropertyValue(cloneCapabilityInstance, propertyValuePair);
 				if (!clonePropertyValueRes.equals(TitanOperationStatus.OK)) {
 					error = clonePropertyValueRes;
-					if (log.isDebugEnabled()) {
-						log.debug("Failed to clone property value  of capability {} {} {} {} {}", capability.getUniqueId(), ofCI, componentInstanceId, statusIs, error);
-					}
+					log.debug("Failed to clone property value  of capability {} of component instance {}. status is {}", capability.getUniqueId(), componentInstanceId, error);
 					break;
 				}
 			}
-			if (log.isDebugEnabled()) {
-				log.debug("After cloning property values {} {} {} {}", ofCI, capabilityInstanceId, statusIs, error);
-			}
+			log.debug("After cloning property values of component instance {}. status is {}", capabilityInstanceId, error);
 		}
-		log.debug("After cloning capability instance with property values of capability instance {} ofRI {} statusIs {}.", capabilityInstanceId, componentInstanceId, error);
+		log.debug("After cloning capability instance with property values of capability instance {} of resource instance {}. status is {}.", capabilityInstanceId, componentInstanceId, error);
 		if (error == null) {
 			return Either.left(cloneCapabilityInstance);
 		}
@@ -1100,7 +1063,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		TitanOperationStatus error = null;
 		String propertyValueID = propertyValuePair.getLeft().getUniqueId();
 		String capabilityInstanceId = cloneCapabilityInstance.getUniqueId();
-		log.debug("Before cloning property values {} ofCI {}.", propertyValueID, capabilityInstanceId);
+		log.debug("Before cloning property values {} of component instance {}.", propertyValueID, capabilityInstanceId);
 
 		Map<String, Object> props = propertyValuePair.getRight().getProperties();
 		PropertyData propertyData = new PropertyData();
@@ -1111,33 +1074,33 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		PropertyValueData createdValue = null;
 		Either<GraphRelation, TitanOperationStatus> createRelationRes;
 
-		log.debug("Before creating property values node {} onGraph.", propertyValue.getUniqueId());
+		log.debug("Before creating property values node {} on graph.", propertyValue.getUniqueId());
 		Either<PropertyValueData, TitanOperationStatus> createValueRes = titanGenericDao.createNode(propertyValue, PropertyValueData.class);
 		if (createValueRes.isRight()) {
 			error = createValueRes.right().value();
-			log.debug("Failed to create property value for capability instance {} ofRI. statusIs {}.", cloneCapabilityInstance.getUniqueId(), error);
+			log.debug("Failed to create property value for capability instance {} of resource instance. status is {}.", cloneCapabilityInstance.getUniqueId(), error);
 		}
-		log.debug("After creating property values node {} onGraph. statusIs {}.", propertyValue.getUniqueId(), error);
+		log.debug("After creating property values node {} on graph. status is {}.", propertyValue.getUniqueId(), error);
 		if (error == null) {
 			createdValue = createValueRes.left().value();
-			log.debug("Before creating relation from capability instance {} toValue {}.", capabilityInstanceId, createdValue.getUniqueId());
+			log.debug("Before creating relation from capability instance {} to property value {}.", capabilityInstanceId, createdValue.getUniqueId());
 			createRelationRes = titanGenericDao.createRelation(cloneCapabilityInstance, createdValue, GraphEdgeLabels.PROPERTY_VALUE, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to create relation from capability instance {} toValue {} statusIs {}.", cloneCapabilityInstance.getUniqueId(), createdValue.getUniqueId(), error);
+				log.debug("Failed to create relation from capability instance {} to property value {}. status is {}.", cloneCapabilityInstance.getUniqueId(), createdValue.getUniqueId(), error);
 			}
-			log.debug("After creating relation from capability instance {} toValue {} statusIs {}", capabilityInstanceId, createdValue.getUniqueId(), error);
+			log.debug("After creating relation from capability instance {} to property value {}. status is {}.", capabilityInstanceId, createdValue.getUniqueId(), error);
 		}
 		if (error == null) {
-			log.debug("Before creating relation from property value {} toProperty {}.", createdValue, propertyData.getUniqueId());
+			log.debug("Before creating relation from property value {} to property {}.", createdValue, propertyData.getUniqueId());
 			createRelationRes = titanGenericDao.createRelation(createdValue, propertyData, GraphEdgeLabels.PROPERTY_IMPL, props);
 			if (createRelationRes.isRight()) {
 				error = createRelationRes.right().value();
-				log.debug("Failed to create relation from property value {} toProperty {} statusIs {}.", createdValue.getUniqueId(), propertyId, error);
+				log.debug("Failed to create relation from property value {} to property {}. status is {}.", createdValue.getUniqueId(), propertyId, error);
 			}
-			log.debug("Before creating relation from property value {} toProperty {} statusIs {}.", createdValue, propertyData.getUniqueId(), error);
+			log.debug("Before creating relation from property value {} to property {}. status is {}.", createdValue, propertyData.getUniqueId(), error);
 		}
-		log.debug("After cloning property values {} ofCI {} statusIs {}.", propertyValueID, capabilityInstanceId, error);
+		log.debug("After cloning property values {} of component instance {}. status is {}.", propertyValueID, capabilityInstanceId, error);
 		if (error == null) {
 			return Either.left(createdValue);
 		}
@@ -1150,7 +1113,7 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		String propertyValueID = (String) titanGenericDao.getProperty(propertyVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		String capabilityInstanceId = (String) titanGenericDao.getProperty(capabilityInstanceVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		if (log.isTraceEnabled()) {
-			log.trace("Before cloning property values {} {} {}", propertyValueID, ofCI, capabilityInstanceId);
+			log.trace("Before cloning property values {} of component instance {}", propertyValueID, capabilityInstanceId);
 		}
 
 		Map<String, Object> props = titanGenericDao.getProperties(propertyValuePair.getRight());
@@ -1165,48 +1128,40 @@ public class CapabilityInstanceOperation extends AbstractOperation implements IC
 		TitanVertex createdValue = null;
 		TitanOperationStatus createRelationRes;
 
-		log.trace("Before creating property values node {} {} ", propertyValue.getUniqueId(), onGraph);
+		log.trace("Before creating property values node {} on graph.", propertyValue.getUniqueId());
 		Either<TitanVertex, TitanOperationStatus> createValueRes = titanGenericDao.createNode(propertyValue);
 		String capabiltyInstId = (String) titanGenericDao.getProperty(capabilityInstanceVertex, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		if (createValueRes.isRight()) {
 			error = createValueRes.right().value();
-			if (log.isDebugEnabled()) {
-				log.debug("Failed to create property value for capability instance {} {} {} {}", capabiltyInstId, ofRI, statusIs, error);
-			}
+			log.debug("Failed to create property value for capability instance {} of resource instance. status is {}", capabiltyInstId, error);
 		}
 		if (log.isTraceEnabled()) {
-			log.trace("After creating property values node {} {} {} {} ", propertyValue.getUniqueId(), onGraph, statusIs, error);
+			log.trace("After creating property values node {} on graph. status is {} ", propertyValue.getUniqueId(), error);
 		}
 		if (error == null) {
 			createdValue = createValueRes.left().value();
-			log.trace("Before creating relation from capability instance {} {} {}", capabilityInstanceId, toValue, propertyValue.getUniqueId());
+			log.trace("Before creating relation from capability instance {} to property value {}", capabilityInstanceId, propertyValue.getUniqueId());
 			createRelationRes = titanGenericDao.createEdge(capabilityInstanceVertex, createdValue, GraphEdgeLabels.PROPERTY_VALUE, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				if (log.isDebugEnabled()) {
-					log.debug("Failed to create relation from capability instance {} {} {} {} {}", capabiltyInstId, toValue, propertyValue.getUniqueId(), statusIs, error);
-				}
+				log.debug("Failed to create relation from capability instance {} to property value {}. status is {}", capabiltyInstId, propertyValue.getUniqueId(), error);
 			}
 			if (log.isTraceEnabled()) {
-				log.trace("After creating relation from capability instance {} {} {} {} {} ", capabilityInstanceId, toValue, propertyValue.getUniqueId(), statusIs, error);
+				log.trace("After creating relation from capability instance {} to property value {}. status is {} ", capabilityInstanceId, propertyValue.getUniqueId(), error);
 			}
 		}
 		if (error == null) {
-			log.trace("Before creating relation from property value {} {} {} ", createdValue, toProperty, propertyData.getUniqueId());
+			log.trace("Before creating relation from property value {} to property {} ", createdValue, propertyData.getUniqueId());
 			createRelationRes = titanGenericDao.createEdge(createdValue, propertyData, GraphEdgeLabels.PROPERTY_IMPL, props);
 			if (!createRelationRes.equals(TitanOperationStatus.OK)) {
 				error = createRelationRes;
-				if (log.isDebugEnabled()) {
-					log.debug("Failed to create relation from property value {} {} {} {} {}", propertyValue.getUniqueId(), toProperty, propertyId, statusIs, error);
-				}
+				log.debug("Failed to create relation from property value {} to property {}. status is {}", propertyValue.getUniqueId(), propertyId, error);
 			}
 			if (log.isTraceEnabled()) {
-				log.trace("Before creating relation from property value c", createdValue, toProperty, propertyData.getUniqueId(), statusIs, error);
+				log.trace("Before creating relation from property value {} to property {}. status is {}", createdValue, propertyData.getUniqueId(), error);
 			}
 		}
-		if (log.isTraceEnabled()) {
-			log.trace("After cloning property values {} {} {} {} {}", propertyValueID, ofCI, capabilityInstanceId, statusIs, error);
-		}
+		log.trace("After cloning property values {} of component instance {}. status is {}", propertyValueID, capabilityInstanceId, error);
 		if (error == null) {
 			return TitanOperationStatus.OK;
 		}

@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.*;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
@@ -63,6 +64,7 @@ import org.openecomp.sdc.common.util.SerializationUtils;
 import org.openecomp.sdc.common.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fj.data.Either;
 
@@ -73,15 +75,9 @@ public class ComponentCache {
 
 	@javax.annotation.Resource
 	ComponentCassandraDao componentCassandraDao;
-
-	@javax.annotation.Resource
-	ResourceOperation resourceOperation;
-
-	@javax.annotation.Resource
-	ServiceOperation serviceOperation;
-
-	@javax.annotation.Resource
-	ProductOperation productOperation;
+	
+	@Autowired
+	ToscaOperationFacade toscaOperationFacade;
 
 	private Map<ComponentTypeEnum, Map<String, Component>> catalogInMemoryCache = new HashMap<>();
 	private final ReentrantReadWriteLock rwCatalogLock = new ReentrantReadWriteLock();
@@ -626,13 +622,7 @@ public class ComponentCache {
 			return false;
 		}
 
-		ComponentOperation componentOperation = getComponentOperation(nodeTypeEnum);
-
-		if (componentOperation == null) {
-			return false;
-		}
-
-		Either<Component, StorageOperationStatus> either = componentOperation.getComponent(componentUid, false);
+		Either<Component, StorageOperationStatus> either = toscaOperationFacade.getToscaElement(componentUid);
 		if (either.isLeft()) {
 			Component component = either.left().value();
 			result = saveComponent(componentUid, lastModificationTime, nodeTypeEnum, component);
@@ -675,8 +665,7 @@ public class ComponentCache {
 				logger.debug("Failed to prepare component {} of type {} for cache", componentUid,
 						nodeTypeEnum.name().toLowerCase());
 				if (logger.isTraceEnabled()) {
-					logger.trace("Failed to prepare component " + componentUid + " of type "
-							+ nodeTypeEnum.name().toLowerCase() + " for cache");
+					logger.trace("Failed to prepare component {} of type {} for cache",componentUid,nodeTypeEnum.name().toLowerCase());
 				}
 			}
 		} else {
@@ -702,24 +691,6 @@ public class ComponentCache {
 
 		return result;
 
-	}
-
-	private ComponentOperation getComponentOperation(NodeTypeEnum nodeTypeEnum) {
-		ComponentOperation componentOperation = null;
-		switch (nodeTypeEnum) {
-		case Resource:
-			componentOperation = resourceOperation;
-			break;
-		case Service:
-			componentOperation = serviceOperation;
-			break;
-		case Product:
-			componentOperation = productOperation;
-			break;
-		default:
-			break;
-		}
-		return componentOperation;
 	}
 
 	/**

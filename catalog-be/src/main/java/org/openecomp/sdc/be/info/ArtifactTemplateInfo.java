@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.Configuration.DeploymentArtifactTypeConfig;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -205,7 +205,7 @@ public class ArtifactTemplateInfo {
 
 		if (!artifactTypeExist) {
 			BeEcompErrorManager.getInstance().logBeInvalidTypeError("Artifact", "-Not supported artifact type ", correctType);
-			log.debug("Not supported artifact type = {}", correctType);
+			log.debug("Not supported artifact type = {}" , correctType);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_TYPE_NOT_SUPPORTED, correctType));
 		}
 
@@ -275,8 +275,8 @@ public class ArtifactTemplateInfo {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_VALID_IN_MASTER, resourceInfo.getFileName(), resourceInfo.getType(), parentArtifact.getFileName(), parentArtifact.getType()));
 		}
 		if (parentArtifact.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_NESTED.getType())) {
-			if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ARTIFACT.getType())) {
-				Either.left(true);
+			if (resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ARTIFACT.getType()) || resourceInfo.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_NESTED.getType())) {
+				return Either.left(true);
 			}
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_VALID_IN_MASTER, resourceInfo.getFileName(), resourceInfo.getType(), parentArtifact.getFileName(), parentArtifact.getType()));
 		}
@@ -285,7 +285,7 @@ public class ArtifactTemplateInfo {
 		}
 
 		if (parentArtifact.getType().equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType())) {
-			Either.left(true);
+			return Either.left(true);
 		}
 		return Either.left(true);
 	}
@@ -324,7 +324,7 @@ public class ArtifactTemplateInfo {
 
 	private static Either<List<ArtifactType>, ActionStatus> getDeploymentArtifactTypes(NodeTypeEnum parentType) {
 
-		Map<String, DeploymentArtifactTypeConfig> deploymentArtifacts = null;
+		Map<String, ArtifactTypeConfig> deploymentArtifacts = null;
 		List<ArtifactType> artifactTypes = new ArrayList<ArtifactType>();
 
 		if (parentType.equals(NodeTypeEnum.Service)) {

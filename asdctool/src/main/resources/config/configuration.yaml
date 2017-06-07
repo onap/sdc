@@ -8,7 +8,7 @@ identificationHeaderFields:
 
 
 # catalog backend hostname
-beFqdn: sdccatalog
+beFqdn: sdccatalog.att.com
 
 # catalog backend http port
 beHttpPort: 8080
@@ -25,19 +25,36 @@ beSslPort: 8443
 version: 1.0
 released: 2012-11-30
 
-titanCfgFile: src/main/resources/config/titan.properties
+titanCfgFile: C:\Git_work\Git_UGN\d2-sdnc\asdctool\src\main\resources\config\titan.properties
+titanMigrationKeySpaceCfgFile: C:\Git_work\Git_UGN\d2-sdnc\asdctool\src\main\resources\config\titan-migration.properties
 titanInMemoryGraph: false
-titanLockTimeout: 30
+titanLockTimeout: 1800
 titanReconnectIntervalInSeconds: 3
 titanHealthCheckReadTimeout: 1
 esReconnectIntervalInSeconds: 3
 uebHealthCheckReconnectIntervalInSeconds: 15
 uebHealthCheckReadTimeout: 4
 
+
 # Protocols
 protocols:
    - http
    - https
+   
+# Default imports
+defaultImports:
+   - nodes:
+        file: nodes.yml
+   - datatypes:
+        file: data.yml
+   - capabilities:
+        file: capabilities.yml
+   - relationships:
+        file: relationships.yml
+   - groups:
+        file: groups.yml
+   - policies:
+        file: policies.yml
 
 # Users
 users:
@@ -93,6 +110,9 @@ artifactTypes:
    - AAI_VF_MODULE_MODEL
    - AAI_VF_INSTANCE_MODEL
    - OTHER
+   - SNMP_POLL
+   - SNMP_TRAP
+   - GUIDE
 
 licenseTypes:
    - User
@@ -105,30 +125,36 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - VFCMT
  
 # validForResourceTypes usage
 #     validForResourceTypes:
 #        - VF
 #        - VL
 deploymentResourceArtifacts:
-  heat:
-      displayName: "Base HEAT Template"
-      type: HEAT
-      validForResourceTypes: *allResourceTypes
-  heatVol:
-      displayName: "Volume HEAT Template"
-      type: HEAT_VOL
-      validForResourceTypes: *allResourceTypes
-  heatNet:
-      displayName: "Network HEAT Template"
-      type: HEAT_NET
-      validForResourceTypes: *allResourceTypes
+#  heat:
+#      displayName: "Base HEAT Template"
+#      type: HEAT
+#      validForResourceTypes: *allResourceTypes
+#  heatVol:
+#      displayName: "Volume HEAT Template"
+#      type: HEAT_VOL
+#      validForResourceTypes: *allResourceTypes
+#  heatNet:
+#      displayName: "Network HEAT Template"
+#      type: HEAT_NET
+#      validForResourceTypes: *allResourceTypes
   
 deploymentResourceInstanceArtifacts:
   heatEnv:
       displayName: "HEAT ENV"
       type: HEAT_ENV
       description: "Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+  VfHeatEnv:
+      displayName: "VF HEAT ENV"
+      type: HEAT_ENV
+      description: "VF Auto-generated HEAT Environment deployment artifact"
       fileExtension: "env"
 
 #tosca artifacts placeholders
@@ -143,6 +169,7 @@ toscaArtifacts:
       displayName: Tosca Model
       type: TOSCA_CSAR
       description: TOSCA definition package of the asset
+
 
 #Informational artifacts placeHolder
 excludeResourceCategory:
@@ -160,7 +187,7 @@ informationalResourceArtifacts:
   testScripts:
       displayName: Test Scripts
       type: OTHER
-  cloudQuestionnaire:
+  CloudQuestionnaire:
       displayName: Cloud Questionnaire (completed)
       type: OTHER
   HEATTemplateFromVendor:
@@ -169,7 +196,7 @@ informationalResourceArtifacts:
   resourceSecurityTemplate:
       displayName: Resource Security Template
       type: OTHER
- 
+            
 excludeServiceCategory:
 
 informationalServiceArtifacts:
@@ -247,6 +274,16 @@ serviceDeploymentArtifacts:
     YANG_XML:
         acceptedTypes:
             - xml
+    VNF_CATALOG:
+        acceptedTypes:
+            - xml
+    MODEL_INVENTORY_PROFILE:
+        acceptedTypes:
+            - xml
+    MODEL_QUERY_SPEC:
+        acceptedTypes:
+            - xml
+#AAI Artifacts
     AAI_SERVICE_MODEL:
         acceptedTypes:
             - xml
@@ -264,17 +301,80 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - yaml
             - yml
+        validForResourceTypes: *allResourceTypes
     HEAT_VOL:
         acceptedTypes:
             - yaml
             - yml
+        validForResourceTypes: *allResourceTypes
+    HEAT_NESTED:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes: *allResourceTypes
+    HEAT_ARTIFACT:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
     HEAT_NET:
         acceptedTypes:
             - yaml
             - yml
+        validForResourceTypes: *allResourceTypes
     YANG_XML:
         acceptedTypes:
             - xml
+        validForResourceTypes: *allResourceTypes
+    VNF_CATALOG:
+        acceptedTypes:
+            - xml
+        validForResourceTypes: *allResourceTypes
+    VF_LICENSE:
+        acceptedTypes:
+            - xml
+        validForResourceTypes: *allResourceTypes
+    VENDOR_LICENSE:
+        acceptedTypes:
+            - xml
+        validForResourceTypes: *allResourceTypes
+    MODEL_INVENTORY_PROFILE:
+        acceptedTypes:
+            - xml
+        validForResourceTypes: *allResourceTypes
+    MODEL_QUERY_SPEC:
+        acceptedTypes:
+            - xml
+        validForResourceTypes: *allResourceTypes
+    #APPC Artifatcs
+    APPC_CONFIG:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+    #DCAE Artifacts
+    DCAE_TOSCA:
+        acceptedTypes:
+            - yml
+            - yaml
+        validForResourceTypes:
+            - VF
+    DCAE_JSON:
+        acceptedTypes:
+            - json
+        validForResourceTypes:
+            - VF
+    DCAE_POLICY:
+        acceptedTypes:
+            - emf
+        validForResourceTypes:
+            - VF
+    DCAE_DOC:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF        
+    DCAE_EVENT:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+#AAI Artifacts
     AAI_VF_MODEL:
         acceptedTypes:
             - xml
@@ -284,24 +384,102 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - xml
         validForResourceTypes:
-            - VF 
+            - VF
     OTHER:
         acceptedTypes:
-
+        validForResourceTypes: *allResourceTypes
+#MIB artifacts
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+      
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
         acceptedTypes:
             - env
+    VF_MODULES_METADATA:
+        acceptedTypes:
+            - json
+#DCAE_VF Instance Artifacts
+    DCAE_INVENTORY_TOSCA:
+        acceptedTypes:
+            - yml
+            - yaml
+    DCAE_INVENTORY_JSON:
+        acceptedTypes:
+            - json
+    DCAE_INVENTORY_POLICY:
+      acceptedTypes:
+            - emf
+    DCAE_INVENTORY_DOC:
+      acceptedTypes:
+    DCAE_INVENTORY_BLUEPRINT:
+      acceptedTypes:
+    DCAE_INVENTORY_EVENT:
+      acceptedTypes:
+#MIB artifacts
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+      
+
+resourceInformationalArtifacts:
+    CHEF:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    PUPPET:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SHELL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    HEAT:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    BPEL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    DG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    MURANO_PKG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    OTHER:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    GUIDE:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+            - VFC
+
 
 resourceInformationalDeployedArtifacts:
 
 
 requirementsToFulfillBeforeCert:
-     CP:
-       - tosca.capabilities.network.Bindable
-       
-capabilitiesToConsumeBeforeCert:
 
+capabilitiesToConsumeBeforeCert:
+            
 unLoggedUrls:
    - /sdc2/rest/healthCheck
 
@@ -312,6 +490,7 @@ cleanComponentsConfiguration:
        - Service
 
 artifactsIndex: resources
+
 cassandraConfig:
     cassandraHosts: ['localhost']
     localDataCenter:
@@ -326,36 +505,40 @@ cassandraConfig:
         - { name: sdcaudit, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
         - { name: sdccomponent, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
-
-
+        
+       
 switchoverDetector:
-    gBeFqdn: 
-    gFeFqdn: 
-    beVip: 1.2.3.4
-    feVip: 1.2.3.4
+    gBeFqdn: AIO-BE.ecomp.idns.cip
+    gFeFqdn: AIO-FE.ecomp.idns.cip
+    beVip: 0.0.0.0
+    feVip: 0.0.0.0
     beResolveAttempts: 3
     feResolveAttempts: 3
     enabled: false
     interval: 60
     changePriorityUser: ecompasdc
     changePriorityPassword: ecompasdc123
-    publishNetworkUrl: 
+    publishNetworkUrl: "http://xxxxxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
     publishNetworkBody: '{"note":"publish network"}'
     groups:
-      beSet: { changePriorityUrl: "http://localhost/",
-               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.cip","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
-      feSet: { changePriorityUrl: "http://localhost/",
-               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.cip","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip.att.com"}'}
+      beSet: { changePriorityUrl: "http://xxxxxxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com?user=root",
+               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.com","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
+      feSet: { changePriorityUrl: "http://cora.web.att.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip.att.com?user=root",
+               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.com","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com"}'}
     
+       
+heatEnvArtifactHeader: ""
+heatEnvArtifactFooter: ""
 
-heatEnvArtifactHeader:
-    ""
-heatEnvArtifactFooter:
-    ""
-
+onboarding:
+    protocol: http
+    host: localhost
+    port: 8080
+    downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+   
 applicationL1Cache:
     datatypes:
-        enabled: false
+        enabled: true
         firstRunDelay: 10
         pollIntervalInSec: 60
 
@@ -367,10 +550,25 @@ applicationL2Cache:
         servicesSizeInCache: 200
         productsSizeInCache: 100
     queue:
-        syncIntervalInSecondes: 60
-        waitOnShutDownInMinutes: 30
+        syncIntervalInSecondes: 43200
+        waitOnShutDownInMinutes: 10
         numberOfCacheWorkers: 4
 
 toscaValidators:
-    stringMaxLength: 1024
-disableAudit: true
+    stringMaxLength: 65536
+disableAudit: false
+
+vfModuleProperties:
+    min_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    max_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule:
+    initial_count:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    vf_module_type:
+        forBaseModule: Base
+        forNonBaseModule: Expansion
+        

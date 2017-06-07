@@ -22,6 +22,61 @@ org.openecomp.groups.VfModule:
       required: true
       default: false
       status: SUPPORTED
+    vf_module_label: 
+      type: string
+      required: true
+      description: > 
+        Alternate textual key used to reference this VF-Module model. 
+        Must be unique within the VNF model
+    vf_module_description:
+      type: string
+      required: true
+      description: >
+        Description of the VF-modules contents and purpose  
+        (e.g. "Front-End" or "Database Cluster")
+    min_vf_module_instances:
+      type: integer
+      required: true
+      description: The minimum instances of this VF-Module
+    max_vf_module_instances: 
+      type: integer
+      required: false
+      description: The maximum instances of this VF-Module
+    initial_count:
+      type: integer
+      required: false
+      description: >
+        The initial count of instances of the VF-Module. The value must be in the 
+        range between min_vfmodule_instances and max_vfmodule_instances.
+        If no value provided the initial count is the min_vfmodule_instances.
+    vf_module_type:
+      type: string
+      required: true
+      constraint:
+        - valid_values: ["Base", "Expansion"]
+    volume_group:
+      type: boolean
+      required: true
+      default: false
+      description: >
+        "true" indicates that this VF Module model requires attachment to a Volume  
+        Group. 
+        VID operator must select the Volume Group instance to attach to a VF-Module 
+        at deployment time.
+    availability_zone_count:
+      type: integer
+      required: false
+      description: >
+        Quantity of Availability Zones needed for this VF-Module    
+        (source: Extracted from VF-Module HEAT template)
+    vfc_list:
+      type: map
+      entry_schema: 
+        description: <vfc_id>:<count>
+        type: string
+      required: false
+      description: >
+        Identifies the set of VM types and their count included in the VF-Module
 tosca.groups.Root:
   description: The TOSCA Group Type all other TOSCA Group Types derive from
   interfaces: 

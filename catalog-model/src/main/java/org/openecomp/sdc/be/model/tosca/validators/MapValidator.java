@@ -101,7 +101,7 @@ public class MapValidator implements PropertyTypeValidator {
 				innerValidator = ToscaPropertyType.JSON.getValidator();
 				break;
 			default:
-				log.debug("inner Tosca Type is unknown: {}", innerToscaType);
+				log.debug("inner Tosca Type is unknown. {}", innerToscaType);
 				return false;
 			}
 
@@ -109,7 +109,7 @@ public class MapValidator implements PropertyTypeValidator {
 			log.debug("inner Tosca Type is: {}", innerType);
 
 			boolean isValid = validateComplexInnerType(value, innerType, allDataTypes);
-			log.debug("Finish to validate value {} of map with inner type {}. Result is {}", value, innerType, isValid);
+			log.debug("Finish to validate value {} of map with inner type {}. result is {}",value,innerType,isValid);
 			return isValid;
 
 		}
@@ -126,14 +126,14 @@ public class MapValidator implements PropertyTypeValidator {
 
 				if (!innerValidator.isValid(element, null, allDataTypes)
 						|| !keyValidator.isValid(entry.getKey(), null, allDataTypes)) {
-					log.debug("validation of key : {}, element: {} failed", currentKey, entry.getValue());
+					log.debug("validation of key : {}, element : {} failed", currentKey, entry.getValue());
 					return false;
 				}
 			}
 
 			return true;
 		} catch (JsonSyntaxException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Map Validator");
 		}
 
@@ -162,15 +162,15 @@ public class MapValidator implements PropertyTypeValidator {
 					String element = JsonUtils.toString(currentValue);
 					boolean isValid = dataTypeValidatorConverter.isValid(element, innerDataTypeDefinition,
 							allDataTypes);
-					if (isValid == false) {
-						log.debug("Cannot parse value {} from type {} of key {}", currentValue, innerType, currentKey);
+					if (!isValid) {
+						log.debug("Cannot parse value {} from type {} of key {}",currentValue,innerType,currentKey);
 						return false;
 					}
 				}
 			}
 
 		} catch (Exception e) {
-			log.debug("Cannot parse value {} of map from inner type {}. {}", value, innerType, e);
+			log.debug("Cannot parse value {} of map from inner type {}", value, innerType, e);
 			return false;
 		}
 

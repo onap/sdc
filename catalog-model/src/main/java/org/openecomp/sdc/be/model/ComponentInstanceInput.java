@@ -28,6 +28,11 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 public class ComponentInstanceInput extends InputDefinition implements IComponentInstanceConnectedElement {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3937554584759816724L;
+
+	/**
 	 * Value of property
 	 */
 	private String value;
@@ -62,6 +67,13 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 
 		this.value = value;
 		this.valueUniqueUid = valueUniqueUid;
+	}
+
+	public ComponentInstanceInput(PropertyDataDefinition propertyDefinition) {
+		super(propertyDefinition);
+		if(propertyDefinition.getGetInputValues() != null && !propertyDefinition.getGetInputValues().isEmpty()){
+			this.inputId = propertyDefinition.getGetInputValues().get(0).getInputId();
+		}
 	}
 
 	public String getComponentInstanceName() {
@@ -104,13 +116,13 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
-	public boolean isDefinition() {
+	/*public boolean isDefinition() {
 		return definition;
 	}
 
 	public void setDefinition(boolean definition) {
 		this.definition = definition;
-	}
+	}*/
 
 	public List<String> getPath() {
 		return path;

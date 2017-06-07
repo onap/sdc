@@ -140,8 +140,8 @@ public class ResourceUploader implements IResourceUploader {
 	 * getServiceArtifact(artifactUpdateData.getId());
 	 * 
 	 * if(getServiceArtifactStatus.isRight()){
-	 * log.debug("ResourceUploadStatus:updateArtifactt artifact with id {} not exist.", 
-	 * artifactUpdateData.getId()); status =
+	 * log.debug("ResourceUploadStatus:updateArtifactt artifact with id " +
+	 * artifactUpdateData.getId() + " not exist."); status =
 	 * getServiceArtifactStatus.right().value(); }
 	 * if(getServiceArtifactStatus.isLeft()){ status =
 	 * updateServiceArtifact(artifactUpdateData,

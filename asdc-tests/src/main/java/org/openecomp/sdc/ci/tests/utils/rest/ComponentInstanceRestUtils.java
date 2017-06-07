@@ -100,7 +100,24 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 		return sendGetServerRequest;
 
 	}
+	
+	public static RestResponse getComponentInstancePropertiesByID(ComponentTypeEnum type, String componentId, String resourceInstanceId, User user)
+			throws IOException {
 
+		Config config = Utils.getConfig();
+
+		Map<String, String> headersMap = new HashMap<String, String>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
+		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), user.getUserId());
+
+		String url = String.format(Urls.GET_COMPONENT_INSTANCE_PROPERTIES_BY_ID, config.getCatalogBeHost(), config.getCatalogBePort(),
+				ComponentTypeEnum.findParamByType(type), componentId, resourceInstanceId);
+
+		return sendGet(url, user.getUserId(), headersMap);
+
+	}
+	
 	public static RestResponse deleteComponentInstance(User sdncModifierDetails, String componentId,
 			String resourceInstanceId, ComponentTypeEnum componentType) throws Exception {
 
@@ -130,8 +147,19 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 		RestResponse updateResourceInstance = sendPost(url, serviceBodyJson, userId, acceptHeaderData);
 		return updateResourceInstance;
 	}
+	public static RestResponse updateComponentInstance(ComponentInstance componentInstance,
+			User sdncModifierDetails, String componentId, ComponentTypeEnum componentType) throws IOException {
 
-	// TODO Tal CI for New API Multiple Instance Update
+		Config config = Utils.getConfig();
+		String userId = sdncModifierDetails.getUserId();
+		String serviceBodyJson = gson.toJson(componentInstance);
+		String url = String.format(Urls.UPDATE_COMPONENT_INSTANCE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				ComponentTypeEnum.findParamByType(componentType), componentId,
+				componentInstance.getUniqueId());
+		RestResponse updateResourceInstance = sendPost(url, serviceBodyJson, userId, acceptHeaderData);
+		return updateResourceInstance;
+	}
+
 	public static RestResponse updateMultipleComponentInstance(
 			List<ComponentInstanceReqDetails> componentInstanceReqDetailsList, User sdncModifierDetails,
 			String componentId, ComponentTypeEnum componentType) throws IOException {
@@ -161,7 +189,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 			break;
 		}
 		String serviceBodyJson = gson.toJson(relation);
-		String url = String.format(Urls.ASSOCIATE__RESOURCE_INSTANCE, config.getCatalogBeHost(),
+		String url = String.format(Urls.ASSOCIATE_RESOURCE_INSTANCE, config.getCatalogBeHost(),
 				config.getCatalogBePort(), componentType, componentId);
 
 		RestResponse associateInstance = sendPost(url, serviceBodyJson, sdncModifierDetails.getUserId(),
@@ -187,7 +215,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 			break;
 		}
 		String serviceBodyJson = gson.toJson(relation);
-		String url = String.format(Urls.DISSOCIATE__RESOURCE_INSTANCE, config.getCatalogBeHost(),
+		String url = String.format(Urls.DISSOCIATE_RESOURCE_INSTANCE, config.getCatalogBeHost(),
 				config.getCatalogBePort(), componentType, componentId);
 
 		RestResponse associateInstance = sendPut(url, serviceBodyJson, sdncModifierDetails.getUserId(),
@@ -236,7 +264,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 
 		Config config = Utils.getConfig();
 		String resourceUid = ("{\"componentUid\":\"" + component.getUniqueId() + "\"}");
-		String url = String.format(Urls.CHANGE__RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
+		String url = String.format(Urls.CHANGE_RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
 				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(componentType), containerUID,
 				componentInstanceToReplace.getUniqueId());
 		RestResponse changeResourceInstanceVersion = sendPost(url, resourceUid, sdncModifierDetails.getUserId(),
@@ -264,7 +292,7 @@ public class ComponentInstanceRestUtils extends BaseRestUtils {
 			ComponentTypeEnum componentType) throws IOException {
 		Config config = Utils.getConfig();
 		String resourceUid = ("{\"componentUid\":\"" + serviceUniqueId + "\"}");
-		String url = String.format(Urls.CHANGE__RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
+		String url = String.format(Urls.CHANGE_RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
 				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(componentType), componentUniqueId,
 				serviceInstanceToReplaceUniqueId);
 		RestResponse changeResourceInstanceVersion = sendPost(url, resourceUid, sdncModifierDetails.getUserId(),

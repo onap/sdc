@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.openecomp.sdc.be.config.Configuration.DeploymentArtifactTypeConfig;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 
 public interface IDeploymentArtifactTypeConfigGetter {
-	DeploymentArtifactTypeConfig getDeploymentArtifactConfig();
+	ArtifactTypeConfig getDeploymentArtifactConfig();
 }

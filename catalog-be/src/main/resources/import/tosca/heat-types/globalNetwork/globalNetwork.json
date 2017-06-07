@@ -1,0 +1,21 @@
+{
+  "payloadName": "globalNetwork.yml",
+  "contactId": "jh0003",
+  "name": "GlobalNetwork",
+  "description": "Represents a simple , logical network service with monitoring capabilities.",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "GlobalNetwork"
+  ]
+}

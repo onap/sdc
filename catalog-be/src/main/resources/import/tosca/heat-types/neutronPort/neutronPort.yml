@@ -1,14 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: NeutronPortGlobalTypes
-  template_version: 1.0.0
-description: Neutron Port TOSCA Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.cp.nodes.heat.network.neutron.Port:
-    derived_from: tosca.nodes.network.Port
+    derived_from: org.openecomp.resource.cp.nodes.network.Port
     properties:
       port_security_enabled:
         type: boolean
@@ -133,4 +126,11 @@ node_types:
         type: tosca.capabilities.Attachment
         occurrences:
         - 1
+        - UNBOUNDED
+      binding:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
         - UNBOUNDED

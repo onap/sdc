@@ -53,20 +53,21 @@ import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.common.util.GeneralUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceRestUtils extends BaseRestUtils {
 	private static Logger logger = LoggerFactory.getLogger(ResourceRestUtils.class.getName());
 
 	// ****** CREATE *******
 
-	public static RestResponse createResource(ResourceReqDetails resourceDetails, User sdncModifierDetails) throws Exception {
+	public static RestResponse createResource(ResourceReqDetails resourceDetails, User sdncModifierDetails)
+			throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort());
@@ -87,9 +88,11 @@ public class ResourceRestUtils extends BaseRestUtils {
 			resourceDetails.setUUID(ResponseParser.getUuidFromResponse(createResourceResponse));
 			resourceDetails.setVersion(ResponseParser.getVersionFromResponse(createResourceResponse));
 			resourceDetails.setUniqueId(ResponseParser.getUniqueIdFromResponse(createResourceResponse));
-			String lastUpdaterUserId = ResponseParser.getValueFromJsonResponse(createResourceResponse.getResponse(), "lastUpdaterUserId");
+			String lastUpdaterUserId = ResponseParser.getValueFromJsonResponse(createResourceResponse.getResponse(),
+					"lastUpdaterUserId");
 			resourceDetails.setLastUpdaterUserId(lastUpdaterUserId);
-			String lastUpdaterFullName = ResponseParser.getValueFromJsonResponse(createResourceResponse.getResponse(), "lastUpdaterFullName");
+			String lastUpdaterFullName = ResponseParser.getValueFromJsonResponse(createResourceResponse.getResponse(),
+					"lastUpdaterFullName");
 			resourceDetails.setLastUpdaterFullName(lastUpdaterFullName);
 			// Creator details never change after component is created - Ella,
 			// 12/1/2016
@@ -100,7 +103,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 
 	}
 
-	public static RestResponse createImportResource(ImportReqDetails importReqDetails, User sdncModifierDetails, Map<String, String> additionalHeaders) throws JSONException, IOException {
+	public static RestResponse createImportResource(ImportReqDetails importReqDetails, User sdncModifierDetails,
+			Map<String, String> additionalHeaders) throws JSONException, IOException {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort());
@@ -116,7 +120,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 		if (additionalHeaders != null) {
 			headersMap.putAll(additionalHeaders);
 		} else {
-			headersMap.put(HttpHeaderEnum.Content_MD5.getValue(), ArtifactRestUtils.calculateMD5(resourceImportBodyJson));
+			headersMap.put(HttpHeaderEnum.Content_MD5.getValue(),
+					ArtifactRestUtils.calculateMD5(resourceImportBodyJson));
 		}
 
 		RestResponse createResourceResponse = http.httpSendPost(url, resourceImportBodyJson, headersMap);
@@ -127,7 +132,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 			// 12/1/2016
 			importReqDetails.setCreatorUserId(userId);
 			importReqDetails.setCreatorFullName(sdncModifierDetails.getFullName());
-			importReqDetails.setToscaResourceName(ResponseParser.getToscaResourceNameFromResponse(createResourceResponse));
+			importReqDetails
+					.setToscaResourceName(ResponseParser.getToscaResourceNameFromResponse(createResourceResponse));
 			importReqDetails.setDerivedList(ResponseParser.getDerivedListFromJson(createResourceResponse));
 		}
 		return createResourceResponse;
@@ -135,11 +141,13 @@ public class ResourceRestUtils extends BaseRestUtils {
 	}
 
 	// ***** DELETE ****
-	public static RestResponse deleteResource(ResourceReqDetails resourceDetails, User sdncModifierDetails, String version) throws IOException {
+	public static RestResponse deleteResource(ResourceReqDetails resourceDetails, User sdncModifierDetails,
+			String version) throws IOException {
 
 		if (resourceDetails.getUniqueId() != null) {
 			Config config = Utils.getConfig();
-			String url = String.format(Urls.DELETE_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(), config.getCatalogBePort(), resourceDetails.getName(), version);
+			String url = String.format(Urls.DELETE_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
+					config.getCatalogBePort(), resourceDetails.getName(), version);
 			return sendDelete(url, sdncModifierDetails.getUserId());
 		} else {
 			return null;
@@ -150,7 +158,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 	public static RestResponse markResourceToDelete(String resourceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
+		String url = String.format(Urls.DELETE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				resourceId);
 		RestResponse sendDelete = sendDelete(url, userId);
 
 		return sendDelete;
@@ -160,7 +169,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 	public static RestResponse deleteResource(String resourceId, String userId) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
+		String url = String.format(Urls.DELETE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				resourceId);
 		RestResponse sendDelete = sendDelete(url, userId);
 
 		deleteMarkedResources(userId);
@@ -176,9 +186,11 @@ public class ResourceRestUtils extends BaseRestUtils {
 		sendDelete(url, userId);
 	}
 
-	public static RestResponse deleteResourceByNameAndVersion(User sdncModifierDetails, String resourceName, String resourceVersion) throws IOException {
+	public static RestResponse deleteResourceByNameAndVersion(User sdncModifierDetails, String resourceName,
+			String resourceVersion) throws IOException {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(), config.getCatalogBePort(), resourceName, resourceVersion);
+		String url = String.format(Urls.DELETE_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
+				config.getCatalogBePort(), resourceName, resourceVersion);
 		RestResponse sendDelete = sendDelete(url, sdncModifierDetails.getUserId());
 
 		deleteMarkedResources(sdncModifierDetails.getUserId());
@@ -186,13 +198,17 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return sendDelete;
 	}
 
-	public static Boolean deleteResourceByNameAndVersion(String resourceName, String resourceVersion) throws IOException {
-		RestResponse deleteResponse = ResourceRestUtils.deleteResourceByNameAndVersion(ElementFactory.getDefaultUser(UserRoleEnum.ADMIN), resourceName, resourceVersion);
+	public static Boolean deleteResourceByNameAndVersion(String resourceName, String resourceVersion)
+			throws IOException {
+		RestResponse deleteResponse = ResourceRestUtils.deleteResourceByNameAndVersion(
+				ElementFactory.getDefaultUser(UserRoleEnum.ADMIN), resourceName, resourceVersion);
 		return checkErrorCode(deleteResponse);
 	}
 
-	public static Boolean removeResource(String resourceId) throws FileNotFoundException, IOException, ClientProtocolException {
-		RestResponse response = deleteResource(resourceId, ElementFactory.getDefaultUser(UserRoleEnum.ADMIN).getUserId());
+	public static Boolean removeResource(String resourceId)
+			throws FileNotFoundException, IOException, ClientProtocolException {
+		RestResponse response = deleteResource(resourceId,
+				ElementFactory.getDefaultUser(UserRoleEnum.ADMIN).getUserId());
 		return checkErrorCode(response);
 	}
 
@@ -204,30 +220,38 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return sendGet(url, sdncModifierDetails.getUserId());
 	}
 
-	public static RestResponse getModule(User sdncModifierDetails, String componentId, String moduleId) throws IOException {
+	public static RestResponse getModule(User sdncModifierDetails, String componentId, String moduleId)
+			throws IOException {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_MODULE_BY_ID, config.getCatalogBeHost(), config.getCatalogBePort(), componentId, moduleId);
+		String url = String.format(Urls.GET_MODULE_BY_ID, config.getCatalogBeHost(), config.getCatalogBePort(),
+				componentId, moduleId);
 		return sendGet(url, sdncModifierDetails.getUserId());
 	}
 
-	public static RestResponse getLatestResourceFromCsarUuid(User sdncModifierDetails, String csarUuid) throws IOException {
+	public static RestResponse getLatestResourceFromCsarUuid(User sdncModifierDetails, String csarUuid)
+			throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_RESOURCE_BY_CSAR_UUID, config.getCatalogBeHost(), config.getCatalogBePort(), csarUuid);
+		String url = String.format(Urls.GET_RESOURCE_BY_CSAR_UUID, config.getCatalogBeHost(), config.getCatalogBePort(),
+				csarUuid);
 		return sendGet(url, sdncModifierDetails.getUserId());
 	}
 
-	public static RestResponse getResource(ResourceReqDetails resourceDetails, User sdncModifierDetails) throws IOException {
+	public static RestResponse getResource(ResourceReqDetails resourceDetails, User sdncModifierDetails)
+			throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceDetails.getUniqueId());
+		String url = String.format(Urls.GET_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				resourceDetails.getUniqueId());
 		return sendGet(url, sdncModifierDetails.getUserId());
 	}
 
-	public static RestResponse getResourceByNameAndVersion(String userId, String resourceName, String resourceVersion) throws IOException {
+	public static RestResponse getResourceByNameAndVersion(String userId, String resourceName, String resourceVersion)
+			throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(), config.getCatalogBePort(), resourceName, resourceVersion);
+		String url = String.format(Urls.GET_RESOURCE_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
+				config.getCatalogBePort(), resourceName, resourceVersion);
 
 		return sendGet(url, userId);
 	}
@@ -240,19 +264,47 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return sendGet(url, sdncModifierDetails.getUserId());
 
 	}
+	
+	public static RestResponse getResourceListFilterByCategory(User sdncModifierDetails, String componentType, String category) throws IOException {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_FILTERED_ASSET_LIST, config.getCatalogBeHost(), config.getCatalogBePort(), componentType, "category=" + category);
+		
+		Map<String, String> headersMap =  prepareHeadersMap(sdncModifierDetails.getUserId());
+		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+
+		return sendGet(url, sdncModifierDetails.getUserId(), headersMap);
+
+	}
+	
+	public static RestResponse getResourceListFilterByCriteria(User sdncModifierDetails, String componentType, String criteria, String value) throws IOException {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_FILTERED_ASSET_LIST, config.getCatalogBeHost(), config.getCatalogBePort(), componentType, criteria + "=" + value);
+		
+		Map<String, String> headersMap =  prepareHeadersMap(sdncModifierDetails.getUserId());
+		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+
+		return sendGet(url, sdncModifierDetails.getUserId(), headersMap);
+
+	}
 
 	public static RestResponse getResource(String resourceId) throws ClientProtocolException, IOException {
 		return getResource(ElementFactory.getDefaultUser(UserRoleEnum.ADMIN), resourceId);
 	}
 
-	public static RestResponse getLatestResourceFromCsarUuid(String csarUuid) throws ClientProtocolException, IOException {
+	public static RestResponse getLatestResourceFromCsarUuid(String csarUuid)
+			throws ClientProtocolException, IOException {
 		return getLatestResourceFromCsarUuid(ElementFactory.getDefaultUser(UserRoleEnum.ADMIN), csarUuid);
 	}
 
 	public static RestResponse getResourceLatestVersionList(User sdncModifierDetails) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_RESOURCE_lATEST_VERSION, config.getCatalogBeHost(), config.getCatalogBePort());
+		String url = String.format(Urls.GET_RESOURCE_lATEST_VERSION, config.getCatalogBeHost(),
+				config.getCatalogBePort());
 
 		return sendGet(url, sdncModifierDetails.getUserId());
 
@@ -261,7 +313,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 	public static RestResponse putAllCategoriesTowardsCatalogFeWithUuidNotAllowed(String uuid) throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(), BaseRestUtils.RESOURCE_COMPONENT_TYPE);
+		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(),
+				BaseRestUtils.RESOURCE_COMPONENT_TYPE);
 
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
@@ -269,7 +322,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.X_ECOMP_REQUEST_ID_HEADER.getValue(), uuid);
 		HttpRequest http = new HttpRequest();
 
-		logger.debug("Send PUT request to get all categories (should be 405): {}", url);
+		logger.debug("Send PUT request to get all categories (should be 405): {}",url);
 		return http.httpSendByMethod(url, "PUT", null, headersMap);
 	}
 
@@ -283,7 +336,6 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 
-		// logger.debug("Send GET request to get all tags: {}", url);
 		return http.httpSendGet(url, headersMap);
 
 	}
@@ -299,9 +351,7 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
-		// logger.debug("Send GET request to get all property scopes: {}", url);
 		return http.httpSendGet(url, headersMap);
-
 	}
 
 	public static RestResponse getAllArtifactTypesTowardsCatalogBe() throws IOException {
@@ -316,7 +366,6 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
-		// logger.debug("Send GET request to get all property scopes: {}", url);
 		return http.httpSendGet(url, headersMap);
 
 	}
@@ -332,7 +381,6 @@ public class ResourceRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), "application/json");
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), "cs0008");
 
-		// logger.debug("Send GET request to get all property scopes: {}", url);
 		return http.httpSendGet(url, headersMap);
 
 	}
@@ -340,21 +388,24 @@ public class ResourceRestUtils extends BaseRestUtils {
 	public static RestResponse sendOptionsTowardsCatalogFeWithUuid() throws IOException {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(), BaseRestUtils.RESOURCE_COMPONENT_TYPE);
+		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(),
+				BaseRestUtils.RESOURCE_COMPONENT_TYPE);
 
 		Map<String, String> headersMap = new HashMap<String, String>();
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderData);
 		HttpRequest http = new HttpRequest();
 
-		logger.debug("Send OPTIONS request for categories: {}", url);
+		logger.debug("Send OPTIONS request for categories: {}",url);
 		return http.httpSendByMethod(url, "OPTIONS", null, headersMap);
 	}
 
 	// ********** UPDATE *************
-	public static RestResponse updateResourceMetadata(ResourceReqDetails updatedResourceDetails, User sdncModifierDetails, String uniqueId, String encoding) throws Exception {
+	public static RestResponse updateResourceMetadata(ResourceReqDetails updatedResourceDetails,
+			User sdncModifierDetails, String uniqueId, String encoding) throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId);
+		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
+				uniqueId);
 
 		String ContentTypeString = String.format("%s;%s", contentTypeHeaderData, encoding);
 
@@ -370,9 +421,11 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return updateResourceResponse;
 	}
 
-	public static RestResponse updateResourceTEST(Resource resource, User sdncModifierDetails, String uniqueId, String encoding) throws Exception {
+	public static RestResponse updateResourceTEST(Resource resource, User sdncModifierDetails, String uniqueId,
+			String encoding) throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId);
+		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
+				uniqueId);
 
 		String ContentTypeString = String.format("%s;%s", contentTypeHeaderData, encoding);
 
@@ -381,25 +434,43 @@ public class ResourceRestUtils extends BaseRestUtils {
 		String userId = sdncModifierDetails.getUserId();
 
 		RestResponse updateResourceResponse = sendPut(url, userBodyJson, userId, ContentTypeString);
+
+		// String resourceUniqueId =
+		// ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(),
+		// "uniqueId");
+		// updatedResourceDetails.setUniqueId(resourceUniqueId);
+		// String resourceVersion =
+		// ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(),
+		// "version");
+		// updatedResourceDetails.setUniqueId(resourceVersion);
+
 		return updateResourceResponse;
 	}
 
-	public static RestResponse updateResourceMetadata(ResourceReqDetails updatedResourceDetails, User sdncModifierDetails, String uniqueId) throws Exception {
+	public static RestResponse updateResourceMetadata(ResourceReqDetails updatedResourceDetails,
+			User sdncModifierDetails, String uniqueId) throws Exception {
 		return updateResourceMetadata(updatedResourceDetails, sdncModifierDetails, uniqueId, "");
 	}
 
-	public static RestResponse updateResourceMetadata(String json, User sdncModifierDetails, String resourceId) throws IOException {
+	public static RestResponse updateResourceMetadata(String json, User sdncModifierDetails, String resourceId)
+			throws IOException {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
+		String url = String.format(Urls.UPDATE_RESOURCE_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
+				resourceId);
 		String userId = sdncModifierDetails.getUserId();
+
 		RestResponse updateResourceResponse = sendPut(url, json, userId, contentTypeHeaderData);
+
 		return updateResourceResponse;
 	}
 
-	public static RestResponse updateResource(ResourceReqDetails resourceDetails, User sdncModifierDetails, String resourceId) throws IOException {
+	public static RestResponse updateResource(ResourceReqDetails resourceDetails, User sdncModifierDetails,
+			String resourceId) throws IOException {
+
 		String userId = sdncModifierDetails.getUserId();
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.UPDATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
+		String url = String.format(Urls.UPDATE_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				resourceId);
 
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 
@@ -413,9 +484,11 @@ public class ResourceRestUtils extends BaseRestUtils {
 			resourceDetails.setUUID(ResponseParser.getUuidFromResponse(updateResourceResponse));
 			resourceDetails.setVersion(ResponseParser.getVersionFromResponse(updateResourceResponse));
 			resourceDetails.setUniqueId(ResponseParser.getUniqueIdFromResponse(updateResourceResponse));
-			String lastUpdaterUserId = ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(), "lastUpdaterUserId");
+			String lastUpdaterUserId = ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(),
+					"lastUpdaterUserId");
 			resourceDetails.setLastUpdaterUserId(lastUpdaterUserId);
-			String lastUpdaterFullName = ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(), "lastUpdaterFullName");
+			String lastUpdaterFullName = ResponseParser.getValueFromJsonResponse(updateResourceResponse.getResponse(),
+					"lastUpdaterFullName");
 			resourceDetails.setLastUpdaterFullName(lastUpdaterFullName);
 			resourceDetails.setCreatorUserId(userId);
 			resourceDetails.setCreatorFullName(sdncModifierDetails.getFullName());
@@ -423,21 +496,26 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return updateResourceResponse;
 	}
 
-	public static RestResponse createResourceInstance(ResourceReqDetails resourceDetails, User modifier, String vfResourceUniqueId) throws Exception {
-		ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory.getComponentResourceInstance(resourceDetails);
-		RestResponse createResourceInstanceResponse = ComponentInstanceRestUtils.createComponentInstance(resourceInstanceReqDetails, modifier, vfResourceUniqueId, ComponentTypeEnum.RESOURCE);
+	public static RestResponse createResourceInstance(ResourceReqDetails resourceDetails, User modifier,
+			String vfResourceUniqueId) throws Exception {
+		ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory
+				.getComponentResourceInstance(resourceDetails);
+		RestResponse createResourceInstanceResponse = ComponentInstanceRestUtils.createComponentInstance(
+				resourceInstanceReqDetails, modifier, vfResourceUniqueId, ComponentTypeEnum.RESOURCE);
 		ResourceRestUtils.checkCreateResponse(createResourceInstanceResponse);
 		return createResourceInstanceResponse;
 	}
 
-	public static RestResponse associateResourceInstances(JSONObject body, User sdncModifierDetails, Component component) throws IOException {
+	public static RestResponse associateResourceInstances(JSONObject body, User sdncModifierDetails,
+			Component component) throws IOException {
 
 		Config config = Utils.getConfig();
 		Gson gson = new Gson();
 		String bodyJson = gson.toJson(body);
 		component.getComponentType();
 		String componentType = ComponentTypeEnum.findParamByType(component.getComponentType());
-		String url = String.format(Urls.ASSOCIATE__RESOURCE_INSTANCE, config.getCatalogBeHost(), config.getCatalogBePort(), componentType, component.getUniqueId());
+		String url = String.format(Urls.ASSOCIATE_RESOURCE_INSTANCE, config.getCatalogBeHost(),
+				config.getCatalogBePort(), componentType, component.getUniqueId());
 		return sendPost(url, bodyJson, sdncModifierDetails.getUserId(), null);
 
 	}
@@ -476,11 +554,14 @@ public class ResourceRestUtils extends BaseRestUtils {
 
 	// =======================================resource
 	// associate==================================================
-	public static RestResponse associate2ResourceInstances(Component container, ComponentInstance fromNode, ComponentInstance toNode, String assocType, User sdncUserDetails) throws IOException {
-		return associate2ResourceInstances(container, fromNode.getUniqueId(), toNode.getUniqueId(), assocType, sdncUserDetails);
+	public static RestResponse associate2ResourceInstances(Component container, ComponentInstance fromNode,
+			ComponentInstance toNode, String assocType, User sdncUserDetails) throws IOException {
+		return associate2ResourceInstances(container, fromNode.getUniqueId(), toNode.getUniqueId(), assocType,
+				sdncUserDetails);
 	}
 
-	public static RestResponse associate2ResourceInstances(Component component, String fromNode, String toNode, String assocType, User sdncUserDetails) throws IOException {
+	public static RestResponse associate2ResourceInstances(Component component, String fromNode, String toNode,
+			String assocType, User sdncUserDetails) throws IOException {
 
 		RelationshipInstData relationshipInstData = new RelationshipInstData();
 		Map<String, List<CapabilityDefinition>> capabilitiesMap = component.getCapabilities();
@@ -495,12 +576,15 @@ public class ResourceRestUtils extends BaseRestUtils {
 		relationshipInstData.setRequirementOwnerId(requirementDefinitionFrom.getOwnerId());
 		relationshipInstData.setRequirementId(requirementDefinitionFrom.getUniqueId());
 
-		JSONObject assocBody = assocBuilder(relationshipInstData, capabilityDefinitionTo, requirementDefinitionFrom, toNode, fromNode);
+		JSONObject assocBody = assocBuilder(relationshipInstData, capabilityDefinitionTo, requirementDefinitionFrom,
+				toNode, fromNode);
 		return ResourceRestUtils.associateResourceInstances(assocBody, sdncUserDetails, component);
 
 	}
 
-	private static JSONObject assocBuilder(RelationshipInstData relationshipInstData, CapabilityDefinition capabilityDefinitionTo, RequirementDefinition requirementDefinitionFrom, String toNode, String fromNode) {
+	private static JSONObject assocBuilder(RelationshipInstData relationshipInstData,
+			CapabilityDefinition capabilityDefinitionTo, RequirementDefinition requirementDefinitionFrom, String toNode,
+			String fromNode) {
 
 		String type = capabilityDefinitionTo.getType();
 		String requirement = requirementDefinitionFrom.getName();
@@ -529,7 +613,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 
 	}
 
-	private static CapabilityDefinition getCapabilityDefinitionByOwnerId(List<CapabilityDefinition> capabilityDefinitionList, String ownerId) {
+	private static CapabilityDefinition getCapabilityDefinitionByOwnerId(
+			List<CapabilityDefinition> capabilityDefinitionList, String ownerId) {
 
 		for (CapabilityDefinition capabilityDefinition : capabilityDefinitionList) {
 			if (capabilityDefinition.getOwnerId().equals(ownerId)) {
@@ -539,7 +624,8 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return null;
 	}
 
-	private static RequirementDefinition getRequirementDefinitionByOwnerId(List<RequirementDefinition> requirementDefinitionList, String ownerId) {
+	private static RequirementDefinition getRequirementDefinitionByOwnerId(
+			List<RequirementDefinition> requirementDefinitionList, String ownerId) {
 
 		for (RequirementDefinition requirementDefinition : requirementDefinitionList) {
 			if (requirementDefinition.getOwnerId().equals(ownerId)) {
@@ -562,14 +648,18 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return name;
 	}
 
-	public static Resource convertResourceGetResponseToJavaObject(ResourceReqDetails resourceDetails) throws IOException {
-		RestResponse response = ResourceRestUtils.getResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+	public static Resource convertResourceGetResponseToJavaObject(ResourceReqDetails resourceDetails)
+			throws IOException {
+		RestResponse response = ResourceRestUtils.getResource(resourceDetails,
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		assertEquals("Check response code after get resource", 200, response.getErrorCode().intValue());
 		return ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
 	}
 
-	public static RestResponse changeResourceInstanceVersion(String containerUniqueId, String instanceToReplaceUniqueId, String newResourceUniqueId, User sdncModifierDetails, ComponentTypeEnum componentType) throws IOException {
-		return ProductRestUtils.changeServiceInstanceVersion(containerUniqueId, instanceToReplaceUniqueId, newResourceUniqueId, sdncModifierDetails, componentType);
+	public static RestResponse changeResourceInstanceVersion(String containerUniqueId, String instanceToReplaceUniqueId,
+			String newResourceUniqueId, User sdncModifierDetails, ComponentTypeEnum componentType) throws IOException {
+		return ProductRestUtils.changeServiceInstanceVersion(containerUniqueId, instanceToReplaceUniqueId,
+				newResourceUniqueId, sdncModifierDetails, componentType);
 	}
 
 }

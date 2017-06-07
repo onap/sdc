@@ -1,0 +1,57 @@
+<div class="w-sdc-designer-leftbar">
+    <div class="w-sdc-designer-leftbar-title">Elements <span class="w-sdc-designer-leftbar-title-count">{{model.numberOfElements}}</span>
+    </div>
+
+    <div class="w-sdc-designer-leftbar-search">
+        <input type="text" class="w-sdc-designer-leftbar-search-input" placeholder="Search..."
+               data-ng-model="searchText" data-ng-change="searchComponents(searchText)"
+               ng-model-options="{ debounce: 500 }" data-tests-id="searchAsset"/>
+        <span class="w-sdc-search-icon leftbar" data-ng-class="{'cancel':searchText, 'magnification':!searchText}"
+              data-ng-click="searchText=''; searchComponents('',categories)"></span>
+    </div>
+    <div class="i-sdc-designer-leftbar-section"
+         data-ng-repeat="(entityCategory, objCategory) in displaySortedCategories track by $index"
+         data-ng-class="{'expanded': expandedSection.indexOf(entityCategory) !== -1}">
+        <div class="i-sdc-designer-leftbar-section-title pointer" data-ng-click="sectionClick(entityCategory)"
+             data-tests-id="leftbar-section-title-{{entityCategory}}">
+            {{entityCategory}}
+            <div class="i-sdc-designer-leftbar-section-title-icon"></div>
+        </div>
+        <div class="i-sdc-designer-leftbar-section-content"
+             data-ng-repeat="(subCategory, components) in objCategory track by $index">
+            <div class="i-sdc-designer-leftbar-section-content-subcat i-sdc-designer-leftbar-section-content-item">
+                {{subCategory}}
+            </div>
+            <div class="i-sdc-designer-leftbar-section-content-item"
+                 data-ng-class="{'default-pointer': isViewOnly}"
+                 data-ng-mouseover="!isViewOnly && onMouseOver(component)"
+                 data-ng-mouseleave="!isViewOnly && onMouseOut()"
+                 data-drag="{{!isViewOnly}}"
+                 data-jqyoui-options="{revert: 'invalid', helper:setElementTemplate, appendTo:'body', cursorAt: {left:38, top: 38}, cursor:'move'}"
+                 jqyoui-draggable="{index:{{$index}},animate:true,onStart:'dragStartCallback(component)',onStop:'dragStopCallback()', onDrag:'onDragCallback()'}"
+                 data-ng-repeat="component in components | orderBy: 'displayName' track by $index"
+                 data-tests-id={{component.displayName}}>
+                <div class="i-sdc-designer-leftbar-section-content-item-icon-ph">
+                    <div class="medium {{component.iconClass}}"
+                         data-tests-id="leftbar-section-content-item-{{component.displayName}}">
+                        <div class="{{component.certifiedIconClass}}" uib-tooltip="Not certified"
+                             tooltip-class="uib-custom-tooltip" tooltip-placement="bottom" tooltip-popup-delay="700">
+                        </div>
+                    </div>
+                </div>
+                <div class="i-sdc-designer-leftbar-section-content-item-info">
+                        <span class="i-sdc-designer-leftbar-section-content-item-info-title"
+                              uib-tooltip="{{component.displayName}}" tooltip-class="uib-custom-tooltip"
+                              tooltip-placement="bottom" tooltip-popup-delay="700">
+                            {{component.displayName}}</span>
+                    <div class="i-sdc-designer-leftbar-section-content-item-info-text">
+                        V.{{component.version}}
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content-item-info-text"> Type:
+                        {{component.componentSubType}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

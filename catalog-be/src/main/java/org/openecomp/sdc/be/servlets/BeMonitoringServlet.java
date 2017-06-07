@@ -135,17 +135,17 @@ public class BeMonitoringServlet extends BeGenericServlet {
 	@Path("/version")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "return the ASDC application version", notes = "return the SDC application version", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "return SDC version"), @ApiResponse(code = 500, message = "Internal Error") })
+	@ApiOperation(value = "return the ASDC application version", notes = "return the ASDC application version", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "return ASDC version"), @ApiResponse(code = 500, message = "Internal Error") })
 	public Response getSdcVersion(@Context final HttpServletRequest request) {
 		try {
 			String url = request.getMethod() + " " + request.getRequestURI();
 			log.debug("Start handle request of {}", url);
 
 			String version = getVersionFromContext(request);
-			log.debug("sdc version from manifest is: {}", version);
+			log.debug("asdc version from manifest is: {}", version);
 			if (version == null || version.isEmpty()) {
-				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.SDC_VERSION_NOT_FOUND));
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.ASDC_VERSION_NOT_FOUND));
 			}
 
 			HealthCheckInfo versionInfo = new HealthCheckInfo();
@@ -158,14 +158,14 @@ public class BeMonitoringServlet extends BeGenericServlet {
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "getSDCVersion");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getSDCVersion");
-			log.debug("BE get SDC version unexpected exception", e);
+			log.debug("BE get ASDC version unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
 
 	private String getVersionFromContext(HttpServletRequest request) {
 		ServletContext servletContext = request.getSession().getServletContext();
-		String version = (String) servletContext.getAttribute(Constants.SDC_RELEASE_VERSION_ATTR);
+		String version = (String) servletContext.getAttribute(Constants.ASDC_RELEASE_VERSION_ATTR);
 		return version;
 	}
 
@@ -187,7 +187,7 @@ public class BeMonitoringServlet extends BeGenericServlet {
 			object = gson.fromJson(content, clazz);
 			object.setFields(null);
 		} catch (Exception e) {
-			log.debug("Failed to convert the content {} to object. {}", content.substring(0, Math.min(50, content.length())), e);
+			log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
 		}
 
 		return object;

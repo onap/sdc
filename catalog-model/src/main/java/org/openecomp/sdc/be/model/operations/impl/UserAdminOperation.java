@@ -20,11 +20,8 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -47,20 +44,24 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.MethodActivationStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component("user-operation")
 public class UserAdminOperation implements IUserAdminOperation {
 
-	@javax.annotation.Resource
 	private TitanGenericDao titanGenericDao;
 
-	public UserAdminOperation() {
+	public UserAdminOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
 		super();
+		this.titanGenericDao = titanGenericDao;
+
 	}
 
 	private static Logger log = LoggerFactory.getLogger(UserAdminOperation.class.getName());
@@ -132,8 +133,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 		}
 	}
 
-	private void validateUserExists(Wrapper<Either<User, ActionStatus>> resultWrapper, Wrapper<UserData> userWrapper,
-			String id) {
+	private void validateUserExists(Wrapper<Either<User, ActionStatus>> resultWrapper, Wrapper<UserData> userWrapper, String id) {
 		Either<User, ActionStatus> result;
 		if (id == null) {
 			log.info("User userId  is empty");
@@ -142,19 +142,10 @@ public class UserAdminOperation implements IUserAdminOperation {
 			return;
 		}
 		id = id.toLowerCase();
-		Either<UserData, TitanOperationStatus> either = titanGenericDao
-				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+		Either<UserData, TitanOperationStatus> either = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
 
 		if (either.isRight()) {
-			if (either.right().value() == TitanOperationStatus.NOT_FOUND) {
-				log.debug("User with userId {} not found", id);
-				result = Either.right(ActionStatus.USER_NOT_FOUND);
-				resultWrapper.setInnerElement(result);
-			} else {
-				log.debug("Problem get User with userId {}. Reason - {}", id, either.right().value().name());
-				result = Either.right(ActionStatus.GENERAL_ERROR);
-				resultWrapper.setInnerElement(result);
-			}
+			resultWrapper.setInnerElement(getUserNotFoundError(id, either.right().value()));
 		} else {
 			userWrapper.setInnerElement(either.left().value());
 		}
@@ -168,10 +159,10 @@ public class UserAdminOperation implements IUserAdminOperation {
 			UserData userData = convertToUserData(user);
 			result = titanGenericDao.createNode(userData, UserData.class);
 			if (result.isRight()) {
-				log.debug("Problem while saving User {}. Reason - {}", userData.toString(), result.right().value().name());
+				log.debug("Problem while saving User  {}. Reason - {}",userData.toString(),result.right().value().name());
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
-			log.debug("User {} saved successfully", userData.toString());
+			log.debug("User {} saved successfully",userData.toString());
 			return Either.left(convertToUser(result.left().value()));
 
 		} finally {
@@ -194,10 +185,10 @@ public class UserAdminOperation implements IUserAdminOperation {
 			UserData userData = convertToUserData(user);
 			result = titanGenericDao.updateNode(userData, UserData.class);
 			if (result.isRight()) {
-				log.debug("Problem while updating User {}. Reason - {}", userData.toString(), result.right().value().name());
+				log.debug("Problem while updating User {}. Reason - {}",userData.toString(),result.right().value().name());
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
-			log.debug("User {} updated successfully", userData.toString());
+			log.debug("User {} updated successfully",userData.toString());
 			return Either.left(convertToUser(result.left().value()));
 
 		} finally {
@@ -229,10 +220,9 @@ public class UserAdminOperation implements IUserAdminOperation {
 	@Override
 	public Either<User, ActionStatus> deleteUserData(String id) {
 		Either<User, ActionStatus> result;
-		Either<UserData, TitanOperationStatus> eitherGet = titanGenericDao
-				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
+		Either<UserData, TitanOperationStatus> eitherGet = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), id, UserData.class);
 		if (eitherGet.isRight()) {
-			log.debug("Problem while retriving user with userId {}", id);
+			log.debug("Problem while retriving user with userId {}",id);
 			if (eitherGet.right().value() == TitanOperationStatus.NOT_FOUND) {
 				result = Either.right(ActionStatus.USER_NOT_FOUND);
 			} else {
@@ -264,11 +254,11 @@ public class UserAdminOperation implements IUserAdminOperation {
 	private void deleteUser(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
 		Either<UserData, TitanOperationStatus> eitherDelete = titanGenericDao.deleteNode(userData, UserData.class);
 		if (eitherDelete.isRight()) {
-			log.debug("Problem while deleting User {}. Reason - {}", userData.toString(), eitherDelete.right().value().name());
+			log.debug("Problem while deleting User {}. Reason - {}",userData.toString(),eitherDelete.right().value().name());
 			Either<User, ActionStatus> result = Either.right(ActionStatus.GENERAL_ERROR);
 			resultWrapper.setInnerElement(result);
 		} else {
-			log.debug("User {} deleted successfully", userData.toString());
+			log.debug("User {} deleted successfully",userData.toString());
 			Either<User, ActionStatus> result = Either.left(convertToUser(eitherDelete.left().value()));
 			resultWrapper.setInnerElement(result);
 		}
@@ -277,10 +267,9 @@ public class UserAdminOperation implements IUserAdminOperation {
 	private void validateUserHasNoConnections(Wrapper<Either<User, ActionStatus>> resultWrapper, UserData userData) {
 		if (resultWrapper.isEmpty()) {
 
-			Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao.getEdgesForNode(userData,
-					Direction.BOTH);
+			Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao.getEdgesForNode(userData, Direction.BOTH);
 			if (edgesForNode.isRight()) {
-				log.debug("Problem while deleting User {}. Reason - {}", userData.toString(), edgesForNode.right().value().name());
+				log.debug("Problem while deleting User {}. Reason - {}",userData.toString(),edgesForNode.right().value().name());
 				Either<User, ActionStatus> result = Either.right(ActionStatus.GENERAL_ERROR);
 				resultWrapper.setInnerElement(result);
 			} else {
@@ -293,35 +282,31 @@ public class UserAdminOperation implements IUserAdminOperation {
 		}
 	}
 
-	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user,
-			Map<String, Object> properties) {
+	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user, Map<String, Object> properties) {
 
 		UserData userData = convertToUserData(user);
 
-		Either<TitanVertex, TitanOperationStatus> vertexUser = titanGenericDao
-				.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId());
+		Either<TitanVertex, TitanOperationStatus> vertexUser = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User), user.getUserId());
 		if (vertexUser.isRight()) {
-			log.debug("Problem while deleting User {}. Reason - {}", userData.toString(), vertexUser.right().value().name());
+			log.debug("Problem while deleting User {}. Reason - {}",userData.toString(),vertexUser.right().value().name());
 			return Either.right(StorageOperationStatus.GENERAL_ERROR);
 		}
 
 		List<Edge> pandingTasks = new ArrayList<>();
-		Either<List<Edge>, TitanOperationStatus> edges = titanGenericDao
-				.getOutgoingEdgesByCriteria(vertexUser.left().value(), GraphEdgeLabels.STATE, properties);
+		Either<List<Edge>, TitanOperationStatus> edges = titanGenericDao.getOutgoingEdgesByCriteria(vertexUser.left().value(), GraphEdgeLabels.STATE, properties);
 
 		if (edges.isRight() || edges.left().value() == null) {
 			if (edges.right().value() == TitanOperationStatus.NOT_FOUND) {
 				return Either.left(pandingTasks);
 			} else {
-				log.debug("Problem while deleting User {}", userData.toString(), edges.right().value().name());
+				log.debug("Problem while deleting User {}. Reason - ",userData.toString(),edges.right().value().name());
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 		}
 
 		for (Edge edge : edges.left().value()) {
 			Vertex componentVertex = edge.inVertex();
-			VertexProperty<Object> property = componentVertex
-					.property(GraphPropertiesDictionary.IS_DELETED.getProperty());
+			VertexProperty<Object> property = componentVertex.property(GraphPropertiesDictionary.IS_DELETED.getProperty());
 			if (!property.isPresent()) {
 				pandingTasks.add(edge);
 			} else {
@@ -347,33 +332,62 @@ public class UserAdminOperation implements IUserAdminOperation {
 				propertiesToMatch.put(GraphPropertiesDictionary.USER_STATUS.getProperty(), status);
 			}
 
-			Either<List<UserData>, TitanOperationStatus> userNodes = titanGenericDao.getByCriteria(NodeTypeEnum.User,
-					propertiesToMatch, UserData.class);
+			Either<List<UserData>, TitanOperationStatus> userNodes = titanGenericDao.getByCriteria(NodeTypeEnum.User, propertiesToMatch, UserData.class);
 
 			titanGenericDao.commit();
-			if (userNodes.isRight()) {
-				// in case of NOT_FOUND from Titan return empty list
-				if (userNodes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-					return Either.left(result);
-				} else {
-					log.error("Problem while getting all users with role {}. Reason - {}", role, userNodes.right().value().name());
-					return Either.right(ActionStatus.GENERAL_ERROR);
-				}
-			} else {
-				List<UserData> userDataList = userNodes.left().value();
-				if (userDataList != null) {
-					for (UserData userData : userDataList) {
-						User user = convertToUser(userData);
-						result.add(user);
-					}
-					return Either.left(result);
-				}
-				log.debug("No users were found with role {}", role);
-				return Either.left(result);
-			}
+			return convertToUsers(role, userNodes);
 		} finally {
 			titanGenericDao.commit();
 		}
+	}
+
+	private Either<List<User>, ActionStatus> convertToUsers(String role, Either<List<UserData>, TitanOperationStatus> userNodes) {
+
+		if (userNodes.isRight()) {
+            // in case of NOT_FOUND from Titan return empty list
+            if (userNodes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+                return Either.left(Collections.emptyList());
+            } else {
+                log.error("Problem while getting all users with role {}. Reason - {}", role, userNodes.right().value().name());
+                return Either.right(ActionStatus.GENERAL_ERROR);
+            }
+        } else {
+			List<UserData> userDataList = userNodes.left().value();
+            if (userDataList != null) {
+                return Either.left(convertToUsers(userDataList));
+            }
+            log.debug("No users were found with role {}", role);
+            return Either.left(Collections.emptyList());
+        }
+	}
+
+	private List<User> convertToUsers(List<UserData> usersData) {
+		List<User> result = new ArrayList<>();
+		for (UserData userData : usersData) {
+			User user = convertToUser(userData);
+			result.add(user);
+		}
+		return result;
+	}
+
+	@Override
+	public Either<List<User>, ActionStatus> getAllUsers() {
+		try {
+			Either<List<UserData>, TitanOperationStatus> userNodes = titanGenericDao.getAll(NodeTypeEnum.User, UserData.class);
+			return convertToUsers("", userNodes);
+		} finally {
+			titanGenericDao.commit();
+		}
+	}
+
+	private Either<User, ActionStatus> getUserNotFoundError(String uid, TitanOperationStatus status) {
+		if (status == TitanOperationStatus.NOT_FOUND) {
+            log.debug("User with userId {} not found", uid);
+            return Either.right(ActionStatus.USER_NOT_FOUND);
+        } else {
+            log.debug("Problem get User with userId {}. Reason - {}", uid, status.name());
+            return  Either.right(ActionStatus.GENERAL_ERROR);
+        }
 	}
 
 	protected User convertToUser(UserData userData) {
@@ -403,6 +417,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 		return userData;
 	}
 
+	@Override
 	public Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> getUserDataWithFunctionalMenu(String userId) {
 
 		Either<User, ActionStatus> userData = getUserData(userId, true, true);
@@ -424,8 +439,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 			functionalMenuInfo.setFunctionalMenu(userFunctionalMenuData.getFunctionalMenu());
 		}
 
-		ImmutablePair<User, FunctionalMenuInfo> result = new ImmutablePair<User, FunctionalMenuInfo>(user,
-				functionalMenuInfo);
+		ImmutablePair<User, FunctionalMenuInfo> result = new ImmutablePair<User, FunctionalMenuInfo>(user, functionalMenuInfo);
 
 		return Either.left(result);
 	}
@@ -441,8 +455,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 		userId = userId.toLowerCase();
 		String uid = UniqueIdBuilder.buildUserFunctionalMenuUid(userId);
 
-		Either<UserFunctionalMenuData, TitanOperationStatus> either = titanGenericDao.getNode(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.UserFunctionalMenu), uid, UserFunctionalMenuData.class);
+		Either<UserFunctionalMenuData, TitanOperationStatus> either = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.UserFunctionalMenu), uid, UserFunctionalMenuData.class);
 
 		return either;
 	}
@@ -457,8 +470,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 				String uid = UniqueIdBuilder.buildUserFunctionalMenuUid(userId);
 				UserFunctionalMenuData functionalMenuData = new UserFunctionalMenuData(newFunctionalMenu, uid);
 
-				Either<UserFunctionalMenuData, TitanOperationStatus> createNode = titanGenericDao
-						.createNode(functionalMenuData, UserFunctionalMenuData.class);
+				Either<UserFunctionalMenuData, TitanOperationStatus> createNode = titanGenericDao.createNode(functionalMenuData, UserFunctionalMenuData.class);
 
 				if (createNode.isRight()) {
 					return Either.right(createNode.right().value());
@@ -473,8 +485,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 		} else {
 			UserFunctionalMenuData userFunctionalMenuData = functionalMenu.left().value();
 			userFunctionalMenuData.setFunctionalMenu(newFunctionalMenu);
-			Either<UserFunctionalMenuData, TitanOperationStatus> updateNode = titanGenericDao
-					.updateNode(userFunctionalMenuData, UserFunctionalMenuData.class);
+			Either<UserFunctionalMenuData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(userFunctionalMenuData, UserFunctionalMenuData.class);
 
 			if (updateNode.isRight()) {
 				return Either.right(updateNode.right().value());

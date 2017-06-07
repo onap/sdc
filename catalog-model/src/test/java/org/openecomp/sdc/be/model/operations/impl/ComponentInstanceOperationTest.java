@@ -65,20 +65,16 @@ public class ComponentInstanceOperationTest {
 
 		ComponentInstance ri = FactoryUtils.createResourceInstance();
 		CapabilityData capData = FactoryUtils.createCapabilityData();
-		Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> childNodesReturned = prepareChildNodeRetValue(
-				capData);
+		Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> childNodesReturned = prepareChildNodeRetValue(capData);
 
-		Mockito.when(titanGenericDao.getChildrenNodes(Mockito.anyString(), Mockito.anyString(),
-				Mockito.any(GraphEdgeLabels.class), Mockito.any(NodeTypeEnum.class), Mockito.any()))
-				.thenReturn(childNodesReturned);
+		Mockito.when(titanGenericDao.getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.any(GraphEdgeLabels.class), Mockito.any(NodeTypeEnum.class), Mockito.any())).thenReturn(childNodesReturned);
 
 		// ImmutablePair<ComponentInstance, List<ImmutablePair<CapabilityData,
 		// GraphEdge>>> instanceAndCapabilities =
 		// componentInstanceOperation.getCapabilities(ri,
 		// NodeTypeEnum.Resource);
 
-		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> instanceAndCapabilities = componentInstanceOperation
-				.getCapabilities(ri, NodeTypeEnum.Resource);
+		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> instanceAndCapabilities = componentInstanceOperation.getCapabilities(ri, NodeTypeEnum.Resource);
 
 		// assertTrue(instanceAndCapabilities.left.getUniqueId().equals(ri.getUniqueId()));
 		assertTrue(instanceAndCapabilities.left().value().size() == 1);
@@ -90,19 +86,15 @@ public class ComponentInstanceOperationTest {
 	public void testGetRequirements() {
 		ComponentInstance ri = FactoryUtils.createResourceInstance();
 		RequirementData reqData = FactoryUtils.createRequirementData();
-		Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> childNodesReturned = prepareChildNodeRetValue(
-				reqData);
+		Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> childNodesReturned = prepareChildNodeRetValue(reqData);
 
-		Mockito.when(titanGenericDao.getChildrenNodes(Mockito.anyString(), Mockito.anyString(),
-				Mockito.any(GraphEdgeLabels.class), Mockito.any(NodeTypeEnum.class), Mockito.any()))
-				.thenReturn(childNodesReturned);
+		Mockito.when(titanGenericDao.getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.any(GraphEdgeLabels.class), Mockito.any(NodeTypeEnum.class), Mockito.any())).thenReturn(childNodesReturned);
 
 		// ImmutablePair<ComponentInstance, List<ImmutablePair<RequirementData,
 		// GraphEdge>>> instanceAndCapabilities =
 		// componentInstanceOperation.getRequirements(ri,
 		// NodeTypeEnum.Resource);
-		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> instanceAndCapabilities = componentInstanceOperation
-				.getRequirements(ri, NodeTypeEnum.Resource);
+		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> instanceAndCapabilities = componentInstanceOperation.getRequirements(ri, NodeTypeEnum.Resource);
 
 		// assertTrue(instanceAndCapabilities.left.getUniqueId().equals(ri.getUniqueId()));
 		// assertTrue(instanceAndCapabilities.right.size() == 1);
@@ -125,8 +117,7 @@ public class ComponentInstanceOperationTest {
 		return capabilityInstance;
 	}
 
-	private Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> prepareChildNodeRetValue(
-			GraphNode data) {
+	private Either<List<ImmutablePair<GraphNode, GraphEdge>>, TitanOperationStatus> prepareChildNodeRetValue(GraphNode data) {
 		ImmutablePair<GraphNode, GraphEdge> pair = new ImmutablePair<>(data, FactoryUtils.createGraphEdge());
 		List<ImmutablePair<GraphNode, GraphEdge>> retList = new ArrayList<>();
 		retList.add(pair);

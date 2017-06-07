@@ -42,16 +42,6 @@ public class ServiceComponentInstanceBusinessLogic extends ComponentInstanceBusi
 	}
 
 	@Override
-	protected ComponentOperation getContainerComponentOperation() {
-		return serviceOperation;
-	}
-
-	@Override
-	protected ComponentOperation getCompInstOriginComponentOperation() {
-		return resourceOperation;
-	}
-
-	@Override
 	protected ComponentTypeEnum getComponentTypeOfComponentInstance() {
 		return ComponentTypeEnum.RESOURCE_INSTANCE;
 	}

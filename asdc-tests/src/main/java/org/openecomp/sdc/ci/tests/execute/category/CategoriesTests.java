@@ -54,6 +54,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedCategoryAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
@@ -61,6 +62,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.CategoryValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -2234,6 +2236,18 @@ public class CategoriesTests extends CategoriesBaseTest {
 
 		checkAuditSuccess(PRODUCT_COMPONENT_TYPE);
 	}
+
+	// @Test
+	// public void getAllResourceCategories_generalError() throws Exception
+	// {
+	// User user = new User();
+	// RestResponse getAllCategoriesRest =
+	// CategoryRestUtils.getAllCategories(user, SERVICE_COMPONENT_TYPE);
+	// assertEquals("Check response code after get Category", 500,
+	// getAllCategoriesRest.getErrorCode().intValue());
+	// Utils.checkBodyResponseOnError(ActionStatus.GENERAL_ERROR.name(), new
+	// ArrayList<String>(), getAllCategoriesRest.getResponse());
+	// }
 
 	//////////////////////////////////////////////////////////////////////////////
 

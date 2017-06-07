@@ -6,60 +6,66 @@
 	<groupId>org.openecomp.sdc.be</groupId>
 	<artifactId>catalog-model</artifactId>
 
-	
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
-	
-	
 
 	<dependencies>
 
+		<!-- Common of SDC -->
 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+			<groupId>org.openecomp.sdc</groupId>
+			<artifactId>common-app-api</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- yaml to object converter -->
+		
 		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.14</version>
+			<groupId>org.openecomp.sdc.be</groupId>
+			<artifactId>common-be</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>2.0-SNAPSHOT</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- catalog dao -->
+		<dependency>
+			<groupId>org.openecomp.sdc.be</groupId>
+			<artifactId>catalog-dao</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version><!--$NO-MVN-MAN-VER$ -->
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.functionaljava</groupId>
+			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
@@ -75,141 +81,26 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.0.1.Final</version>
 		</dependency>
 
+		<!-- Gson -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-
-		<!-- Common of SD&C -->
-		<dependency>
-			<groupId>org.openecomp.sdc</groupId>
-			<artifactId>common-app-api</artifactId>
-			<version>${common-app-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.sdc.be</groupId>
-			<artifactId>common-be</artifactId>
-			<version>${common-be.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<!--  catalog dao -->
-		<dependency>
-			<groupId>org.openecomp.sdc.be</groupId>
-			<artifactId>catalog-dao</artifactId>
-			<version>${catalog-dao.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		
-		<!--  -->
-		<dependency>    
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${guava.version}</version><!--$NO-MVN-MAN-VER$-->
-			<scope>provided</scope>
-		</dependency>
-		
-		 <dependency>
-    		<groupId>org.functionaljava</groupId>
-   			<artifactId>functionaljava</artifactId>
-    		<scope>provided</scope>	
-		 </dependency>
-		
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		
-		<!-- spring -->
-		
-		 <dependency>
-        	<groupId>javax.validation</groupId>
-        	<artifactId>validation-api</artifactId>
-        	<version>1.1.0.Final</version>
-		</dependency>
-
-		<dependency>
-        	<groupId>org.hibernate</groupId>
-       		<artifactId>hibernate-validator</artifactId>
-        	<version>5.3.4.Final</version>
-    	</dependency> 
-
- 		<!-- Gson -->
- 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
+			<version>${gson.version}</version>
 			<scope>provided</scope>
 		</dependency>
- 	
- 		<!-- TITAN -->
+
+		<!-- TITAN -->
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
 			<artifactId>titan-core</artifactId>
@@ -239,30 +130,30 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- TITAN END-->
- 		
- 		<dependency>
+		<!-- TITAN END -->
+
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${lang3.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		 <!--  http client -->
+
+		<!-- http client -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+            <version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-			<version>${httpcore.version}</version>
+            <version>${httpcore.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- CASSANDRA -->
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
@@ -277,56 +168,60 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- CASSANDRA END -->
-		
-		<!-- test -->
- 
- 		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-  			<groupId>org.aspectj</groupId> 
-  			<artifactId>aspectjrt</artifactId>
-			<version>${aspectjrt.version}</version>
-  			<!--<version>1.7.4</version>-->
-  			<scope>test</scope> 
-  		</dependency>
-		
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
-  			<groupId>org.aspectj</groupId> 
-  			<artifactId>aspectjweaver</artifactId> 
-  			<version>1.7.4</version>
-  			<scope>test</scope>
-  		</dependency>
-		
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 			<scope>test</scope>
 			<version>4.0.7.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-jci-core</artifactId>
+			<version>${commons-jci-core.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -35,6 +35,7 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedEcomConsumerAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ConsumerRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
@@ -191,29 +192,49 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 	}
 
 	@Test
-	public void createEcompCredentialsByDesigner() throws Exception { // HttpCspUserId header contains Designer UserId
-		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition, sdncDesignerUserDetails);
-		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION, createConsumerRest.getErrorCode().intValue());
+	public void createEcompCredentialsByDesigner() throws Exception { // HttpCspUserId
+																		// header
+																		// contains
+																		// Designer
+																		// UserId
+		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,
+				sdncDesignerUserDetails);
+		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION,
+				createConsumerRest.getErrorCode().intValue());
 		// Get Consumer
 		RestResponse getConsumerRest = ConsumerRestUtils.getConsumer(consumerDataDefinition, sdncAdminUserDetails);
-		assertEquals("Check response code after get Consumer", STATUS_CODE_NOT_FOUND, getConsumerRest.getErrorCode().intValue());
+		assertEquals("Check response code after get Consumer", STATUS_CODE_NOT_FOUND,
+				getConsumerRest.getErrorCode().intValue());
 		// Audit validation
-		AuditValidationUtils.createEcompConsumerAuditFailure(ADD_ECOMP_USER_CREDENTIALS, consumerDataDefinition, sdncDesignerUserDetails, ActionStatus.RESTRICTED_OPERATION);
+		AuditValidationUtils.createEcompConsumerAuditFailure(ADD_ECOMP_USER_CREDENTIALS, consumerDataDefinition,
+				sdncDesignerUserDetails, ActionStatus.RESTRICTED_OPERATION);
 	}
 
 	@Test
-	public void createEcompCredentialsByTester() throws Exception { // HttpCspUserId header contains Tester UserId
-		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition, sdncTesterUserDetails);
-		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION, createConsumerRest.getErrorCode().intValue());
+	public void createEcompCredentialsByTester() throws Exception { // HttpCspUserId
+																	// header
+																	// contains
+																	// Tester
+																	// UserId
+		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,
+				sdncTesterUserDetails);
+		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION,
+				createConsumerRest.getErrorCode().intValue());
 		// Get Consumer
 		RestResponse getConsumerRest = ConsumerRestUtils.getConsumer(consumerDataDefinition, sdncAdminUserDetails);
-		assertEquals("Check response code after get Consumer", STATUS_CODE_NOT_FOUND, getConsumerRest.getErrorCode().intValue());
+		assertEquals("Check response code after get Consumer", STATUS_CODE_NOT_FOUND,
+				getConsumerRest.getErrorCode().intValue());
 		// Audit validation
-		AuditValidationUtils.createEcompConsumerAuditFailure(ADD_ECOMP_USER_CREDENTIALS, consumerDataDefinition, sdncTesterUserDetails, ActionStatus.RESTRICTED_OPERATION);
+		AuditValidationUtils.createEcompConsumerAuditFailure(ADD_ECOMP_USER_CREDENTIALS, consumerDataDefinition,
+				sdncTesterUserDetails, ActionStatus.RESTRICTED_OPERATION);
 	}
 
 	@Test
-	public void createEcompCredentialsByOps() throws Exception { // HttpCspUserId header contains OPS UserId
+	public void createEcompCredentialsByOps() throws Exception { // HttpCspUserId
+																	// header
+																	// contains
+																	// OPS
+																	// UserId
 		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition, sdncOpsUserDetails);
 		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION,
 				createConsumerRest.getErrorCode().intValue());
@@ -227,7 +248,13 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 	}
 
 	@Test
-	public void createEcompCredentialsByGovernor() throws Exception { // HttpCspUserId header contains Governor UserId Create Consumer
+	public void createEcompCredentialsByGovernor() throws Exception { // HttpCspUserId
+																		// header
+																		// contains
+																		// Governor
+																		// UserId
+																		// Create
+																		// Consumer
 		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,
 				sdncGovernorUserDetails);
 		assertEquals("Check response code after create Consumer", STATUS_CODE_RESTRICTED_OPERATION,
@@ -751,11 +778,11 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 				ADD_ECOMP_USER_CREDENTIALS);
 	}
 
-	// USER_ID (USER_ID is taken from USER_ID header)
+	// UserId (UserId is taken from USER_ID header)
 
 	@Test
 	public void createEcompCredentialsHttpCspUserIdIsEmpty() throws Exception {
-		// USER_ID is taken from USER_ID header
+		// UserId is taken from USER_ID header
 		sdncAdminUserDetails.setUserId("");
 		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,
 				sdncAdminUserDetails);
@@ -775,7 +802,12 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 	}
 
 	@Test
-	public void createEcompCredentialsHttpCspUserIdIsNull() throws Exception { // USER_ID is taken from USER_ID header
+	public void createEcompCredentialsHttpCspUserIdIsNull() throws Exception { // UserId
+																				// is
+																				// taken
+																				// from
+																				// USER_ID
+																				// header
 		sdncAdminUserDetails.setUserId(null);
 		RestResponse createConsumerRest = ConsumerRestUtils.createConsumer(consumerDataDefinition,
 				sdncAdminUserDetails);
@@ -813,10 +845,10 @@ public class ManageEcompConsumerCredentials extends ComponentBaseTest {
 				ADD_ECOMP_USER_CREDENTIALS);
 	}
 
-	// add USER_ID in json body
+	// add UserId in json body
 	@Test
 	public void createEcompCredentiaJsonBodyContainLastModfierAtuid() throws Exception {
-		// Add USER_ID (not admin) to json - we will ignore and create the user
+		// Add UserId (not admin) to json - we will ignore and create the user
 		HashMap<String, String> jsonMap = new HashMap<String, String>();
 		jsonMap.put("consumerName", "benny");
 		jsonMap.put("consumerPassword", "123456789012345678901234567890ab123456789012345678901234567890ab");

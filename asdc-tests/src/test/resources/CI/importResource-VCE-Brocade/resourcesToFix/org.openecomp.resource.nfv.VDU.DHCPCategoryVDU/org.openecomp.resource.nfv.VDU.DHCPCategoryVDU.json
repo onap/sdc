@@ -1,6 +1,6 @@
 {
   "payloadName": "org.openecomp.resource.nfv.VDU.DHCPCategoryVDU.yaml",
-  "contactId": "jh0003",
+  "attContact": "jh0003",
   "resourceName": "org.openecomp.resource.nfv.VDU.DHCPCategoryVDU",
   "description": "Node Type that represents a Module",
   "resourceIconPath": "defaulticon",

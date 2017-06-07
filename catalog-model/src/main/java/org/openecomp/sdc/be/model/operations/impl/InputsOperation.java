@@ -28,12 +28,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.json.Json;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.process.traversal.Order;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
@@ -45,15 +48,18 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GetInputValueInfo;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.IInputsOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.AttributeData;
@@ -70,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
 import com.google.gson.Gson;
 import com.thinkaurelius.titan.core.TitanEdge;
@@ -83,9 +90,13 @@ import fj.data.Either;
 @Component("input-operation")
 public class InputsOperation extends AbstractOperation implements IInputsOperation {
 
+	private static final String GET_INPUT = "get_input";
+
 	private static String ASSOCIATING_INPUT_TO_PROP = "AssociatingInputToComponentInstanceProperty";
 
 	private static Logger log = LoggerFactory.getLogger(InputsOperation.class.getName());
+	@Autowired
+	PropertyOperation propertyOperation;
 
 	@Autowired
 	private ComponentInstanceOperation componentInstanceOperation;
@@ -95,18 +106,103 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 	 * Delete specific input from component Although inputId is unique, pass also componentId as all other methods, and also check that the inputId is inside that componentId.
 	 */
 	@Override
-	public Either<String, StorageOperationStatus> deleteInput(String inputId) {
+	public Either<InputDefinition, StorageOperationStatus> deleteInput(String inputId) {
 		log.debug(String.format("Before deleting input: %s from graph", inputId));
+		List<ComponentInstanceInput> inputsValueList = null;
+		List<ComponentInstanceProperty> propertyList = new ArrayList<>();
+		
+		Either<TitanVertex, TitanOperationStatus> vertexService = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), inputId);
+
+		if (vertexService.isRight()) {
+			log.debug("failed to fetch vertex of resource input for id = {}", inputId);
+			TitanOperationStatus status = vertexService.right().value();
+			if (status == TitanOperationStatus.NOT_FOUND) {
+				status = TitanOperationStatus.INVALID_ID;
+			}
+
+			StorageOperationStatus convertTitanStatusToStorageStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+			return Either.right(convertTitanStatusToStorageStatus);
+		}
+		TitanVertex vertex = vertexService.left().value();
+		Iterator<Edge> edgeIter = vertex.edges(Direction.IN, GraphEdgeLabels.INPUT.getProperty());
+		
+		if (edgeIter == null) {
+			log.debug("No edges in graph for criteria");
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.NOT_FOUND));
+		}
+		String inputName = "";
+		if (edgeIter != null) {
+			while (edgeIter.hasNext()) {
+				Edge edge = edgeIter.next();
+				GraphEdge graphEdge = null;
+
+				Map<String, Object> edgeProps = titanGenericDao.getProperties(edge);
+				GraphEdgeLabels edgeTypeFromGraph = GraphEdgeLabels.getByName(edge.label());
+				graphEdge = new GraphEdge(edgeTypeFromGraph, edgeProps);
+				
+				inputName = (String) graphEdge.getProperties().get(GraphEdgePropertiesDictionary.NAME.getProperty());
+				
+			}
+		}
+		
+		
 		Either<List<ComponentInstanceInput>, TitanOperationStatus> inputsValueStatus = this.getComponentInstanceInputsByInputId(inputId);
 		if(inputsValueStatus.isLeft()){
-			List<ComponentInstanceInput> inputsValueLis = inputsValueStatus.left().value();
-			if(!inputsValueLis.isEmpty()){
-				for(ComponentInstanceInput inputValue: inputsValueLis){
+			inputsValueList = inputsValueStatus.left().value();
+			if(!inputsValueList.isEmpty()){	
+				for(ComponentInstanceInput inputValue: inputsValueList){					
 					Either<InputValueData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.InputValue), inputValue.getValueUniqueUid(), InputValueData.class);
 					if (deleteNode.isRight()) {
 						StorageOperationStatus convertTitanStatusToStorageStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(deleteNode.right().value());
 						return Either.right(convertTitanStatusToStorageStatus);
-					} 
+					} 		
+				}
+			}
+		// US848813 delete service input that relates to VL / CP property
+		} else {
+			Either<List<ComponentInstanceProperty>, TitanOperationStatus> propertyValueStatus = getComponentInstancePropertiesByInputId(inputId);
+			if(propertyValueStatus.isLeft() && !propertyValueStatus.left().value().isEmpty()){
+				//propertyList = propertyValueStatus.left().value();	
+				for(ComponentInstanceProperty propertyValue: propertyValueStatus.left().value()){
+			
+					String value = propertyValue.getValue();
+					Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
+					
+					resetInputName(mappedToscaTemplate, inputName);
+					
+					value = gson.toJson(mappedToscaTemplate);
+					propertyValue.setValue(value);
+					String compInstId = propertyValue.getComponentInstanceId();
+					propertyValue.setRules(null);
+				
+					Either<PropertyValueData, TitanOperationStatus> eitherStatus = componentInstanceOperation.updatePropertyOfResourceInstance(propertyValue, compInstId, false);
+
+					if (eitherStatus.isRight()) {
+						log.error("Failed to add property value {} to resource instance {} in Graph. status is {}", propertyValue, compInstId, eitherStatus.right().value().name());
+						return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+						
+					} else {
+						PropertyValueData propertyValueData = eitherStatus.left().value();
+
+						ComponentInstanceProperty propertyValueResult = propertyOperation.buildResourceInstanceProperty(propertyValueData, propertyValue);
+
+						log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult);
+
+						Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(propertyValue.getPath(), propertyValueData.getUniqueId(), propertyValue.getDefaultValue());
+						if (findDefaultValue.isRight()) {
+							return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()));
+							
+						}
+						String defaultValue = findDefaultValue.left().value();
+						propertyValueResult.setDefaultValue(defaultValue);
+						log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
+						
+						propertyValueResult.setComponentInstanceId(compInstId);
+						propertyList.add(propertyValueResult);
+
+						
+					}
+					
 				}
 			}
 		}
@@ -115,7 +211,11 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 			StorageOperationStatus convertTitanStatusToStorageStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(deleteNode.right().value());
 			return Either.right(convertTitanStatusToStorageStatus);
 		} else {
-			return Either.left(inputId);
+			InputDefinition inputDefinition = this.convertInputDataToInputDefinition(deleteNode.left().value());
+			inputDefinition.setInputs(inputsValueList);
+			inputDefinition.setProperties(propertyList);
+			inputDefinition.setName(inputName);
+			return Either.left(inputDefinition);
 		}
 	}
 
@@ -131,7 +231,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 
 				StorageOperationStatus validateAndUpdateProperty = validateAndUpdateProperty(propertyDefinition, dataTypes);
 				if (validateAndUpdateProperty != StorageOperationStatus.OK) {
-					log.error("Property " + propertyDefinition + " is invalid. Status is " + validateAndUpdateProperty);
+					log.error("Property {} is invalid. Status is {}", propertyDefinition, validateAndUpdateProperty);
 					return Either.right(TitanOperationStatus.INVALID_PROPERTY);
 				}
 
@@ -312,6 +412,8 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
 			log.error("Failed to add input {} to graph. status is {}", propertyName, operationStatus);
+			if(operationStatus == TitanOperationStatus.TITAN_SCHEMA_VIOLATION )
+				return Either.right(TitanOperationStatus.ALREADY_EXIST);			
 			return Either.right(operationStatus);
 		}
 
@@ -447,7 +549,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 
 	public <ElementDefinition> TitanOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId, List<ElementDefinition> elements, NodeElementFetcher<ElementDefinition> singleNodeFetcher) {
 
-		log.trace("Going to fetch elements under resource {}", resourceId);
+		log.trace("Going to fetch elements under resource {}" , resourceId);
 		TitanOperationStatus resourceAttributesStatus = singleNodeFetcher.findAllNodeElements(resourceId, elements);
 
 		if (resourceAttributesStatus != TitanOperationStatus.OK) {
@@ -514,7 +616,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 
 	}
 
-	public TitanOperationStatus associatePropertyToInput(String riId, String inputId, ComponentInstanceProperty property, GetInputValueInfo getInput) {
+	public TitanOperationStatus associatePropertyToInput(String riId, String inputId, ComponentInstanceProperty property, GetInputValueDataDefinition getInput) {
 		TitanOperationStatus status = TitanOperationStatus.OK;
 		Either<TitanGraph, TitanOperationStatus> graphRes = titanGenericDao.getGraph();
 		if (graphRes.isRight()) {
@@ -536,10 +638,14 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 		if(getInput!=null){
 			props.put(GraphEdgePropertiesDictionary.NAME.getProperty(), getInput.getPropName());
 			if (getInput.isList()) {
-				String index = getInput.getIndexValue().toString();
-				if (getInput.getGetInputIndex() != null) {
-					index = getInput.getGetInputIndex().getInputName();
-	
+				String index = "";
+				if(getInput.getIndexValue()!= null ){
+					index = getInput.getIndexValue().toString();
+				}else{
+					if (getInput.getGetInputIndex() != null) {
+						index = getInput.getGetInputIndex().getInputName();
+		
+					}
 				}
 				props.put(GraphEdgePropertiesDictionary.GET_INPUT_INDEX.getProperty(), index);
 			}
@@ -627,7 +733,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 	
 				}
 	
-				groupDefinition.setInputsValue(propsList);
+				groupDefinition.setInputs(propsList);
 			}
 
 		}
@@ -704,7 +810,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 		Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllRes = getAllInputsOfResourceInstanceOnlyInputDefId(resourceInstanceId);
 		if (getAllRes.isRight()) {
 			TitanOperationStatus status = getAllRes.right().value();
-			log.trace("After fetching all properties of resource instance {}. Status is {}", resourceInstanceId, status);
+			log.trace("After fetching all properties of resource instance {}. Status is {}" ,resourceInstanceId, status);
 			return new ImmutablePair<TitanOperationStatus, String>(status, null);
 		}
 
@@ -713,7 +819,7 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 			for (ComponentInstanceInput instanceProperty : list) {
 				String propertyUniqueId = instanceProperty.getUniqueId();
 				String valueUniqueUid = instanceProperty.getValueUniqueUid();
-				log.trace("Go over property {} under resource instance {}. valueUniqueId = {}", propertyUniqueId, resourceInstanceId, valueUniqueUid);
+				log.trace("Go over property {} under resource instance {}. valueUniqueId = {}" ,propertyUniqueId, resourceInstanceId, valueUniqueUid);
 				if (propertyId.equals(propertyUniqueId) && valueUniqueUid != null) {
 					log.debug("The property {} already created under resource instance {}", propertyId, resourceInstanceId);
 					return new ImmutablePair<TitanOperationStatus, String>(TitanOperationStatus.ALREADY_EXIST, valueUniqueUid);
@@ -1031,19 +1137,36 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 			PropertyValueData propertyValueData = propertyValueDataPair.left;
 			String propertyValueUid = propertyValueData.getUniqueId();
 			String value = propertyValueData.getValue();
+			
+			String componentInstanceId = (String) propertyValueDataPair.right.getProperties().get(GraphEdgePropertiesDictionary.OWNER_ID.getProperty());
 
 			Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> propertyDefRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), propertyValueUid, GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class);
 			if (propertyDefRes.isRight()) {
 				TitanOperationStatus status = propertyDefRes.right().value();
-				if (status == TitanOperationStatus.NOT_FOUND) {
-					status = TitanOperationStatus.INVALID_ID;
-				}
 				return Either.right(status);
 			}
 
 			ImmutablePair<PropertyData, GraphEdge> propertyDefPair = propertyDefRes.left().value();
 			PropertyData propertyData = propertyDefPair.left;
 			String propertyUniqueId = (String) propertyData.getPropertyDataDefinition().getUniqueId();
+			
+			Either<TitanVertex, TitanOperationStatus> originVertexEither = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), propertyUniqueId);
+			if (originVertexEither.isRight()) {
+				log.debug("Failed to fetch vertex of property for id {} error {}", propertyUniqueId, originVertexEither.right().value());
+				return Either.right(originVertexEither.right().value());
+			}
+			TitanVertex originVertex = originVertexEither.left().value();
+			Iterator<Edge> edgeIter = originVertex.edges(Direction.IN, GraphEdgeLabels.PROPERTY.getProperty());
+			if (edgeIter == null) {		
+				return Either.right(TitanOperationStatus.NOT_FOUND);
+			}
+		
+			String propertyName = "";
+			
+			while (edgeIter.hasNext()) {
+				TitanEdge edge = (TitanEdge) edgeIter.next();
+				propertyName = (String) edge.property(GraphEdgePropertiesDictionary.NAME.getProperty()).value();
+			}
 
 			ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty();
 			// set property original unique id
@@ -1059,7 +1182,9 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 			resourceInstanceProperty.setRules(propertyValueData.getRules());
 			resourceInstanceProperty.setType(propertyData.getPropertyDataDefinition().getType());
 			resourceInstanceProperty.setSchema(propertyData.getPropertyDataDefinition().getSchema());
-			resourceInstanceProperty.setName((String) propertyValueDataPair.right.getProperties().get(GraphPropertiesDictionary.NAME.getProperty()));
+			resourceInstanceProperty.setName(propertyName);
+			resourceInstanceProperty.setComponentInstanceId(componentInstanceId);
+
 
 			result.add(resourceInstanceProperty);
 		}
@@ -1091,10 +1216,22 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 		if (newInputsMap != null && !newInputsMap.isEmpty()) {
 			for (Entry<String, List<InputDefinition>> entry : newInputsMap.entrySet()) {
 				String compInstId = entry.getKey();
+				Either<TitanVertex, TitanOperationStatus> ciVertexEither = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), compInstId);
+				if (ciVertexEither.isRight()) {
+					log.debug("Failed to fetch vertex of resource instance for id {} error {}", compInstId, ciVertexEither.right().value());
+					return Either.right( DaoStatusConverter.convertTitanStatusToStorageStatus(ciVertexEither.right().value()));
+				}
+				TitanVertex ciVertex = ciVertexEither.left().value();
+
+				
+				//String originType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.LABEL.getProperty());
+				String compInstname = (String) titanGenericDao.getProperty(ciVertex, GraphPropertiesDictionary.NORMALIZED_NAME.getProperty());
+				
 				List<InputDefinition> inputs = entry.getValue();
 
 				if (inputs != null && !inputs.isEmpty()) {
 					for (InputDefinition input : inputs) {
+						
 
 						Either<Integer, StorageOperationStatus> counterRes = componentInstanceOperation.increaseAndGetResourceInstanceSpecificCounter(compInstId, GraphPropertiesDictionary.INPUT_COUNTER, true);
 						if (counterRes.isRight()) {
@@ -1109,9 +1246,13 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 
 							return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(oldInputEither.right().value()));
 						}
-						JSONObject jobject = new JSONObject();
-						jobject.put("get_input", input.getName());
+						
 						InputDefinition oldInput = oldInputEither.left().value();
+						String serviceInputName = compInstname + "_" + input.getName();
+						input.setName(serviceInputName);
+						
+						JSONObject jobject = new JSONObject();
+						jobject.put(GET_INPUT, input.getName());
 						
 						ComponentInstanceInput inputValue = new ComponentInstanceInput(oldInput, jobject.toJSONString(), null);
 						Integer index = counterRes.left().value();
@@ -1125,13 +1266,6 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 						}
 						ComponentInstanceInput inputValueData = eitherStatus.left().value();
 
-						// ComponentInstanceInput propertyValueResult =
-						// buildResourceInstanceInput(propertyValueData,
-						// inputValue);
-						// log.debug("The returned ResourceInstanceProperty is "
-						// + propertyValueResult);
-
-						String inputName = input.getName();
 						input.setSchema(oldInputEither.left().value().getSchema());
 						input.setDefaultValue(oldInput.getDefaultValue());
 						input.setConstraints(oldInput.getConstraints());
@@ -1147,13 +1281,13 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 							return Either.right(validateAndUpdateProperty);
 						}
 
-						Either<InputsData, TitanOperationStatus> addPropertyToGraph = addInputToGraph(inputName, input, resourceId, nodeType);
+						Either<InputsData, TitanOperationStatus> addPropertyToGraph = addInputToGraph(serviceInputName, input, resourceId, nodeType);
 
 						if (addPropertyToGraph.isRight()) {
 							return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertyToGraph.right().value()));
 						}
 						InputDefinition createdInputyDefinition = convertInputDataToInputDefinition(addPropertyToGraph.left().value());
-						createdInputyDefinition.setName(inputName);
+						createdInputyDefinition.setName(serviceInputName);
 						createdInputyDefinition.setParentUniqueId(resourceId);
 
 						Map<String, Object> props = new HashMap<String, Object>();
@@ -1178,7 +1312,275 @@ public class InputsOperation extends AbstractOperation implements IInputsOperati
 
 			}
 		}
+		Map<String, List<ComponentInstancePropInput>> newInputsPropsMap = componentInsInputs.getComponentInstanceProperties();
+		if (newInputsPropsMap != null && !newInputsPropsMap.isEmpty()) {
+			Either<List<InputDefinition>, StorageOperationStatus>  result = createInputsFromProperty(resourceId, nodeType, dataTypes, resList, newInputsPropsMap);
+			
+			if (result.isRight()) {
+				log.debug("Failed to create inputs of resource  for id {} error {}", resourceId, result.right().value());
+				return result;
+			}
+			resList = result.left().value();
+			
+		}
 		return Either.left(resList);
 	}
+
+	private Either<List<InputDefinition>, StorageOperationStatus> createInputsFromProperty(String resourceId, NodeTypeEnum nodeType, Map<String, DataTypeDefinition> dataTypes, List<InputDefinition> resList, Map<String, List<ComponentInstancePropInput>> newInputsPropsMap) {
+		for (Entry<String, List<ComponentInstancePropInput>> entry : newInputsPropsMap.entrySet()) {
+			String compInstId = entry.getKey();
+			List<ComponentInstancePropInput> properties = entry.getValue();
+			
+			Either<TitanVertex, TitanOperationStatus> ciVertexEither = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), compInstId);
+			if (ciVertexEither.isRight()) {
+				log.debug("Failed to fetch vertex of resource instance for id {} error {}", compInstId, ciVertexEither.right().value());
+				return Either.right( DaoStatusConverter.convertTitanStatusToStorageStatus(ciVertexEither.right().value()));
+			}
+			TitanVertex ciVertex = ciVertexEither.left().value();
+
+			
+			//String originType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.LABEL.getProperty());
+			String compInstname = (String) titanGenericDao.getProperty(ciVertex, GraphPropertiesDictionary.NORMALIZED_NAME.getProperty());
+			String inputName = compInstname;
+			
+			if (properties != null && !properties.isEmpty()) {
+				for (ComponentInstancePropInput propInput : properties) {
+					Either<InputDefinition, StorageOperationStatus> createInputRes = createInputForComponentInstance(resourceId, nodeType, dataTypes, compInstId, inputName, propInput);
+					
+					if (createInputRes.isRight()) {
+						log.debug("Failed to create input  of resource instance for id {} error {}", compInstId, createInputRes.right().value());
+						return Either.right(createInputRes.right().value());
+					}
+					
+					resList.add(createInputRes.left().value());
+				
+				}
+			}
+			
+		}
+		return Either.left(resList);
+	}
+
+	private Either<InputDefinition, StorageOperationStatus> createInputForComponentInstance(String resourceId, NodeTypeEnum nodeType, Map<String, DataTypeDefinition> dataTypes,  String compInstId, String inputName, ComponentInstancePropInput propInput) {
+		String propertiesName = propInput.getPropertiesName() ;
+		PropertyDefinition selectedProp = propInput.getInput();
+		String[] parsedPropNames = propInput.getParsedPropNames();
+		if(parsedPropNames != null){
+			for(String str: parsedPropNames){
+				inputName += "_"  + str;
+			}
+		} else {
+			inputName += "_"  + propInput.getName();
+		}
+		
+		InputDefinition input = null;
+		ComponentInstanceProperty prop = propInput;	
+		
+		if(propertiesName != null && !propertiesName.isEmpty() && selectedProp != null){
+			input = new InputDefinition(selectedProp);
+		}else{
+			input = new InputDefinition(prop);
+			input.setName(inputName + "_" + prop.getName());
+			
+		}
+		input.setName(inputName);	
+		
+		JSONObject jobject = new JSONObject();
+							
+		
+		if(prop.getValueUniqueUid() == null || prop.getValueUniqueUid().isEmpty()){
+			if(propertiesName != null && !propertiesName.isEmpty() && selectedProp != null){
+					
+				jobject = createJSONValueForProperty(parsedPropNames.length -1, parsedPropNames, jobject, inputName);	
+				prop.setValue(jobject.toJSONString());	
+				
+			}else{
+				
+				jobject.put(GET_INPUT, input.getName());
+				prop.setValue(jobject.toJSONString());
+				
+				
+			}
+			Either<Integer, StorageOperationStatus> increaseCounterRes = componentInstanceOperation.increaseAndGetResourceInstanceSpecificCounter(compInstId, GraphPropertiesDictionary.PROPERTY_COUNTER, true);
+			if (increaseCounterRes.isRight()) {
+				log.debug("Failed to increase resource property counter {} to resource instance {}", prop, compInstId);
+				
+				return Either.right( increaseCounterRes.right().value());
+			}
+			Integer index = increaseCounterRes.left().value();							
+			Either<ComponentInstanceProperty, StorageOperationStatus> result = componentInstanceOperation.addPropertyValueToResourceInstance(prop, compInstId, false, index, true);
+			if (result.isRight()) {
+				log.debug("Failed to add property value {} to resource instance {}", prop, compInstId);								
+				return  Either.right( result.right().value());
+			}
+			prop = result.left().value();
+			
+		}else{
+			
+			String value = prop.getValue();
+			if(value != null){
+				Object objValue =  new Yaml().load(value);
+				if( objValue instanceof Map || objValue  instanceof List ){
+					if(propertiesName == null ||propertiesName.isEmpty()){
+						jobject.put(GET_INPUT, input.getName());
+						prop.setValue(jobject.toJSONString());
+						prop.setRules(null);
+						
+					}else{
+						Map<String, Object> mappedToscaTemplate = (Map<String, Object>) objValue;
+						createInputValue(mappedToscaTemplate, 1, parsedPropNames, inputName);
+						Gson gson = new Gson(); 
+						String json = gson.toJson(mappedToscaTemplate);								
+						prop.setValue(json);
+						prop.setRules(null);
+					}
+					
+				}else{
+					jobject.put(GET_INPUT, input.getName());
+					prop.setValue(jobject.toJSONString());
+					prop.setRules(null);
+				}
+			}else{
+				jobject.put(GET_INPUT, input.getName());
+				prop.setValue(jobject.toJSONString());
+				prop.setRules(null);
+			}
+			
+			Either<PropertyValueData, TitanOperationStatus> eitherStatus = componentInstanceOperation.updatePropertyOfResourceInstance(prop, compInstId, false);
+
+			if (eitherStatus.isRight()) {
+				log.error("Failed to add property value {} to resource instance {} in Graph. status is {}", prop, compInstId, eitherStatus.right().value().name());
+				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherStatus.right().value()));
+				
+			} else {
+				PropertyValueData propertyValueData = eitherStatus.left().value();
+
+				prop  = propertyOperation.buildResourceInstanceProperty(propertyValueData, prop);
+
+				log.debug("The returned ResourceInstanceProperty is {}", prop);
+
+				Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(prop.getPath(), propertyValueData.getUniqueId(), prop.getDefaultValue());
+				if (findDefaultValue.isRight()) {
+					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()));
+					
+				}
+				String defaultValue = findDefaultValue.left().value();
+				prop.setDefaultValue(defaultValue);
+				log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
+				
+				prop.setComponentInstanceId(compInstId);
+				
+
+				
+			}
+
+			
+		}
+		
+		StorageOperationStatus validateAndUpdateProperty = validateAndUpdateProperty(input, dataTypes);
+		if (validateAndUpdateProperty != StorageOperationStatus.OK) {
+			log.error("Property {} is invalid. Status is {}", input, validateAndUpdateProperty);
+			return Either.right(validateAndUpdateProperty);
+		}
+
+		Either<InputsData, TitanOperationStatus> addPropertyToGraph = addInputToGraph(input.getName(), input, resourceId, nodeType);
+
+		if (addPropertyToGraph.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertyToGraph.right().value()));
+		}
+		InputDefinition createdInputyDefinition = convertInputDataToInputDefinition(addPropertyToGraph.left().value());
+		createdInputyDefinition.setName(input.getName());
+		createdInputyDefinition.setParentUniqueId(resourceId);
+		
+		TitanOperationStatus status = associatePropertyToInput(compInstId, createdInputyDefinition.getUniqueId(), prop, null);
+		if (status != TitanOperationStatus.OK) {
+			log.debug("Failed to associate input {} tp property  value{} ", createdInputyDefinition.getName(), prop.getValueUniqueUid());
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+		}
+		
+		return Either.left(createdInputyDefinition);
+		
+	}
+	
+	private  JSONObject createJSONValueForProperty (int i, String [] parsedPropNames, JSONObject ooj, String inputName){
+		
+		while(i >= 1){
+			if( i == parsedPropNames.length -1){				
+				JSONObject jobProp = new JSONObject();
+				jobProp.put(GET_INPUT, inputName);
+				ooj.put(parsedPropNames[i], jobProp);
+				i--;
+				return createJSONValueForProperty (i, parsedPropNames, ooj, inputName);
+			}else{
+				JSONObject res = new JSONObject();
+				res.put(parsedPropNames[i], ooj);
+				i --;
+				res =  createJSONValueForProperty (i, parsedPropNames, res, inputName);
+				return res;
+			}
+		}
+		
+		return ooj;
+	}
+	
+	public void resetInputName(Map<String, Object> lhm1, String inputName){
+	    for (Map.Entry<String, Object> entry : lhm1.entrySet()) {
+	        String key = entry.getKey();
+	        Object value = entry.getValue();
+	        if (value instanceof String && ((String) value).equalsIgnoreCase(inputName) && key.equals(GET_INPUT)) {
+	        	value = "";
+	        	lhm1.remove(key);	        	
+	        } else if (value instanceof Map) {
+	            Map<String, Object> subMap = (Map<String, Object>)value;
+	            resetInputName(subMap, inputName);
+	        } else {
+	             continue;
+	        }
+
+	    }
+	}
+	
+	private  Map<String, Object> createInputValue(Map<String, Object> lhm1, int index, String[] inputNames, String inputName){
+		while(index < inputNames.length){
+			if(lhm1.containsKey(inputNames[index])){
+				Object value = lhm1.get(inputNames[index]);
+				if (value instanceof Map){
+					if(index == inputNames.length -1){
+						((Map) value).put(GET_INPUT, inputName);
+						return ((Map) value);
+						
+					}else{
+						index++;
+						return  createInputValue((Map)value, index, inputNames, inputName);
+					}
+				}else{
+					Map<String, Object> jobProp = new HashMap<>();
+					if(index == inputNames.length -1){
+						jobProp.put(GET_INPUT, inputName);
+						lhm1.put(inputNames[index], jobProp);
+						return lhm1;						
+					}else{						
+						lhm1.put(inputNames[index], jobProp);
+						index++;
+						return  createInputValue(jobProp, index, inputNames, inputName);
+					}
+				}
+			}else{				
+				Map<String, Object> jobProp = new HashMap<>();
+				lhm1.put(inputNames[index], jobProp);
+				if(index == inputNames.length -1){
+					jobProp.put(GET_INPUT, inputName);
+					return jobProp;
+				}else{
+					index++;
+					return  createInputValue(jobProp, index, inputNames, inputName);
+				}
+			}
+		}
+		return lhm1;
+	}
+
+
+
 
 }

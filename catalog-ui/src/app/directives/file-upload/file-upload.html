@@ -1,0 +1,23 @@
+<div class="i-sdc-form-item i-sdc-form-file-upload">
+    <span class="i-sdc-form-file-name" data-tests-id="filename">{{(fileModel && fileModel.filename) || defaultText}}</span>
+    <div class="i-sdc-form-file-upload-x-btn" ng-click="cancel()" data-ng-show="fileModel.filename && fileModel.filename!=='' && elementDisabled!=='true'"></div>
+    <label class="i-sdc-form-file-upload-label">
+        <input
+            type="file"
+            name="{{elementName}}"
+            ng-model="myFileModel"
+            base-sixty-four-input
+            accept="{{getExtensionsWithDot()}}"
+            file-type="{{extensions}}"
+            data-ng-change="onFileChange()"
+            onchange="angular.element(this).scope().setEmptyError(this)"
+            onclick="angular.element(this).scope().onFileClick(this)"
+            on-after-validate="onAfterValidate"
+            data-ng-required="{{elementRequired}}"
+            data-ng-disabled="elementDisabled==='true'"
+            data-tests-id="browseButton"
+            maxsize="10240"
+            />
+        <div class="file-upload-browse-btn" data-ng-class="{'disabled':elementDisabled==='true'}">Browse</div>
+    </label>
+</div>

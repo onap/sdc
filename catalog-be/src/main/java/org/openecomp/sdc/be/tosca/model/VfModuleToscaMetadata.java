@@ -26,6 +26,7 @@ public class VfModuleToscaMetadata implements IToscaMetadata {
 	private String vfModuleModelInvariantUUID;
 	private String vfModuleModelUUID;
 	private String vfModuleModelVersion;
+	private String vfModuleModelCustomizationUUID;
 
 	@Override
 	public void setName(String name) {
@@ -61,6 +62,14 @@ public class VfModuleToscaMetadata implements IToscaMetadata {
 
 	public String getVfModuleModelVersion() {
 		return vfModuleModelVersion;
+	}
+
+	public String getVfModuleModelCustomizationUUID() {
+		return vfModuleModelCustomizationUUID;
+	}
+
+	public void setCustomizationUUID(String customizationUUID) {
+		this.vfModuleModelCustomizationUUID = customizationUUID;
 	}
 
 }

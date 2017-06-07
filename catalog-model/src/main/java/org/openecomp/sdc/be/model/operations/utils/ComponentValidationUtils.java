@@ -20,11 +20,12 @@
 
 package org.openecomp.sdc.be.model.operations.utils;
 
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.operations.api.IComponentOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -56,52 +57,26 @@ public class ComponentValidationUtils {
 		return true;
 	}
 
-	public static boolean canWorkOnResource(String resourceId, IResourceOperation resourceOperation,
-			String userId) {
-		Either<Resource, StorageOperationStatus> getResourceResult = resourceOperation.getLightComponent(resourceId,
-				false);
-
-		if (getResourceResult.isRight()) {
-			log.debug("Failed to retrive resource, resource id {}", resourceId);
-			return false;
-		}
-		Resource resource = getResourceResult.left().value();
-
-		return canWorkOnResource(resource, userId);
-
-	}
-
-	public static boolean canWorkOnService(String serviceId, IServiceOperation serviceOperation, String userId) {
-		Either<Service, StorageOperationStatus> getResourceResult = serviceOperation.getLightComponent(serviceId,
-				false);
-
-		if (getResourceResult.isRight()) {
-			log.debug("Failed to retrieve service, service id {}", serviceId);
-			return false;
-		}
-		Service service = getResourceResult.left().value();
-
-		return canWorkOnComponent(service, userId);
-
-	}
-
-	public static boolean canWorkOnComponent(String componentId, IComponentOperation componentOperation,
-			String userId) {
-		Either<Component, StorageOperationStatus> getResourceResult = componentOperation.getLightComponent(componentId,
-				false);
+	public static boolean canWorkOnComponent(String componentId, ToscaOperationFacade toscaOperationFacade, String userId) {
+		
+		Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseMetadata);
 
 		if (getResourceResult.isRight()) {
 			log.debug("Failed to retrieve component, component id {}", componentId);
 			return false;
 		}
-		Component service = getResourceResult.left().value();
+		Component component = getResourceResult.left().value();
 
-		return canWorkOnComponent(service, userId);
+		return canWorkOnComponent(component, userId);
 	}
-
+	
 	public static boolean canWorkOnComponent(Component component, String userId) {
+		return canWorkOnComponent(component.getLifecycleState(), component.getLastUpdaterUserId(), userId);
+	}
+	
+	private static boolean canWorkOnComponent(LifecycleStateEnum lifecycleState, String lastUpdaterUserId, String userId) {
 		// verify resource is checked-out
-		if (component.getLifecycleState() != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
+		if (lifecycleState != LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) {
 			log.debug("resource is not checked-out");
 			return false;
 		}
@@ -113,7 +88,7 @@ public class ComponentValidationUtils {
 		}
 
 		// verify resource last update user is the current user
-		if (!userId.equals(component.getLastUpdaterUserId())) {
+		if (!userId.equals(lastUpdaterUserId)) {
 			log.debug("resource last updater userId is not {}", userId);
 			return false;
 		}

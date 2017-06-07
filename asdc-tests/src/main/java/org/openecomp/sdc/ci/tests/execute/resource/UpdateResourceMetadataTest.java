@@ -40,6 +40,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -228,7 +229,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 	}
 
 	public char[] getTagInValidFormatChars() throws Exception {
-		// Tag format is the same as defined for Resource Name :
+		// Tag format is the same as defined for "Resource Name" :
 		// Allowed characters: Alphanumeric (a-zA-Z0-9), space (' '), underscore
 		// ('_'), dash ('-'), dot ('.')
 		char[] notValidCharsArray = new char[30];
@@ -468,6 +469,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 		AssertJUnit.assertTrue(!resourceDetails.getCost().equals(updatedResourceRespJavaObject.getCost()));
 		AssertJUnit.assertTrue(!resourceDetails.getLicenseType().equals(updatedResourceRespJavaObject.getLicenseType()));
 		AssertJUnit.assertTrue(!resourceDetails.getUUID().equals(updatedResourceRespJavaObject.getUUID()));
+
 	}
 
 	protected void parseResponseAndValidate(ResourceReqDetails ResourceDetails, RestResponse restResponse) throws Exception {
@@ -590,6 +592,52 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 		parseResponseAndValidate(resourceDetails, getRestResponse);
 
 	}
+
+	// @Test
+	// public void UpdateResourceModifierNotOwnerStateTest() throws Exception {
+	//
+	//
+	// RestResponse restResponse = createResource(sdncModifierDetails,
+	// resourceDetails);
+	// String resourceName = resourceDetails.getName();
+	//
+	// // new user parameters
+	// String userFirstName = "Kot";
+	// String userLastName = "Matroskin";
+	// String role = "ADMIN";
+	// User sdncUserDetails = new User(userFirstName, userLastName,
+	// httpCspUserId, email, role,null);
+	// RestResponse deleteUserResponse = userUtils.deleteUser(sdncUserDetails,
+	// ElementFactory.getDefaultUser(UserRoleEnum.ADMIN));
+	//
+	// RestResponse createUserResponse = UserUtils.createUser(sdncUserDetails,
+	// ElementFactory.getDefaultUser(UserRoleEnum.ADMIN));
+	//
+	// User updatedSdncModifierDetails = new User(userFirstName, userLastName,
+	// httpCspUserId, email,role,null);
+	// ResourceReqDetails updatedResourceDetails =
+	// defineUpdatedResourse(resourceName);
+	// RestResponse updatedRestResponse =
+	// ResourceRestUtils.updateResource(updatedResourceDetails,
+	// updatedSdncModifierDetails, resourceDetails.getUniqueId(), "");
+	//
+	// // validate response
+	// assertNotNull("check response object is not null after update resource",
+	// updatedRestResponse);
+	// assertNotNull("check error code exists in response after update
+	// resource", updatedRestResponse.getErrorCode());
+	// ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESTRICTED_OPERATION.name(),
+	// Empty_List, updatedRestResponse.getResponse());
+	//
+	// RestResponse getRestResponse =
+	// ResourceRestUtils.getResource(sdncModifierDetails,
+	// resourceDetails.getUniqueId());
+	// assertNotNull("check response object is not null after update resource",
+	// getRestResponse);
+	// parseResponseAndValidate(resourceDetails, getRestResponse);
+	//
+	//
+	// }
 
 	@Test
 	public void UpdateResourceNameSensitiveTest() throws Exception {
@@ -962,7 +1010,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResourceIcon_resourceVersion_11() throws Exception {
-		// Can be changed only if major version is 0.
+		// Can be changed only if major version is "0".
 
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
@@ -1022,7 +1070,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResourceVandorName_resourceVersion_11() throws Exception {
-		// Can be changed only if the major resource version is 0.
+		// Can be changed only if the major resource version is "0".
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
 
@@ -1084,7 +1132,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResourceName_resourceVersion_11() throws Exception {
-		// Can be changed only if the major resource version is 0.
+		// Can be changed only if the major resource version is "0".
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
 
@@ -1139,7 +1187,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResourceTag_resourceVersion_11() throws Exception {
-		// Tag Can be updated when major version is 0.
+		// Tag Can be updated when major version is "0".
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
 
@@ -1199,7 +1247,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 	public void UpdateAllowedParames_resourceVersion_11() throws Exception {
 
 		// Tag, contactId, vendorRelease,tags And description - Can be also
-		// updated when major version is NOT 0.
+		// updated when major version is NOT "0".
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
 
@@ -1259,7 +1307,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResourceDerivedFrom_resourceVersion_11() throws Exception {
-		// DerivedFrom parameter - Can be updated when major version is 0.
+		// DerivedFrom parameter - Can be updated when major version is "0".
 		User adminModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		String resourceBaseVersion = "0.1";
 
@@ -1302,7 +1350,7 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 		RestResponse updatedRestResponse = ResourceRestUtils.updateResourceMetadata(updatedResourceDetails, sdncModifierDetails, resourceDetails.getUniqueId(), "");
 		// validate response
 		List<String> resourceList = new ArrayList<String>();
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESOURCE_DERIVED_FROM_CANNOT_BE_CHANGED.name(), resourceList, updatedRestResponse.getResponse());
+		ResourceRestUtils.checkSuccess(updatedRestResponse);
 
 		// get resource with original name. original metadata should be returned
 		RestResponse getRestResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
@@ -1540,26 +1588,26 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void UpdateResource_contactIdValidation() throws Exception { // [a-zA-Z]{2}[0-9]{3}[a-zA-Z0-9]{1}
-																			// (6
-																			// characters
-																			// now,
-																			// may
-																			// be
-																			// expanded
-																			// up
-																			// to
-																			// 8
-																			// characters
-																			// in
-																			// the
-																			// future).
-																			// Convert
-																			// Upper
-																			// case
-																			// character
-																			// to
-																			// lower
-																			// case
+																		// (6
+																		// characters
+																		// now,
+																		// may
+																		// be
+																		// expanded
+																		// up
+																		// to
+																		// 8
+																		// characters
+																		// in
+																		// the
+																		// future).
+																		// Convert
+																		// Upper
+																		// case
+																		// character
+																		// to
+																		// lower
+																		// case
 		RestResponse updatedRestResponse;
 
 		RestResponse restResponse = createResource(sdncModifierDetails, resourceDetails);

@@ -39,10 +39,8 @@ public class JsonObjectTest {
 
 	private ObjectMapper mapper;
 	UploadResourceInfo inputObjectRef;
-	private final String INPUT_RESOURCE_STRING = "{  \"payloadData\" : \"My Test Object\",  \"payloadName\" : \"TestName\", "
-			+ "  \"description\":\"my_description\",\"tags\":[\"tag1\"], "
-			+ "\"artifactList\" : [ {    \"artifactName\" : \"myArtifact0\",  \"artifactPath\" : \"scripts/\",  \"artifactType\" : \"PUPPET\",   "
-			+ " \"artifactDescription\" : \"This is Description\",    \"artifactData\" : null  }, "
+	private final String INPUT_RESOURCE_STRING = "{  \"payloadData\" : \"My Test Object\",  \"payloadName\" : \"TestName\", " + "  \"description\":\"my_description\",\"tags\":[\"tag1\"], "
+			+ "\"artifactList\" : [ {    \"artifactName\" : \"myArtifact0\",  \"artifactPath\" : \"scripts/\",  \"artifactType\" : \"PUPPET\",   " + " \"artifactDescription\" : \"This is Description\",    \"artifactData\" : null  }, "
 			+ "{    \"artifactName\" : \"myArtifact1\",  \"artifactPath\" : \"scripts/\", \"artifactType\" : \"PUPPET\",    \"artifactDescription\" : \"This is Description\", "
 			+ "   \"artifactData\" : null  } ], \"contactId\" : null, \"name\" : null, \"resourceIconPath\" : null, \"vendorName\" : null, \"vendorRelease\" : null , \"resourceType\" : \"VFC\" }";
 
@@ -51,14 +49,12 @@ public class JsonObjectTest {
 		mapper = new ObjectMapper();
 		ArrayList<UploadArtifactInfo> artifactList = new ArrayList<UploadArtifactInfo>();
 		for (int i = 0; i < 2; i++) {
-			UploadArtifactInfo artifactInfo = new UploadArtifactInfo("myArtifact" + i, "scripts/",
-					ArtifactTypeEnum.PUPPET, "This is Description");
+			UploadArtifactInfo artifactInfo = new UploadArtifactInfo("myArtifact" + i, "scripts/", ArtifactTypeEnum.PUPPET, "This is Description");
 			artifactList.add(artifactInfo);
 		}
 		ArrayList<String> tags = new ArrayList<>();
 		tags.add("tag1");
-		inputObjectRef = new UploadResourceInfo("My Test Object", "TestName", "my_description", null, tags,
-				artifactList);
+		inputObjectRef = new UploadResourceInfo("My Test Object", "TestName", "my_description", null, tags, artifactList);
 
 	}
 

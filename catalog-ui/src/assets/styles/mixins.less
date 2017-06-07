@@ -1,0 +1,217 @@
+@import "variables";
+
+.f-color {
+    .a {color:  @main_color_a;}
+    .b {color:  @main_color_b;}
+    .c {color:  @main_color_c;}
+    .d {color:  @main_color_d;}
+    .e {color:  @main_color_e;}
+    .f {color:  @main_color_f;}
+    .g {color:  @main_color_g;}
+    .h {color:  @main_color_h;}
+    .i {color:  @main_color_i;}
+    .j {color:  @main_color_j;}
+    .k {color:  @main_color_k;}
+    .l {color:  @main_color_l;}
+    .m {color:  @main_color_m;}
+    .n {color:  @main_color_n;}
+    .o {color:  @main_color_o;}
+    .p {color:  @main_color_p;}
+
+    .q {color:  @func_color_q;}
+    .r {color:  @func_color_r;}
+    .s {color:  @func_color_s;}
+
+    .t {color:  @tlv_color_t;}
+    .u {color:  @tlv_color_u;}
+    .v {color:  @tlv_color_v;}
+
+
+}
+
+.f-type {
+    ._36 {
+        font-family: @font-omnes-light;
+        font-size: 36px;
+    }
+    ._24 {
+        font-family: @font-omnes-light;
+        font-size: 24px;
+    }
+    ._18_r {
+        font-family: @font-omnes-regular;
+        font-size: 18px;
+    }
+    ._18_m {
+        font-family: @font-omnes-medium;
+        font-size: 18px;
+    }
+    ._16_r {
+        font-family: @font-omnes-regular;
+        font-size: 16px;
+    }
+    ._16_m {
+        font-family: @font-omnes-medium;
+        font-size: 16px;
+    }
+    ._14_r {
+        font-family: @font-omnes-regular;
+        font-size: 14px;
+    }
+    ._14_m {
+        font-family: @font-omnes-medium;
+        font-size: 14px;
+    }
+    ._14_i {
+        font-family: @font-omnes-medium-italic;
+        font-size: 14px;
+    }
+    ._13_r {
+        font-family: @font-omnes-regular;
+        font-size: 13px;
+    }
+    ._13_m {
+        font-family: @font-omnes-medium;
+        font-size: 13px;
+    }
+    ._13_i {
+        font-family: @font-omnes-medium-italic;
+        font-size: 13px;
+    }
+    ._12_r {
+        font-family: @font-omnes-regular;
+        font-size: 12px;
+    }
+    ._12_m {
+        font-family: @font-omnes-medium;
+        font-size: 12px;
+    }
+    ._12_i {
+        font-family: @font-omnes-medium-italic;
+        font-size: 12px;
+    }
+}
+
+.buildForColor(@c){
+    .@{c}_36  { color:  ~"@{main_color_@{c}}"; .f-type > ._36;}
+    .@{c}_24  { color:  ~"@{main_color_@{c}}"; .f-type > ._24;}
+    .@{c}_18_r  { color:  ~"@{main_color_@{c}}"; .f-type > ._18_r;}
+    .@{c}_18_m  { color:  ~"@{main_color_@{c}}"; .f-type > ._18_m;}
+    .@{c}_16_r  { color:  ~"@{main_color_@{c}}"; .f-type > ._16_r;}
+    .@{c}_16_m  { color:  ~"@{main_color_@{c}}"; .f-type > ._16_m;}
+    .@{c}_14_r  { color:  ~"@{main_color_@{c}}"; .f-type > ._14_r;}
+    .@{c}_14_m  { color:  ~"@{main_color_@{c}}"; .f-type > ._14_m;}
+    .@{c}_14_i  { color:  ~"@{main_color_@{c}}"; .f-type > ._14_i;}
+    .@{c}_13_r  { color:  ~"@{main_color_@{c}}"; .f-type > ._13_r;}
+    .@{c}_13_m  { color:  ~"@{main_color_@{c}}"; .f-type > ._13_m;}
+    .@{c}_13_i  { color:  ~"@{main_color_@{c}}"; .f-type > ._13_i;}
+    .@{c}_12_r  { color:  ~"@{main_color_@{c}}"; .f-type > ._12_r;}
+    .@{c}_12_m  { color:  ~"@{main_color_@{c}}"; .f-type > ._12_m;}
+    .@{c}_12_i  { color:  ~"@{main_color_@{c}}"; .f-type > ._12_i;}
+}
+
+.buildForFuncColor(@c){
+    .@{c}_36  { color:  ~"@{func_color_@{c}}"; .f-type > ._36;}
+    .@{c}_24  { color:  ~"@{func_color_@{c}}"; .f-type > ._24;}
+    .@{c}_18_r  { color:  ~"@{func_color_@{c}}"; .f-type > ._18_r;}
+    .@{c}_18_m  { color:  ~"@{func_color_@{c}}"; .f-type > ._18_m;}
+    .@{c}_16_r  { color:  ~"@{func_color_@{c}}"; .f-type > ._16_r;}
+    .@{c}_16_m  { color:  ~"@{func_color_@{c}}"; .f-type > ._16_m;}
+    .@{c}_14_r  { color:  ~"@{func_color_@{c}}"; .f-type > ._14_r;}
+    .@{c}_14_m  { color:  ~"@{func_color_@{c}}"; .f-type > ._14_m;}
+    .@{c}_14_i  { color:  ~"@{func_color_@{c}}"; .f-type > ._14_i;}
+    .@{c}_13_r  { color:  ~"@{func_color_@{c}}"; .f-type > ._13_r;}
+    .@{c}_13_m  { color:  ~"@{func_color_@{c}}"; .f-type > ._13_m;}
+    .@{c}_13_i  { color:  ~"@{func_color_@{c}}"; .f-type > ._13_i;}
+    .@{c}_12_r  { color:  ~"@{func_color_@{c}}"; .f-type > ._12_r;}
+    .@{c}_12_m  { color:  ~"@{func_color_@{c}}"; .f-type > ._12_m;}
+    .@{c}_12_i  { color:  ~"@{func_color_@{c}}"; .f-type > ._12_i;}
+}
+
+
+.buildForTlvColor(@c){
+    .@{c}_36  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._36;}
+    .@{c}_24  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._24;}
+    .@{c}_18_r  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._18_r;}
+    .@{c}_18_m  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._18_m;}
+    .@{c}_16_r  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._16_r;}
+    .@{c}_16_m  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._16_m;}
+    .@{c}_14_r  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._14_r;}
+    .@{c}_14_m  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._14_m;}
+    .@{c}_14_i  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._14_i;}
+    .@{c}_13_r  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._13_r;}
+    .@{c}_13_m  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._13_m;}
+    .@{c}_13_i  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._13_i;}
+    .@{c}_12_r  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._12_r;}
+    .@{c}_12_m  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._12_m;}
+    .@{c}_12_i  { color:  ~"@{tlv_color_@{c}}"; .f-type > ._12_i;}
+}
+
+.buildForColor(a);
+.buildForColor(b);
+.buildForColor(c);
+.buildForColor(d);
+.buildForColor(e);
+.buildForColor(f);
+.buildForColor(g);
+.buildForColor(h);
+.buildForColor(i);
+.buildForColor(j);
+.buildForColor(k);
+.buildForColor(l);
+.buildForColor(m);
+.buildForColor(n);
+.buildForColor(o);
+.buildForColor(p);
+
+.buildForFuncColor(q);
+.buildForFuncColor(r);
+.buildForFuncColor(s);
+
+.buildForTlvColor(t);
+.buildForTlvColor(u);
+.buildForTlvColor(v);
+
+
+.disabled {
+    opacity: 0.4 !important;
+    cursor: auto;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+/* I'm not using hidden name, can not override bower_components/bootstrap/dist/css/less/responsive-utilities.less */
+.hideme {
+    visibility: hidden;
+}
+
+.view-mode {
+    opacity: 1;
+    border: solid 1px @main_color_o;
+    background-color: #f8f8f8;
+    cursor: auto;
+
+    & + &:not(.icons-text), &.no-border-top {
+       border-top: none;
+    }
+}
+
+.no-pointer-events {
+    pointer-events: none;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.selectable {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}

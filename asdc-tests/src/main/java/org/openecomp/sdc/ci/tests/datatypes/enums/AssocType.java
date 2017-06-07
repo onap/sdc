@@ -22,11 +22,8 @@ package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum AssocType {
 
-	BINDABLE("tosca.capabilities.network.Bindable"), 
-	HOSTEDON("tosca.relationships.HostedOn"), 
-	LINKABLE("tosca.capabilities.network.Linkable"), 
-	CONTAINER("tosca.capabilities.Container"), 
-	NODE("tosca.capabilities.Node");
+	BINDABLE("tosca.capabilities.network.Bindable"), HOSTEDON("tosca.relationships.HostedOn"), LINKABLE("tosca.capabilities.network.Linkable"), 
+	CONTAINER("tosca.capabilities.Container"), NODE("tosca.capabilities.Node");
 
 	private String assocType;
 

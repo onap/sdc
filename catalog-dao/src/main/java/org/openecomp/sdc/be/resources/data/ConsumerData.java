@@ -46,12 +46,19 @@ public class ConsumerData extends GraphNode {
 	public ConsumerData(Map<String, Object> properties) {
 		super(NodeTypeEnum.ConsumerCredentials);
 		consumerDataDefinition = new ConsumerDataDefinition();
-		consumerDataDefinition.setConsumerDetailsLastupdatedtime((Long) properties.get(GraphPropertiesDictionary.CONSUMER_DETAILS_LAST_UPDATED_TIME.getProperty()));
-		consumerDataDefinition.setConsumerLastAuthenticationTime((Long) properties.get(GraphPropertiesDictionary.CONSUMER_LAST_AUTHENTICATION_TIME.getProperty()));
-		consumerDataDefinition.setConsumerName((String) properties.get(GraphPropertiesDictionary.CONSUMER_NAME.getProperty()));
-		consumerDataDefinition.setConsumerPassword((String) properties.get(GraphPropertiesDictionary.CONSUMER_PASSWORD.getProperty()));
-		consumerDataDefinition.setConsumerSalt((String) properties.get(GraphPropertiesDictionary.CONSUMER_SALT.getProperty()));
-		consumerDataDefinition.setLastModfierAtuid((String) properties.get(GraphPropertiesDictionary.LAST_MODIFIER_USER_ID.getProperty()));
+		consumerDataDefinition.setConsumerDetailsLastupdatedtime(
+				(Long) properties.get(GraphPropertiesDictionary.CONSUMER_DETAILS_LAST_UPDATED_TIME.getProperty()));
+		consumerDataDefinition.setConsumerLastAuthenticationTime(
+				(Long) properties.get(GraphPropertiesDictionary.CONSUMER_LAST_AUTHENTICATION_TIME.getProperty()));
+		consumerDataDefinition
+				.setConsumerName((String) properties.get(GraphPropertiesDictionary.CONSUMER_NAME.getProperty()));
+		consumerDataDefinition.setConsumerPassword(
+				(String) properties.get(GraphPropertiesDictionary.CONSUMER_PASSWORD.getProperty()));
+		consumerDataDefinition
+				.setConsumerSalt((String) properties.get(GraphPropertiesDictionary.CONSUMER_SALT.getProperty()));
+		consumerDataDefinition.setLastModfierAtuid(
+				(String) properties.get(GraphPropertiesDictionary.LAST_MODIFIER_USER_ID.getProperty()));
+
 	}
 
 	@Override

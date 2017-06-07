@@ -72,10 +72,10 @@ public class DistributionEngineClusterHealth {
 
 	public enum HealthCheckInfoResult {
 
-		OK(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())), UNAVAILABLE(
-				new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())), NOT_CONFIGURED(
-						new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())), DISABLED(
-								new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription()));
+		OK(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.UP, null, ClusterStatusDescription.OK.getDescription())), 
+		UNAVAILABLE(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.UNAVAILABLE.getDescription())), 
+		NOT_CONFIGURED(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.NOT_CONFIGURED.getDescription())), 
+		DISABLED(new HealthCheckInfo(HealthCheckComponent.DE, HealthCheckStatus.DOWN, null, ClusterStatusDescription.DISABLED.getDescription()));
 
 		private HealthCheckInfo healthCheckInfo;
 
@@ -237,6 +237,7 @@ public class DistributionEngineClusterHealth {
 						message = e.getClass().getName();
 					}
 					healthLogger.debug("Error occured during running Health Check retry query towards UEB server {}. Result is {}", healthCheckCall.getServer(), message);
+					healthLogger.trace("Error occured during running Health Check retry query towards UEB server {}. Result is {}", healthCheckCall.getServer(), message, e);
 				}
 				retryNumber++;
 

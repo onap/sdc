@@ -67,16 +67,23 @@ public class ExternalApiEventTableDesc implements ITableDescription {
 	}
 
 	enum EGAEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESCRIPTION(
-				"description", DataType.varchar(), false), CONSUMER_ID("consumer_id", DataType.varchar(),
-						false), RESOURCE_URL("resource_URL", DataType.varchar(), false), RESOURCE_NAME("resource_name",
-								DataType.varchar(),
-								false), RESOURCE_TYPE("resource_type", DataType.varchar(), false), SERVICE_INST_ID(
-										"service_instance_id", DataType.varchar(),
-										true), MODIFIER("modifier", DataType.varchar(), false), PREV_ARTIFACT_UUID(
-												"prev_artifact_uuid", DataType.varchar(), false), CURR_ARTIFACT_UUID(
-														"curr_artifact_uuid", DataType.varchar(), false), ARTIFACT_DATA(
-																"artifact_data", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESCRIPTION( "description", DataType.varchar(), false), 
+		CONSUMER_ID("consumer_id", DataType.varchar(), false), 
+		RESOURCE_URL("resource_URL", DataType.varchar(), false), 
+		RESOURCE_NAME("resource_name", DataType.varchar(), false),
+		RESOURCE_TYPE("resource_type", DataType.varchar(), false), 
+		SERVICE_INST_ID( "service_instance_id", DataType.varchar(), true),
+		INVARIANT_UUID("invariant_uuid", DataType.varchar(), true),
+		MODIFIER("modifier", DataType.varchar(), false), 
+		PREV_VERSION( "prev_version", DataType.varchar(), false), 
+		CURR_VERSION("curr_version", DataType.varchar(), false),
+		PREV_STATE("prev_state", DataType.varchar(), false), 
+		CURR_STATE( "curr_state", DataType.varchar(), false),	
+		PREV_ARTIFACT_UUID( "prev_artifact_uuid", DataType.varchar(), false),
+		CURR_ARTIFACT_UUID( "curr_artifact_uuid", DataType.varchar(), false),
+		ARTIFACT_DATA( "artifact_data", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

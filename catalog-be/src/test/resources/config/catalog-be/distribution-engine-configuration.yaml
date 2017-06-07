@@ -1,7 +1,7 @@
 uebServers:
-   - uebsb91kcdc.it.att.com:3904
-   - uebsb92kcdc.it.att.com:3904
-#   - uebsb93kcdc.it.att.com:3904
+   - uebsb91kcdc.it.att.com
+   - uebsb92kcdc.it.att.com
+#   - uebsb93kcdc.it.att.com
 
 uebPublicKey: 8F3MDAtMSBwwpSMy
 

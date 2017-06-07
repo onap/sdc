@@ -36,9 +36,9 @@
 		</encoder>
 	</appender>
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="DEBUG_ROLLING" />
 	</root>
-	<logger name="org.openecomp.sdc" level="DEBUG" />
+	<logger name="org.openecomp.sdc" level="INFO" />
 
 </configuration>

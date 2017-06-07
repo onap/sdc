@@ -92,7 +92,6 @@ public class HttpRequest {
 			response.append(result);
 
 		} catch (Exception e) {
-			// logger.error("Error during getting input stream: ",e);
 		}
 
 		try {
@@ -101,7 +100,6 @@ public class HttpRequest {
 			response.append(result);
 
 		} catch (Exception e) {
-			// logger.error("Error during getting error stream: ",e);
 		}
 
 		logger.debug("Response body: {}", response);
@@ -155,7 +153,7 @@ public class HttpRequest {
 			}
 			in.close();
 		} catch (Exception e) {
-			logger.debug("response body is null");
+			logger.debug("response body is null", e);
 		}
 
 		String result;
@@ -190,7 +188,8 @@ public class HttpRequest {
 		return restResponse;
 	}
 
-	public RestResponse httpSendByMethod(String url, String method, String body, Map<String, String> headers) throws IOException {
+	public RestResponse httpSendByMethod(String url, String method, String body, Map<String, String> headers)
+			throws IOException {
 
 		RestResponse restResponse = new RestResponse();
 		URL obj = new URL(url);
@@ -234,7 +233,7 @@ public class HttpRequest {
 			in.close();
 		} catch (Exception e) {
 			// response = null;
-			logger.debug("response body is null");
+			logger.debug("response body is null", e);
 		}
 
 		String result;
@@ -353,7 +352,8 @@ public class HttpRequest {
 		return httpSendPost(url, body, headers, "PUT");
 	}
 
-	public RestResponse httpSendPost(String url, String body, Map<String, String> headers, String methodType) throws IOException {
+	public RestResponse httpSendPost(String url, String body, Map<String, String> headers, String methodType)
+			throws IOException {
 
 		RestResponse restResponse = new RestResponse();
 		URL obj = new URL(url);
@@ -428,7 +428,8 @@ public class HttpRequest {
 
 	}
 
-	public RestResponse httpSendDeleteWithBody2(String url, String body, Map<String, String> headers) throws ClientProtocolException, IOException {
+	public RestResponse httpSendDeleteWithBody2(String url, String body, Map<String, String> headers)
+			throws ClientProtocolException, IOException {
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		RestResponse restResponse = new RestResponse();
@@ -455,7 +456,8 @@ public class HttpRequest {
 		return restResponse;
 	}
 
-	public RestResponse httpSendDeleteWithBody(String url, String body, Map<String, String> headers) throws IOException {
+	public RestResponse httpSendDeleteWithBody(String url, String body, Map<String, String> headers)
+			throws IOException {
 
 		RestResponse restResponse = new RestResponse();
 		URL obj = new URL(url);
@@ -600,7 +602,8 @@ public class HttpRequest {
 
 	}
 
-	public RestResponse httpSendPostMultipart(String url, Map<String, String> headers, String jsonLocation, String zipLocation) throws IOException {
+	public RestResponse httpSendPostMultipart(String url, Map<String, String> headers, String jsonLocation,
+			String zipLocation) throws IOException {
 
 		Gson gson = new Gson();
 		String gsonToSend = null;
@@ -665,7 +668,8 @@ public class HttpRequest {
 
 	}
 
-	public RestResponse httpSendPostWithAuth(String url, String body, Map<String, String> headers, String username, String password) throws IOException {
+	public RestResponse httpSendPostWithAuth(String url, String body, Map<String, String> headers, String username,
+			String password) throws IOException {
 
 		String userPassword = username + ":" + password;
 		String encoding = Base64.encodeBase64String(userPassword.getBytes());
@@ -799,7 +803,8 @@ public class HttpRequest {
 		return restResponse;
 	}
 
-	public static RestResponse sendHttpPostWithEntity(HttpEntity requestEntity, String url, Map<String, String> headers) throws IOException, ClientProtocolException {
+	public static RestResponse sendHttpPostWithEntity(HttpEntity requestEntity, String url, Map<String, String> headers)
+			throws IOException, ClientProtocolException {
 		CloseableHttpResponse response = null;
 		CloseableHttpClient client = HttpClients.createDefault();
 		try {

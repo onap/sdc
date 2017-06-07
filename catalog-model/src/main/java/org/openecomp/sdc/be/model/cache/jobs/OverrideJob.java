@@ -47,8 +47,7 @@ public class OverrideJob extends Job {
 			log.trace("override component in cache, componentId:{} of nodeTypeEnum:{} with timestamp:{}.", componentId,
 					nodeTypeEnum, timestamp);
 			// get component from grath
-			Either<Component, StorageOperationStatus> componentRes = getOperationByType(nodeTypeEnum)
-					.getComponent(componentId, false);
+			Either<Component, StorageOperationStatus> componentRes = daoInfo.getToscaOperationFacade().getToscaElement(componentId);
 			if (componentRes.isRight()) {
 				log.debug("failed to get full component:{} from graph status:{}", componentId,
 						componentRes.right().value());
@@ -66,7 +65,7 @@ public class OverrideJob extends Job {
 		} catch (Exception e) {
 			log.debug("an exception was encountered during OverrideJob", e);
 		} finally {
-			this.daoInfo.getResourceOperation().getTitanGenericDao().commit();
+			this.daoInfo.getToscaOperationFacade().commit();
 		}
 		return false;
 

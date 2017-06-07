@@ -1,7 +1,7 @@
 uebServers:
-   - uebsb91sfdc.it.att.com:3904
-   - uebsb92sfdc.it.att.com:3904
-   - uebsb93sfdc.it.att.com:3904
+   - uebsb91sfdc.it.att.com
+   - uebsb92sfdc.it.att.com
+   - uebsb93sfdc.it.att.com
 
 # prev Kansas City Sandbox uebPublicKey: 8F3MDAtMSBwwpSMy 
 uebPublicKey: sSJc5qiBnKy2qrlc

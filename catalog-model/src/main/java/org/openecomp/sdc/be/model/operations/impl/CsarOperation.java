@@ -61,7 +61,6 @@ public class CsarOperation {
 
 	}
 
-	// Mock returning a file from the file system until we have API from onboarding
 	public Either<Map<String, byte[]>, StorageOperationStatus> getMockCsar(String csarUuid) {
 		File dir = new File("/var/tmp/mockCsar");
 		FileFilter fileFilter = new WildcardFileFilter("*.csar");
@@ -93,11 +92,10 @@ public class CsarOperation {
 	 */
 	public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, User user) {
 
-		Either<Map<String, byte[]>, StorageOperationStatus> result = onboardingClient.getCsar(csarUuid,
-				user.getUserId());
+		Either<Map<String, byte[]>, StorageOperationStatus> result = onboardingClient.getCsar(csarUuid, user.getUserId());
 
 		if (result.isRight()) {
-			log.debug("Cannot find csar {}. Status returned is {}", csarUuid, result.right().value());
+			log.debug("Cannot find csar {}. Staus returned is {}", csarUuid, result.right().value());
 		} else {
 			Map<String, byte[]> values = result.left().value();
 			if (values != null) {

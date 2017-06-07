@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ToscaTopolgyTemplate {
@@ -40,8 +41,11 @@ public class ToscaTopolgyTemplate {
 		return groups;
 	}
 
-	public void setGroups(Map<String, ToscaGroupTemplate> groups) {
-		this.groups = groups;
+	public void addGroups(Map<String, ToscaGroupTemplate> groups) {
+		if ( this.groups == null ){
+			this.groups = new HashMap<>();
+		}
+		this.groups.putAll(groups);
 	}
 
 	public SubstitutionMapping getSubstitution_mappings() {

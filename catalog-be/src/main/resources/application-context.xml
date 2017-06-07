@@ -28,6 +28,8 @@
 		org.openecomp.sdc.be.dao.cassandra,
 		org.openecomp.sdc.be.switchover.detector,
 		org.openecomp.sdc.be.tosca,
+		org.openecomp.sdc.be.model.jsontitan.operations,
+		org.openecomp.sdc.be.dao.jsongraph,
 		org.openecomp.sdc.be.externalapi.servlet
 		">
 		
@@ -56,9 +58,9 @@
   <bean id="distribution-engine-cluster-health" class="org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth" />
   <bean id="categoriesImportManager" class="org.openecomp.sdc.be.components.impl.CategoriesImportManager" />
   <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.externalapi.servlet.AssetMetadataConverter" />
-  
-  
-  
+
+  <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
+
   <util:properties id="elasticsearchConfig" location="file:${config.home}/elasticsearch.yml" />
   
 </beans>

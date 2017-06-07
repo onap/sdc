@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.junit.Rule;
@@ -45,6 +46,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.preRequisites.SimpleOneRsrcOneServiceTest;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.PropertyRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
@@ -54,6 +56,8 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.gson.Gson;
 
 public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
@@ -79,10 +83,6 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 
 	@BeforeMethod
 	public void init() throws Exception {
-		// //Create user
-		// sdncDesignerDetails = createUser("tu1234", "Test", "User",
-		// "tu1234@intl.sdc.com", "DESIGNER");
-		//
 		// //Delete resource
 		//
 		// resourceDetails = new ResourceReqDetails();
@@ -117,7 +117,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 		// Create property
 		// System.out.println ("---- Create Property (POST) ----");
 
-		String propertyId = UniqueIdBuilder.buildPropertyUniqueId(getResourceId(resourceDetails), property.getName());
+		String propertyId = UniqueIdBuilder.buildComponentPropertyUniqueId(getResourceId(resourceDetails), property.getName());
 
 		PropertyRestUtils.deleteProperty(getResourceId(resourceDetails), propertyId, sdncDesignerDetails);
 		RestResponse createPropertyResponse = PropertyRestUtils.createProperty(getResourceId(resourceDetails), body,
@@ -194,7 +194,7 @@ public class PropertyApisTest extends SimpleOneRsrcOneServiceTest {
 	protected String getPropertyId(ResourceReqDetails resource, PropertyReqDetails property) {
 		// return
 		// resource.getResourceName().toLowerCase()+".0.1."+property.getPropertyName();
-		return UniqueIdBuilder.buildPropertyUniqueId(resource.getUniqueId(), property.getName());
+		return UniqueIdBuilder.buildComponentPropertyUniqueId(resource.getUniqueId(), property.getName());
 	}
 
 	protected String getResourceId(ResourceReqDetails resource) {

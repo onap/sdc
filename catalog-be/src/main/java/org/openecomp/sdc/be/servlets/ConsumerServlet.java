@@ -204,7 +204,7 @@ public class ConsumerServlet extends BeGenericServlet {
 		ConsumerDefinition consumer = null;
 		Gson gson = new Gson();
 		try {
-			log.trace("convert json to object. json=\n{}", data);
+			log.trace("convert json to object. json=\n {}", data);
 			consumer = gson.fromJson(data, ConsumerDefinition.class);
 			if (consumer == null) {
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");

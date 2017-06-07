@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.tosca.model;
 public class ToscaMetadata implements IToscaMetadata {
 	private String invariantUUID;
 	private String UUID;
+	private String customizationUUID;
 	private String version;
 	private String name;
 	private String description;
@@ -32,7 +33,8 @@ public class ToscaMetadata implements IToscaMetadata {
 	private String resourceVendor;
 	private String resourceVendorRelease;
 	private Boolean serviceEcompNaming;
-	private Boolean serviceHoming;
+	private Boolean ecompGeneratedNaming;
+	private String namingPolicy;
 
 	public String getName() {
 		return name;
@@ -109,20 +111,28 @@ public class ToscaMetadata implements IToscaMetadata {
 		this.resourceVendorRelease = resourceVendorRelease;
 	}
 
-	public Boolean isServiceEcompNaming() {
+	public Boolean isEcompGeneratedNaming() {
+		return ecompGeneratedNaming;
+	}
+
+	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+		this.ecompGeneratedNaming = ecompGeneratedNaming;
+	}
+
+	public String isNamingPolicy() {
+		return namingPolicy;
+	}
+
+	public void setNamingPolicy(String namingPolicy) {
+		this.namingPolicy = namingPolicy;
+	}
+
+	public Boolean getServiceEcompNaming() {
 		return serviceEcompNaming;
 	}
 
 	public void setServiceEcompNaming(Boolean serviceEcompNaming) {
 		this.serviceEcompNaming = serviceEcompNaming;
-	}
-
-	public Boolean isServiceHoming() {
-		return serviceHoming;
-	}
-
-	public void setServiceHoming(Boolean serviceHoming) {
-		this.serviceHoming = serviceHoming;
 	}
 
 	public String getVersion() {
@@ -132,6 +142,14 @@ public class ToscaMetadata implements IToscaMetadata {
 	@Override
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public String getCustomizationUUID() {
+		return customizationUUID;
+	}
+
+	public void setCustomizationUUID(String customizationUUID) {
+		this.customizationUUID = customizationUUID;
 	}
 
 }

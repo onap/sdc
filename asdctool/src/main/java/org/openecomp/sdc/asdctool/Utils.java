@@ -95,7 +95,7 @@ public class Utils {
 					if (rightValue == null) {
 						continue;
 					} else {
-						log.debug("The key {} cannot be found in the properties {}", key, leftProps);
+						log.debug("The key {} cannot be found in the properties {}",key,leftProps);
 						return false;
 					}
 				}
@@ -103,7 +103,7 @@ public class Utils {
 				// if (false == leftValue instanceof Map && false == leftValue
 				// instanceof List) {
 				if (false == leftValue.equals(rightValue)) {
-					log.trace("The value of key {} is different between properties {} vs {}", key, leftValue, rightValue);
+					log.trace("The value of key {} is differnet between properties. {} vs {}",key,leftValue,rightValue);
 					return false;
 				}
 				// }

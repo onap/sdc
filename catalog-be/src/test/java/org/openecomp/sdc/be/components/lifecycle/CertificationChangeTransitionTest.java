@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.components.lifecycle.CertificationChangeTransition;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
@@ -63,19 +65,32 @@ public class CertificationChangeTransitionTest extends LifecycleTestBase {
 		super.setup();
 		componentsUtils.Init();
 		// checkout transition object
-		certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, lcOperation);
+		certifyTransitionObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
 		certifyTransitionObj.setConfigurationManager(configurationManager);
-
-		certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, lcOperation);
+		certifyTransitionObj.setLifeCycleOperation(toscaElementLifecycleOperation);
+		
+		certificationCancelObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation,  toscaOperationFacade, titanDao);
 		certificationCancelObj.setConfigurationManager(configurationManager);
-
-		certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, lcOperation);
+		certificationCancelObj.setLifeCycleOperation(toscaElementLifecycleOperation);
+		
+		certificationFailObj = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentsUtils, toscaElementLifecycleOperation, toscaOperationFacade, titanDao);
 		certificationFailObj.setConfigurationManager(configurationManager);
-
+		certificationFailObj.setLifeCycleOperation(toscaElementLifecycleOperation);
+		
 		owner = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
 
 		when(artifactsManager.deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList())).thenReturn(StorageOperationStatus.OK);
 		resource = createResourceObject(false);
+	}
+	
+	@Test
+	public void testVFCMTStateValidation(){
+		Resource resource = createResourceVFCMTObject();
+				
+		User user = new User("cs0008", "Carlos", "Santana", "cs@sdc.com", "DESIGNER", null);
+				
+		Either<Boolean, ResponseFormat> validateBeforeTransition = certifyTransitionObj.validateBeforeTransition(resource, ComponentTypeEnum.RESOURCE, user, owner, LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
+		assertEquals(validateBeforeTransition.isLeft(), true);
 	}
 
 	@Test

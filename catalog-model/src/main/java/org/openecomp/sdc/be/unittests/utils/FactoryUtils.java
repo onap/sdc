@@ -25,9 +25,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -39,6 +41,7 @@ import org.openecomp.sdc.be.resources.data.CapabilityInstData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.RequirementData;
+import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 
 public final class FactoryUtils {
 	private FactoryUtils() {
@@ -59,6 +62,15 @@ public final class FactoryUtils {
 		Resource resource = new Resource();
 		String uniqueId = UUID.randomUUID().toString();
 		resource.setUniqueId(uniqueId);
+		return resource;
+	}
+	
+	public static ResourceMetadataData createResourceByType(String resourceType) {
+		ResourceMetadataData resource = new ResourceMetadataData();
+		String uniqueId = UUID.randomUUID().toString();
+		resource.getMetadataDataDefinition().setHighestVersion(true);
+		resource.getMetadataDataDefinition().setUniqueId(uniqueId);
+		((ResourceMetadataDataDefinition)resource.getMetadataDataDefinition()).setResourceType(ResourceTypeEnum.getTypeIgnoreCase(resourceType));
 		return resource;
 	}
 

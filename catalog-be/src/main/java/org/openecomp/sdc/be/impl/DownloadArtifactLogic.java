@@ -78,11 +78,8 @@ public class DownloadArtifactLogic {
 
 			String payloadStr = new String(artifactPayload);
 			byte[] decodedPayload = artifactPayload;
-			boolean isEncoded = GeneralUtility.isBase64Encoded(payloadStr);
-			if (isEncoded) {
-				log.debug("payload is encoded. perform decode");
-				decodedPayload = Base64.decode(new String(artifactPayload));
-			}
+			log.debug("payload is encoded. perform decode");
+			decodedPayload = Base64.decode(new String(artifactPayload));
 			final InputStream artifactStream = new ByteArrayInputStream(decodedPayload);
 			log.debug("found artifact for with id: {}", artifactId);
 			try {
@@ -106,7 +103,7 @@ public class DownloadArtifactLogic {
 			} catch (IOException e) {
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "Failed to stream artifact data on the response");
 				BeEcompErrorManager.getInstance().logBeSystemError("Failed to stream artifact data on the response");
-				log.debug("Failed to stream artifact data on the response: {}", e.getMessage());
+				log.debug("Failed to stream artifact data on the response: {}", e.getMessage(), e);
 				response = buildResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Failed to stream artifact data on the response");
 				return response;
 			}

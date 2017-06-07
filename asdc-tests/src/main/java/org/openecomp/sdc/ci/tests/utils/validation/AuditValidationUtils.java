@@ -100,7 +100,6 @@ public class AuditValidationUtils {
 			}
 		}
 
-		// logger.debug("audit description - {}", auditDesc);
 		return auditDesc;
 	}
 
@@ -205,24 +204,29 @@ public class AuditValidationUtils {
 		validateField(actualAuditRecord, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
 		validateField(actualAuditRecord, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
 				externalAuditObject.getCONSUMER_ID());
+		// TODO
 		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
 				externalAuditObject.getRESOURCE_URL());
+		//TODO
 		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(),
 				externalAuditObject.getRESOURCE_NAME());
 		validateField(actualAuditRecord, AuditJsonKeysEnum.SERVICE_INSTANCE_ID.getAuditJsonKeyName(),
 				externalAuditObject.getSERVICE_INSTANCE_ID());
+		//TODO
 		validateField(actualAuditRecord, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(),
 				externalAuditObject.getRESOURCE_TYPE());
 		validateField(actualAuditRecord, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(),
 				externalAuditObject.getSTATUS());
 		validateField(actualAuditRecord, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(),
 				externalAuditObject.getDESC());
-		validateField(actualAuditRecord, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
-				externalAuditObject.getMODIFIER());
+		//TODO
+//		validateField(actualAuditRecord, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(),
+//				externalAuditObject.getMODIFIER());
 		validateField(actualAuditRecord, AuditJsonKeysEnum.PREV_ARTIFACT_UUID.getAuditJsonKeyName(),
 				externalAuditObject.getPREV_ARTIFACT_UUID());
 		validateField(actualAuditRecord, AuditJsonKeysEnum.CURR_ARTIFACT_UUID.getAuditJsonKeyName(),
 				externalAuditObject.getCURR_ARTIFACT_UUID());
+		//TODO
 		validateField(actualAuditRecord, AuditJsonKeysEnum.ARTIFACT_DATA.getAuditJsonKeyName(),
 				externalAuditObject.getARTIFACT_DATA());
 
@@ -495,6 +499,61 @@ public class AuditValidationUtils {
 		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
 				expectedDistDownloadAudit.getResourceUrl());
 	}
+	
+	public static void validateAuditExternalSearchAPI(ExpectedExternalAudit expectedDistDownloadAudit, String action, Map<AuditingFieldsKeysEnum, String> body)
+			throws Exception {
+
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2 = parseAuditResourceByAction(action, body);
+
+		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
+		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedDistDownloadAudit.getSTATUS());
+		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedDistDownloadAudit.getDESC());
+		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(),
+				expectedDistDownloadAudit.getCONSUMER_ID());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(),
+				expectedDistDownloadAudit.getRESOURCE_URL());
+	}
+	
+	public static void validateAuditExternalCreateResource(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	Map<String, Object> map2 = new HashMap<String, Object>();
+		map2 = parseAuditResourceByAction(action, body);
+
+		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), expectedExternalAudit.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), expectedExternalAudit.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(), expectedExternalAudit.getCONSUMER_ID());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedExternalAudit.getRESOURCE_URL());
+		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), expectedExternalAudit.getMODIFIER());
+		
+		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(), expectedExternalAudit.getPrevVersion());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), expectedExternalAudit.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), expectedExternalAudit.getPrevState());
+		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), expectedExternalAudit.getCurrState());
+		
+		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedExternalAudit.getStatus());
+		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedExternalAudit.getDesc());
+	}
+	
+	public static void validateAuditExternalChangeLifecycle(ExpectedResourceAuditJavaObject expectedExternalAudit, String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2 = parseAuditResourceByAction(action, body);
+
+		validateField(map2, AuditJsonKeysEnum.ACTION.getAuditJsonKeyName(), action);
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_NAME.getAuditJsonKeyName(), expectedExternalAudit.getResourceName());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_TYPE.getAuditJsonKeyName(), expectedExternalAudit.getResourceType());
+		validateField(map2, AuditJsonKeysEnum.CONSUMER_ID.getAuditJsonKeyName(), expectedExternalAudit.getCONSUMER_ID());
+		validateField(map2, AuditJsonKeysEnum.RESOURCE_URL.getAuditJsonKeyName(), expectedExternalAudit.getRESOURCE_URL());
+		validateField(map2, AuditJsonKeysEnum.MODIFIER.getAuditJsonKeyName(), expectedExternalAudit.getMODIFIER());
+		
+		validateField(map2, AuditJsonKeysEnum.PREV_VERSION.getAuditJsonKeyName(), expectedExternalAudit.getPrevVersion());
+		validateField(map2, AuditJsonKeysEnum.CURR_VERSION.getAuditJsonKeyName(), expectedExternalAudit.getCurrVersion());
+		validateField(map2, AuditJsonKeysEnum.PREV_STATE.getAuditJsonKeyName(), expectedExternalAudit.getPrevState());
+		validateField(map2, AuditJsonKeysEnum.CURR_STATE.getAuditJsonKeyName(), expectedExternalAudit.getCurrState());
+		
+		validateField(map2, AuditJsonKeysEnum.STATUS.getAuditJsonKeyName(), expectedExternalAudit.getStatus());
+		validateField(map2, AuditJsonKeysEnum.DESCRIPTION.getAuditJsonKeyName(), expectedExternalAudit.getDesc());
+	}
 
 	public void validateAuditDeploy(ExpectedResourceAuditJavaObject resourceAuditJavaObject, String action)
 			throws Exception {
@@ -634,11 +693,10 @@ public class AuditValidationUtils {
 	//
 	// }
 
-	public static Map<String, Object> parseAuditResourceByAction(String action,
-			Map<AuditingFieldsKeysEnum, String> body) throws Exception {
+	public static Map<String, Object> parseAuditResourceByAction(String action, Map<AuditingFieldsKeysEnum, String> body) throws Exception {
 
 		Map auditingMessage = null;
-		auditingMessage = retrieveAuditMessagesByPattern(action, body);
+		auditingMessage = retrieveAuditMessagesByPattern(action, body, false);
 
 		return auditingMessage;
 
@@ -678,12 +736,12 @@ public class AuditValidationUtils {
 		Map auditingMessage = null;
 
 		if (body == null || body.isEmpty()) {
-			auditingMessage = retrieveAuditMessagesByPattern(action, null);
+			auditingMessage = retrieveAuditMessagesByPattern(action, null, false);
 			// String pattern = "/_search?q=ACTION:\"" + action + "\"";
 			// auditingMessage = retrieveAuditMessagesByPattern(action);
 			// auditingMessage = retrieveAuditMessagesByPattern(pattern);
 		} else {
-			auditingMessage = retrieveAuditMessagesByPattern(action, body);
+			auditingMessage = retrieveAuditMessagesByPattern(action, body, false);
 			// auditingMessage = retrieveAuditMessagesUsingBody(body);
 		}
 
@@ -737,11 +795,12 @@ public class AuditValidationUtils {
 		return restResponse.getResponse();
 	}
 
-	public static Map retrieveAuditMessagesByPattern(String action, Map<AuditingFieldsKeysEnum, String> body)
+	public static Map<String, String> retrieveAuditMessagesByPattern(String action, Map<AuditingFieldsKeysEnum, String> body, Boolean retryFlag)
 			throws IOException {
 
 		// get cassandra table name by action
 		String esType = AuditingActionEnum.getActionByName(action).getAuditingEsType();
+		Map<String, String> resultsMap = new HashMap<String, String>();
 
 		List<Pair<AuditingFieldsKeysEnum, String>> myFields = new ArrayList<Pair<AuditingFieldsKeysEnum, String>>();
 		Pair<AuditingFieldsKeysEnum, String> myPair = new Pair<AuditingFieldsKeysEnum, String>(
@@ -754,13 +813,16 @@ public class AuditValidationUtils {
 		}
 
 		List<Row> fetchFromTable = CassandraUtils.fetchFromTable(auditKeySpaceName, esType, myFields);
-		assertTrue("expected on fetching from data base one record only, actual: " + fetchFromTable.size(),
-				fetchFromTable.size() == 1);
+		if(retryFlag){
+			if(fetchFromTable.size() == 0){
+				return resultsMap;
+			}
+		}
+		assertTrue("expected on fetching from data base one record only, actual: " + fetchFromTable.size(), fetchFromTable.size() == 1);
 		Row row = fetchFromTable.get(0);
 
 		ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
 
-		Map<String, String> resultsMap = new HashMap<String, String>();
 
 		for (int i = 0; i < columnDefinitions.size(); i++) {
 			resultsMap.put(columnDefinitions.getName(i), row.getObject(columnDefinitions.getName(i)) == null ? "null"

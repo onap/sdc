@@ -21,35 +21,39 @@
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum UserRoleEnum {
-    
-	ADMIN("jh0003","Jimmy", "Hendrix"), DESIGNER("cs0008","Carlos", "Santana"), DESIGNER2("me0009","Melissa", "Etheridge"), TESTER("jm0007","Joni", "Mitchell"),ADMIN4("km2000","Kot", "May"), GOVERNOR("gv0001","David", "Shadmi"), 
-	OPS("op0001","Steve", "Regev"),PRODUCT_STRATEGIST1("ps0001","Eden", "Rozin"),PRODUCT_STRATEGIST2("ps0002","Ella", "Kvetny"),PRODUCT_STRATEGIST3("ps0003","Geva", "Alon"), PRODUCT_MANAGER1("pm0001","Teddy", "Isashar"), 
-	PRODUCT_MANAGER2("pm0002","Sarah", "Bettens");
-	
-    private String userId;
-    private String firstName;
-    private String lastName;
-    private String userName;
+
+	ADMIN("jh0003", "Jimmy", "Hendrix"), DESIGNER("cs0008", "Carlos", "Santana"), DESIGNER2("me0009", "Melissa","Etheridge"), TESTER("jm0007", "Joni", "Mitchell"), ADMIN4("km2000", "Kot", "May"), 
+	GOVERNOR("gv0001","David", "Shadmi"), OPS("op0001", "Steve", "Regev"), PRODUCT_STRATEGIST1("ps0001", "Eden","Rozin"), PRODUCT_STRATEGIST2("ps0002", "Ella", "Kvetny"), PRODUCT_STRATEGIST3("ps0003", "Geva", "Alon"), 
+	PRODUCT_MANAGER1("pm0001", "Teddy", "Isashar"), PRODUCT_MANAGER2("pm0002", "Sarah", "Bettens");
+	private String userId;
+	private String firstName;
+	private String lastName;
+	private String userName;
+
 	private UserRoleEnum(String userId, String userName) {
 		this.userId = userId;
 		this.userName = userName;
 	}
-	
+
 	private UserRoleEnum(String userId, String firstName, String lastName) {
 		this.userId = userId;
-		this.firstName =firstName;
+		this.firstName = firstName;
 		this.lastName = lastName;
-		this.userName = firstName+" " + lastName;
+		this.userName = firstName + " " + lastName;
 	}
+
 	public String getUserId() {
 		return userId;
 	}
+
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+
 	public String getUserName() {
 		return userName;
 	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -69,8 +73,5 @@ public enum UserRoleEnum {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-    
 
 }
-
-

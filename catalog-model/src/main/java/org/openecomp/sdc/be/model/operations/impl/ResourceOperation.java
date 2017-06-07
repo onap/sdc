@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,8 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -79,14 +82,19 @@ import org.openecomp.sdc.be.model.operations.api.IAttributeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.migration.MigrationErrorInformer;
 import org.openecomp.sdc.be.model.operations.utils.GraphDeleteUtil;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.TagData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.util.PairUtils;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,9 +105,11 @@ import com.google.gson.GsonBuilder;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 
+import fj.Function;
 import fj.data.Either;
 
 @org.springframework.stereotype.Component("resource-operation")
+@Deprecated
 public class ResourceOperation extends ComponentOperation implements IResourceOperation {
 
 	public ResourceOperation() {
@@ -139,8 +149,8 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 	private GraphDeleteUtil graphDeleteUtil = new GraphDeleteUtil();
 
-	private static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
-	private static Pattern uuidNormativeNewVersion = Pattern.compile("^\\d{1,}.0");
+	public static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
+	public static Pattern uuidNormativeNewVersion = Pattern.compile("^\\d{1,}.0");
 
 	@Override
 	public Either<Resource, StorageOperationStatus> createResource(Resource resource) {
@@ -169,19 +179,18 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 			if (findUser.isRight()) {
 				TitanOperationStatus status = findUser.right().value();
-				log.error("Cannot find user " + userId + " in the graph. status is " + status);
+				log.error("Cannot find user {} in the graph. status is {}", userId, status);
 				return sendError(status, StorageOperationStatus.USER_NOT_FOUND);
 			}
 
 			TitanVertex creatorVertex = findUser.left().value();
 			TitanVertex updaterVertex = creatorVertex;
-
 			String updaterUserId = resource.getLastUpdaterUserId();
 			if (updaterUserId != null && !updaterUserId.equals(userId)) {
 				findUser = findUserVertex(updaterUserId);
 				if (findUser.isRight()) {
 					TitanOperationStatus status = findUser.right().value();
-					log.error("Cannot find user " + userId + " in the graph. status is " + status);
+					log.error("Cannot find user {} in the graph. status is {}", userId, status);
 					return sendError(status, StorageOperationStatus.USER_NOT_FOUND);
 				} else {
 					updaterVertex = findUser.left().value();
@@ -232,8 +241,8 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 				result = Either.right(associateCategory);
 				return result;
 			}
-
-			TitanOperationStatus associateProperties = associatePropertiesToResource(metadataVertex, resourceUniqueId, resource.getProperties());
+			
+			TitanOperationStatus associateProperties = associatePropertiesToResource(metadataVertex, resourceUniqueId, resource.getProperties(), derivedResources);
 			if (associateProperties != TitanOperationStatus.OK) {
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(associateProperties));
 				return result;
@@ -302,13 +311,13 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 			result = this.getResource(resourceUniqueId, true);
 			if (result.isRight()) {
-				log.error("Cannot get full resource from the graph. status is " + result.right().value());
+				log.error("Cannot get full resource from the graph. status is {}", result.right().value());
 				return Either.right(result.right().value());
 			}
 
 			if (log.isDebugEnabled()) {
 				String json = prettyJson.toJson(result.left().value());
-				log.debug("Resource retrieved is " + json);
+				log.debug("Resource retrieved is {}", json);
 			}
 
 			return result;
@@ -335,7 +344,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		Either<CategoryData, StorageOperationStatus> categoryResult = elementOperation.getNewCategoryData(categoryName, NodeTypeEnum.ResourceNewCategory, CategoryData.class);
 		if (categoryResult.isRight()) {
 			StorageOperationStatus status = categoryResult.right().value();
-			log.error("Cannot find category " + categoryName + " in the graph. status is " + status);
+			log.error("Cannot find category {} in the graph. status is {}", categoryName, status);
 			return categoryResult.right().value();
 		}
 		categoryData = categoryResult.left().value();
@@ -343,16 +352,16 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
 					GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
 			if (childrenNodes.isRight()) {
-				log.debug("Faield to fetch sub categories for  resource category" + categoryData.getCategoryDataDefinition().getName());
+				log.debug("Faield to fetch sub categories for  resource category {}", categoryData.getCategoryDataDefinition().getName());
 				return DaoStatusConverter.convertTitanStatusToStorageStatus(childrenNodes.right().value());
 			}
 			for (ImmutablePair<SubCategoryData, GraphEdge> pair : childrenNodes.left().value()) {
 				SubCategoryData subcategoryData = pair.left;
 				if (subcategoryData.getSubCategoryDataDefinition().getName().equals(subcategoryName)) {
 					Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.createRelation(resourceData, subcategoryData, GraphEdgeLabels.CATEGORY, null);
-					log.debug("After associating resource " + resourceData.getUniqueId() + " to subcategory " + subcategoryData + ". Edge type is " + GraphEdgeLabels.CATEGORY);
+					log.debug("After associating resource {} to subcategory {}. Edge type is {}", resourceData.getUniqueId(), subcategoryData, GraphEdgeLabels.CATEGORY);
 					if (result.isRight()) {
-						log.error("Faield to associate resource " + resourceData.getUniqueId() + " to category " + categoryData + ". Edge type is " + GraphEdgeLabels.CATEGORY);
+						log.error("Faield to associate resource {} to category {}. Edge type is {}", resourceData.getUniqueId(), categoryData, GraphEdgeLabels.CATEGORY);
 						return DaoStatusConverter.convertTitanStatusToStorageStatus(result.right().value());
 					}
 
@@ -492,13 +501,32 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 		StorageOperationStatus status = StorageOperationStatus.OK;
 		if (artifacts != null) {
+			Map<ArtifactDefinition, ArtifactDefinition> heatEnvMap = new HashMap<ArtifactDefinition, ArtifactDefinition>();
 			for (Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
 
 				ArtifactDefinition artifactDefinition = entry.getValue();
-				status = artifactOperation.addArifactToComponent(artifactDefinition, resourceId, NodeTypeEnum.Resource, false, metadataVertex);
+				
+				ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactDefinition.getArtifactType());
+				if(artifactType != ArtifactTypeEnum.HEAT_ENV){
+					status = artifactOperation.addArifactToComponent(artifactDefinition, resourceId, NodeTypeEnum.Resource, false, metadataVertex);
+				}else{
+					Optional<ArtifactDefinition> op = artifacts.values().stream().filter(p -> p.getUniqueId().equals(artifactDefinition.getGeneratedFromId())).findAny();
+					if(op.isPresent()){
+						heatEnvMap.put(artifactDefinition, op.get());
+					}
+					
+					
+				}
 
 				if (!status.equals(StorageOperationStatus.OK)) {
 					return status;
+				}
+			}
+			for(Entry<ArtifactDefinition, ArtifactDefinition> entry : heatEnvMap.entrySet()){
+				Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact = artifactOperation.addHeatEnvArtifact(entry.getKey(), entry.getValue(), resourceId, NodeTypeEnum.Resource, false);
+				if (addHeatEnvArtifact.isRight()) {
+					log.debug("failed to create heat env artifact on resource instance");
+					return addHeatEnvArtifact.right().value();
 				}
 			}
 		}
@@ -539,7 +567,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		}
 	}
 
-	private TitanOperationStatus associatePropertiesToResource(TitanVertex metadatVertex, String resourceId, List<PropertyDefinition> properties) {
+	private TitanOperationStatus associatePropertiesToResource(TitanVertex metadatVertex, String resourceId, List<PropertyDefinition> properties, List<ResourceMetadataData> derivedResources) {
 
 		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
 		if (allDataTypes.isRight()) {
@@ -547,19 +575,80 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			log.debug("Cannot find any data type. Status is {}.", status);
 			return status;
 		}
-
+		
 		Map<String, PropertyDefinition> convertedProperties = new HashMap<>();
 
 		if (properties != null) {
 			for (PropertyDefinition propertyDefinition : properties) {
 				convertedProperties.put(propertyDefinition.getName(), propertyDefinition);
 			}
-			TitanOperationStatus operationStatus = propertyOperation.addPropertiesToGraph(metadatVertex, convertedProperties, allDataTypes.left().value(), resourceId);
-			return operationStatus;
+			
+			Either<Map<String, PropertyDefinition>, TitanOperationStatus> getPropertiesOfAllDerivedFromRes = getPropertiesOfAllDerivedFrom(derivedResources);
+			
+			if(getPropertiesOfAllDerivedFromRes.isRight()){
+				TitanOperationStatus status = getPropertiesOfAllDerivedFromRes.right().value();
+				log.debug("Cannot fetch properties of all derived from resources. Status is {}.", status);
+				return status;
+			}
+			
+			Map<String, PropertyDefinition> allDerivedFromProperties = getPropertiesOfAllDerivedFromRes.left().value();
+			
+			TitanOperationStatus validatePropertyNamesUniqunessStatus = validatePropertyNamesUniquness(properties, allDerivedFromProperties);
+			
+			if(validatePropertyNamesUniqunessStatus != TitanOperationStatus.OK){
+				return validatePropertyNamesUniqunessStatus;
+			}
+			
+			return propertyOperation.addPropertiesToGraph(metadatVertex, convertedProperties, allDataTypes.left().value(), resourceId);
 		}
 
 		return TitanOperationStatus.OK;
 
+	}
+
+	private TitanOperationStatus validatePropertyNamesUniquness(List<PropertyDefinition> properties, Map<String, PropertyDefinition> allDerivedFromProperties) {
+		
+		TitanOperationStatus result  = TitanOperationStatus.OK;
+		Optional<PropertyDefinition> propertyOptional= properties.stream()
+				//filters out properties with the same name and different type
+				.filter(prop -> allDerivedFromProperties.containsKey(prop.getName()) && !prop.getType().equals(allDerivedFromProperties.get(prop.getName()).getType()))
+				//Searches for any matching value
+				.findAny();
+		if(propertyOptional.isPresent()){
+			log.error("Property with name {} and type {} already exists in derived from resource. ", propertyOptional.get().getName(), allDerivedFromProperties.get( propertyOptional.get().getName()).getType());
+			result = TitanOperationStatus.ALREADY_EXIST;
+		}
+		return result;
+	}
+
+	private Either<Map<String, PropertyDefinition>, TitanOperationStatus> getPropertiesOfAllDerivedFrom(List<ResourceMetadataData> derivedResources) {
+		Map<String, PropertyDefinition> allDerivedProperties = new HashMap<>();
+		Either<Map<String, PropertyDefinition>, TitanOperationStatus> getPropertiesOfAllDerivedFromRes = Either.left(allDerivedProperties);
+		String currResourceName = null ;
+		if(!CollectionUtils.isEmpty(derivedResources)){
+			try{
+				for(int i = derivedResources.size() - 1; i >= 0 ; --i){
+					ResourceMetadataData currDerivedResource = derivedResources.get(i);
+					currResourceName = currDerivedResource.getMetadataDataDefinition().getName();
+					Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus>  res = 
+							titanGenericDao.getChildrenNodes( currDerivedResource.getUniqueIdKey(), (String)currDerivedResource.getUniqueId(), GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property, PropertyData.class);
+					if(res.isRight() && res.right().value() != TitanOperationStatus.NOT_FOUND){
+						getPropertiesOfAllDerivedFromRes = Either.right(res.right().value());
+						break;
+					}else if(res.isLeft()){
+						allDerivedProperties.putAll(res.left().value().stream()
+								//Maps PropertyData converted to PropertyDefinition
+								.map(pair->	propertyOperation.convertPropertyDataToPropertyDefinition(pair.getLeft(), (String)pair.getRight().getProperties().get(GraphPropertiesDictionary.NAME.getProperty()), (String)currDerivedResource.getUniqueId()))
+								//and collects it to a map
+								.collect(Collectors.toMap(entry->entry.getName(), entry->entry)));
+					}
+				}
+			}
+			catch(Exception e){
+				log.error("Exception occured during fetch properties of resource {}. ", currResourceName);
+			}
+		}
+		return getPropertiesOfAllDerivedFromRes;
 	}
 
 	private TitanOperationStatus associateAttributesToResource(TitanVertex metadataVertex, List<AttributeDefinition> attributes, String resourceId) {
@@ -605,7 +694,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		// TODO Evg : need to change too..
 		if (derivedResources != null) {
 			for (ResourceMetadataData derivedResource : derivedResources) {
-				log.debug("After associating resource " + resourceData.getUniqueId() + " to parent resource " + derivedResource.getUniqueId() + ". Edge type is " + GraphEdgeLabels.DERIVED_FROM);
+				log.debug("After associating resource {} to parent resource {}. Edge type is {}", resourceData.getUniqueId(), derivedResource.getUniqueId(), GraphEdgeLabels.DERIVED_FROM);
 				Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(resourceData, derivedResource, GraphEdgeLabels.DERIVED_FROM, null);
 				if (createRelationResult.isRight()) {
 					log.error("Failed to associate resource {} to derived ", resourceData.getUniqueId());
@@ -636,26 +725,27 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 				List<ResourceMetadataData> resources = null;
 				if (getParentResources.isRight()) {
 					/*
-					 * log.debug( "Cannot find parent resource by tosca resource name" + parentResource + " in the graph. Try to find by name"); Map<String, Object> propertiesWithResourceNameToMatch = new HashMap<String, Object>();
+					 * log.debug( "Cannot find parent resource by tosca resource name {} in the graph. Try to find by name", parentResource); 
+					 * Map<String, Object> propertiesWithResourceNameToMatch = new HashMap<String, Object>();
 					 * propertiesWithResourceNameToMatch.put( GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name()); propertiesWithResourceNameToMatch.put( GraphPropertiesDictionary.NAME.getProperty(), parentResource);
 					 * propertiesWithResourceNameToMatch.put( GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty( ), true);
 					 * 
 					 * getParentResources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, propertiesWithResourceNameToMatch, ResourceData.class); if (getParentResources.isRight()) { log.error(
 					 * "Cannot find parent resource by tosca resource name" + parentResource + " in the graph."); return Either.right(StorageOperationStatus. PARENT_RESOURCE_NOT_FOUND); }else{ resources = getParentResources.left().value();
-					 * 
+					 * hea
 					 * }
 					 */
-					log.error("Cannot find parent resource by tosca resource name" + parentResource + " in the graph.");
+					log.error("Cannot find parent resource by tosca resource name {} in the graph.", parentResource);
 					return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
 
 				} else {
 					resources = getParentResources.left().value();
 					if (resources == null || resources.size() == 0) {
-						log.error("Cannot find parent resource by tosc name" + parentResource + " in the graph. resources size is empty");
+						log.error("Cannot find parent resource by tosc name {} in the graph. resources size is empty", parentResource);
 						return Either.right(StorageOperationStatus.PARENT_RESOURCE_NOT_FOUND);
 					} else {
 						if (resources.size() > 1) {
-							log.error("Multiple parent resources called " + parentResource + " found in the graph.");
+							log.error("Multiple parent resources called {} found in the graph.", parentResource);
 							return Either.right(StorageOperationStatus.MULTIPLE_PARENT_RESOURCE_FOUND);
 						}
 						ResourceMetadataData parentResourceData = resources.get(0);
@@ -714,133 +804,6 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return getResource(uniqueId, componentParametersView, inTransaction);
 	}
 
-	// public Either<Resource, StorageOperationStatus> getResource(String
-	// uniqueId, boolean inTransaction) {
-	//
-	// Resource resource = null;
-	// try {
-	//
-	// NodeTypeEnum resourceNodeType = NodeTypeEnum.Resource;
-	// NodeTypeEnum compInstNodeType = NodeTypeEnum.Resource;
-	//
-	// Either<ResourceMetadataData, StorageOperationStatus>
-	// componentByLabelAndId = getComponentByLabelAndId(uniqueId,
-	// resourceNodeType, ResourceMetadataData.class);
-	// if (componentByLabelAndId.isRight()) {
-	// return Either.right(componentByLabelAndId.right().value());
-	// }
-	// ResourceMetadataData resourceData = componentByLabelAndId.left().value();
-	// resource = convertResourceDataToResource(resourceData);
-	//
-	// TitanOperationStatus status = setResourceCreatorFromGraph(resource,
-	// uniqueId);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourceLastModifierFromGraph(resource, uniqueId);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourcePropertiesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourceAttributesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourceDerivedFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setComponentCategoriesFromGraph(resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setComponentInstancesFromGraph(uniqueId, resource,
-	// resourceNodeType, compInstNodeType);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	//
-	// }
-	//
-	// StorageOperationStatus setRequirementsStatus =
-	// setResourceRequirementsFromGraph(uniqueId, resource, true);
-	// if (setRequirementsStatus != StorageOperationStatus.OK) {
-	// log.error("Failed to set requirement of resource " + uniqueId + ". status
-	// is " + setRequirementsStatus);
-	// return Either.right(setRequirementsStatus);
-	// }
-	//
-	// StorageOperationStatus storageStatus =
-	// setResourceCapabilitiesFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// storageStatus = setArtifactFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// status = setComponentInstancesAttributesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	//
-	// }
-	//
-	// status = setComponentInstancesPropertiesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	//
-	// }
-	//
-	// storageStatus = setResourceInterfacesFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// storageStatus = setResourceAdditionalInformationFromGraph(uniqueId,
-	// resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	// status = setAllVersions(resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setGroupsFromGraph(uniqueId, resource, NodeTypeEnum.Resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// } finally {
-	// if (false == inTransaction) {
-	// titanGenericDao.commit();
-	// }
-	// }
-	//
-	// return Either.left(resource);
-	// }
-
 	private TitanOperationStatus setComponentInstancesAttributesFromGraph(String uniqueId, Resource component) {
 		Map<String, List<ComponentInstanceAttribute>> resourceInstancesAttributes = new HashMap<>();
 		TitanOperationStatus status = TitanOperationStatus.OK;
@@ -862,114 +825,6 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return status;
 
 	}
-
-	// public Either<Resource, StorageOperationStatus> getResource_tx(String
-	// uniqueId, boolean inTransaction) {
-	//
-	// Resource resource = null;
-	// try {
-	//
-	// NodeTypeEnum resourceNodeType = NodeTypeEnum.Resource;
-	// NodeTypeEnum compInstNodeType = NodeTypeEnum.Resource;
-	//
-	// Either<ResourceMetadataData, StorageOperationStatus>
-	// componentByLabelAndId = getComponentByLabelAndId_tx(uniqueId,
-	// resourceNodeType, ResourceMetadataData.class);
-	// if (componentByLabelAndId.isRight()) {
-	// return Either.right(componentByLabelAndId.right().value());
-	// }
-	// ResourceMetadataData resourceData = componentByLabelAndId.left().value();
-	// resource = convertResourceDataToResource(resourceData);
-	//
-	// TitanOperationStatus status = setResourceCreatorFromGraph(resource,
-	// uniqueId);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourceLastModifierFromGraph(resource, uniqueId);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourcePropertiesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setResourceDerivedFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setComponentCategoriesFromGraph(resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// status = setComponentInstancesFromGraph(uniqueId, resource,
-	// resourceNodeType, compInstNodeType);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	//
-	// }
-	//
-	// StorageOperationStatus setRequirementsStatus =
-	// setResourceRequirementsFromGraph(uniqueId, resource, true);
-	// if (setRequirementsStatus != StorageOperationStatus.OK) {
-	// log.error("Failed to set requirement of resource " + uniqueId + ". status
-	// is " + setRequirementsStatus);
-	// return Either.right(setRequirementsStatus);
-	// }
-	//
-	// StorageOperationStatus storageStatus =
-	// setResourceCapabilitiesFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// storageStatus = setArtifactFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// status = setComponentInstancesPropertiesFromGraph(uniqueId, resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	//
-	// }
-	//
-	// storageStatus = setResourceInterfacesFromGraph(uniqueId, resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	//
-	// storageStatus = setResourceAdditionalInformationFromGraph(uniqueId,
-	// resource);
-	// if (storageStatus != StorageOperationStatus.OK) {
-	// return Either.right(storageStatus);
-	// }
-	// status = setAllVersions(resource);
-	// if (status != TitanOperationStatus.OK) {
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// }
-	//
-	// } finally {
-	// if (false == inTransaction) {
-	// titanGenericDao.commit();
-	// }
-	// }
-	//
-	// return Either.left(resource);
-	// }
 
 	private StorageOperationStatus setResourceAdditionalInformationFromGraph(String uniqueId, Resource resource) {
 
@@ -1019,7 +874,11 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			}
 		} else {
 			Map<String, CapabilityDefinition> capabilities = result.left().value();
-			if (capabilities == null || capabilities.isEmpty()) {
+			if (capabilities != null && !capabilities.isEmpty() && resource.getResourceType().equals(ResourceTypeEnum.VF)) {
+				log.error(String.format("VF %s has direct capabilities.!!!!!!!!!!!!!", resource.getName()));
+				MigrationErrorInformer.addMalformedVF(resource.getUniqueId());
+			}
+			if (capabilities == null || capabilities.isEmpty() || resource.getResourceType().equals(ResourceTypeEnum.VF)) {
 				Either<Map<String, List<CapabilityDefinition>>, TitanOperationStatus> eitherCapabilities = super.getCapabilities(resource, NodeTypeEnum.Resource, true);
 				if (eitherCapabilities.isLeft()) {
 					retStatus = StorageOperationStatus.OK;
@@ -1086,7 +945,11 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			}
 		} else {
 			Map<String, RequirementDefinition> requirements = result.left().value();
-			if (requirements == null || requirements.isEmpty()) {
+			if (requirements != null && !requirements.isEmpty() && resource.getResourceType().equals(ResourceTypeEnum.VF)) {
+				log.error(String.format("VF %s has direct requirements.!!!!!!!!!!!!!", resource.getName()));
+				MigrationErrorInformer.addMalformedVF(resource.getUniqueId());
+			}
+			if (requirements == null || requirements.isEmpty() || resource.getResourceType() == ResourceTypeEnum.VF) {
 				Either<Map<String, List<RequirementDefinition>>, TitanOperationStatus> eitherCapabilities = super.getRequirements(resource, NodeTypeEnum.Resource, true);
 				if (eitherCapabilities.isLeft()) {
 					retStatus = StorageOperationStatus.OK;
@@ -1197,10 +1060,8 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			log.debug("Found parent node {}", value);
 		UserData userData = value.getKey();
 
-		if (log.isDebugEnabled()) {
+		if (log.isDebugEnabled())
 			log.debug("Build resource : set last modifier userId to {}", userData.getUserId());
-		}
-
 		String fullName = buildFullName(userData);
 		if (log.isDebugEnabled())
 			log.debug("Build resource : set last modifier full name to {}", fullName);
@@ -1222,9 +1083,8 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		if (log.isDebugEnabled())
 			log.debug("Found parent node {}", value);
 		UserData userData = value.getKey();
-		if (log.isDebugEnabled()) {
+		if (log.isDebugEnabled())
 			log.debug("Build resource : set creator userId to {}", userData.getUserId());
-		}
 		String fullName = buildFullName(userData);
 		if (log.isDebugEnabled())
 			log.debug("Build resource : set creator full name to {}", fullName);
@@ -1310,7 +1170,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		propertiesToMatch.put(GraphPropertiesDictionary.NAME.getProperty(), resourceName);
 
 		Either<List<ResourceMetadataData>, TitanOperationStatus> getParentResources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, propertiesToMatch, ResourceMetadataData.class);
-		log.debug("result after searching for resources called " + resourceName + " is " + getParentResources);
+		log.debug("result after searching for resources called {} is {}", resourceName, getParentResources);
 		if (getParentResources.isRight()) {
 			TitanOperationStatus titanStatus = getParentResources.right().value();
 			if (titanStatus == TitanOperationStatus.NOT_FOUND) {
@@ -1321,7 +1181,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		} else {
 			List<ResourceMetadataData> value = getParentResources.left().value();
 			int numberOFResources = (value == null ? 0 : value.size());
-			log.debug("The number of resources returned after searching for resource called " + resourceName + " is " + numberOFResources);
+			log.debug("The number of resources returned after searching for resource called {} is {}", resourceName, numberOFResources);
 			return Either.left(numberOFResources);
 		}
 	}
@@ -1418,67 +1278,67 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 				if (iterator != null && iterator.hasNext()) {
 					Vertex rootVertex = iterator.next();
 					TitanOperationStatus deleteChildrenNodes = graphDeleteUtil.deleteChildrenNodes(rootVertex, GraphEdgeLabels.PROPERTY);
-					log.debug("After deleting properties nodes in the graph. status is " + deleteChildrenNodes);
+					log.debug("After deleting properties nodes in the graph. status is {}", deleteChildrenNodes);
 					if (deleteChildrenNodes != TitanOperationStatus.OK) {
 						result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(deleteChildrenNodes));
 						return result;
 					}
 					StorageOperationStatus removeInterfacesFromResource = removeInterfacesFromResource(resource);
-					log.debug("After deleting interfaces nodes in the graph. status is " + removeInterfacesFromResource);
+					log.debug("After deleting interfaces nodes in the graph. status is {}", removeInterfacesFromResource);
 					if (!removeInterfacesFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeInterfacesFromResource);
 						return result;
 					}
 					StorageOperationStatus removeArtifactsFromResource = removeArtifactsFromResource(resource);
-					log.debug("After deleting artifacts nodes in the graph. status is " + removeArtifactsFromResource);
+					log.debug("After deleting artifacts nodes in the graph. status is {}", removeArtifactsFromResource);
 					if (!removeArtifactsFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeArtifactsFromResource);
 						return result;
 					}
 					StorageOperationStatus removeCapabilitiesFromResource = removeCapabilitiesFromResource(resource);
-					log.debug("After deleting capabilities nodes in the graph. status is " + removeCapabilitiesFromResource);
+					log.debug("After deleting capabilities nodes in the graph. status is {}", removeCapabilitiesFromResource);
 					if (!removeCapabilitiesFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeCapabilitiesFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeRequirementsFromResource = removeRequirementsFromResource(resource);
-					log.debug("After deleting requirements nodes in the graph. status is " + removeRequirementsFromResource);
+					log.debug("After deleting requirements nodes in the graph. status is {}", removeRequirementsFromResource);
 					if (!removeRequirementsFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeRequirementsFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeRIsFromResource = removeResourceInstanceFromResource(resource);
-					log.debug("After deleting resource instance nodes in the graph. status is " + removeRIsFromResource);
+					log.debug("After deleting resource instance nodes in the graph. status is {}", removeRIsFromResource);
 					if (!removeRIsFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeRIsFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeAttributesFromResource = removeAttributesFromResource(resource);
-					log.debug("After deleting requirements nodes in the graph. status is " + removeRequirementsFromResource);
+					log.debug("After deleting requirements nodes in the graph. status is {}", removeRequirementsFromResource);
 					if (removeAttributesFromResource != StorageOperationStatus.OK) {
 						result = Either.right(removeAttributesFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeInputsFromResource = removeInputsFromComponent(NodeTypeEnum.Resource, resource);
-					log.debug("After deleting requirements nodes in the graph. status is " + removeInputsFromResource);
+					log.debug("After deleting requirements nodes in the graph. status is {}", removeInputsFromResource);
 					if (removeInputsFromResource != StorageOperationStatus.OK) {
 						result = Either.right(removeInputsFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeAdditionalInformationFromResource = super.deleteAdditionalInformation(NodeTypeEnum.Resource, resource.getUniqueId());
-					log.debug("After deleting additional information node in the graph. status is " + removeAdditionalInformationFromResource);
+					log.debug("After deleting additional information node in the graph. status is {}", removeAdditionalInformationFromResource);
 					if (!removeAdditionalInformationFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeAdditionalInformationFromResource);
 						return result;
 					}
 
 					StorageOperationStatus removeGroupsFromResource = super.deleteGroups(NodeTypeEnum.Resource, resource.getUniqueId());
-					log.debug("After deleting group nodes in the graph. status is " + removeGroupsFromResource);
+					log.debug("After deleting group nodes in the graph. status is {}", removeGroupsFromResource);
 					if (!removeGroupsFromResource.equals(StorageOperationStatus.OK)) {
 						result = Either.right(removeGroupsFromResource);
 						return result;
@@ -1698,12 +1558,12 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		categoryRelation.setFrom(relationEndPoint);
 		Either<GraphRelation, TitanOperationStatus> deleteOutgoingRelation = titanGenericDao.deleteOutgoingRelation(categoryRelation);
 		if (deleteOutgoingRelation.isRight()) {
-			log.error("Failed to delete category from resource " + resourceData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.CATEGORY);
+			log.error("Failed to delete category from resource {}. Edge type is {}", resourceData.getUniqueId(), GraphEdgeLabels.CATEGORY);
 			result = DaoStatusConverter.convertTitanStatusToStorageStatus(deleteOutgoingRelation.right().value());
 			return result;
 		}
 
-		log.debug("After removing edge from graph " + deleteOutgoingRelation);
+		log.debug("After removing edge from graph {}", deleteOutgoingRelation);
 
 		return assosiateMetadataToCategory(resource, resourceData);
 	}
@@ -1718,15 +1578,15 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		lastModifierRelation.setTo(relationEndPoint);
 		Either<GraphRelation, TitanOperationStatus> deleteIncomingRelation = titanGenericDao.deleteIncomingRelation(lastModifierRelation);
 		if (deleteIncomingRelation.isRight()) {
-			log.error("Failed to delete user from resource " + resourceData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.LAST_MODIFIER);
+			log.error("Failed to delete user from resource {}. Edge type is {}", resourceData.getUniqueId(),GraphEdgeLabels.LAST_MODIFIER);
 			result = DaoStatusConverter.convertTitanStatusToStorageStatus(deleteIncomingRelation.right().value());
 			return result;
 		}
 
 		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(modifierUserData, resourceData, GraphEdgeLabels.LAST_MODIFIER, null);
-		log.debug("After associating user " + modifierUserData + " to resource " + resourceData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.LAST_MODIFIER);
+		log.debug("After associating user {} to resource {}. Edge type is {}", modifierUserData, resourceData.getUniqueId(), GraphEdgeLabels.LAST_MODIFIER);
 		if (createRelation.isRight()) {
-			log.error("Failed to associate user " + modifierUserData + " to resource " + resourceData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.LAST_MODIFIER);
+			log.error("Failed to associate user {} to resource {}. Edge type is {}", modifierUserData, resourceData.getUniqueId(), GraphEdgeLabels.LAST_MODIFIER);
 			result = DaoStatusConverter.convertTitanStatusToStorageStatus(createRelation.right().value());
 			return result;
 		}
@@ -1783,6 +1643,30 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 	public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExists(String templateName) {
 		return validateToscaResourceNameUniqueness(templateName, titanGenericDao);
 	}
+	
+	//Tal G for US815447
+	public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExtends(String templateNameCurrent, String templateNameExtends) {
+		
+		String currentTemplateNameChecked = templateNameExtends;
+		
+		while(currentTemplateNameChecked != null && !currentTemplateNameChecked.equalsIgnoreCase(templateNameCurrent)){
+			Either<Resource, StorageOperationStatus> latestByToscaResourceName = getLatestByToscaResourceName(currentTemplateNameChecked, true);
+			
+			if(latestByToscaResourceName.isRight()){
+				return latestByToscaResourceName.right().value() == StorageOperationStatus.NOT_FOUND ? Either.left(false) : Either.right(latestByToscaResourceName.right().value());
+			}
+			
+			Resource value = latestByToscaResourceName.left().value();	
+			
+			if(value.getDerivedFrom() != null){
+				currentTemplateNameChecked = value.getDerivedFrom().get(0);				
+			} else {
+				currentTemplateNameChecked = null;
+			}
+		}
+		
+		return (currentTemplateNameChecked != null && currentTemplateNameChecked.equalsIgnoreCase(templateNameCurrent)) ? Either.left(true) : Either.left(false);
+	}
 
 	public Either<List<ArtifactDefinition>, StorageOperationStatus> getAdditionalArtifacts(String resourceId, boolean recursively, boolean inTransaction) {
 		List<ArtifactDefinition> artifacts = new ArrayList<>();
@@ -1798,12 +1682,12 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			for (Entry<String, InterfaceDefinition> entry : interfaces.entrySet()) {
 
 				InterfaceDefinition interfaceDefinition = entry.getValue();
-				Map<String, Operation> operations = interfaceDefinition.getOperations();
+				Map<String, Operation> operations = interfaceDefinition.getOperationsMap();
 				if (operations != null && !operations.isEmpty()) {
 					for (Entry<String, Operation> opEntry : operations.entrySet()) {
 
 						Operation operation = opEntry.getValue();
-						ArtifactDefinition artifactDefinition = operation.getImplementation();
+						ArtifactDefinition artifactDefinition = operation.getImplementationArtifact();
 						if (artifactDefinition != null) {
 							artifacts.add(artifactDefinition);
 						}
@@ -1824,6 +1708,13 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 	public <T> Either<T, StorageOperationStatus> getComponent(String id, boolean inTransaction) {
 		return (Either<T, StorageOperationStatus>) getResource(id, inTransaction);
 	}
+
+	// @Override
+	// public <T> Either<T, StorageOperationStatus> getComponent_tx(String id,
+	// boolean inTransaction) {
+	// return (Either<T, StorageOperationStatus>) getResource_tx(id,
+	// inTransaction);
+	// }
 
 	private Optional<ImmutablePair<SubCategoryData, GraphEdge>> validateCategoryHierarcy(List<ImmutablePair<SubCategoryData, GraphEdge>> childNodes, String subCategoryName) {
 		Predicate<ImmutablePair<SubCategoryData, GraphEdge>> matchName = p -> p.getLeft().getSubCategoryDataDefinition().getName().equals(subCategoryName);
@@ -1850,8 +1741,9 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 		String subCategoryName = filters.get(FilterKeyEnum.SUB_CATEGORY);
 		String categoryName = filters.get(FilterKeyEnum.CATEGORY);
+		ResourceTypeEnum resourceType = ResourceTypeEnum.getType( filters.get(FilterKeyEnum.RESOURCE_TYPE));
 		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> subcategories = null;
-		Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategoryData = null;
+		Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategoryData;
 
 		if (categoryName != null) {
 			subcategories = getAllSubCategories(categoryName);
@@ -1867,20 +1759,59 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 					return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
 				}
 				return fetchByCategoryOrSubCategoryUid((String) subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction,
-						ResourceMetadataData.class);
+						ResourceMetadataData.class, resourceType);
 			}
 
-			return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction, ResourceMetadataData.class);
+			return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction, ResourceMetadataData.class, resourceType);
 		}
-		return fetchByMainCategory(subcategories.left().value(), inTransaction);
+		if(subcategories != null){
+			return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
+		}
+		return fetchByResourceType(NodeTypeEnum.Resource, filters.get(FilterKeyEnum.RESOURCE_TYPE), ResourceMetadataData.class, inTransaction);
 	}
 
-	private <T> Either<List<T>, StorageOperationStatus> fetchByMainCategory(List<ImmutablePair<SubCategoryData, GraphEdge>> subcategories, boolean inTransaction) {
+	@SuppressWarnings("unchecked")
+	private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByResourceType(NodeTypeEnum nodeType, String resourceType,
+			Class<S> clazz, boolean inTransaction) {
+		List<T> components = null;
+		TitanOperationStatus status;
+		Wrapper<StorageOperationStatus> statusWrapper = new Wrapper<>();
+		Either<List<T>, StorageOperationStatus> result;
+		try {
+			Map<String, Object> props = new HashMap<>();
+			props.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), resourceType);
+			props.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
+			Either<List<S>, TitanOperationStatus> getResources = titanGenericDao.getByCriteria(nodeType, props, clazz);
+			if (getResources.isRight()) {
+				status = getResources.right().value();
+				if(status != TitanOperationStatus.NOT_FOUND){
+					statusWrapper.setInnerElement(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
+				}else{
+					components = new ArrayList<>();
+				}
+			}else{
+				components = getResources.left().value().stream().
+				map(c->(T)convertComponentMetadataDataToComponent(c)).collect(Collectors.toList());
+			}
+			if(!statusWrapper.isEmpty()){
+				result = Either.right(statusWrapper.getInnerElement());
+			}else{
+				result = Either.left(components);
+			}
+			return result;
+		} finally {
+			if (!inTransaction) {
+				titanGenericDao.commit();
+			}
+		}
+	}
+
+	private <T> Either<List<T>, StorageOperationStatus> fetchByMainCategory(List<ImmutablePair<SubCategoryData, GraphEdge>> subcategories, boolean inTransaction, ResourceTypeEnum resourceType) {
 		List<T> components = new ArrayList<>();
 
 		for (ImmutablePair<SubCategoryData, GraphEdge> subCategory : subcategories) {
 			Either<List<T>, StorageOperationStatus> fetched = fetchByCategoryOrSubCategoryUid((String) subCategory.getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource,
-					inTransaction, ResourceMetadataData.class);
+					inTransaction, ResourceMetadataData.class, resourceType);
 			if (fetched.isRight()) {
 				// return fetched;
 				continue;
@@ -1904,6 +1835,52 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 	@Override
 	public Either<Set<Resource>, StorageOperationStatus> getCatalogData(Map<String, Object> propertiesToMatch, boolean inTransaction) {
 		return getComponentCatalogData(NodeTypeEnum.Resource, propertiesToMatch, Resource.class, ResourceMetadataData.class, inTransaction);
+	}
+
+	@Override
+	public Either<List<Resource>, StorageOperationStatus> getAllDerivedResources(Resource resource) {
+		try {
+			Either<List<ImmutablePair<ResourceMetadataData, GraphEdge>>, TitanOperationStatus> childrenNodes = getDerivingChildren(resource);
+			return childrenNodes.either((childrenPairs) -> convertToResources(PairUtils.leftSequence(childrenPairs)),
+										(status) -> Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status)));
+		} finally {
+			titanGenericDao.commit();
+		}
+	}
+
+	@Override
+	public Either<List<Resource>, StorageOperationStatus> getRootResources() {
+		Map<String, Object> rootToscaResource = new HashMap<>();
+		rootToscaResource.put(GraphPropertiesDictionary.TOSCA_RESOURCE_NAME.getProperty(), Resource.ROOT_RESOURCE);
+		return getResourceListByCriteria(rootToscaResource, false);
+	}
+
+	@Override
+	public Either<List<Resource>, StorageOperationStatus> getVFResources() {
+		Map<String, Object> rootToscaResource = new HashMap<>();
+		rootToscaResource.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VF);
+		return getResourceListByCriteria(rootToscaResource, false);
+	}
+
+	@Override
+	public Either<List<Resource>, StorageOperationStatus> getAll() {
+		Either<List<Resource>, StorageOperationStatus> resourceListByCriteria = getResourceListByCriteria(new HashMap<>(), false);
+		if (resourceListByCriteria.isRight() && resourceListByCriteria.right().value() == StorageOperationStatus.NOT_FOUND) {
+			return Either.left(Collections.emptyList());
+		}
+		return resourceListByCriteria;
+	}
+
+
+	private Either<List<ImmutablePair<ResourceMetadataData, GraphEdge>>, TitanOperationStatus> getDerivingChildren(Resource resource) {
+		return titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId(), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource, ResourceMetadataData.class);
+	}
+
+	private Either<List<Resource>, StorageOperationStatus> convertToResources(List<ResourceMetadataData> resourcesMetaData) {
+		List<Either<Resource, StorageOperationStatus>> resources = resourcesMetaData.stream()
+				.map(resourceMetaData -> this.getResource(resourceMetaData.getMetadataDataDefinition().getUniqueId()))
+				.collect(Collectors.toList());
+		return Either.sequenceLeft(fj.data.List.iterableList(resources)).bimap(fj.data.List::toJavaList, Function.identity());
 	}
 
 	protected TitanOperationStatus findResourcesPathRecursively(String resourceId, List<ResourceMetadataData> resourcesPathList) {
@@ -2106,7 +2083,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			}
 
 			long endFetchAllFromCache = System.currentTimeMillis();
-			log.debug("Fetch all catalog resources metadata from cache took " + (endFetchAllFromCache - startFetchAllFromCache) + " ms");
+			log.debug("Fetch all catalog resources metadata from cache took {} ms", (endFetchAllFromCache - startFetchAllFromCache));
 
 			long startFetchFromGraph = System.currentTimeMillis();
 			log.debug("The number of resources needed to be fetch as light component is {}", notCertifiedHighest.size());
@@ -2115,13 +2092,13 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 				log.trace("Fetch catalog resource non cached {} {}", uniqueId, data.getMetadataDataDefinition().getName());
 				Either<Resource, StorageOperationStatus> component = getLightComponent(uniqueId, inTransaction);
 				if (component.isRight()) {
-					log.debug("Failed to get Service for id =  " + data.getUniqueId() + "  error : " + component.right().value() + " skip resource");
+					log.debug("Failed to get Service for id =  {}  error : {} skip resource", data.getUniqueId(), component.right().value());
 				} else {
 					result.add(component.left().value());
 				}
 			}
 			long endFetchFromGraph = System.currentTimeMillis();
-			log.debug("Fetch catalog resources from graph took " + (endFetchFromGraph - startFetchFromGraph) + " ms");
+			log.debug("Fetch catalog resources from graph took {} ms", (endFetchFromGraph - startFetchFromGraph));
 
 			return Either.left(result);
 
@@ -2141,7 +2118,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return getResourceCatalogDataLatestCertifiedAndNonCertified(inTransaction, propertiesToMatch);
 	}
 
-	private Either<List<Resource>, StorageOperationStatus> getResourceCatalogDataLatestCertifiedAndNonCertified(boolean inTransaction, Map<String, Object> otherToMatch) {
+	public Either<List<Resource>, StorageOperationStatus> getResourceCatalogDataLatestCertifiedAndNonCertified(boolean inTransaction, Map<String, Object> otherToMatch) {
 		Map<String, Object> propertiesToMatch = new HashMap<>();
 
 		if (otherToMatch != null) {
@@ -2169,7 +2146,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		for (ResourceMetadataData data : listOfHighest) {
 			Either<Resource, StorageOperationStatus> component = getLightComponent(data.getMetadataDataDefinition().getUniqueId(), inTransaction);
 			if (component.isRight()) {
-				log.debug("Failed to get Service for id =  " + data.getUniqueId() + "  error : " + component.right().value() + " skip resource");
+				log.debug("Failed to get Service for id =  {} error : {} skip resource", data.getUniqueId(), component.right().value());
 			} else {
 				result.add(component.left().value());
 			}
@@ -2193,7 +2170,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			if (resource.isLeft()) {
 				resources.add(resource.left().value());
 			} else {
-				log.debug("Failed to fetch resource for name = " + data.getMetadataDataDefinition().getName() + "  and id = " + data.getUniqueId());
+				log.debug("Failed to fetch resource for name = {} and id = {}", data.getUniqueId(), data.getMetadataDataDefinition().getName());
 			}
 		}
 		return Either.left(resources);
@@ -2253,16 +2230,11 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		}
 		List<ResourceMetadataData> dataList = byCriteria.left().value();
 		if (dataList != null && !dataList.isEmpty()) {
-			// if (dataList.size() > 1) {
-			// log.debug("More that one instance of resource for name =" +
-			// nameValue + " and version = " + version);
-			// return Either.right(StorageOperationStatus.GENERAL_ERROR);
-			// }
 			for (ResourceMetadataData resourceData : dataList) {
 				// ResourceMetadataData resourceData = dataList.get(0);
 				Either<Resource, StorageOperationStatus> resource = getResource(resourceData.getMetadataDataDefinition().getUniqueId(), inTransaction);
 				if (resource.isRight()) {
-					log.debug("Failed to fetch resource for name = " + resourceData.getMetadataDataDefinition().getName() + "  and id = " + resourceData.getUniqueId());
+					log.debug("Failed to fetch resource for name = {} and id = {}", resourceData.getMetadataDataDefinition().getName(), resourceData.getUniqueId());
 					return Either.right(resource.right().value());
 				}
 				resourcesList.add(resource.left().value());
@@ -2287,7 +2259,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		}
 		List<Resource> resourcesList = byNamesAndVersion.left().value();
 		if (resourcesList.size() > 1) {
-			log.debug("More that one instance of resource for name =" + name + " and version = " + version);
+			log.debug("More that one instance of resource for name = {} and version = {}", name, version);
 			return Either.right(StorageOperationStatus.GENERAL_ERROR);
 		}
 		return Either.left(resourcesList.get(0));
@@ -2345,7 +2317,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 		try {
 
-			log.debug("In updateResource. received resource = " + (resource == null ? null : resource.toString()));
+			log.debug("In updateResource. received resource = {}", (resource == null ? null : resource.toString()));
 			if (resource == null) {
 				log.error("Resource object is null");
 				result = Either.right(StorageOperationStatus.BAD_REQUEST);
@@ -2355,7 +2327,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(resource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setHighestVersion(resource.isHighestVersion());
-			log.debug("After converting resource to ResourceData. ResourceData = " + resourceData);
+			log.debug("After converting resource to ResourceData. ResourceData = {}", resourceData);
 
 			if (resourceData.getUniqueId() == null) {
 				log.error("Resource id is missing in the request.");
@@ -2365,14 +2337,14 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resourceData, ResourceMetadataData.class);
 
 			if (updateNode.isRight()) {
-				log.error("Failed to update resource " + resource.getUniqueId() + ". status is " + updateNode.right().value());
+				log.error("Failed to update resource {}. status is {}", resource.getUniqueId(), updateNode.right().value());
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
 				return result;
 			}
 
 			Either<Resource, StorageOperationStatus> updatedResource = getResource(resource.getUniqueId(), true);
 			if (updatedResource.isRight()) {
-				log.error("Resource id is missing in the request. status is " + updatedResource.right().value());
+				log.error("Resource id is missing in the request. status is {}", updatedResource.right().value());
 				result = Either.right(StorageOperationStatus.BAD_REQUEST);
 				return result;
 			}
@@ -2382,7 +2354,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 			if (log.isDebugEnabled()) {
 				String json = prettyJson.toJson(result.left().value());
-				log.debug("Resource retrieved after update is " + json);
+				log.debug("Resource retrieved after update is {}", json);
 			}
 
 			return result;
@@ -2430,7 +2402,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 				for (ResourceMetadataData resourceData : resourceDataList) {
 					Either<Resource, StorageOperationStatus> resource = getResource(resourceData.getMetadataDataDefinition().getUniqueId());
 					if (resource.isRight()) {
-						log.debug("Failed to fetch resource for id = " + resourceData.getUniqueId() + "  error is " + resource.right().value());
+						log.debug("Failed to fetch resource for id = {} error is {}", resourceData.getUniqueId(), resource.right().value());
 						return Either.right(resource.right().value());
 					}
 					result.add(resource.left().value());
@@ -2539,20 +2511,21 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			}
 			other.setVersion(version);
 			other.setUniqueId(null);
-
+			
 			List<InputDefinition> inputs = other.getInputs();
 			Map<String, List<ComponentInstanceProperty>> inputsPropMap = new HashMap<String, List<ComponentInstanceProperty>>();
-
-			if (inputs != null) {
-				for (InputDefinition input : inputs) {
-
-					Either<List<ComponentInstanceProperty>, TitanOperationStatus> inputPropStatus = inputOperation.getComponentInstancePropertiesByInputId(input.getUniqueId());
-					if (inputPropStatus.isLeft()) {
-						if (inputPropStatus.left().value() != null)
+			
+			if(inputs != null){
+				for(InputDefinition input: inputs){
+					
+					Either<List<ComponentInstanceProperty>, TitanOperationStatus> inputPropStatus  = inputOperation.getComponentInstancePropertiesByInputId(input.getUniqueId());
+					if(inputPropStatus.isLeft()){
+						if(inputPropStatus.left().value() != null)
 							inputsPropMap.put(input.getName(), inputPropStatus.left().value());
-
+						
 					}
-
+					
+					
 				}
 			}
 
@@ -2607,13 +2580,8 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 			result = this.getResource(resource.getUniqueId(), true);
 			if (result.isRight()) {
-				log.error("Cannot get full service from the graph. status is " + result.right().value());
+				log.error("Cannot get full service from the graph. status is {}", result.right().value());
 				return Either.right(result.right().value());
-			}
-
-			if (log.isDebugEnabled()) {
-				String json = prettyJson.toJson(result.left().value());
-				// log.debug("Resource retrieved is {}", json);
 			}
 
 			return result;
@@ -2713,13 +2681,13 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			SubCategoryDefinition currSubcategory = currentCategory.getSubcategories().get(0);
 			SubCategoryDefinition newSubcategory = newCategory.getSubcategories().get(0);
 			if (newSubcategory.getName() != null && false == newSubcategory.getName().equals(currSubcategory.getName())) {
-				log.debug("Going to update the category of the resource from " + currentCategory + " to " + newCategory);
+				log.debug("Going to update the category of the resource from {} to {}", currentCategory, newCategory);
 				categoryWasChanged = true;
 			}
 		}
 		if (categoryWasChanged) {
 			status = moveCategoryEdge((Resource) component, (ResourceMetadataData) componentData, newCategory);
-			log.debug("Going to update the category of the resource from " + currentCategory + " to " + newCategory + ". status is " + status);
+			log.debug("Going to update the category of the resource from {} to {}. status is {}", currentCategory, newCategory, status);
 		}
 		return status;
 	}
@@ -2810,7 +2778,12 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		List<ResourceMetadataData> resourceMetadataDataList = null;
 		Either<List<ResourceMetadataData>, TitanOperationStatus> byCsar = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
 		if (byCsar.isRight()) {
-			if (TitanOperationStatus.NOT_FOUND.equals(byCsar.right().value())) {
+			if (TitanOperationStatus.NOT_FOUND == byCsar.right().value()) {
+				//Fix Defect DE256036 
+				if( StringUtils.isEmpty(systemName)){
+					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.NOT_FOUND));
+				}
+				
 				props.clear();
 				props.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
 				props.put(GraphPropertiesDictionary.SYSTEM_NAME.getProperty(), systemName);
@@ -2820,7 +2793,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(bySystemname.right().value()));
 				}
 				if (bySystemname.left().value().size() > 2) {
-					log.debug("getLatestResourceByCsarOrName - getByCriteria(by system name) must return only 2 latest version, but was returned - " + bySystemname.left().value().size());
+					log.debug("getLatestResourceByCsarOrName - getByCriteria(by system name) must return only 2 latest version, but was returned - {}", bySystemname.left().value().size());
 					return Either.right(StorageOperationStatus.GENERAL_ERROR);
 				}
 				resourceMetadataDataList = bySystemname.left().value();
@@ -2850,7 +2823,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		} else {
 			resourceMetadataDataList = byCsar.left().value();
 			if (resourceMetadataDataList.size() > 2) {
-				log.debug("getLatestResourceByCsarOrName - getByCriteria(by csar) must return only 2 latest version, but was returned - " + byCsar.left().value().size());
+				log.debug("getLatestResourceByCsarOrName - getByCriteria(by csar) must return only 2 latest version, but was returned - {}", byCsar.left().value().size());
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 			if (resourceMetadataDataList.size() == 1) {
@@ -2889,7 +2862,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return Either.left(byCsar.left().value());
 	}
 
-	private Either<Resource, StorageOperationStatus> getResource(String uniqueId, ComponentParametersView componentParametersView, boolean inTransaction) {
+	public Either<Resource, StorageOperationStatus> getResource(String uniqueId, ComponentParametersView componentParametersView, boolean inTransaction) {
 
 		Resource resource = null;
 		try {
@@ -2971,7 +2944,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			if (false == componentParametersView.isIgnoreRequirements()) {
 				StorageOperationStatus setRequirementsStatus = setResourceRequirementsFromGraph(uniqueId, resource, true);
 				if (setRequirementsStatus != StorageOperationStatus.OK) {
-					log.error("Failed to set requirement of resource " + uniqueId + ". status is " + setRequirementsStatus);
+					log.error("Failed to set requirement of resource {}. status is {}", uniqueId, setRequirementsStatus);
 					return Either.right(setRequirementsStatus);
 				}
 			}
@@ -2979,7 +2952,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			if (false == componentParametersView.isIgnoreInputs()) {
 				status = setComponentInputsFromGraph(uniqueId, resource, true);
 				if (status != TitanOperationStatus.OK) {
-					log.error("Failed to set inputs of resource " + uniqueId + ". status is " + status);
+					log.error("Failed to set inputs of resource {}. status is {}", uniqueId, status);
 					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				}
 
@@ -3008,7 +2981,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 			}
 
 			if (false == componentParametersView.isIgnoreComponentInstancesProperties()) {
-				status = setComponentInstancesPropertiesFromGraph(uniqueId, resource);
+				status = setComponentInstancesPropertiesFromGraph(resource);
 				if (status != TitanOperationStatus.OK) {
 					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 

@@ -72,9 +72,7 @@ public class CategoriesImportManager {
 			NodeTypeEnum nodeTypeCategory = NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(componentType, CategoryTypeEnum.CATEGORY);
 			NodeTypeEnum nodeTypeSubCategory = NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(componentType, CategoryTypeEnum.SUBCATEGORY);
 			NodeTypeEnum nodeTypeGroup = NodeTypeConvertUtils.getCategoryNodeTypeByComponentParam(componentType, CategoryTypeEnum.GROUPING);
-			if (log.isDebugEnabled()) {
-				log.debug("createCategoriesByDao: creating componentType:{}  nodeTypeCategory:{} nodeTypeSubCategory:{} nodeTypeGroup:{}", componentType, nodeTypeCategory, nodeTypeSubCategory, nodeTypeGroup);
-			}
+			log.debug("createCategoriesByDao: creating componentType:{}  nodeTypeCategory:{} nodeTypeSubCategory:{} nodeTypeGroup:{}", componentType, nodeTypeCategory, nodeTypeSubCategory, nodeTypeGroup);
 			List<CategoryDefinition> newCategoriesvalue = new ArrayList<>();
 			for (CategoryDefinition category : entry.getValue()) {
 
@@ -124,16 +122,18 @@ public class CategoriesImportManager {
 		Either<GroupingDefinition, ActionStatus> createdGrouping = elementOperation.createGrouping(subcategory.getUniqueId(), grouping, nodeTypeGroup);
 		if (createdGrouping.isRight()) {
 			if (ActionStatus.COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY.equals(createdGrouping.right().value())) {
-				log.debug(" create grouping for {}. group {} already exists", entry.getKey(), grouping.getName());
+				log.debug(" create grouping for {}  group {} already exists ", entry.getKey(), grouping.getName());
 				String groupingId = UniqueIdBuilder.buildGroupingUid(grouping.getUniqueId(), grouping.getNormalizedName());
 				createdGrouping = elementOperation.getGroupingUniqueForType(nodeTypeGroup, groupingId);
 				if (createdGrouping.isRight()) {
-					log.debug("failed to get grouping that exists groupingId: {}, type: {}", groupingId, nodeTypeGroup);
+					log.debug("failed to get grouping that exists groupingId: {} type: {}", groupingId, nodeTypeGroup);
 					return Either.right(componentsUtils.getResponseFormat(createdGrouping.right().value()));
 				}
 			}
-			log.debug("Failed to create groupingcategory for {}, category {}, subcategory {}, grouping {}, error {}", entry.getKey(), category.getName(), subcategory.getName(), (grouping != null ? grouping.getName() : null), 
-					(createdGrouping != null && createdGrouping.right() != null ? createdGrouping.right().value() : null));
+			log.debug("Failed to create groupingcategory for {}  category {} subcategory {} grouping {} error {}", entry.getKey(),
+					category.getName(), subcategory.getName(), grouping != null ? grouping.getName() : null, 
+							createdGrouping != null && createdGrouping.right() != null ? createdGrouping.right().value() : null);
+			
 			return Either.right(componentsUtils.getResponseFormat(createdGrouping.right().value()));
 		} else {
 			log.debug("createGroupingDeo: create Grouping was successful {}", createdGrouping.left().value());
@@ -147,15 +147,15 @@ public class CategoriesImportManager {
 		Either<SubCategoryDefinition, ActionStatus> createdSubCategory = elementOperation.createSubCategory(newcategory.getUniqueId(), subcategory, nodeTypeSubCategory);
 		if (createdSubCategory.isRight()) {
 			if (ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY.equals(createdSubCategory.right().value())) {
-				log.debug(" create subcategory for {} category {}, alreay exists retrieving", entry.getKey(), newcategory.getName(), subcategory.getName());
+				log.debug(" create subcategory for {}  category {} subcategory {} already exists retrieving", entry.getKey(), newcategory.getName(), subcategory.getName());
 				String subCategoryId = UniqueIdBuilder.buildSubCategoryUid(newcategory.getUniqueId(), subcategory.getNormalizedName());
 				createdSubCategory = elementOperation.getSubCategory(nodeTypeSubCategory, subCategoryId);
 				if (createdSubCategory.isRight()) {
-					log.debug("failed to get sub category that exists subCategoryId: {}, type: {}", subCategoryId, nodeTypeSubCategory);
+					log.debug("failed to get sub category that exists subCategoryId: {} type: {}", subCategoryId, nodeTypeSubCategory);
 					return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
 				}
 			} else {
-				log.debug("Failed to create subcategory for {} category {}, error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
+				log.debug("Failed to create subcategory for {}  category: {} subcategory: {} error {}", entry.getKey(), newcategory.getName(), subcategory.getName(), createdSubCategory.right().value());
 				return Either.right(componentsUtils.getResponseFormat(createdSubCategory.right().value()));
 			}
 		} else {
@@ -168,7 +168,7 @@ public class CategoriesImportManager {
 		log.debug("createCategorieDeo: creating category {}", category);
 		Either<CategoryDefinition, ActionStatus> createdCategory = elementOperation.createCategory(category, nodeTypeCategory);
 		if (createdCategory.isRight()) {
-			log.debug("Failed to create category for {}, error {}", entry.getKey(), category.getName(), createdCategory.right().value());
+			log.debug("Failed to create category for {}  {} error {}", entry.getKey(), category.getName(), createdCategory.right().value());
 			if (!ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS.equals(createdCategory.right().value())) {
 				return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
 			} else {
@@ -176,7 +176,7 @@ public class CategoriesImportManager {
 				String categoryId = UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeTypeCategory);
 				createdCategory = elementOperation.getCategory(nodeTypeCategory, categoryId);
 				if (createdCategory.isRight()) {
-					log.debug("failed to get category that exists categoryId: {}, type: {}", categoryId, nodeTypeCategory);
+					log.debug("failed to get category that exists categoryId: {} type: {}", categoryId, nodeTypeCategory);
 					return Either.right(componentsUtils.getResponseFormat(createdCategory.right().value()));
 				}
 			}

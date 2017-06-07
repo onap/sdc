@@ -61,9 +61,9 @@ public class ConfigMgrServlet extends BasicServlet {
 
 			Configuration configuration = configurationManager.getConfiguration();
 			if (configuration == null) {
-				log.warn("Configuration of type " + Configuration.class + " was not found");
+				log.warn("Configuration of type {} was not found", Configuration.class);
 			} else {
-				log.info("The value returned from getConfig is " + configuration);
+				log.info("The value returned from getConfig is {}", configuration);
 
 				result = gson.toJson(configuration);
 
@@ -72,9 +72,9 @@ public class ConfigMgrServlet extends BasicServlet {
 
 			RestConfigurationInfo configuration = configurationManager.getRestClientConfiguration();
 			if (configuration == null) {
-				log.warn("Configuration of type " + RestConfigurationInfo.class + " was not found");
+				log.warn("Configuration of type {} was not found", RestConfigurationInfo.class);
 			} else {
-				log.info("The value returned from getConfig is " + configuration);
+				log.info("The value returned from getConfig is {}", configuration);
 
 				result = gson.toJson(configuration);
 

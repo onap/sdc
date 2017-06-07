@@ -77,7 +77,7 @@ public class BasicAuthenticationFilter implements ContainerRequestFilter {
 				if (basic.equalsIgnoreCase("Basic")) {
 					try {
 						String credentials = new String(Base64.decodeBase64(st.nextToken()), "UTF-8");
-						log.debug("Credentials: {}", credentials);
+						log.debug("Credentials: {}" , credentials);
 						checkUserCredentiles(requestContext, credentials);
 					} catch (UnsupportedEncodingException e) {
 						log.error("Authentication Filter Failed Couldn't retrieve authentication", e);

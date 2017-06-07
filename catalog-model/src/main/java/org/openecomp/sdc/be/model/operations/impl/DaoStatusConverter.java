@@ -100,8 +100,7 @@ public class DaoStatusConverter {
 
 	}
 
-	public static StorageOperationStatus convertRsrcUploadStatusToStorageStatus(
-			ResourceUploadStatus resourceUploadStatus) {
+	public static StorageOperationStatus convertRsrcUploadStatusToStorageStatus(ResourceUploadStatus resourceUploadStatus) {
 		if (resourceUploadStatus == null) {
 			return StorageOperationStatus.GENERAL_ERROR;
 		}

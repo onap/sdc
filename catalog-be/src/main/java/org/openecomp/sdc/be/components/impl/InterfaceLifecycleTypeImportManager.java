@@ -113,7 +113,7 @@ public class InterfaceLifecycleTypeImportManager {
 			operation.setDescription((String) opProp.get("description"));
 			operations.put(entry.getKey(), operation);
 		}
-		interfaceDef.setOperations(operations);
+		interfaceDef.setOperationsMap(operations);
 		return interfaceDef;
 	}
 

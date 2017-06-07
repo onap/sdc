@@ -23,15 +23,19 @@ package org.openecomp.sdc.be.components.lifecycle;
 import java.util.Arrays;
 
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
@@ -45,8 +49,8 @@ public class CheckinTransition extends LifeCycleTransition {
 
 	private static Logger log = LoggerFactory.getLogger(CheckinTransition.class.getName());
 
-	public CheckinTransition(ComponentsUtils componentUtils, ILifecycleOperation lifecycleOperation) {
-		super(componentUtils, lifecycleOperation);
+	public CheckinTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+		super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 
 		// authorized roles
 		Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
@@ -71,21 +75,40 @@ public class CheckinTransition extends LifeCycleTransition {
 	public Either<? extends Component, ResponseFormat> changeState(ComponentTypeEnum componentType, Component component, ComponentBusinessLogic componentBl, User modifier, User owner, boolean shouldLock, boolean inTransaction) {
 		log.debug("start performing checkin for {} {}", componentType.name(), component.getUniqueId());
 
-		NodeTypeEnum nodeType = componentType.getNodeType();
-		Either<? extends Component, StorageOperationStatus> checkinResourceResult = lifeCycleOperation.checkinComponent(nodeType, component, modifier, owner, inTransaction);
-		if (checkinResourceResult.isRight()) {
-			log.debug("checkout failed on graph");
-			StorageOperationStatus response = checkinResourceResult.right().value();
-			ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
-
-			if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
-				actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+		Either<? extends Component, ResponseFormat> result = null;
+		try{
+			Either<ToscaElement, StorageOperationStatus> checkinResourceResult = lifeCycleOperation.
+					checkinToscaELement(component.getLifecycleState(), component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+			
+			if (checkinResourceResult.isRight()) {
+				log.debug("checkout failed on graph");
+				StorageOperationStatus response = checkinResourceResult.right().value();
+				ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
+	
+				if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
+					actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+				}
+				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
+				result =  Either.right(responseFormat);
 			}
-			ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-			return Either.right(responseFormat);
+			else {
+				result =  Either.left(ModelConverter.convertFromToscaElement(checkinResourceResult.left().value()));
+			}
+		} finally {
+			if (result == null || result.isRight()) {
+				BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
+				if (inTransaction == false) {
+					log.debug("operation failed. do rollback");
+					titanDao.rollback();
+				}
+			} else {
+				if (inTransaction == false) {
+					log.debug("operation success. do commit");
+					titanDao.commit();
+				}
+			}
 		}
-
-		return Either.left(checkinResourceResult.left().value());
+		return result;
 	}
 
 	@Override
@@ -94,13 +117,19 @@ public class CheckinTransition extends LifeCycleTransition {
 		log.debug("validate before checkin. component name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
 		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, componentType, lifecycleChangeInfo);
+		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
 		if (userValidationResponse.isRight()) {
 			return userValidationResponse;
 		}
 
 		if (!oldState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION) && !oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
-			ResponseFormat error = componentUtils.getResponseFormat(ActionStatus.COMPONENT_ALREADY_CHECKED_IN, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
+			ActionStatus action = ActionStatus.COMPONENT_ALREADY_CHECKED_IN;
+			if (oldState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)){
+				action = ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION;
+			} else if (oldState.equals(LifecycleStateEnum.CERTIFIED)){
+				action = ActionStatus.COMPONENT_ALREADY_CERTIFIED;
+			}
+			ResponseFormat error = componentUtils.getResponseFormat(action, componentName, componentType.name().toLowerCase(), owner.getFirstName(), owner.getLastName(), owner.getUserId());
 			return Either.right(error);
 		}
 

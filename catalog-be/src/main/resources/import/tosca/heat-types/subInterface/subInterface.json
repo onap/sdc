@@ -1,0 +1,15 @@
+{
+	"payloadName": "subInterface.yml",
+	"contactId": "jh0003",
+	"name": "subInterface",
+	"description": "VLAN sub-Interface is a logical port which must be binded to a port. Regular port may have 1…N VLAN Interfaces.It can connect to its own network (regardless of the network the parent port can connect)",
+	"resourceIconPath": "network",
+	"resourceType": "CP",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Network Elements"
+		}]
+	}],
+	"tags": ["subInterface"]
+}

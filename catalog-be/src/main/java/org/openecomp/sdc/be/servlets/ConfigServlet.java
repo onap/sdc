@@ -63,9 +63,7 @@ public class ConfigServlet extends BasicServlet {
 				log.warn("Configuration of type {} was not found", Configuration.class);
 			}
 			log.debug("{}", configuration);
-			if (log.isInfoEnabled()) {
-				log.debug("Info level ENABLED...");
-			}
+			log.info("Info level ENABLED...");
 			log.info("The value returned from getConfig is {}", configuration);
 
 			result = gson.toJson(configuration);

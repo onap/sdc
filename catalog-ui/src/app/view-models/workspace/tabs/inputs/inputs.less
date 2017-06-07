@@ -1,0 +1,225 @@
+.workspace-inputs {
+
+    .sdc-workspace-container .w-sdc-main-right-container .w-sdc-main-container-body-content {
+        padding: 25px 8% 25px 8%;
+    }
+
+    .w-sdc-main-container .w-sdc-main-right-container > div:first-child {
+        /* scroll fix */
+        padding-bottom: 0px;
+    }
+
+
+    width: 100%;
+    display: flex;
+
+    .text {
+        padding-left: 15px;
+        .no-overflow;
+    }
+
+    .title-text {
+        color: @main_color_m;
+        .f-type._13_m;
+        .bold;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .no-overflow {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .title-blue-text {
+        color: @main_color_a;
+        .f-type._13_m;
+
+        &.property-name-text {
+            padding-right: 13px;
+            border-right: 1px solid rgba(120, 136, 148, 0.26);
+            flex-grow: 1;
+            .no-overflow;
+        }
+    }
+
+    .instance-name-text {
+        flex-grow: 1;
+    }
+
+    ng-include {
+        width: 45%;
+    }
+
+    .w-sdc-inputs-search {
+        padding: 10px 20px 20px 0;
+        white-space: nowrap;
+        position: relative;
+        width: 60%;
+        height: 64px;
+
+        .inputs-search-icon {
+            top: 9px;
+            right: 11px;
+        }
+
+        .magnification-white {
+            .sprite-new;
+            .search-white-icon;
+            .hand;
+        }
+
+        .search-icon-container {
+            width: 35px;
+            height: 30px;
+            background-color: @main_color_a;
+            white-space: nowrap;
+            float: right;
+            position: relative;
+            bottom: 31px;
+            right: 1px;
+            border-radius: 0px 4px 4px 0px;
+            .hand
+        }
+    }
+
+    .total-inputs-count {
+        width: 100%;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .new-input-button {
+        margin: 9px 0 0 0;
+    }
+
+    .w-sdc-inputs-search-input {
+        border: 1px solid @color_e;
+        .border-radius(4px);
+        height: 32px;
+        margin: 0;
+        padding: 0px 28px 3px 10px;
+        vertical-align: 4px;
+        width: 100%;
+        outline: none;
+        font-style: italic;
+    }
+
+    .w-sdc-classic-btn {
+        float: right;
+        margin-bottom: 10px;
+    }
+
+    .prop-to-input-button {
+        position: absolute;
+        top: 50%;
+        margin-right: -20px;
+        margin-bottom: -10px;
+
+    }
+
+    .table-container-flex {
+
+        .flex-item {
+            line-height: 22px;
+        }
+        .expand-collapse-table-row {
+
+            .data-row {
+                background: @tlv_color_u;
+                .hand;
+                align-items: center;
+                padding: 0 12px;
+                margin: 1px 0px 1px 0px;
+                min-height: 40px;
+            }
+
+            .data-row:hover {
+                .bg_j;
+            }
+        }
+    }
+
+    .table {
+        height: 640px;
+        margin-bottom: 0;
+        clear: both;
+
+        .empty-row {
+            padding: 3px;
+        }
+
+        .flex-item {
+            line-height: 22px;
+        }
+
+        .table-header {
+
+            line-height: 14px;
+            background-color: @main_color_a;
+            color: @main_color_p;
+            text-align: left;
+            padding: 7px 5px 7px 10px;
+            .f-type._14_m;
+        }
+        .head {
+            background-color: #e6e6e6;
+        }
+
+        .body {
+            .scrollbar-container {
+                .perfect-scrollbar;
+                max-height: 610px;
+            }
+
+            .expand-collapse-inputs-table-icon {
+                .hand;
+                .sprite-new;
+                .arrow-up;
+                transition: .3s all;
+                position: relative;
+                left: 8px;
+                border: none !important;
+                padding: 0px 10px 0px 10px;
+            }
+
+            .table-col-text {
+                margin-left: 14px;
+            }
+        }
+    }
+
+    .inputs-header {
+        width: 100%;
+        position: relative;
+        bottom: 31px;
+    }
+
+    .inputs-tables-container {
+        width: 100%;
+        min-width: 100%;
+        display: flex;
+    }
+
+    .inputs-button-container {
+        width: 8%;
+        min-width: 8%;
+        display: flex;
+
+        .right-arrow-btn {
+            .sprite-new;
+            .blue-right-arrow-circle;
+            margin: auto;
+            cursor: pointer;
+        }
+    }
+
+    .table-container-flex {
+        margin-top: 27px;
+        width: 46%;
+        min-width: 46%;
+        display: inline-block;
+        float: left;
+    }
+}

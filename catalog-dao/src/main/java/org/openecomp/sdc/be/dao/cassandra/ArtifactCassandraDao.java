@@ -85,7 +85,7 @@ public class ArtifactCassandraDao extends CassandraDao {
 	 */
 	public CassandraOperationStatus deleteAllArtifacts() {
 		logger.info("cleaning all artifacts.");
-		String query = "truncate sdcArtifact.resources;";
+		String query = "truncate sdcartifact.resources;";
 		try {
 			session.execute(query);
 		} catch (Exception e) {

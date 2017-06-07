@@ -1,0 +1,26 @@
+<div class="property-row flex-container">
+    <div class="flex-item text property-name-container">
+        <span class="title-blue-text property-name-text " data-ng-class="{'hand': isClickable}" data-tests-id="propertyName" data-ng-click="onNameClicked(property)" tooltips tooltip-content="{{property.name}}">{{property.name}}</span>
+    </div>
+    <div class="flex-item text property-name-container">
+        <span class="text instance-name-text" data-tests-id="instanceName" tooltips tooltip-content="{{instanceName}}">{{instanceName}}</span>
+    </div>
+    <div class="type-schema-container">
+        <div class="text">
+            <span tooltips tooltip-content="propertyName_{{property.type}}" data-tests-id="propertyType">{{property.type}}</span>
+        </div>
+    </div>
+    <div class="type-schema-container">
+        <div class="text">
+            <span tooltips tooltip-content="{{property.schema.property.type}}" data-tests-id="propertySchema">{{property.schema.property.type}} </span>
+        </div>
+    </div>
+    <sdc-checkbox ng-if="instancePropertiesMap"
+                  class="property-check-box"
+                  disabled="property.isAlreadySelected || isViewOnly"
+                  sdc-checklist-model="instancePropertiesMap[instanceId]"
+                  sdc-checklist-value="property"
+                  sdc-checklist-change="onCheckboxClicked()"
+                  data-tests-id="propertyCheckbox_{{property.name}}"
+                  data-ng-click=" $event.stopPropagation()"></sdc-checkbox>
+</div>

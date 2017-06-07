@@ -40,7 +40,7 @@ public class HeatNumberConverter implements PropertyValueConverter {
 	@Override
 	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (original == null) {
+		if (original == null || original.isEmpty()) {
 			return null;
 		}
 

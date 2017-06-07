@@ -20,12 +20,19 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class ComponentInstInputsMap {
+public class ComponentInstInputsMap implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1136631343963488131L;
+	
 	Map<String, List<InputDefinition>> componentInstanceInputsMap;
+	Map<String, List<ComponentInstancePropInput>> componentInstanceProperties;
 
 	public Map<String, List<InputDefinition>> getComponentInstanceInputsMap() {
 		return componentInstanceInputsMap;
@@ -33,5 +40,13 @@ public class ComponentInstInputsMap {
 
 	public void setComponentInstanceInputsMap(Map<String, List<InputDefinition>> componentInstanceInputsMap) {
 		this.componentInstanceInputsMap = componentInstanceInputsMap;
+	}
+	
+	public Map<String, List<ComponentInstancePropInput>> getComponentInstanceProperties() {
+		return componentInstanceProperties;
+	}
+
+	public void setComponentInstancePropInput(Map<String, List<ComponentInstancePropInput>> componentInstanceProperties) {
+		this.componentInstanceProperties = componentInstanceProperties;
 	}
 }

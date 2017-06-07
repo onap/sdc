@@ -110,6 +110,9 @@ public class CompositionBusinessLogic {
 		case VFC:
 			offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
 			break;
+		case VFCMT:
+			offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
+			break;
 		default:
 			offsetedCanvasPosition = topLeftCanvasPosition - CompositionBusinessLogic.VFC_CANVAS_ELEMENT_SIZE / 2;
 			break;

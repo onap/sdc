@@ -39,6 +39,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -46,18 +48,24 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
@@ -66,12 +74,15 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.GroupRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ImportRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +94,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 	private static Logger log = LoggerFactory.getLogger(ImportCsarResourceTest.class.getName());
 	@Rule
 	public static TestName name = new TestName();
-
+	private static final String CSARS_PATH = "/src/test/resources/CI/csars/";
 	Gson gson = new Gson();
 
 	public ImportCsarResourceTest() {
@@ -757,7 +768,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		byte[] data = null;
 		String payloadData = null;
 
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -775,7 +786,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 
 		// change composition (resource should be updated)
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_b.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_b.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -802,7 +813,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 
 		// wrong RI (without node types, resource shouldn't be updated)
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_c.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_c.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -817,7 +828,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		// create new resource from other Csar
 		resourceDetails = ElementFactory.getDefaultImportResource();
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/VF_RI2_G4_withArtifacts.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/VF_RI2_G4_withArtifacts.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -833,7 +844,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		// wrong RI (with node types) resource shouldn't be created
 		resourceDetails.setCsarUUID("VF_RI2_G4_withArtifacts_b.csar");
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/VF_RI2_G4_withArtifacts_b.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/VF_RI2_G4_withArtifacts_b.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -854,7 +865,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		byte[] data = null;
 		String payloadData = null;
 
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -871,7 +882,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 
 		// change composition and update resource
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_b.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_b.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -899,7 +910,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 		// try to update resource with wrong RI (without node types, resource
 		// shouldn't be updated)
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_c.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_c.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1079,7 +1090,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		byte[] data = null;
 		String payloadData = null;
 
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1097,7 +1108,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 
 		// change composition (add new RI with specified property values)
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_d.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_d.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1112,7 +1123,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		assertEquals("Check response code ", BaseRestUtils.STATUS_CODE_SUCCESS, changeResourceState.getErrorCode().intValue());
 
 		// change composition (add new specified property values to existing RI)
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/valid_vf_f.csar");
+		path = Paths.get(rootPath + "/src/main/resources/ci/valid_vf_f.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1268,7 +1279,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		Map<String, String> createdMembers = groupDefinition1.get(0).getMembers();
 		verifyMembers(createdMembers, compNameToUniqueId);
 
-		List<GroupProperty> properties = groupDefinition1.get(0).getProperties();
+		List<GroupProperty> properties = groupDefinition1.get(0).convertToGroupProperties();
 		assertEquals("Verify number of members", 2, properties.size());
 
 		GroupProperty heatFiles = properties.stream().filter(p -> p.getName().equals("heat_files")).findFirst().get();
@@ -1465,7 +1476,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		byte[] data = null;
 		String payloadData = null;
 
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/vmmc_relate_by_cap_name.csar");
+		path = Paths.get(rootPath + CSARS_PATH + "vmmc_relate_by_cap_name.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1491,7 +1502,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		byte[] data = null;
 		String payloadData = null;
 
-		path = Paths.get(rootPath + "/src/test/resources/CI/csars/vf_relate_by_cap_name.csar");
+		path = Paths.get(rootPath + CSARS_PATH + "vf_relate_by_cap_name.csar");
 		data = Files.readAllBytes(path);
 		payloadData = Base64.encodeBase64String(data);
 		resourceDetails.setPayloadData(payloadData);
@@ -1512,6 +1523,310 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 		Map<String, List<RequirementCapabilityRelDef>> mappedByReqOwner = resource.getComponentInstancesRelations().stream().collect(Collectors.groupingBy(e -> e.getFromNode()));
 		assertEquals(mappedByReqOwner.get(cp1Uid).get(0).getRelationships().get(0).getCapabilityUid(), capabilities.get("virtual_linkable").getUniqueId());
 		assertEquals(mappedByReqOwner.get(cp2Uid).get(0).getRelationships().get(0).getCapabilityUid(), capabilities.get("link").getUniqueId());
+	}
+
+	@Test(enabled = true)
+	public void importCsarCheckVfHeatEnv() throws Exception {
+		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		resourceDetails.setCsarUUID("csar_1");
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+
+	
+		Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
+		assertNotNull(deploymentArtifacts);
+		// 2 lisence, 1 heat, 1 heatenv
+		assertEquals(4, deploymentArtifacts.size());
+
+		ArtifactDefinition artifactHeat = deploymentArtifacts.get("heat0");
+		assertNotNull(artifactHeat);
+
+		ArtifactDefinition artifactHeatEnv = deploymentArtifacts.get("heat0env");
+		assertNotNull(artifactHeatEnv);
+
+		assertEquals(artifactHeat.getUniqueId(), artifactHeatEnv.getGeneratedFromId());
+		assertEquals("VF HEAT ENV", artifactHeatEnv.getArtifactDisplayName());
+		assertEquals("HEAT_ENV", artifactHeatEnv.getArtifactType());
+		assertEquals("VF Auto-generated HEAT Environment deployment artifact", artifactHeatEnv.getDescription());
+
+		String designerUserId = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId();
+		String testerUserId = ElementFactory.getDefaultUser(UserRoleEnum.TESTER).getUserId();
+		RestResponse lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, designerUserId, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.STARTCERTIFICATION);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		lifecycleChangeResponse = LifecycleRestUtils.changeResourceState(resourceDetails, testerUserId, LifeCycleStatesEnum.CERTIFY);
+		LifecycleRestUtils.checkSuccess(lifecycleChangeResponse);
+		Resource certifiedResource = ResponseParser.parseToObjectUsingMapper(lifecycleChangeResponse.getResponse(), Resource.class);
+
+
+		User modifier = new User();
+		modifier.setUserId(designerUserId);
+
+		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService("newtestservice1", ServiceCategoriesEnum.MOBILITY, designerUserId);
+		
+		RestResponse serviceRes = ServiceRestUtils.createService(serviceDetails, modifier);
+		ResourceRestUtils.checkCreateResponse(serviceRes);
+		Service service =  ResponseParser.parseToObjectUsingMapper(serviceRes.getResponse(), Service.class);
+
+		ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory.getComponentInstance(certifiedResource);
+		RestResponse createResourceInstanceResponse = ComponentInstanceRestUtils.createComponentInstance(resourceInstanceReqDetails, modifier, service.getUniqueId(), service.getComponentType());
+		BaseRestUtils.checkCreateResponse(createResourceInstanceResponse);
+		RestResponse serviceByGet = ServiceRestUtils.getService(service.getUniqueId());
+		service =  ResponseParser.parseToObjectUsingMapper(serviceByGet.getResponse(), Service.class);
+		
+		List<ComponentInstance> componentInstances = service.getComponentInstances();
+		assertNotNull(componentInstances);
+		
+		assertEquals(1, componentInstances.size());
+		ComponentInstance ci = componentInstances.get(0);
+		Map<String, ArtifactDefinition> instDepArtifacts = ci.getDeploymentArtifacts();
+		assertNotNull(instDepArtifacts);
+		ArtifactDefinition instArtifactHeat = instDepArtifacts.get("heat0");
+		assertNotNull(instArtifactHeat);
+
+		ArtifactDefinition instArtifactHeatEnv = instDepArtifacts.get("heat0env");
+		assertNotNull(instArtifactHeatEnv);
+		assertEquals(artifactHeat.getUniqueId(), instArtifactHeatEnv.getGeneratedFromId());
+		assertEquals("HEAT ENV", instArtifactHeatEnv.getArtifactDisplayName());
+		assertEquals("HEAT_ENV", instArtifactHeatEnv.getArtifactType());
+
+		assertEquals(artifactHeat.getUniqueId(), instArtifactHeat.getUniqueId());
+		//different artifacts
+		assertTrue( !artifactHeatEnv.getUniqueId().equals(instArtifactHeat.getUniqueId()) );
+	
+
+	}
+	
+	@Test(enabled = true)
+	public void createAndUpdateCsarCheckVfHeatEnv() throws Exception {
+		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+		resourceDetails.setCsarUUID("orig2G_org");
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+
+	
+		Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
+		assertNotNull(deploymentArtifacts);
+		
+		assertEquals(13, deploymentArtifacts.size());
+
+		ArtifactDefinition artifactHeat = deploymentArtifacts.get("heat0");
+		assertNotNull(artifactHeat);
+
+		ArtifactDefinition artifactHeatEnv = deploymentArtifacts.get("heat0env");
+		assertNotNull(artifactHeatEnv);
+
+		assertEquals(artifactHeat.getUniqueId(), artifactHeatEnv.getGeneratedFromId());
+		assertEquals("VF HEAT ENV", artifactHeatEnv.getArtifactDisplayName());
+		assertEquals("HEAT_ENV", artifactHeatEnv.getArtifactType());
+		assertEquals("VF Auto-generated HEAT Environment deployment artifact", artifactHeatEnv.getDescription());
+		
+		List<GroupDefinition>  groups = resource.getGroups();
+		assertEquals(2, groups.size());
+		GroupDefinition group1 = groups.stream().filter(p -> p.getName().contains("module-0")).findAny().get();
+		GroupDefinition group2 = groups.stream().filter(p -> p.getName().contains("module-1")).findAny().get();
+		assertEquals(11, group1.getArtifacts().size());
+		assertEquals(3, group2.getArtifacts().size());
+		
+		resourceDetails.setCsarUUID("orig2G_update");
+		
+		RestResponse updateResource = ResourceRestUtils.updateResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), resourceDetails.getUniqueId());
+		BaseRestUtils.checkSuccess(updateResource);
+
+		resource = ResponseParser.parseToObjectUsingMapper(updateResource.getResponse(), Resource.class);
+
+		
+		Map<String, ArtifactDefinition> deploymentArtifactsUpd = resource.getDeploymentArtifacts();
+		assertNotNull(deploymentArtifactsUpd);
+		
+		assertEquals(13, deploymentArtifactsUpd.size());
+
+		ArtifactDefinition artifactHeatUpd = deploymentArtifacts.get("heat0");
+		assertNotNull(artifactHeatUpd);
+
+		ArtifactDefinition artifactHeatEnvUpd = deploymentArtifacts.get("heat0env");
+		assertNotNull(artifactHeatEnvUpd);
+		
+		groups = resource.getGroups();
+		assertEquals(2, groups.size());
+		assertEquals(7, groups.get(0).getArtifacts().size());
+		assertEquals(7, groups.get(1).getArtifacts().size());
+	
+
+	}
+	
+	@Test
+	public void importInnerVfcWithArtifactsSucceed() throws Exception {
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		String rootPath = System.getProperty("user.dir");
+		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		
+		String payloadName = "ImportArtifactsToVFC.csar";
+		Path path = Paths.get(rootPath + CSARS_PATH + "ImportArtifactsToVFC.csar");
+		byte[] data = Files.readAllBytes(path);
+		String payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setPayloadName(payloadName);
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		
+		List<ComponentInstance> componentInstances = resource.getComponentInstances();
+		List<ComponentInstance> reducedComponentInstances = componentInstances.stream()
+				.filter(ci->ci.getNormalizedName().contains("server_sm"))
+				.collect(Collectors.toList());
+		assertTrue(!reducedComponentInstances.isEmpty() && reducedComponentInstances.size() == 2);
+		reducedComponentInstances.stream().forEach(ci->isValidArtifacts(ci));
+		
+		payloadName = "ImportArtifactsToVFC_empty.csar";
+		path = Paths.get(rootPath + CSARS_PATH + "ImportArtifactsToVFC_empty.csar");
+		data = Files.readAllBytes(path);
+		payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setName(resourceDetails.getName()+"2");
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setPayloadName(payloadName);
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		
+		createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(createResource);
+		resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		
+		componentInstances = resource.getComponentInstances();
+		reducedComponentInstances = componentInstances.stream()
+				.filter(ci->ci.getNormalizedName().contains("server_sm"))
+				.collect(Collectors.toList());
+		assertTrue(!reducedComponentInstances.isEmpty() && reducedComponentInstances.size() == 2);
+		reducedComponentInstances.stream()
+		.forEach(ci->assertTrue(
+				(ci.getDeploymentArtifacts()==null || ci.getDeploymentArtifacts().isEmpty()) &&
+				(ci.getArtifacts()==null || ci.getArtifacts().isEmpty()))
+				);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void importInnerVfcWithArtifactsUpdateSucceed() throws Exception {
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		String rootPath = System.getProperty("user.dir");
+		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		
+		String payloadName = "vfc_artifacts.csar";
+		Path path = Paths.get(rootPath + CSARS_PATH + payloadName);
+		byte[] data = Files.readAllBytes(path);
+		String payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setPayloadName(payloadName);
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		
+		Map<String,String> validCreatedInformationalArtifactVersions = new HashMap<>();
+		validCreatedInformationalArtifactVersions.put("GuideInfoDelete.mib","1");
+		validCreatedInformationalArtifactVersions.put("GuideInfoUpdate.mib","1");
+		validCreatedInformationalArtifactVersions.put("OtherInfoIgnore.mib","1");
+		
+		Map<String,String> validCreatedDeploymentArtifactVersions = new HashMap<>();
+		validCreatedDeploymentArtifactVersions.put("PollDelete.mib","1");
+		validCreatedDeploymentArtifactVersions.put("PollUpdate.mib","1");
+		validCreatedDeploymentArtifactVersions.put("TrapDelete.mib","1");
+		validCreatedDeploymentArtifactVersions.put("TrapUpdate.mib","1");
+		
+		Map<String,String> validUpdatedInformationalArtifactVersions = new HashMap<>();
+		validUpdatedInformationalArtifactVersions.put("GuideInfoNew.mib","1");
+		validUpdatedInformationalArtifactVersions.put("GuideInfoUpdate.mib","2");
+		validUpdatedInformationalArtifactVersions.put("OtherInfoIgnore.mib","1");
+		
+		Map<String,String> validUpdatedDeploymentArtifactVersions = new HashMap<>();
+		validUpdatedDeploymentArtifactVersions.put("PollNew.mib","1");
+		validUpdatedDeploymentArtifactVersions.put("PollUpdate.mib","2");
+		validUpdatedDeploymentArtifactVersions.put("TrapNew.mib","1");
+		validUpdatedDeploymentArtifactVersions.put("TrapUpdate.mib","2");
+
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		
+		List<ComponentInstance> componentInstances = resource.getComponentInstances().stream()
+				.filter(ci->ci.getNormalizedName().contains("ltm_server"))
+				.collect(Collectors.toList());
+		assertTrue(!componentInstances.isEmpty() && componentInstances.size() == 1);
+		ComponentInstance componentInstance = componentInstances.get(0);
+		assertTrue(!componentInstance.getArtifacts().isEmpty() && componentInstance.getArtifacts().size() == 3);
+		componentInstance.getArtifacts().values().stream()
+		.forEach(a->assertTrue(validCreatedInformationalArtifactVersions.containsKey(a.getArtifactName()) && 
+				validCreatedInformationalArtifactVersions.get(a.getArtifactName()).equals(a.getArtifactVersion())));
+		
+		assertTrue(!componentInstance.getDeploymentArtifacts().isEmpty() && componentInstance.getDeploymentArtifacts().size() == 4);
+		componentInstance.getDeploymentArtifacts().values().stream()
+		.forEach(a->assertTrue(validCreatedDeploymentArtifactVersions.containsKey(a.getArtifactName()) && 
+				validCreatedDeploymentArtifactVersions.get(a.getArtifactName()).equals(a.getArtifactVersion())));
+		
+		payloadName = "vfc_artifacts_update.csar";
+		path = Paths.get(rootPath + CSARS_PATH + payloadName);
+		data = Files.readAllBytes(path);
+		payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setPayloadName(payloadName);
+		
+		RestResponse updateResource = ResourceRestUtils.updateResource(resourceDetails, sdncModifierDetails, resource.getUniqueId());
+		BaseRestUtils.checkSuccess(updateResource);
+		resource = ResponseParser.parseToObjectUsingMapper(updateResource.getResponse(), Resource.class);
+		
+		componentInstances = resource.getComponentInstances().stream()
+				.filter(ci->ci.getNormalizedName().contains("ltm_server"))
+				.collect(Collectors.toList());
+		assertTrue(!componentInstances.isEmpty() && componentInstances.size() == 1);
+		componentInstance = componentInstances.get(0);
+		assertTrue(!componentInstance.getArtifacts().isEmpty() && componentInstance.getArtifacts().size() == 3);
+		componentInstance.getArtifacts().values().stream()
+		.forEach(a->assertTrue(validUpdatedInformationalArtifactVersions.containsKey(a.getArtifactName()) && 
+				validUpdatedInformationalArtifactVersions.get(a.getArtifactName()).equals(a.getArtifactVersion())));
+		
+		assertTrue(!componentInstance.getDeploymentArtifacts().isEmpty() && componentInstance.getDeploymentArtifacts().size() == 4);
+		componentInstance.getDeploymentArtifacts().values().stream()
+		.forEach(a->assertTrue(validUpdatedDeploymentArtifactVersions.containsKey(a.getArtifactName()) && 
+				validUpdatedDeploymentArtifactVersions.get(a.getArtifactName()).equals(a.getArtifactVersion())));
+		
+		
+		payloadName = "vfc_artifacts_delete_all.csar";
+		path = Paths.get(rootPath + CSARS_PATH + payloadName);
+		data = Files.readAllBytes(path);
+		payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setPayloadData(payloadData);
+		resourceDetails.setPayloadName(payloadName);
+		
+		updateResource = ResourceRestUtils.updateResource(resourceDetails, sdncModifierDetails, resource.getUniqueId());
+		BaseRestUtils.checkSuccess(updateResource);
+		resource = ResponseParser.parseToObjectUsingMapper(updateResource.getResponse(), Resource.class);
+		
+		componentInstances = resource.getComponentInstances().stream()
+				.filter(ci->ci.getNormalizedName().contains("ltm_server"))
+				.collect(Collectors.toList());
+		assertTrue(!componentInstances.isEmpty() && componentInstances.size() == 1);
+		componentInstance = componentInstances.get(0);
+		assertTrue(componentInstance.getArtifacts() == null || componentInstance.getArtifacts().isEmpty());
+		assertTrue(componentInstance.getDeploymentArtifacts() == null || componentInstance.getDeploymentArtifacts().isEmpty());
+	}
+	
+	private void isValidArtifacts(ComponentInstance ci) {
+		assertTrue(!ci.getDeploymentArtifacts().isEmpty() && ci.getDeploymentArtifacts().size() == 11);
+		ci.getDeploymentArtifacts().values().stream()
+						 .forEach(a->assertTrue(a.getArtifactName().startsWith("Some")));
+		
+		assertTrue(!ci.getArtifacts().isEmpty() && ci.getArtifacts().size() == 1);
+		ci.getArtifacts().values().stream()
+						 .forEach(a->assertTrue(a.getArtifactName().startsWith("Process")));
 	}
 
 	private void verifyMembers(Map<String, String> createdMembers, Map<String, String> compNameToUniqueId) {

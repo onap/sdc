@@ -92,8 +92,7 @@ public class ElementOperationTest extends ModelTestBase {
 	public void testGetResourceAndServiceCategoty() {
 		String id = OperationTestsUtil.deleteAndCreateResourceCategory(CATEGORY, SUBCATEGORY, titanDao);
 
-		Either<CategoryDefinition, ActionStatus> res = elementOperation.getCategory(NodeTypeEnum.ResourceNewCategory,
-				id);
+		Either<CategoryDefinition, ActionStatus> res = elementOperation.getCategory(NodeTypeEnum.ResourceNewCategory, id);
 		assertTrue(res.isLeft());
 		CategoryDefinition categoryDefinition = (CategoryDefinition) res.left().value();
 		assertEquals(CATEGORY, categoryDefinition.getName());

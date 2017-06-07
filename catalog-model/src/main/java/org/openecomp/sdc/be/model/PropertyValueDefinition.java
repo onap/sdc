@@ -27,7 +27,6 @@ public class PropertyValueDefinition extends InputsValueDataDefinition implement
 
 	public PropertyValueDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public PropertyValueDefinition(String name, String value) {

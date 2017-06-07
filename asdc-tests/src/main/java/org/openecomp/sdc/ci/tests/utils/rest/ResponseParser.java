@@ -21,6 +21,7 @@
 package org.openecomp.sdc.ci.tests.utils.rest;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,8 +31,10 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;
@@ -50,7 +53,9 @@ import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintJacksonDeserialiser;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceDistributionStatus;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -59,7 +64,34 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class ResponseParser {
-	
+
+	// comment by Andrey, for test only
+	// public static void main(String[] args) {
+	// String response =
+	// "{\"uniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2\",\"resourceName\":\"importResource4test\",\"resourceVersion\":\"0.1\",\"creatorUserId\":\"jh0003\",\"creatorFullName\":\"Jimmy
+	// Hendrix\",\"lastUpdaterUserId\":\"jh0003\",\"lastUpdaterFullName\":\"Jimmy
+	// Hendrix\",\"creationDate\":1446742241514,\"lastUpdateDate\":1446742241514,\"description\":\"Represents
+	// a generic software component that can be managed and run by a Compute
+	// Node
+	// Type.\",\"icon\":\"defaulticon\",\"tags\":[\"importResource4test\"],\"category\":\"Generic/Infrastructure\",\"lifecycleState\":\"NOT_CERTIFIED_CHECKOUT\",\"derivedFrom\":[\"tosca.nodes.Root\"],\"artifacts\":{},\"deploymentArtifacts\":{},\"properties\":[{\"uniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2.port\",\"type\":\"integer\",\"required\":false,\"description\":\"the
+	// port the DBMS service will listen to for data and
+	// requests\",\"password\":false,\"name\":\"port\",\"parentUniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2\",\"definition\":true},{\"uniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2.root_password\",\"type\":\"string\",\"required\":false,\"description\":\"the
+	// optional root password for the DBMS
+	// service\",\"password\":false,\"name\":\"root_password\",\"parentUniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2\",\"definition\":true}],\"interfaces\":{\"standard\":{\"type\":\"tosca.interfaces.node.lifecycle.Standard\",\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard\",\"operations\":{\"stop\":{\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard.stop\",\"description\":\"Standard
+	// lifecycle stop
+	// operation.\",\"definition\":false},\"start\":{\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard.start\",\"description\":\"Standard
+	// lifecycle start
+	// operation.\",\"definition\":false},\"delete\":{\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard.delete\",\"description\":\"Standard
+	// lifecycle delete
+	// operation.\",\"definition\":false},\"create\":{\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard.create\",\"description\":\"Standard
+	// lifecycle create
+	// operation.\",\"definition\":false},\"configure\":{\"uniqueId\":\"tosca.interfaces.node.lifecycle.standard.configure\",\"description\":\"Standard
+	// lifecycle configure
+	// operation.\",\"definition\":false}},\"definition\":false}},\"capabilities\":{\"feature\":{\"uniqueId\":\"capability.8313348e-3623-4f4a-9b8f-d2fbadaf9a31.feature\",\"type\":\"tosca.capabilities.Node\"},\"feature2\":{\"uniqueId\":\"capability.52eb0139-a855-47b9-a0e6-c90f0a90b1d2.feature2\",\"type\":\"tosca.capabilities.Node\"}},\"requirements\":{\"dependency\":{\"uniqueId\":\"8313348e-3623-4f4a-9b8f-d2fbadaf9a31.dependency\",\"capability\":\"tosca.capabilities.Node\",\"node\":\"tosca.nodes.Root\",\"relationship\":\"tosca.relationships.DependsOn\"},\"dependency2\":{\"uniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2.dependency2\",\"capability\":\"tosca.capabilities.Node\",\"node\":\"tosca.nodes.importResource4test\",\"relationship\":\"tosca.relationships.DependsOn\"}},\"vendorName\":\"ATT
+	// (Tosca)\",\"vendorRelease\":\"1.0.0.wd03\",\"contactId\":\"jh0003\",\"systemName\":\"Importresource4test\",\"additionalInformation\":[{\"uniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2.additionalinformation\",\"lastCreatedCounter\":0,\"parentUniqueId\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2\",\"parameters\":[]}],\"allVersions\":{\"0.1\":\"52eb0139-a855-47b9-a0e6-c90f0a90b1d2\"},\"abstract\":false,\"highestVersion\":true,\"uuid\":\"2e91a2df-b066-49bb-abde-4c1c01e409db\"}";
+	// convertResourceResponseToJavaObject(response);
+	// }
+
 	private static final String INVARIANT_UUID = "invariantUUID";
 	public static final String UNIQUE_ID = "uniqueId";
 	public static final String VERSION = "version";
@@ -183,30 +215,6 @@ public class ResponseParser {
 		return propertyDefinition;
 	}
 
-	// public static ResourceInstanceReqDetails
-	// convertResourceInstanceResponseToJavaObject(String response) {
-	//
-	// ObjectMapper mapper = new ObjectMapper();
-	// final SimpleModule module = new
-	// SimpleModule("customerSerializationModule", new Version(1, 0, 0, "static
-	// version"));
-	// JsonDeserializer<PropertyConstraint> desrializer = new
-	// PropertyConstraintJacksonDeserialiser();
-	// addDeserializer(module, PropertyConstraint.class, desrializer);
-	//
-	// mapper.registerModule(module);
-	// ResourceInstanceReqDetails resourceInstanceReqDetails = null;
-	// try {
-	// resourceInstanceReqDetails = mapper.readValue(response,
-	// ResourceInstanceReqDetails.class);
-	// logger.debug(resourceInstanceReqDetails.toString());
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// return resourceInstanceReqDetails;
-	// }
 	public static String toJson(Object object) {
 		Gson gson = new Gson();
 		return gson.toJson(object);
@@ -231,17 +239,7 @@ public class ResponseParser {
 	public static ArtifactReqDetails convertArtifactReqDetailsToJavaObject(String response) {
 
 		ArtifactReqDetails artifactReqDetails = null;
-		// try {
-		//
-		// artifactDefinition = mapper.readValue(response,
-		// ArtifactReqDetails.class);
-		// logger.debug(artifactDefinition.toString());
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// return artifactDefinition;
+		
 		Gson gson = new Gson();
 		artifactReqDetails = gson.fromJson(response, ArtifactReqDetails.class);
 		return artifactReqDetails;
@@ -283,17 +281,7 @@ public class ResponseParser {
 			ArtifactDefinition artifactDefinition) {
 
 		ArtifactReqDetails artifactReqDetails = null;
-		// try {
-		//
-		// artifactDefinition = mapper.readValue(response,
-		// ArtifactReqDetails.class);
-		// logger.debug(artifactDefinition.toString());
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// return artifactDefinition;
+		
 		Gson gson = new Gson();
 		String artDef = gson.toJson(artifactDefinition);
 		artifactReqDetails = gson.fromJson(artDef, ArtifactReqDetails.class);
@@ -491,9 +479,11 @@ public class ResponseParser {
 		}
 	}
 
-	public static Map<String, ArrayList<Component>> convertCatalogResponseToJavaObject(String response) {
+	public static Map<String, List<Component>> convertCatalogResponseToJavaObject(String response) {
 
-		Map<String, ArrayList<Component>> map = new HashMap<String, ArrayList<Component>>();
+		// Map<String, ArrayList<Component>> map = new HashMap<String,
+		// ArrayList<Component>>();
+		Map<String, List<Component>> map = new HashMap<String, List<Component>>();
 
 		JsonElement jElement = new JsonParser().parse(response);
 		JsonObject jObject = jElement.getAsJsonObject();
@@ -537,5 +527,40 @@ public class ResponseParser {
 
 		return map;
 
+	}
+	
+	
+	public static Map<Long, ServiceDistributionStatus> convertServiceDistributionStatusToObject(String response) throws ParseException {
+
+		Map<Long, ServiceDistributionStatus> serviceDistributionStatusMap = new HashMap<Long, ServiceDistributionStatus>();
+		ServiceDistributionStatus serviceDistributionStatusObject = null;
+		
+		JsonElement jElement = new JsonParser().parse(response);
+		JsonObject jObject = jElement.getAsJsonObject();
+		JsonArray jDistrStatusArray = jObject.getAsJsonArray("distributionStatusOfServiceList");
+		
+		for (int i = 0; i < jDistrStatusArray.size(); i++){
+			Gson gson = new Gson();
+			String servDistrStatus = gson.toJson(jDistrStatusArray.get(i));
+			serviceDistributionStatusObject = gson.fromJson(servDistrStatus, ServiceDistributionStatus.class);
+			serviceDistributionStatusMap.put(Utils.getEpochTimeFromUTC(serviceDistributionStatusObject.getTimestamp()), serviceDistributionStatusObject);
+		}
+
+		return serviceDistributionStatusMap;
+		
+	}
+
+	public static Map<String, String> getPropertiesNameType(RestResponse restResponse)
+			throws JSONException {
+		Map<String, String> propertiesMap = new HashMap<String, String>();
+		JSONArray propertiesList = getListFromJson(restResponse, "properties");
+		for (int i = 0; i < propertiesList.length() ; i ++){
+			JSONObject  prop = (JSONObject) JSONValue.parse(propertiesList.get(i).toString());
+			String propName = prop.get("name").toString();
+			String propType = prop.get("type").toString();
+			propertiesMap.put(propName, propType);
+		}
+		
+		return propertiesMap;
 	}
 }

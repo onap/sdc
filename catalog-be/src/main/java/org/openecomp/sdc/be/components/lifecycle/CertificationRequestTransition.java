@@ -29,10 +29,14 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -50,13 +54,20 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.tosca.ToscaError;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
+import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.be.user.Role;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -68,15 +79,11 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 
 	private static Logger log = LoggerFactory.getLogger(CertificationRequestTransition.class.getName());
 
-	private ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder;
-	private ResourceOperation resourceOperation;
 	private CapabilityOperation capabilityOperation;
 	private ServiceBusinessLogic serviceBusinessLogic;
-	private ToscaExportHandler toscaExportUtils;
-
-	public CertificationRequestTransition(ComponentsUtils componentUtils, ILifecycleOperation lifecycleOperation, ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder, ServiceBusinessLogic serviceBusinessLogic,
-			CapabilityOperation capabilityOperation, ToscaExportHandler toscaExportUtils) {
-		super(componentUtils, lifecycleOperation);
+	public CertificationRequestTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ServiceDistributionArtifactsBuilder serviceDistributionArtifactsBuilder, ServiceBusinessLogic serviceBusinessLogic,
+			CapabilityOperation capabilityOperation, ToscaExportHandler toscaExportUtils, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+		super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 
 		// authorized roles
 		Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
@@ -87,13 +94,13 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 		// TODO to be later defined for product
 		// addAuthorizedRoles(ComponentTypeEnum.PRODUCT,
 		// Arrays.asList(productCheckoutRoles));
+		
+		//additional authorized roles for resource type
+		Role[] resourceRoles = { Role.TESTER};
+		addResouceAuthorizedRoles(ResourceTypeEnum.VFCMT, Arrays.asList(resourceRoles));
 
-		this.serviceDistributionArtifactsBuilder = serviceDistributionArtifactsBuilder;
-		if (lifeCycleOperation != null)
-			this.resourceOperation = lifeCycleOperation.getResourceOperation();
 		this.serviceBusinessLogic = serviceBusinessLogic;
 		this.capabilityOperation = capabilityOperation;
-		this.toscaExportUtils = toscaExportUtils;
 	}
 
 	@Override
@@ -125,7 +132,7 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 	private ResponseFormat getRelevantResponseFormatUncertifiedRI(ComponentInstance nonCertifiedRI, ComponentTypeEnum componentType) {
 
 		ResponseFormat responseFormat;
-		Either<Resource, StorageOperationStatus> eitherResource = resourceOperation.getResource(nonCertifiedRI.getComponentUid());
+		Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(nonCertifiedRI.getComponentUid());
 		if (eitherResource.isRight()) {
 
 			responseFormat = componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -133,16 +140,16 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 		} else {
 			ActionStatus actionStatus;
 			Resource resource = eitherResource.left().value();
-			Either<List<Resource>, StorageOperationStatus> status = resourceOperation.findLastCertifiedResourceByUUID(resource);
+			Either<Resource, StorageOperationStatus> status = toscaOperationFacade.findLastCertifiedToscaElementByUUID(resource);
 
 			if (ValidationUtils.validateMinorVersion(nonCertifiedRI.getComponentVersion())) {
-				if (status.isRight() || status.left().value() == null || status.left().value().isEmpty()) {
+				if (status.isRight() || status.left().value() == null) {
 					actionStatus = ActionStatus.VALIDATED_RESOURCE_NOT_FOUND;
 				} else {
 					actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
 				}
 			} else {
-				if (status.isRight() || status.left().value() == null || status.left().value().isEmpty())
+				if (status.isRight() || status.left().value() == null)
 					actionStatus = ActionStatus.FOUND_LIST_VALIDATED_RESOURCES;
 				else {
 					actionStatus = ActionStatus.FOUND_ALREADY_VALIDATED_RESOURCE;
@@ -157,23 +164,23 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 
 	private Either<ActionStatus, Map<String, ArtifactDefinition>> validateMandatoryArtifactsSupplied(Map<String, ArtifactDefinition> artifacts) {
 
-		if (artifacts == null || true == artifacts.isEmpty()) {
+		if (artifacts == null || artifacts.isEmpty()) {
 			return Either.left(ActionStatus.OK);
 		}
 
-		Map<String, ArtifactDefinition> invalidArtifacts = new HashMap<String, ArtifactDefinition>();
+		Map<String, ArtifactDefinition> invalidArtifacts = new HashMap<>();
 		for (Entry<String, ArtifactDefinition> artifact : artifacts.entrySet()) {
 
 			ArtifactDefinition artifactDefinition = artifact.getValue();
-			if (true == artifactDefinition.getMandatory()) {
+			if (artifactDefinition.getMandatory()) {
 				String artifactEsId = artifactDefinition.getEsId();
-				if (artifactEsId == null || true == artifactEsId.isEmpty()) {
+				if (artifactEsId == null || artifactEsId.isEmpty()) {
 					invalidArtifacts.put(artifact.getKey(), artifactDefinition);
 				}
 			}
 		}
 
-		if (true == invalidArtifacts.isEmpty()) {
+		if (invalidArtifacts.isEmpty()) {
 			return Either.left(ActionStatus.OK);
 		} else {
 			return Either.right(invalidArtifacts);
@@ -185,81 +192,73 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 
 		log.debug("start performing certification request for resource {}", component.getUniqueId());
 
-		// Either<ActionStatus, Map<String, ArtifactDefinition>>
-		// validateMandatoryArtifacts =
-		// validateMandatoryArtifactsSupplied(component.getArtifacts());
-		// log.debug("After checking mandatory artifacts were populated. Result
-		// is " + validateMandatoryArtifacts);
-		// if (validateMandatoryArtifacts.isRight()) {
-		// ResponseFormat responseFormat = componentUtils
-		// .getResponseFormatByMissingArtifacts(
-		// componentType,
-		// validateMandatoryArtifacts.right().value());
-		// return Either.right(responseFormat);
-		// }
-		ActionStatus actionStatus = null;
-		ResponseFormat responseFormat = null;
-
-		if (componentType == ComponentTypeEnum.SERVICE || (componentType == ComponentTypeEnum.RESOURCE && ((Resource) component).getResourceType() == ResourceTypeEnum.VF)) {
-
-			Either<Boolean, ResponseFormat> statusCert = validateAllResourceInstanceCertified(component);
-			if (statusCert.isRight()) {
-				return Either.right(statusCert.right().value());
-			}
-
-			statusCert = validateConfiguredAtomicReqCapSatisfied(component);
-			if (statusCert.isRight()) {
-				return Either.right(statusCert.right().value());
-			}
-		}
-		if (componentType == ComponentTypeEnum.SERVICE) {
-			Either<Boolean, StorageOperationStatus> status = validateDeloymentArtifactSupplied((Service) component);
-			if (status.isRight()) {
-				StorageOperationStatus operationStatus = status.right().value();
-				actionStatus = componentUtils.convertFromStorageResponse(operationStatus);
-			} else {
-				Boolean isDeploymentArtifactExists = status.left().value();
-				if (isDeploymentArtifactExists == null || isDeploymentArtifactExists.booleanValue() == false) {
-					actionStatus = ActionStatus.SERVICE_DEPLOYMENT_ARTIFACT_NOT_FOUND;
-				} else {
-					Either<Service, ResponseFormat> generateHeatEnvResult = serviceBusinessLogic.generateHeatEnvArtifacts((Service) component, modifier, shouldLock);
-					if (generateHeatEnvResult.isRight()) {
-						return Either.right(generateHeatEnvResult.right().value());
-					}
-					Either<Service, ResponseFormat> generateVfModuleResult = serviceBusinessLogic.generateVfModuleArtifacts((Service) component, modifier, shouldLock);
-					if (generateVfModuleResult.isRight()) {
-						return Either.right(generateVfModuleResult.right().value());
-					}
+		ActionStatus actionStatus;
+		ResponseFormat responseFormat;
+		Either<? extends Component, ResponseFormat> result = null;
+		try{
+			if (componentType == ComponentTypeEnum.SERVICE || (componentType == ComponentTypeEnum.RESOURCE && ((Resource) component).getResourceType() == ResourceTypeEnum.VF)) {
+	
+				Either<Boolean, ResponseFormat> statusCert = validateAllResourceInstanceCertified(component);
+				if (statusCert.isRight()) {
+					return Either.right(statusCert.right().value());
+				}
+	
+				statusCert = validateConfiguredAtomicReqCapSatisfied(component);
+				if (statusCert.isRight()) {
+					return Either.right(statusCert.right().value());
 				}
 			}
-
-			if (actionStatus != null) {
+			if (componentType == ComponentTypeEnum.SERVICE) {
+			
+				Either<Service, ResponseFormat> generateHeatEnvResult = serviceBusinessLogic.generateHeatEnvArtifacts((Service) component, modifier, shouldLock);
+						
+				if (generateHeatEnvResult.isRight()) {
+						return Either.right(generateHeatEnvResult.right().value());
+					}
+				Either<Service, ResponseFormat> generateVfModuleResult = serviceBusinessLogic.generateVfModuleArtifacts((Service) component, modifier, shouldLock);
+				if (generateVfModuleResult.isRight()) {
+						return Either.right(generateVfModuleResult.right().value());
+				}
+			}
+	
+			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherPopulated = componentBl.populateToscaArtifacts(component, modifier, true, inTransaction, shouldLock);
+			if (eitherPopulated != null && eitherPopulated.isRight()) {
+				return Either.right(eitherPopulated.right().value());
+			}
+	
+			NodeTypeEnum nodeType = componentType.equals(ComponentTypeEnum.SERVICE) ? NodeTypeEnum.Service : NodeTypeEnum.Resource;
+			
+			
+			Either<ToscaElement, StorageOperationStatus> certificationRequestResult = lifeCycleOperation.requestCertificationToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
+			if (certificationRequestResult.isRight()) {
+				log.debug("checkout failed on graph");
+				StorageOperationStatus response = certificationRequestResult.right().value();
+				actionStatus = componentUtils.convertFromStorageResponse(response);
+	
+				if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
+					actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+				}
 				responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-				return Either.right(responseFormat);
+				result =  Either.right(responseFormat);
 			}
-
-		}
-
-		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> eitherPopulated = componentBl.populateToscaArtifacts(component, modifier, true, inTransaction, shouldLock);
-		if (eitherPopulated != null && eitherPopulated.isRight()) {
-			return Either.right(eitherPopulated.right().value());
-		}
-
-		NodeTypeEnum nodeType = (componentType.equals(ComponentTypeEnum.SERVICE)) ? NodeTypeEnum.Service : NodeTypeEnum.Resource;
-		Either<? extends Component, StorageOperationStatus> certificationRequestResult = lifeCycleOperation.requestCertificationComponent(nodeType, component, modifier, owner, inTransaction);
-		if (certificationRequestResult.isRight()) {
-			log.debug("checkout failed on graph");
-			StorageOperationStatus response = certificationRequestResult.right().value();
-			actionStatus = componentUtils.convertFromStorageResponse(response);
-
-			if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
-				actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+			else {
+				result =  Either.left(ModelConverter.convertFromToscaElement(certificationRequestResult.left().value()));
 			}
-			responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-			return Either.right(responseFormat);
+	} finally {
+		if (result == null || result.isRight()) {
+			BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
+			if (inTransaction == false) {
+				log.debug("operation failed. do rollback");
+				titanDao.rollback();
+			}
+		} else {
+			if (inTransaction == false) {
+				log.debug("operation success. do commit");
+				titanDao.commit();
+			}
 		}
-
-		return Either.left(certificationRequestResult.left().value());
+	}
+		return result;
 	}
 
 	private Either<Boolean, ResponseFormat> validateConfiguredAtomicReqCapSatisfied(Component component) {
@@ -369,7 +368,7 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 		log.debug("validate before certification request. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
 		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, componentType, lifecycleChangeInfo);
+		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
 		if (userValidationResponse.isRight()) {
 			return userValidationResponse;
 		}
@@ -397,13 +396,4 @@ public class CertificationRequestTransition extends LifeCycleTransition {
 
 		return Either.left(true);
 	}
-
-	private Either<Boolean, StorageOperationStatus> validateDeloymentArtifactSupplied(Service service) {
-
-		Either<Boolean, StorageOperationStatus> serviceContainsDeploymentArtifacts = this.serviceDistributionArtifactsBuilder.isServiceContainsDeploymentArtifacts(service);
-
-		return serviceContainsDeploymentArtifacts;
-
-	}
-
 }

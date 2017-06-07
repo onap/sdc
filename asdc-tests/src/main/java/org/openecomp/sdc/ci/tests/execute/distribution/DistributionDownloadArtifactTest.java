@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -45,13 +46,16 @@ import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedDistDownloadAudit;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.utils.ArtifactUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
@@ -103,10 +107,6 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 	// serviceBaseVersion = "0.1";
 	// designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 	// adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-	//// resourceDetails =
-	// ElementFactory.getDefaultResource("tosca.nodes.newnotgenericresource4testNew",
-	// NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS,
-	// "jh0003");
 	// resourceDetails =
 	// ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 	// NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS,
@@ -125,10 +125,6 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 		serviceBaseVersion = "0.1";
 		designerUser = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
 		adminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
-		// resourceDetails =
-		// ElementFactory.getDefaultResource("tosca.nodes.newnotgenericresource4testNew",
-		// NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS,
-		// "jh0003");
 		resourceDetails = ElementFactory.getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum.VFC,
 				NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, adminUser);
 		serviceDetails = ElementFactory.getDefaultService();
@@ -537,6 +533,64 @@ public class DistributionDownloadArtifactTest extends ComponentBaseTest {
 				.getUniqueId();
 
 		download_serviceVersionNotFound_inner(serviceDetails.getName(), "0.2", null, null);
+	}
+	
+	@Test
+	public void downloadServiceToscaArtifactSuccess() throws Exception {
+		// Creates service
+		RestResponse serviceResponse = ServiceRestUtils.createService(serviceDetails, designerUser);
+		assertEquals("Check response code after creating resource", 201, serviceResponse.getErrorCode().intValue());
+		Service service = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
+		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		// Approves service distribution
+		RestResponse serviceDistributionApproveRes = ServiceRestUtils.approveServiceDistribution(service.getUniqueId(), UserRoleEnum.GOVERNOR.getUserId());
+		service = ResponseParser.convertServiceResponseToJavaObject(serviceDistributionApproveRes.getResponse());
+		// Distributes service
+		RestResponse serviceDistributionRes = AtomicOperationUtils.distributeService(service, true);
+		service = ResponseParser.convertServiceResponseToJavaObject(serviceDistributionRes.getResponse());
+		// Gets tosca template artifact from service
+		ArtifactDefinition toscaTemplateArtifact = service.getToscaArtifacts().get("assettoscatemplate");
+		String expectedPayloadChecksum = toscaTemplateArtifact.getArtifactChecksum();
+		String artifactName = toscaTemplateArtifact.getArtifactName();
+		ArtifactReqDetails artifactDetails = ArtifactUtils.convertArtifactDefinitionToArtifactReqDetails(toscaTemplateArtifact);
+		// Downloads tosca template artifact
+		Map<String, String> authorizationHeaders = new HashMap<String, String>();
+		authorizationHeaders.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, artifactDetails,
+				designerUser, authorizationHeaders);
+		assertEquals("Check response code after download resource", 200, restResponse.getErrorCode().intValue());
+
+		// Validating headers
+		// content disposition
+		List<String> contDispHeaderList = restResponse.getHeaderFields().get(Constants.CONTENT_DISPOSITION_HEADER);
+		assertNotNull(contDispHeaderList);
+		assertEquals("Check content disposition header",
+				new StringBuilder().append("attachment; filename=\"").append(artifactName).append("\"").toString(),
+				contDispHeaderList.get(0));
+
+		// content type
+		List<String> contTypeHeaderList = restResponse.getHeaderFields().get(Constants.CONTENT_TYPE_HEADER);
+		assertNotNull(contTypeHeaderList);
+		assertEquals("Check content type", "application/octet-stream", contTypeHeaderList.get(0));
+		String actualContents = restResponse.getResponse();
+
+		// validating checksum
+		byte[] bytes = actualContents.getBytes();
+		String actualPayloadChecksum = GeneralUtility.calculateMD5ByByteArray(bytes);
+		AssertJUnit.assertEquals(expectedPayloadChecksum, actualPayloadChecksum);
+
+		// validating valid zip
+		InputStream is = new ByteArrayInputStream(bytes);
+		InputStream zis = new ZipInputStream(is);
+		zis.close();
+
+		// validate audit
+		String relativeUrl = encodeUrlForDownload(String.format(Urls.DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL,
+				ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceBaseVersion, artifactName));
+		String auditAction = "DArtifactDownload";
+		ExpectedDistDownloadAudit expectedDistDownloadAudit = new ExpectedDistDownloadAudit(auditAction,
+				ResourceRestUtils.ecomp, encodeUrlForDownload(relativeUrl), "200", "OK");
+		AuditValidationUtils.validateAudit(expectedDistDownloadAudit, auditAction);
 	}
 
 }

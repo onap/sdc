@@ -1,0 +1,22 @@
+<sdc-modal modal="modalInstance"
+           type="classic"
+           class="w-sdc-modal modal-type-alert conformance-level-modal"
+           header="Warning"
+           buttons="footerButtons"
+           show-close-button="false">
+
+    <perfect-scrollbar include-padding="true">
+        <div class="w-sdc-modal-body-content" data-tests-id="message">
+            <p>
+                You are about to distribute a service with models and artifacts created with an <b>older version of the platform</b>.
+                For such service, new properties, metadata and requirements needed by ECOMP components will not be available.
+            </p><p>
+                It is highly recommended that you upgrade the service models and artifacts.
+            </p><p>
+                Click "Continue" if you need to distribute the current service version.<br />
+                Click "Reject" if you need to stop the distribution and manually upgrade the service.
+            </p>
+        </div>
+    </perfect-scrollbar>
+
+</sdc-modal>

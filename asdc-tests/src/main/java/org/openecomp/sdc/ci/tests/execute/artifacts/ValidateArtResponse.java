@@ -34,6 +34,7 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.AllOperationsUtil;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
@@ -315,7 +316,7 @@ public class ValidateArtResponse extends ComponentBaseTest {
 
 		ArtifactDefinition ArtifactDefinitionRespJavaObject = ResponseParser
 				.convertArtifactDefinitionResponseToJavaObject(updateInformationalArtifactToResource.getResponse());
-		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getListHeatParameters();
 		for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
 			String verify = updateValueParam;
 			AssertJUnit.assertTrue("verification failed", verify.equals(heatParameterDefinition.getCurrentValue()));
@@ -389,7 +390,7 @@ public class ValidateArtResponse extends ComponentBaseTest {
 
 		ArtifactDefinition ArtifactDefinitionRespJavaObject = ResponseParser
 				.convertArtifactDefinitionResponseToJavaObject(updateInformationalArtifactToResource.getResponse());
-		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getListHeatParameters();
 		for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
 			String verify = updateValueParam;
 			AssertJUnit.assertTrue("verification failed", verify.equals(heatParameterDefinition.getCurrentValue()));
@@ -461,7 +462,7 @@ public class ValidateArtResponse extends ComponentBaseTest {
 		// verify change in update response
 		ArtifactDefinition ArtifactDefinitionRespJavaObject = ResponseParser
 				.convertArtifactDefinitionResponseToJavaObject(updateInformationalArtifactToResource.getResponse());
-		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getListHeatParameters();
 		for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
 			// String verify = updateValueParam;
 			if (heatParameterDefinition.getDefaultValue() != null) {
@@ -541,7 +542,7 @@ public class ValidateArtResponse extends ComponentBaseTest {
 
 		ArtifactDefinition ArtifactDefinitionRespJavaObject = ResponseParser
 				.convertArtifactDefinitionResponseToJavaObject(updateInformationalArtifactToResource.getResponse());
-		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = ArtifactDefinitionRespJavaObject.getListHeatParameters();
 		for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
 			String verify = updateValueParam;
 			AssertJUnit.assertTrue("verification failed", verify.equals(heatParameterDefinition.getCurrentValue()));

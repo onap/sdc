@@ -1,0 +1,26 @@
+<div class="popover-input-wrapper" tooltip="{{value}}">
+    <input
+        class="value-input"
+        type="text"
+        [ngClass]="{'error': control.invalid}"
+        [name]="name"
+        [value]="value"
+        disabled
+        />
+    <button [popover]="popoverForm">Edit</button>
+</div>
+
+<popover-content #popoverForm [title]="name" [buttons]="buttonsArray" [placement]="'top'" [closeOnClickOutside]="true">
+    <div class="edit-subnet-wrapper">
+        <textarea   rows="5"
+                    #textArea
+                    class="subnet-value"
+                    [ngClass]="{'error': control.invalid}"
+                    [(ngModel)]="value"
+                    [attr.maxlength]="validation.propertyValue.max"
+                    [attr.minlength]="validation.propertyValue.min"
+                    [pattern]="pattern"
+                    [formControl]="control"
+                  ></textarea>
+    </div>
+</popover-content>

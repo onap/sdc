@@ -20,26 +20,29 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
 import java.util.Map;
-
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 
 public class Service extends Component {
+
+	private static final long serialVersionUID = -8819935942700578059L;
+
 	public Service() {
 		super(new ServiceMetadataDefinition());
-		componentType = ComponentTypeEnum.SERVICE;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.SERVICE);
+		this.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
 	}
 
 	public Service(ComponentMetadataDefinition serviceMetadataDefinition) {
 		super(serviceMetadataDefinition);
-		componentType = ComponentTypeEnum.SERVICE;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.SERVICE);
+		this.setToscaType(ToscaElementTypeEnum.TopologyTemplate.getValue());
 	}
 
 	private Map<String, ArtifactDefinition> serviceApiArtifacts;
 
-	private List<AdditionalInformationDefinition> additionalInformation;
 
 	public Map<String, ArtifactDefinition> getServiceApiArtifacts() {
 		return serviceApiArtifacts;
@@ -71,17 +74,26 @@ public class Service extends Component {
 			getServiceMetadataDefinition().setDistributionStatus(distributionStatus.name());
 	}
 
+	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+		getServiceMetadataDefinition().setEcompGeneratedNaming(ecompGeneratedNaming);
+	}
+
+	public Boolean isEcompGeneratedNaming() {
+		return getServiceMetadataDefinition().isEcompGeneratedNaming();
+	}
+
+	public void setNamingPolicy(String namingPolicy) {
+		getServiceMetadataDefinition().setNamingPolicy(namingPolicy);
+	}
+
+	public String getNamingPolicy() {
+		return getServiceMetadataDefinition().getNamingPolicy();
+	}
+
 	private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
 		return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
 	}
 
-	public List<AdditionalInformationDefinition> getAdditionalInformation() {
-		return additionalInformation;
-	}
-
-	public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
-		this.additionalInformation = additionalInformation;
-	}
 
 	@Override
 	public String toString() {

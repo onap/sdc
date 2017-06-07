@@ -28,8 +28,8 @@ resources:
           name: "LAN Connectors"
           icons: ['network','connector','port']
       Infrastructure:
-                name: "Infrastructure"
-                icons: ['ucpe']
+          name: "Infrastructure"
+          icons: ['ucpe']
   NetworkLayer4:
     name: "Network L4+"
     subcategories: 
@@ -114,3 +114,30 @@ resources:
       Policy:
           name: "Policy"
           icons: ['dcae_policy']
+  Template:
+    name: "Template"
+    subcategories:
+      MonitoringTemplate:
+          name: "Monitoring Template"
+          icons: ['monitoring_template']
+  AllottedResource:
+    name: "Allotted Resource"
+    subcategories:
+      AllottedResource:
+          name: "Allotted Resource"
+          icons: ['allotted_resource']
+      TunnelXConnect:
+          name: "Tunnel XConnect"
+          icons: ['tunnel_x_connect'] 
+      IpMuxDemux:
+          name: "IP Mux Demux"
+          icons: ['ip_mux_demux'] 
+      ServiceAdmin:
+          name: "Service Admin"
+          icons: ['service_admin']  
+      ContrailRoute:
+          name: "Contrail Route"
+          icons: ['contrail_route']          
+      SecurityZone:
+          name: "Security Zone"
+          icons: ['security_zone']          

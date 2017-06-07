@@ -89,12 +89,12 @@ public class Neo4jUsersDAO implements IUsersDAO {
 				if (createUniquenessStatus.equals(Neo4jOperationStatus.OK)) {
 					logger.info("Users constraints creatyed in Neo4j");
 				} else {
-					logger.error("Failed to create constraints in Neo4j graph [" + createUniquenessStatus + "]");
+					logger.error("Failed to create constraints in Neo4j graph [{}]", createUniquenessStatus);
 					throw new RuntimeException(
 							"Failed to initialize Neo4jUsersDAO - Failed to create constraints in Neo4j graph");
 				}
 			} else {
-				logger.error("Failed to create indexes in Neo4j graph [" + createIndexStatus + "]");
+				logger.error("Failed to create indexes in Neo4j graph [{}]", createIndexStatus);
 				throw new RuntimeException(
 						"Failed to initialize Neo4jUsersDAO - Failed to create indexes in Neo4j graph");
 			}

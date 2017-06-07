@@ -30,6 +30,7 @@ public class TargetCapabilityRelDef implements Serializable {
 	 */
 	private static final long serialVersionUID = -7571489368200736413L;
 
+	private String uid;
 	private String toNode;
 
 	// private List<ImmutablePair<String, RelationshipImpl>> relationships;
@@ -64,6 +65,14 @@ public class TargetCapabilityRelDef implements Serializable {
 
 	public List<RequirementAndRelationshipPair> getRelationships() {
 		return relationships;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public void setRelationships(List<RequirementAndRelationshipPair> relationships) {

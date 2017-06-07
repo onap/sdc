@@ -30,6 +30,30 @@
 			  </methods>
 		</class>
 		
+		<class name="org.openecomp.sdc.ci.tests.execute.artifacts.InformationalArt">
+			  <methods>
+				<include name="UpdateAllResourceMandatoryArtifacts"/>
+				<include name="updateInformationalArtifactMetadataOfResource"/>
+			  </methods>
+		</class>
+		<class name="org.openecomp.sdc.ci.tests.execute.artifacts.InformationalArtCloudQuestionnaire">
+			  <methods>
+				<include name="updateMandatoryInformationalArtifact_CloudQuestionnaire"/>
+			  </methods>
+		</class>  
+		<class name="org.openecomp.sdc.ci.tests.execute.artifacts.ServiceApiArtifactTest">
+			  <methods>
+				<include name="uploadServiceApiArtifactSuccessfullyTest"/>
+				<include name="updateApiArtifactSuccessfullyTest"/>
+				<include name="deleteApiArtifactSuccessfully"/>
+			  </methods>
+		</class>  
+		<class name="org.openecomp.sdc.ci.tests.execute.artifacts.ServiceInformationalArtifact">
+			  <methods>
+				<include name="updateMandatoryInformationalArtifact_ServiceQuestionnaire"/>
+			  </methods>
+		</class> 
+		
 		<class name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateArtResponse"/>
 		
 		<class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest"/>

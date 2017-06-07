@@ -1,0 +1,37 @@
+<div class="properties-table">
+    <div class="table-header">
+        <div class="table-cell col1">Property Name</div>
+        <div class="table-cell col2">Type</div>
+        <div class="table-cell col3">ES</div>
+        <div class="table-cell valueCol">Value</div>
+    </div>
+    <div class="table-body">
+        <div class="no-data" *ngIf="!inputs || !inputs.length">No data to display</div>
+        <div class="table-row" *ngFor="let input of inputs">
+            <div class="table-cell col1">
+                <span tooltip="{{input.name}}" >{{input.name}}</span>
+                <span *ngIf="input.description"
+                      class="property-description-icon sprite-new show-desc"
+                      tooltip="{{input.description}}"></span>
+            </div>
+            <div class="table-cell col2">{{input.type | contentAfterLastDot}}</div>
+            <div class="table-cell col3">{{input.schema && input.schema.property && input.schema.property.type ? (input.schema.property.type | contentAfterLastDot) : ''}}</div>
+            <div class="table-cell valueCol input-value-col" [class.inner-table-container]="input.childrenProperties || !input.isSimpleType">
+                <dynamic-element class="value-input"
+                                 *ngIf="input.isSimpleType"
+                                 pattern="validationUtils.getValidationPattern(input.type)"
+                                 [(value)]="input.defaultValue"
+                                 [type]="input.type"
+                                 [name]="input.name"
+                                 (change)="onInputValueChanged(input);">
+                </dynamic-element>
+                <div class="delete-button-container">
+                    <span class="sprite-new delete-btn" (click)="onDeleteInput(input)"></span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

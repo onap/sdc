@@ -184,8 +184,15 @@ public interface Urls {
 
 	// ***********************************External API's
 	// (AssetData)****************************************
+	
+	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts/%s";
+	final String DELETE_EXTRNAL_API_DELETE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
 
+	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts/%s";
+	final String POST_EXTERNAL_API_UPDATE_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts/%s";
+	
 	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/%s/%s/artifacts";
+	final String POST_EXTERNAL_API_UPLOAD_ARTIFACT_OF_COMPONENTINSTANCE_ON_ASSET  = "http://%s:%s/asdc/v1/catalog/%s/%s/resourceInstances/%s/artifacts";
 
 	final String GET_DOWNLOAD_RESOURCE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/resources/%s/artifacts/%s";
 	final String GET_DOWNLOAD_SERVICE_ARTIFACT_OF_ASSET = "http://%s:%s/asdc/v1/catalog/services/%s/artifacts/%s";
@@ -202,6 +209,11 @@ public interface Urls {
 	final String POST_AUTHORIZATION = "http://%s:%s/sdc2/rest/v1/consumers";
 	final String GET_DOWNLOAD_SERVICE_RI_ARTIFACT = "http://%s:%s/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s";
 	final String GET_DOWNLOAD_SERVICE_ARTIFACT = "http://%s:%s/asdc/v1/catalog/services/%s/artifacts/%s";
+	
+	final String POST_EXTERNAL_API_CREATE_RESOURCE = "http://%s:%s/asdc/v1/catalog/resources";
+	
+	final String CHANGE_RESOURCE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/asdc/v1/catalog/resources/%s/lifecycleState/%s";
+	final String CHANGE_SERVICE_LIFECYCLE_STATE_EXTERNAL_API = "http://%s:%s/asdc/v1/catalog/services/%s/lifecycleState/%s";
 
 	// *****************************************************************************************************
 
@@ -243,6 +255,7 @@ public interface Urls {
 	// *****************************************************************************************************
 
 	final String VALIDATE_RESOURCE_NAME = "http://%s:%s/sdc2/rest/v1/catalog/resources/validate-name/%s";
+	final String VALIDATE_CONFORMANCE_LEVEL = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/conformanceLevelValidation";
 
 	final String CREATE_SERVICE = "http://%s:%s/sdc2/rest/v1/catalog/services";
 	final String DELETE_SERVICE = "http://%s:%s/sdc2/rest/v1/catalog/services/%s";
@@ -255,14 +268,16 @@ public interface Urls {
 	final String DELETE_COMPONENT_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s";
 	final String UPDATE_COMPONENT_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s";
 	final String GET_COMPONENT_INSTANCES = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/componentInstances";
+	//{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/properties
+	final String GET_COMPONENT_INSTANCE_PROPERTIES_BY_ID = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/componentInstances/%s/properties";
 	// Tal New API
 	final String UPDATE_MULTIPLE_COMPONENT_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/multipleComponentInstance";
 
-	final String CHANGE__RESOURCE_INSTANCE_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s/changeVersion";
+	final String CHANGE_RESOURCE_INSTANCE_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s/changeVersion";
 
 	final String CREATE_AND_ASSOCIATE_RESOURCE_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/resourceInstance/createAndAssociate";
-	final String ASSOCIATE__RESOURCE_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/associate";
-	final String DISSOCIATE__RESOURCE_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/dissociate";
+	final String ASSOCIATE_RESOURCE_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/associate";
+	final String DISSOCIATE_RESOURCE_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/dissociate";
 
 	final String DISTRIBUTION_INIT = "http://%s:%s/init";
 	final String DISTRIBUTION_INIT_RESET = "http://%s:%s/initReset";
@@ -270,6 +285,7 @@ public interface Urls {
 	final String REJECT_DISTRIBUTION = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution-state/reject";
 	final String DISTRIBUTION_DOWNLOAD_ARTIFACT = "http://%s:%s/download";
 	final String ACTIVATE_DISTRIBUTION = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution/%s/activate";
+	final String DISTRIBUTION_SERVICE_LIST = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution";
 
 	final String DEPLOY_SERVICE = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/distribution/%s/markDeployed";
 	final String UPDATE_SERVICE_METADATA = "http://%s:%s/sdc2/rest/v1/catalog/services/%s/metadata";

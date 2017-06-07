@@ -6,6 +6,9 @@
 			<class name="org.openecomp.sdc.externalApis.GetAssetServlet" />
 			<class name="org.openecomp.sdc.externalApis.GetFilteredAssetServlet"/>
 			<class name="org.openecomp.sdc.externalApis.GetSpecificAssetMetadataServlet"/>
+			<class name="org.openecomp.sdc.ci.tests.execute.devCI.CRUDExternalAPI"/>
+			<class name="org.openecomp.sdc.ci.tests.execute.devCI.SearchFilterCategoryExternalAPI"/>
+			<class name="org.openecomp.sdc.ci.tests.execute.externalapi.UserAPIs"/>
 		</classes>
 	</test>
 </suite> 

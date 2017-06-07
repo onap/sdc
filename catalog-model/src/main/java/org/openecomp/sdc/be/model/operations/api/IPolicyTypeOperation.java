@@ -32,7 +32,6 @@ public interface IPolicyTypeOperation {
 
 	Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyType(String uniqueId, boolean inTransaction);
 
-	Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyType,
-			boolean inTransaction);
+	Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyType, boolean inTransaction);
 
 }

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -33,15 +34,16 @@ public class Resource extends Component implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6811540567661368482L;
+	public static final String ROOT_RESOURCE = "tosca.nodes.Root";
 
 	public Resource() {
 		super(new ResourceMetadataDefinition());
-		componentType = ComponentTypeEnum.RESOURCE;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
 	}
 
 	public Resource(ComponentMetadataDefinition componentMetadataDefinition) {
 		super(componentMetadataDefinition);
-		componentType = ComponentTypeEnum.RESOURCE;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.RESOURCE);
 	}
 
 	private List<String> derivedFrom;
@@ -57,7 +59,7 @@ public class Resource extends Component implements Serializable {
 
 	private List<String> defaultCapabilities;
 
-	private List<AdditionalInformationDefinition> additionalInformation;
+//	private List<AdditionalInformationDefinition> additionalInformation;
 
 	/**
 	 * Please note that more than one "derivedFrom" resource is not currently
@@ -150,13 +152,6 @@ public class Resource extends Component implements Serializable {
 				.setLicenseType(licenseType);
 	}
 
-	public List<AdditionalInformationDefinition> getAdditionalInformation() {
-		return additionalInformation;
-	}
-
-	public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
-		this.additionalInformation = additionalInformation;
-	}
 
 	@Override
 	public int hashCode() {
@@ -270,4 +265,29 @@ public class Resource extends Component implements Serializable {
 		return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
 				.getVendorRelease();
 	}
+	
+	@Override
+	public String fetchGenericTypeToscaNameFromConfig(){
+		String result = super.fetchGenericTypeToscaNameFromConfig();
+		if(null == result)
+			result = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(ResourceTypeEnum.VFC.getValue());
+		return result;
+	}
+	
+	@Override
+	public String assetType(){
+		return this.getResourceType().name();
+	}
+	
+	@Override
+	public boolean shouldGenerateInputs(){
+		//TODO add complex VFC condition when supported
+		return ResourceTypeEnum.VF == this.getResourceType();
+	}
+	
+	@Override
+	public boolean deriveFromGeneric(){	
+		return this.shouldGenerateInputs() || (derivedFrom != null && derivedFrom.contains(fetchGenericTypeToscaNameFromConfig()));
+	}
+	
 }

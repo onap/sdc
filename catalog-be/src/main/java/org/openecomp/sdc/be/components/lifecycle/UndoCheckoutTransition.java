@@ -21,25 +21,24 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import java.util.Arrays;
-import java.util.List;
-
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,8 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
 	private static Logger log = LoggerFactory.getLogger(CheckoutTransition.class.getName());
 	private ArtifactsBusinessLogic artifactsManager;
 
-	public UndoCheckoutTransition(ComponentsUtils componentUtils, ILifecycleOperation lifecycleOperation) {
-		super(componentUtils, lifecycleOperation);
+	public UndoCheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+		super(componentUtils, lifecycleOperation, toscaOperationFacade,  titanDao);
 
 		// authorized roles
 		Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
@@ -86,7 +85,7 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
 		log.debug("validate before undo checkout. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
 		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, componentType, lifecycleChangeInfo);
+		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier,component, componentType, lifecycleChangeInfo);
 		if (userValidationResponse.isRight()) {
 			return userValidationResponse;
 		}
@@ -111,59 +110,29 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
 		Either<? extends Component, ResponseFormat> result = null;
 		log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
 
-		Either<List<ArtifactDefinition>, StorageOperationStatus> artifactsRes = lifeCycleOperation.getComponentOperation(componentType.getNodeType()).getComponentArtifactsForDelete(component.getUniqueId(), componentType.getNodeType(), true);
-		if (artifactsRes.isRight()) {
-			ActionStatus actionStatus = componentUtils.convertFromStorageResponse(artifactsRes.right().value());
-			ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-			result = Either.right(responseFormat);
-			return result;
-		}
-		// TODO - start transaction
 		try {
-			NodeTypeEnum nodeType = componentType.getNodeType();
-
-			// 1. perform undo checkout on graph (update status and delete
-			// current version)
-			Either<? extends Component, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(nodeType, component, modifier, owner, true);
+			Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId());
 
 			if (undoCheckoutResourceResult.isRight()) {
 				log.debug("checkout failed on graph");
 				StorageOperationStatus response = undoCheckoutResourceResult.right().value();
 				ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
 				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-				result = Either.right(responseFormat);
-				return result;
+				result =  Either.right(responseFormat);
 			}
-
-			// 2. delete unrelated artifacts
-			// use artifacts API to delete artifacts from swift / elasticsearch
-
-			if (artifactsRes.left().value() != null) {
-				List<ArtifactDefinition> artifacts = artifactsRes.left().value();
-				StorageOperationStatus deleteAllResourceArtifacts = artifactsManager.deleteAllComponentArtifactsIfNotOnGraph(artifacts);
-
-				if (!deleteAllResourceArtifacts.equals(StorageOperationStatus.OK)) {
-					ActionStatus actionStatus = componentUtils.convertFromStorageResponse(deleteAllResourceArtifacts);
-					ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-					result = Either.right(responseFormat);
-					return result;
-				}
+			else {
+				result =  Either.left(ModelConverter.convertFromToscaElement(undoCheckoutResourceResult.left().value()));
 			}
-
-			result = Either.left(undoCheckoutResourceResult.left().value());
 		} finally {
 			if (result == null || result.isRight()) {
-				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "Change LifecycleState - Undo Checkout failed on graph");
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState - Undo Checkout failed on graph");
-
 				log.debug("operation failed. do rollback");
-				lifeCycleOperation.getResourceOperation().getTitanGenericDao().rollback();
+				titanDao.rollback();
 			} else {
 				log.debug("operation success. do commit");
-				lifeCycleOperation.getResourceOperation().getTitanGenericDao().commit();
+				titanDao.commit();
 			}
 		}
-
 		return result;
 	}
 

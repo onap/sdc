@@ -22,36 +22,93 @@ package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
-//import javax.validation.Valid;
-//import javax.validation.constraints.NotNull;
-//
-//
-//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-//import com.fasterxml.jackson.annotation.JsonProperty;
-//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class PropertyDefinition extends PropertyDataDefinition
 		implements IOperationParameter, IComplexDefaultValue, Serializable {
 
-	/**
-	 * 
+	
+	/**The enumeration presents the list of property names with specific behavior 
+	 * @author rbetzer
+	 *
 	 */
+	public enum PropertyNames {
+		
+		MIN_INSTANCES("min_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+		MAX_INSTANCES("max_vf_module_instances", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+		INITIAL_COUNT("initial_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+		VF_MODULE_LABEL("vf_module_label", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
+		VF_MODULE_DESCRIPTION("vf_module_description", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_RESOURCE_LEVEL),
+		NETWORK_ROLE("network_role", GroupInstancePropertyValueUpdateBehavior.NOT_RELEVANT),
+		AVAILABILTY_ZONE_COUNT("availability_zone_count", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL),
+		VFC_LIST("vfc_list", GroupInstancePropertyValueUpdateBehavior.UPDATABLE_ON_SERVICE_LEVEL);
+		
+		private String propertyName;
+		private GroupInstancePropertyValueUpdateBehavior updateBehavior;
+		
+		private PropertyNames(String propertyName,GroupInstancePropertyValueUpdateBehavior updateBehavior){
+			this.propertyName = propertyName;
+			this.updateBehavior = updateBehavior;
+		}
+		
+		public String getPropertyName() {
+			return propertyName;
+		}
+		
+		public GroupInstancePropertyValueUpdateBehavior getUpdateBehavior() {
+			return updateBehavior;
+		}
+		/**
+		 * finds PropertyNames according received string name
+		 * @param name
+		 * @return
+		 */
+		public static PropertyNames findName(String name){
+			for (PropertyNames e : PropertyNames.values()) {
+				if (e.getPropertyName().equals(name)) {
+					return e;
+				}
+			}
+			return null;
+		}
+	}
+	/**
+	 * The enumeration presents the list of highest levels for which update property value is allowed
+	 * @author nsheshukov
+	 *
+	 */
+	public enum GroupInstancePropertyValueUpdateBehavior{
+		NOT_RELEVANT("NOT_RELEVANT", -1),
+		UPDATABLE_ON_RESOURCE_LEVEL("UPDATABLE_ON_VF_LEVEL", 0),
+		UPDATABLE_ON_SERVICE_LEVEL("UPDATABLE_ON_SERVICE_LEVEL", 1);
+		
+		String levelName;
+		int levelNumber;
+		
+		private GroupInstancePropertyValueUpdateBehavior(String name, int levelNumber){
+			this.levelName = name;
+			this.levelNumber = levelNumber;
+		}
+
+		public String getLevelName() {
+			return levelName;
+		}
+
+		public int getLevelNumber() {
+			return levelNumber;
+		}
+	}
+	
 	private static final long serialVersionUID = 188403656600317269L;
 
 	private List<PropertyConstraint> constraints;
 	// private Schema schema;
 	private String status;
 
-	private String name;
 
-	/**
-	 * The resource id which this property belongs to
-	 */
-	private String parentUniqueId;
 
+	
 	public PropertyDefinition() {
 		super();
 	}
@@ -61,16 +118,10 @@ public class PropertyDefinition extends PropertyDataDefinition
 	}
 
 	public PropertyDefinition(PropertyDefinition pd) {
-		this.setUniqueId(pd.getUniqueId());
-		this.setConstraints(pd.getConstraints());
-		// this.setSchema(pd.schema);
-		this.setDefaultValue(pd.getDefaultValue());
-		this.setDescription(pd.getDescription());
-		this.setName(pd.getName());
-		this.setSchema(pd.getSchema());
-		this.setParentUniqueId(pd.getParentUniqueId());
-		this.setRequired(pd.isRequired());
-		this.setType(pd.getType());
+		super(pd);	
+		this.setConstraints(pd.getConstraints());		
+		status = pd.status;
+		
 	}
 
 	public List<PropertyConstraint> getConstraints() {
@@ -81,17 +132,11 @@ public class PropertyDefinition extends PropertyDataDefinition
 		this.constraints = constraints;
 	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@Override
 	public String toString() {
-		return super.toString() + " [name=" + name + ", parentUniqueId=" + parentUniqueId + ", constraints="
+		return super.toString() + " [name=" + getName() + ", constraints="
 				+ constraints + "]]";
 	}
 
@@ -112,13 +157,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 		this.status = status;
 	}
 
-	public String getParentUniqueId() {
-		return parentUniqueId;
-	}
-
-	public void setParentUniqueId(String parentUniqueId) {
-		this.parentUniqueId = parentUniqueId;
-	}
+	
 
 	@Override
 	public boolean isDefinition() {
@@ -126,7 +165,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 	}
 
 	public void setDefinition(boolean definition) {
-		this.definition = definition;
+		super.setDefinition(definition);
 	}
 
 	@Override
@@ -134,8 +173,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((constraints == null) ? 0 : constraints.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
@@ -154,15 +192,10 @@ public class PropertyDefinition extends PropertyDataDefinition
 				return false;
 		} else if (!constraints.equals(other.constraints))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (parentUniqueId == null) {
-			if (other.parentUniqueId != null)
-				return false;
-		} else if (!parentUniqueId.equals(other.parentUniqueId))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		if (status == null) {
 			if (other.status != null)

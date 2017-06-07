@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -92,7 +94,6 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 	@Autowired
 	protected ComponentsUtils componentsUtils;
 
-	private static final Object LOCK = new Object();
 	private Logger log = null;
 
 	protected void init(Logger log) {
@@ -101,28 +102,20 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 	}
 
-	private void initLog(Logger log) {
+	private synchronized void initLog(Logger log) {
 		if (this.log == null) {
-			synchronized (LOCK) {
-				if (this.log == null) {
-					this.log = log;
-				}
-
-			}
+			this.log = log;
 		}
 	}
 
-	private void initSpringFromContext() {
+	private synchronized void initSpringFromContext() {
 		if (servletUtils == null) {
-			synchronized (LOCK) {
-				if (servletUtils == null) {
-					ServletContext context = servletRequest.getSession().getServletContext();
-					WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-					WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-					servletUtils = webApplicationContext.getBean(ServletUtils.class);
-					resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);
-				}
-			}
+			ServletContext context = servletRequest.getSession().getServletContext();
+			WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context
+					.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+			WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+			servletUtils = webApplicationContext.getBean(ServletUtils.class);
+			resourceImportManager = webApplicationContext.getBean(ResourceImportManager.class);
 		}
 	}
 
@@ -137,10 +130,10 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		}
 	}
 
-	protected void validateUserExist(Wrapper<Response> responseWrapper, Wrapper<User> userWrapper, String userId) {
-		log.debug("get user {} from DB", userId);
+	protected void validateUserExist(Wrapper<Response> responseWrapper, Wrapper<User> userWrapper, String userUserId) {
+		log.debug("get user {} from DB", userUserId);
 		// get user details
-		if (userId == null) {
+		if (userUserId == null) {
 			log.info("user userId is null");
 			Response response = returnMissingInformation(new User());
 			responseWrapper.setInnerElement(response);
@@ -148,11 +141,11 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 		else {
 			IUserBusinessLogic userAdmin = getServletUtils().getUserAdmin();
-			Either<User, ActionStatus> eitherCreator = userAdmin.getUser(userId, false);
+			Either<User, ActionStatus> eitherCreator = userAdmin.getUser(userUserId, false);
 			if (eitherCreator.isRight()) {
-				log.info("user is not listed. userId={}", userId);
+				log.info("user is not listed. userId={}", userUserId);
 				User user = new User();
-				user.setUserId(userId);
+				user.setUserId(userUserId);
 				Response response = returnMissingInformation(user);
 				responseWrapper.setInnerElement(response);
 			} else {
@@ -203,6 +196,16 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		}
 
 	}
+	protected void validateCsar(Wrapper<Response> responseWrapper, File file, String payloadName) throws FileNotFoundException {
+		InputStream fileInputStream = new FileInputStream(file);
+		Map<String, byte[]> unzippedFolder = ZipUtil.readZip(new ZipInputStream(fileInputStream));
+		if (payloadName == null || payloadName.isEmpty() || unzippedFolder.isEmpty()) {
+			log.info("Invalid json was received. payloadName should be yml file name");
+			Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+			responseWrapper.setInnerElement(errorResponse);
+		}
+
+	}
 
 	protected void fillZipContents(Wrapper<String> yamlStringWrapper, File file) throws FileNotFoundException {
 		InputStream fileInputStream = new FileInputStream(file);
@@ -218,6 +221,33 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		String yamlAsString = new String(yamlFileInBytes, StandardCharsets.UTF_8);
 		log.debug("received yaml: {}", yamlAsString);
 		yamlStringWrapper.setInnerElement(yamlAsString);
+	}
+	
+	protected void fillPayloadDataFromFile(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfoWrapper, File file)  {
+		try(InputStream fileInputStream = new FileInputStream(file);){
+			
+			byte [] data = new byte[(int)file.length()];
+			if( fileInputStream.read(data) == -1){
+				log.info("Invalid json was received.");
+				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+				
+				Response errorResp = buildErrorResponse(responseFormat);
+				responseWrapper.setInnerElement(errorResp);
+			}
+			String payloadData =  Base64.encodeBase64String(data);
+			uploadResourceInfoWrapper.setPayloadData(payloadData);			
+			
+			
+			
+		} catch (IOException e) {
+			log.info("Invalid json was received or Error while closing input Stream.");
+			log.debug("Invalid json was received or Error while closing input Stream. {}", e.getMessage(), e);
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+			
+			Response errorResp = buildErrorResponse(responseFormat);
+			responseWrapper.setInnerElement(errorResp);
+			
+		}
 	}
 
 	protected void validateUserRole(Wrapper<Response> errorResponseWrapper, User user, ResourceAuthorityTypeEnum resourceAuthority) {
@@ -248,7 +278,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			} else {
 				if (!resourceAuthorityEnum.isBackEndImport()) {
 					isValid = resourceInfoObject.getPayloadName() != null && !resourceInfoObject.getPayloadName().isEmpty();
-					// TODO Tal only resource name is checked
+					//Tal only resource name is checked
 				} else {
 					isValid = true;
 				}
@@ -256,6 +286,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			}
 
 		} catch (JsonSyntaxException e) {
+			log.debug("Invalid json was received. {}", e.getMessage(), e);
 			isValid = false;
 
 		}
@@ -294,8 +325,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 	protected void validatePayloadIsTosca(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user, String toscaPayload) {
 		log.debug("checking payload is valid tosca");
 		boolean isValid;
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
+		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
 		Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.TOSCA_VERSION);
 
 		if (findFirstToscaStringElement.isRight()) {
@@ -337,9 +367,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 	protected void validatePayloadNameSpace(Wrapper<Response> responseWrapper, UploadResourceInfo resourceInfo, User user, String toscaPayload) {
 		boolean isValid;
 		String nameSpace = "";
-
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
+		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
 		Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
 		if (toscaElement.isRight() || toscaElement.left().value().size() != 1) {
 			isValid = false;
@@ -357,7 +385,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		} else {
 			String str1 = nameSpace.substring(Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX.length());
 			String[] findTypes = str1.split("\\.");
-			if (ResourceTypeEnum.contains(findTypes[0].toUpperCase())) {
+			if (ResourceTypeEnum.containsName(findTypes[0].toUpperCase())) {
 				String type = findTypes[0].toUpperCase();
 				resourceInfo.setResourceType(type);
 			} else {
@@ -370,8 +398,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 	protected void validatePayloadIsSingleResource(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user, String toscaPayload) {
 		log.debug("checking payload contains single resource");
 		boolean isValid;
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
+		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
 		Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, ToscaTagNamesEnum.NODE_TYPES);
 		if (toscaElement.isRight()) {
 			isValid = false;
@@ -392,8 +419,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 	protected void validatePayloadIsNotService(Wrapper<Response> responseWrapper, User user, UploadResourceInfo uploadResourceInfo, String toscaPayload) {
 		log.debug("checking payload is not a tosca service");
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
+		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(toscaPayload);
 		Either<Object, ResultStatusEnum> toscaElement = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
 
 		if (toscaElement.isLeft()) {
@@ -406,24 +432,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		}
 
 	}
-
-	protected void validatePayloadIsTopologyTemplate(Wrapper<Response> responseWrapper, User user, UploadResourceInfo uploadResourceInfo, String toscaPayload) {
-		log.debug("checking payload is a tosca topology template");
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
-		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
-		Either<Object, ResultStatusEnum> toscaElement = ImportUtils.findToscaElement(mappedToscaTemplate, ToscaTagNamesEnum.TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL);
-
-		if (toscaElement.isRight()) {
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
-			Response errorResponse = buildErrorResponse(responseFormat);
-			EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-			additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, uploadResourceInfo.getName());
-			getComponentsUtils().auditResource(responseFormat, user, null, "", "", AuditingActionEnum.IMPORT_RESOURCE, additionalParam);
-			responseWrapper.setInnerElement(errorResponse);
-		}
-
-	}
-
+	
 	protected void validateToscaTemplatePayloadName(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user) {
 		String toscaTemplatePayloadName = uploadResourceInfo.getPayloadName();
 		boolean isValidSuffix = false;
@@ -495,7 +504,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			responseWrapper.setInnerElement(errorResponse);
 		} else {
 			String toscaPayload = resourceInfo.getPayloadData();
-			String decodedPayload = (GeneralUtility.isBase64Encoded(toscaPayload)) ? new String(Base64.decodeBase64(toscaPayload)) : toscaPayload;
+			String decodedPayload = new String(Base64.decodeBase64(toscaPayload));
 			yamlStringWrapper.setInnerElement(decodedPayload);
 		}
 
@@ -510,13 +519,26 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 				if (responseWrapper.isEmpty()) {
 					validateDataNotNull(responseWrapper, file, resourceInfoJsonString);
 				}
-				if (responseWrapper.isEmpty()) {
-					validateZip(responseWrapper, file, uploadResourceInfoWrapper.getInnerElement().getPayloadName());
-				}
-
-				// Fill PayLoad From File
-				if (responseWrapper.isEmpty()) {
-					fillToscaTemplateFromZip(yamlStringWrapper, uploadResourceInfoWrapper.getInnerElement().getPayloadName(), file);
+				if(!resourceAuthorityEnum.equals(ResourceAuthorityTypeEnum.CSAR_TYPE_BE)){
+					if (responseWrapper.isEmpty()) {
+						validateZip(responseWrapper, file, uploadResourceInfoWrapper.getInnerElement().getPayloadName());
+					}
+	
+					// Fill PayLoad From File
+					if (responseWrapper.isEmpty()) {
+						fillToscaTemplateFromZip(yamlStringWrapper, uploadResourceInfoWrapper.getInnerElement().getPayloadName(), file);
+					}
+				}else{
+					
+					if (responseWrapper.isEmpty()) {
+						validateCsar(responseWrapper, file, uploadResourceInfoWrapper.getInnerElement().getPayloadName());
+					}
+	
+					// Fill PayLoad From File
+					if (responseWrapper.isEmpty()) {
+						fillPayloadDataFromFile(responseWrapper, uploadResourceInfoWrapper.getInnerElement(), file);
+					}
+					
 				}
 
 			} else {
@@ -548,12 +570,12 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			}
 		}
 	}
-
-	protected void commonGeneralValidations(Wrapper<Response> responseWrapper, Wrapper<User> userWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, ResourceAuthorityTypeEnum resourceAuthorityEnum, String userId,
+	
+	protected void commonGeneralValidations(Wrapper<Response> responseWrapper, Wrapper<User> userWrapper, Wrapper<UploadResourceInfo> uploadResourceInfoWrapper, ResourceAuthorityTypeEnum resourceAuthorityEnum, String userUserId,
 			String resourceInfoJsonString) {
 
 		if (responseWrapper.isEmpty()) {
-			validateUserExist(responseWrapper, userWrapper, userId);
+			validateUserExist(responseWrapper, userWrapper, userUserId);
 		}
 
 		if (responseWrapper.isEmpty()) {
@@ -575,7 +597,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 	private void validateResourceType(Wrapper<Response> responseWrapper, UploadResourceInfo uploadResourceInfo, User user) {
 		String resourceType = uploadResourceInfo.getResourceType();
-		if (resourceType == null || !ResourceTypeEnum.contains(resourceType)) {
+		if (resourceType == null || !ResourceTypeEnum.containsName(resourceType)) {
 			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			Response errorResponse = buildErrorResponse(responseFormat);
 			EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
@@ -610,7 +632,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		}
 	}
 
-	protected void topologyTemplatePayloadValidations(Wrapper<Response> responseWrapper, Wrapper<String> yamlStringWrapper, User user, UploadResourceInfo uploadResourceInfo) {
+	/*protected void topologyTemplatePayloadValidations(Wrapper<Response> responseWrapper, Wrapper<String> yamlStringWrapper, User user, UploadResourceInfo uploadResourceInfo) {
 
 		if (responseWrapper.isEmpty()) {
 			validatePayloadIsYml(responseWrapper, user, uploadResourceInfo, yamlStringWrapper.getInnerElement());
@@ -622,16 +644,23 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			validatePayloadIsTopologyTemplate(responseWrapper, user, uploadResourceInfo, yamlStringWrapper.getInnerElement());
 		}
 
-	}
+	}*/
 
 	protected void handleImport(Wrapper<Response> responseWrapper, User user, UploadResourceInfo resourceInfoObject, String yamlAsString, ResourceAuthorityTypeEnum authority, boolean createNewVersion, String resourceUniqueId) {
-		Either<ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>, ResponseFormat> createOrUpdateResponse = null;
-		Response response = null;
+		Either<ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>, ResponseFormat> createOrUpdateResponse;
+		Response response;
 		Object representation = null;
 
 		if (CsarValidationUtils.isCsarPayloadName(resourceInfoObject.getPayloadName())) {
 			log.debug("import resource from csar");
+			
 			createOrUpdateResponse = importResourceFromUICsar(resourceInfoObject, user, resourceUniqueId);
+			//if (createOrUpdateResponse.isLeft()){
+			//	LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
+			//	lifecycleChangeInfo.setUserRemarks("certification on import");
+			//	Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> resourceImportManager.getResourceBusinessLogic().validatePropertiesDefaultValues(createOrUpdateResponse.left().value().left);
+			//}
+			
 		} else if (!authority.isUserTypeResource()) {
 			log.debug("import normative type resource");
 			createOrUpdateResponse = resourceImportManager.importNormativeResource(yamlAsString, resourceInfoObject, user, createNewVersion, true);
@@ -645,7 +674,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			try {
 				representation = RepresentationUtils.toRepresentation(createOrUpdateResponse.left().value().getLeft());
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.debug("Error while building resource representation : {}", e.getMessage(), e);
 			}
 			ActionStatus successStatus = createOrUpdateResponse.left().value().right;
 			response = buildOkResponse(getComponentsUtils().getResponseFormat(successStatus), representation);
@@ -655,9 +684,9 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
 	private Either<ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus>, ResponseFormat> importResourceFromUICsar(UploadResourceInfo resourceInfoObject, User user, String resourceUniqueId) {
 
-		Either<org.openecomp.sdc.be.model.Resource, ResponseFormat> createOrUpdateResourceRes = null;
+		Either<org.openecomp.sdc.be.model.Resource, ResponseFormat> createOrUpdateResourceRes;
 		ImmutablePair<org.openecomp.sdc.be.model.Resource, ActionStatus> result = null;
-		ActionStatus actionStatus = null;
+		ActionStatus actionStatus;
 		org.openecomp.sdc.be.model.Resource resource = new org.openecomp.sdc.be.model.Resource();
 		String payloadName = resourceInfoObject.getPayloadName();
 		fillResourceFromResourceInfoObject(resource, resourceInfoObject);
@@ -673,7 +702,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			return Either.right(createOrUpdateResourceRes.right().value());
 		}
 		if (resourceUniqueId == null || resourceUniqueId.isEmpty()) {
-			createOrUpdateResourceRes = resourceImportManager.getResourceBusinessLogic().createResource(resource, user, csarUIPayload, payloadName);
+			createOrUpdateResourceRes = resourceImportManager.getResourceBusinessLogic().createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, csarUIPayload, payloadName);
 			if (createOrUpdateResourceRes.isRight()) {
 				return Either.right(createOrUpdateResourceRes.right().value());
 			}
@@ -714,7 +743,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 		}
 
 		log.debug("checking payload is valid tosca");
-		String heatDecodedPayload = (GeneralUtility.isBase64Encoded(toscaYaml)) ? new String(Base64.decodeBase64(toscaYaml)) : toscaYaml;
+		String heatDecodedPayload = toscaYaml;
 		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(heatDecodedPayload);
 		Either<String, ResultStatusEnum> findFirstToscaStringElement = ImportUtils.findFirstToscaStringElement(mappedToscaTemplate, ToscaTagNamesEnum.TOSCA_VERSION);
 
@@ -775,8 +804,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			log.info("Failed to decode received csar", csarUUID);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
 		}
-
-		byte[] decodedPayload = (GeneralUtility.isBase64Encoded(payloadData)) ? Base64.decodeBase64(payloadData.getBytes(StandardCharsets.UTF_8)) : payloadData.getBytes(StandardCharsets.UTF_8);
+		
+		byte[] decodedPayload = Base64.decodeBase64(payloadData.getBytes(StandardCharsets.UTF_8));
 		if (decodedPayload == null) {
 			log.info("Failed to decode received csar", csarUUID);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_NOT_FOUND, csarUUID));
@@ -839,5 +868,60 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			response = buildErrorResponse(errorWrapper.getInnerElement());
 		}
 		return response;
+	}
+	
+	protected void validateXECOMPInstanceIDHeader(String instanceIdHeader, Wrapper<ResponseFormat> responseWrapper) {
+		ResponseFormat responseFormat;
+		if(StringUtils.isEmpty(instanceIdHeader) ){
+			log.debug("Missing X-ECOMP-InstanceID header");
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
+			responseWrapper.setInnerElement(responseFormat);
+		}
+	}
+	
+	protected void validateHttpCspUserIdHeader(String header, Wrapper<ResponseFormat> responseWrapper) {
+		ResponseFormat responseFormat;
+		if( StringUtils.isEmpty(header)){
+			log.debug("MissingUSER_ID");
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
+			responseWrapper.setInnerElement(responseFormat);
+		}
+	}
+	
+	/**
+	 * Convert json to Object object
+	 * @param <T>
+	 * @param classSupplier
+	 * @param json
+	 * @return
+	 */
+	public <T> Either<T, ResponseFormat> parseToObject(String json, Supplier<Class<T>> classSupplier) {
+		
+		try {
+			T object = RepresentationUtils.fromRepresentation(json, classSupplier.get());
+			return Either.left(object);
+		} catch (Exception e) {
+			log.debug("Failed to parse json to {} object", classSupplier.get().getName(), e);
+			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
+			return Either.right(responseFormat);
+		}
+	}
+
+	/**
+	 * Convert json to Object object
+	 * @param <T>
+	 * @param json
+	 * @param type
+	 * @return
+	 */
+	public <T> Either<List<T>, ResponseFormat> parseListOfObjects(String json, Type type) {
+		try {
+			List<T> listOfObjects = gson.fromJson(json, type);
+			return Either.left(listOfObjects);
+		} catch (Exception e) {
+			log.debug("Failed to parse json to {} object", type.getClass().getName(), e);
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
+			return Either.right(responseFormat);
+		}
 	}
 }

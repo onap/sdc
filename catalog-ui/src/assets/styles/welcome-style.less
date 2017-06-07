@@ -1,0 +1,63 @@
+
+html,
+body {
+    height: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.sdc-welcome-new-page {
+
+    opacity: 0;
+    height: 100%;
+    background-color: @main_color_p;
+
+    .sdc-welcome-close {
+        position: absolute;
+        right: 38px;
+        top: 30px;
+        z-index: 101;
+        cursor: pointer;
+
+        .sprite-welcome;
+        .sprite-welcome.close;
+
+        &:hover {
+            .sprite-welcome.close_white;
+        }
+    }
+
+    .sdc-welcome-wrapper {
+        height: 100vh;
+        width: 100%;
+        background-size: cover;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: url(images/welcome/002.png);
+    }
+
+    .sdc-welcome-main {
+        text-align: center;
+        position: absolute;
+        bottom: 40%;
+        z-index: 1;
+        color: #fff;
+        left: 0;
+        width: 100%;
+    }
+
+    .sdc-welcome-cover {
+        position: absolute;
+        top: 0px;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        background-color: rgba(14, 13, 12, 0.8);
+        z-index: 0;
+    }
+
+}

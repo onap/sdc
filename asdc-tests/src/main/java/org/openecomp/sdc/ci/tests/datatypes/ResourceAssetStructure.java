@@ -24,6 +24,8 @@ public class ResourceAssetStructure extends AssetStructure {
 
 	private String subCategory;
 	private String resourceType;
+	protected String lastUpdaterFullName;
+	protected String toscaResourceName;
 
 	public ResourceAssetStructure() {
 		super();
@@ -37,6 +39,22 @@ public class ResourceAssetStructure extends AssetStructure {
 	@Override
 	public String toString() {
 		return "ResourceAssetStructure [subCategory=" + subCategory + ", resourceType=" + resourceType + "]";
+	}
+	
+	public String getLastUpdaterFullName() {
+		return lastUpdaterFullName;
+	}
+
+	public void setLastUpdaterFullName(String lastUpdaterFullName) {
+		this.lastUpdaterFullName = lastUpdaterFullName;
+	}
+
+	public String getToscaResourceName() {
+		return toscaResourceName;
+	}
+
+	public void setToscaResourceName(String toscaResourceName) {
+		this.toscaResourceName = toscaResourceName;
 	}
 
 	public String getSubCategory() {

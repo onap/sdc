@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sdctool</artifactId>
+	<artifactId>asdctool</artifactId>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -11,15 +11,7 @@
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
-
 	<dependencies>
-
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -28,103 +20,46 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${lang3.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!--<dependency>-->
-			<!--<groupId>org.springframework</groupId>-->
-			<!--<artifactId>spring-beans</artifactId>-->
-			<!--<version>${spring.version}</version>-->
-			<!--<scope>provided</scope>-->
-		<!--</dependency>-->
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- ASDC dependencies -->
 		<dependency>
 			<groupId>org.openecomp.sdc.be</groupId>
 			<artifactId>common-be</artifactId>
-			<version>${common-be.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>common-app-api</artifactId>
-			<version>${common-app-api.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openecomp.sdc.be</groupId>
 			<artifactId>catalog-dao</artifactId>
-			<version>${catalog-dao.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openecomp.sdc.be</groupId>
 			<artifactId>catalog-model</artifactId>
-			<version>${catalog-model.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>catalog-be</artifactId>
-			<version>${asdc.full.version}</version>
-			
+			<version>${project.version}</version>
+
 			<!-- Comment Out in order to debug in eclipse -->
 			<classifier>classes</classifier>
-			
-			<scope>compile</scope>
-		</dependency>  
-		
-		<!-- ASDC dependencies end -->
 
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- ASDC dependencies end -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
@@ -136,37 +71,42 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-jci-core</artifactId>
+			<version>${commons-jci-core.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-			<version>9.2.10.v20150310</version>
+			<version>${jetty.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
+			<version>${jersey-bom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>${jersey-bom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-jetty-http</artifactId>
+			<version>${jersey-bom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
+			<version>${jersey-bom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -181,37 +121,38 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+			<version>${slf4j-api.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<!-- groovy -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>${groovy.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-configuration2</artifactId>
-			<version>2.1</version>
+            <version>${groovy.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.6</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<!-- TITAN -->
 		<dependency>
@@ -225,6 +166,13 @@
 					<artifactId>json</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${json-simple.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -259,7 +207,7 @@
 		<dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
 			<artifactId>blueprints-graph-sail</artifactId>
-			<version>2.6.0</version>
+			<version>2.5.0</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
@@ -268,14 +216,14 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
+            <version>${commons-logging}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>2.0-SNAPSHOT</version>
+            <version>${commons-codec}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -295,27 +243,31 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.version}</version>
+			<version>${jackson.annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
+			<version>${gson.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+            <version>${httpclient.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-			<version>${httpcore.version}</version>
+            <version>${httpcore.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<!-- Spring 4 dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -330,24 +282,29 @@
 			<version>${spring.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
 			<version>${spring.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>4.0.7.RELEASE</version>
+			<version>${spring.version}</version>
+			<!--<version>4.0.7.RELEASE</version>-->
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<!-- Spring 4 dependencies end -->
 		<!-- JavaConfig need this library -->
 		<dependency>
@@ -356,22 +313,25 @@
 			<version>3.2.4</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.14</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.functionaljava</groupId>
-			<artifactId>functionaljava</artifactId>
+			<version>${snakeyaml.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.functionaljava</groupId>
+			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
+            <version>${elastic-search.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -381,6 +341,7 @@
 			<version>${jackson.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.elasticsearch.plugin</groupId>
 			<artifactId>shield</artifactId>
@@ -395,12 +356,14 @@
 			<version>${cassandra.driver.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-mapping</artifactId>
 			<version>${cassandra.driver.version}</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<!-- CASSANDRA END -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -408,38 +371,37 @@
 			<version>3.9.0.FINAL</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>2.0.2</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-resources-plugin</artifactId>
-			<version>3.0.2</version>
-		</dependency>
+
 		<!-- Temporary, till building the populate task which adding all components 
-		to cache. We will use Serialization Utils. -->
+			to cache. We will use Serialization Utils. -->
 		<dependency>
 			<groupId>de.ruedigermoeller</groupId>
 			<artifactId>fst</artifactId>
 			<version>2.47</version>
 			<scope>compile</scope>
 		</dependency>
-	
-			<!-- testing -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-				<scope>test</scope>
-			</dependency>
-			<!-- testing end -->
-		</dependencies>
 
-		<build>
-			<plugins>
+		<!-- testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- testing end -->
+
+	</dependencies>
+
+	<build>
+		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -452,7 +414,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
+				<version>2.6</version>
 				<executions>
 					<execution>
 						<id>create.jar.with.dependencies</id>
@@ -461,22 +423,14 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-
 							<descriptorRefs>
 								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
-				<executions>
 					<execution>
 						<configuration>
-							<finalName>${project.artifactId}</finalName>
+							<finalName>sdctool</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptor>${project.basedir}/tarball.xml</descriptor>
 						</configuration>
@@ -488,32 +442,59 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
 
-				<executions>
-					<execution>
-						<id>copy-sdctool-cassandra</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
-							<resources>
-								<resource>
-									<directory>./target</directory>
-									<includes>
-										<include>sdctool.tar</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>		
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+
+                <executions>
+
+                    <execution>
+                        <id>copy-sdctool</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./target</directory>
+                                    <includes>
+                                        <include>sdctool.tar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>Fortify</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.fortify.ps.maven.plugin</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>4.30</version>
+						<configuration>
+							<source>1.8</source>
+							<buildId>${project.parent.artifactId}</buildId>
+							<toplevelArtifactId>${project.parent.artifactId}</toplevelArtifactId>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

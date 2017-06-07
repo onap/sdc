@@ -1,0 +1,74 @@
+<!--<div>selectedPropertiesName - {{dataTypesService.selectedPropertiesName}}</div>-->
+<!--<div>selectedInput - {{dataTypesService.selectedInput}}</div>-->
+
+<div data-ng-if="dataTypes" class="default-value-section i-sdc-form-item">
+    <label class="i-sdc-form-label">Default Value</label>
+    <div data-ng-if="isTypeDataType">
+             <select-fields-structure value-obj-ref="myValue"
+                          type-name="property.type"
+                          parent-form-obj="forms.editForm"
+                          fields-prefix-name="currentPropertyIndex"
+                          read-only="true"
+                          default-value="{{getDefaultValue()}}"
+                          path="{{property.name}}"
+                                      is-parent-already-input="false"
+                          expand-by-default="true"></select-fields-structure>
+
+    </div>
+    <div data-ng-if="!isTypeDataType" ng-switch="property.type">
+        <div ng-switch-when="map">
+
+            <select-type-map value-obj-ref="myValue"
+                 schema-property="property.schema.property"
+                 parent-form-obj="forms.editForm"
+                 fields-prefix-name="currentPropertyIndex"
+                 read-only="true"
+                 default-value="{{getDefaultValue()}}"
+                 max-length="maxLength"></select-type-map>
+        </div>
+        <div ng-switch-when="list">
+            <select-type-list value-obj-ref="myValue"
+                  schema-property="property.schema.property"
+                  parent-form-obj="forms.editForm"
+                  fields-prefix-name="currentPropertyIndex"
+                  read-only="true"
+                  default-value="{{getDefaultValue()}}"
+                  max-length="maxLength"></select-type-list>
+        </div>
+        <div ng-switch-default>
+            <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid)}">
+                <input class="i-sdc-form-input"
+                       data-tests-id="defaultvalue"
+                       ng-if="!((property.simpleType||property.type) == 'boolean')"
+                       data-ng-maxlength="maxLength"
+                       data-ng-disabled="isReadOnly"
+                       maxlength="{{maxLength}}"
+                       data-ng-model="property.value"
+                       type="text"
+                       name="value"
+                       data-ng-pattern="getValidationPattern((property.simpleType||property.type))"
+                       data-ng-model-options="{ debounce: 200 }"
+                       data-ng-change="('json'==property.type && forms.editForm.value.$setValidity('pattern', validateJson(property.value)))
+                                        ||(!forms.editForm.value.$error.pattern && ('integer'==property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(property.value)) || onValueChange()))"
+                       data-ng-change=""
+                       autofocus />
+                <select class="i-sdc-form-select"
+                        data-tests-id="booleantype"
+                        ng-if="(property.simpleType||property.type) == 'boolean'"
+                        data-ng-disabled="isReadOnly"
+                        name="value"
+                        data-ng-change="onValueChange()"
+                        data-ng-model="property.value">
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+
+                <div class="input-error" data-ng-show="forms.editForm.value.$dirty && forms.editForm.value.$invalid">
+                    <span ng-show="forms.editForm.value.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Property' }"></span>
+                    <span ng-show="forms.editForm.value.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
+                    <span ng-show="forms.editForm.value.$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

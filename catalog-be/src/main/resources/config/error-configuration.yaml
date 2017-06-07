@@ -42,12 +42,13 @@ errors:
         message: "Error: Not authorized to use the API.",
         messageId: "POL5003"
     }
+#---------POL5004------------------------------     
+    MISSING_USER_ID: {
+        code: 400  ,
+        message: "Error: Missing 'USER_ID' HTTP header.",
+        messageId: "POL5004"
+    }
 #---------SVC4000----------------------------- 
-    INVALID_CONTENT: {
-        code: 400,
-        message: "Error: Invalid content.",
-        messageId: "SVC4000"
-    }#---------SVC4000----------------------------- 
     INVALID_CONTENT: {
         code: 400,
         message: "Error: Invalid content.",
@@ -60,7 +61,7 @@ errors:
         messageId: "SVC4002"
     }
 #---------SVC4003------------------------------ 
-# %1 - Users's USER_ID     
+# %1 - Users's ID     
     USER_NOT_FOUND: {
         code: 404,
         message: "Error: User '%1' was not found.",
@@ -104,7 +105,7 @@ errors:
 # %1 - service/resource
     COMPONENT_MISSING_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. Missing %1 contact id.",
+        message: "Error: Invalid Content. Missing %1 contact.",
         messageId: "SVC4049"
     } 
 #---------SVC4050----------------------------- 
@@ -207,14 +208,14 @@ errors:
     }
 
 #---------SVC4064------------------------------ 
-# %1 - Service/Resource
+# %1 - Service/Resource/Property
     COMPONENT_INVALID_DESCRIPTION: {
         code: 400,
         message: "Error: Invalid Content. %1 description contains non-english characters.",
         messageId: "SVC4064"
     }
 #---------SVC4065------------------------------ 
-# %1 - Service/Resource
+# %1 - Service/Resource/Property
 # %2 - max resource/service name length 
     COMPONENT_DESCRIPTION_EXCEEDS_LIMIT: {
         code: 400,
@@ -245,9 +246,9 @@ errors:
 
 #---------SVC4069------------------------------ 
 # %1 - Service/Resource/Product
-    COMPONENT_INVALID_CONTACT_ID: {
+    COMPONENT_INVALID_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. %1 contact id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
+        message: "Error: Invalid Content. %1 Contact Id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
         messageId: "SVC4069"
     }
 #---------SVC4070------------------------------ 
@@ -283,7 +284,7 @@ errors:
 # %2 - resource/service
 # %3 - First name of last modifier
 # %4 - Last name of last modifier
-# %5 - USER_ID of last modifier
+# %5 - USER_ID of last modifier
     COMPONENT_IN_CHECKOUT_STATE: {
         code: 403,
         message: "Error: Requested '%1' %2 is locked for modification by %3 %4(%5).",
@@ -511,7 +512,7 @@ errors:
 #-----------SVC4130---------------------------
     INVALID_PROJECT_CODE: {
         code: 400,
-        message: "Error: Invalid Content. PROJECT_CODE number must be numeric from 5 up to 10 digits.",
+        message: "Error: Invalid Content. PROJECT_CODE must be from 3 up to 50 characters.",
         messageId: "SVC4130"
     }
 #-----------SVC4131---------------------------
@@ -1060,7 +1061,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4567------------------------------ 
-# %1 - "User Name and userId"   
+# %1 - "User Name and UserId"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1068,7 +1069,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4568------------------------------ 
-# %1 - "User Name and userId"   
+# %1 - "User Name and UserId"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1144,7 +1145,7 @@ errors:
         messageId: "SVC4580"
     }
 #---------SVC4581------------------------------ 
-# %1 - userId
+# %1 - UserId
     INVALID_PRODUCT_CONTACT: {
         code: 400,
         message: "Error: Invalid content. User '%1' cannot be set as Product Contact.",
@@ -1691,4 +1692,87 @@ errors:
         code: 500,
         message: "Error: %1 %2 automatic generation of artifacts failed. Description: %3",
         messageId: "SVC4650"
+    }
+#---------SVC4651------------------------------
+    PARENT_RESOURCE_DOES_NOT_EXTEND: {
+        code: 400,
+        message: "Error: Once resource is certified, derived_from can be changed only to a sibling",
+        messageId: "SVC4651"
+    }
+#---------SVC4652------------------------------  
+# %1 - resource/service
+    COMPONENT_INVALID_SUBCATEGORY: {
+        code: 400,
+        message: "Error: Invalid Content. Invalid %1 sub category.",
+        messageId: "SVC4652"
+    }
+#---------SVC4653------------------------------  
+# %1 - group instance uniqueId     
+# %2 - service uniqueId
+    GROUP_INSTANCE_NOT_FOUND_ON_COMPONENT_INSTANCE: {
+        code: 404,
+        message: "Error: Requested group instance %1 was not found on component %2.",
+        messageId: "SVC4653"
+    }
+#---------SVC4654------------------------------  
+# %1 - group property name     
+# %2 - valid min limit value
+# %3 - valid max limit value
+    INVALID_GROUP_MIN_MAX_INSTANCES_PROPERTY_VALUE: {
+        code: 400,
+        message: "Error: Value of %1 must be not higher than %2, and not lower than %3.",
+        messageId: "SVC4654"
+    }
+#---------SVC4655------------------------------  
+# %1 - group property name     
+# %2 - valid min limit value
+# %3 - valid max limit value
+    INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE: {
+        code: 400,
+        message: "Error: Value of %1 must be between %2 and %3.",
+        messageId: "SVC4655"
+    }
+#---------SVC4656------------------------------  
+# %1 - group property name     
+# %2 - lower/higher
+# %3 - valid max/min value
+    INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER: {
+        code: 400,
+        message: "Error: Value of %1 must be %2 or equals to %3.",
+        messageId: "SVC4656"
+    }    
+#---------SVC4657------------------------------
+# %1 - certificationRequest / startTesting
+    RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID: {
+        code: 400,
+        message: "Error - Lifecycle state %1 is not valid for resource of type VFCMT",
+        messageId: "SVC4657"
+    }
+#---------SVC4658------------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+# %3 – not found asset type [service / resource]
+# %4 – not found asset name 
+    ASSET_NOT_FOUND_DURING_CSAR_CREATION: {
+        code: 400,
+        message: "Error: CSAR packaging failed for %1 %2. %3 %4 was not found",
+        messageId: "SVC4658"
+    }
+#---------SVC4659------------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+# %3 – Artifact name 
+# %4 – Artifact uuid
+    ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION: {
+        code: 400,
+        message: " Error: CSAR packaging failed for %1 %2. Artifact %3 [%4] was not found",
+        messageId: "SVC4659"
+    }
+#---------SVC4660------------------------------
+# %1 - assetType
+# %2 - matching generic node type name
+    GENERIC_TYPE_NOT_FOUND: {
+        code: 404,
+        message: "Creation of %1 failed. Generic type %2 was not found",
+        messageId: "SVC4660"
     }

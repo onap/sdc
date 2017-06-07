@@ -24,11 +24,7 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 public enum MandatoryResourceArtifactTypeEnum {
 
-	TEST_SCRIPTS(null, "testscripts"), 
-	FEATURES(null, "features"), 
-	CAPACITY(null, "capacity"), 
-	VENDOR_TEST_RESULT(null,"vendortestresult"), 
-	CLOUD_QUESTIONNAIRE(null, "cloudquestionnaire");
+	TEST_SCRIPTS(null, "testscripts"), FEATURES(null, "features"), CAPACITY(null, "capacity"), VENDOR_TEST_RESULT(null, "vendortestresult"), CLOUD_QUESTIONNAIRE(null, "cloudQuestionnaire");
 
 	String artifactName;
 	String logicalName;

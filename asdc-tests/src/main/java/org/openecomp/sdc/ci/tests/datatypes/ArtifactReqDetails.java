@@ -22,6 +22,7 @@ package org.openecomp.sdc.ci.tests.datatypes;
 
 import java.util.List;
 
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 
 public class ArtifactReqDetails {

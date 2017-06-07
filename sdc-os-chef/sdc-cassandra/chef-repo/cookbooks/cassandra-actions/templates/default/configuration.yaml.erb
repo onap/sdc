@@ -22,8 +22,9 @@ beProtocol: http
 beSslPort: <%= @ssl_port %>
 version: 1.0
 released: 2012-11-30
+toscaConformanceLevel: 3.0
 
-titanCfgFile: /var/lib/jetty/config/catalog-be/titan.properties
+titanCfgFile: <%= @titan_Path %>/titan.properties
 titanInMemoryGraph: false
 titanLockTimeout: 1800
 # The interval to try and reconnect to titan DB when it is down during ASDC startup:
@@ -43,6 +44,21 @@ protocols:
    - http
    - https
 
+# Default imports
+defaultImports:
+   - nodes:
+        file: nodes.yml
+   - datatypes:
+        file: data.yml
+   - capabilities:
+        file: capabilities.yml
+   - relationships:
+        file: relationships.yml
+   - groups:
+        file: groups.yml
+   - policies:
+        file: policies.yml
+
 # Users
 users:
     tom: passwd
@@ -60,10 +76,10 @@ cassandraConfig:
     truststorePath : /config/.truststore
     truststorePassword : Aa123456
     keySpaces:
-        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>','<%= @rep_factor %>']}
-        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>','<%= @rep_factor %>']}
-        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>','<%= @rep_factor %>']}
-        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @dc1 %>','<%= @rep_factor %>']}
+        - { name: dox, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: sdcaudit, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: sdcartifact, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
+        - { name: sdccomponent, replicationStrategy: NetworkTopologyStrategy, replicationInfo: ['<%= @DC_NAME %>','<%= @rep_factor %>']}
 
 #Application-specific settings of ES
 elasticSearch:
@@ -106,7 +122,9 @@ artifactTypes:
    - AAI_VF_MODULE_MODEL
    - AAI_VF_INSTANCE_MODEL
    - OTHER
-
+   - SNMP_POLL
+   - SNMP_TRAP
+   - GUIDE
 
 licenseTypes:
    - User
@@ -119,6 +137,8 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - VFCMT
+  - Abstract
 
 # validForResourceTypes usage
 #     validForResourceTypes:
@@ -132,6 +152,11 @@ deploymentResourceInstanceArtifacts:
       displayName: "HEAT ENV"
       type: HEAT_ENV
       description: "Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+  VfHeatEnv:
+      displayName: "VF HEAT ENV"
+      type: HEAT_ENV
+      description: "VF Auto-generated HEAT Environment deployment artifact"
       fileExtension: "env"
 
 #tosca artifacts placeholders
@@ -163,7 +188,7 @@ informationalResourceArtifacts:
   testScripts:
       displayName: Test Scripts
       type: OTHER
-  cloudQuestionnaire:
+  CloudQuestionnaire:
       displayName: Cloud Questionnaire (completed)
       type: OTHER
   HEATTemplateFromVendor:
@@ -319,36 +344,55 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - xml
         validForResourceTypes: *allResourceTypes
+    LIFECYCLE_OPERATIONS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes:
+            - VF
+            - VFC
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes: *allResourceTypes
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
+        validForResourceTypes: *allResourceTypes
     APPC_CONFIG:
         acceptedTypes:
         validForResourceTypes:
             - VF
-    #DCAE Artifacts
     DCAE_TOSCA:
         acceptedTypes:
             - yml
             - yaml
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_JSON:
         acceptedTypes:
             - json
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_POLICY:
         acceptedTypes:
             - emf
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_DOC:
         acceptedTypes:
         validForResourceTypes:
-            - VF
+            - VF 
+            - VFCMT       
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
             - VF
-#AAI Artifacts
+            - VFCMT
     AAI_VF_MODEL:
         acceptedTypes:
             - xml
@@ -362,6 +406,12 @@ resourceDeploymentArtifacts:
     OTHER:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
@@ -370,7 +420,13 @@ resourceInstanceDeploymentArtifacts:
     VF_MODULES_METADATA:
         acceptedTypes:
             - json
-#DCAE_VF Instance Artifacts
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
     DCAE_INVENTORY_TOSCA:
         acceptedTypes:
             - yml
@@ -387,6 +443,56 @@ resourceInstanceDeploymentArtifacts:
       acceptedTypes:
     DCAE_INVENTORY_EVENT:
       acceptedTypes:
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+
+resourceInformationalArtifacts:
+    CHEF:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    PUPPET:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SHELL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    HEAT:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    BPEL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    DG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    MURANO_PKG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    OTHER:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    GUIDE:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+            - VFC
+
 resourceInformationalDeployedArtifacts:
 
 
@@ -405,10 +511,8 @@ cleanComponentsConfiguration:
 
 artifactsIndex: resources
 
-heatEnvArtifactHeader:
-    ""
-heatEnvArtifactFooter:
-    ""
+heatEnvArtifactHeader: ""
+heatEnvArtifactFooter: ""
 
 onboarding:
     protocol: http
@@ -454,6 +558,24 @@ applicationL2Cache:
         numberOfCacheWorkers: 4
 
 toscaValidators:
-    stringMaxLength: 65536
+    stringMaxLength: 2500
 
 disableAudit: false
+vfModuleProperties:
+    min_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    max_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule:
+    initial_count:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    vf_module_type:
+        forBaseModule: Base
+        forNonBaseModule: Expansion
+
+genericAssetNodeTypes:
+  VFC: org.openecomp.resource.abstract.nodes.VFC
+  VF : org.openecomp.resource.abstract.nodes.VF
+  Service: org.openecomp.resource.abstract.nodes.service

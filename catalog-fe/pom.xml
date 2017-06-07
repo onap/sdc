@@ -5,387 +5,306 @@
 	<artifactId>catalog-fe</artifactId>
 	<packaging>war</packaging>
 
-
-
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
-
-
 	<dependencies>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 
 		<dependency>
 			<groupId>org.functionaljava</groupId>
 			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>security-utils</artifactId>
-			<version>${security-utils.version}</version>
-			<scope>compile</scope>        </dependency>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.openecomp.sdc</groupId>
-				<artifactId>common-app-api</artifactId>
-				<version>${common-app-api.version}</version>
-			</dependency>
+		<dependency>
+			<groupId>org.openecomp.sdc</groupId>
+			<artifactId>common-app-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-			<!-- File changes listener -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.7.10</version>
-				<scope>compile</scope>
-			</dependency>
+		<!-- File changes listener -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-classic</artifactId>
-				<version>${logback.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>ch.qos.logback</groupId>
-				<artifactId>logback-core</artifactId>
-				<version>${logback.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
-				<artifactId>groovy-all</artifactId>
-				<version>${groovy.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.codehaus.janino</groupId>
-				<artifactId>janino</artifactId>
-				<version>${janino.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.yaml</groupId>
-				<artifactId>snakeyaml</artifactId>
-				<version>1.14</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>${groovy.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-jci-core</artifactId>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>${janino.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>2.3.1</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>${snakeyaml.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.glassfish.jersey.containers</groupId>
-				<artifactId>jersey-container-servlet</artifactId>
-				<version>2.24</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jci-core</artifactId>
+			<version>${commons-jci-core.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-multipart</artifactId>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-moxy</artifactId>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey-bom.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>javax.mail-api</artifactId>
-				<version>1.5.2</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey-bom.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-json-jackson</artifactId>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-moxy</artifactId>
+			<version>${jersey-bom.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-core</artifactId>
-				<version>${jackson.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.2</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey-bom.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>${jackson.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<!-- http client -->
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>${httpclient.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpcore</artifactId>
-				<version>${httpcore.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.annotations.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpmime</artifactId>
-				<!--<version>4.3.2</version>-->
-				<version>${httpclient.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<!-- http client -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.2.1-SNAPSHOT</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+            <version>${httpcore.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>2.0-SNAPSHOT</version>
-				<scope>compile</scope>
-			</dependency>
-			<!-- http client END -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
+			<!--<version>4.3.2</version>-->
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<scope>provided</scope>
-			</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons-logging}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<!-- JSON and YAML Parsing -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.dataformat</groupId>
-				<artifactId>jackson-dataformat-yaml</artifactId>
-				<version>${jackson.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+            <version>${commons-codec}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- http client END -->
 
-			<!-- Jetty Proxy -->
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-proxy</artifactId>
-				<version>${jetty.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlets</artifactId>
-				<version>${jetty.servlets.version}</version>
-				<scope>compile</scope>
-			</dependency>
+		<!-- JSON and YAML Parsing -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>${jackson.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<!-- Proxy servlet -->
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>${guava.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			
-			<!-- Aspects -->
-			<dependency>
-				<groupId>com.jcabi</groupId>
-				<artifactId>jcabi-aspects</artifactId>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.aspectj</groupId>
-				<artifactId>aspectjrt</artifactId>
-				<version>${aspectjrt.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${lang3.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			
-			<!-- Inserted for ECOMP Portal Integration -->
-			<dependency>
-				<groupId>org.openecomp.ecompsdkos</groupId>
-				<artifactId>ecompFW</artifactId>
-				<version>${ecomp.version}</version>
-				<scope>compile</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>com.att.nsa</groupId>
-						<artifactId>cambriaClient</artifactId>
-					</exclusion>
-					<exclusion>
-						<artifactId>slf4j-log4j12</artifactId>
-						<groupId>org.slf4j</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+		<!-- Jetty Proxy -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-proxy</artifactId>
+			<version>${jetty.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<!-- TEST -->
-			<dependency>
-				<groupId>org.glassfish.jersey.test-framework.providers</groupId>
-				<artifactId>jersey-test-framework-provider-bundle</artifactId>
-				<type>pom</type>
-				<scope>test</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>${jetty.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<scope>test</scope>
-			</dependency>
+		<!-- Proxy servlet -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<scope>test</scope>
-			</dependency>
+		<!-- Aspects -->
+		<dependency>
+			<groupId>com.jcabi</groupId>
+			<artifactId>jcabi-aspects</artifactId>
+			<version>${jcabi.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectjrt.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-all</artifactId>
-				<version>1.10.19</version>
-				<scope>test</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+            <version>${lang3.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<version>${spring.version}</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
+		<!-- Inserted for ECOMP Portal Integration -->
+		<dependency>
+			<groupId>org.openecomp.ecompsdkos</groupId>
+			<artifactId>ecompFW</artifactId>
+			<version>${ecomp.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.att.nsa</groupId>
+					<artifactId>cambriaClient</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- System metrics -->
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>sigar</artifactId>
+			<version>${sigar.version}</version>
+			<scope>compile</scope>
+		</dependency>
 
+		<!-- TEST -->
+		<dependency>
+			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
+			<artifactId>jersey-test-framework-provider-bundle</artifactId>
+			<version>${jersey-bom.version}</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
 
-		<build>
+	</dependencies>
 
-			<finalName>${project.artifactId}-${project.version}</finalName>
+	<build>
 
-			<plugins>
-				
+		<finalName>${project.artifactId}-${project.version}</finalName>
+
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -396,7 +315,7 @@
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 					</archive>
-					
+
 					<webResources>
 						<resource>
 							<directory>src/main/resources</directory>
@@ -404,8 +323,6 @@
 					</webResources>
 				</configuration>
 			</plugin>
-
-
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -439,16 +356,14 @@
 							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-frontend/</outputDirectory>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
-
-
 
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.0.6.v20130930</version>
+                <version>${jetty.version}</version>
+				<!--<version>9.0.6.v20130930</version>-->
 				<configuration>
 					<contextPath>/</contextPath>
 					<webApp>
@@ -463,6 +378,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.7</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -477,36 +395,12 @@
 					</execution>
 				</executions>
 			</plugin>
-            		<!-- ============================================= -->
-					<!-- Create the TAR file -->
-					<!-- ============================================= -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.6</version>
-						<configuration>
-							<finalName>${project.artifactId}-${full.release.version}${build.type}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptor>${project.basedir}/tarball.xml</descriptor>
-						</configuration>
-						
-						<executions>
-							<execution>
-								<id>assembly-tar-file</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>	
 		</plugins>
-
 
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
-				only. It has no influence on the Maven build itself. -->
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -514,7 +408,7 @@
 					<configuration>
 						<lifecycleMappingMetadata>
 							<pluginExecutions>
-								
+
 								<pluginExecution>
 									<pluginExecutionFilter>
 										<groupId>com.jcabi</groupId>
@@ -528,22 +422,81 @@
 										<execute />
 									</action>
 								</pluginExecution>
-								
+
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
-				
+
 				<!-- jacbi (log injection) -->
 
 			</plugins>
 		</pluginManagement>
-		
+
 	</build>
 
+	<profiles>
+        <profile>
+            <id>catalog</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
 
 
+            <build>
+
+                <finalName>${project.artifactId}-${full.release.version}</finalName>
+
+                <plugins>
+
+                    <!-- ================================================== -->
+                    <!-- Get the next versions from the properties file. -->
+                    <!-- ================================================== -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0-alpha-2</version>
+
+                        <executions>
+                            <execution>
+                                <inherited>false</inherited>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>${project.parent.build.directory}/FullReleaseVersion.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
 
+		<profile>
+			<id>Fortify</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.fortify.ps.maven.plugin</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>4.30</version>
+						<configuration>
+							<source>1.8</source>
+							<buildId>${project.parent.artifactId}</buildId>
+							<toplevelArtifactId>${project.parent.artifactId}</toplevelArtifactId>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

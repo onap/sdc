@@ -1,23 +1,3 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 package org.openecomp.sdc.be.dao.neo4j;
 
 import java.util.ArrayList;
@@ -64,7 +44,7 @@ public enum GraphPropertiesDictionary {
 	IMPORTED_TOSCA_CHECKSUM	("importedToscaChecksum",				String.class,				false,		true),
 	GENERATED			("generated",				Boolean.class,				false,		false),
 	// User
-	USER_ID				("userId",					String.class, 				true,		true),
+	USERID				("userId",					String.class, 				true,		true),
 	EMAIL				("email",					String.class, 				false,		false),
 	FIRST_NAME			("firstName",				String.class, 				false,		false),
 	LAST_NAME			("lastName",				String.class, 				false,		false),
@@ -83,7 +63,7 @@ public enum GraphPropertiesDictionary {
 	ARTIFACT_REPOSITORY	("artifactRepository",		String.class, 				false,		false),
 	ARTIFACT_CHECKSUM	("artifactChecksum",		String.class, 				false,		false),
 	CREATOR				("creator",					String.class, 				false,		false),
-	ATT_CREATOR			("attCreator",				String.class, 				false,		false),
+	CREATOR_ID          ("creatorId",				String.class, 				false,		false),
 	LAST_UPDATER		("lastUpdater",				String.class, 				false,		false),
 	CREATOR_FULL_NAME	("creatorFullName",			String.class, 				false,		false),
 	UPDATER_FULL_NAME	("updaterFullName",			String.class, 				false,		false),
@@ -147,6 +127,7 @@ public enum GraphPropertiesDictionary {
 	STATUS				("status",			    	String.class, 				false,		false),
 	FUNCTIONAL_MENU		("functionalMenu",		   	String.class, 				false,		false),
 	REQUIRED_ARTIFACTS	("requiredArtifacts",		String.class,	 			false,		false),
+	CUSTOMIZATION_UUID	("customizationUUID",		String.class,	 			false,		false),
 	;
 
 

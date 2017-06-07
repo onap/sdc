@@ -46,14 +46,20 @@ public enum AuditingActionEnum {
 	UPDATE_RESOURCE_METADATA("UpdateResourceMetadata", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
 	UPDATE_SERVICE_METADATA("UpdateServiceMetadata", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
 	ARTIFACT_UPLOAD("ArtifactUpload", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
+	//External API
 	ARTIFACT_UPLOAD_BY_API("ArtifactUploadByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
 	ARTIFACT_UPDATE_BY_API("ArtifactUpdateByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
 	ARTIFACT_DELETE_BY_API("ArtifactDeleteByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
+	DOWNLOAD_ARTIFACT("DownloadArtifact",AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+	CREATE_RESOURCE_BY_API("CreateResourceByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE), 
+	CHANGE_LIFECYCLE_BY_API("ChangeLifecycleByAPI", AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+	
+	
 	ARTIFACT_PAYLOAD_UPDATE("ArtifactPayloadUpdate", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
 	ARTIFACT_METADATA_UPDATE("ArtifactMetadataUpdate", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
 	ARTIFACT_DELETE("ArtifactDelete", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
 	ARTIFACT_DOWNLOAD("ArtifactDownload", AuditingTypesConstants.RESOURCE_ADMIN_EVENT_TYPE), 
-	DOWNLOAD_ARTIFACT("DownloadArtifact",AuditingTypesConstants.EXTERNAL_API_EVENT_TYPE),
+	
 
 	// Distribution
 	DISTRIBUTION_ARTIFACT_DOWNLOAD("DArtifactDownload", AuditingTypesConstants.DISTRIBUTION_DOWNLOAD_EVENT_TYPE), 

@@ -7,11 +7,8 @@ RUN apt-get -y install vim
 COPY chef-solo /root/chef-solo/
 COPY chef-repo/cookbooks/. /root/chef-solo/cookbooks/
 
-
 # install chef-solo
 RUN curl -L https://omnitruck.chef.io/install.sh | bash
-
-
 
 COPY startup.sh /root/
 

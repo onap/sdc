@@ -56,7 +56,7 @@ import org.testng.annotations.BeforeMethod;
 
 /**
  * 
- * @author al714h
+ * @author alitvinsky
  * 
  *         resourceDetails - create, Add Heat, certify resourceDetails1 - create
  *         resource, LCS - CheckOut serviceDetails - create, add RI from

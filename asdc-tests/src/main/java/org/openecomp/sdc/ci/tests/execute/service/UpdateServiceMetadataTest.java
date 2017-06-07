@@ -45,6 +45,7 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
@@ -93,12 +94,16 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		sdncGovernorDeatails = ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR);
 		sdncTesterDetails = ElementFactory.getDefaultUser(UserRoleEnum.TESTER);
 		sdncOpsDetails = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
-		resourceDetailsVFCcomp = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVFCcomp, UserRoleEnum.DESIGNER, true, true);
+		resourceDetailsVFCcomp = AtomicOperationUtils
+				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
+				true, true);
 
-		AtomicOperationUtils.changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+		AtomicOperationUtils.changeComponentState(resourceDetailsVFCcomp, UserRoleEnum.DESIGNER,
+				LifeCycleStatesEnum.CERTIFY, true);
 		Service serviceServ = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceDetailsVFCcomp, serviceServ, UserRoleEnum.DESIGNER, true);
+		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceDetailsVFCcomp, serviceServ,
+				UserRoleEnum.DESIGNER, true);
 
 		serviceDetails = new ServiceReqDetails(serviceServ);
 		updatedServiceDetails = updatedServiceDetails(serviceDetails);
@@ -131,36 +136,49 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		// createServiceResponse);
 	}
 
-	protected void getServiceAndValidate(ServiceReqDetails excpectedService, User creator, User updater, LifecycleStateEnum lifeCycleState) throws Exception {
-		RestResponse getServiceResponse = ServiceRestUtils.getService(excpectedService.getUniqueId(), sdncDesignerDetails);
+	protected void getServiceAndValidate(ServiceReqDetails excpectedService, User creator, User updater,
+			LifecycleStateEnum lifeCycleState) throws Exception {
+		RestResponse getServiceResponse = ServiceRestUtils.getService(excpectedService.getUniqueId(),
+				sdncDesignerDetails);
 		AssertJUnit.assertNotNull("check response object is not null after updating service", getServiceResponse);
-		AssertJUnit.assertNotNull("check if error code exists in response after updating service", getServiceResponse.getErrorCode());
-		AssertJUnit.assertEquals("Check response code after updating service", 200, getServiceResponse.getErrorCode().intValue());
+		AssertJUnit.assertNotNull("check if error code exists in response after updating service",
+				getServiceResponse.getErrorCode());
+		AssertJUnit.assertEquals("Check response code after updating service", 200,
+				getServiceResponse.getErrorCode().intValue());
 		Service actualService = ResponseParser.convertServiceResponseToJavaObject(getServiceResponse.getResponse());
-		ServiceValidationUtils.validateServiceResponseMetaData(excpectedService, actualService, creator, updater, lifeCycleState);
+		ServiceValidationUtils.validateServiceResponseMetaData(excpectedService, actualService, creator, updater,
+				lifeCycleState);
 	}
 
-	public void getServiceAndValidate(ServiceReqDetails excpectedService, LifecycleStateEnum lifecycleState) throws Exception {
+	public void getServiceAndValidate(ServiceReqDetails excpectedService, LifecycleStateEnum lifecycleState)
+			throws Exception {
 		getServiceAndValidate(excpectedService, sdncDesignerDetails, sdncDesignerDetails, lifecycleState);
 	}
 
-	protected void validateResponse(RestResponse response, int errorCode, ActionStatus actionResponse, List<String> listOfVariables) throws Exception {
+	protected void validateResponse(RestResponse response, int errorCode, ActionStatus actionResponse,
+			List<String> listOfVariables) throws Exception {
 		AssertJUnit.assertNotNull("check response object is not null after updating service", response);
-		AssertJUnit.assertNotNull("check if error code exists in response after updating service", response.getErrorCode());
-		AssertJUnit.assertEquals("Check response code after updating service", errorCode, response.getErrorCode().intValue());
+		AssertJUnit.assertNotNull("check if error code exists in response after updating service",
+				response.getErrorCode());
+		AssertJUnit.assertEquals("Check response code after updating service", errorCode,
+				response.getErrorCode().intValue());
 
 		if (actionResponse != null) {
-			ErrorValidationUtils.checkBodyResponseOnError(actionResponse.name(), listOfVariables, response.getResponse());
+			ErrorValidationUtils.checkBodyResponseOnError(actionResponse.name(), listOfVariables,
+					response.getResponse());
 			return;
 		}
 
 		Service actualService = ResponseParser.convertServiceResponseToJavaObject(response.getResponse());
-		ServiceValidationUtils.validateServiceResponseMetaData(updatedServiceDetails, actualService, sdncDesignerDetails, sdncDesignerDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+		ServiceValidationUtils.validateServiceResponseMetaData(updatedServiceDetails, actualService,
+				sdncDesignerDetails, sdncDesignerDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
 	protected void validateActualVsExpected(ServiceReqDetails expectedService, RestResponse actualServiceFromResponse) {
-		Service actualService = ResponseParser.convertServiceResponseToJavaObject(actualServiceFromResponse.getResponse());
-		ServiceValidationUtils.validateServiceResponseMetaData(updatedServiceDetails, actualService, sdncDesignerDetails, sdncDesignerDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+		Service actualService = ResponseParser
+				.convertServiceResponseToJavaObject(actualServiceFromResponse.getResponse());
+		ServiceValidationUtils.validateServiceResponseMetaData(updatedServiceDetails, actualService,
+				sdncDesignerDetails, sdncDesignerDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
 	protected String multipleString(String ch, int repeat) {
@@ -184,24 +202,30 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 			if (field == "name") {
 				for (char ch = (char) min; ch <= (char) max; ch++) {
 					updatedServiceDetails.setName("testname" + String.valueOf(ch));
-					updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
-					updateWithInvalidValue(ActionStatus.INVALID_COMPONENT_NAME, new ArrayList<>(Arrays.asList("Service")));
+					updatedServiceDetails.setTags(
+							addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+					updateWithInvalidValue(ActionStatus.INVALID_COMPONENT_NAME,
+							new ArrayList<>(Arrays.asList("Service")));
 				}
 			} else if (field == "icon") {
 				for (char ch = (char) min; ch <= (char) max; ch++) {
 					updatedServiceDetails.setIcon("testname" + String.valueOf(ch));
-					updateWithInvalidValue(ActionStatus.COMPONENT_INVALID_ICON, new ArrayList<>(Arrays.asList("Service")));
+					updateWithInvalidValue(ActionStatus.COMPONENT_INVALID_ICON,
+							new ArrayList<>(Arrays.asList("Service")));
 				}
 			} else if (field == "tags") {
 				List<String> variables = Arrays.asList("Service", "tag");
 				for (char ch = (char) min; ch <= (char) max; ch++) {
-					updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(String.valueOf(ch), updatedServiceDetails.getName())));
+					updatedServiceDetails.setTags(
+							new ArrayList<>(Arrays.asList(String.valueOf(ch), updatedServiceDetails.getName())));
 					updateWithInvalidValue(ActionStatus.INVALID_FIELD_FORMAT, variables);
 				}
 			} else if (field == "category") {
 				for (char ch = (char) min; ch <= (char) max; ch++) {
-					updatedServiceDetails.addCategoryChain(multipleString("1", 5) + String.valueOf(ch), multipleString("1", 5) + String.valueOf(ch));
-					updateWithInvalidValue(ActionStatus.COMPONENT_INVALID_CATEGORY, new ArrayList<>(Arrays.asList("Service")));
+					updatedServiceDetails.addCategoryChain(multipleString("1", 5) + String.valueOf(ch),
+							multipleString("1", 5) + String.valueOf(ch));
+					updateWithInvalidValue(ActionStatus.COMPONENT_INVALID_CATEGORY,
+							new ArrayList<>(Arrays.asList("Service")));
 				}
 			}
 
@@ -236,7 +260,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	}
 
-	protected void checkErrorResponse(ActionStatus actionStatus, ArrayList<String> arrList, RestResponse response) throws Exception, JSONException {
+	protected void checkErrorResponse(ActionStatus actionStatus, ArrayList<String> arrList, RestResponse response)
+			throws Exception, JSONException {
 		ErrorValidationUtils.checkBodyResponseOnError(actionStatus.name(), arrList, response.getResponse());
 	}
 
@@ -246,9 +271,94 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	}
 
+	// @Test
+	// public void updateMetadateSuccessTest() throws Exception {
+	// CloseableHttpClient httpClient = HttpClients.createDefault();
+	// HttpGet httpGet =
+	// ServiceRestUtils.createGetServiceGetRquest(serviceDetails,
+	// sdncDesignerDetails);
+	// CloseableHttpResponse response = httpClient.execute(httpGet);
+	// assertTrue(response.getStatusLine().getStatusCode() == 200);
+	// String responseString = new
+	// BasicResponseHandler().handleResponse(response);
+	// Service serviceObject =
+	// ResponseParser.convertServiceResponseToJavaObject(responseString);
+	// assertTrue("service object creation failed the returned object is null",
+	// serviceObject != null);
+	// String currentCategory = serviceObject.getCategories().get(0).getName();
+	// String currentServiceName = serviceObject.getName();
+	// String currentProjectCode = serviceObject.getProjectCode();
+	// String currentIcon = serviceObject.getIcon();
+	// String currentDescription = serviceObject.getDescription();
+	// List<String> currentTags = serviceObject.getTags();
+	//
+	// String newCategory = ServiceCategoriesEnum.VOIP.getValue();
+	// serviceDetails.addCategory(newCategory);
+	// // String newServiceName = "updated name";
+	// // serviceDetails.setServiceName(newServiceName);
+	// String newProjectCode = "68686868";
+	// serviceDetails.setProjectCode(newProjectCode);
+	// String newIcon = "updated-icon";
+	// serviceDetails.setIcon(newIcon);
+	// String newDescription = "updated description <html></html>";
+	// serviceDetails.setDescription(newDescription);
+	// List<String> newTags = new ArrayList<>();
+	// newTags.add("update1");
+	// newTags.add("update2");
+	// newTags.add(currentServiceName);
+	// serviceDetails.setTags(newTags);
+	// HttpPut httpPut =
+	// ServiceRestUtils.createUpdateServiceMetaDataPutRequest(serviceDetails,
+	// sdncDesignerDetails);
+	// response = httpClient.execute(httpPut);
+	// assertTrue(response.getStatusLine().getStatusCode() == 200);
+	// responseString = new BasicResponseHandler().handleResponse(response);
+	// String serviceUid =
+	// ServiceRestUtils.getServiceUniqueIdFromString(responseString);
+	//
+	// ServiceReqDetails details = new ServiceReqDetails();
+	// details.setUniqueId(serviceUid);
+	//
+	// httpGet = ServiceRestUtils.createGetServiceGetRquest(details,
+	// sdncDesignerDetails);
+	// response = httpClient.execute(httpGet);
+	// assertTrue(response.getStatusLine().getStatusCode() == 200);
+	// responseString = new BasicResponseHandler().handleResponse(response);
+	// serviceObject =
+	// ResponseParser.convertServiceResponseToJavaObject(responseString);
+	// assertTrue("service object creation failed the returned object is null",
+	// serviceObject != null);
+	// String updatedCategory = serviceObject.getCategories().get(0).getName();
+	// String updatedServiceName = serviceObject.getName();
+	// String updatedProjectCode = serviceObject.getProjectCode();
+	// String updatedIcon = serviceObject.getIcon();
+	// String updatedDescription = serviceObject.getDescription();
+	// List<String> updatedTags = serviceObject.getTags();
+	// assertFalse("category did not cahnge",
+	// currentCategory.equals(updatedCategory));
+	// assertEquals("categoruy did not match expacted value", updatedCategory,
+	// newCategory);
+	// // assertFalse("service name did not change",
+	// currentServiceName.equals(updatedServiceName) );
+	// // assertEquals("service name did not match expacted
+	// value",updatedServiceName,newServiceName);
+	// assertFalse("projectCode did not change", currentProjectCode.equals(updatedProjectCode));
+	// assertEquals("projectCode not match expacted value", updatedProjectCode, newProjectCode);
+	// assertFalse("icon did not change", currentIcon.equals(updatedIcon));
+	// assertEquals("icon did not match expacted value", updatedIcon, newIcon);
+	// assertFalse("description did not change",
+	// currentDescription.equals(updatedDescription));
+	// assertEquals("description did not match expacted value", "updated
+	// description", updatedDescription);
+	// assertFalse("tags did not change", currentTags.containsAll(updatedTags));
+	// assertTrue("tags did not match expacted value",
+	// updatedTags.containsAll(newTags));
+	// }
+
 	@Test
 	public void updateService_ByOtherDesigner() throws Exception {
-		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails2);
+		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails2);
 		validateResponse(updateServiceResponse, 409, ActionStatus.RESTRICTED_OPERATION, listForMessage);
 
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -266,12 +376,14 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void updateServiceNotExist() throws Exception {
 		updatedServiceDetails.setUniqueId("nnnnn");
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
-		validateResponse(updateServiceResponse, 404, ActionStatus.SERVICE_NOT_FOUND, new ArrayList<String>(Arrays.asList("")));
+		validateResponse(updateServiceResponse, 404, ActionStatus.SERVICE_NOT_FOUND,
+				new ArrayList<String>(Arrays.asList("")));
 	}
 
 	@Test
 	public void updateCheckedinService() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		validateResponse(updateServiceResponse, 409, ActionStatus.RESTRICTED_OPERATION, listForMessage);
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -328,7 +440,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void updateServiceByMethod_delete() throws Exception {
-		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails, sdncDesignerDetails, "DELETE", Urls.UPDATE_SERVICE_METADATA);
+		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails,
+				sdncDesignerDetails, "DELETE", Urls.UPDATE_SERVICE_METADATA);
 		validateResponse(updateServiceResponse, 405, ActionStatus.NOT_ALLOWED, listForMessage);
 
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -336,7 +449,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void updateServiceByMethod_get() throws Exception {
-		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails, sdncDesignerDetails, "GET", Urls.UPDATE_SERVICE_METADATA);
+		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails,
+				sdncDesignerDetails, "GET", Urls.UPDATE_SERVICE_METADATA);
 		validateResponse(updateServiceResponse, 405, ActionStatus.NOT_ALLOWED, listForMessage);
 
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -344,7 +458,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void updateServiceByMethod_post() throws Exception {
-		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails, sdncDesignerDetails, "POST", Urls.UPDATE_SERVICE_METADATA);
+		RestResponse updateServiceResponse = ServiceRestUtils.createServiceByHttpMethod(updatedServiceDetails,
+				sdncDesignerDetails, "POST", Urls.UPDATE_SERVICE_METADATA);
 		validateResponse(updateServiceResponse, 405, ActionStatus.NOT_ALLOWED, listForMessage);
 
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
@@ -359,7 +474,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	{
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		validateResponse(updateServiceResponse, 400, ActionStatus.SERVICE_CATEGORY_CANNOT_BE_CHANGED, listForMessage);
 
@@ -419,6 +535,7 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	// TODO Irrelevant
 	@Test(enabled = false)
 	public void missingProjectCodeTest2() throws Exception {
+
 		updatedServiceDetails.setProjectCode(null);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		validateResponse(updateServiceResponse, 400, ActionStatus.MISSING_PROJECT_CODE, listForMessage);
@@ -445,7 +562,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void missingDescriptionTest1() throws Exception {
 		updatedServiceDetails.setDescription(StringUtils.EMPTY);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
-		validateResponse(updateServiceResponse, 400, ActionStatus.COMPONENT_MISSING_DESCRIPTION, Arrays.asList("Service"));
+		validateResponse(updateServiceResponse, 400, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
+				Arrays.asList("Service"));
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
@@ -453,7 +571,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void missingDescriptionTest2() throws Exception {
 		updatedServiceDetails.setDescription(null);
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
-		validateResponse(updateServiceResponse, 400, ActionStatus.COMPONENT_MISSING_DESCRIPTION, Arrays.asList("Service"));
+		validateResponse(updateServiceResponse, 400, ActionStatus.COMPONENT_MISSING_DESCRIPTION,
+				Arrays.asList("Service"));
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
@@ -477,15 +596,18 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void missingTagsTest3() throws Exception {
 		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(StringUtils.EMPTY)));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
-		validateResponse(updateServiceResponse, 400, ActionStatus.INVALID_FIELD_FORMAT, Arrays.asList("Service", "tag"));
+		validateResponse(updateServiceResponse, 400, ActionStatus.INVALID_FIELD_FORMAT,
+				Arrays.asList("Service", "tag"));
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
 	@Test
 	public void missingTagsTest4() throws Exception {
-		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(StringUtils.EMPTY, updatedServiceDetails.getName())));
+		updatedServiceDetails
+				.setTags(new ArrayList<>(Arrays.asList(StringUtils.EMPTY, updatedServiceDetails.getName())));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
-		validateResponse(updateServiceResponse, 400, ActionStatus.INVALID_FIELD_FORMAT, Arrays.asList("Service", "tag"));
+		validateResponse(updateServiceResponse, 400, ActionStatus.INVALID_FIELD_FORMAT,
+				Arrays.asList("Service", "tag"));
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
 
@@ -535,7 +657,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	// values------------------------------------------
 	@Test
 	public void contactIdValidationTest7() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		updatedServiceDetails.setContactId("ab0001");
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
@@ -546,7 +669,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		// addMandatoryArtifactsToService();
 
 		RestResponse certifyServiceResp = LifecycleRestUtils.certifyService(serviceDetails);
-		Service certifyServiceServ = ResponseParser.convertServiceResponseToJavaObject(certifyServiceResp.getResponse());
+		Service certifyServiceServ = ResponseParser
+				.convertServiceResponseToJavaObject(certifyServiceResp.getResponse());
 		ServiceReqDetails certifyService = new ServiceReqDetails(certifyServiceServ);
 		updatedServiceDetails = new ServiceReqDetails(certifyService);
 		updatedServiceDetails.setContactId("ab0001");
@@ -660,7 +784,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void contactIdValidationTest26() throws Exception {
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		updatedServiceDetails = new ServiceReqDetails(serviceDetails);
 		updatedServiceDetails.setContactId("xy0002");
 		correctUpdate();
@@ -669,77 +794,88 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void serviceNameValidationTest1() throws Exception {
 		updatedServiceDetails.setName(multipleString("a", 49));
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest2() throws Exception {
 		updatedServiceDetails.setName(multipleString("b", 50));
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest3() throws Exception {
 		updatedServiceDetails.setName("testNamE");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest4() throws Exception {
 		updatedServiceDetails.setName("Testname");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest5() throws Exception {
 		updatedServiceDetails.setName("Test_name");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest6() throws Exception {
 		updatedServiceDetails.setName("Test name");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest7() throws Exception {
 		updatedServiceDetails.setName("Test-name");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest8() throws Exception {
 		updatedServiceDetails.setName("Test.name");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest9() throws Exception {
 		updatedServiceDetails.setName("...1...");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest10() throws Exception {
 		updatedServiceDetails.setName("-a_1. Arrrrrr");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
 	@Test
 	public void serviceNameValidationTest11() throws Exception {
 		updatedServiceDetails.setName("Testname1234567890");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		correctUpdate();
 	}
 
@@ -747,20 +883,24 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void serviceNameValidationTest14() throws Exception {
 		updatedServiceDetails.setName(StringUtils.SPACE); // one space with
 															// nothing
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		// updateWithInvalidValue(ActionStatus.INVALID_COMPONENT_NAME, new
 		// ArrayList<>(Arrays.asList("Service")));
-		validateResponse(updateServiceResponse, 400, ActionStatus.MISSING_COMPONENT_NAME, new ArrayList<>(Arrays.asList("Service")));
+		validateResponse(updateServiceResponse, 400, ActionStatus.MISSING_COMPONENT_NAME,
+				new ArrayList<>(Arrays.asList("Service")));
 	}
 
 	// ------------------------------------------invalid
 	// values------------------------------------------
 	@Test
 	public void serviceNameValidationTest12() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		updatedServiceDetails.setName("TestNamE");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
@@ -769,8 +909,10 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void serviceNameValidationTest13() throws Exception {
 		updatedServiceDetails.setName(multipleString("c", 51));
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
-		updateWithInvalidValue(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT, new ArrayList<>(Arrays.asList("Service", "50")));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updateWithInvalidValue(ActionStatus.COMPONENT_NAME_EXCEEDS_LIMIT,
+				new ArrayList<>(Arrays.asList("Service", "50")));
 	}
 
 	@Test
@@ -784,7 +926,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		LifecycleRestUtils.certifyService(serviceDetails);
 		updatedServiceDetails.setName("testnamename");
 		updatedServiceDetails.setCategories(serviceDetails.getCategories());
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
 		getServiceAndValidate(serviceDetails, sdncDesignerDetails, sdncTesterDetails, LifecycleStateEnum.CERTIFIED);
@@ -794,11 +937,14 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void serviceNameValidationTest17() throws Exception {
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		updatedServiceDetails.setName("TestNamE");
 		updatedServiceDetails.setCategories(serviceDetails.getCategories());
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
-		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		validateResponse(updateServiceResponse2, 400, ActionStatus.SERVICE_NAME_CANNOT_BE_CHANGED, listForMessage);
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
@@ -806,8 +952,10 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void serviceNameValidationTest18() throws Exception {
 		updatedServiceDetails.setName("  testname  ");
-		updatedServiceDetails.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
-		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		updatedServiceDetails
+				.setTags(addServiceNameToTagsList(updatedServiceDetails.getName(), updatedServiceDetails.getTags()));
+		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse1);
 		assertNotNull(updateServiceResponse1.getErrorCode());
 		assertEquals(200, updateServiceResponse1.getErrorCode().intValue());
@@ -860,7 +1008,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void iconValidationTest8() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		updatedServiceDetails.setIcon("TestNamE");
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
@@ -905,14 +1054,16 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void iconValidationTest14() throws Exception {
 		updatedServiceDetails.setIcon(multipleString("c", 26));
-		updateWithInvalidValue(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT, new ArrayList<>(Arrays.asList("Service", "25")));
+		updateWithInvalidValue(ActionStatus.COMPONENT_ICON_EXCEEDS_LIMIT,
+				new ArrayList<>(Arrays.asList("Service", "25")));
 	}
 
 	@Test
 	public void iconValidationTest15() throws Exception {
 		// addMandatoryArtifactsToService();
 		RestResponse certifyServiceResp = LifecycleRestUtils.certifyService(serviceDetails);
-		Service certifyServiceServ = ResponseParser.convertServiceResponseToJavaObject(certifyServiceResp.getResponse());
+		Service certifyServiceServ = ResponseParser
+				.convertServiceResponseToJavaObject(certifyServiceResp.getResponse());
 		ServiceReqDetails certifyService = new ServiceReqDetails(certifyServiceServ);
 		updatedServiceDetails = new ServiceReqDetails(certifyService);
 		updatedServiceDetails.setIcon("testnamename");
@@ -924,7 +1075,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void iconValidationTest16() throws Exception {
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		updatedServiceDetails = new ServiceReqDetails(serviceDetails);
 		updatedServiceDetails.setIcon("TestNamE");
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
@@ -939,7 +1091,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void categoryValidationTest1() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		updatedServiceDetails.addCategory(ServiceCategoriesEnum.VOIP.getValue());
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
@@ -981,7 +1134,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void categoryValidationTest6() throws Exception {
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		updatedServiceDetails = new ServiceReqDetails(serviceDetails);
 		updatedServiceDetails = serviceDetails;
 		List<CategoryDefinition> categories = updatedServiceDetails.getCategories();
@@ -990,7 +1144,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		categoryDefinition2.setName("ccc");
 		categories.set(0, categoryDefinition2);
 		updatedServiceDetails.setCategories(categories);
-		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		validateResponse(updateServiceResponse2, 400, ActionStatus.SERVICE_CATEGORY_CANNOT_BE_CHANGED, listForMessage);
 		getServiceAndValidate(serviceDetails, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 	}
@@ -1011,19 +1166,22 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void tagsValidationTest1() throws Exception {
-		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(multipleString("a", 49), updatedServiceDetails.getName())));
+		updatedServiceDetails
+				.setTags(new ArrayList<>(Arrays.asList(multipleString("a", 49), updatedServiceDetails.getName())));
 		correctUpdate();
 	}
 
 	@Test
 	public void tagsValidationTest2() throws Exception {
-		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(multipleString("B", 50), updatedServiceDetails.getName())));
+		updatedServiceDetails
+				.setTags(new ArrayList<>(Arrays.asList(multipleString("B", 50), updatedServiceDetails.getName())));
 		correctUpdate();
 	}
 
 	@Test
 	public void tagsValidationTest3() throws Exception {
-		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList(multipleString("A", 50), multipleString("B", 50), updatedServiceDetails.getName())));
+		updatedServiceDetails.setTags(new ArrayList<>(
+				Arrays.asList(multipleString("A", 50), multipleString("B", 50), updatedServiceDetails.getName())));
 		correctUpdate();
 	}
 
@@ -1077,7 +1235,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void tagsValidationTest13() throws Exception {
-		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList("Testtag1234567890", updatedServiceDetails.getName())));
+		updatedServiceDetails
+				.setTags(new ArrayList<>(Arrays.asList("Testtag1234567890", updatedServiceDetails.getName())));
 		correctUpdate();
 	}
 
@@ -1089,7 +1248,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void tagsValidationTest15() throws Exception {
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKIN);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKIN);
 		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList("TestTaG", updatedServiceDetails.getName())));
 		RestResponse updateServiceResponse = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
 		checkErrorResponse(ActionStatus.RESTRICTED_OPERATION, listForMessage, updateServiceResponse);
@@ -1109,7 +1269,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	public void tagsValidationTest17() throws Exception {
 		// addMandatoryArtifactsToService();
 		certifyService(serviceDetails, serviceDetails.getVersion());
-		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(), LifeCycleStatesEnum.CHECKOUT);
+		LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerDetails, serviceDetails.getVersion(),
+				LifeCycleStatesEnum.CHECKOUT);
 		updatedServiceDetails = new ServiceReqDetails(serviceDetails);
 		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList("TestTaG", updatedServiceDetails.getName())));
 		correctUpdate();
@@ -1124,7 +1285,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 		tagsList.add(updatedServiceDetails.getName());
 		while (tagsCount > maxLengthTag) {
 			tagsList.add(multipleString("a", maxLengthTag));
-			tagsCount -= maxLengthTag + 1 + 1/* (50 and comma of each tag + one space, totally 52) */;
+			tagsCount -= maxLengthTag + 1
+					+ 1/* (50 and comma of each tag + one space, totally 52) */;
 		}
 		tagsList.add(multipleString("a", tagsCount));
 		updatedServiceDetails.setTags(tagsList);
@@ -1134,7 +1296,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void tagsValidationTest19() throws Exception {
 		updatedServiceDetails.setTags(new ArrayList<>(Arrays.asList("   Tag   ", updatedServiceDetails.getName())));
-		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse1);
 		assertNotNull(updateServiceResponse1.getErrorCode());
 		assertEquals(200, updateServiceResponse1.getErrorCode().intValue());
@@ -1201,7 +1364,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest6() throws Exception {
 		updatedServiceDetails.setDescription("desc\tription");
-		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse1 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse1);
 		assertNotNull(updateServiceResponse1.getErrorCode());
 		assertEquals(200, updateServiceResponse1.getErrorCode().intValue());
@@ -1213,7 +1377,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest7() throws Exception {
 		updatedServiceDetails.setDescription("desc      ription     ");
-		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse2 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse2);
 		assertNotNull(updateServiceResponse2.getErrorCode());
 		assertEquals(200, updateServiceResponse2.getErrorCode().intValue());
@@ -1225,7 +1390,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest8() throws Exception {
 		updatedServiceDetails.setDescription("desc" + StringUtils.LF + "ription");
-		RestResponse updateServiceResponse3 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse3 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse3);
 		assertNotNull(updateServiceResponse3.getErrorCode());
 		assertEquals(200, updateServiceResponse3.getErrorCode().intValue());
@@ -1237,7 +1403,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest9() throws Exception {
 		updatedServiceDetails.setDescription("<html>Hello, <b>world!</b></html>");
-		RestResponse updateServiceResponse4 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse4 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse4);
 		assertNotNull(updateServiceResponse4.getErrorCode());
 		assertEquals(200, updateServiceResponse4.getErrorCode().intValue());
@@ -1262,8 +1429,9 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 
 	@Test
 	public void descriptionValidationTest10_b() throws Exception {
-		updatedServiceDetails.setDescription("\uC2B5");
-		RestResponse updateServiceResponse5 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		updatedServiceDetails.setDescription("\uC2B5abc");
+		RestResponse updateServiceResponse5 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse5);
 		assertNotNull(updateServiceResponse5.getErrorCode());
 		assertEquals(200, updateServiceResponse5.getErrorCode().intValue());
@@ -1276,7 +1444,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest11() throws Exception {
 		updatedServiceDetails.setDescription("&<>");
-		RestResponse updateServiceResponse6 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse6 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse6);
 		assertNotNull(updateServiceResponse6.getErrorCode());
 		assertEquals(200, updateServiceResponse6.getErrorCode().intValue());
@@ -1288,7 +1457,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest12() throws Exception {
 		updatedServiceDetails.setDescription("文 test");
-		RestResponse updateServiceResponse7 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse7 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse7);
 		assertNotNull(updateServiceResponse7.getErrorCode());
 		assertEquals(200, updateServiceResponse7.getErrorCode().intValue());
@@ -1300,7 +1470,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest13() throws Exception {
 		updatedServiceDetails.setDescription("   description");
-		RestResponse updateServiceResponse8 = ServiceRestUtils.updateService(updatedServiceDetails, sdncDesignerDetails);
+		RestResponse updateServiceResponse8 = ServiceRestUtils.updateService(updatedServiceDetails,
+				sdncDesignerDetails);
 		assertNotNull(updateServiceResponse8);
 		assertNotNull(updateServiceResponse8.getErrorCode());
 		assertEquals(200, updateServiceResponse8.getErrorCode().intValue());
@@ -1312,7 +1483,8 @@ public class UpdateServiceMetadataTest extends ComponentBaseTest {
 	@Test
 	public void descriptionValidationTest14() throws Exception {
 		updatedServiceDetails.setDescription(multipleString("a", 1025));
-		updateWithInvalidValue(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT, new ArrayList<>(Arrays.asList("Service", "1024")));
+		updateWithInvalidValue(ActionStatus.COMPONENT_DESCRIPTION_EXCEEDS_LIMIT,
+				new ArrayList<>(Arrays.asList("Service", "1024")));
 	}
 
 	@Test

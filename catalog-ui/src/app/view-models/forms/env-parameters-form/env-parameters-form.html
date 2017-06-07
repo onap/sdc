@@ -1,0 +1,92 @@
+<sdc-modal modal="envParametersModal" type="classic" class="sdc-env-form-container" buttons="buttons" header="{{artifactResource.artifactDisplayName}}" show-close-button="true">
+    <div class="w-sdc-env-form-container">
+        <div class="w-sdc-env-search pull-left">
+            <input type="text" class="w-sdc-env-search-input" placeholder="Search" data-ng-model="searchText" data-tests-id="search-env-param-name"/>
+            <div class="search-icon-container">
+                <span class="w-sdc-search-icon env-search-icon magnification-white"></span>
+            </div>
+        </div>
+        <div class="table-container-flex">
+            <div class="table">
+                <div class="head flex-container">
+                    <div class="table-header head-row flex-item" ng-repeat="header in tableHeadersList track by $index">
+                        <info-tooltip class="header-info" data-ng-if="header.info" class="info-button" info-message-translate="{{header.info}}" direction="left"></info-tooltip>
+                        {{header.title}}
+                    </div>
+                </div>
+                <div class="body">
+                    <perfect-scrollbar suppress-scroll-x="true" scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                        <ng-form name="forms.editForm" class="w-sdc-form">
+                            <div data-ng-repeat="parameter in heatParameters| filter:{filterTerm:searchText} track by $index "
+                                 class="flex-container data-row"
+                                data-ng-init="parameter.filterTerm=parameter.name + ' ' + parameter.currentValue + ' ' + parameter.defaultValue + ' ' +parameter.description">
+                                <div class="table-col-general flex-item" data-tests-id="heatParameterName_{{parameter.name}}">
+                                    {{parameter.name}}
+                                    <span class="sprite-new show-desc hand"
+                                          uib-popover-template="templatePopover"
+                                          popover-class="parameter-description-popover top"
+                                          popover-title="Parameter Description"
+                                          popover-placement="top-left"
+                                          popover-is-open="selectedParameter.name == parameter.name"
+                                          popover-trigger="'none'"
+                                          popover-append-to-body="true"
+                                        data-ng-click="openDescPopover(parameter)"></span>
+                                </div>
+
+                                <div class="table-col-general flex-item text">
+                                    <span  data-tests-id="default-value-of-{{parameter.name}}" tooltips tooltip-content="{{parameter.defaultValue}}">{{parameter.defaultValue}}</span>
+                                </div>
+
+                                <!--<div class="table-col-general flex-item">-->
+                                    <!--<input type="text" value="{{parameter.currentValue}}"/>-->
+                                <!--</div>-->
+
+                                <div class="table-col-general flex-item left-column-container">
+
+                                        <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm[parameter.name].$dirty && forms.editForm[parameter.name].$invalid), required: (parameter.defaultValue)}">
+                                            <span class="required-symbol">*</span>
+                                            <div class="input-parameter">
+                                                <input class="i-sdc-form-input" data-ng-class="{error: (forms.editForm[parameter.name].$invalid)}"
+                                                       data-ng-model-options="{ debounce: 200 }"
+                                                       data-ng-model="parameter.currentValue"
+                                                       value="{{parameter.currentValue}}"
+                                                       type="text"
+                                                       name="{{parameter.name}}"
+                                                       data-ng-pattern="getValidationPattern(parameter.type, 'heat')"
+                                                       data-ng-required="parameter.defaultValue"
+                                                       data-ng-change="'json'==parameter.type && forms.editForm[parameter.name].$setValidity('pattern', validateJson(parameter.currentValue))"
+                                                       data-ng-blur="(forms.editForm[parameter.name].$error.required && (parameter.currentValue=parameter.defaultValue))"
+                                                       data-tests-id="value-field-of-{{parameter.name}}"/>
+
+                                                <div class="action-button">
+                                                    <div class="sprite-new revert-param" data-ng-if="parameter.defaultValue" data-ng-click="parameter.currentValue = parameter.defaultValue"
+                                                         data-tests-id="revert-{{parameter.name}}">
+                                                    </div>
+                                                    <div class="sprite-new delete-param"
+                                                         data-ng-if="!parameter.defaultValue"
+                                                         data-ng-disabled="!parameter.currentValue"
+                                                         data-ng-class="{disabled:!parameter.currentValue}"
+                                                         data-ng-click="parameter.currentValue = ''"
+                                                         data-tests-id="delete-{{parameter.name}}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="input-error" data-ng-show="forms.editForm[parameter.name].$invalid">
+                                                <span ng-show="forms.editForm[parameter.name].$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Value'}"></span>
+                                                <span ng-show="forms.editForm[parameter.name].$error.pattern && parameter.type==='string'" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                                                <span ng-show="forms.editForm[parameter.name].$error.pattern && !(parameter.type==='string')" translate="VALIDATION_ERROR_TYPE" translate-values="{'type': '{{parameter.type}}'}"></span>
+                                            </div>
+                                        </div>
+
+                                </div>
+
+                            </div>
+                        </ng-form>
+
+                    </perfect-scrollbar>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</sdc-modal>

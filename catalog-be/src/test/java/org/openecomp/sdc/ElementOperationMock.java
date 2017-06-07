@@ -27,7 +27,6 @@ import java.util.Map;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Category;
 import org.openecomp.sdc.be.model.PropertyScope;

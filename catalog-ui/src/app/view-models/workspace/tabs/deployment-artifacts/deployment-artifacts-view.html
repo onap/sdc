@@ -1,0 +1,126 @@
+<div class="workspace-deployment-artifact">
+
+    <div data-tests-id="add-deployment-artifact-button" ng-if="!isViewMode()" data-ng-class="{'disabled': isDisableMode()}" data-tests-id="add-property-button" class="add-btn" data-ng-click="addOrUpdate({})">Add</div>
+
+    <div class="table-container-flex">
+
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <loader data-display="isLoading"></loader>
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" data-ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-if="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item"></div>
+            </div>
+
+            <form class="body" name="editForm">
+
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+
+                    <!-- Artifact row -->
+                    <div ng-if="noArtifactsToShow()" data-ng-class="{'disabled': isDisableMode()}" class="no-row-text" translate="DEPLOYMENT_ARTIFACT_NO_ARTIFACTS_TO_DISPLAY"></div>
+                    <div data-ng-repeat-start="artifact in artifacts | orderBy:sortBy:reverse track by $index"
+                         class="flex-container data-row"
+                         data-ng-class="{'selected': selectedArtifactId == artifact.uniqueId }"
+                         data-ng-if="artifact.esId && 'HEAT_ENV' !== artifact.artifactType"
+                         data-tests-id="artifact-item-{{artifact.artifactDisplayName}}">
+                        <div class="table-col-general flex-item" >
+                            <div class="heat-env-connect-container" ng-class="{'heat-env-connect-container-view-mode': isViewMode()}" data-ng-if="artifact.envArtifact">
+                            <span  class="heat-env-connect"></span>
+                             </div>
+                            <span data-tests-id="artifactDisplayName_{{artifact.artifactDisplayName}}" sdc-smart-tooltip class="artifact-name">{{artifact.artifactDisplayName}}</span>
+
+                            <span class="sprite-new show-desc hand description-popover-icon"
+                                  uib-popover-template="popoverTemplate"
+                                  popover-class="parameter-description-popover deployment-artifact-view top"
+                                  popover-title="Description"
+                                  popover-placement="top-left"
+                                  popover-is-open="selectedArtifactId == artifact.uniqueId && !isLoading"
+                                  popover-trigger="'none'"
+                                  popover-append-to-body="true"
+                                  data-ng-click="openDescriptionPopover(artifact.uniqueId)"
+                                  data-tests-id="descriptionIcon_{{artifact.artifactDisplayName}}"></span>
+                        </div>
+
+                        <div class="table-col-general flex-item text" data-tests-id="artifactType_{{artifact.artifactDisplayName}}" tooltips tooltip-content="{{artifact.artifactType}}">
+                            {{artifact.artifactType}}
+                        </div>
+                        <div class="table-col-general flex-item" data-tests-id="timeout_{{artifact.artifactDisplayName}}">
+                            {{artifact.timeout? artifact.timeout:''}}
+                        </div>
+                        <div class="table-col-general flex-item" data-tests-id="artifactVersion_{{artifact.artifactDisplayName}}">
+                            {{artifact.artifactVersion}}
+                        </div>
+                        <div class="table-col-general flex-item text" data-tests-id="artifactUUID_{{artifact.artifactDisplayName}}" tooltips tooltip-content="{{artifact.artifactUUID}}">
+                            <span>{{artifact.artifactUUID}}</span>
+                        </div>
+
+                        <div class="table-btn-col flex-item">
+                            <button class="table-edit-btn" data-tests-id="edit_{{artifact.artifactDisplayName}}"
+                                    data-ng-if="!isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" data-ng-click="addOrUpdate(artifact)"></button>
+                            <button class="table-delete-btn" data-tests-id="delete_{{artifact.artifactDisplayName}}"
+                                    data-ng-if="!isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" data-ng-click="delete(artifact)"> </button>
+                             <button class="table-download-btn" download-artifact  data-tests-id="download_{{artifact.artifactDisplayName}}"
+                                     data-ng-if="artifact.artifactDisplayName" component="component" artifact="artifact"></button>
+                            <button ng-if="!isViewMode() && artifact.isHEAT()"
+                                    class="sprite e-sdc-small-icon-pad edit-paramtes-button"
+                                    data-ng-click="openEditEnvParametersModal(artifact)" type="button"
+                                    data-tests-id="edit-parameters-of-{{artifact.artifactDisplayName}}"></button>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" class="flex-container data-row" data-ng-if="artifact.envArtifact">
+
+                        <div class="table-col-general flex-item"  zzdata-ng-click="!isViewMode() && addOrUpdate(artifact.envArtifact)">
+                            <span>{{artifact.envArtifact.artifactDisplayName}}</span>
+                        </div>
+
+                        <div class="table-col-general flex-item" data-tests-id="{{artifact.envArtifact.artifactType}}">
+                            {{artifact.envArtifact.artifactType}}
+                        </div>
+                        <div class="table-col-general flex-item" data-tests-id="{{artifact.envArtifact.timeout}}">
+                            {{artifact.envArtifact.timeout? artifact.envArtifact.timeout:''}}
+                        </div>
+                        <div class="table-col-general flex-item" data-tests-id="artifactEnvVersion_{{artifact.artifactDisplayName}}">
+                            {{artifact.envArtifact.artifactVersion}}
+                        </div>
+                        <div class="table-col-general flex-item text" data-tests-id="{{artifact.envArtifact.artifactUUID}}" tooltips tooltip-content="{{artifact.envArtifact.artifactUUID}}">
+                            <span>{{artifact.envArtifact.artifactUUID}}</span>
+                        </div>
+
+
+                        <div class="table-btn-col flex-item" >
+                            <button class="table-edit-btn" data-tests-id="edit_{{artifact.artifactLabel}}env"
+                                    data-ng-if="!isViewMode()" data-ng-click="addOrUpdate(artifact.envArtifact)"></button>
+                            <button class="table-download-btn" data-tests-id="download_env_{{artifact.artifactDisplayName}}" download-artifact
+                                    data-ng-if="artifact.artifactName" component="component" artifact="artifact.envArtifact"></button>
+
+                        </div>
+                    </div>
+
+                    <!--<div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env" ng-if="artifact.heatParameters.length">-->
+                        <!--<span class="enabled" data-ng-bind="getEnvArtifactName(artifact)" data-ng-click="!isViewMode() && addOrUpdate(getEnvArtifact(artifact))"></span>-->
+                        <!--<download-artifact class="i-sdc-designer-sidebar-section-content-item-button download-env sprite e-sdc-small-download hand" artifact="getEnvArtifact(artifact)"-->
+                                           <!--component="currentComponent" instance="true"-->
+                                           <!--data-tests-id="download"></download-artifact>-->
+                    <!--</div>-->
+
+
+
+                    <!-- Add artifacts buttons -->
+                    <!--<button class="add-button" data-ng-repeat="artifact in artifacts track by $index"-->
+                            <!--type="button"-->
+                            <!--data-ng-show="!artifact.esId"-->
+                            <!--data-ng-if="!viewModeOrCsarComponent()"-->
+                            <!--data-ng-class="{'disabled': isDisableMode() || component.isCsarComponent()}"-->
+                            <!--data-tests-id="{{artifact.artifactDisplayName}} deployment_artifact"-->
+                            <!--translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_HEAT"-->
+                            <!--translate-values="{'name': '{{artifact.artifactDisplayName}}'}"-->
+                            <!--data-ng-click="addOrUpdate(artifact)"></button>-->
+
+                    <!-- Top add button -->
+                    <button class="add-button" type="button" data-ng-if="!isViewMode()" data-ng-class="{'disabled': isDisableMode()}" translate="DEPLOYMENT_ARTIFACT_BUTTON_ADD_OTHER" data-ng-click="addOrUpdate({})"></button>
+                </perfect-scrollbar>
+            </form>
+        </div>
+    </div>
+</div>

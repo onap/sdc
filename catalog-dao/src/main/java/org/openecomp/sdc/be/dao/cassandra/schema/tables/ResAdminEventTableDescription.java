@@ -71,40 +71,27 @@ public class ResAdminEventTableDescription implements ITableDescription {
 	}
 
 	enum AEFieldsDescription {
-		REQUEST_ID("request_id", DataType.varchar(), false), SERVICE_INST_ID("service_instance_id", DataType.varchar(),
-				true), INVARIANT_UUID("invariant_UUID", DataType.varchar(), true), ACTION("action", DataType.varchar(),
-						true), STATUS("status", DataType.varchar(), false), DESCRIPTION("description",
-								DataType.varchar(),
-								false), RESOURCE_TYPE("resource_type", DataType.varchar(), false), PREV_VERSION(
-										"prev_version", DataType.varchar(),
-										true), PREV_STATE("prev_state", DataType.varchar(), true), CURR_STATE(
-												"curr_state", DataType.varchar(), false), RESOURCE_NAME("resource_name",
-														DataType.varchar(), false), CURR_VERSION("curr_version",
-																DataType.varchar(), true), MODIFIER("modifier",
-																		DataType.varchar(),
-																		false), PREV_ARTIFACT_UUID("prev_artifact_UUID",
-																				DataType.varchar(),
-																				false), CURR__ARTIFACT_UUID(
-																						"curr_artifact_UUID",
-																						DataType.varchar(),
-																						false), ARTIFACT_DATA(
-																								"artifact_data",
-																								DataType.varchar(),
-																								false), DID("did",
-																										DataType.varchar(),
-																										true), DPREV_STATUS(
-																												"dprev_status",
-																												DataType.varchar(),
-																												false), DCURR_STATUS(
-																														"dcurr_status",
-																														DataType.varchar(),
-																														false), TOSCA_NODE_TYPE(
-																																"tosca_node_type",
-																																DataType.varchar(),
-																																false), COMMENT(
-																																		"comment",
-																																		DataType.varchar(),
-																																		false);
+		REQUEST_ID("request_id", DataType.varchar(), false), 
+		SERVICE_INST_ID("service_instance_id", DataType.varchar(), true), 
+		INVARIANT_UUID("invariant_UUID", DataType.varchar(), true), 
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false),
+		DESCRIPTION("description",DataType.varchar(), false), 
+		RESOURCE_TYPE("resource_type", DataType.varchar(), false), 
+		PREV_VERSION( "prev_version", DataType.varchar(), true), 
+		PREV_STATE("prev_state", DataType.varchar(), true), 
+		CURR_STATE("curr_state", DataType.varchar(), false), 
+		RESOURCE_NAME("resource_name", DataType.varchar(), false), 
+		CURR_VERSION("curr_version", DataType.varchar(), true), 
+		MODIFIER("modifier", DataType.varchar(), false), 
+		PREV_ARTIFACT_UUID("prev_artifact_UUID", DataType.varchar(), false), 
+		CURR__ARTIFACT_UUID("curr_artifact_UUID", DataType.varchar(), false), 
+		ARTIFACT_DATA("artifact_data", DataType.varchar(), false), 
+		DID("did", DataType.varchar(), true), 
+		DPREV_STATUS("dprev_status", DataType.varchar(), false), 
+		DCURR_STATUS("dcurr_status", DataType.varchar(), false), 
+		TOSCA_NODE_TYPE("tosca_node_type", DataType.varchar(), false), 
+		COMMENT("comment", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

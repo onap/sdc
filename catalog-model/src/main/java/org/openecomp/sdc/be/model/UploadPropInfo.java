@@ -23,6 +23,9 @@ package org.openecomp.sdc.be.model;
 import java.util.List;
 import java.util.Map;
 
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+
+
 public class UploadPropInfo extends UploadInfo {
 
 	private Object value;
@@ -31,13 +34,13 @@ public class UploadPropInfo extends UploadInfo {
 
 	private boolean password;
 
-	private List<GetInputValueInfo> get_input;
+	private List<GetInputValueDataDefinition> get_input;
 
-	public List<GetInputValueInfo> getGet_input() {
+	public List<GetInputValueDataDefinition> getGet_input() {
 		return get_input;
 	}
 
-	public void setGet_input(List<GetInputValueInfo> get_input) {
+	public void setGet_input(List<GetInputValueDataDefinition> get_input) {
 		this.get_input = get_input;
 	}
 

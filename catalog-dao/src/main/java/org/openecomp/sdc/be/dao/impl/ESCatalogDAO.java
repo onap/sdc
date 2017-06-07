@@ -74,9 +74,8 @@ public class ESCatalogDAO extends ESGenericSearchDAO implements ICatalogDAO {
 			try {
 				healthStatus = isInitCompleted() ? checkHealth() : HealthCheckStatus.DOWN;
 			} catch (Exception e) {
-				log.error("Error while trying to connect to elasticsearch. host: " + getEsClient().getServerHost()
-						+ " port: " + getEsClient().getServerPort(), e.getMessage());
-				log.trace("Error while trying to connect to elasticsearch", e);
+				log.error("Error while trying to connect to elasticsearch. host: {} | port: {} | error: {}", 
+						getEsClient().getServerHost(), getEsClient().getServerPort(), e.getMessage(), e);
 				healthStatus = HealthCheckStatus.DOWN;
 			}
 			healthCheckLogger.trace("Executed ELASTICSEARCH Health Check Task - Status = {}", healthStatus);

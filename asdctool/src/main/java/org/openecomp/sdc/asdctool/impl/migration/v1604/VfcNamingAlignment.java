@@ -77,7 +77,7 @@ public class VfcNamingAlignment {
 				log.debug("Checking resource {}", vfc.getMetadataDataDefinition().getName());
 				boolean wasChanged = false;
 
-				Either<Boolean, StorageOperationStatus> vfcEither = fixToscaNameEmpty(vfc);
+				Either<Boolean, StorageOperationStatus>	vfcEither = fixToscaNameEmpty(vfc);
 				if (vfcEither.isRight()) {
 					log.error("DB error during checkIsToscaNameEmpty - exiting...");
 					result = false;
@@ -156,7 +156,6 @@ public class VfcNamingAlignment {
 		}
 		return Either.left(false);
 	}
-
 
 	private Either<Boolean, StorageOperationStatus> generateAndSetToscaResourceName(ResourceMetadataData vfc,
 			String toscaResourceName) {

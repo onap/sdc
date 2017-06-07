@@ -27,10 +27,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-import com.thinkaurelius.titan.core.TitanGraphQuery;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -39,17 +43,27 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.config.Config;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.cassandra.CassandraUtils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CategoryRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +76,7 @@ import org.testng.annotations.BeforeSuite;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
+import com.relevantcodes.extentreports.NetworkMode;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
@@ -99,7 +114,7 @@ public abstract class ComponentBaseTest {
 	}
 
 	@BeforeSuite(alwaysRun = true)
-	public static void openTitan() throws FileNotFoundException {
+	public static void openTitan() throws Exception {
 
 		File dir = new File(REPORT_FOLDER);
 		try {
@@ -107,19 +122,36 @@ public abstract class ComponentBaseTest {
 		} catch (IOException e) {
 		}
 		extentReport = new ExtentReports(REPORT_FOLDER + REPORT_FILE_NAME);
+		// extentReport = new ExtentReports(REPORT_FOLDER +
+		// REPORT_FILE_NAME,true , NetworkMode.ONLINE);
+		// extentReport.x();
 
+		openTitanLogic();
+	}
+
+	protected static void openTitanLogic() throws Exception {
+		initGraph();
+		cleanComponents();
+		// DbUtils.deleteFromEsDbByPattern("_all");
+		CassandraUtils.truncateAllKeyspaces();
+	}
+
+	protected static void initGraph() throws FileNotFoundException {
 		myconfig = Utils.getConfig();
 		config = Utils.getConfig();
 		logger.trace(config.toString());
 		String titanConfigFilePath = myconfig.getTitanPropertiesFile();
-		System.out.println("titan configuration path:\n"+titanConfigFilePath);
 		titanGraph = TitanFactory.open(titanConfigFilePath);
-		System.out.println("is open:\n"+titanGraph.isOpen());
 		assertNotNull(titanGraph);
 	}
 
 	@AfterSuite(alwaysRun = true)
-	public static void shutdownTitan() {
+	public static void shutdownTitan() throws Exception {
+		shutdownTitanLogic();
+		extentReport.flush();
+	}
+
+	protected static void shutdownTitanLogic() {
 		if (titanGraph.isOpen()) {
 			titanGraph.close();
 		}
@@ -129,8 +161,9 @@ public abstract class ComponentBaseTest {
 	@BeforeMethod(alwaysRun = true)
 	public void beforeState(java.lang.reflect.Method method) throws Exception {
 
-		cleanComponents();
-		CassandraUtils.truncateAllKeyspaces();
+		// deleteCreatedComponents(getCatalogAsMap());
+	
+		performeClean();
 		extendTest = extentReport.startTest(method.getName());
 		extendTest.log(LogStatus.INFO, "Test started");
 
@@ -138,8 +171,7 @@ public abstract class ComponentBaseTest {
 
 	@AfterMethod(alwaysRun = true)
 	public void afterState(ITestResult result) throws Exception {
-		cleanComponents();
-		CassandraUtils.truncateAllKeyspaces();
+		performeClean();
 
 		if (result.isSuccess()) {
 			extendTest.log(LogStatus.PASS, "Test Result : <span class='label success'>Success</span>");
@@ -150,8 +182,12 @@ public abstract class ComponentBaseTest {
 		}
 
 		extentReport.endTest(extendTest);
-		extentReport.flush();
 
+	}
+
+	protected void performeClean() throws Exception, FileNotFoundException {
+		cleanComponents();
+		CassandraUtils.truncateAllKeyspaces();
 	}
 
 	public void verifyErrorCode(RestResponse response, String action, int expectedCode) {
@@ -160,7 +196,7 @@ public abstract class ComponentBaseTest {
 		assertEquals("Check response code after  + action" + action, expectedCode, response.getErrorCode().intValue());
 	}
 
-	private void cleanComponents() throws Exception {
+	private static void cleanComponents() throws Exception {
 
 		// Components to delete
 		List<String> vfResourcesToDelete = new ArrayList<String>();
@@ -179,10 +215,8 @@ public abstract class ComponentBaseTest {
 		List<String> resourcesNotToDelete = config.getResourcesNotToDelete();
 		List<String> resourceCategoriesNotToDelete = config.getResourceCategoriesNotToDelete();
 		List<String> serviceCategoriesNotToDelete = config.getServiceCategoriesNotToDelete();
-		TitanGraphQuery<? extends TitanGraphQuery> query = titanGraph.query();
-		query = query.has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Resource.getName());
-		Iterable<TitanVertex> vertices=query.vertices();
-//		Iterable<TitanVertex> vertices = titanGraph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Resource.getName()).vertices();
+
+		Iterable<TitanVertex> vertices = titanGraph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Resource.getName()).vertices();
 		if (vertices != null) {
 			Iterator<TitanVertex> iter = vertices.iterator();
 			while (iter.hasNext()) {
@@ -195,13 +229,13 @@ public abstract class ComponentBaseTest {
 				if ((resourcesNotToDelete != null && !resourcesNotToDelete.contains(name)) || (version != null && !version.equals("1.0"))) {
 					String id = vertex.value(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 					String resourceType = vertex.value(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty());
-					// if (name.startsWith("ci")) {
-					if (resourceType.equals(ResourceTypeEnum.VF.name())) {
-						vfResourcesToDelete.add(id);
-					} else {
-						nonVfResourcesToDelete.add(id);
+					if (name.startsWith("ci")) {
+						if (resourceType.equals(ResourceTypeEnum.VF.name())) {
+							vfResourcesToDelete.add(id);
+						} else {
+							nonVfResourcesToDelete.add(id);
+						}
 					}
-					// }
 				} else if ((resourcesNotToDelete != null && !resourcesNotToDelete.contains(name)) || (version != null && version.equals("1.0"))) {
 					if ((boolean) vertex.value(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()) == false) {
 						vertex.property(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
@@ -217,9 +251,9 @@ public abstract class ComponentBaseTest {
 				Vertex vertex = iter.next();
 				String id = vertex.value(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 				String name = vertex.value(GraphPropertiesDictionary.NAME.getProperty());
-				// if (name.startsWith("ci")){
-				servicesToDelete.add(id);
-				// }
+				if (name.startsWith("ci")) {
+					servicesToDelete.add(id);
+				}
 			}
 		}
 
@@ -230,9 +264,9 @@ public abstract class ComponentBaseTest {
 				Vertex vertex = iter.next();
 				String id = vertex.value(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 				String name = vertex.value(GraphPropertiesDictionary.NAME.getProperty());
-				//if (name.startsWith("ci")) {
+				if (name.startsWith("Ci")) {
 					productsToDelete.add(id);
-				//}
+				}
 			}
 		}
 
@@ -345,4 +379,141 @@ public abstract class ComponentBaseTest {
 
 	}
 
+	private void deleteCreatedComponents(Map<String, List<Component>> convertCatalogResponseToJavaObject) throws IOException {
+		final String userId = UserRoleEnum.DESIGNER.getUserId();
+		List<Component> resourcesArrayList = convertCatalogResponseToJavaObject.get(ComponentTypeEnum.RESOURCE_PARAM_NAME);
+
+		// List<String> collect = resourcesArrayList.stream().filter(s ->
+		// s.getName().startsWith("ci")).map(e ->
+		// e.getUniqueId()).collect(Collectors.toList());
+
+		// List<Map<String, String>> collect =
+		// resourcesArrayList.stream().filter(s ->
+		// s.getName().startsWith("ci")).map(e ->
+		// e.getAllVersions()).collect(Collectors.toList());
+		/*
+		 * List<String> collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith("ci")) .flatMap(e -> e.getAllVersions().values().stream()).collect(Collectors.toList());
+		 */
+
+		if (!CollectionUtils.isEmpty(resourcesArrayList)) {
+			List<String> collect = buildCollectionUniqueId(resourcesArrayList);
+			for (String uId : collect) {
+				ResourceRestUtils.deleteResource(uId, userId);
+			}
+		}
+
+		resourcesArrayList = convertCatalogResponseToJavaObject.get(ComponentTypeEnum.SERVICE_PARAM_NAME);
+		if (resourcesArrayList.size() > 0) {
+			List<String> collect = buildCollectionUniqueId(resourcesArrayList);
+			for (String uId : collect) {
+				ServiceRestUtils.deleteServiceById(uId, userId);
+			}
+		}
+		resourcesArrayList = convertCatalogResponseToJavaObject.get(ComponentTypeEnum.PRODUCT_PARAM_NAME);
+		if (resourcesArrayList.size() > 0) {
+			List<String> collect = buildCollectionUniqueId(resourcesArrayList);
+			for (String uId : collect) {
+				ProductRestUtils.deleteProduct(uId, userId);
+			}
+		}
+
+	}
+
+	private void deleteCollection(List<Component> componentArrayList, Consumer<String> deleteHandler) {
+
+		if (componentArrayList.size() > 0) {
+			List<String> collect = buildCollectionUniqueId(componentArrayList);
+			for (String uId : collect) {
+				deleteHandler.accept(uId);
+				// ProductRestUtils.deleteProduct(uId, userId);
+			}
+		}
+	}
+
+	private List<String> buildCollectionUniqueId(List<Component> resourcesArrayList) {
+
+		// Stream<String> flatMap = resourcesArrayList.stream().filter(s ->
+		// s.getName().startsWith("ci")).map(e -> e.getAllVersions()).map( e ->
+		// e.values()).flatMap( e -> e.stream());
+
+		// List<String> collect = resourcesArrayList.stream()
+		// //
+		// .filter(s -> s.getName().startsWith("ci") )
+		// //
+		// .map(e -> e.getUniqueId())
+
+		// .map( e -> e.values())
+		// .filter(out -> out!=null )
+		// .flatMap( e -> e.stream())
+		// .collect(Collectors.toList());
+
+		// List<String> collect = resourcesArrayList.stream().filter(s ->
+		// s.getName().startsWith("ci"))
+		// .flatMap(e ->
+		// e.getAllVersions().values().stream()).collect(Collectors.toList());
+		ComponentTypeEnum componentTypeEnum = resourcesArrayList.get(0).getComponentType();
+
+		List<String> genericCollection = new ArrayList<String>();
+		resourcesArrayList.stream().filter(s -> s.getName().toLowerCase().startsWith("ci")).map(e -> e.getUniqueId()).collect(Collectors.toList()).forEach((i) -> {
+			try {
+				switch (componentTypeEnum) {
+				case RESOURCE:
+					RestResponse resource = ResourceRestUtils.getResource(i);
+					Resource convertResourceResponseToJavaObject = ResponseParser.convertResourceResponseToJavaObject(resource.getResponse());
+					Map<String, String> allVersions = convertResourceResponseToJavaObject.getAllVersions();
+					Collection<String> values = allVersions.values();
+					genericCollection.addAll(values);
+						
+					break;
+				case SERVICE:
+					RestResponse service = ServiceRestUtils.getService(i);
+					Service convertServiceResponseToJavaObject = ResponseParser.convertServiceResponseToJavaObject(service.getResponse());
+					allVersions = convertServiceResponseToJavaObject.getAllVersions();
+					values = allVersions.values();
+					genericCollection.addAll(values);
+
+					break;
+						
+
+				case PRODUCT:
+					RestResponse product = ProductRestUtils.getProduct(i);
+					Product convertProductResponseToJavaObject = ResponseParser.convertProductResponseToJavaObject(product.getResponse());
+					allVersions = convertProductResponseToJavaObject.getAllVersions();
+					values = allVersions.values();
+					genericCollection.addAll(values);
+
+					break;
+
+				// default:
+				// break;
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		//
+
+		// List<String> collect =
+		// genericCollection.stream().collect(Collectors.toList());
+
+		return genericCollection;
+	}
+
+	private Map<String, List<Component>> getCatalogAsMap() throws Exception {
+		RestResponse catalog = CatalogRestUtils.getCatalog(UserRoleEnum.DESIGNER.getUserId());
+		Map<String, List<Component>> convertCatalogResponseToJavaObject = ResponseParser.convertCatalogResponseToJavaObject(catalog.getResponse());
+		return convertCatalogResponseToJavaObject;
+	}
+	protected Resource createVfFromCSAR(User sdncModifierDetails, String csarId) throws Exception {
+		// create new resource from Csar
+		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
+
+		resourceDetails.setCsarUUID(csarId);
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource createdResource = ResponseParser.convertResourceResponseToJavaObject(createResource.getResponse());
+		return createdResource;
+	}
 }

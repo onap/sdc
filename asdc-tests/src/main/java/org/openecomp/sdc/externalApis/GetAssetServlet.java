@@ -37,6 +37,7 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Resource;
@@ -122,14 +123,14 @@ public class GetAssetServlet extends ComponentBaseTest {
 		List<String> expectedAssetNamesList = new ArrayList<>();
 
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
-		resourceDetails.setName("Resource1");
+		resourceDetails.setName("ciResource1");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
 		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource2");
+		resourceDetails.setName("ciResource2");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -141,7 +142,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		expectedAssetNamesList.add(resource.getName());
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource3");
+		resourceDetails.setName("ciResource3");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -151,7 +152,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource4");
+		resourceDetails.setName("ciResource4");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -163,7 +164,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource5");
+		resourceDetails.setName("ciResource5");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -174,7 +175,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource6");
+		resourceDetails.setName("ciResource6");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -182,7 +183,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		resource = (Resource) AtomicOperationUtils.changeComponentState(resource, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 		expectedAssetNamesList.add(resource.getName());
 
-		resourceDetails.setName("Resource7");
+		resourceDetails.setName("ciResource7");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		createResource = ResourceRestUtils.createResource(resourceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createResource);
@@ -201,7 +202,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		List<String> getActualAssetNamesList = AssetRestUtils.getResourceNamesList(resourceAssetList);
 		Utils.compareArrayLists(getActualAssetNamesList, expectedAssetNamesList, "Element");
 
-		AssetRestUtils.checkResourceTypeInObjectList(resourceAssetList, ResourceTypeEnum.VF);
+		AssetRestUtils.checkComponentTypeInObjectList(resourceAssetList, ComponentTypeEnum.RESOURCE);
 
 		// Validate audit message
 		ExpectedExternalAudit expectedAssetListAudit = ElementFactory.getDefaultAssetListAudit(AssetTypeEnum.RESOURCES, AuditingActionEnum.GET_ASSET_LIST);
@@ -216,13 +217,13 @@ public class GetAssetServlet extends ComponentBaseTest {
 		ArtifactReqDetails artifactDetails = ElementFactory.getArtifactByType(ArtifactTypeEnum.OTHER, ArtifactTypeEnum.OTHER, true);
 
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		serviceDetails.setName("Service1");
+		serviceDetails.setName("ciService1");
 		RestResponse createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		Service service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service2");
+		serviceDetails.setName("ciService2");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -235,7 +236,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		expectedAssetNamesList.add(service.getName());
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service3");
+		serviceDetails.setName("ciService3");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -246,7 +247,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service4");
+		serviceDetails.setName("ciService4");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -257,7 +258,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service5");
+		serviceDetails.setName("ciService5");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -267,7 +268,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKOUT, true).getLeft();
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service6");
+		serviceDetails.setName("ciService6");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -276,7 +277,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.STARTCERTIFICATION, true).getLeft();
 		expectedAssetNamesList.add(service.getName());
 
-		serviceDetails.setName("Service7");
+		serviceDetails.setName("ciService7");
 		createService = ServiceRestUtils.createService(serviceDetails, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
 		BaseRestUtils.checkCreateResponse(createService);
 		service = ResponseParser.parseToObjectUsingMapper(createService.getResponse(), Service.class);
@@ -307,7 +308,7 @@ public class GetAssetServlet extends ComponentBaseTest {
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
-		resourceDetails.setName("Resource1");
+		resourceDetails.setName("ciResource1");
 		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
 		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncUserDetails);
 		BaseRestUtils.checkCreateResponse(createResource);

@@ -1,14 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: ContrailPortGlobalTypes
-  template_version: 1.0.0
-description: Contrail Port TOSCA Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.cp.nodes.heat.network.contrail.Port:
-    derived_from: tosca.nodes.network.Port
+    derived_from: org.openecomp.resource.cp.nodes.network.Port
     properties:
       static_routes:
         type: list

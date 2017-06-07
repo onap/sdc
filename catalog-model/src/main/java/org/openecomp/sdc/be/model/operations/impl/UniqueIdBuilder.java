@@ -24,22 +24,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.ResourceCategoryData;
 import org.openecomp.sdc.be.resources.data.ServiceCategoryData;
 import org.openecomp.sdc.be.resources.data.TagData;
 import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class UniqueIdBuilder {
 
 	private static String DOT = ".";
 	private static final String HEAT_PARAM_PREFIX = "heat_";
-
+	
 	public static String buildPropertyUniqueId(String resourceId, String propertyName) {
 		return resourceId + DOT + propertyName;
 	}
-
+	
 	public static String buildHeatParameterUniqueId(String resourceId, String propertyName) {
 		return resourceId + DOT + HEAT_PARAM_PREFIX + propertyName;
 	}
@@ -103,7 +105,9 @@ public class UniqueIdBuilder {
 	public static String buildAttributeUid(String resourceId, String attName) {
 		return NodeTypeEnum.Attribute.getName() + DOT + resourceId + DOT + attName;
 	}
-
+	public static String buildArtifactUid(String parentId, String label) {
+		return parentId + DOT + label;
+	}
 	public static String buildRequirementUid(String resourceId, String reqName) {
 		return resourceId + DOT + reqName;
 	}
@@ -125,9 +129,8 @@ public class UniqueIdBuilder {
 	public static String buildPropertyValueUniqueId(String parentId, String paramName) {
 		return NodeTypeEnum.PropertyValue.getName() + DOT + parentId + DOT + paramName;
 	}
-
-	public static String buildArtifactByInterfaceUniqueId(String resourceId, String interfaceName, String operation,
-			String artifactLabel) {
+	
+	public static String buildArtifactByInterfaceUniqueId(String resourceId, String interfaceName, String operation, String artifactLabel) {
 
 		return resourceId + DOT + interfaceName + DOT + operation + DOT + artifactLabel;
 	}
@@ -141,8 +144,7 @@ public class UniqueIdBuilder {
 	// return resourceId + DOT + interfaceName + DOT +operation + DOT +
 	// artifactLabel;
 	// }
-	public static String buildArtifactByInterfaceUniqueIdAndRsrcId(String resourceId, String interfaceName,
-			String operation, String artifactLabel) {
+	public static String buildArtifactByInterfaceUniqueIdAndRsrcId(String resourceId, String interfaceName, String operation, String artifactLabel) {
 		return resourceId + DOT + interfaceName + DOT + operation + DOT + artifactLabel;
 	}
 
@@ -183,6 +185,9 @@ public class UniqueIdBuilder {
 	public static String buildCategoryUid(String categoryName, NodeTypeEnum type) {
 		return type.getName() + DOT + categoryName;
 	}
+	public static String buildComponentCategoryUid(String categoryName, VertexTypeEnum type) {
+		return type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName);
+	}
 
 	public static String buildSubCategoryUid(String categoryUid, String subCategoryName) {
 		return categoryUid + DOT + subCategoryName;
@@ -194,6 +199,10 @@ public class UniqueIdBuilder {
 
 	public static String buildResourceInstancePropertyValueUid(String resourceInstanceUniqueId, Integer index) {
 		return resourceInstanceUniqueId + DOT + "property" + DOT + index;
+	}
+	
+	public static String buildComponentPropertyUniqueId(String resourceId, String propertyName) {
+		return NodeTypeEnum.Property.getName() + DOT + resourceId + DOT + propertyName;
 	}
 
 	public static String buildResourceInstanceAttributeValueUid(String resourceInstanceUniqueId, Integer index) {
@@ -236,7 +245,7 @@ public class UniqueIdBuilder {
 		return groupUniqueId + DOT + "property" + DOT + index;
 
 	}
-
+	
 	public static String buildUserFunctionalMenuUid(String userId) {
 		return userId + DOT + "functionalmenu";
 

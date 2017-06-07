@@ -21,10 +21,7 @@
 package org.openecomp.sdc.be.model;
 
 public enum DistributionStatusEnum {
-	DISTRIBUTION_NOT_APPROVED("Distribution not approved"), 
-	DISTRIBUTION_APPROVED("Distribution approved"), 
-	DISTRIBUTED("Distributed"), 
-	DISTRIBUTION_REJECTED("Distribution rejected");
+	DISTRIBUTION_NOT_APPROVED("Distribution not approved"), DISTRIBUTION_APPROVED("Distribution approved"), DISTRIBUTED("Distributed"), DISTRIBUTION_REJECTED("Distribution rejected");
 
 	private String value;
 
@@ -39,8 +36,7 @@ public enum DistributionStatusEnum {
 	public static DistributionStatusEnum findState(String state) {
 
 		for (DistributionStatusEnum distributionStatus : DistributionStatusEnum.values()) {
-			if (distributionStatus.name().equalsIgnoreCase(state)
-					|| distributionStatus.getValue().equalsIgnoreCase(state)) {
+			if (distributionStatus.name().equalsIgnoreCase(state) || distributionStatus.getValue().equalsIgnoreCase(state)) {
 				return distributionStatus;
 			}
 		}

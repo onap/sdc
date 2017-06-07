@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.util.List;
+
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
@@ -48,8 +51,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jcabi.aspects.Loggable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -77,29 +80,33 @@ public class GroupServlet extends AbstractValidationsServlet {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get group artifacts ", httpMethod = "GET", notes = "Returns artifacts metadata according to groupId", response = Resource.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "group found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Group not found") })
-	public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType, @PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
-			@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "group found"),
+			@ApiResponse(code = 403, message = "Restricted operation"),
+			@ApiResponse(code = 404, message = "Group not found") })
+	public Response getGroupArtifactById(@PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId, @PathParam("groupId") final String groupId,
+			@Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
 		log.debug("(get) Start handle request of {}", url);
-		Response response = null;
 
 		try {
 
 			GroupBusinessLogic businessLogic = this.getGroupBL(context);
 			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-			Either<GroupDefinitionInfo, ResponseFormat> actionResponse = businessLogic.getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
+			Either<GroupDefinitionInfo, ResponseFormat> actionResponse = businessLogic
+					.getGroupWithArtifactsById(componentTypeEnum, componentId, groupId, userId, false);
 
 			if (actionResponse.isRight()) {
 				log.debug("failed to get all non abstract {}", containerComponentType);
 				return buildErrorResponse(actionResponse.right().value());
 			}
 
-			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+					actionResponse.left().value());
 
 		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "getGroupArtifactById");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getGroupArtifactById");
 			log.debug("getGroupArtifactById unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -112,9 +119,15 @@ public class GroupServlet extends AbstractValidationsServlet {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Update Group Metadata", httpMethod = "PUT", notes = "Returns updated group definition", response = GroupDefinition.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Group Updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
-	public Response updateGroupMetadata(@PathParam("containerComponentType") final String containerComponentType, @PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
-			@ApiParam(value = "Service object to be Updated", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Group Updated"),
+			@ApiResponse(code = 403, message = "Restricted operation"),
+			@ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response updateGroupMetadata(
+			@PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
+			@ApiParam(value = "Service object to be Updated", required = true) String data,
+			@Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
@@ -129,7 +142,7 @@ public class GroupServlet extends AbstractValidationsServlet {
 		try {
 			GroupBusinessLogic businessLogic = getGroupBL(context);
 
-			Either<GroupDefinition, ResponseFormat> convertResponse = parseToGroup(data);
+			Either<GroupDefinition, ResponseFormat> convertResponse = parseToObject(data, () -> GroupDefinition.class);
 			if (convertResponse.isRight()) {
 				log.debug("failed to parse group");
 				response = buildErrorResponse(convertResponse.right().value());
@@ -139,7 +152,8 @@ public class GroupServlet extends AbstractValidationsServlet {
 
 			// Update GroupDefinition
 			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-			Either<GroupDefinition, ResponseFormat> actionResponse = businessLogic.updateGroupMetadata(componentId, user, groupUniqueId, componentTypeEnum, updatedGroup, true);
+			Either<GroupDefinition, ResponseFormat> actionResponse = businessLogic
+					.validateAndUpdateGroupMetadata(componentId, user, componentTypeEnum, updatedGroup, true);
 
 			if (actionResponse.isRight()) {
 				log.debug("failed to update GroupDefinition");
@@ -152,7 +166,6 @@ public class GroupServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Update Group Metadata");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Group Metadata");
 			log.debug("update group metadata failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -162,20 +175,74 @@ public class GroupServlet extends AbstractValidationsServlet {
 	}
 
 	/**
-	 * Convert data to GroupDefinition object
-	 * 
-	 * @param groupJson
+	 * Updates List of properties on a group (only values)
+	 * @param containerComponentType
+	 * @param componentId
+	 * @param groupUniqueId
+	 * @param data
+	 * @param request
+	 * @param userId
 	 * @return
 	 */
-	public Either<GroupDefinition, ResponseFormat> parseToGroup(String groupJson) {
+	@PUT
+	@Path("/{containerComponentType}/{componentId}/groups/{groupUniqueId}/properties")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Updates List of properties on a group (only values)", httpMethod = "PUT", notes = "Returns updated list of properties", response = GroupDefinition.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Group Updated"),
+			@ApiResponse(code = 403, message = "Restricted operation"),
+			@ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response updateGroupProperties(@PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId, @PathParam("groupUniqueId") final String groupUniqueId,
+			@ApiParam(value = "Service object to be Updated", required = true) String data,
+			@Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+	
+		init(log);
+		ServletContext context = request.getSession().getServletContext();
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}", url);
+
+		User user = new User();
+		user.setUserId(userId);
+		log.debug("modifier id is {}", userId);
+
+		Response response = null;
+
 		try {
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			GroupDefinition groupDefinition = gson.fromJson(groupJson, GroupDefinition.class);
-			return Either.left(groupDefinition);
+			GroupBusinessLogic businessLogic = getGroupBL(context);
+			Either<List<GroupProperty>, ResponseFormat> convertResponse = parseListOfObjects(data,
+					new TypeToken<List<GroupProperty>>() {
+					}.getType());
+
+			if (convertResponse.isRight()) {
+				log.debug("failed to parse group Property");
+				response = buildErrorResponse(convertResponse.right().value());
+				return response;
+			}
+			List<GroupProperty> groupPropertyToUpdate = convertResponse.left().value();
+
+			// Update GroupDefinition
+			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+			Either<List<GroupProperty>, ResponseFormat> actionResponse = businessLogic.validateAndUpdateGroupProperties(
+					componentId, groupUniqueId, user, componentTypeEnum, groupPropertyToUpdate, false);
+
+			if (actionResponse.isRight()) {
+				log.debug("failed to update GroupDefinition");
+				response = buildErrorResponse(actionResponse.right().value());
+				return response;
+			}
+
+			List<GroupProperty> groupProperty = actionResponse.left().value();
+			Object result = RepresentationUtils.toRepresentation(groupProperty);
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+
 		} catch (Exception e) {
-			log.debug("Failed to parse json (group data) to GroupDefinition object");
-			ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
-			return Either.right(responseFormat);
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Group Properties");
+			log.debug("update group properties failed with exception", e);
+			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+			return response;
+
 		}
 	}
 

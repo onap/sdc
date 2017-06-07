@@ -21,12 +21,7 @@
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum ServiceApiArtifactEnum {
-	CONFIGURATION("Configuration".toLowerCase()), 
-	INSTANTIATION("Instantiation".toLowerCase()),
-	MONITORING("Monitoring".toLowerCase()), 
-	REPORTING("Reporting".toLowerCase()), 
-	LOGGING("Logging".toLowerCase()), 
-	TESTING("Testing".toLowerCase());
+	CONFIGURATION("Configuration".toLowerCase()), INSTANTIATION("Instantiation".toLowerCase()), MONITORING("Monitoring".toLowerCase()), REPORTING("Reporting".toLowerCase()), LOGGING("Logging".toLowerCase()), TESTING("Testing".toLowerCase());
 
 	String logicalName;
 

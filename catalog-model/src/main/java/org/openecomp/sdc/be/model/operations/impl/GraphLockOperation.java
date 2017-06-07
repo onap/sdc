@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -32,6 +33,7 @@ import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fj.data.Either;
@@ -42,9 +44,9 @@ public class GraphLockOperation implements IGraphLockOperation {
 
 	@javax.annotation.Resource
 	private TitanGenericDao titanGenericDao;
-
-	@javax.annotation.Resource
-	private ResourceOperation resourceOperation;
+	
+	@Autowired
+	ToscaOperationFacade toscaOperationFacade;
 
 	@javax.annotation.Resource
 	private ICacheMangerOperation cacheManagerOperation;
@@ -56,9 +58,7 @@ public class GraphLockOperation implements IGraphLockOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openecomp.sdc.be.model.operations.impl.IGraphLockOperation#
-	 * lockResource(java.lang.String,
-	 * org.openecomp.sdc.be.model.operations.api.IResourceOperation)
+	 * @see org.openecomp.sdc.be.model.operations.impl.IGraphLockOperation# lockResource(java.lang.String, org.openecomp.sdc.be.model.operations.api.IResourceOperation)
 	 */
 	@Override
 	public StorageOperationStatus lockComponent(String componentId, NodeTypeEnum nodeType) {
@@ -70,14 +70,13 @@ public class GraphLockOperation implements IGraphLockOperation {
 			// In this way we mark the component as updated one (and component
 			// won't be fetched from cache since the component in cache has
 			// different timestamp)
-			Either<ComponentMetadataData, TitanOperationStatus> updateTime = updateModificationTimeOfComponent(
-					componentId, nodeType);
-			if (updateTime.isRight()) {
-				TitanOperationStatus operationStatus = updateTime.right().value();
-				if (operationStatus != TitanOperationStatus.OK) {
-					return DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus);
-				}
-			}
+//			Either<ComponentMetadataData, TitanOperationStatus> updateTime = updateModificationTimeOfComponent(componentId, nodeType);
+//			if (updateTime.isRight()) {
+//				TitanOperationStatus operationStatus = updateTime.right().value();
+//				if (operationStatus != TitanOperationStatus.OK) {
+//					return DaoStatusConverter.convertTitanStatusToStorageStatus(operationStatus);
+//				}
+//			}
 
 			lockElementStatus = titanGenericDao.lockElement(componentId, nodeType);
 
@@ -97,24 +96,21 @@ public class GraphLockOperation implements IGraphLockOperation {
 	 * @param nodeType
 	 * @return
 	 */
-	private Either<ComponentMetadataData, TitanOperationStatus> updateModificationTimeOfComponent(String componentId,
-			NodeTypeEnum nodeType) {
+	private Either<ComponentMetadataData, TitanOperationStatus> updateModificationTimeOfComponent(String componentId, NodeTypeEnum nodeType) {
 
 		if (nodeType == NodeTypeEnum.Resource || nodeType == NodeTypeEnum.Service || nodeType == NodeTypeEnum.Product) {
 			// We fetch all node since update only timestamp make problems since
 			// there is default resource type (VFC) which changes component
 			// resource type when we update only timestamp(ResourceMetadataData
 			// contains default value VFC on resourceType field).
-			Either<ComponentMetadataData, TitanOperationStatus> findComp = titanGenericDao
-					.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, ComponentMetadataData.class);
+			Either<ComponentMetadataData, TitanOperationStatus> findComp = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), componentId, ComponentMetadataData.class);
 
 			if (findComp.isRight()) {
 				return Either.right(findComp.right().value());
 			}
 			ComponentMetadataData componentMetadataData = findComp.left().value();
 			componentMetadataData.getMetadataDataDefinition().setLastUpdateDate(System.currentTimeMillis());
-			Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao
-					.updateNode(componentMetadataData, ComponentMetadataData.class);
+			Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentMetadataData, ComponentMetadataData.class);
 			return updateNode;
 		}
 		return Either.right(TitanOperationStatus.OK);
@@ -123,23 +119,20 @@ public class GraphLockOperation implements IGraphLockOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openecomp.sdc.be.model.operations.impl.IGraphLockOperation#
-	 * unlockResource(java.lang.String,
-	 * org.openecomp.sdc.be.model.operations.api.IResourceOperation)
+	 * @see org.openecomp.sdc.be.model.operations.impl.IGraphLockOperation# unlockResource(java.lang.String, org.openecomp.sdc.be.model.operations.api.IResourceOperation)
 	 */
 	@Override
 	public StorageOperationStatus unlockComponent(String componentId, NodeTypeEnum nodeType) {
 
-		Either<Long, StorageOperationStatus> addComponentToCachePart1 = addComponentToCachePart1WithoutCommit(
-				componentId, nodeType);
+//		Either<Long, StorageOperationStatus> addComponentToCachePart1 = addComponentToCachePart1WithoutCommit(componentId, nodeType);
 
 		TitanOperationStatus lockElementStatus = titanGenericDao.releaseElement(componentId, nodeType);
 
-		if (addComponentToCachePart1.isLeft()) {
-			Long lastUpdateDate = addComponentToCachePart1.left().value();
-			addComponentToCachePart2(componentId, lastUpdateDate, nodeType);
-		}
-
+//		if (addComponentToCachePart1.isLeft()) {
+//			Long lastUpdateDate = addComponentToCachePart1.left().value();
+//			addComponentToCachePart2(componentId, lastUpdateDate, nodeType);
+//		}
+//
 		return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
 	}
 
@@ -151,15 +144,14 @@ public class GraphLockOperation implements IGraphLockOperation {
 	@Override
 	public StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType) {
 
-		Either<Long, StorageOperationStatus> addComponentToCachePart1 = addComponentToCachePart1WithoutCommit(
-				componentId, nodeType);
+//		Either<Long, StorageOperationStatus> addComponentToCachePart1 = addComponentToCachePart1WithoutCommit(componentId, nodeType);
 
 		TitanOperationStatus lockElementStatus = titanGenericDao.releaseElement(name, nodeType);
-
-		if (addComponentToCachePart1.isLeft()) {
-			Long lastUpdateDate = addComponentToCachePart1.left().value();
-			addComponentToCachePart2(componentId, lastUpdateDate, nodeType);
-		}
+//
+//		if (addComponentToCachePart1.isLeft()) {
+//			Long lastUpdateDate = addComponentToCachePart1.left().value();
+//			addComponentToCachePart2(componentId, lastUpdateDate, nodeType);
+//		}
 
 		return DaoStatusConverter.convertTitanStatusToStorageStatus(lockElementStatus);
 	}
@@ -171,15 +163,12 @@ public class GraphLockOperation implements IGraphLockOperation {
 	 * @param nodeType
 	 * @return
 	 */
-	private Either<Long, StorageOperationStatus> addComponentToCachePart1WithoutCommit(String componentId,
-			NodeTypeEnum nodeType) {
+	private Either<Long, StorageOperationStatus> addComponentToCachePart1WithoutCommit(String componentId, NodeTypeEnum nodeType) {
 		if (componentId != null) { // In case of error, the componentId might be
 									// empty.
-			if (nodeType == NodeTypeEnum.Resource || nodeType == NodeTypeEnum.Service
-					|| nodeType == NodeTypeEnum.Product) {
+			if (nodeType == NodeTypeEnum.Resource || nodeType == NodeTypeEnum.Service || nodeType == NodeTypeEnum.Product) {
 				Long lastUpdateDate = null;
-				Either<ComponentMetadataData, StorageOperationStatus> resResult = resourceOperation
-						.getComponentByLabelAndId(componentId, nodeType, ComponentMetadataData.class);
+				Either<ComponentMetadataData, StorageOperationStatus> resResult = toscaOperationFacade.getComponentMetadata(componentId);
 				if (resResult.isLeft()) {
 					ComponentMetadataData resourceMetadataData = resResult.left().value();
 					lastUpdateDate = resourceMetadataData.getMetadataDataDefinition().getLastUpdateDate();
@@ -201,12 +190,10 @@ public class GraphLockOperation implements IGraphLockOperation {
 	 * @param nodeType
 	 * @return
 	 */
-	private Either<Long, StorageOperationStatus> addComponentToCachePart2(String componentId, Long lastUpdateDate,
-			NodeTypeEnum nodeType) {
+	private Either<Long, StorageOperationStatus> addComponentToCachePart2(String componentId, Long lastUpdateDate, NodeTypeEnum nodeType) {
 		if (componentId != null) { // In case of error, the componentId might be
 									// empty.
-			if (nodeType == NodeTypeEnum.Resource || nodeType == NodeTypeEnum.Service
-					|| nodeType == NodeTypeEnum.Product) {
+			if (nodeType == NodeTypeEnum.Resource || nodeType == NodeTypeEnum.Service || nodeType == NodeTypeEnum.Product) {
 				// add task to Q
 				log.debug("Going to add component {} of type {} to cache", componentId, nodeType.name().toLowerCase());
 				cacheManagerOperation.updateComponentInCache(componentId, lastUpdateDate, nodeType);

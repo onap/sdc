@@ -39,43 +39,33 @@ import fj.data.Either;
 
 public interface IInputsOperation {
 
-	Either<String, StorageOperationStatus> deleteInput(String inputId);
+	Either<InputDefinition, StorageOperationStatus> deleteInput(String inputId);
 
-	Either<List<InputDefinition>, TitanOperationStatus> addInputsToGraph(String componentId, NodeTypeEnum nodeType,
-			Map<String, InputDefinition> inputs, Map<String, DataTypeDefinition> dataTypes);
+	Either<List<InputDefinition>, TitanOperationStatus> addInputsToGraph(String componentId, NodeTypeEnum nodeType, Map<String, InputDefinition> inputs, Map<String, DataTypeDefinition> dataTypes);
 
-	Either<List<InputDefinition>, StorageOperationStatus> addInputsToComponent(String resourceId, NodeTypeEnum nodeType,
-			ComponentInstInputsMap componentInsInputs, Map<String, DataTypeDefinition> dataTypes);
+	Either<List<InputDefinition>, StorageOperationStatus> addInputsToComponent(String resourceId, NodeTypeEnum nodeType, ComponentInstInputsMap componentInsInputs, Map<String, DataTypeDefinition> dataTypes);
 
 	TitanOperationStatus findNodeNonInheretedInputs(String uniqueId, List<InputDefinition> inputs);
 
-	Either<List<InputDefinition>, StorageOperationStatus> getInputsOfComponent(String compId, String fromName,
-			int amount);
+	Either<List<InputDefinition>, StorageOperationStatus> getInputsOfComponent(String compId, String fromName, int amount);
 
-	Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllInputsOfResourceInstance(
-			ComponentInstance compInstance);
+	Either<List<ComponentInstanceInput>, TitanOperationStatus> getAllInputsOfResourceInstance(ComponentInstance compInstance);
 
-	Either<Map<String, InputDefinition>, StorageOperationStatus> deleteAllInputsAssociatedToNode(NodeTypeEnum nodeType,
-			String uniqueId);
+	Either<Map<String, InputDefinition>, StorageOperationStatus> deleteAllInputsAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
 
 	// TitanOperationStatus findNodeNonInheretedAttribues(String uniqueId,
 	// NodeTypeEnum nodeType, List<AttributeDefinition> attributes);
 
-	Either<InputsData, StorageOperationStatus> addInput(String inputName, InputDefinition inputDefinition,
-			String componentId, NodeTypeEnum nodeType);
+	Either<InputsData, StorageOperationStatus> addInput(String inputName, InputDefinition inputDefinition, String componentId, NodeTypeEnum nodeType);
 
-	Either<InputsData, TitanOperationStatus> addInputToGraph(String propertyName, InputDefinition inputDefinition,
-			String componentId, NodeTypeEnum nodeType);
+	Either<InputsData, TitanOperationStatus> addInputToGraph(String propertyName, InputDefinition inputDefinition, String componentId, NodeTypeEnum nodeType);
 
-	Either<AttributeData, StorageOperationStatus> updateInput(String inputId, InputDefinition newInDef,
-			Map<String, DataTypeDefinition> dataTypes);
+	Either<AttributeData, StorageOperationStatus> updateInput(String inputId, InputDefinition newInDef, Map<String, DataTypeDefinition> dataTypes);
 
 	TitanOperationStatus findAllResourceInputs(String uniqueId, List<InputDefinition> inputs);
 
-	Either<InputDefinition, StorageOperationStatus> getInputById(String uniqueId, boolean skipProperties,
-			boolean skipinputsValue);
+	Either<InputDefinition, StorageOperationStatus> getInputById(String uniqueId, boolean skipProperties, boolean skipinputsValue);
 
-	TitanOperationStatus addInputsToGraph(TitanVertex metadata, String componentId, Map<String, InputDefinition> inputs,
-			Map<String, DataTypeDefinition> dataTypes);
+	TitanOperationStatus addInputsToGraph(TitanVertex metadata, String componentId, Map<String, InputDefinition> inputs, Map<String, DataTypeDefinition> dataTypes);
 
 }

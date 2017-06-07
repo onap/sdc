@@ -128,7 +128,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 			for (ImmutablePair<HeatParameterValueData, GraphEdge> immutablePair : values) {
 				GraphEdge edge = immutablePair.getValue();
 				String propertyName = (String) edge.getProperties().get(GraphPropertiesDictionary.NAME.getProperty());
-				log.trace("Heat value " + propertyName + " is associated to node " + parentUniqueId);
+				log.trace("Heat value {} is associated to node {}", propertyName,parentUniqueId);
 				HeatParameterValueData propertyData = immutablePair.getKey();
 
 				heatValues.add(propertyData);
@@ -193,17 +193,17 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 
 		}
 
-		log.debug("The heat values deleted from node {} are {}", parentUniqueId, heatValues);
+		log.debug("The heat values deleted from node {} are {}" , parentUniqueId, heatValues);
 		return StorageOperationStatus.OK;
 	}
 
 	private Either<HeatParameterData, TitanOperationStatus> deleteHeatParameterFromGraph(String propertyId) {
-		log.debug("Before deleting heat parameter from graph {}", propertyId);
+		log.debug("Before deleting heat parameter from graph {}" , propertyId);
 		return titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.HeatParameter), propertyId, HeatParameterData.class);
 	}
 
 	private Either<HeatParameterValueData, TitanOperationStatus> deleteHeatParameterValueFromGraph(String propertyId) {
-		log.debug("Before deleting heat parameter from graph {}", propertyId);
+		log.debug("Before deleting heat parameter from graph {}" , propertyId);
 		return titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.HeatParameterValue), propertyId, HeatParameterValueData.class);
 	}
 
@@ -214,17 +214,6 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 			for (HeatParameterDefinition propertyDefinition : properties) {
 
 				String propertyName = propertyDefinition.getName();
-
-				// type and value should be validated in business logic:
-				// ArtifactsBusinessLogic.validateAndConvertHeatParamers(ArtifactDefinition)
-
-				// StorageOperationStatus validateAndUpdateProperty =
-				// validateAndUpdateProperty(propertyDefinition);
-				// if (validateAndUpdateProperty != StorageOperationStatus.OK) {
-				// log.error("Property " + propertyDefinition + " is invalid.
-				// Status is " + validateAndUpdateProperty);
-				// return StorageOperationStatus.BAD_REQUEST;
-				// }
 
 				Either<HeatParameterData, TitanOperationStatus> addPropertyToGraph = addPropertyToGraph(propertyName, propertyDefinition, parentId, nodeType);
 
@@ -264,12 +253,12 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 		propertyDefinition.setUniqueId(UniqueIdBuilder.buildHeatParameterUniqueId(parentId, propertyName));
 		HeatParameterData propertyData = new HeatParameterData(propertyDefinition);
 
-		log.debug("Before adding property to graph {}", propertyData);
+		log.debug("Before adding property to graph {}" , propertyData);
 		Either<HeatParameterData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyData, HeatParameterData.class);
-		log.debug("After adding property to graph {}", propertyData);
+		log.debug("After adding property to graph {}" , propertyData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add property {} to graph. Status is {}", propertyName, operationStatus);
+			log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -278,10 +267,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(parentNode, propertyData, GraphEdgeLabels.HEAT_PARAMETER, props);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			
-			if (log.isDebugEnabled()) {
-				log.error("Failed to associate {} {} to heat parameter {} in graph. Status is {}", nodeType.getName(), parentId, propertyName, operationStatus);
-			}
+			log.error("Failed to associate {} {} to heat parameter {} in graph. status is {}", nodeType.getName(), parentId, propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -291,13 +277,13 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 
 	public StorageOperationStatus validateAndUpdateProperty(HeatParameterDefinition propertyDefinition) {
 
-		log.trace("Going to validate property type and value. {}", propertyDefinition);
+		log.trace("Going to validate property type and value. {}" , propertyDefinition);
 
 		String propertyType = propertyDefinition.getType();
 		HeatParameterType type = getType(propertyType);
 
 		if (type == null) {
-			log.info("The type {} of heat is invalid", type);
+			log.info("The type {} of heat parameter is invalid", type);
 
 			return StorageOperationStatus.INVALID_TYPE;
 		}
@@ -316,7 +302,8 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 		PropertyValueConverter converter = type.getConverter();
 
 		if (isEmptyValue(defaultValue)) {
-			log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
+			log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName() , EMPTY_VALUE);
+					
 			propertyDefinition.setDefaultValue(EMPTY_VALUE);
 		} else if (false == isEmptyValue(defaultValue)) {
 			String convertedValue = converter.convert(defaultValue, null, null);
@@ -333,6 +320,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 
 		if (isEmptyValue(value)) {
 			log.debug("Value was not sent for property {}. Set value to {}", propertyDefinition.getName(), EMPTY_VALUE);
+					
 			propertyDefinition.setCurrentValue(EMPTY_VALUE);
 		} else if (!value.equals("")) {
 			String convertedValue = converter.convert(value, null, null);
@@ -465,7 +453,7 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 		log.debug("After adding property to graph {}", heatValueData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add heat value {} to graph. Status is {}", heatValueData.getUniqueId(), operationStatus);
+			log.error("Failed to add heat value {} to graph. status is {}", heatValueData.getUniqueId(), operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -474,14 +462,14 @@ public class HeatParametersOperation implements IHeatParametersOperation {
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(heatEnvNode, heatValueData, GraphEdgeLabels.PARAMETER_VALUE, props);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			log.error("Failed to associate heat value {} to heat env artifact {} in graph. Status is {}", heatValueData.getUniqueId(), artifactId, operationStatus);
+			log.error("Failed to associate heat value {} to heat env artifact {} in graph. status is {}", heatValueData.getUniqueId(), artifactId, operationStatus);
 			return Either.right(operationStatus);
 		}
 		UniqueIdData heatParameterNode = new UniqueIdData(NodeTypeEnum.HeatParameter, heatParameter.getUniqueId());
 		Either<GraphRelation, TitanOperationStatus> createRel2Result = titanGenericDao.createRelation(heatValueData, heatParameterNode, GraphEdgeLabels.PARAMETER_IMPL, null);
 		if (createRel2Result.isRight()) {
 			TitanOperationStatus operationStatus = createRel2Result.right().value();
-			log.error("Failed to associate heat value {} to heat parameter {} in graph. Status is {}", heatValueData.getUniqueId(), heatParameter.getName(), operationStatus);
+			log.error("Failed to associate heat value {} to heat parameter {} in graph. status is {}", heatValueData.getUniqueId(), heatParameter.getName(), operationStatus);
 			return Either.right(operationStatus);
 		}
 

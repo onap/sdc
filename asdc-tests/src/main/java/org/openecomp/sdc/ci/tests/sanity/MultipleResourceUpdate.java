@@ -20,14 +20,14 @@
 
 package org.openecomp.sdc.ci.tests.sanity;
 
-import static org.testng.AssertJUnit.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
@@ -43,6 +43,7 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class MultipleResourceUpdate extends ComponentBaseTest {
 
@@ -57,14 +58,18 @@ public class MultipleResourceUpdate extends ComponentBaseTest {
 	public void simpleScenario() throws Exception {
 
 		// Creating VF and Resource instances
-		Resource vf = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		Resource vf = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left()
+				.value();
 		Resource cp1 = AtomicOperationUtils
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.CP, NormativeTypesEnum.PORT,
-						ResourceCategoryEnum.NETWORK_CONNECTIVITY_CON_POINT, UserRoleEnum.DESIGNER, true).left().value();
-		Resource cp2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true).left().value();
+						ResourceCategoryEnum.NETWORK_CONNECTIVITY_CON_POINT, UserRoleEnum.DESIGNER, true)
+				.left().value();
+		Resource cp2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.CP, UserRoleEnum.DESIGNER, true)
+				.left().value();
 		Resource vl = AtomicOperationUtils
 				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VL, NormativeTypesEnum.NETWORK,
-						ResourceCategoryEnum.NETWORK_CONNECTIVITY_VIRTUAL_LINK, UserRoleEnum.DESIGNER, true).left().value();
+						ResourceCategoryEnum.NETWORK_CONNECTIVITY_VIRTUAL_LINK, UserRoleEnum.DESIGNER, true)
+				.left().value();
 
 		vf.getCreatorUserId();
 

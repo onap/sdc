@@ -1,11 +1,4 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: NeutronSecurityRulesGlobalTypes
-  template_version: 1.0.0
-description: Neutron Security Rules TOSCA Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules:
     derived_from: tosca.nodes.Root
@@ -36,7 +29,7 @@ node_types:
     - port:
         capability: tosca.capabilities.Attachment
         node: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
-        relationship: corg.openecomp.relationships.AttachesTo
+        relationship: org.openecomp.relationships.AttachesTo
         occurrences:
         - 0
         - UNBOUNDED

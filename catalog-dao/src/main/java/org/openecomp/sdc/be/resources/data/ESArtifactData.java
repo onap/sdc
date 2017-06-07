@@ -26,13 +26,13 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-@Table(keyspace = "sdcArtifact", name = "resources")
+@Table(keyspace = "sdcartifact", name = "resources")
 public class ESArtifactData {
-	public final static String RRESOURCE_ID_FIELD = "resourceId";
+	public static final String RRESOURCE_ID_FIELD = "resourceId";
 
-	public final static String SERVICE_NAME_FIELD = "serviceName";
-	public final static String SERVICE_VERSION_FIELD = "serviceVersion";
-	public final static String ARTIFACT_NAME_FIELD = "artifactName";
+	public static final String SERVICE_NAME_FIELD = "serviceName";
+	public static final String SERVICE_VERSION_FIELD = "serviceVersion";
+	public static final String ARTIFACT_NAME_FIELD = "artifactName";
 
 	public static String delim = ":";
 

@@ -27,14 +27,17 @@ import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +52,13 @@ public class ServiceRestUtils extends BaseRestUtils {
 
 	private static Gson gson = new Gson();
 
-	public static RestResponse deleteService(String serviceName, String version, User sdncModifierDetails) throws IOException {
+	public static RestResponse deleteService(String serviceName, String version, User sdncModifierDetails)
+			throws IOException {
+
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_SERVICE_BY_NAME_AND_VERSION, config.getCatalogBeHost(), config.getCatalogBePort(), serviceName, version);
+		String url = String.format(Urls.DELETE_SERVICE_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
+				config.getCatalogBePort(), serviceName, version);
+
 		String userId = sdncModifierDetails.getUserId();
 		RestResponse sendDelete = sendDelete(url, userId);
 		deleteMarkedServices(userId);
@@ -59,8 +66,10 @@ public class ServiceRestUtils extends BaseRestUtils {
 	}
 
 	public static RestResponse deleteServiceById(String serviceId, String userId) throws IOException {
+
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
+		String url = String.format(Urls.DELETE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(),
+				serviceId);
 		RestResponse sendDelete = sendDelete(url, userId);
 		deleteMarkedServices(userId);
 		return sendDelete;
@@ -78,8 +87,8 @@ public class ServiceRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.CREATE_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort());
 		String serviceBodyJson = gson.toJson(service);
 
-		logger.debug("Send POST request to create service: {]", url);
-		logger.debug("Service body: {}", serviceBodyJson);
+		logger.debug("Send POST request to create service: {}",url);
+		logger.debug("Service body: {}",serviceBodyJson);
 
 		RestResponse res = sendPost(url, serviceBodyJson, user.getUserId(), acceptHeaderData);
 		if (res.getErrorCode() == STATUS_CODE_CREATED) {
@@ -101,8 +110,8 @@ public class ServiceRestUtils extends BaseRestUtils {
 				service.getUniqueId());
 		String serviceBodyJson = gson.toJson(service);
 
-		logger.debug("Send PUT request to create service: {}", url);
-		logger.debug("Service body: {}", serviceBodyJson);
+		logger.debug("Send PUT request to create service: {}",url);
+		logger.debug("Service body: {}",serviceBodyJson);
 
 		RestResponse res = sendPut(url, serviceBodyJson, user.getUserId(), acceptHeaderData);
 		if (res.getErrorCode() == STATUS_CODE_CREATED) {
@@ -111,6 +120,13 @@ public class ServiceRestUtils extends BaseRestUtils {
 		}
 
 		return res;
+	}
+
+	public static RestResponse getService(String serviceId) throws IOException {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceId);
+		return getServiceFromUrl(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), false);
 	}
 
 	public static RestResponse getService(ServiceReqDetails serviceReqDetails, User sdncModifierDetails)
@@ -141,8 +157,8 @@ public class ServiceRestUtils extends BaseRestUtils {
 			throws IOException {
 		Map<String, String> headersMap = prepareHeadersMap(sdncModifierDetails, isCached);
 		HttpRequest http = new HttpRequest();
-		logger.debug("Send GET request to create service: {}", url);
-		logger.debug("Service headers: {}", headersMap);
+		logger.debug("Send GET request to create service: {}",url);
+		logger.debug("Service headers: {}",headersMap);
 		RestResponse sendGetServerRequest = http.httpSendGet(url, headersMap);
 
 		return sendGetServerRequest;
@@ -208,9 +224,9 @@ public class ServiceRestUtils extends BaseRestUtils {
 		String url = String.format(urls, config.getCatalogBeHost(), config.getCatalogBePort());
 		// TODO: ADD AUTHENTICATION IN REQUEST
 		logger.debug(url);
-		logger.debug("Send {} request to create user: {}", method, url);
-		logger.debug("User body: {}", serviceBodyJson);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send {} request to create user: {}",method,url);
+		logger.debug("User body: {}",serviceBodyJson);
+		logger.debug("User headers: {}",headersMap);
 		RestResponse sendCreateUserRequest = http.httpSendByMethod(url, method, serviceBodyJson, headersMap);
 
 		return sendCreateUserRequest;
@@ -254,9 +270,16 @@ public class ServiceRestUtils extends BaseRestUtils {
 		JSONObject jsonResp = (JSONObject) JSONValue.parse(json);
 		JSONArray servicesArray = (JSONArray) jsonResp.get("services");
 
-		logger.debug("services = {}", servicesArray);
+		logger.debug("services= {}",servicesArray);
 
 		return servicesArray;
+	}
+	
+	public static RestResponse getDistributionServiceList(Service service, User user) throws IOException {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.DISTRIBUTION_SERVICE_LIST, config.getCatalogBeHost(), config.getCatalogBePort(), service.getUUID());
+		return getServiceFromUrl(url, user, false);
 	}
 
 }

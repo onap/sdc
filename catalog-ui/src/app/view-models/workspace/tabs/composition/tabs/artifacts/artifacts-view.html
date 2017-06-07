@@ -1,0 +1,67 @@
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content artifacts">
+    <div class="w-sdc-designer-sidebar-section">
+        <expand-collapse
+            expanded-selector=".w-sdc-designer-sidebar-section-content" class="w-sdc-designer-sidebar-section-title">
+            <span class="w-sdc-designer-sidebar-section-title-text" data-ng-bind="getTitle()" tooltips tooltip-content="{{getTitle()}}"></span>
+            <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+        </expand-collapse>
+
+        <div class="w-sdc-designer-sidebar-section-content">
+            <div class="i-sdc-designer-sidebar-section-content-item">
+                <div class="i-sdc-designer-sidebar-section-content-item-artifact"
+                     data-ng-repeat="artifact in artifacts | orderBy: ['-mandatory', 'artifactDisplayName'] track by $index"
+                     data-ng-if="(!isComponentInstanceSelected() || isVFiArtifact(artifact)|| artifact.esId) && 'HEAT_ENV' !== artifact.artifactType"
+                     data-tests-id="artifact-item-{{artifact.artifactDisplayName}}">
+                    <span data-ng-if="artifact.heatParameters.length" class="i-sdc-designer-sidebar-section-content-item-file-link"></span>
+                    <div class="i-sdc-designer-sidebar-section-content-item-artifact-details" data-ng-class="{'heat':artifact.isHEAT() && artifact.heatParameters.length}">
+                        <div class="i-sdc-designer-sidebar-section-content-item-artifact-filename" data-tests-id="artifactName-{{artifact.artifactDisplayName}}"
+                             data-ng-bind="artifact.artifactName" tooltips tooltip-content="{{artifact.artifactName}}"
+                              data-ng-if="artifact.artifactName"></div>
+                        <div>
+                            <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-name" data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
+                                  data-ng-class="{'hand enabled': (isVFiArtifact(artifact)) && !isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)}"
+                                  data-ng-bind="artifact.artifactDisplayName" data-ng-click="!isViewMode() && !isLoading && (!isComponentInstanceSelected()||isVFiArtifact(artifact)) && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact) && addOrUpdate(artifact)"
+                                  tooltips tooltip-content="{{artifact.artifactDisplayName}}"></span>
+                            <div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env" ng-if="artifact.heatParameters.length">
+                                <span data-ng-bind="getEnvArtifactName(artifact)"data-tests-id="heat_env_{{artifact.artifactDisplayName}}"></span>
+                                <button class="i-sdc-designer-sidebar-section-content-item-button update-env sprite e-sdc-small-icon-pencil" data-tests-id="edit_{{artifact.artifactDisplayName}}"
+                                        data-ng-if="!isViewMode()" data-ng-click="addOrUpdate(getEnvArtifact(artifact))"></button>
+                                <download-artifact  class="i-sdc-designer-sidebar-section-content-item-button download-env sprite e-sdc-small-download hand"  artifact="getEnvArtifact(artifact)"
+                                                   component="currentComponent" instance="isComponentInstanceSelected()"
+                                                   data-tests-id="download_env_{{artifact.artifactDisplayName}}"></download-artifact>
+                            </div>
+                        </div>
+
+                        <div class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc">
+                            <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc-label" data-ng-show="artifact.description">Description:</span>{{artifact.description}}
+                        </div>
+                    </div>
+                    <button ng-if="!isViewMode() && artifact.esId && (!isComponentInstanceSelected()||isVFiArtifact(artifact)) && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
+                            data-tests-id="delete_{{artifact.artifactDisplayName}}" data-ng-click="delete(artifact)" type="button"></button>
+                    <button ng-if="!isViewMode()  && artifact.isHEAT() && isComponentInstanceSelected() && artifact.heatParameters.length"
+                            class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-pad"
+                            data-ng-click="openEditEnvParametersModal(getEnvArtifact(artifact))" type="button"
+                            data-tests-id="edit-parameters-of-{{artifact.artifactDisplayName}}"></button>
+                    <!--need to remove this button -->
+                    <button ng-if="!isViewMode()  && artifact.isHEAT() && !isComponentInstanceSelected()  && artifact.heatParameters.length"
+                            class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-pad"
+                            data-ng-click="openEditEnvParametersModal(artifact)" type="button"
+                            data-tests-id="edit-parameters-of-{{artifact.artifactDisplayName}}"></button>
+
+                    <download-artifact ng-if="artifact.esId && 'deployment' != artifactType" class="i-sdc-designer-sidebar-section-content-item-button download sprite e-sdc-small-download hand"
+                                       artifact="artifact" component="currentComponent" data-tests-id="download-{{artifact.artifactDisplayName}}" instance="isComponentInstanceSelected()"></download-artifact>
+                    <download-artifact ng-if="artifact.esId && 'deployment' == artifactType" class="i-sdc-designer-sidebar-section-content-item-button download sprite e-sdc-small-download hand"
+                                       artifact="artifact" component="currentComponent" instance="isComponentInstanceSelected()" data-tests-id="download_{{artifact.artifactDisplayName}}"
+                                       show-loader="artifact.isHEAT()"
+                                       download-icon-class="i-sdc-designer-sidebar-section-content-item-button download sprite e-sdc-small-download hand"></download-artifact>
+                    <button ng-if="!isViewMode() && !artifact.esId && artifactType==='deployment' && !isComponentInstanceSelected() && !artifact.isThirdParty()" class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-upload"
+                            data-ng-click="addOrUpdate(artifact)" type="button" data-tests-id="add_Artifact"></button>
+                </div>
+            </div>
+
+        </div>
+        <div class="w-sdc-designer-sidebar-section-footer" data-ng-if="!isViewMode() && artifactType!=='api' && (!isComponentInstanceSelected()||selectedComponent.resourceType=='VF') && !currentComponent.isProduct() && ('deployment' != artifactType || selectedComponent.isComplex())">
+            <button class="w-sdc-designer-sidebar-section-footer-action tlv-btn blue" data-tests-id="add_Artifact_Button" data-ng-click="addOrUpdate({})" type="button">Add Artifact</button>
+        </div>
+    </div>
+</perfect-scrollbar>

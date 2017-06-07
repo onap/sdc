@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -27,7 +28,8 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 public enum PropertyTypeEnum {
 	INTEGER("defaultIntegerPropName1", "integer", "125", "default integer type property description", null), 
 	STRING("defaultStringPropName1", "string", "string", "default string type property description", null), 
-	BOOLEAN("defaultBooleanPropName1", "boolean", "true", "default boolean type property description", null), 
+	BOOLEAN("defaultBooleanPropName1", "boolean", "true", "default boolean type property description", null),
+	FLOAT("defaultFloatPropName1", "float", "12.34", "default f;oat type property description", null),
 	STRING_LIST("defaultStringListPropName", "list", "[a,b]", "outer description", getDefaultStringSchema(ToscaPropertyType.STRING.getType())), 
 	INTEGER_LIST("defaultIntegerListPropName", "list", "[1,2]", "outer description", getDefaultStringSchema(ToscaPropertyType.INTEGER.getType())), 
 	BOOLEAN_LIST("defaultBooleanListPropName", "list", "[true,false]", "outer description", getDefaultStringSchema(ToscaPropertyType.BOOLEAN.getType())), 

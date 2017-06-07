@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.util.Map;
+
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -38,23 +40,18 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperation;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ArtifactUiDownloadData;
 import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.jcabi.aspects.Loggable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -75,8 +72,6 @@ public class ArtifactServlet extends BeGenericServlet {
 
 	private static Logger log = LoggerFactory.getLogger(ArtifactServlet.class.getName());
 
-	private Gson gson = new Gson();
-
 	// *************** Resources
 	@POST
 	@Path("/resources/{resourceId}/artifacts")
@@ -88,11 +83,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response loadArtifact(@PathParam("resourceId") final String resourceId, @ApiParam(value = "json describe the artifact", required = true) String data, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleUploadRequest(data, request, resourceId, ComponentTypeEnum.RESOURCE);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "loadArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("loadArtifact");
 			log.debug("loadArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -109,11 +103,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleUpdateRequest(data, request, resourceId, artifactId, ComponentTypeEnum.RESOURCE);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "updateArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateArtifact");
 			log.debug("updateArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -129,11 +122,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response deleteArtifact(@PathParam("resourceId") final String resourceId, @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDeleteRequest(request, resourceId, artifactId, ComponentTypeEnum.RESOURCE, null, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "deleteArtifact");
+		} catch (Exception e) {
 			log.debug("deleteArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
@@ -150,11 +142,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response loadInformationArtifact(@PathParam("serviceId") final String serviceId, @ApiParam(value = "json describe the artifact", required = true) String data, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleUploadRequest(data, request, serviceId, ComponentTypeEnum.SERVICE);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "loadInformationArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("loadInformationArtifact");
 			log.debug("loadInformationArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -171,11 +162,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleUpdateRequest(data, request, serviceId, artifactId, ComponentTypeEnum.SERVICE);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "updateInformationArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateInformationArtifact");
 			log.debug("updateInformationArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -193,11 +183,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId, @HeaderParam(value = Constants.MD5_HEADER) String origMd5) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleUpdateRequest(data, request, serviceId, artifactId, ComponentTypeEnum.SERVICE);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "updateApiArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateApiArtifact");
 			log.debug("updateApiArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -214,11 +203,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@HeaderParam(value = Constants.MD5_HEADER) String origMd5) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDeleteRequest(request, serviceId, artifactId, ComponentTypeEnum.SERVICE, null, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "deleteApiArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("deleteApiArtifact");
 			log.debug("deleteApiArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -234,11 +222,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response deleteInformationalArtifact(@PathParam("serviceId") final String serviceId, @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDeleteRequest(request, serviceId, artifactId, ComponentTypeEnum.SERVICE, null, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "deleteInformationalArtifact");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("deleteInformationalArtifact");
 			log.debug("deleteInformationalArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -258,11 +245,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response downloadServiceArtifactBase64(@PathParam("serviceId") final String serviceId, @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDownloadRequest(request, serviceId, artifactId, null, ComponentTypeEnum.SERVICE, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "downloadServiceArtifactBase64");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadServiceArtifactBase64");
 			log.debug("downloadServiceArtifactBase64 unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -278,11 +264,10 @@ public class ArtifactServlet extends BeGenericServlet {
 	public Response downloadResourceArtifactBase64(@PathParam("resourceId") final String resourceId, @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDownloadRequest(request, resourceId, artifactId, null, ComponentTypeEnum.RESOURCE, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "downloadResourceArtifactBase64");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadResourceArtifactBase64");
 			log.debug("downloadResourceArtifactBase64 unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -300,11 +285,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@PathParam("componentId") final String componentId, @PathParam("componentInstanceId") final String componentInstanceId, @PathParam("artifactId") final String artifactId, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDownloadRequest(request, componentInstanceId, artifactId, componentId, ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentType);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "downloadResourceInstanceArtifactBase64");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadResourceInstanceArtifactBase64");
 			log.debug("downloadResourceInstanceArtifactBase64 unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -325,11 +309,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			return handleArtifactRequest(data, request, resourceId, interfaceType, operation, null, ComponentTypeEnum.RESOURCE, ArtifactOperation.Create, null, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "loadArtifactToInterface");
+			return handleArtifactRequest(data, request, resourceId, interfaceType, operation, null, ComponentTypeEnum.RESOURCE, ArtifactOperationEnum.Create, null, null);
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("loadArtifactToInterface");
 			log.debug("loadArtifactToInterface unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -348,11 +331,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
 			return handleDeleteRequest(request, resourceId, artifactId, ComponentTypeEnum.RESOURCE, interfaceType, operation);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "deleteArtifactToInterface");
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("deleteArtifactToInterface");
 			log.debug("deleteArtifactToInterface unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -371,11 +353,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@ApiParam(value = "json describe the artifact", required = true) String data) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			return handleArtifactRequest(data, request, resourceId, interfaceType, operation, artifactId, ComponentTypeEnum.RESOURCE, ArtifactOperation.Update, null, null);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "updateArtifactToInterface");
+			return handleArtifactRequest(data, request, resourceId, interfaceType, operation, artifactId, ComponentTypeEnum.RESOURCE, ArtifactOperationEnum.Update, null, null);
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateArtifactToInterface");
 			log.debug("updateArtifactToInterface unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -394,11 +375,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@ApiParam(value = "json describe the artifact", required = true) String data, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperation.Update, componentId, containerComponentType);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "updateRIArtifact");
+			return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.Update, componentId, containerComponentType);
+		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("updateRIArtifact");
 			log.debug("updateRIArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -417,11 +397,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@ApiParam(value = "json describe the artifact", required = true) String data, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperation.Update, componentId, containerComponentType);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "loadResourceInstanceHeatEnvArtifact");
+			return handleArtifactRequest(data, request, componentInstanceId, null, null, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.Update, componentId, containerComponentType);
+		} catch (Exception e) {
 			log.debug("loadResourceInstanceHeatEnvArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
@@ -439,11 +418,10 @@ public class ArtifactServlet extends BeGenericServlet {
 			@Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			return handleArtifactRequest(data, request, componentInstanceId, null, null, null, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperation.Create, componentId, containerComponentType);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "loadResourceInstanceHeatEnvArtifact");
+			return handleArtifactRequest(data, request, componentInstanceId, null, null, null, ComponentTypeEnum.RESOURCE_INSTANCE, ArtifactOperationEnum.Create, componentId, containerComponentType);
+		} catch (Exception e) {
 			log.debug("loadResourceInstanceHeatEnvArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
@@ -461,27 +439,69 @@ public class ArtifactServlet extends BeGenericServlet {
 			@ApiParam(value = "json describe the artifact", required = true) String data, @Context final HttpServletRequest request) {
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 		try {
-			ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(containerComponentType);
 			return handleDeleteRequest(request, componentInstanceId, artifactId, ComponentTypeEnum.RESOURCE_INSTANCE, null, null, componentId);
-		} catch (Throwable e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "deleteArtifact");
+		} catch (Exception e) {
 			log.debug("deleteArtifact unexpected exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
+	
+	
+	@GET
+	@Path("/{containerComponentType}/{componentId}/artifactsByType/{artifactGroupType}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get component Artifacts", httpMethod = "GET", notes = "Returns artifacts", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component artifacts"), @ApiResponse(code = 404, message = "Resource/Artifact not found") })
+	public Response getComponentArtifacts(
+			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId, @PathParam("artifactGroupType") final String artifactGroupType, @Context final HttpServletRequest request) {
+
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}" , url);
+		try {
+			return handleGetArtifactsRequest(request, componentId, null, artifactGroupType, containerComponentType);
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadResourceInstanceArtifactBase64");
+			log.debug("downloadResourceInstanceArtifactBase64 unexpected exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+	
+	@GET
+	@Path("/{containerComponentType}/{componentId}/resourceInstances/{componentInstanceId}/artifactsByType/{artifactGroupType}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get component Artifacts", httpMethod = "GET", notes = "Returns artifacts", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component artifacts"), @ApiResponse(code = 404, message = "Resource/Artifact not found") })
+	public Response getComponentInstanceArtifacts(
+			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId,  @PathParam("componentInstanceId") final String componentInstanceId,  @PathParam("artifactGroupType") final String artifactGroupType, @Context final HttpServletRequest request) {
+
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}" , url);
+		try {
+			return handleGetArtifactsRequest(request,componentInstanceId , componentId, artifactGroupType, containerComponentType);
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("downloadResourceInstanceArtifactBase64");
+			log.debug("downloadResourceInstanceArtifactBase64 unexpected exception", e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+	
 
 	// ////////// API END ///////////////////////////
 
 	// ************ private *********************
 
 	private Response handleUploadRequest(String data, HttpServletRequest request, String componentId, ComponentTypeEnum componentType) {
-		return handleArtifactRequest(data, request, componentId, null, componentType, ArtifactOperation.Create);
+		return handleArtifactRequest(data, request, componentId, null, componentType, ArtifactOperationEnum.Create);
 	}
 
 	private Response handleUpdateRequest(String data, HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType) {
-		return handleArtifactRequest(data, request, componentId, artifactId, componentType, ArtifactOperation.Update);
+		return handleArtifactRequest(data, request, componentId, artifactId, componentType, ArtifactOperationEnum.Update);
 	}
 
 	private Response handleDownloadRequest(HttpServletRequest request, String componentId, String artifactId, String parentId, ComponentTypeEnum componentType, String containerComponentType) {
@@ -505,6 +525,25 @@ public class ArtifactServlet extends BeGenericServlet {
 		}
 		return response;
 	}
+	
+	private Response handleGetArtifactsRequest(HttpServletRequest request, String componentId, String parentId, String artifactGroupType, String containerComponentType) {
+		String userId = request.getHeader(Constants.USER_ID_HEADER);
+		ServletContext context = request.getSession().getServletContext();
+		ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
+		ComponentTypeEnum componentTypeEnum  = parentId == null || parentId.isEmpty()? ComponentTypeEnum.findByParamName(containerComponentType): ComponentTypeEnum.RESOURCE_INSTANCE;		
+		Either<Map<String, ArtifactDefinition>, ResponseFormat> actionResult = artifactsLogic.handleGetArtifactsByType(containerComponentType, parentId, componentTypeEnum, componentId, artifactGroupType, userId);
+
+		Response response;
+		if (actionResult.isRight()) {
+			response = buildErrorResponse(actionResult.right().value());
+		} else {
+			
+			response =  buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResult.left().value());
+		}
+			
+		return response;
+	}
+	
 
 	private Response handleDeleteRequest(HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType, String interfaceType, String operationName) {
 		return handleDeleteRequest(request, componentId, artifactId, componentType, interfaceType, operationName, null);
@@ -514,7 +553,7 @@ public class ArtifactServlet extends BeGenericServlet {
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		ServletContext context = request.getSession().getServletContext();
 		ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType, ArtifactOperation.Delete, artifactId, null, null, null, interfaceType, operationName,
+		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType, artifactsLogic.new ArtifactOperationInfo (false, false, ArtifactOperationEnum.Delete), artifactId, null, null, null, interfaceType, operationName,
 				parentId, null);
 		Response response;
 		if (actionResult.isRight()) {
@@ -531,7 +570,7 @@ public class ArtifactServlet extends BeGenericServlet {
 
 	}
 
-	private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String interfaceName, String operationName, String artifactId, ComponentTypeEnum componentType, ArtifactOperation operation, String parentId,
+	private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String interfaceName, String operationName, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operationEnum, String parentId,
 			String containerComponentType) {
 		ArtifactDefinition artifactInfo = RepresentationUtils.convertJsonToArtifactDefinition(data, ArtifactDefinition.class);
 		String origMd5 = request.getHeader(Constants.MD5_HEADER);
@@ -540,7 +579,8 @@ public class ArtifactServlet extends BeGenericServlet {
 
 		ServletContext context = request.getSession().getServletContext();
 		ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType, operation, artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
+		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> actionResult = artifactsLogic.handleArtifactRequest(componentId, userId, componentType, 
+				artifactsLogic.new ArtifactOperationInfo (false, false,operationEnum), artifactId, artifactInfo, origMd5, data, interfaceName, operationName, parentId,
 				containerComponentType);
 		Response response;
 		if (actionResult.isRight()) {
@@ -557,7 +597,7 @@ public class ArtifactServlet extends BeGenericServlet {
 
 	}
 
-	private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperation operation) {
+	private Response handleArtifactRequest(String data, HttpServletRequest request, String componentId, String artifactId, ComponentTypeEnum componentType, ArtifactOperationEnum operation) {
 		return handleArtifactRequest(data, servletRequest, componentId, null, null, artifactId, componentType, operation, null, null);
 	}
 

@@ -42,6 +42,8 @@ import org.testng.TestNG;
 
 public class StartTest {
 
+	// private List<Class<? extends AttSdcTest>> testClasses = new
+	// ArrayList<Class<? extends AttSdcTest>>();
 	public static long timeOfTest = 0;
 
 	public static boolean debug = false;
@@ -73,50 +75,14 @@ public class StartTest {
 			System.exit(1);
 		}
 
-		// need to update
-		// List<String> packagesToRun = config.getPackages();
-		// if (packagesToRun == null || true == packagesToRun.isEmpty()) {
-		// logger.error("No package was configured to be executed.");
-		// System.exit(2);
-		// }
-		// StartTest tests = new StartTest();
-
-		// stop on error logic
-		// boolean stopOnClassFailure = false;
-		// String stopOnClassFailureStr =
-		// System.getProperty("stopOnClassFailure");
-		// if (stopOnClassFailureStr != null &&
-		// stopOnClassFailureStr.equalsIgnoreCase("true")) {
-		// stopOnClassFailure = true;
-		// } else {
-		// Boolean stopOnClassFailureObj = config.isStopOnClassFailure();
-		// if (stopOnClassFailureObj != null) {
-		// stopOnClassFailure = stopOnClassFailureObj.booleanValue();
-		// }
-		// }
-		//
-
-		// tests.start(packagesToRun, stopOnClassFailure);
-
-		// TestListenerAdapter tla = new TestListenerAdapter();
-		//
-		// TestHTMLReporter report = new TestHTMLReporter();
-		//// report.
-
 		TestNG testng = new TestNG();
 
 		List<String> suites = new ArrayList<String>();
 		suites.add("testSuites/" + args[0]);
 		testng.setTestSuites(suites);
-		// testng.addListener(tla);
 		testng.setUseDefaultListeners(true);
 		testng.setOutputDirectory("target/");
 
-		StartTest tests = new StartTest();
-		// testng.setPreserveOrder(true);
-		// testng.setVerbose(2);
-		// testng.setSuiteThreadPoolSize(1);
-		// testng.setThreadCount(1);
 		testng.run();
 
 	}
@@ -145,10 +111,6 @@ public class StartTest {
 		}
 	}
 
-	// logger.debug("Going to run test class {}", testClass.getName());
-	// logger.debug("Test class {} finished {}", testClass.getName(), (result.wasSuccessful() ? "OK." : " WITH ERROR."));
-	// logger.debug("class {} failed tests: {}", testClass.getName(), (failuresPerClass * 1.0) / runsPerClass * 100 + " %");
-	// logger.debug("class {} ignored tests: {}", testClass.getName(), (ignoredPerClass * 1.0) / runsPerClass * 100 + " %");
 	private List<Class> getClassesForPackage(String pkgname) {
 
 		List<Class> classes = new ArrayList<Class>();
@@ -289,5 +251,23 @@ public class StartTest {
 		results.append("<th>").append("Result").append("</th>");
 		results.append("</tr>");
 	}
+
+	// private void addUnitTestResult(StringBuilder results,
+	// Class<? extends AttSdcTest> testClass, Result unitTestResult) {
+	//
+	// boolean isSuccess = unitTestResult.wasSuccessful();
+	//
+	// String result = (isSuccess) ? "success" : "fail";
+	// String fileName = FileUtils.getFileName(testClass.getName());
+	// results.append("<tr>");
+	// //
+	// results.append("<td>").append(FileUtils.getFileName(testClass.getName())).append("</td>");
+	// results.append("<td class=\"name\">")
+	// .append("<a href=\"" + fileName + timeOfTest + ".html\">"
+	// + fileName + "</a>").append("</td>");
+	// results.append("<td class=\"" + result + "\">").append(result)
+	// .append("</td>");
+	// results.append("</tr>");
+	// }
 
 }

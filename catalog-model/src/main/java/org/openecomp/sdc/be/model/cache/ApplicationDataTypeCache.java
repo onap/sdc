@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -41,10 +40,10 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheInfo;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -93,7 +92,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 					if (firstRunDelay != null) {
 						firstRunDelayInSec = firstRunDelay;
 					}
-					log.trace("ApplicationDataTypesCache polling interval is " + pollingIntervalInSec + " seconds.");
+					log.trace("ApplicationDataTypesCache polling interval is {} seconds.", pollingIntervalInSec);
 					if (scheduledPollingService != null) {
 						log.debug("Start ApplicationDataTypeCache polling task. polling interval {} seconds",
 								pollingIntervalInSec);
@@ -210,7 +209,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
 			log.trace("Start fetching all data types from db");
 			Either<List<DataTypeData>, TitanOperationStatus> allDataTypeNodes = propertyOperation.getAllDataTypeNodes();
 			Long end = System.currentTimeMillis();
-			log.trace("Finish fetching all data types from db. Took " + (end - start) + " Milliseconds");
+			log.trace("Finish fetching all data types from db. Took {} Milliseconds", (end - start));
 			if (allDataTypeNodes.isRight()) {
 				TitanOperationStatus status = allDataTypeNodes.right().value();
 				if (status != TitanOperationStatus.OK) {

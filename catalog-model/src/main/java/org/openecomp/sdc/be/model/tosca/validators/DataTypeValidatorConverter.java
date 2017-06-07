@@ -88,8 +88,7 @@ public class DataTypeValidatorConverter {
 		return result;
 	}
 
-	private ImmutablePair<JsonElement, Boolean> validateAndUpdate(JsonElement jsonElement,
-			DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
+	private ImmutablePair<JsonElement, Boolean> validateAndUpdate(JsonElement jsonElement, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
 
 		Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
 
@@ -100,14 +99,14 @@ public class DataTypeValidatorConverter {
 			PropertyValueConverter converter = toscaPropertyType.getConverter();
 			if (jsonElement == null || true == jsonElement.isJsonNull()) {
 				boolean valid = validator.isValid(null, null, allDataTypes);
-				if (false == valid) {
-					log.trace("Failed in validation of property {} from type {}", dataTypeDefinition.getName(), dataTypeDefinition.getName());
+				if (!valid) {
+					log.trace("Failed in validation of property {} from type {}",  dataTypeDefinition.getName(), dataTypeDefinition.getName());
 					return falseResult;
 				}
 				return new ImmutablePair<JsonElement, Boolean>(jsonElement, true);
 
 			} else {
-				if (true == jsonElement.isJsonPrimitive()) {
+				if (jsonElement.isJsonPrimitive()) {
 					String value = null;
 					if (jsonElement != null) {
 						if (jsonElement.toString().isEmpty()) {
@@ -117,7 +116,7 @@ public class DataTypeValidatorConverter {
 						}
 					}
 					boolean valid = validator.isValid(value, null, null);
-					if (false == valid) {
+					if (!valid) {
 						log.trace("Failed in validation of property {} from type {}. Json primitive value is {}", dataTypeDefinition.getName(), dataTypeDefinition.getName(), value);
 						return falseResult;
 					}
@@ -127,7 +126,7 @@ public class DataTypeValidatorConverter {
 					try {
 						element = jsonParser.parse(convertedValue);
 					} catch (JsonSyntaxException e) {
-						log.debug("Failed to parse value {} of property {}. {}", convertedValue, dataTypeDefinition.getName(), e);
+						log.debug("Failed to parse value {} of property {} {}", convertedValue, dataTypeDefinition.getName(), e);
 						return falseResult;
 					}
 
@@ -164,13 +163,13 @@ public class DataTypeValidatorConverter {
 
 						PropertyDefinition propertyDefinition = allProperties.get(propName);
 						if (propertyDefinition == null) {
-							log.debug("The property {} was not found under data type {}", propName, dataTypeDefinition.getName());
+							log.debug("The property {} was not found under data type {}" ,propName, dataTypeDefinition.getName());
 							return falseResult;
 						}
 						String type = propertyDefinition.getType();
 						boolean isScalarType = ToscaPropertyType.isScalarType(type);
 
-						if (true == isScalarType) {
+						if (isScalarType) {
 							ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
 							if (propertyType == null) {
 								log.debug("cannot find the {} under default tosca property types", type);
@@ -179,8 +178,7 @@ public class DataTypeValidatorConverter {
 							PropertyTypeValidator validator = propertyType.getValidator();
 							String innerType = null;
 							if (propertyType == ToscaPropertyType.LIST || propertyType == ToscaPropertyType.MAP) {
-								if (propertyDefinition.getSchema() != null
-										&& propertyDefinition.getSchema().getProperty() != null) {
+								if (propertyDefinition.getSchema() != null && propertyDefinition.getSchema().getProperty() != null) {
 									innerType = propertyDefinition.getSchema().getProperty().getType();
 									if (innerType == null) {
 										log.debug("Property type {} must have inner type in its declaration.", propertyType);
@@ -215,7 +213,7 @@ public class DataTypeValidatorConverter {
 									try {
 										element = jsonParser.parse(convertedValue);
 									} catch (JsonSyntaxException e) {
-										log.debug("Failed to parse value {} of type {}. {}", convertedValue, propertyType, e);
+										log.debug("Failed to parse value {} of type {}", convertedValue, propertyType, e);
 										return falseResult;
 									}
 								}
@@ -226,14 +224,13 @@ public class DataTypeValidatorConverter {
 
 							DataTypeDefinition typeDefinition = allDataTypes.get(type);
 							if (typeDefinition == null) {
-								log.debug("The data type {] cannot be found in the given data type list.", type);
+								log.debug("The data type {} cannot be found in the given data type list.", type);
 								return falseResult;
 							}
 
-							ImmutablePair<JsonElement, Boolean> isValid = validateAndUpdate(elementValue,
-									typeDefinition, allDataTypes);
+							ImmutablePair<JsonElement, Boolean> isValid = validateAndUpdate(elementValue, typeDefinition, allDataTypes);
 
-							if (false == isValid.getRight().booleanValue()) {
+							if (!isValid.getRight().booleanValue()) {
 								log.debug("Failed in validation of value {} from type {}", (elementValue != null ? elementValue.toString() : null), typeDefinition.getName());
 								return falseResult;
 							}
@@ -254,8 +251,7 @@ public class DataTypeValidatorConverter {
 
 	}
 
-	public ImmutablePair<JsonElement, Boolean> validateAndUpdate(String value, DataTypeDefinition dataTypeDefinition,
-			Map<String, DataTypeDefinition> allDataTypes) {
+	public ImmutablePair<JsonElement, Boolean> validateAndUpdate(String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
 
 		ImmutablePair<JsonElement, Boolean> result = falseResult;
 
@@ -308,8 +304,7 @@ public class DataTypeValidatorConverter {
 		return value;
 	}
 
-	public boolean isValid(String value, DataTypeDefinition dataTypeDefinition,
-			Map<String, DataTypeDefinition> allDataTypes) {
+	public boolean isValid(String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
 
 		boolean result = false;
 
@@ -321,7 +316,7 @@ public class DataTypeValidatorConverter {
 		try {
 			jsonElement = jsonParser.parse(value);
 		} catch (JsonSyntaxException e) {
-			log.debug("Failed to parse the value {} from type {}. {}", value, dataTypeDefinition, e);
+			log.debug("Failed to parse the value {} from type {}", value, dataTypeDefinition, e);
 			return false;
 		}
 
@@ -330,8 +325,7 @@ public class DataTypeValidatorConverter {
 		return result;
 	}
 
-	private boolean isValid(JsonElement jsonElement, DataTypeDefinition dataTypeDefinition,
-			Map<String, DataTypeDefinition> allDataTypes) {
+	private boolean isValid(JsonElement jsonElement, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
 
 		Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
 
@@ -342,8 +336,7 @@ public class DataTypeValidatorConverter {
 			if (jsonElement == null || true == jsonElement.isJsonNull()) {
 				boolean valid = validator.isValid(null, null, allDataTypes);
 				if (false == valid) {
-					log.trace("Failed in validation of property " + dataTypeDefinition.getName() + " from type "
-							+ dataTypeDefinition.getName());
+					log.trace("Failed in validation of property {} from type {}", dataTypeDefinition.getName(), dataTypeDefinition.getName());
 					return false;
 				}
 
@@ -396,7 +389,7 @@ public class DataTypeValidatorConverter {
 
 						PropertyDefinition propertyDefinition = allProperties.get(propName);
 						if (propertyDefinition == null) {
-							log.debug("The property {} was not found under data tpye {}", propName, dataTypeDefinition.getName());
+							log.debug("The property {} was not found under data type {}", propName, dataTypeDefinition.getName());
 							return false;
 						}
 						String type = propertyDefinition.getType();
@@ -411,11 +404,10 @@ public class DataTypeValidatorConverter {
 							PropertyTypeValidator validator = propertyType.getValidator();
 							String innerType = null;
 							if (propertyType == ToscaPropertyType.LIST || propertyType == ToscaPropertyType.MAP) {
-								if (propertyDefinition.getSchema() != null
-										&& propertyDefinition.getSchema().getProperty() != null) {
+								if (propertyDefinition.getSchema() != null && propertyDefinition.getSchema().getProperty() != null) {
 									innerType = propertyDefinition.getSchema().getProperty().getType();
 									if (innerType == null) {
-										log.debug("Property type {} must have inner type in its decleration.", propertyType);
+										log.debug("Property type {} must have inner type in its declaration.", propertyType);
 										return false;
 									}
 								}
@@ -440,7 +432,7 @@ public class DataTypeValidatorConverter {
 
 							DataTypeDefinition typeDefinition = allDataTypes.get(type);
 							if (typeDefinition == null) {
-								log.debug("The data type {} canot be found in the given data type list.", type);
+								log.debug("The data type {} cannot be found in the given data type list.", type);
 								return false;
 							}
 
@@ -465,35 +457,4 @@ public class DataTypeValidatorConverter {
 		}
 
 	}
-
-	// public ImmutablePair<String, Boolean>
-	// validateAndUpdateAndReturnString(String value, DataTypeDefinition
-	// dataTypeDefinition, Map<String, DataTypeDefinition> allDataTypes) {
-	//
-	// ImmutablePair<JsonElement, Boolean> result = falseResult;
-	//
-	// if (value == null || value.isEmpty()) {
-	// return trueStringEmptyResult;
-	// }
-	//
-	// JsonElement jsonElement = null;
-	// try {
-	// jsonElement = jsonParser.parse(value);
-	// } catch (JsonSyntaxException e) {
-	// return falseStringEmptyResult;
-	// }
-	//
-	// result = validateAndUpdate(jsonElement, dataTypeDefinition,
-	// allDataTypes);
-	//
-	// if (result.right.booleanValue() == false) {
-	// log.debug("The value {} of property from type {} is invalid", value, dataTypeDefinition.getName());
-	// return new ImmutablePair<String, Boolean>(value, false);
-	// }
-	//
-	// String valueFromJsonElement = getValueFromJsonElement(result.left);
-	//
-	// return new ImmutablePair<String, Boolean>(valueFromJsonElement, true);
-	// }
-
 }

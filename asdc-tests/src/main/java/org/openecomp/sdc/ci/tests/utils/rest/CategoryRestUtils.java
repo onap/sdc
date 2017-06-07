@@ -61,7 +61,8 @@ public class CategoryRestUtils extends BaseRestUtils {
 	// GET categories
 	public static RestResponse getAllCategories(User sdncModifierDetails, String categoryType) throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_ALL_CATEGORIES, config.getCatalogBeHost(), config.getCatalogBePort(), categoryType);
+		String url = String.format(Urls.GET_ALL_CATEGORIES, config.getCatalogBeHost(), config.getCatalogBePort(),
+				categoryType);
 		String userId = sdncModifierDetails.getUserId();
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 		HttpRequest http = new HttpRequest();
@@ -70,9 +71,11 @@ public class CategoryRestUtils extends BaseRestUtils {
 		return getCategotyResponse;
 	}
 
-	public static RestResponse getAllCategoriesTowardsFe(User sdncModifierDetails, String categoryType) throws Exception {
+	public static RestResponse getAllCategoriesTowardsFe(User sdncModifierDetails, String categoryType)
+			throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(), categoryType);
+		String url = String.format(Urls.GET_ALL_CATEGORIES_FE, config.getCatalogFeHost(), config.getCatalogFePort(),
+				categoryType);
 		String userId = sdncModifierDetails.getUserId();
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 		HttpRequest http = new HttpRequest();
@@ -82,12 +85,14 @@ public class CategoryRestUtils extends BaseRestUtils {
 	}
 
 	// Delete Category
-	public static RestResponse deleteCategory(String categoryId, String psUserId, String categoryType) throws Exception {
+	public static RestResponse deleteCategory(String categoryId, String userId, String categoryType)
+			throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_CATEGORY, config.getCatalogBeHost(), config.getCatalogBePort(), categoryType, categoryId);
+		String url = String.format(Urls.DELETE_CATEGORY, config.getCatalogBeHost(), config.getCatalogBePort(),
+				categoryType, categoryId);
 		url = url.replace("#", "%23"); // HEX
 		url = url.replace(" ", "%20"); // HEX
-		RestResponse deleteCategoryResponse = sendDelete(url, psUserId);
+		RestResponse deleteCategoryResponse = sendDelete(url, userId);
 		return deleteCategoryResponse;
 	}
 
@@ -166,9 +171,13 @@ public class CategoryRestUtils extends BaseRestUtils {
 		return addCategoryResponse;
 	}
 
-	public static RestResponse deleteCatergoryHttpCspAtuUidIsMissing(CategoryDefinition categoryDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse deleteCatergoryHttpCspAtuUidIsMissing(CategoryDefinition categoryDataDefinition,
+			User sdncModifierDetails) throws Exception {
+
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(), categoryDataDefinition.getName());
+		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(),
+				categoryDataDefinition.getName());
+
 		String userId = sdncModifierDetails.getUserId();
 		Map<String, String> headersMap = prepareHeadersMap(userId);
 		headersMap.remove("USER_ID");
@@ -184,9 +193,11 @@ public class CategoryRestUtils extends BaseRestUtils {
 	public static RestResponse createGrouping(GroupingDefinition grouping, SubCategoryDefinition subCategory,
 			CategoryDefinition parentCategory, User sdncModifierDetails, String categoryType) throws Exception {
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.CREATE_GROUPING, config.getCatalogBeHost(), config.getCatalogBePort(), categoryType, parentCategory.getUniqueId(), subCategory.getUniqueId());
+		String url = String.format(Urls.CREATE_GROUPING, config.getCatalogBeHost(), config.getCatalogBePort(),
+				categoryType, parentCategory.getUniqueId(), subCategory.getUniqueId());
 		String bodyJson = gson.toJson(grouping);
-		RestResponse addGroupingResponse = BaseRestUtils.sendPost(url, bodyJson, sdncModifierDetails.getUserId(), acceptHeaderData);
+		RestResponse addGroupingResponse = BaseRestUtils.sendPost(url, bodyJson, sdncModifierDetails.getUserId(),
+				acceptHeaderData);
 		return addGroupingResponse;
 	}
 
@@ -281,8 +292,7 @@ public class CategoryRestUtils extends BaseRestUtils {
 	}
 
 	public enum CategoryAuditJsonKeysEnum {
-		ACTION("ACTION"), MODIFIER("MODIFIER"), CATEGORY_NAME("CATEGORY_NAME"), SUB_CATEGORY_NAME("SUB_CATEGORY_NAME"), GROUPING_NAME("GROUPING_NAME"), RESOURCE_TYPE("RESOURCE_TYPE"), ECOMP_USER("ECOMP_USER"), STATUS("STATUS"), 
-		DESCRIPTION("DESCRIPTION"), DETAILS("DETAILS");
+		ACTION("ACTION"), MODIFIER("MODIFIER"), CATEGORY_NAME("CATEGORY_NAME"), SUB_CATEGORY_NAME("SUB_CATEGORY_NAME"), GROUPING_NAME("GROUPING_NAME"), RESOURCE_TYPE("RESOURCE_TYPE"), ECOMP_USER("ECOMP_USER"), STATUS("STATUS"), DESCRIPTION("DESCRIPTION"), DETAILS("DETAILS");
 		
 		private String auditJsonKeyName;
 

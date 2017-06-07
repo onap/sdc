@@ -40,7 +40,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.openecomp.sdc.ci.tests.api.SdcTest;
+import org.openecomp.sdc.ci.tests.api.AttSdcTest;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public class StartTest2backup {
 
-	private List<Class<? extends SdcTest>> testClasses = new ArrayList<Class<? extends SdcTest>>();
+	private List<Class<? extends AttSdcTest>> testClasses = new ArrayList<Class<? extends AttSdcTest>>();
 	public static long timeOfTest = 0;
 
 	public static boolean debug = false;
@@ -170,7 +170,7 @@ public class StartTest2backup {
 		int totalFailureTests = 0;
 		int totalIgnoreTests = 0;
 		int numOfFailureClasses = 0;
-		for (Class<? extends SdcTest> testClass : testClasses) {
+		for (Class<? extends AttSdcTest> testClass : testClasses) {
 
 			index++;
 
@@ -187,18 +187,17 @@ public class StartTest2backup {
 			System.out.println(builder.toString());
 
 			logger.debug(builder.toString());
-			logger.debug("Going to run test class {}", testClass.getName());
+			logger.debug("Going to run test class {}",testClass.getName());
 
 			result = JUnitCore.runClasses(testClass);
 			if (result.wasSuccessful() == false) {
 				numOfFailureClasses++;
 			}
-			logger.debug("Test class {} finished {}", testClass.getName(), (result.wasSuccessful() ? "OK." : " WITH ERROR."));
+			logger.debug("Test class {} finished {}",testClass.getName(),(result.wasSuccessful() ? "OK." : " WITH ERROR."));
 			List<Failure> failures = result.getFailures();
 			if (failures != null) {
 				for (Failure failure : failures) {
-					logger.error("Test class " + testClass.getName() + " failure test " + failure.getTestHeader() + "-"
-							+ failure.getTrace());
+					logger.error("Test class {} failure test {}-{}",testClass.getName(),failure.getTestHeader(),failure.getTrace());
 				}
 			}
 			int runsPerClass = result.getRunCount();
@@ -209,8 +208,10 @@ public class StartTest2backup {
 			totalFailureTests += failuresPerClass;
 			totalIgnoreTests += ignoredPerClass;
 
-			logger.debug("class {} failed tests: {}", testClass.getName(), (failuresPerClass * 1.0) / runsPerClass * 100 + " %");
-			logger.debug("class {} ignored tests: {}", testClass.getName(), (ignoredPerClass * 1.0) / runsPerClass * 100 + " %");
+			logger.debug("class {} Failed tests {} %",testClass.getName(),
+					(failuresPerClass * 1.0) / runsPerClass * 100);
+			logger.debug("class {} Ignored tests {} %",testClass.getName(),
+					(ignoredPerClass * 1.0) / runsPerClass * 100);
 
 			// List<Failure> failures = result.getFailures();
 			// if (failures != null) {
@@ -242,9 +243,8 @@ public class StartTest2backup {
 
 		if (!success) {
 			System.out.println("FAILURE");
-			logger.error("Failure tests : "
-					+ ((totalFailureTests + totalIgnoreTests) * 1.0) / (totalRunTests + totalIgnoreTests) + " %");
-			logger.error("Ignored tests : " + (totalIgnoreTests * 1.0) / (totalRunTests + totalIgnoreTests) + " %");
+			logger.error("Failure tests : {} %",((totalFailureTests + totalIgnoreTests) * 1.0) / (totalRunTests + totalIgnoreTests));
+			logger.error("Ignored tests : {} %",(totalIgnoreTests * 1.0) / (totalRunTests + totalIgnoreTests));
 			System.exit(1);
 		}
 
@@ -392,7 +392,7 @@ public class StartTest2backup {
 		results.append("</tr>");
 	}
 
-	private void addUnitTestResult(StringBuilder results, Class<? extends SdcTest> testClass,
+	private void addUnitTestResult(StringBuilder results, Class<? extends AttSdcTest> testClass,
 			Result unitTestResult) {
 
 		boolean isSuccess = unitTestResult.wasSuccessful();

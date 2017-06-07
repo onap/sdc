@@ -27,6 +27,7 @@ import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
@@ -48,6 +49,12 @@ public class ComponentBusinessLogicTest {
 
 		@Override
 		public Either<List<ComponentInstance>, ResponseFormat> getComponentInstancesFilteredByPropertiesAndInputs(String componentId, ComponentTypeEnum componentTypeEnum, String userId, String searchText) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId, List<String> dataParamsToReturn) {
 			// TODO Auto-generated method stub
 			return null;
 		}

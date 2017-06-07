@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.User;
@@ -39,10 +40,12 @@ import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
+import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedProductAudit;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedResourceAuditJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedUserCRUDAudit;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.Constants;
 
@@ -99,6 +102,38 @@ public class Convertor {
 		return resourceRespJavaObject;
 
 	}
+
+	// ********** service **************
+
+	// public static ServiceRespJavaObject
+	// constructFieldsForRespValidation(ServiceReqDetails serviceDetails, String
+	// serviceVersion, User user) {
+	// return convertToRespObject(serviceDetails, serviceVersion,
+	// user.getUserId(), user.getFullName());
+	//
+	// }
+	//
+	// private static ServiceRespJavaObject
+	// convertToRespObject(ServiceReqDetails serviceDetails, String
+	// serviceVersion, String UserId, String userName) {
+	// ServiceRespJavaObject serviceRespJavaObject = new
+	// ServiceRespJavaObject();
+	//
+	// serviceRespJavaObject.setUniqueId(serviceDetails.getUniqueId());
+	// serviceRespJavaObject.setName(serviceDetails.getName());
+	// serviceRespJavaObject.setCreatorUserId(UserId);
+	// serviceRespJavaObject.setCreatorFullName(userName);
+	// serviceRespJavaObject.setLastUpdaterUserId(UserId);
+	// serviceRespJavaObject.setLastUpdaterFullName(userName);
+	// serviceRespJavaObject.setDescription(serviceDetails.getDescription());
+	// serviceRespJavaObject.setIcon(serviceDetails.getIcon());
+	// serviceRespJavaObject.setCategory(serviceDetails.getCategory());
+	// serviceRespJavaObject.setLifecycleState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
+	// serviceRespJavaObject.setContactId(serviceDetails.getContactId());
+	// serviceRespJavaObject.setVersion(serviceVersion);
+	//
+	// return serviceRespJavaObject;
+	// }
 
 	// ********** product **************
 
@@ -186,18 +221,18 @@ public class Convertor {
 		ExpectedProductAudit expectedProductAudit = new ExpectedProductAudit();
 
 		expectedProductAudit.setACTION(action);
-		String userId = user.getUserId();
+		String userUserId = user.getUserId();
 		String userFullName;
 		if (StringUtils.isEmpty(user.getFirstName()) && StringUtils.isEmpty(user.getLastName())) {
 			userFullName = "";
 		} else {
 			userFullName = user.getFullName();
 		}
-		if (StringUtils.isEmpty(userId)) {
-			userId = "UNKNOWN";
+		if (StringUtils.isEmpty(userUserId)) {
+			userUserId = "UNKNOWN";
 		}
 		expectedProductAudit.setMODIFIER(
-				!StringUtils.isEmpty(userFullName) ? userFullName + "(" + userId + ")" : "(" + userId + ")");
+				!StringUtils.isEmpty(userFullName) ? userFullName + "(" + userUserId + ")" : "(" + userUserId + ")");
 		expectedProductAudit.setSTATUS(Integer.toString(errorInfo.getCode()));
 		expectedProductAudit.setDESC(errorInfo.getAuditDesc((Object[]) (errorMessageParams)));
 		expectedProductAudit

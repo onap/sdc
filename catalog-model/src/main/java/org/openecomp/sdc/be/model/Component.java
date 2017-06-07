@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -45,14 +46,6 @@ public abstract class Component implements Serializable {
 
 	private List<CategoryDefinition> categories;
 
-	// User
-	private String creatorUserId;
-	private String creatorFullName;
-	private String lastUpdaterUserId;
-	private String lastUpdaterFullName;
-
-	protected ComponentTypeEnum componentType;
-
 	private List<ComponentInstance> componentInstances;
 
 	private List<RequirementCapabilityRelDef> componentInstancesRelations;
@@ -70,7 +63,28 @@ public abstract class Component implements Serializable {
 	private List<InputDefinition> inputs;
 
 	private List<GroupDefinition> groups;
+	
+	private String derivedFromGenericType;
+	private String derivedFromGenericVersion;
+	private String toscaType;
+	protected List<AdditionalInformationDefinition> additionalInformation;
+	
+	public String getDerivedFromGenericVersion() {
+		return derivedFromGenericVersion;
+	}
 
+	public void setDerivedFromGenericVersion(String derivedFromGenericVersion) {
+		this.derivedFromGenericVersion = derivedFromGenericVersion;
+	}
+
+	public String getDerivedFromGenericType() {
+		return derivedFromGenericType;
+	}
+
+	public void setDerivedFromGenericType(String derivedFromGenericType) {
+		this.derivedFromGenericType = derivedFromGenericType;
+	}
+	
 	public Component(ComponentMetadataDefinition componentMetadataDefinition) {
 		this.componentMetadataDefinition = componentMetadataDefinition;
 	}
@@ -136,6 +150,10 @@ public abstract class Component implements Serializable {
 		componentMetadataDefinition.getMetadataDataDefinition().setTags(tags);
 	}
 
+	public void setConformanceLevel(String conformanceLevel) {
+		componentMetadataDefinition.getMetadataDataDefinition().setConformanceLevel(conformanceLevel);
+	}
+	
 	public void setIcon(String icon) {
 		componentMetadataDefinition.getMetadataDataDefinition().setIcon(icon);
 	}
@@ -145,35 +163,35 @@ public abstract class Component implements Serializable {
 	}
 
 	public String getCreatorUserId() {
-		return creatorUserId;
+		return this.componentMetadataDefinition.getMetadataDataDefinition().getCreatorUserId();
 	}
 
 	public void setCreatorUserId(String creatorUserId) {
-		this.creatorUserId = creatorUserId;
+		this.componentMetadataDefinition.getMetadataDataDefinition().setCreatorUserId(creatorUserId);
 	}
 
 	public String getCreatorFullName() {
-		return creatorFullName;
+		return this.componentMetadataDefinition.getMetadataDataDefinition().getCreatorFullName();
 	}
 
 	public void setCreatorFullName(String creatorFullName) {
-		this.creatorFullName = creatorFullName;
+		this.componentMetadataDefinition.getMetadataDataDefinition().setCreatorFullName(creatorFullName);
 	}
 
 	public String getLastUpdaterUserId() {
-		return lastUpdaterUserId;
+		return this.componentMetadataDefinition.getMetadataDataDefinition().getLastUpdaterUserId();
 	}
 
 	public void setLastUpdaterUserId(String lastUpdaterUserId) {
-		this.lastUpdaterUserId = lastUpdaterUserId;
+		this.componentMetadataDefinition.getMetadataDataDefinition().setLastUpdaterUserId(lastUpdaterUserId);
 	}
 
 	public String getLastUpdaterFullName() {
-		return lastUpdaterFullName;
+		return this.componentMetadataDefinition.getMetadataDataDefinition().getLastUpdaterFullName();
 	}
 
 	public void setLastUpdaterFullName(String lastUpdaterFullName) {
-		this.lastUpdaterFullName = lastUpdaterFullName;
+		this.componentMetadataDefinition.getMetadataDataDefinition().setLastUpdaterFullName(lastUpdaterFullName);
 	}
 
 	public String getName() {
@@ -212,6 +230,10 @@ public abstract class Component implements Serializable {
 		return componentMetadataDefinition.getMetadataDataDefinition().getTags();
 	}
 
+	public String getConformanceLevel() {
+		return componentMetadataDefinition.getMetadataDataDefinition().getConformanceLevel();
+	}
+	
 	public String getIcon() {
 		return componentMetadataDefinition.getMetadataDataDefinition().getIcon();
 	}
@@ -283,11 +305,11 @@ public abstract class Component implements Serializable {
 	}
 
 	public ComponentTypeEnum getComponentType() {
-		return componentType;
+		return this.componentMetadataDefinition.getMetadataDataDefinition().getComponentType();
 	}
 
 	public void setComponentType(ComponentTypeEnum componentType) {
-		this.componentType = componentType;
+		this.componentMetadataDefinition.getMetadataDataDefinition().setComponentType(componentType);
 	}
 
 	public Map<String, List<CapabilityDefinition>> getCapabilities() {
@@ -394,11 +416,11 @@ public abstract class Component implements Serializable {
 		result = prime * result + ((artifacts == null) ? 0 : artifacts.hashCode());
 		result = prime * result + ((categories == null) ? 0 : categories.hashCode());
 		result = prime * result + ((componentMetadataDefinition == null) ? 0 : componentMetadataDefinition.hashCode());
-		result = prime * result + ((creatorUserId == null) ? 0 : creatorUserId.hashCode());
-		result = prime * result + ((creatorFullName == null) ? 0 : creatorFullName.hashCode());
+//		result = prime * result + ((creatorUserId == null) ? 0 : creatorUserId.hashCode());
+//		result = prime * result + ((creatorFullName == null) ? 0 : creatorFullName.hashCode());
 		result = prime * result + ((deploymentArtifacts == null) ? 0 : deploymentArtifacts.hashCode());
-		result = prime * result + ((lastUpdaterUserId == null) ? 0 : lastUpdaterUserId.hashCode());
-		result = prime * result + ((lastUpdaterFullName == null) ? 0 : lastUpdaterFullName.hashCode());
+//		result = prime * result + ((lastUpdaterUserId == null) ? 0 : lastUpdaterUserId.hashCode());
+//		result = prime * result + ((lastUpdaterFullName == null) ? 0 : lastUpdaterFullName.hashCode());
 		result = prime * result + ((capabilities == null) ? 0 : capabilities.hashCode());
 		result = prime * result + ((requirements == null) ? 0 : requirements.hashCode());
 		result = prime * result + ((componentInstances == null) ? 0 : componentInstances.hashCode());
@@ -409,6 +431,8 @@ public abstract class Component implements Serializable {
 		result = prime * result + ((componentInstancesInputs == null) ? 0 : componentInstancesInputs.hashCode());
 		result = prime * result + ((componentInstancesRelations == null) ? 0 : componentInstancesRelations.hashCode());
 		result = prime * result + ((groups == null) ? 0 : groups.hashCode());
+		result = prime * result + ((derivedFromGenericType == null) ? 0 : derivedFromGenericType.hashCode());
+		result = prime * result + ((derivedFromGenericVersion == null) ? 0 : derivedFromGenericVersion.hashCode());
 		return result;
 	}
 
@@ -436,31 +460,31 @@ public abstract class Component implements Serializable {
 				return false;
 		} else if (!componentMetadataDefinition.equals(other.componentMetadataDefinition))
 			return false;
-		if (creatorUserId == null) {
-			if (other.creatorUserId != null)
-				return false;
-		} else if (!creatorUserId.equals(other.creatorUserId))
-			return false;
-		if (creatorFullName == null) {
-			if (other.creatorFullName != null)
-				return false;
-		} else if (!creatorFullName.equals(other.creatorFullName))
-			return false;
+//		if (creatorUserId == null) {
+//			if (other.creatorUserId != null)
+//				return false;
+//		} else if (!creatorUserId.equals(other.creatorUserId))
+//			return false;
+//		if (creatorFullName == null) {
+//			if (other.creatorFullName != null)
+//				return false;
+//		} else if (!creatorFullName.equals(other.creatorFullName))
+//			return false;
 		if (deploymentArtifacts == null) {
 			if (other.deploymentArtifacts != null)
 				return false;
 		} else if (!deploymentArtifacts.equals(other.deploymentArtifacts))
 			return false;
-		if (lastUpdaterUserId == null) {
-			if (other.lastUpdaterUserId != null)
-				return false;
-		} else if (!lastUpdaterUserId.equals(other.lastUpdaterUserId))
-			return false;
-		if (lastUpdaterFullName == null) {
-			if (other.lastUpdaterFullName != null)
-				return false;
-		} else if (!lastUpdaterFullName.equals(other.lastUpdaterFullName))
-			return false;
+//		if (lastUpdaterUserId == null) {
+//			if (other.lastUpdaterUserId != null)
+//				return false;
+//		} else if (!lastUpdaterUserId.equals(other.lastUpdaterUserId))
+//			return false;
+//		if (lastUpdaterFullName == null) {
+//			if (other.lastUpdaterFullName != null)
+//				return false;
+//		} else if (!lastUpdaterFullName.equals(other.lastUpdaterFullName))
+//			return false;
 		if (componentInstances == null) {
 			if (other.componentInstances != null)
 				return false;
@@ -497,6 +521,16 @@ public abstract class Component implements Serializable {
 			if (other.groups != null)
 				return false;
 		} else if (!groups.equals(other.groups))
+			return false;
+		if (derivedFromGenericType == null) {
+			if (other.derivedFromGenericType != null)
+				return false;
+		} else if (!derivedFromGenericType.equals(other.derivedFromGenericType))
+			return false;
+		if (derivedFromGenericVersion == null) {
+			if (other.derivedFromGenericVersion != null)
+				return false;
+		} else if (!derivedFromGenericVersion.equals(other.derivedFromGenericVersion))
 			return false;
 		return true;
 	}
@@ -595,4 +629,49 @@ public abstract class Component implements Serializable {
 	public void setSpecificComponetTypeArtifacts(Map<String, ArtifactDefinition> specificComponentTypeArtifacts) {
 		// Implement where needed
 	}
+	
+	public void setMetadataDefinition(ComponentMetadataDefinition metadataDefinition) {
+		this.componentMetadataDefinition = metadataDefinition;
+	}
+	
+	public String fetchGenericTypeToscaNameFromConfig(){
+		// Implement where needed
+		return ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get(this.assetType());
+	}
+	
+	public String assetType(){
+		// Implement where needed
+		return this.getComponentType().getValue();
+	}
+	
+	public boolean shouldGenerateInputs(){
+		// Implement where needed
+		return true;
+	}
+	
+	public boolean deriveFromGeneric(){
+		// Implement where needed
+		return true;
+	}
+	
+	public void setDerivedFromGenericInfo(Resource genericType){
+		derivedFromGenericType = genericType.getToscaResourceName();
+		derivedFromGenericVersion = genericType.getVersion();
+	}
+
+	public String getToscaType() {
+		return toscaType;
+	}
+
+	public void setToscaType(String toscaType) {
+		this.toscaType = toscaType;
+	}
+	public List<AdditionalInformationDefinition> getAdditionalInformation() {
+		return additionalInformation;
+	}
+
+	public void setAdditionalInformation(List<AdditionalInformationDefinition> additionalInformation) {
+		this.additionalInformation = additionalInformation;
+	}
+	
 }

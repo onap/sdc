@@ -24,8 +24,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -33,8 +36,6 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
-import org.openecomp.sdc.be.resources.data.RequirementData;
 import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
@@ -42,14 +43,18 @@ import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
 import org.openecomp.sdc.be.tosca.model.ToscaRequirement;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import fj.data.Either;
 
 public class CapabiltyRequirementConvertor {
 	private static CapabiltyRequirementConvertor instance;
-
+	public final static String PATH_DELIMITER = ".";
+	
 	protected CapabiltyRequirementConvertor() {
 
 	}
@@ -131,8 +136,8 @@ public class CapabiltyRequirementConvertor {
 		return Either.left(nodeType);
 	}
 
-	public Either<SubstitutionMapping, ToscaError> convertRequirements(Component component, SubstitutionMapping substitutionMapping) {
-		Map<String, ToscaRequirement> toscaRequirements = convertRequirementsAsMap(component);
+	public Either<SubstitutionMapping, ToscaError> convertSubstitutionMappingRequirements(Component component, SubstitutionMapping substitutionMapping) {
+		Map<String, String[]> toscaRequirements = convertSubstitutionMappingRequirementsAsMap(component);
 		if (!toscaRequirements.isEmpty()) {
 			substitutionMapping.setRequirements(toscaRequirements);
 		}
@@ -145,9 +150,9 @@ public class CapabiltyRequirementConvertor {
 		Map<String, List<RequirementDefinition>> requirements = component.getRequirements();
 		List<Map<String, ToscaRequirement>> toscaRequirements = new ArrayList<>();
 		if (requirements != null) {
-			boolean isNodeType = ToscaUtils.isNodeType(component);
+			boolean isNodeType = ToscaUtils.isAtomicType(component);
 			for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
-				entry.getValue().stream().filter(r -> (!isNodeType || (isNodeType && component.getUniqueId().equals(r.getOwnerId())))).forEach(r -> {
+				entry.getValue().stream().filter(r -> (!isNodeType || (isNodeType && component.getUniqueId().equals(r.getOwnerId())) || (isNodeType && r.getOwnerId() == null))).forEach(r -> {
 					ImmutablePair<String, ToscaRequirement> pair = convertRequirement(component, isNodeType, r);
 					Map<String, ToscaRequirement> requirement = new HashMap<>();
 
@@ -163,17 +168,25 @@ public class CapabiltyRequirementConvertor {
 		return toscaRequirements;
 	}
 
-	private Map<String, ToscaRequirement> convertRequirementsAsMap(Component component) {
+	private String getSubPathByFirstDelimiterAppearance(String path) {
+		return path.substring(path.indexOf(PATH_DELIMITER) + 1);
+	}
+	
+	private String getSubPathByLastDelimiterAppearance(String path) {
+		return path.substring(path.lastIndexOf(PATH_DELIMITER) + 1);
+	}
+	
+	//This function calls on Substitution Mapping region - the component is always non-atomic
+	private Map<String, String[]> convertSubstitutionMappingRequirementsAsMap(Component component) {
 		Map<String, List<RequirementDefinition>> requirements = component.getRequirements();
-		Map<String, ToscaRequirement> toscaRequirements = new HashMap<>();
+		Map<String,  String[]> toscaRequirements = new HashMap<>();
 		if (requirements != null) {
-			boolean isNodeType = ToscaUtils.isNodeType(component);
 			for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
-				entry.getValue().stream().filter(r -> (!isNodeType || (isNodeType && component.getUniqueId().equals(r.getOwnerId())))).forEach(r -> {
-					ImmutablePair<String, ToscaRequirement> pair = convertRequirement(component, isNodeType, r);
-					toscaRequirements.put(pair.left, pair.right);
+				entry.getValue().stream().forEach(r -> {
+					String fullReqName = getRequirementPath(r);
+					log.debug("the requirement {} belongs to resource {} ", fullReqName, component.getUniqueId());
+					toscaRequirements.put(fullReqName, new String[]{r.getOwnerName(), getSubPathByFirstDelimiterAppearance(fullReqName)});
 				});
-
 				log.debug("Finish convert Requirements for node type");
 			}
 		} else {
@@ -182,17 +195,25 @@ public class CapabiltyRequirementConvertor {
 		return toscaRequirements;
 	}
 
+	private String getRequirementPath(RequirementDefinition r) {
+		List<String> pathArray = Lists.reverse(r.getPath().stream()
+				.map(path -> ValidationUtils.normalizeComponentInstanceName(getSubPathByLastDelimiterAppearance(path)))
+				.collect(Collectors.toList()));
+		return new StringBuilder().append(String.join(PATH_DELIMITER, pathArray)).append(PATH_DELIMITER).append(r.getName()).toString();
+		
+	}
+	
 	private ImmutablePair<String, ToscaRequirement> convertRequirement(Component component, boolean isNodeType, RequirementDefinition r) {
 		String name = r.getName();
 		if (!isNodeType) {
-			name = r.getOwnerName() + "." + name;
+			name = getRequirementPath(r);
 		}
 		log.debug("the requirement {} belongs to resource {} ", name, component.getUniqueId());
 		ToscaRequirement toscaRequirement = new ToscaRequirement();
 
 		List<Object> occurences = new ArrayList<>();
 		occurences.add(Integer.valueOf(r.getMinOccurrences()));
-		if (r.getMaxOccurrences().equals(RequirementData.MAX_OCCURRENCES)) {
+		if (r.getMaxOccurrences().equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
 			occurences.add(r.getMaxOccurrences());
 		} else {
 			occurences.add(Integer.valueOf(r.getMaxOccurrences()));
@@ -212,9 +233,9 @@ public class CapabiltyRequirementConvertor {
 		Map<String, List<CapabilityDefinition>> capabilities = component.getCapabilities();
 		Map<String, ToscaCapability> toscaCapabilities = new HashMap<>();
 		if (capabilities != null) {
-			boolean isNodeType = ToscaUtils.isNodeType(component);
+			boolean isNodeType = ToscaUtils.isAtomicType(component);
 			for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
-				entry.getValue().stream().filter(c -> (!isNodeType || (isNodeType && component.getUniqueId().equals(c.getOwnerId())))).forEach(c -> {
+				entry.getValue().stream().filter(c -> (!isNodeType || (isNodeType && component.getUniqueId().equals(c.getOwnerId())) || (isNodeType && c.getOwnerId() == null) )).forEach(c -> {
 					convertCapabilty(component, toscaCapabilities, isNodeType, c, dataTypes);
 
 				});
@@ -225,11 +246,39 @@ public class CapabiltyRequirementConvertor {
 
 		return toscaCapabilities;
 	}
+	
+	//This function calls on Substitution Mapping region - the component is always non-atomic
+	public Map<String, String[]> convertSubstitutionMappingCapabilities(Component component, Map<String, DataTypeDefinition> dataTypes) {
+		Map<String, List<CapabilityDefinition>> capabilities = component.getCapabilities();
+		Map<String, String[]> toscaCapabilities = new HashMap<>();
+		if (capabilities != null) {
+			for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
+				entry.getValue().stream().forEach(c -> {
+					String fullCapName = getCapabilityPath(c);
+					log.debug("the capabilty {} belongs to resource {} ", fullCapName, component.getUniqueId());
+					toscaCapabilities.put(fullCapName, new String[]{c.getOwnerName(), getSubPathByFirstDelimiterAppearance(fullCapName)});
+				});
+			}
+		} else {
+			log.debug("No Capabilities for node type");
+		}
 
+		return toscaCapabilities;
+	}
+	
+	private String getCapabilityPath(CapabilityDefinition c)  {
+		List<String> pathArray = Lists.reverse(c.getPath().stream()
+				.map(path -> ValidationUtils.normalizeComponentInstanceName(getSubPathByLastDelimiterAppearance(path)))
+				.collect(Collectors.toList()));
+		return new StringBuilder().append(String.join(PATH_DELIMITER, pathArray)).append(PATH_DELIMITER).append(c.getName()).toString();
+	}
+	
+	
+	
 	private void convertCapabilty(Component component, Map<String, ToscaCapability> toscaCapabilities, boolean isNodeType, CapabilityDefinition c, Map<String, DataTypeDefinition> dataTypes) {
 		String name = c.getName();
 		if (!isNodeType) {
-			name = c.getOwnerName() + "." + name;
+			name = getCapabilityPath(c);
 		}
 		log.debug("the capabilty {} belongs to resource {} ", name, component.getUniqueId());
 		ToscaCapability toscaCapability = new ToscaCapability();
@@ -238,7 +287,7 @@ public class CapabiltyRequirementConvertor {
 
 		List<Object> occurences = new ArrayList<>();
 		occurences.add(Integer.valueOf(c.getMinOccurrences()));
-		if (c.getMaxOccurrences().equals(CapabilityData.MAX_OCCURRENCES)) {
+		if (c.getMaxOccurrences().equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
 			occurences.add(c.getMaxOccurrences());
 		} else {
 			occurences.add(Integer.valueOf(c.getMaxOccurrences()));

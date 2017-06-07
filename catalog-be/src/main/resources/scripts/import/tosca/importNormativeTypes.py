@@ -41,7 +41,7 @@ def createNormativeType(beHost, bePort, adminUser, fileDir, ELEMENT_NAME, update
 		path = fileDir + ELEMENT_NAME + "/" + ELEMENT_NAME + ".zip"
 		debug(path)
         	CURRENT_JSON_FILE=fileDir + ELEMENT_NAME + "/" + ELEMENT_NAME + ".json"
-        	#sed -i 's/"userId": ".*",/"userId": "'${ATT_UID}'",/' ${CURRENT_JSON_FILE}
+        	#sed -i 's/"userId": ".*",/"userId": "'${USER_ID}'",/' ${CURRENT_JSON_FILE}
 
 		jsonFile = open(CURRENT_JSON_FILE)
 		

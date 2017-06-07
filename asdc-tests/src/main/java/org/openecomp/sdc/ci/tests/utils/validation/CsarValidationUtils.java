@@ -53,8 +53,10 @@ public class CsarValidationUtils {
 
 	public static String getCsarPayload(String csarName, String fileLocation) throws Exception {
 
-		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
-		assertTrue("Return response code different from 200", csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		RestResponseAsByteArray csar = ImportRestUtils.getCsar(csarName,
+				ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER));
+		assertTrue("Return response code different from 200",
+				csar.getHttpStatusCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		Map<String, byte[]> readZip = null;
 		byte[] data = csar.getResponse();
 		if (data != null && data.length > 0) {
@@ -86,7 +88,8 @@ public class CsarValidationUtils {
 
 	}
 
-	protected static List<TypeHeatMetaDefinition> getArtifactsByGroup(JSONObject jsonObjectImportStructure, List<TypeHeatMetaDefinition> listHeatMetaDefenition) {
+	protected static List<TypeHeatMetaDefinition> getArtifactsByGroup(JSONObject jsonObjectImportStructure,
+			List<TypeHeatMetaDefinition> listHeatMetaDefenition) {
 
 		@SuppressWarnings("unchecked")
 		Set<Object> typeSet = jsonObjectImportStructure.keySet();
@@ -103,7 +106,8 @@ public class CsarValidationUtils {
 		return listHeatMetaDefenition;
 	}
 
-	protected static List<GroupHeatMetaDefinition> fetchArtifactByGroup(JSONArray array, List<GroupHeatMetaDefinition> listGroupHeatMetaDefinition, Boolean openNewGroup) {
+	protected static List<GroupHeatMetaDefinition> fetchArtifactByGroup(JSONArray array,
+			List<GroupHeatMetaDefinition> listGroupHeatMetaDefinition, Boolean openNewGroup) {
 
 		GroupHeatMetaDefinition groupHeatMetaDefinition;
 
@@ -130,8 +134,10 @@ public class CsarValidationUtils {
 						PropertyHeatMetaDefinition propertyHeatMetaDefinition = new PropertyHeatMetaDefinition();
 						propertyHeatMetaDefinition.setName(groupKeyStr);
 						propertyHeatMetaDefinition.setValue((boolean) jsonObject.get(groupKeyStr));
-						if (!groupHeatMetaDefinition.getPropertyHeatMetaDefinition().equals(propertyHeatMetaDefinition)) {
-							groupHeatMetaDefinition.getPropertyHeatMetaDefinition().setValue((boolean) jsonObject.get(groupKeyStr));
+						if (!groupHeatMetaDefinition.getPropertyHeatMetaDefinition()
+								.equals(propertyHeatMetaDefinition)) {
+							groupHeatMetaDefinition.getPropertyHeatMetaDefinition()
+									.setValue((boolean) jsonObject.get(groupKeyStr));
 						}
 					}
 					if (groupKeyStr.equals("fileName") || groupKeyStr.equals("env")) {
@@ -141,7 +147,8 @@ public class CsarValidationUtils {
 						groupHeatMetaDefinition.setArtifactList(listArtifactNames);
 					} else {
 						if (!groupKeyStr.equals("isBase")) {
-							fetchArtifactByGroup((JSONArray) jsonObject.get(groupKeyStr), listGroupHeatMetaDefinition, false);
+							fetchArtifactByGroup((JSONArray) jsonObject.get(groupKeyStr), listGroupHeatMetaDefinition,
+									false);
 						}
 					}
 				}
@@ -150,12 +157,14 @@ public class CsarValidationUtils {
 		return listGroupHeatMetaDefinition;
 	}
 
-	private static Integer getArtifactCount(List<TypeHeatMetaDefinition> listHeatMetaDefenition, Boolean isEnvIncluded) {
+	private static Integer getArtifactCount(List<TypeHeatMetaDefinition> listHeatMetaDefenition,
+			Boolean isEnvIncluded) {
 		int count = 0;
 		List<String> uniqeArtifactList = new ArrayList<>();
 
 		for (TypeHeatMetaDefinition typeHeatMetaDefinition : listHeatMetaDefenition) {
-			for (GroupHeatMetaDefinition groupHeatMetaDefinition : typeHeatMetaDefinition.getGroupHeatMetaDefinition()) {
+			for (GroupHeatMetaDefinition groupHeatMetaDefinition : typeHeatMetaDefinition
+					.getGroupHeatMetaDefinition()) {
 				if (isEnvIncluded) {
 					count = count + groupHeatMetaDefinition.getArtifactList().size();
 				} else {
@@ -189,17 +198,27 @@ public class CsarValidationUtils {
 	public static void validateCsarVfArtifact(String csarUUID, Resource resource) throws Exception {
 
 		List<TypeHeatMetaDefinition> listTypeHeatMetaDefinition = getListTypeHeatMetaDefinition(csarUUID);
-		assertTrue("check group count, expected: " + getGroupCount(listTypeHeatMetaDefinition) + ", actual: " + resource.getGroups().size(), getGroupCount(listTypeHeatMetaDefinition) == resource.getGroups().size());
-		assertTrue("check artifact count, expected: " + getArtifactCount(listTypeHeatMetaDefinition, false) + ", actual: " + resource.getDeploymentArtifacts().size(),
+		assertTrue(
+				"check group count, expected: " + getGroupCount(listTypeHeatMetaDefinition) + ", actual: "
+						+ resource.getGroups().size(),
+				getGroupCount(listTypeHeatMetaDefinition) == resource.getGroups().size());
+		assertTrue(
+				"check artifact count, expected: " + getArtifactCount(listTypeHeatMetaDefinition, false) + ", actual: "
+						+ resource.getDeploymentArtifacts().size(),
 				getArtifactCount(listTypeHeatMetaDefinition, false) == resource.getDeploymentArtifacts().size());
 
 	}
 
-	public static void validateToscaDefinitonObjectVsResource(ToscaDefinition toscaDefinition, Resource resource) throws Exception {
+	public static void validateToscaDefinitonObjectVsResource(ToscaDefinition toscaDefinition, Resource resource)
+			throws Exception {
 
-		assertTrue("check resource instance count, expected: " + getResourceInstanceCount(toscaDefinition) + ", actual: " + resource.getComponentInstances().size(),
+		assertTrue(
+				"check resource instance count, expected: " + getResourceInstanceCount(toscaDefinition) + ", actual: "
+						+ resource.getComponentInstances().size(),
 				getResourceInstanceCount(toscaDefinition) == resource.getComponentInstances().size());
-		assertTrue("check resource instance relation count, expected: " + getResourceInstanceRelationCount(toscaDefinition) + ", actual: " + resource.getComponentInstancesRelations().size(),
+		assertTrue(
+				"check resource instance relation count, expected: " + getResourceInstanceRelationCount(toscaDefinition)
+						+ ", actual: " + resource.getComponentInstancesRelations().size(),
 				getResourceInstanceRelationCount(toscaDefinition) == resource.getComponentInstancesRelations().size());
 
 	}
@@ -211,9 +230,11 @@ public class CsarValidationUtils {
 
 	public static Integer getResourceInstanceRelationCount(ToscaDefinition toscaDefinition) {
 		int count = 0;
-		List<ToscaNodeTemplatesTopologyTemplateDefinition> toscaNodeTemplatesTopologyTemplateDefinition = toscaDefinition.getToscaTopologyTemplate().getToscaNodeTemplatesTopologyTemplateDefinition();
+		List<ToscaNodeTemplatesTopologyTemplateDefinition> toscaNodeTemplatesTopologyTemplateDefinition = toscaDefinition
+				.getToscaTopologyTemplate().getToscaNodeTemplatesTopologyTemplateDefinition();
 		for (int i = 0; i < toscaNodeTemplatesTopologyTemplateDefinition.size(); i++) {
-			List<ToscaRequirementsNodeTemplatesDefinition> requirements = toscaNodeTemplatesTopologyTemplateDefinition.get(i).getRequirements();
+			List<ToscaRequirementsNodeTemplatesDefinition> requirements = toscaNodeTemplatesTopologyTemplateDefinition
+					.get(i).getRequirements();
 			if (requirements != null) {
 				for (ToscaRequirementsNodeTemplatesDefinition requirement : requirements) {
 					if (requirement.getNode() != null) {
@@ -234,7 +255,10 @@ public class CsarValidationUtils {
 			assertTrue("group description is null", groupDefinition.getDescription() != null);
 			assertTrue("InvariantUUID is null", groupDefinition.getInvariantUUID() != null);
 			// groupDefinition.getMembers();
-			assertTrue("name format mismatch, expected: " + groupNameBuilder(resource) + "[0-9], actual: " + groupDefinition.getName(), groupDefinition.getName().contains(groupNameBuilder(resource)));
+			assertTrue(
+					"name format mismatch, expected: " + groupNameBuilder(resource) + "[0-9], actual: "
+							+ groupDefinition.getName(),
+					groupDefinition.getName().contains(groupNameBuilder(resource)));
 			// groupDefinition.getProperties();
 			// groupDefinition.getPropertyValueCounter();
 			assertTrue(groupDefinition.getType().equals(getGroupType()));

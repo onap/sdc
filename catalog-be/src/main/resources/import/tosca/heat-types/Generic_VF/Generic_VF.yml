@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.abstract.nodes.VF: 
+    derived_from: tosca.nodes.Root
+    properties:
+      nf_function:
+        type: string       
+      nf_role: 
+        type: string       
+      nf_naming_code:
+        type: string
+      nf_type:
+        type: string 
+      nf_naming:
+        type: org.openecomp.datatypes.Naming
+        Default: true
+      availability_zone_max_count: 
+        type: integer     
+        default: 1 
+        constraints:
+        - valid_values: [0,1,2]
+      min_instances:
+        type: integer 
+      max_instances:
+        type: integer 
+
+    

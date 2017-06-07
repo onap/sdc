@@ -51,6 +51,8 @@ import org.openecomp.sdc.ci.tests.datatypes.ComponentReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ImportReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.PropertyReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceAssetStructure;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceExternalReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
@@ -69,8 +71,12 @@ import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+import com.google.common.base.CaseFormat;
+
 public class ElementFactory {
 
+	private static final String JH0003 = "jh0003";
+	private static final String CI_RES = "ciRes";
 	private static String DEFAULT_ARTIFACT_LABEL = "artifact1";
 	private static final String RESOURCE_INSTANCE_POS_X = "20";
 	private static final String RESOURCE_INSTANCE_POS_Y = "20";
@@ -79,48 +85,48 @@ public class ElementFactory {
 	// *** RESOURCE ***
 
 	public static ResourceReqDetails getDefaultResource() {
-		return getDefaultResource("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003");
+		return getDefaultResource(CI_RES, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, JH0003);
 	}
 
 	public static ResourceReqDetails getDefaultResource(ResourceCategoryEnum category) {
-		return getDefaultResource("ciRes", NormativeTypesEnum.ROOT, category, "jh0003");
+		return getDefaultResource(CI_RES, NormativeTypesEnum.ROOT, category, JH0003);
 	}
 
 	public static ResourceReqDetails getDefaultResource(String contactId) {
-		return getDefaultResource("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, contactId);
+		return getDefaultResource(CI_RES, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, contactId);
 	}
 
 	public static ResourceReqDetails getDefaultResource(User modifier) {
-		return getDefaultResource("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, modifier.getUserId());
+		return getDefaultResource(CI_RES, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, modifier.getUserId());
 	}
 
 	public static ResourceReqDetails getDefaultResource(NormativeTypesEnum derivedFrom, ResourceCategoryEnum category) {
-		return getDefaultResource("ciRes", derivedFrom, category, "jh0003");
+		return getDefaultResource(CI_RES, derivedFrom, category, JH0003);
 	}
 
 	public static ResourceReqDetails getDefaultResource(NormativeTypesEnum derivedFrom) {
-		return getDefaultResource("ciRes", derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003");
+		return getDefaultResource(CI_RES, derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, JH0003);
 	}
 
 	public static ResourceReqDetails getDefaultResource(String resourceName, NormativeTypesEnum derivedFrom) {
-		return getDefaultResource(resourceName, derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003");
+		return getDefaultResource(resourceName, derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, JH0003);
 	}
 
 	public static ResourceReqDetails getDefaultResource(NormativeTypesEnum derivedFrom, String contactId) {
-		return getDefaultResource("ciRes", derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, contactId);
+		return getDefaultResource(CI_RES, derivedFrom, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, contactId);
 	}
 
 	// New
 	public static ResourceReqDetails getDefaultResourceByType(ResourceTypeEnum ResourceType, String resourceName) {
-		return getDefaultResourceByType(resourceName, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, "jh0003", ResourceType.toString());
+		return getDefaultResourceByType(resourceName, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, JH0003, ResourceType.toString());
 	}
 
 	public static ResourceReqDetails getDefaultResourceByType(ResourceTypeEnum ResourceType, User user) {
-		return getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, user.getUserId(), ResourceType.toString());
+		return getDefaultResourceByType(CI_RES, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, user.getUserId(), ResourceType.toString());
 	}
 
 	public static ResourceReqDetails getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum resourceType, NormativeTypesEnum normativeTypes, ResourceCategoryEnum resourceCategory, User user) {
-		return getDefaultResourceByType("ciRes", normativeTypes, resourceCategory, user.getUserId(), resourceType.toString());
+		return getDefaultResourceByType(CI_RES, normativeTypes, resourceCategory, user.getUserId(), resourceType.toString());
 	}
 
 	public static PropertyReqDetails getDefaultMapProperty(PropertyTypeEnum innerType) {
@@ -139,7 +145,7 @@ public class ElementFactory {
 
 		ArrayList<String> derivedFrom = new ArrayList<String>();
 		derivedFrom.add(derived.normativeName);
-		String vendorName = "ATT (Tosca)";
+		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon);
@@ -150,7 +156,7 @@ public class ElementFactory {
 	}
 
 	public static ResourceReqDetails getDefaultResourceByTypeNormTypeAndCatregory(ResourceTypeEnum resourceType, Resource normativeTypes, ResourceCategoryEnum resourceCategory, User user) {
-		return getDefaultResource("ciRes" + resourceType, normativeTypes, resourceCategory, user.getUserId());
+		return getDefaultResource(CI_RES + resourceType, normativeTypes, resourceCategory, user.getUserId());
 	}
 
 	public static ResourceReqDetails getDefaultResource(String resourceName, Resource derived, ResourceCategoryEnum category, String contactId) {
@@ -161,7 +167,7 @@ public class ElementFactory {
 
 		ArrayList<String> derivedFrom = new ArrayList<String>();
 		derivedFrom.add(derived.getToscaResourceName());
-		String vendorName = "ATT (Tosca)";
+		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon);
@@ -186,11 +192,25 @@ public class ElementFactory {
 			derivedFrom = new ArrayList<String>();
 			derivedFrom.add(derived.normativeName);
 		}
-		String vendorName = "ATT (Tosca)";
+		String vendorName = "ATT Tosca";
 		String vendorRelease = "1.0.0.wd03";
 		String icon = "defaulticon";
 		ResourceReqDetails resourceDetails = new ResourceReqDetails(resourceName, description, resourceTags, null, derivedFrom, vendorName, vendorRelease, contactId, icon, resourceType.toString());
 		resourceDetails.addCategoryChain(category.getCategory(), category.getSubCategory());
+		return resourceDetails;
+	}
+	
+	public static ResourceExternalReqDetails getDefaultResourceByType(String resourceName, ResourceCategoryEnum category, String contactId, String resourceType) {
+		resourceName = (resourceName + resourceType + generateUUIDforSufix());
+		String description = "Represents a generic software component that can be managed and run by a Compute Node Type.";
+		ArrayList<String> resourceTags = new ArrayList<String>();
+		resourceTags.add(resourceName);
+		String vendorName = "ATT Tosca";
+		String vendorRelease = "1.0.0.wd03";
+		String icon = "defaulticon";
+		ResourceExternalReqDetails resourceDetails = new ResourceExternalReqDetails(resourceName, description, resourceTags, 
+				vendorName, vendorRelease, contactId, icon,
+				resourceType.toString(), category.getCategory(), category.getSubCategory());
 		return resourceDetails;
 	}
 
@@ -205,7 +225,7 @@ public class ElementFactory {
 			derivedFrom = new ArrayList<String>();
 			derivedFrom.add(derived.normativeName);
 		}
-		String vendorName = "ATT (Tosca)";
+		String vendorName = "SDC Tosca";
 		String vendorRelease = "1.0.0.wd03";
 		String icon = "defaulticon";
 		ImportReqDetails resourceDetails = new ImportReqDetails(resourceName, description, resourceTags, derivedFrom, vendorName, vendorRelease, contactId, icon);
@@ -217,18 +237,18 @@ public class ElementFactory {
 	public static ImportReqDetails getDefaultImportResource(ResourceReqDetails resourceReqDetails) {
 		ImportReqDetails importReqDetails = new ImportReqDetails(resourceReqDetails.getName(), resourceReqDetails.getDescription(), resourceReqDetails.getTags(), resourceReqDetails.getDerivedFrom(), resourceReqDetails.getVendorName(),
 				resourceReqDetails.getVendorRelease(), resourceReqDetails.getContactId(), resourceReqDetails.getIcon());
-		importReqDetails.setPayloadName("myCompute.yaml");
+		importReqDetails.setPayloadName("ciMyCompute.yaml");
 		importReqDetails.setCategories(resourceReqDetails.getCategories());
 		importReqDetails.setPayloadData(
 				"dG9zY2FfZGVmaW5pdGlvbnNfdmVyc2lvbjogdG9zY2Ffc2ltcGxlX3lhbWxfMV8wXzANCm5vZGVfdHlwZXM6IA0KICBvcmcub3BlbmVjb21wLnJlc291cmNlLk15Q29tcHV0ZToNCiAgICBkZXJpdmVkX2Zyb206IHRvc2NhLm5vZGVzLlJvb3QNCiAgICBhdHRyaWJ1dGVzOg0KICAgICAgcHJpdmF0ZV9hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIHB1YmxpY19hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICB0eXBlOiBtYXANCiAgICAgICAgZW50cnlfc2NoZW1hOg0KICAgICAgICAgIHR5cGU6IHRvc2NhLmRhdGF0eXBlcy5uZXR3b3JrLk5ldHdvcmtJbmZvDQogICAgICBwb3J0czoNCiAgICAgICAgdHlwZTogbWFwDQogICAgICAgIGVudHJ5X3NjaGVtYToNCiAgICAgICAgICB0eXBlOiB0b3NjYS5kYXRhdHlwZXMubmV0d29yay5Qb3J0SW5mbw0KICAgIHJlcXVpcmVtZW50czoNCiAgICAgIC0gbG9jYWxfc3RvcmFnZTogDQogICAgICAgICAgY2FwYWJpbGl0eTogdG9zY2EuY2FwYWJpbGl0aWVzLkF0dGFjaG1lbnQNCiAgICAgICAgICBub2RlOiB0b3NjYS5ub2Rlcy5CbG9ja1N0b3JhZ2UNCiAgICAgICAgICByZWxhdGlvbnNoaXA6IHRvc2NhLnJlbGF0aW9uc2hpcHMuQXR0YWNoZXNUbw0KICAgICAgICAgIG9jY3VycmVuY2VzOiBbMCwgVU5CT1VOREVEXSAgDQogICAgY2FwYWJpbGl0aWVzOg0KICAgICAgaG9zdDogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5Db250YWluZXINCiAgICAgICAgdmFsaWRfc291cmNlX3R5cGVzOiBbdG9zY2Eubm9kZXMuU29mdHdhcmVDb21wb25lbnRdIA0KICAgICAgZW5kcG9pbnQgOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuRW5kcG9pbnQuQWRtaW4gDQogICAgICBvczogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5PcGVyYXRpbmdTeXN0ZW0NCiAgICAgIHNjYWxhYmxlOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuU2NhbGFibGUNCiAgICAgIGJpbmRpbmc6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5uZXR3b3JrLkJpbmRhYmxlDQo=");
-		return importReqDetails;
+				return importReqDetails;
 	}
 
 	public static ImportReqDetails getDefaultImportResource() {
 		ResourceReqDetails resourceReqDetails = getDefaultResource();
 		ImportReqDetails importReqDetails = new ImportReqDetails(resourceReqDetails.getName(), resourceReqDetails.getDescription(), resourceReqDetails.getTags(), resourceReqDetails.getDerivedFrom(), resourceReqDetails.getVendorName(),
 				resourceReqDetails.getVendorRelease(), resourceReqDetails.getContactId(), resourceReqDetails.getIcon());
-		importReqDetails.setPayloadName("myCompute.yaml");
+		importReqDetails.setPayloadName("ciMyCompute.yaml");
 		importReqDetails.setCategories(resourceReqDetails.getCategories());
 		importReqDetails.setPayloadData(
 				"dG9zY2FfZGVmaW5pdGlvbnNfdmVyc2lvbjogdG9zY2Ffc2ltcGxlX3lhbWxfMV8wXzANCm5vZGVfdHlwZXM6IA0KICBvcmcub3BlbmVjb21wLnJlc291cmNlLk15Q29tcHV0ZToNCiAgICBkZXJpdmVkX2Zyb206IHRvc2NhLm5vZGVzLlJvb3QNCiAgICBhdHRyaWJ1dGVzOg0KICAgICAgcHJpdmF0ZV9hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIHB1YmxpY19hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICB0eXBlOiBtYXANCiAgICAgICAgZW50cnlfc2NoZW1hOg0KICAgICAgICAgIHR5cGU6IHRvc2NhLmRhdGF0eXBlcy5uZXR3b3JrLk5ldHdvcmtJbmZvDQogICAgICBwb3J0czoNCiAgICAgICAgdHlwZTogbWFwDQogICAgICAgIGVudHJ5X3NjaGVtYToNCiAgICAgICAgICB0eXBlOiB0b3NjYS5kYXRhdHlwZXMubmV0d29yay5Qb3J0SW5mbw0KICAgIHJlcXVpcmVtZW50czoNCiAgICAgIC0gbG9jYWxfc3RvcmFnZTogDQogICAgICAgICAgY2FwYWJpbGl0eTogdG9zY2EuY2FwYWJpbGl0aWVzLkF0dGFjaG1lbnQNCiAgICAgICAgICBub2RlOiB0b3NjYS5ub2Rlcy5CbG9ja1N0b3JhZ2UNCiAgICAgICAgICByZWxhdGlvbnNoaXA6IHRvc2NhLnJlbGF0aW9uc2hpcHMuQXR0YWNoZXNUbw0KICAgICAgICAgIG9jY3VycmVuY2VzOiBbMCwgVU5CT1VOREVEXSAgDQogICAgY2FwYWJpbGl0aWVzOg0KICAgICAgaG9zdDogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5Db250YWluZXINCiAgICAgICAgdmFsaWRfc291cmNlX3R5cGVzOiBbdG9zY2Eubm9kZXMuU29mdHdhcmVDb21wb25lbnRdIA0KICAgICAgZW5kcG9pbnQgOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuRW5kcG9pbnQuQWRtaW4gDQogICAgICBvczogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5PcGVyYXRpbmdTeXN0ZW0NCiAgICAgIHNjYWxhYmxlOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuU2NhbGFibGUNCiAgICAgIGJpbmRpbmc6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5uZXR3b3JrLkJpbmRhYmxlDQo=");
@@ -239,7 +259,7 @@ public class ElementFactory {
 		ResourceReqDetails resourceReqDetails = getDefaultResourceByType(ResourceTypeEnum.VFC, name);
 		ImportReqDetails importReqDetails = new ImportReqDetails(resourceReqDetails.getName(), resourceReqDetails.getDescription(), resourceReqDetails.getTags(), resourceReqDetails.getDerivedFrom(), resourceReqDetails.getVendorName(),
 				resourceReqDetails.getVendorRelease(), resourceReqDetails.getContactId(), resourceReqDetails.getIcon());
-		importReqDetails.setPayloadName("myCompute.yaml");
+		importReqDetails.setPayloadName("ciMyCompute.yaml");
 		importReqDetails.setCategories(resourceReqDetails.getCategories());
 		importReqDetails.setPayloadData(
 				"dG9zY2FfZGVmaW5pdGlvbnNfdmVyc2lvbjogdG9zY2Ffc2ltcGxlX3lhbWxfMV8wXzANCm5vZGVfdHlwZXM6IA0KICBvcmcub3BlbmVjb21wLnJlc291cmNlLk15Q29tcHV0ZToNCiAgICBkZXJpdmVkX2Zyb206IHRvc2NhLm5vZGVzLlJvb3QNCiAgICBhdHRyaWJ1dGVzOg0KICAgICAgcHJpdmF0ZV9hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIHB1YmxpY19hZGRyZXNzOg0KICAgICAgICB0eXBlOiBzdHJpbmcNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICB0eXBlOiBtYXANCiAgICAgICAgZW50cnlfc2NoZW1hOg0KICAgICAgICAgIHR5cGU6IHRvc2NhLmRhdGF0eXBlcy5uZXR3b3JrLk5ldHdvcmtJbmZvDQogICAgICBwb3J0czoNCiAgICAgICAgdHlwZTogbWFwDQogICAgICAgIGVudHJ5X3NjaGVtYToNCiAgICAgICAgICB0eXBlOiB0b3NjYS5kYXRhdHlwZXMubmV0d29yay5Qb3J0SW5mbw0KICAgIHJlcXVpcmVtZW50czoNCiAgICAgIC0gbG9jYWxfc3RvcmFnZTogDQogICAgICAgICAgY2FwYWJpbGl0eTogdG9zY2EuY2FwYWJpbGl0aWVzLkF0dGFjaG1lbnQNCiAgICAgICAgICBub2RlOiB0b3NjYS5ub2Rlcy5CbG9ja1N0b3JhZ2UNCiAgICAgICAgICByZWxhdGlvbnNoaXA6IHRvc2NhLnJlbGF0aW9uc2hpcHMuQXR0YWNoZXNUbw0KICAgICAgICAgIG9jY3VycmVuY2VzOiBbMCwgVU5CT1VOREVEXSAgDQogICAgY2FwYWJpbGl0aWVzOg0KICAgICAgaG9zdDogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5Db250YWluZXINCiAgICAgICAgdmFsaWRfc291cmNlX3R5cGVzOiBbdG9zY2Eubm9kZXMuU29mdHdhcmVDb21wb25lbnRdIA0KICAgICAgZW5kcG9pbnQgOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuRW5kcG9pbnQuQWRtaW4gDQogICAgICBvczogDQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5PcGVyYXRpbmdTeXN0ZW0NCiAgICAgIHNjYWxhYmxlOg0KICAgICAgICB0eXBlOiB0b3NjYS5jYXBhYmlsaXRpZXMuU2NhbGFibGUNCiAgICAgIGJpbmRpbmc6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5uZXR3b3JrLkJpbmRhYmxlDQo=");
@@ -423,16 +443,17 @@ public class ElementFactory {
 	}
 
 	public static ArtifactReqDetails getDefaultDeploymentArtifactForType(String artifactType) throws IOException, Exception {
-		return getArtifactByType(DEFAULT_ARTIFACT_LABEL, artifactType, true);
+		return getArtifactByType(DEFAULT_ARTIFACT_LABEL, artifactType, true, false);
 	}
 
 	public static ArtifactReqDetails getArtifactByType(ArtifactTypeEnum artifactLabel, ArtifactTypeEnum artifactType, Boolean deploymentTrue) throws IOException, Exception {
-		return getArtifactByType(DEFAULT_ARTIFACT_LABEL, artifactType.toString(), deploymentTrue);
+		return getArtifactByType(DEFAULT_ARTIFACT_LABEL, artifactType.toString(), deploymentTrue, false);
 
 	}
 
-	public static ArtifactReqDetails getArtifactByType(String artifactLabel, String artifactType, Boolean deploymentTrue) throws IOException, Exception {
+	public static ArtifactReqDetails getArtifactByType(String artifactLabel, String artifactType, Boolean deploymentTrue, Boolean updatedPayload) throws IOException, Exception {
 		String artifactName;
+		String updatedPayloadData =null;
 		String payloadData = null;
 		Integer timeout = null;
 		String url = "";
@@ -449,6 +470,7 @@ public class ElementFactory {
 		 * Missing file type: DCAE_JSON
 		 */
 		switch (artifactTypeEnum) {
+		case DCAE_INVENTORY_TOSCA:
 		case DCAE_EVENT:
 		case APPC_CONFIG:
 		case DCAE_DOC:
@@ -458,18 +480,17 @@ public class ElementFactory {
 		case HEAT_VOL: {
 			artifactName = generateUUIDforSufix() + artifactType + "_install_apache2.yaml";
 			payloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDEzLTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTENCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIGltYWdlX25hbWVfMjoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogSW1hZ2UgTmFtZQ0KICAgIGRlc2NyaXB0aW9uOiBTQ09JTUFHRSBTcGVjaWZ5IGFuIGltYWdlIG5hbWUgZm9yIGluc3RhbmNlMg0KICAgIGRlZmF1bHQ6IGNpcnJvcy0wLjMuMS14ODZfNjQNCiAgbmV0d29ya19pZDoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogTmV0d29yayBJRA0KICAgIGRlc2NyaXB0aW9uOiBTQ09ORVRXT1JLIE5ldHdvcmsgdG8gYmUgdXNlZCBmb3IgdGhlIGNvbXB1dGUgaW5zdGFuY2UNCiAgICBoaWRkZW46IHRydWUNCiAgICBjb25zdHJhaW50czoNCiAgICAgIC0gbGVuZ3RoOiB7IG1pbjogNiwgbWF4OiA4IH0NCiAgICAgICAgZGVzY3JpcHRpb246IFBhc3N3b3JkIGxlbmd0aCBtdXN0IGJlIGJldHdlZW4gNiBhbmQgOCBjaGFyYWN0ZXJzLg0KICAgICAgLSByYW5nZTogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBSYW5nZSBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3ZhbHVlczoNCiAgICAgICAgLSBtMS5zbWFsbA0KICAgICAgICAtIG0xLm1lZGl1bQ0KICAgICAgICAtIG0xLmxhcmdlDQogICAgICAgIGRlc2NyaXB0aW9uOiBBbGxvd2VkIHZhbHVlcyBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbYS16QS1aMC05XSsiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IGNvbnNpc3Qgb2YgY2hhcmFjdGVycyBhbmQgbnVtYmVycyBvbmx5Lg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbQS1aXStbYS16QS1aMC05XSoiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IHN0YXJ0IHdpdGggYW4gdXBwZXJjYXNlIGNoYXJhY3Rlci4NCiAgICAgIC0gY3VzdG9tX2NvbnN0cmFpbnQ6IG5vdmEua2V5cGFpcg0KICAgICAgICBkZXNjcmlwdGlvbjogQ3VzdG9tIGRlc2NyaXB0aW9uDQoNCnJlc291cmNlczoNCiAgbXlfaW5zdGFuY2UxOg0KICAgIHR5cGU6IE9TOjpOb3ZhOjpTZXJ2ZXINCiAgICBwcm9wZXJ0aWVzOg0KICAgICAgaW1hZ2U6IHsgZ2V0X3BhcmFtOiBpbWFnZV9uYW1lXzEgfQ0KICAgICAgZmxhdm9yOiBtMS5zbWFsbA0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9DQogIG15X2luc3RhbmNlMjoNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8yIH0NCiAgICAgIGZsYXZvcjogbTEudGlueQ0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9";
+			updatedPayloadData = "dG9zY2FfZGVmaW5pdGlvbnNfdmVyc2lvbjogdG9zY2Ffc2ltcGxlX3lhbWxfMV8wXzANCg0Kbm9kZV90eXBlczoNCiAgY29tLmF0dC5kMi5yZXNvdXJjZS5jcC5DUDoNCiAgICBkZXJpdmVkX2Zyb206IHRvc2NhLm5vZGVzLm5ldHdvcmsuUG9ydA0KICAgIHByb3BlcnRpZXM6DQogICAgICBpc190YWdnZWQ6DQogICAgICAgIHR5cGU6IGJvb2xlYW4NCiAgICAgICAgcmVxdWlyZWQ6IGZhbHNlDQogICAgICAgIGRlZmF1bHQ6IGZhbHNlDQogICAgICAgIGRlc2NyaXB0aW9uOiANCg0KICAgIHJlcXVpcmVtZW50czoNCiAgICAgIC0gdmlydHVhbExpbms6DQogICAgICAgICAgY2FwYWJpbGl0eTogdG9zY2EuY2FwYWJpbGl0aWVzLm5ldHdvcmsuTGlua2FibGUNCiAgICAgICAgICByZWxhdGlvbnNoaXA6IHRvc2NhLnJlbGF0aW9uc2hpcHMubmV0d29yay5MaW5rc1RvDQogICAgICAtIHZpcnR1YWxCaW5kaW5nOg0KICAgICAgICAgIGNhcGFiaWxpdHk6IHRvc2NhLmNhcGFiaWxpdGllcy5uZXR3b3JrLkJpbmRhYmxlDQogICAgICAgICAgcmVsYXRpb25zaGlwOiB0b3NjYS5yZWxhdGlvbnNoaXBzLm5ldHdvcmsuQmluZHNUbw0KICAgIGNhcGFiaWxpdGllczoNCiAgICAgIGF0dGFjaG1lbnQ6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5BdHRhY2htZW50DQogICAgICAgIG9jY3VycmVuY2VzOg0KICAgICAgICAtIDENCiAgICAgICAgLSBVTkJPVU5ERUQNCiAgICAgICAgdHlwZTogdG9zY2EuY2FwYWJpbGl0aWVzLm5ldHdvcmsuQmluZGFibGUNCiAgICAgICAgb2NjdXJyZW5jZXM6DQogICAgICAgIC0gMQ0KICAgICAgICAtIFVOQk9VTkRFRA0KICAgICAgdmlydHVhbF9saW5rYWJsZToNCiAgICAgICAgdHlwZTogY29tLmF0dC5kMi5jYXBhYmlsaXRpZXMuTWV0cmljDQogICAgICBlbmRfcG9pbnQ6DQogICAgICAgIHR5cGU6IHRvc2NhLmNhcGFiaWxpdGllcy5FbmRwb2ludCAgICAgICA=";
 			timeout = 60;
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
 		}
-		case DCAE_INVENTORY_TOSCA:
-		case DCAE_INVENTORY_JSON:
 		case DCAE_INVENTORY_POLICY:
-		case DCAE_INVENTORY_DOC:
 		case DCAE_INVENTORY_BLUEPRINT:
 		case DCAE_INVENTORY_EVENT: {
 			artifactName = getDcaeArtifactName(artifactTypeEnum, artifactType);
 			payloadData = "will be override later";
+			updatedPayloadData = "override";
 			timeout = 60;
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
@@ -477,16 +498,20 @@ public class ElementFactory {
 		case MURANO_PKG: {
 			artifactName = artifactType + "org.openstack.Rally.zip";
 			payloadData = "ODM4MTRjNzkxZjcwYTlkMjk4ZGQ2ODE4MThmNjg0N2Y=";
+			updatedPayloadData = "ODM4MTRjNzkxZjcwYTlkMjk4ZGQ2ODE4MThmMTAwN2Y=";
 			break;
 		}
 		case DCAE_POLICY: {
 			artifactName = artifactType + "dcae_policy.emf";
 			payloadData = "will be override later";
+			updatedPayloadData = "override";
 			break;
 		}
+		case DCAE_INVENTORY_JSON:
 		case DCAE_JSON: {
 			artifactName = artifactType + "dcae_policy.json";
-			payloadData = "e30=";
+			payloadData = "ew0KICAiYXJ0aWZhY3RzIjogImRmc2FmIiwNCiAgIm5vcm1hbGl6ZWROYW1lIjogImNpc2VydmljZTBiYzY5ODk2OTQ4ZiIsDQogICJzeXN0ZW1OYW1lIjogIkNpc2VydmljZTBiYzY5ODk2OTQ4ZiIsDQogICJpbnZhcmlhbnRVVUlEIjogIjEzZmJkNzI3LWRjNzUtNDU1OS1iNzEyLWUwMjc5YmY4YTg2MSIsDQogICJhdHRDb250YWN0IjogImNzMDAwOCIsDQogICJuYW1lIjogImNpU2VydmljZTBiYzY5ODk2OTQ4ZiINCn0=";
+			updatedPayloadData = "ew0KICAiYXJ0aWZhY3RzIjogIjEyMzQzIiwNCiAgIm5vcm1hbGl6ZWROYW1lIjogIjU0MzUzNCIsDQogICJzeXN0ZW1OYW1lIjogIkNpc2VydmljZTBiYzY5ODk2OTQ4ZiIsDQogICJpbnZhcmlhbnRVVUlEIjogIjEzZmJkNzI3LWRjNzUtNDU1OS1iNzEyLWUwMjc5YmY4YTg2MSIsDQogICJhdHRDb250YWN0IjogImNzMDAwOCIsDQogICJuYW1lIjogImNpU2VydmljZTBiYzY5ODk2OTQ4ZiINCn0=";
 			break;
 		}
 		case PUPPET:
@@ -495,6 +520,7 @@ public class ElementFactory {
 		case YANG: {
 			artifactName = generateUUIDforSufix() + artifactType + "yangXml.xml";
 			payloadData = "PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8ZGF0YT4NCiAgPHNwb3J0cz4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+TGlvbmVsIEFuZHJlcyBNZXNzaTwvbmFtZT4NCiAgICAgIDxiaXJ0aGRheT4xOTg3LTA2LTI0VDAwOjAwOjAwLTAwOjAwPC9iaXJ0aGRheT4NCiAgICA8L3BlcnNvbj4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+Q3Jpc3RpYW5vIFJvbmFsZG88L25hbWU+DQogICAgICA8YmlydGhkYXk+MTk4NS0wMi0wNVQwMDowMDowMC0wMDowMDwvYmlydGhkYXk+DQogICAgPC9wZXJzb24+DQogICAgPHRlYW0+DQogICAgICA8bmFtZT5GQyBCYXJjZWxvbmE8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5MaW9uZWwgQW5kcmVzIE1lc3NpPC9uYW1lPg0KICAgICAgICA8c2Vhc29uPkNoYW1waW9ucyBMZWFndWUgMjAxNC0yMDE1PC9zZWFzb24+DQogICAgICAgIDxudW1iZXI+MTA8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40Mzwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICAgIDx0ZWFtPg0KICAgICAgPG5hbWU+UmVhbCBNYWRyaWQ8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5DcmlzdGlhbm8gUm9uYWxkbzwvbmFtZT4NCiAgICAgICAgPHNlYXNvbj5DaGFtcGlvbnMgTGVhZ3VlIDIwMTQtMjAxNTwvc2Vhc29uPg0KICAgICAgICA8bnVtYmVyPjc8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40ODwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICA8L3Nwb3J0cz4NCg0KPC9kYXRhPg==";
+			updatedPayloadData = "PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8ZGF0YT4NCiAgPHNwb3J0cz4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+TGlvbmVsIEFuZHJlcyBNZXNzaTwvbmFtZT4NCiAgICAgIDxiaXJ0aGRheT4xOTkwLTA2LTI0VDAwOjAwOjAwLTAwOjExPC9iaXJ0aGRheT4NCiAgICA8L3BlcnNvbj4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+Q3Jpc3RpYW5vIFJvbmFsZG88L25hbWU+DQogICAgICA8YmlydGhkYXk+MTk4NS0wMi0wNVQwMDowMDowMC0wMDowMDwvYmlydGhkYXk+DQogICAgPC9wZXJzb24+DQogICAgPHRlYW0+DQogICAgICA8bmFtZT5GQyBCYXJjZWxvbmE8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5MaW9uZWwgQW5kcmVzIE1lc3NpPC9uYW1lPg0KICAgICAgICA8c2Vhc29uPkNoYW1waW9ucyBMZWFndWUgMjAxNC0yMDE1PC9zZWFzb24+DQogICAgICAgIDxudW1iZXI+MTA8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40Mzwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICAgIDx0ZWFtPg0KICAgICAgPG5hbWU+UmVhbCBNYWRyaWQ8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5DcmlzdGlhbm8gUm9uYWxkbzwvbmFtZT4NCiAgICAgICAgPHNlYXNvbj5DaGFtcGlvbnMgTGVhZ3VlIDIwMTQtMjAxNTwvc2Vhc29uPg0KICAgICAgICA8bnVtYmVyPjc8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40ODwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICA8L3Nwb3J0cz4NCg0KPC9kYXRhPg==";
 			timeout = 15;
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
@@ -507,13 +533,19 @@ public class ElementFactory {
 		case YANG_XML: {
 			artifactName = generateUUIDforSufix() + artifactType + "yangXml.xml";
 			payloadData = "PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8ZGF0YT4NCiAgPHNwb3J0cz4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+TGlvbmVsIEFuZHJlcyBNZXNzaTwvbmFtZT4NCiAgICAgIDxiaXJ0aGRheT4xOTg3LTA2LTI0VDAwOjAwOjAwLTAwOjAwPC9iaXJ0aGRheT4NCiAgICA8L3BlcnNvbj4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+Q3Jpc3RpYW5vIFJvbmFsZG88L25hbWU+DQogICAgICA8YmlydGhkYXk+MTk4NS0wMi0wNVQwMDowMDowMC0wMDowMDwvYmlydGhkYXk+DQogICAgPC9wZXJzb24+DQogICAgPHRlYW0+DQogICAgICA8bmFtZT5GQyBCYXJjZWxvbmE8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5MaW9uZWwgQW5kcmVzIE1lc3NpPC9uYW1lPg0KICAgICAgICA8c2Vhc29uPkNoYW1waW9ucyBMZWFndWUgMjAxNC0yMDE1PC9zZWFzb24+DQogICAgICAgIDxudW1iZXI+MTA8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40Mzwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICAgIDx0ZWFtPg0KICAgICAgPG5hbWU+UmVhbCBNYWRyaWQ8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5DcmlzdGlhbm8gUm9uYWxkbzwvbmFtZT4NCiAgICAgICAgPHNlYXNvbj5DaGFtcGlvbnMgTGVhZ3VlIDIwMTQtMjAxNTwvc2Vhc29uPg0KICAgICAgICA8bnVtYmVyPjc8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40ODwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICA8L3Nwb3J0cz4NCg0KPC9kYXRhPg==";
+			updatedPayloadData = "PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8ZGF0YT4NCiAgPHNwb3J0cz4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+TGlvbmVsIEFuZHJlcyBNZXNzaTwvbmFtZT4NCiAgICAgIDxiaXJ0aGRheT4xOTkwLTA2LTI0VDAwOjAwOjAwLTAwOjExPC9iaXJ0aGRheT4NCiAgICA8L3BlcnNvbj4NCiAgICA8cGVyc29uPg0KICAgICAgPG5hbWU+Q3Jpc3RpYW5vIFJvbmFsZG88L25hbWU+DQogICAgICA8YmlydGhkYXk+MTk4NS0wMi0wNVQwMDowMDowMC0wMDowMDwvYmlydGhkYXk+DQogICAgPC9wZXJzb24+DQogICAgPHRlYW0+DQogICAgICA8bmFtZT5GQyBCYXJjZWxvbmE8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5MaW9uZWwgQW5kcmVzIE1lc3NpPC9uYW1lPg0KICAgICAgICA8c2Vhc29uPkNoYW1waW9ucyBMZWFndWUgMjAxNC0yMDE1PC9zZWFzb24+DQogICAgICAgIDxudW1iZXI+MTA8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40Mzwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICAgIDx0ZWFtPg0KICAgICAgPG5hbWU+UmVhbCBNYWRyaWQ8L25hbWU+DQogICAgICA8cGxheWVyPg0KICAgICAgICA8bmFtZT5DcmlzdGlhbm8gUm9uYWxkbzwvbmFtZT4NCiAgICAgICAgPHNlYXNvbj5DaGFtcGlvbnMgTGVhZ3VlIDIwMTQtMjAxNTwvc2Vhc29uPg0KICAgICAgICA8bnVtYmVyPjc8L251bWJlcj4NCiAgICAgICAgPHNjb3Jlcz40ODwvc2NvcmVzPg0KICAgICAgPC9wbGF5ZXI+DQogICAgPC90ZWFtPg0KICA8L3Nwb3J0cz4NCg0KPC9kYXRhPg==";
 			timeout = 0;
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
 		}
+		case SNMP_POLL:
+		case SNMP_TRAP:
+		case DCAE_INVENTORY_DOC:
+		case GUIDE:
 		case OTHER: {
 			artifactName = generateUUIDforSufix() + artifactType + "other.pdf";
 			payloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDEzLTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTENCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIGltYWdlX25hbWVfMjoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogSW1hZ2UgTmFtZQ0KICAgIGRlc2NyaXB0aW9uOiBTQ09JTUFHRSBTcGVjaWZ5IGFuIGltYWdlIG5hbWUgZm9yIGluc3RhbmNlMg0KICAgIGRlZmF1bHQ6IGNpcnJvcy0wLjMuMS14ODZfNjQNCiAgbmV0d29ya19pZDoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogTmV0d29yayBJRA0KICAgIGRlc2NyaXB0aW9uOiBTQ09ORVRXT1JLIE5ldHdvcmsgdG8gYmUgdXNlZCBmb3IgdGhlIGNvbXB1dGUgaW5zdGFuY2UNCiAgICBoaWRkZW46IHRydWUNCiAgICBjb25zdHJhaW50czoNCiAgICAgIC0gbGVuZ3RoOiB7IG1pbjogNiwgbWF4OiA4IH0NCiAgICAgICAgZGVzY3JpcHRpb246IFBhc3N3b3JkIGxlbmd0aCBtdXN0IGJlIGJldHdlZW4gNiBhbmQgOCBjaGFyYWN0ZXJzLg0KICAgICAgLSByYW5nZTogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBSYW5nZSBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3ZhbHVlczoNCiAgICAgICAgLSBtMS5zbWFsbA0KICAgICAgICAtIG0xLm1lZGl1bQ0KICAgICAgICAtIG0xLmxhcmdlDQogICAgICAgIGRlc2NyaXB0aW9uOiBBbGxvd2VkIHZhbHVlcyBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbYS16QS1aMC05XSsiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IGNvbnNpc3Qgb2YgY2hhcmFjdGVycyBhbmQgbnVtYmVycyBvbmx5Lg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbQS1aXStbYS16QS1aMC05XSoiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IHN0YXJ0IHdpdGggYW4gdXBwZXJjYXNlIGNoYXJhY3Rlci4NCiAgICAgIC0gY3VzdG9tX2NvbnN0cmFpbnQ6IG5vdmEua2V5cGFpcg0KICAgICAgICBkZXNjcmlwdGlvbjogQ3VzdG9tIGRlc2NyaXB0aW9uDQoNCnJlc291cmNlczoNCiAgbXlfaW5zdGFuY2UxOg0KICAgIHR5cGU6IE9TOjpOb3ZhOjpTZXJ2ZXINCiAgICBwcm9wZXJ0aWVzOg0KICAgICAgaW1hZ2U6IHsgZ2V0X3BhcmFtOiBpbWFnZV9uYW1lXzEgfQ0KICAgICAgZmxhdm9yOiBtMS5zbWFsbA0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9DQogIG15X2luc3RhbmNlMjoNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8yIH0NCiAgICAgIGZsYXZvcjogbTEudGlueQ0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9";
+			updatedPayloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDE2LTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGRzYWRzYWRzYWUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFkc2FkYXN3Z2UgbmFtZSBmb3IgaW5zdGFuY2UxDQogICAgZGVmYXVsdDogY2lycm9zLTAuMy4xLXg4Nl82NA0KICBpbWFnZV9uYW1lXzI6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTINCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIG5ldHdvcmtfaWQ6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IE5ldHdvcmsgSUQNCiAgICBkZXNjcmlwdGlvbjogU0NPTkVUV09SSyBOZXR3b3JrIHRvIGJlIHVzZWQgZm9yIHRoZSBjb21wdXRlIGluc3RhbmNlDQogICAgaGlkZGVuOiB0cnVlDQogICAgY29uc3RyYWludHM6DQogICAgICAtIGxlbmd0aDogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBsZW5ndGggbXVzdCBiZSBiZXR3ZWVuIDYgYW5kIDggY2hhcmFjdGVycy4NCiAgICAgIC0gcmFuZ2U6IHsgbWluOiA2LCBtYXg6IDggfQ0KICAgICAgICBkZXNjcmlwdGlvbjogUmFuZ2UgZGVzY3JpcHRpb24NCiAgICAgIC0gYWxsb3dlZF92YWx1ZXM6DQogICAgICAgIC0gbTEuc21hbGwNCiAgICAgICAgLSBtMS5tZWRpdW0NCiAgICAgICAgLSBtMS5sYXJnZQ0KICAgICAgICBkZXNjcmlwdGlvbjogQWxsb3dlZCB2YWx1ZXMgZGVzY3JpcHRpb24NCiAgICAgIC0gYWxsb3dlZF9wYXR0ZXJuOiAiW2EtekEtWjAtOV0rIg0KICAgICAgICBkZXNjcmlwdGlvbjogUGFzc3dvcmQgbXVzdCBjb25zaXN0IG9mIGNoYXJhY3RlcnMgYW5kIG51bWJlcnMgb25seS4NCiAgICAgIC0gYWxsb3dlZF9wYXR0ZXJuOiAiW0EtWl0rW2EtekEtWjAtOV0qIg0KICAgICAgICBkZXNjcmlwdGlvbjogUGFzc3dvcmQgbXVzdCBzdGFydCB3aXRoIGFuIHVwcGVyY2FzZSBjaGFyYWN0ZXIuDQogICAgICAtIGN1c3RvbV9jb25zdHJhaW50OiBub3ZhLmtleXBhaXINCiAgICAgICAgZGVzY3JpcHRpb246IEN1c3RvbSBkZXNjcmlwdGlvbg0KDQpyZXNvdXJjZXM6DQogIG15X2luc3RhbmNlMToNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8xIH0NCiAgICAgIGZsYXZvcjogbTEuc21hbGwNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICAtIG5ldHdvcmsgOiB7IGdldF9wYXJhbSA6IG5ldHdvcmtfaWQgfQ0KICBteV9pbnN0YW5jZTI6DQogICAgdHlwZTogT1M6Ok5vdmE6OlNlcnZlcg0KICAgIHByb3BlcnRpZXM6DQogICAgICBpbWFnZTogeyBnZXRfcGFyYW06IGltYWdlX25hbWVfMiB9DQogICAgICBmbGF2b3I6IG0xLnRpbnkNCiAgICAgIG5ldHdvcmtzOg0KICAgICAgICAtIG5ldHdvcmsgOiB7IGdldF9wYXJhbSA6IG5ldHdvcmtfaWQgfQ";
 			timeout = 0;
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
@@ -522,12 +554,21 @@ public class ElementFactory {
 		default: {// dummy
 			artifactName = generateUUIDforSufix() + "testArtifact.sh";
 			payloadData = "dGVzdA==";
+			updatedPayloadData = "YmVzYg==";
 			artifactLabel = normalizeArtifactLabel(artifactName);
 			break;
 		}
 		}
-
-		ArtifactReqDetails artifactDetails = new ArtifactReqDetails(artifactName, artifactType, artifactDescription, payloadData, artifactLabel);
+		artifactLabel = normalizeArtifactLabel("ci" + artifactName);
+		
+		ArtifactReqDetails artifactDetails = null;
+		
+		if (!updatedPayload){
+		artifactDetails = new ArtifactReqDetails(artifactName, artifactType, artifactDescription, payloadData, artifactLabel);
+		}
+		else artifactDetails = new ArtifactReqDetails(artifactName, artifactType, artifactDescription,
+				updatedPayloadData, artifactLabel);
+		
 		artifactDetails.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT.getType());
 		artifactDetails.setUrl(url);
 		artifactDetails.setTimeout(timeout);
@@ -687,6 +728,43 @@ public class ElementFactory {
 		return expectedExternalArtifactAudit;
 
 	}
+	
+	public static ExpectedExternalAudit getDefaultExternalArtifactAuditSuccess(AssetTypeEnum assetType, AuditingActionEnum action, ArtifactDefinition artifactDefinition, Component component) {
+
+		 //ExpectedExternalAudit expectedExternalArtifactAudit = new ExpectedExternalAudit();
+		
+		ExpectedExternalAudit expectedExternalArtifactAudit = getDefaultExternalAuditObject(assetType, action, null);
+		expectedExternalArtifactAudit.setMODIFIER(AuditValidationUtils.getModifierString(artifactDefinition.getUpdaterFullName(), artifactDefinition.getUserIdLastUpdater()));
+		expectedExternalArtifactAudit.setPREV_ARTIFACT_UUID("");
+		expectedExternalArtifactAudit.setCURR_ARTIFACT_UUID(artifactDefinition.getArtifactUUID());
+		expectedExternalArtifactAudit.setARTIFACT_DATA(AuditValidationUtils.buildArtifactDataAudit(artifactDefinition));
+		expectedExternalArtifactAudit.setRESOURCE_URL(expectedExternalArtifactAudit.getRESOURCE_URL() + "/" + component.getUUID() + "/artifacts");
+		expectedExternalArtifactAudit.setRESOURCE_NAME(component.getName());
+		expectedExternalArtifactAudit.setRESOURCE_TYPE(component.getComponentType().getValue());
+		return expectedExternalArtifactAudit;
+		
+	}
+	
+	public static ExpectedResourceAuditJavaObject getDefaultCreateResourceExternalAPI(String resourceName) {
+
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ExpectedResourceAuditJavaObject();
+		expectedResourceAuditJavaObject.setAction(AuditingActionEnum.CREATE_RESOURCE_BY_API.getName());
+		expectedResourceAuditJavaObject.setResourceName(resourceName);
+		expectedResourceAuditJavaObject.setResourceType("Resource");
+		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
+		expectedResourceAuditJavaObject.setRESOURCE_URL("/asdc/v1/catalog/resources");
+		expectedResourceAuditJavaObject.setMODIFIER("");
+		expectedResourceAuditJavaObject.setPrevVersion("");
+		expectedResourceAuditJavaObject.setCurrVersion("0.1");
+		expectedResourceAuditJavaObject.setPrevState("");
+		expectedResourceAuditJavaObject.setCurrState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.toString());
+		expectedResourceAuditJavaObject.setStatus("201");
+		expectedResourceAuditJavaObject.setDesc("OK");
+		
+		return expectedResourceAuditJavaObject;
+		
+		
+	}
 
 	public static ExpectedExternalAudit getDefaultExternalArtifactAuditSuccess(AssetTypeEnum assetType, AuditingActionEnum action, ArtifactDefinition artifactDefinition, String componentUUID, String resourceInstanceName) {
 
@@ -768,26 +846,26 @@ public class ElementFactory {
 	// Category/Subcategory/Group
 	public static CategoryDefinition getDefaultCategory() {
 		CategoryDefinition productCategoryDefinition = new CategoryDefinition();
-		productCategoryDefinition.setName("Category1");
+		productCategoryDefinition.setName("CiCateg" + generateUUIDforSufix());
 		return productCategoryDefinition;
 	}
 
 	public static SubCategoryDefinition getDefaultSubCategory() {
 		SubCategoryDefinition productSubCategoryDefinition = new SubCategoryDefinition();
-		productSubCategoryDefinition.setName("SubCategory1");
+		productSubCategoryDefinition.setName("CiSubCateg" + generateUUIDforSufix());
 		return productSubCategoryDefinition;
 	}
 
 	public static GroupingDefinition getDefaultGroup() {
 		GroupingDefinition productGroupDefinition = new GroupingDefinition();
-		productGroupDefinition.setName("Grouping1");
+		productGroupDefinition.setName("CiGrouping1" + generateUUIDforSufix());
 		return productGroupDefinition;
 	}
 
 	// Product
 
 	public static ProductReqDetails getDefaultProduct() {
-		return createDefaultProductReqDetails("Product1", null);
+		return createDefaultProductReqDetails("CiProduct1", null);
 	}
 
 	public static ProductReqDetails getDefaultProduct(String name) {
@@ -822,10 +900,7 @@ public class ElementFactory {
 		product.setProjectCode("12345");
 		product.setIcon("myIcon");
 		ArrayList<String> contacts = new ArrayList<String>();
-		// contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST1).getUserId());
-		// contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_STRATEGIST2).getUserId());
 		contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER1).getUserId());
-		// contacts.add(ElementFactory.getDefaultUser(UserRoleEnum.PRODUCT_MANAGER2).getUserId());
 		product.setContacts(contacts);
 		product.setCategories(categories);
 		String fullName = "This is my full name: " + name;

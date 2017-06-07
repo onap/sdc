@@ -1,0 +1,66 @@
+<div class="dynamic-property-row"
+    [ngClass]="{'selected': selectedPropertyId === property.uniqueId }"
+    [class.with-top-border]="property.isChildOfListOrMap"
+    (click)="onClickPropertyRow(property, $event)">
+    <!-- LEFT CELL - for all NON-PropFEModel properties except for MAP)-->
+    <ng-container *ngIf="!isPropertyFEModel">
+        <div class="table-cell" *ngIf="canBeDeclared"> <!-- simple children of complex type -->
+            <checkbox  [label]="property.name" [(checked)]="property.isSelected" [disabled]="property.isDisabled ||property.isDeclared" (checkedChange)="checkProperty.emit(property.propertiesName)"
+            ></checkbox>
+        </div>
+        <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
+    </ng-container>
+    <!-- RIGHT CELL -->
+    <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared">
+        <div class="table-cell" [class.full-width]="isPropertyFEModel || property.isChildOfListOrMap">
+            <dynamic-element class="value-input"
+                pattern="validationUtils.getValidationPattern(property.type)"
+                [(value)]="property.value"
+                [type]="property.type"
+                [name]="property.name"
+                (valueChange)="propValueChanged(property);"
+                > <!--[disabled]="property.isDisabled || property.isDeclared" -->
+            </dynamic-element>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!property.isDeclared"> <!--  other cases need to fail if isDeclared, in which case we need to use full width value above instead) -->
+
+        <ng-container *ngIf="propType == derivedPropertyTypes.COMPLEX && !isPropertyFEModel">
+            <div class="table-cell complex" [class.full-width]="property.isChildOfListOrMap">
+                <span>{{property.type | contentAfterLastDot }}</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP">
+            <div class="table-cell map-entry"><input type="text" /></div>
+            <div class="table-cell" *ngIf="property.schema.property.isSimpleType">
+                <input type="text" [(ngModel)]="property.value" /></div>
+            <div class="table-cell" *ngIf="!property.schema.property.isSimpleType">
+                <span>{{property.schema.property.type | contentAfterLastDot }}</span>
+            </div>
+        </ng-container>
+
+        <!-- ICONS: add, delete, and expand -->
+        <div *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="table-cell"><span class="sprite-new add-item-icon" (click)="addRows()"></span></div>
+        <span *ngIf="property.isChildOfListOrMap" class="delete-span sprite-new delete-item-icon" (click)="deleteItem.emit(property.propertiesName)"></span>
+        <span *ngIf="propType == derivedPropertyTypes.COMPLEX || (property.isChildOfListOrMap && propChildren)" (click)="expandChildById(propPath)" class="expand-icon" [class.expanded]="propPath == expandedChildId">V</span>
+    </ng-container>
+
+</div>
+<!-- Now, recurse into children -->
+<ng-container *ngIf="propChildren && !property.isDeclared">
+    <ng-container *ngFor="let prop of propChildren | filterChildProperties: expandedChildId; trackBy:prop?.propertiesName">
+        <dynamic-property
+            [selectedPropertyId]="selectedPropertyId"
+            [canBeDeclared]="childrenCanBeDeclared"
+            [property]="prop"
+            [expandedChildId]="expandedChildId"
+            [propChildren]=""
+            (valueChanged)="propValueChanged(prop);"
+            (expandChild)="expandChildById($event)"
+            (deleteItem)="deleteListOrMapItem($event)"
+            (clickOnPropertyRow)="onClickPropertyRow($event)"
+            (checkProperty)="checkedChange($event)"
+            >
+        </dynamic-property>
+    </ng-container>
+</ng-container>

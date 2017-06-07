@@ -31,10 +31,8 @@ import org.openecomp.sdc.be.model.cache.jobs.*;
 import org.openecomp.sdc.be.model.cache.workers.CacheWorker;
 import org.openecomp.sdc.be.model.cache.workers.IWorker;
 import org.openecomp.sdc.be.model.cache.workers.SyncWorker;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
-import org.openecomp.sdc.be.model.operations.api.IProductOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
 import org.openecomp.sdc.be.workers.Manager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,18 +45,12 @@ import java.util.LinkedList;
 import java.util.concurrent.*;
 
 /**
- * Created by mlando on 9/5/2016. the class is responsible for handling all
- * cache update operations asynchronously including sync between the graph and
- * cache and on demand update requests
+ * Created by mlando on 9/5/2016. the class is responsible for handling all cache update operations asynchronously including sync between the graph and cache and on demand update requests
  */
 @Component("cacheManger-operation")
 public class CacheMangerOperation implements ICacheMangerOperation {
 	@Autowired
-	private IResourceOperation iResourceOperation;
-	@Autowired
-	private IServiceOperation iServiceOperation;
-	@Autowired
-	private IProductOperation iProductOperation;
+	private ToscaOperationFacade toscaOperationFacade;
 	@Autowired
 	private TitanGenericDao titanGenericDao;
 	@Autowired
@@ -76,21 +68,17 @@ public class CacheMangerOperation implements ICacheMangerOperation {
 	 * constructor
 	 */
 	public CacheMangerOperation() {
-		// daoInfo = new DaoInfo(iResourceOperation, iServiceOperation,
-		// iProductOperation, componentCache);
 	}
 
 	/**
-	 * the method checks in the cache is enabled, if it is, it initializes all
-	 * the workers according to the configuration values.
+	 * the method checks in the cache is enabled, if it is, it initializes all the workers according to the configuration values.
 	 */
 	@PostConstruct
 	public void init() {
 
-		daoInfo = new DaoInfo(iResourceOperation, iServiceOperation, iProductOperation, componentCache);
+		daoInfo = new DaoInfo(toscaOperationFacade, componentCache);
 
-		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager()
-				.getConfiguration().getApplicationL2Cache();
+		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL2Cache();
 		if (applicationL2CacheConfig != null && applicationL2CacheConfig.isEnabled()) {
 			Integer numberOfWorkers = applicationL2CacheConfig.getQueue().getNumberOfCacheWorkers();
 			this.waitOnShutDownInMinutes = applicationL2CacheConfig.getQueue().getWaitOnShutDownInMinutes();
@@ -122,9 +110,7 @@ public class CacheMangerOperation implements ICacheMangerOperation {
 	}
 
 	/**
-	 * the method creates a job to check it the given component is in the cach
-	 * and if so is it valid if the value in the cache is not valid it will be
-	 * updated.
+	 * the method creates a job to check it the given component is in the cach and if so is it valid if the value in the cache is not valid it will be updated.
 	 * 
 	 * @param componentId
 	 *            the uid of the component we want to update
@@ -135,24 +121,21 @@ public class CacheMangerOperation implements ICacheMangerOperation {
 	 */
 	@Override
 	public void updateComponentInCache(String componentId, long timestamp, NodeTypeEnum nodeTypeEnum) {
-		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager()
-				.getConfiguration().getApplicationL2Cache();
+		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL2Cache();
 		if (applicationL2CacheConfig != null && applicationL2CacheConfig.isEnabled()) {
 			this.jobQueue.add(new CheckAndUpdateJob(daoInfo, componentId, nodeTypeEnum, timestamp));
 		}
 	}
 
 	public void overideComponentInCache(String componentId, long timestamp, NodeTypeEnum nodeTypeEnum) {
-		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager()
-				.getConfiguration().getApplicationL2Cache();
+		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL2Cache();
 		if (applicationL2CacheConfig != null && applicationL2CacheConfig.isEnabled()) {
 			this.jobQueue.add(new OverrideJob(daoInfo, componentId, nodeTypeEnum, timestamp));
 		}
 	}
 
 	public void deleteComponentInCache(String componentId, long timestamp, NodeTypeEnum nodeTypeEnum) {
-		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager()
-				.getConfiguration().getApplicationL2Cache();
+		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL2Cache();
 		if (applicationL2CacheConfig != null && applicationL2CacheConfig.isEnabled()) {
 			this.jobQueue.add(new DeleteJob(daoInfo, componentId, nodeTypeEnum, timestamp));
 		}
@@ -168,17 +151,14 @@ public class CacheMangerOperation implements ICacheMangerOperation {
 	 */
 	@Override
 	public void storeComponentInCache(org.openecomp.sdc.be.model.Component component, NodeTypeEnum nodeTypeEnum) {
-		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager()
-				.getConfiguration().getApplicationL2Cache();
+		Configuration.ApplicationL2CacheConfig applicationL2CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL2Cache();
 		if (applicationL2CacheConfig != null && applicationL2CacheConfig.isEnabled()) {
 			this.jobQueue.add(new StoreJob(daoInfo, component, nodeTypeEnum));
 		}
 	}
 
 	/**
-	 * the method shutdown's all the worker's. the method has a pre set of how
-	 * long it will wait for the workers to shutdown. the pre defined value is
-	 * taken from the configuration.
+	 * the method shutdown's all the worker's. the method has a pre set of how long it will wait for the workers to shutdown. the pre defined value is taken from the configuration.
 	 */
 	@PreDestroy
 	public void shutDown() {

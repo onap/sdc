@@ -48,11 +48,6 @@ public class Neo4jGraphBatchBuilder {
 
 		List<GraphNode> nodes = graphNeighbourTable.getNodes();
 		if (nodes != null && nodes.size() > 0) {
-			// String resourceId = findResourceDataIdFromNodes(nodes);
-			// if (resourceId == null || resourceId.isEmpty()) {
-			// logger.error("Cannot find resource id in the graph table");
-			// return Either.right(ActionStatus.INVALID_CONTENT);
-			// }
 			List<NodeRelation> directedEdges = graphNeighbourTable.getDirectedEdges();
 
 			List<RelationEndPoint> relationEndPoints = new ArrayList<RelationEndPoint>(nodes.size());
@@ -72,7 +67,7 @@ public class Neo4jGraphBatchBuilder {
 			if (directedEdges != null) {
 				for (NodeRelation nodeRelation : directedEdges) {
 					GraphRelation relation = buildNeo4jRelation(relationEndPoints, nodeRelation);
-					logger.debug("Goint to add relation {} to catch builder.", relation);
+					logger.debug("Goint to add relation {} to batch builder.", relation);
 					batchBuilder.add(relation);
 				}
 			}

@@ -14,7 +14,7 @@ RUN curl -L https://omnitruck.chef.io/install.sh | bash
 RUN cp ${JETTY_HOME}/resources/log4j.properties ${JETTY_BASE}/resources/log4j.properties
 
 ADD onboarding*.war                    ${JETTY_BASE}/webapps/
-ADD catalog-fe-__SDC-RELEASE__.war     ${JETTY_BASE}/webapps/
+ADD catalog-fe-*.war     ${JETTY_BASE}/webapps/
 RUN chown -R jetty:jetty               ${JETTY_BASE}/webapps
 
 COPY startup.sh /root/

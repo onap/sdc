@@ -170,7 +170,7 @@ public class CrudArt extends ComponentBaseTest {
 		heatArtifactDetails.setPayload(payload);
 
 		RestResponse addInformationalArtifactToResource = ArtifactRestUtils.addInformationalArtifactToResource(heatArtifactDetails, sdncDesignerDetails1, vfResourceDetails.getUniqueId());
-		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
 		// certified resource
@@ -313,7 +313,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "dcae inv tosca label";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.DCAE_INVENTORY_TOSCA;
 		RestResponse addArtifactToResourceInstanceResponse = addArtifactToResourceInstanceAndCertify(artifactFileName, artifactName, artifactLabel, artifactType);
-		logger.debug("addInformationalArtifactToResource response: {}", addArtifactToResourceInstanceResponse.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addArtifactToResourceInstanceResponse.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addArtifactToResourceInstanceResponse.getErrorCode(), addArtifactToResourceInstanceResponse.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
 		// Get the artifact from VF instance and change his description.
@@ -333,7 +333,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = heatSuccessFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		ArtifactReqDetails heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
@@ -352,7 +352,7 @@ public class CrudArt extends ComponentBaseTest {
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
 
 		// Add HEAT
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		ArtifactReqDetails heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
 		heatArtifactDetails.setPayload(payload);
@@ -589,17 +589,8 @@ public class CrudArt extends ComponentBaseTest {
 	// ---------------------------------Service
 	// success--------------------------------
 	@Test()
-	public void addAllTypesDepArtifactToService() throws Exception, Exception {
-
-		// String fileName = heatSuccessFile;
-		// List<String> listFileName =
-		// FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		// logger.debug("listFileName: {}", listFileName.toString());
-
-		// String payload = FileUtils.loadPayloadFile(listFileName, fileName,
-		// true);
+	public void addAllTypesDepArtifactToService() throws Exception {
 		ArtifactReqDetails otherArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.OTHER.getType());
-		// otherArtifactDetails.setPayload(payload);
 
 		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(otherArtifactDetails, sdncDesignerDetails1, serviceDetails.getUniqueId());
 		logger.debug("addInformationalArtifactToService response: {}", addInformationalArtifactToService.getResponseMessage());
@@ -618,7 +609,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = muranoFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		ArtifactReqDetails heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.MURANO_PKG.getType());
@@ -627,7 +618,7 @@ public class CrudArt extends ComponentBaseTest {
 		heatArtifactDetails.setArtifactLabel("Label");
 
 		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(heatArtifactDetails, sdncDesignerDetails1, serviceDetails.getUniqueId());
-		logger.debug("addInformationalArtifactToService response: {}", addInformationalArtifactToService.getResponseMessage());
+		logger.debug("addInformationalArtifactToService response:  {}", addInformationalArtifactToService.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToService.getErrorCode(), addInformationalArtifactToService.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
 	}
@@ -679,7 +670,7 @@ public class CrudArt extends ComponentBaseTest {
 		// update
 		heatArtifactDetails.setPayloadData(payload);
 		RestResponse updateInformationalArtifactToService = ArtifactRestUtils.updateInformationalArtifactOfServiceByMethod(heatArtifactDetails, serviceDetails.getUniqueId(), sdncDesignerDetails1, "POST");
-		logger.debug("updateInformationalArtifactToService response: {}", updateInformationalArtifactToService.getResponseMessage());
+		logger.debug("updateInformationalArtifactToService response:  {}", updateInformationalArtifactToService.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + updateInformationalArtifactToService.getErrorCode(), updateInformationalArtifactToService.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 
 	}
@@ -716,7 +707,7 @@ public class CrudArt extends ComponentBaseTest {
 		String filename1 = heatSuccessFile;
 		// String filename2 = heatSuccessMiniFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, filename1, true);
 
@@ -753,7 +744,7 @@ public class CrudArt extends ComponentBaseTest {
 		String filename1 = heatSuccessFile;
 		String filename2 = heatSuccessMiniFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, filename1, true);
 		heatTypeArtifactDetails.setPayload(payload);
@@ -782,7 +773,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = heatInvalidFormat;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		heatTypeArtifactDetails.setPayload(payload);
@@ -803,7 +794,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = yamlInvalidFormat;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		heatTypeArtifactDetails.setPayload(payload);
@@ -824,7 +815,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = yangFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 
@@ -847,7 +838,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = heatSuccessFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 		heatTypeArtifactDetails.setPayload(payload);
@@ -892,7 +883,7 @@ public class CrudArt extends ComponentBaseTest {
 		String fileName1 = heatSuccessFile;
 		String fileName2 = heatSuccessMiniFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName1, true);
 		ArtifactReqDetails heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.OTHER.getType());
@@ -925,7 +916,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = heatInvalidFormat;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 
@@ -943,13 +934,12 @@ public class CrudArt extends ComponentBaseTest {
 
 	}
 
-	// TODO Andrey Obsolete
 	@Test(enabled = false)
 	public void addHeatArtifactInvalidYamlFormatToService() throws Exception, Exception {
 
 		String fileName = yamlInvalidFormat;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 
@@ -957,7 +947,7 @@ public class CrudArt extends ComponentBaseTest {
 		heatArtifactDetails.setPayload(payload);
 
 		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(heatArtifactDetails, sdncDesignerDetails1, serviceDetails.getUniqueId());
-		logger.debug("addInformationalArtifactToService response: {}", addInformationalArtifactToService.getResponseMessage());
+		logger.debug("addInformationalArtifactToService response: {} ", addInformationalArtifactToService.getResponseMessage());
 
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.INVALID_YAML.name());
 		assertEquals("Check response code after adding artifact", errorInfo.getCode(), addInformationalArtifactToService.getErrorCode());
@@ -972,7 +962,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = muranoFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 
@@ -981,7 +971,7 @@ public class CrudArt extends ComponentBaseTest {
 		heatArtifactDetails.setArtifactName(fileName);
 
 		RestResponse addInformationalArtifactToService = ArtifactRestUtils.addInformationalArtifactToService(heatArtifactDetails, sdncDesignerDetails1, serviceDetails.getUniqueId());
-		logger.debug("addInformationalArtifactToService response: {}", addInformationalArtifactToService.getResponseMessage());
+		logger.debug("addInformationalArtifactToService response: {} ", addInformationalArtifactToService.getResponseMessage());
 
 		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.WRONG_ARTIFACT_FILE_EXTENSION.name());
 		assertEquals("Check response code after adding artifact", errorInfo.getCode(), addInformationalArtifactToService.getErrorCode());
@@ -1019,7 +1009,7 @@ public class CrudArt extends ComponentBaseTest {
 
 		String fileName = heatSuccessFile;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, fileName, true);
 
@@ -1063,7 +1053,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1083,7 +1073,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactLabel = "Label3";
 		artifactType = ArtifactTypeEnum.VENDOR_LICENSE;
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1094,7 +1084,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1105,7 +1095,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1116,7 +1106,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.APPC_CONFIG;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1128,12 +1118,61 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.APPC_CONFIG;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
 		ArtifactValidationUtils.validateArtifactsNumberInComponent(resource, ArtifactGroupTypeEnum.DEPLOYMENT, artifactType, 2);
+		
+		//MIB artifacts: SNMP_POLL, SNMP_TRAP
+		fileName = jsonFile;
+		artifactName = "artifact8.json";
+		artifactLabel = "Label8";
+		artifactType = ArtifactTypeEnum.SNMP_POLL;
 
+		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
+		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
+		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
+		ArtifactValidationUtils.validateArtifactsNumberInComponent(resource, ArtifactGroupTypeEnum.DEPLOYMENT, artifactType, 1);
+		
+		fileName = jsonFile;
+		artifactName = "artifact9.json";
+		artifactLabel = "Label9";
+		artifactType = ArtifactTypeEnum.SNMP_TRAP;
+
+		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
+		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
+		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
+		ArtifactValidationUtils.validateArtifactsNumberInComponent(resource, ArtifactGroupTypeEnum.DEPLOYMENT, artifactType, 1);
+
+		//MIB artifacts: SNMP_POLL, SNMP_TRAP
+		fileName = jsonFile;
+		artifactName = "artifact8.json";
+		artifactLabel = "Label8";
+		artifactType = ArtifactTypeEnum.SNMP_POLL;
+
+		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
+		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
+		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
+		ArtifactValidationUtils.validateArtifactsNumberInComponent(resource, ArtifactGroupTypeEnum.DEPLOYMENT, artifactType, 1);
+		
+		fileName = jsonFile;
+		artifactName = "artifact9.json";
+		artifactLabel = "Label9";
+		artifactType = ArtifactTypeEnum.SNMP_TRAP;
+
+		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
+		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
+		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
+		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
+		ArtifactValidationUtils.validateArtifactsNumberInComponent(resource, ArtifactGroupTypeEnum.DEPLOYMENT, artifactType, 1);
 	}
 
 	@Test
@@ -1145,7 +1184,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1156,7 +1195,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.VF_LICENSE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1167,7 +1206,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.VENDOR_LICENSE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1178,7 +1217,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1189,7 +1228,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1249,7 +1288,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label2";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VF_LICENSE;
 		RestResponse addDeploymentArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vlResourceDetails);
-		logger.debug("addInformationalArtifactToResource response:  {}", addDeploymentArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response: {}", addDeploymentArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addDeploymentArtifactToResource.getErrorCode(), addDeploymentArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vlResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1272,7 +1311,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label2";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VF_LICENSE;
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is  BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1281,7 +1320,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactLabel = "Label3";
 		artifactType = ArtifactTypeEnum.VENDOR_LICENSE;
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1451,7 +1490,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label1";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1462,7 +1501,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactLabel = "Label2";
 		artifactType = ArtifactTypeEnum.APPC_CONFIG;
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1473,7 +1512,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1484,7 +1523,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1516,7 +1555,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label7";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.APPC_CONFIG;
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code 400, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_INVALID_CONTENT);
 		ArrayList<String> variables = new ArrayList<>();
 		variables.add(artifactName);
@@ -1535,7 +1574,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label7";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.APPC_CONFIG;
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, cpResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code 400, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_INVALID_CONTENT);
 		ArrayList<String> variables = new ArrayList<>();
 		variables.add(artifactName);
@@ -1554,7 +1593,7 @@ public class CrudArt extends ComponentBaseTest {
 		String artifactLabel = "Label7";
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.APPC_CONFIG;
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vlResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code 400, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_INVALID_CONTENT);
 		ArrayList<String> variables = new ArrayList<>();
 		variables.add(artifactName);
@@ -1585,7 +1624,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.APPC_CONFIG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is 400, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_INVALID_CONTENT);
 
 		ArrayList<String> variables = new ArrayList<>();
@@ -1607,7 +1646,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, cpResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(cpResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1618,7 +1657,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, cpResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(cpResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1629,7 +1668,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, cpResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(cpResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1645,7 +1684,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vlResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vlResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1656,7 +1695,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vlResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vlResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1667,7 +1706,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vlResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vlResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1683,7 +1722,7 @@ public class CrudArt extends ComponentBaseTest {
 		ArtifactTypeEnum artifactType = ArtifactTypeEnum.VNF_CATALOG;
 
 		RestResponse addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		RestResponse getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		Resource resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1694,7 +1733,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_INVENTORY_PROFILE;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1705,7 +1744,7 @@ public class CrudArt extends ComponentBaseTest {
 		artifactType = ArtifactTypeEnum.MODEL_QUERY_SPEC;
 
 		addInformationalArtifactToResource = addDeploymentArtifactToResource(fileName, artifactName, artifactLabel, artifactType, vfcResourceDetails);
-		logger.debug("addInformationalArtifactToResource response: {}", addInformationalArtifactToResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response:  {}", addInformationalArtifactToResource.getResponseMessage());
 		assertTrue("response code is not BaseRestUtils.STATUS_CODE_SUCCESS, returned :" + addInformationalArtifactToResource.getErrorCode(), addInformationalArtifactToResource.getErrorCode() == BaseRestUtils.STATUS_CODE_SUCCESS);
 		getResource = ResourceRestUtils.getResource(vfcResourceDetails.getUniqueId());
 		resource = ResponseParser.parseToObjectUsingMapper(getResource.getResponse(), Resource.class);
@@ -1736,7 +1775,7 @@ public class CrudArt extends ComponentBaseTest {
 
 	private ArtifactReqDetails buildArtifactReqDetailsObject(String filesPath, String artifactFileName, String artifactName, String artifactLabel, ArtifactTypeEnum artifactType) throws IOException, Exception {
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(filesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}", listFileName);
 
 		String payload = FileUtils.loadPayloadFile(listFileName, artifactFileName, true);
 

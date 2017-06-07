@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
@@ -48,6 +47,7 @@ import org.openecomp.sdc.common.util.GsonFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
@@ -65,13 +65,20 @@ public final class ImportUtils {
 	private static CustomResolver customResolver = new CustomResolver();
 
 	private static class CustomResolver extends Resolver {
+	     @Override
 		protected void addImplicitResolvers() {
-			// avoid implicit resolvers
+	    	// avoid implicit resolvers for strings that can be interpreted as boolean values
+	         addImplicitResolver(Tag.STR, EMPTY, "");
+	         addImplicitResolver(Tag.STR, NULL, null);
+	         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
+	         addImplicitResolver(Tag.NULL, EMPTY, null);
+	         addImplicitResolver(Tag.YAML, YAML, "!&*");	
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Either<List<HeatParameterDefinition>, ResultStatusEnum> getHeatParamsWithoutImplicitTypes(String heatDecodedPayload, String artifactType) {
-		Map<String, Object> heatData = (Map<String, Object>) new Yaml(new Constructor(), new Representer(), new DumperOptions(), customResolver).load(heatDecodedPayload);
+		Map<String, Object> heatData = (Map<String, Object>) new Yaml(new Constructor(), new Representer(), new DumperOptions(), customResolver).load(heatDecodedPayload);	
 		return getHeatParameters(heatData, artifactType);
 	}
 
@@ -82,6 +89,7 @@ public final class ImportUtils {
 		public static final String VENDOR_NAME = "ATT (Tosca)";
 		public static final String VENDOR_RELEASE = "1.0.0.wd03";
 		public static final LifecycleStateEnum NORMATIVE_TYPE_LIFE_CYCLE = LifecycleStateEnum.CERTIFIED;
+		public static final LifecycleStateEnum NORMATIVE_TYPE_LIFE_CYCLE_NOT_CERTIFIED_CHECKOUT = LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT;
 		public static final boolean NORMATIVE_TYPE_HIGHEST_VERSION = true;
 		// public static final String ABSTRACT_CATEGORY = "Generic/Abstract";
 		public static final String ABSTRACT_CATEGORY_NAME = "Generic";
@@ -92,7 +100,6 @@ public final class ImportUtils {
 		public static final List<String> TOSCA_DEFINITION_VERSIONS = Arrays.asList(new String[] { "tosca_simple_yaml_1_0_0", "tosca_simple_profile_for_nfv_1_0_0", "tosca_simple_yaml_1_0" });
 		public static final List<String> TOSCA_YML_CSAR_VALID_SUFFIX = Arrays.asList(new String[] { ".yml", ".yaml", ".csar" });
 		public static final String UI_JSON_PAYLOAD_NAME = "payloadName";
-		public static final String ABSTRACT_NODE = "abstact";
 	}
 
 	public enum ResultStatusEnum {
@@ -172,10 +179,7 @@ public final class ImportUtils {
 		else if (elementType == ToscaElementTypeEnum.ALL) {
 			if (elementValue != null) {
 				returnedList.add(String.valueOf(elementValue));
-			} else {
-				returnedList.add(elementValue);
-			}
-
+			} 
 		}
 	}
 
@@ -622,7 +626,7 @@ public final class ImportUtils {
 			Iterator<Entry<String, Object>> propertiesNameValue = jsonProperties.entrySet().iterator();
 			while (propertiesNameValue.hasNext()) {
 				Entry<String, Object> propertyNameValue = propertiesNameValue.next();
-				if (propertyNameValue.getValue() instanceof Map) {
+				if (propertyNameValue.getValue() instanceof Map || propertyNameValue.getValue() instanceof List) {
 					if (!artifactType.equals(ArtifactTypeEnum.HEAT_ENV.getType())) {
 						@SuppressWarnings("unchecked")
 						Either<HeatParameterDefinition, ResultStatusEnum> propertyStatus = createModuleHeatParameter((Map<String, Object>) propertyNameValue.getValue());
@@ -695,7 +699,7 @@ public final class ImportUtils {
 			return null;
 		}
 		ToscaPropertyType validType = ToscaPropertyType.isValidType(type);
-		if (validType == null || validType.equals(ToscaPropertyType.MAP) || validType.equals(ToscaPropertyType.LIST)) {
+		if (validType == null ||  validType.equals(ToscaPropertyType.JSON) ||validType.equals(ToscaPropertyType.MAP) || validType.equals(ToscaPropertyType.LIST)) {
 			return gson.toJson(value);
 		}
 		return value.toString();

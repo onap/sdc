@@ -1,0 +1,12 @@
+{
+    "propertyValue": {
+        "max": 2500,
+        "min": 0
+    },
+
+    "validationPatterns": {
+        "string": "^[\\sa-zA-Z0-9+-]+$",
+        "comment": "^[\\u0000-\\u00BF]*$",
+        "integer": "^(([-+]?\\d+)|([-+]?0x[0-9a-fA-F]+))$"
+    }
+}

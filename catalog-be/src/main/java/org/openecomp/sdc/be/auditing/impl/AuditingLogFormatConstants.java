@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.auditing.impl;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 
 public interface AuditingLogFormatConstants {
@@ -148,7 +151,8 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION,
 		AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
 		AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE,
-		AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE		
+		AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE
+
 	};
 	
 	static AuditingFieldsKeysEnum[] USER_ACCESS_TEMPLATE_ARRAY = {
@@ -234,9 +238,6 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_DESC
 	};
 	static AuditingFieldsKeysEnum[] EXTERNAL_DOWNLOAD_ARTIFACT_ARRAY = {
-		AuditingFieldsKeysEnum.AUDIT_ACTION,
-		AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
-		AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID,
 		AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
@@ -254,5 +255,46 @@ public interface AuditingLogFormatConstants {
 		AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA,
 		AuditingFieldsKeysEnum.AUDIT_STATUS,
 		AuditingFieldsKeysEnum.AUDIT_DESC
+	};
+	
+	static AuditingFieldsKeysEnum[] EXTERNAL_CRUD_API_ARRAY = {
+			AuditingFieldsKeysEnum.AUDIT_ACTION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
+			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, 
+			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
+			AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
+			
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE,
+			
+			AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID,
+			AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID,
+			AuditingFieldsKeysEnum.AUDIT_STATUS,
+			AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID,
+			AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID,
+			AuditingFieldsKeysEnum.AUDIT_DESC	
+	};
+	
+	static AuditingFieldsKeysEnum[] EXTERNAL_LYFECYCLE_API_ARRAY = {
+			AuditingFieldsKeysEnum.AUDIT_ACTION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE,
+			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, 
+			AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL,
+			AuditingFieldsKeysEnum.AUDIT_MODIFIER_NAME,
+			AuditingFieldsKeysEnum.AUDIT_MODIFIER_UID,
+			
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_VERSION,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE,
+			AuditingFieldsKeysEnum.AUDIT_RESOURCE_CURR_STATE,
+			
+			AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID,
+			AuditingFieldsKeysEnum.AUDIT_INVARIANT_UUID,
+			AuditingFieldsKeysEnum.AUDIT_STATUS,
+			AuditingFieldsKeysEnum.AUDIT_DESC	
 	};
 }

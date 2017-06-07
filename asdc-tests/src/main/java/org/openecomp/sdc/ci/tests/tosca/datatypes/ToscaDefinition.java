@@ -22,6 +22,11 @@ package org.openecomp.sdc.ci.tests.tosca.datatypes;
 
 import java.util.List;
 
+/**
+ * First Level tosca yml structure
+ * @author al714h
+ *
+ */
 public class ToscaDefinition {
 
 	String toscaDefinitionVersion;

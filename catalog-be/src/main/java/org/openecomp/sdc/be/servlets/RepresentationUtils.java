@@ -85,6 +85,7 @@ public class RepresentationUtils {
 
 		JsonObject jsonElement = new JsonObject();
 		ArtifactDefinition resourceInfo = null;
+		
 		try {
 			Gson gson = new Gson();
 			jsonElement = gson.fromJson(content, jsonElement.getClass());
@@ -109,13 +110,19 @@ public class RepresentationUtils {
 				payload = artifactPayload.getAsString();
 			}
 			jsonElement.remove(Constants.ARTIFACT_PAYLOAD_DATA);
-			resourceInfo = gson.fromJson(jsonElement, clazz);
+			String json = gson.toJson(jsonElement);
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(Feature.FAIL_ON_EMPTY_BEANS, false);
+			mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+			
+			resourceInfo = mapper.readValue(json, clazz);
 			resourceInfo.setPayloadData(payload);
 
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeArtifactInformationInvalidError, "Artifact Upload / Update");
 			BeEcompErrorManager.getInstance().logBeArtifactInformationInvalidError("Artifact Upload / Update");
-			log.debug("Failed to convert the content {} to object. {}", content.substring(0, Math.min(50, content.length())), e);
+			log.debug("Failed to convert the content {} to object.", content.substring(0, Math.min(50, content.length())), e);
 		}
 
 		return resourceInfo;

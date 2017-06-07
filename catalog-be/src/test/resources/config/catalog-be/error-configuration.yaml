@@ -42,6 +42,12 @@ errors:
         message: "Error: Not authorized to use the API.",
         messageId: "POL5003"
     }
+#---------POL5004------------------------------     
+    MISSING_USER_ID: {
+        code: 400  ,
+        message: "Error: Missing 'USER_ID' HTTP header.",
+        messageId: "POL5004"
+    }
 #---------SVC4000----------------------------- 
     INVALID_CONTENT: {
         code: 400,
@@ -55,7 +61,7 @@ errors:
         messageId: "SVC4002"
     }
 #---------SVC4003------------------------------ 
-# %1 - Users's USER_ID     
+# %1 - Users's ID     
     USER_NOT_FOUND: {
         code: 404,
         message: "Error: User '%1' was not found.",
@@ -99,7 +105,7 @@ errors:
 # %1 - service/resource
     COMPONENT_MISSING_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. Missing %1 contact id.",
+        message: "Error: Invalid Content. Missing %1 contact.",
         messageId: "SVC4049"
     } 
 #---------SVC4050----------------------------- 
@@ -202,14 +208,14 @@ errors:
     }
 
 #---------SVC4064------------------------------ 
-# %1 - Service/Resource
+# %1 - Service/Resource/Property
     COMPONENT_INVALID_DESCRIPTION: {
         code: 400,
         message: "Error: Invalid Content. %1 description contains non-english characters.",
         messageId: "SVC4064"
     }
 #---------SVC4065------------------------------ 
-# %1 - Service/Resource
+# %1 - Service/Resource/Property
 # %2 - max resource/service name length 
     COMPONENT_DESCRIPTION_EXCEEDS_LIMIT: {
         code: 400,
@@ -240,9 +246,9 @@ errors:
 
 #---------SVC4069------------------------------ 
 # %1 - Service/Resource/Product
-    COMPONENT_INVALID_CONTACT_ID: {
+    COMPONENT_INVALID_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. %1 contact id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
+        message: "Error: Invalid Content. %1 Contact id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
         messageId: "SVC4069"
     }
 #---------SVC4070------------------------------ 
@@ -506,7 +512,7 @@ errors:
 #-----------SVC4130---------------------------
     INVALID_PROJECT_CODE: {
         code: 400,
-        message: "Error: Invalid Content. PROJECT_CODE number must be numeric from 5 up to 10 digits.",
+        message: "Error: Invalid Content. PROJECT_CODE must be from 3 up to 50 characters.",
         messageId: "SVC4130"
     }
 #-----------SVC4131---------------------------
@@ -999,7 +1005,7 @@ errors:
 #---------SVC4561------------------------------
 # %1 - "resource"/"product"
 # %2 - "category"
-# %2 - "category name"
+# %3 - "category name"
     COMPONENT_CATEGORY_NOT_FOUND: {
         code: 404,
         message: "Error: Requested %1 %2 '%3' was not found.",
@@ -1008,7 +1014,7 @@ errors:
 #---------SVC4562------------------------------
 # %1 - "Resource"/"Product"
 # %2 - "sub-category name"
-# %2 - "category name"
+# %3 - "category name"
     COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY: {
         code: 409,
         message: "Error: %1 sub-category '%2' already exists under '%3' category.",
@@ -1017,7 +1023,7 @@ errors:
 #---------SVC4563------------------------------
 # %1 - "Product"
 # %2 - "grouping name"
-# %2 - "sub-category name"
+# %3 - "sub-category name"
     COMPONENT_GROUPING_EXISTS_FOR_SUB_CATEGORY: {
         code: 409,
         message: "Error: %1 grouping '%2' already exists under '%3' sub-category.",
@@ -1055,7 +1061,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4567------------------------------ 
-# %1 - "User Name and userId"   
+# %1 - "User Name and UserId"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1063,7 +1069,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4568------------------------------ 
-# %1 - "User Name and userId"   
+# %1 - "User Name and UserId"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1420,7 +1426,7 @@ errors:
 # %4 - component type [VF ]
     GROUP_INVALID_COMPONENT_INSTANCE: {
         code: 400,
-        message: "Error: member %1 listed in group %2 is not part of %3 %4.",
+        message: "Error: Member '%1' listed in group '%2' is not part of '%3' %4.",
         messageId: "SVC4616"
     }                 
 #---------SVC4617------------------------------
@@ -1580,4 +1586,185 @@ errors:
         code: 400,
         message: 'Error: Data type %1 cannot be upgraded. The new data type does not contain old properties or the type of one of the properties has been changed.',
         messageId: "SVC4636"
-    }  
+    }
+#-----------SVC4637---------------------------
+#%1 - attribute name
+    ATTRIBUTE_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested '%1' attribute was not found.",
+        messageId: "SVC4637"
+    }    
+#-----------SVC4638---------------------------
+#%1 - attribute name
+    ATTRIBUTE_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: Attribute with '%1' name already exists.",
+        messageId: "SVC4638"
+    }
+#-----------SVC4639---------------------------
+#%1 - property name
+    PROPERTY_NAME_ALREADY_EXISTS: {
+        code: 409,
+        message: "Error: Property with '%1' name and different type already exists.",
+        messageId: "SVC4639"
+    }
+#-----------SVC4640---------------------------
+#%1 - property name
+    INVALID_PROPERTY: {
+        code: 409,
+        message: "Error: Invalid property received.",
+        messageId: "SVC4640"
+    }
+#---------SVC4641-----------------------------
+#%1 - invalid filter
+#%2 - valid filters
+    INVALID_FILTER_KEY: {
+        code: 400,
+        message: "Error: The filter %1 is not applicable. Please use one of the following filters: %2",
+        messageId: "SVC4641"
+    }
+#---------SVC4642-----------------------------
+#%1 - asset type
+#%2 - filter
+    NO_ASSETS_FOUND: {
+        code: 404,
+        message: "No %1 were found to match criteria %2",
+        messageId: "SVC4642"
+    }
+#---------SVC4643------------------------------
+# %1 - "Resource"/"Product"
+# %2 - "sub-category name"
+# %3 - "category name"
+    COMPONENT_SUB_CATEGORY_NOT_FOUND_FOR_CATEGORY: {
+        code: 404,
+        message: "Error: %1 sub-category '%2' not found under category '%3'.",
+        messageId: "SVC4643"
+    }
+#---------SVC4644------------------------------
+# %1 - Format
+    CORRUPTED_FORMAT: {
+        code: 400,
+        message: "Error: %1 format is corrupted.",
+        messageId: "SVC4644"
+    }
+#---------SVC4645------------------------------
+# %1 - "groupType"
+    INVALID_VF_MODULE_TYPE: {
+        code: 400,
+        message: "Error: Invalid group type '%1' (should be VfModule).",
+        messageId: "SVC4645"
+    }
+#---------SVC4646------------------------------
+# %1 - "groupName"
+    INVALID_VF_MODULE_NAME: {
+        code: 400,
+        message: "Error: Invalid Content. VF Module name '%1' contains invalid characters",
+        messageId: "SVC4646"
+    }
+    
+#---------SVC4647------------------------------
+# %1 - "modifiedName"
+    INVALID_VF_MODULE_NAME_MODIFICATION: {
+        code: 400,
+        message: "Error: Invalid VF Module name modification, can not modify '%1'",
+        messageId: "SVC4647"
+    }
+#---------SVC4648------------------------------
+# %1 - "inputId"
+# %2 - "componentId"
+    INPUT_IS_NOT_CHILD_OF_COMPONENT: {
+        code: 400,
+        message: "Error: Input id: '%1' is not child of component id: '%2'",
+        messageId: "SVC4648"
+    }
+#---------SVC4649------------------------------
+# %1 - "groupName"
+    GROUP_HAS_CYCLIC_DEPENDENCY: {
+        code: 400,
+        message: "Error: The group '%1' has cyclic dependency",
+        messageId: "SVC4649"
+    }
+#---------SVC4650------------------------------
+# %1 - "Component Type"
+# %2 - <ServiceName>
+# %3 - error description
+    AAI_ARTIFACT_GENERATION_FAILED: {
+        code: 500,
+        message: "Error: %1 %2 automatic generation of artifacts failed. Description: %3",
+        messageId: "SVC4650"
+    }
+#---------SVC4651------------------------------
+    PARENT_RESOURCE_DOES_NOT_EXTEND: {
+        code: 400,
+        message: "Error: Once resource is certified, derived_from can be changed only to a sibling",
+        messageId: "SVC4651"
+    }
+#---------SVC4652------------------------------  
+# %1 - resource/service
+    COMPONENT_INVALID_SUBCATEGORY: {
+        code: 400,
+        message: "Error: Invalid Content. Invalid %1 sub category.",
+        messageId: "SVC4652"
+    }
+#---------SVC4653------------------------------  
+# %1 - group instance uniqueId     
+# %2 - service uniqueId
+    GROUP_INSTANCE_NOT_FOUND_ON_COMPONENT_INSTANCE: {
+        code: 404,
+        message: "Error: Requested group instance %1 was not found on component %2.",
+        messageId: "SVC4653"
+    }
+#---------SVC4654------------------------------  
+# %1 - group property name     
+# %2 - valid min limit value
+# %3 - valid max limit value
+    INVALID_GROUP_MIN_MAX_INSTANCES_PROPERTY_VALUE: {
+        code: 400,
+        message: "Error: Value of %1 must be not higher than %2, and not lower than %3.",
+        messageId: "SVC4654"
+    }
+#---------SVC4655------------------------------  
+# %1 - group property name     
+# %2 - valid min limit value
+# %3 - valid max limit value
+    INVALID_GROUP_INITIAL_COUNT_PROPERTY_VALUE: {
+        code: 400,
+        message: "Error: Value of %1 must be between %2 and %3.",
+        messageId: "SVC4655"
+    }
+#---------SVC4656------------------------------  
+# %1 - group property name     
+# %2 - lower/higher
+# %3 - valid max/min value
+    INVALID_GROUP_PROPERTY_VALUE_LOWER_HIGHER: {
+        code: 400,
+        message: "Error: Value of %1 must be %2 or equals to %3.",
+        messageId: "SVC4656"
+    }    
+#---------SVC4657------------------------------
+# %1 - certificationRequest / startTesting
+    RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID: {
+        code: 400,
+        message: "Error - Lifecycle state %1 is not valid for resource of type VFCMT",
+        messageId: "SVC4657"
+    }
+#---------SVC4658------------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+# %3 – not found asset type [service / resource]
+# %4 – not found asset name 
+    ASSET_NOT_FOUND_DURING_CSAR_CREATION: {
+        code: 400,
+        message: "Error: CSAR packaging failed for %1 %2. %3 %4 was not found",
+        messageId: "SVC4658"
+    }
+#---------SVC4659------------------------------
+# %1 – asset type [service / resource ]
+# %2 – main asset uuid
+# %3 – Artifact name 
+# %4 – Artifact uuid
+    ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION: {
+        code: 400,
+        message: " Error: CSAR packaging failed for %1 %2. Artifact %3 [%4] was not found",
+        messageId: "SVC4659"
+    }

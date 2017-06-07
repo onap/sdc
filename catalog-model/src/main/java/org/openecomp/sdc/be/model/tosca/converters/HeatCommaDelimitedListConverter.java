@@ -39,11 +39,13 @@ public class HeatCommaDelimitedListConverter implements PropertyValueConverter {
 
 	@Override
 	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		String coverted = ValidationUtils.removeNoneUtf8Chars(original);
-		coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-		coverted = ValidationUtils.normaliseWhitespace(coverted);
-		coverted = ValidationUtils.stripOctets(coverted);
-
+		String coverted = null;
+		if(original != null){
+			coverted = ValidationUtils.removeNoneUtf8Chars(original);
+			coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
+			coverted = ValidationUtils.normaliseWhitespace(coverted);
+			coverted = ValidationUtils.stripOctets(coverted);
+		}
 		return coverted;
 	}
 

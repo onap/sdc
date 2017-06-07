@@ -1,0 +1,354 @@
+<div include-padding="true" class="sdc-workspace-general-step">
+
+    <form novalidate class="w-sdc-form" name="editForm" validation-on-load form-to-validate="editForm">
+
+        <div class="w-sdc-form-section-container">
+
+            <!--------------------- IMPORT TOSCA FILE USING BROWSE (ALSO VFC) -------------------->
+            <div class="i-sdc-form-item" ng-if="isShowFileBrowse">
+                <label class="i-sdc-form-label" data-ng-class="{'required':isCreateMode()}">{{browseFileLabel}}</label>
+                <file-upload id="fileUploadElement"
+                             class="i-sdc-form-input"
+                             element-name="fileElement"
+                             element-disabled="{{!isCreateMode()&&!(isEditMode()&&component.resourceType=='VF')}} || {{isViewMode()}}"
+                             form-element="editForm"
+                             file-model="component.importedFile"
+                             on-file-changed-in-directive="uploadFileChangedInGeneralTab"
+                             extensions="{{importedFileExtension}}"
+                             default-text="'Browse to select file'"
+                             data-ng-class="{'error':!(isEditMode()&&component.resourceType=='VF') && (!editForm.fileElement.$valid || !component.importedFile.filename)}"></file-upload>
+            </div>
+
+            <!--------------------- IMPORT TOSCA FILE USING ONBOARDING -------------------->
+            <div class="i-sdc-form-item" ng-if="isShowOnboardingSelectionBrowse">
+                <label class="i-sdc-form-label required">Select VSP</label>
+                <div class="i-sdc-form-file-upload i-sdc-form-input">
+                    <span class="i-sdc-form-file-name" data-tests-id="filename">{{(fileModel && fileModel.filename) || importedToscaBrowseFileText}}</span>
+                    <div class="i-sdc-form-file-upload-x-btn" ng-click="cancel()" data-ng-show="fileModel.filename && fileModel.filename!=='' && elementDisabled!=='true'"></div>
+                    <input type="button" name="fileElement"/>
+                    <div class="file-upload-browse-btn" data-ng-click="openOnBoardingModal()" data-tests-id="browseButton">Browse</div>
+                </div>
+            </div>
+
+            <div class="input-error-file-upload" data-ng-show="component.importedFile && (!editForm.fileElement.$valid || !component.importedFile.filename)">
+                <!-- editForm.fileElement.$error.required <== Can not use this, because the browse is done from outside for the first time -->
+                <span ng-show="!(isEditMode()&&component.resourceType=='VF')&&!component.importedFile.filename" translate="NEW_SERVICE_RESOURCE_ERROR_TOSCA_FILE_REQUIRED"></span><!-- Required -->
+                <span ng-show="editForm.fileElement.$error.maxsize" translate="VALIDATION_ERROR_MAX_FILE_SIZE"></span>
+                <span ng-show="editForm.fileElement.$error.filetype" translate="NEW_SERVICE_RESOURCE_ERROR_VALID_TOSCA_EXTENSIONS" translate-values="{'extensions': '{{importedFileExtension}}' }"></span>
+                <span ng-show="editForm.fileElement.$error.emptyFile" translate="VALIDATION_ERROR_EMPTY_FILE"></span>
+            </div>
+            <!--------------------- IMPORT TOSCA FILE -------------------->
+
+            <div class="w-sdc-form-columns-wrapper">
+
+                <div class="w-sdc-form-column">
+
+                <!--------------------- NAME -------------------->
+                <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.componentName)}">
+                    <label class="i-sdc-form-label required">Name</label>
+                    <input class="i-sdc-form-input"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           name="componentName"
+                           data-ng-init="isCreateMode() && validateName(true)"
+                           data-ng-maxlength="{{component.isProduct()?'25':'50'}}"
+                           maxlength="{{component.isProduct()?'25':'50'}}"
+                           data-ng-minlength="{{component.isProduct()?'4':'0'}}"
+                           minlength="{{component.isProduct()?'4':'0'}}"
+                           data-ng-model="component.name"
+                           type="text"
+                           data-required
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-ng-pattern="validation.componentNameValidationPattern"
+                           data-ng-disabled="component.isAlreadyCertified()"
+                           data-tests-id="name"
+                           autofocus
+                           ng-readonly="isViewMode()"
+                        />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.componentName)">
+                        <span ng-show="editForm.componentName.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_RESOURCE_NAME_REQUIRED"></span>
+                        <span ng-show="editForm.componentName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                        <span ng-show="editForm.componentName.$error.minlength" translate="VALIDATION_ERROR_MIN_LENGTH" translate-values="{'min': '4' }"></span>
+                        <span ng-show="editForm.componentName.$error.nameExist" translate="NEW_SERVICE_RESOURCE_ERROR_NAME_EXISTS"></span>
+                        <span ng-show="editForm.componentName.$error.pattern" translate="VALIDATION_ERROR_INVALID_NAME"></span>
+                    </div>
+                </div>
+                <!--------------------- NAME -------------------->
+
+                <!--------------------- FULL NAME -------------------->
+                <div ng-if="component.isProduct()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.fullName)}">
+                    <label class="i-sdc-form-label required">Full Name</label>
+                    <input class="i-sdc-form-input"
+                           name="fullName"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-change="validateName()"
+                           data-ng-maxlength="100"
+                           maxlength="100"
+                           data-ng-minlength="4"
+                           minlength="4"
+                           data-ng-model="component.fullName"
+                           type="text"
+                           data-required
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-ng-pattern="validation.commentValidationPattern"
+                           data-tests-id="fullName"
+                           autofocus
+                           ng-readonly="isViewMode()"
+                        />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.fullName)">
+                        <span ng-show="editForm.fullName.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_RESOURCE_NAME_REQUIRED"></span>
+                        <span ng-show="editForm.fullName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                        <span ng-show="editForm.fullName.$error.minlength" translate="VALIDATION_ERROR_MIN_LENGTH" translate-values="{'min': '4' }"></span>
+                        <span ng-show="editForm.fullName.$error.nameExist" translate="NEW_SERVICE_RESOURCE_ERROR_NAME_EXISTS"></span>
+                        <span ng-show="editForm.fullName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                    </div>
+                </div>
+                <!--------------------- NAME -------------------->
+
+                <!--------------------- DESCRIPTION -------------------->
+                <div class="i-sdc-form-item"
+                     data-ng-class="{'error': validateField(editForm.description)}">
+                    <label class="i-sdc-form-label required">Description</label>
+                    <textarea class="description"
+                              name="description"
+                              data-ng-class="{'view-mode': isViewMode()}"
+                              data-ng-maxlength="1024"
+                              data-required
+                              data-ng-model="component.description"
+                              data-ng-model-options="{ debounce: 500 }"
+                              data-ng-pattern="validation.commentValidationPattern"
+                              maxlength="1024"
+                              data-tests-id="description"></textarea>
+                    <!-- placeholder="Description here..." -->
+
+                    <div class="input-error" data-ng-show="validateField(editForm.description)">
+                        <span ng-show="editForm.description.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_RESOURCE_DESCRIPTION_REQUIRED"></span>
+                        <span ng-show="editForm.description.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '1024' }"></span>
+                        <span ng-show="editForm.description.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                    </div>
+                </div>
+                <!--------------------- DESCRIPTION -------------------->
+
+                <!--------------------- CATEGORIES -------------------->
+                <div class="i-sdc-form-item"
+                     data-ng-class="{'error': validateField(editForm.category)}"
+                     data-ng-if="!component.isProduct()">
+                    <loader data-display="!categories && !initCategoreis()" relative="true"></loader>
+                    <label class="i-sdc-form-label required">Category</label>
+                    <select class="i-sdc-form-select"
+                            data-required
+                            name="category"
+                            data-ng-class="{'view-mode': isViewMode()}"
+                            data-ng-change="onCategoryChange()"
+                            data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.selectedCategory && component.selectedCategory!=='')"
+                            data-ng-model="componentCategories.selectedCategory"
+                            data-tests-id="selectGeneralCategory"
+                        >
+                        <option value="">Select category</option>
+                        <optgroup ng-if="component.isResource()" data-ng-repeat="mainCategory in categories | orderBy:['name']" label="{{mainCategory.name}}" data-tests-id="{{mainCategory.name}}">
+                            <option data-ng-repeat="subCategory in mainCategory.subcategories track by $index"
+                                    data-ng-selected="componentCategories.selectedCategory === calculateUnique(mainCategory.name,subCategory.name)"
+                                    data-tests-id="{{subCategory.name}}"
+                                    value="{{calculateUnique(mainCategory.name, subCategory.name)}}">{{subCategory.name}}
+
+                            </option>
+                        </optgroup>
+                        <option ng-if="component.isService()" data-ng-repeat="mainCategory in categories | orderBy:['name']"
+                                data-ng-selected="component.selectedCategory===mainCategory.name"
+                                value="{{mainCategory.name}}"
+                                data-tests-id="{{mainCategory.name}}">{{mainCategory.name}}</option>
+                    </select>
+
+                    <div class="input-error" data-ng-show="validateField(editForm.category)">
+                        <span ng-show="editForm.category.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_CATEGORY_REQUIRED"></span>
+                    </div>
+                </div>
+                <!--------------------- CATEGORIES -------------------->
+
+                <!--------------------- PROJECT CODE -------------------->
+                <div class="i-sdc-form-item"  data-ng-if="!component.isResource()"
+                     data-ng-class="{'error': validateField(editForm.projectCode)}">
+                    <label class="i-sdc-form-label required" translate="GENERAL_LABEL_PROJECT_CODE"></label>
+                    <input class="i-sdc-form-input" type="text"
+                           data-ng-model="component.projectCode"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-model-options="{ debounce: 500 }"
+                           maxlength="50"
+                           data-required
+                           name="projectCode"
+                           data-ng-pattern="validation.projectCodeValidationPattern"
+                           data-tests-id="projectCode"
+                        />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.projectCode)">
+                        <span ng-show="editForm.projectCode.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_REQUIRED"></span>
+                        <span ng-show="editForm.projectCode.$error.pattern" translate="NEW_SERVICE_RESOURCE_ERROR_PROJECT_CODE_NOT_VALID"></span>
+                    </div>
+                </div>
+
+
+                    <!--------------------- ECOMPGENERATEDNAMING -------------------->
+
+                    <div class="i-sdc-form-item"
+                         data-ng-class="{'error': validateField(editForm.ecompGeneratedNaming)}"
+                         data-ng-if="component.isService()">
+                        <label class="i-sdc-form-label">Ecomp Generated Naming</label>
+                        <select class="i-sdc-form-select"
+                                data-required
+                                name="ecompGeneratedNaming"
+                                data-ng-change="onEcompGeneratedNamingChange()"
+                                data-ng-class="{'view-mode': isViewMode()}"
+                                data-ng-model="component.ecompGeneratedNaming"
+                                data-tests-id="ecompGeneratedNaming">
+                            <option ng-value="true">true</option>
+                            <option ng-value="false">false</option>
+                        </select>
+                        <div class="input-error" data-ng-show="validateField(editForm.ecompGeneratedNaming)">
+
+                        </div>
+                    </div>
+                    <!--------------------- CATEGORIES -------------------->
+
+                    <!--------------------- NAMING POLICY  -------------------->
+                    <div ng-if="component.isService()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.namingPolicy)}">
+                        <label class="i-sdc-form-label">Naming policy</label>
+                        <input class="i-sdc-form-input"
+                               name="fullName"
+                               data-ng-class="{'view-mode': isViewMode() || !component.ecompGeneratedNaming}"
+                               data-ng-maxlength="100"
+                               maxlength="100"
+                               data-ng-model="component.namingPolicy"
+                               type="text"
+                               data-ng-model-options="{ debounce: 500 }"
+                               data-ng-pattern="validation.commentValidationPattern"
+                               data-tests-id="namingPolicy"
+                               autofocus
+                               ng-readonly="isViewMode() || !component.ecompGeneratedNaming"
+                        />
+
+                        <div class="input-error" data-ng-show="validateField(editForm.namingPolicy)">
+                            <span ng-show="editForm.namingPolicy.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '100' }"></span>
+                            <span ng-show="editForm.namingPolicy.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        </div>
+                    </div>
+                    <!--------------------- NAMING POLICY  -------------------->
+
+
+                <!--------------------- VENDOR NAME -------------------->
+                <div ng-if="component.isResource()" class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.vendorName)}">
+                    <label class="i-sdc-form-label required">Vendor</label>
+                    <input class="i-sdc-form-input" type="text"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-model="component.vendorName"
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-ng-maxlength="25"
+                           data-required
+                           ng-click="oldValue = component.vendorName"
+                           name="vendorName"
+                           data-ng-change="onVendorNameChange(oldValue)"
+                           data-ng-pattern="validation.vendorValidationPattern"
+                           maxlength="25"
+                           data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.vendorName && component.vendorName!=='')"
+                           data-tests-id="vendorName"
+                        />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.vendorName)">
+                        <span ng-show="editForm.vendorName.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_VENDOR_NAME_REQUIRED"></span>
+                        <span ng-show="editForm.vendorName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '25' }"></span>
+                        <span ng-show="editForm.vendorName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                    </div>
+
+                </div>
+
+                <!--------------------- VENDOR NAME -------------------->
+
+                <!--------------------- VENDOR RELEASE -------------------->
+                <div ng-if="component.isResource()"
+                     class="i-sdc-form-item"
+                     data-ng-class="{'error': validateField(editForm.vendorRelease)}">
+                    <label class="i-sdc-form-label required">Vendor Release</label>
+                    <input class="i-sdc-form-input" type="text"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-model="component.vendorRelease"
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-ng-maxlength="25"
+                           data-required
+                           name="vendorRelease"
+                           data-ng-pattern="validation.vendorValidationPattern"
+                           maxlength="25"
+                           data-ng-disabled="component.isCsarComponent() && component.vendorRelease && component.vendorRelease!==''"
+                           data-tests-id="vendorRelease"
+                        />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.vendorRelease)">
+                        <span ng-show="editForm.vendorRelease.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_VENDOR_RELEASE_REQUIRED"></span>
+                        <span ng-show="editForm.vendorRelease.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '128' }"></span>
+                        <span ng-show="editForm.vendorRelease.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                    </div>
+                </div>
+                <!--------------------- VENDOR RELEASE -------------------->
+
+
+
+            </div><!-- Close w-sdc-form-column -->
+
+                <div class="w-sdc-form-column">
+
+                <!--------------------- RESOURCE TAGS -------------------->
+                <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.tags)}">
+                    <label class="i-sdc-form-label">Tags</label>
+
+                    <sdc-tags form-element="editForm" element-name="tags" max-tags="20" class="i-sdc-form-item-tags"
+                              sdc-disabled="isViewMode()"
+                              tags="component.tags"
+                              pattern="validation.tagValidationPattern"
+                              special-tag="component.name"></sdc-tags>
+
+                    <div class="input-error" data-ng-show="validateField(editForm.tags)">
+                        <span ng-show="editForm.tags.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        <span ng-show="editForm.tags.$error.nameExist" translate="NEW_SERVICE_RESOURCE_ERROR_TAG_NAME_EXIST"></span>
+                    </div>
+                </div>
+                <!--------------------- RESOURCE TAGS -------------------->
+
+                <!--------------------- USER ID -------------------->
+                <div class="i-sdc-form-item" data-ng-class="{'error': validateField(editForm.contactId)}">
+                    <label class="i-sdc-form-label " data-ng-class="{'required':!component.isProduct()}" translate="GENERAL_LABEL_CONTACT_ID"></label>
+                    <input class="i-sdc-form-input" type="text" data-ng-if="!component.isProduct()"
+                           data-ng-model="component.contactId"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-required="!component.isProduct()"
+                           name="contactId"
+                           data-ng-pattern="validation.contactIdValidationPattern"
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-tests-id="contactId"
+                           maxlength="50"
+                        />
+                    <input class="i-sdc-form-input" type="text" data-ng-if="component.isProduct()"
+                           data-ng-model="component.contacts[0]"
+                           data-ng-class="{'view-mode': isViewMode()}"
+                           data-ng-required="!component.isProduct()"
+                           name="contactId"
+                           data-ng-pattern="validation.contactIdValidationPattern"
+                           data-ng-model-options="{ debounce: 500 }"
+                           data-tests-id="contactId"
+                           maxlength="50"
+                    />
+
+                    <div class="input-error" data-ng-show="validateField(editForm.contactId)">
+                        <span ng-show="editForm.contactId.$error.required" translate="NEW_SERVICE_RESOURCE_ERROR_CONTACT_REQUIRED"></span>
+                        <span ng-show="editForm.contactId.$error.pattern" translate="NEW_SERVICE_RESOURCE_ERROR_CONTACT_NOT_VALID"></span>
+                    </div>
+                </div>
+                <!--------------------- USER ID -------------------->
+
+
+                </div><!-- Close w-sdc-form-column -->
+            </div>
+
+        </div><!-- Close w-sdc-form-section-container -->
+
+    </form>
+
+</div>

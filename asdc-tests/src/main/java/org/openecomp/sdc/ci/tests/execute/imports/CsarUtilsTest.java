@@ -57,96 +57,125 @@ import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
 public class CsarUtilsTest extends ComponentBaseTest {
-
+	
 	public static final String ASSET_TOSCA_TEMPLATE = "assettoscatemplate";
-
+	
 	@Rule
 	public static TestName name = new TestName();
-
+	
 	public CsarUtilsTest() {
 		super(name, CsarUtilsTest.class.getName());
 	}
-
+	
 	@Test(enabled = true)
 	public void createServiceCsarBasicTest() throws Exception {
-
+		
 		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
 		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-
-		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER, true, true);
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
+		
+		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.VENDOR_LICENSE, resourceVF, UserRoleEnum.DESIGNER,
+				true, true);
+		resourceVF = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
 		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF, service, UserRoleEnum.DESIGNER, true);
-
+		
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
+		
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-
+		
 		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, service);
-
+		
 		csarBasicValidation(service, downloadCSAR);
 	}
-
+	
 	@Test(enabled = true)
 	public void createResourceCsarBasicTest() throws Exception {
 
 		Resource resourceVF = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-		resourceVF = (Resource) AtomicOperationUtils.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		resourceVF = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-
+		
 		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, resourceVF);
-
+		
 		csarBasicValidation(resourceVF, downloadCSAR);
 	}
-
+	
 	@Test(enabled = true)
 	public void createServiceCsarInclDeploymentArtTest() throws Exception {
-
+		
 		Service service = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 
 		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
 		Resource resourceVF2 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
-
-		resourceVF1 = (Resource) AtomicOperationUtils.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
-		resourceVF2 = (Resource) AtomicOperationUtils.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
+		
+		resourceVF1 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
+		resourceVF2 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF2, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
 		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF1, service, UserRoleEnum.DESIGNER, true);
 		AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceVF2, service, UserRoleEnum.DESIGNER, true);
-
+		
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, service, UserRoleEnum.DESIGNER, true, true);
-
+		
 		service = (Service) AtomicOperationUtils.changeComponentState(service, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
-
+		
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-
+		
 		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, service);
-
+		
 		csarBasicValidation(service, downloadCSAR);
-
-		validateServiceCsar(resourceVF1, resourceVF2, service, downloadCSAR, 3, 5, 1);
+		
+		validateServiceCsar(resourceVF1, resourceVF2, service, downloadCSAR, 3, 3, 1, 0);
 	}
-
-	@Test(enabled = true) 
+	
+	@Test(enabled = true)
 	public void createResourceCsarInclDeploymentArtTest() throws Exception {
 
 		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, true, true);
 		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT_ARTIFACT, resourceVF1, UserRoleEnum.DESIGNER, true, true);
-		resourceVF1 = (Resource) AtomicOperationUtils.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		
+		resourceVF1 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
 
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-
+		
 		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, resourceVF1);
-
+		
 		csarBasicValidation(resourceVF1, downloadCSAR);
-		//TODO when feature is integrated to OS should modify expected deployment artifacts in csar Artifacts folder to (0,1,1)
-		validateVFCsar(resourceVF1, downloadCSAR, 1, 0, 0, 0);
+		
+		validateVFCsar(resourceVF1, downloadCSAR, 1, 0, 1, 1, 0, 0, 0);
 	}
+	
+	@Test(enabled = true)
+	public void createResourceCsarInclInformationalArtTest() throws Exception {
 
+		Resource resourceVF1 = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, true).left().value();
+		
+		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.YANG_XML, resourceVF1, UserRoleEnum.DESIGNER, false, true);
+		AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceVF1, UserRoleEnum.DESIGNER, false, true);
+		
+		resourceVF1 = (Resource) AtomicOperationUtils
+				.changeComponentState(resourceVF1, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		
+		byte[] downloadCSAR = downloadCSAR(sdncModifierDetails, resourceVF1);
+		
+		csarBasicValidation(resourceVF1, downloadCSAR);
+		
+		validateVFCsar(resourceVF1, downloadCSAR, 1, 0, 0, 0, 1, 1, 0);
+	}
+	
 	private void csarBasicValidation(Component mainComponent, byte[] downloadCSAR) {
-		try (ByteArrayInputStream ins = new ByteArrayInputStream(downloadCSAR); ZipInputStream zip = new ZipInputStream(ins);) {
+		try (ByteArrayInputStream ins = new ByteArrayInputStream(downloadCSAR);
+				ZipInputStream zip = new ZipInputStream(ins);) {
 
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
@@ -157,16 +186,15 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			while ((len = zip.read(buffer)) > 0) {
 				sb.append(new String(buffer, 0, len));
 			}
+			assertTrue(nextEntry.getName().equals("csar.meta"));
 
-			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
+			readNextEntry(sb, len, buffer, zip);
 
-			sb.setLength(0);
 			nextEntry = zip.getNextEntry();
-
-			while ((len = zip.read(buffer)) > 0) {
-				sb.append(new String(buffer, 0, len));
-			}
-
+			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
+			
+			readNextEntry(sb, len, buffer, zip);
+			nextEntry = zip.getNextEntry();
 			resourceYaml = sb.toString();
 
 			YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
@@ -181,16 +209,22 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			e.printStackTrace();
 		}
 	}
-
-	private void validateServiceCsar(Component certifiedVFC1, Component certifiedVFC2, Service fetchedService, byte[] resultByte, int toscaEntryIndexToPass, int generatorEntryIndexToPass, int deploymentArtifactIndexToPass) {
-
+	
+	private void validateServiceCsar(Component certifiedVFC1, Component certifiedVFC2, Service fetchedService,
+			byte[] resultByte, int toscaEntryIndexToPass, int generatorEntryIndexToPass,
+			int deploymentArtifactIndexToPass, int informationalArtifactIndexToPass) {
+		
 		// TODO Test to validate everything is right (comment out after testing)
-		/*
-		 * try { FileUtils.writeByteArrayToFile(new File("c:/TestCSAR/" + fetchedService.getName() + ".zip"), resultByte); } catch (IOException e) { // Auto-generated catch block e.printStackTrace(); }
-		 */
- 
-		try (ByteArrayInputStream ins = new ByteArrayInputStream(resultByte); ZipInputStream zip = new ZipInputStream(ins);) {
+		/*try {
+			FileUtils.writeByteArrayToFile(new File("c:/TestCSAR/" + fetchedService.getName() + ".zip"), resultByte);
+		} catch (IOException e) {
+			// Auto-generated catch block
+			e.printStackTrace();
+		}*/
 
+		try (ByteArrayInputStream ins = new ByteArrayInputStream(resultByte);
+				ZipInputStream zip = new ZipInputStream(ins);) {
+			
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
 			ZipEntry nextEntry = zip.getNextEntry();
@@ -208,6 +242,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			int toscaEntryIndex = 0;
 			int generatorEntryIndex = 0;
 			int deploymentArtifactIndex = 0;
+			int informationalArtifactIndex = 0;
 			String fileName = null;
 			ArtifactDefinition artifactDefinition;
 			Component componentToValidate = null;
@@ -232,18 +267,18 @@ public class CsarUtilsTest extends ComponentBaseTest {
 				if (entryName.contains(serviceFileName)) {
 					componentToValidate = fetchedService;
 					fileName = "Definitions/" + serviceFileName;
-
+					
 					assertEquals("Validate entry Name", (fileName), nextEntry.getName());
 					assertTrue(yamlToObjectConverter.isValidYaml(resourceYaml.getBytes()));
 					validateContent(resourceYaml, componentToValidate);
 					++toscaEntryIndex;
 					continue;
 				}
-
+				
 				if (entryName.contains(vfc1FileName)) {
 					componentToValidate = certifiedVFC1;
 					fileName = "Definitions/" + vfc1FileName;
-
+					
 					assertEquals("Validate entry Name", (fileName), nextEntry.getName());
 					assertTrue(yamlToObjectConverter.isValidYaml(resourceYaml.getBytes()));
 					validateContent(resourceYaml, componentToValidate);
@@ -253,7 +288,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 				if (entryName.contains(vfc2FileName)) {
 					componentToValidate = certifiedVFC2;
 					fileName = "Definitions/" + vfc2FileName;
-
+					
 					assertEquals("Validate entry Name", (fileName), nextEntry.getName());
 					assertTrue(yamlToObjectConverter.isValidYaml(resourceYaml.getBytes()));
 					validateContent(resourceYaml, componentToValidate);
@@ -261,38 +296,52 @@ public class CsarUtilsTest extends ComponentBaseTest {
 					continue;
 				}
 
-				if (entryName.contains(".xml") && !entryName.startsWith("Artifacts/AAI")) {
-					++deploymentArtifactIndex;
-					continue;
-				}
-
-				if (entryName.startsWith("Artifacts/AAI")) {
+				if (entryName.startsWith("Artifacts/Deployment/MODEL_INVENTORY_PROFILE") && entryName.contains("AAI")) {
 					++generatorEntryIndex;
 					continue;
 				}
-
+				
+				if (entryName.contains(".xml") && entryName.startsWith("Artifacts/Deployment/") && !entryName.contains("AAI")) {
+					++deploymentArtifactIndex;
+					continue;
+				}
+				
+				if (entryName.contains(".xml") && entryName.startsWith("Artifacts/Informational/") && !entryName.contains("AAI")) {
+					++informationalArtifactIndex;
+					continue;
+				}
+				
 				assertTrue("Unexpected entry: " + entryName, true);
 			}
 			assertEquals("Validate amount of entries", toscaEntryIndexToPass, toscaEntryIndex);
 			assertEquals("Validate amount of generated AAI artifacts", generatorEntryIndexToPass, generatorEntryIndex);
-			assertEquals("Validate amount of generated Deployment artifacts", deploymentArtifactIndexToPass, deploymentArtifactIndex);
-
+			assertEquals("Validate amount of Deployment artifacts entries", deploymentArtifactIndexToPass,
+					deploymentArtifactIndex);
+			assertEquals("Validate amount of Informational artifacts entries", informationalArtifactIndexToPass,
+					informationalArtifactIndex);
+			
 			ins.close();
 			zip.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	private void validateVFCsar(Component certifiedVF, byte[] resultByte, int toscaEntryIndexToPass, int ymlDeploymentArtifactIndexToPass, int xmlDeploymentArtifactIndexToPass, int heatEnvDeploymentArtifactIndexToPass) {
-
+	
+	private void validateVFCsar(Component certifiedVF, byte[] resultByte, int toscaEntryIndexToPass, 
+			int ymlDeploymentArtifactIndexToPass, int xmlDeploymentArtifactIndexToPass, int heatDeploymentArtifactIndexToPass,
+			int ymlInformationalArtifactIndexToPass, int xmlInformationalArtifactIndexToPass, int heatInformationalArtifactIndexToPass) {
+		
 		// TODO Test to validate everything is right (comment out after testing)
-		/*
-		 * try { FileUtils.writeByteArrayToFile(new File("c:/TestCSAR/" + fetchedService.getName() + ".zip"), resultByte); } catch (IOException e) { // Auto-generated catch block e.printStackTrace(); }
-		 */
+		/*try {
+			FileUtils.writeByteArrayToFile(new File("c:/TestCSAR/" + fetchedService.getName() + ".zip"), resultByte);
+		} catch (IOException e) {
+			// Auto-generated catch block
+			e.printStackTrace();
+		}*/
 
-		try (ByteArrayInputStream ins = new ByteArrayInputStream(resultByte); ZipInputStream zip = new ZipInputStream(ins);) {
-
+		try (ByteArrayInputStream ins = new ByteArrayInputStream(resultByte);
+				ZipInputStream zip = new ZipInputStream(ins);) {
+			
 			String resourceYaml = null;
 			byte[] buffer = new byte[1024];
 			ZipEntry nextEntry = zip.getNextEntry();
@@ -303,14 +352,23 @@ public class CsarUtilsTest extends ComponentBaseTest {
 				sb.append(new String(buffer, 0, len));
 			}
 
-			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
+			assertTrue(nextEntry.getName().equals("csar.meta"));
 
+			readNextEntry(sb, len, buffer, zip);
+			nextEntry = zip.getNextEntry();
+			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
+			
+			readNextEntry(sb, len, buffer, zip);
+		
 			YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
 
 			int toscaEntryIndex = 0;
-			int ymlEntryIndex = 0;
-			int xmlArtifactsIndex = 0;
-			int heatEnvDeploymentArtifactIndex = 0;
+			int ymlDeploymentArtifactsIndex = 0;
+			int xmlDeploymentArtifactsIndex = 0;
+			int heatDeploymentArtifactIndex = 0;
+			int ymlInformationalArtifactsIndex = 0;
+			int xmlInformationalArtifactsIndex = 0;
+			int heatInformationalArtifactIndex = 0;
 			String fileName = null;
 			ArtifactDefinition artifactDefinition;
 			Component componentToValidate = null;
@@ -319,11 +377,8 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			String vfFileName = artifactDefinition.getArtifactName();
 
 			while ((nextEntry = zip.getNextEntry()) != null) {
-				sb.setLength(0);
-
-				while ((len = zip.read(buffer)) > 0) {
-					sb.append(new String(buffer, 0, len));
-				}
+				
+				readNextEntry(sb, len, buffer, zip);
 
 				String entryName = nextEntry.getName();
 
@@ -331,7 +386,7 @@ public class CsarUtilsTest extends ComponentBaseTest {
 				if (entryName.contains(vfFileName)) {
 					componentToValidate = certifiedVF;
 					fileName = "Definitions/" + vfFileName;
-
+					
 					assertEquals("Validate entry Name", (fileName), nextEntry.getName());
 					assertTrue(yamlToObjectConverter.isValidYaml(resourceYaml.getBytes()));
 					validateContent(resourceYaml, componentToValidate);
@@ -339,35 +394,72 @@ public class CsarUtilsTest extends ComponentBaseTest {
 					continue;
 				}
 
-				if (entryName.contains(".xml") && entryName.startsWith("Artifacts/")) {
-					++xmlArtifactsIndex;
-					continue;
+				if (entryName.contains(".xml") && entryName.contains("YANG_XML")) {
+					if(entryName.startsWith("Artifacts/Deployment")){
+						++xmlDeploymentArtifactsIndex;
+						continue;						
+					}else if(entryName.startsWith("Artifacts/Informational")){
+						++xmlInformationalArtifactsIndex;
+						continue;
+					}
 				}
 
-				if (entryName.contains(".sh") && entryName.startsWith("Artifacts/")) {
-					++heatEnvDeploymentArtifactIndex;
+				if (entryName.contains(".sh") && entryName.contains("HEAT_ARTIFACT")) {
+					if(entryName.startsWith("Artifacts/Deployment")){
+						++heatDeploymentArtifactIndex;
+						continue;					
+					}else if(entryName.startsWith("Artifacts/Informational")){
+						++heatInformationalArtifactIndex;
+						continue;
+					}
+				}
+				
+				if ((entryName.contains(".yml") || entryName.contains(".yaml")) && entryName.contains("HEAT")) {
+					if(entryName.startsWith("Artifacts/Deployment")){
+						++ymlDeploymentArtifactsIndex;
+						continue;						
+					}else if(entryName.startsWith("Artifacts/Informational")){
+						++ymlInformationalArtifactsIndex;
+						continue;
+					}
+				}
+				
+				if(entryName.contains("Definitions/") && entryName.contains("template-interface.yml")){
+					validateInterfaceContent(resourceYaml, certifiedVF);
 					continue;
 				}
-
-				if (entryName.contains(".yml") && entryName.startsWith("Artifacts/")) {
-					++ymlEntryIndex;
+				if(entryName.contains("Definitions/")) {
+					if(isImportsFileValidation(entryName))
 					continue;
 				}
-
+				
 				assertTrue("Unexpected entry: " + entryName, false);
 			}
+			
+			//Definitions folder
 			assertEquals("Validate amount of entries", toscaEntryIndexToPass, toscaEntryIndex);
-			assertEquals("Validate amount of YAML artifacts", ymlDeploymentArtifactIndexToPass, ymlEntryIndex);
-			assertEquals("Validate amount of generated XML artifacts", xmlDeploymentArtifactIndexToPass, xmlArtifactsIndex);
-			assertEquals("Validate amount of generated HEAT ENV artifacts", heatEnvDeploymentArtifactIndexToPass, heatEnvDeploymentArtifactIndex);
-
+			
+			//Deployment folder
+			assertEquals("Validate amount of YAML Deployment artifacts", ymlDeploymentArtifactIndexToPass, ymlDeploymentArtifactsIndex);
+			assertEquals("Validate amount of XML Deployment artifacts", xmlDeploymentArtifactIndexToPass,
+					xmlDeploymentArtifactsIndex);
+			assertEquals("Validate amount of HEAT Deployment artifacts", heatDeploymentArtifactIndexToPass,
+					heatDeploymentArtifactIndex);
+			
+			//Informational folder
+			assertEquals("Validate amount of YAML Informational artifacts", ymlInformationalArtifactIndexToPass, ymlInformationalArtifactsIndex);
+			assertEquals("Validate amount of XML Informational artifacts", xmlInformationalArtifactIndexToPass,
+					xmlInformationalArtifactsIndex);
+			assertEquals("Validate amount of HEAT Informational artifacts", heatInformationalArtifactIndexToPass,
+					heatInformationalArtifactIndex);
+			
 			ins.close();
 			zip.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void validateContent(String content, Component component) {
 		Yaml yaml = new Yaml();
 
@@ -395,30 +487,34 @@ public class CsarUtilsTest extends ComponentBaseTest {
 		if (component.getComponentType().equals(ComponentTypeEnum.SERVICE)) {
 			assertEquals("Validate component type", component.getComponentType().getValue(), type);
 		} else {
-			assertEquals("Validate component type", ((Resource) component).getResourceType(), ResourceTypeEnum.valueOf(type));
+			assertEquals("Validate component type", ((Resource) component).getResourceType(),
+					ResourceTypeEnum.valueOf(type));
 		}
 	}
-
+	
 	private byte[] downloadCSAR(User sdncModifierDetails, Component createdComponent) throws Exception {
 
 		String artifactUniqeId = createdComponent.getToscaArtifacts().get("assettoscacsar").getUniqueId();
 		RestResponse getCsarResponse = null;
-
+		
 		switch (createdComponent.getComponentType()) {
 		case RESOURCE:
-			getCsarResponse = ArtifactRestUtils.downloadResourceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
-			break;
+			getCsarResponse = ArtifactRestUtils.downloadResourceArtifactInternalApi(createdComponent.getUniqueId(),
+					sdncModifierDetails, artifactUniqeId);
+			break;			
 		case SERVICE:
-			getCsarResponse = ArtifactRestUtils.downloadServiceArtifactInternalApi(createdComponent.getUniqueId(), sdncModifierDetails, artifactUniqeId);
+			getCsarResponse = ArtifactRestUtils.downloadServiceArtifactInternalApi(createdComponent.getUniqueId(),
+					sdncModifierDetails, artifactUniqeId);
 			break;
 		default:
 			break;
 		}
-
+		
 		assertNotNull(getCsarResponse);
 		BaseRestUtils.checkSuccess(getCsarResponse);
 
-		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(getCsarResponse.getResponse(), ArtifactUiDownloadData.class);
+		ArtifactUiDownloadData artifactUiDownloadData = ResponseParser.parseToObject(getCsarResponse.getResponse(),
+				ArtifactUiDownloadData.class);
 
 		assertNotNull(artifactUiDownloadData);
 
@@ -426,5 +522,49 @@ public class CsarUtilsTest extends ComponentBaseTest {
 		byte[] decodeBase64 = Base64.decodeBase64(fromUiDownload);
 
 		return decodeBase64;
+	}
+	
+	private void validateInterfaceContent(String content, Component component) {
+		Yaml yaml = new Yaml();
+
+		InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+		@SuppressWarnings("unchecked")
+		Map<String, Object> load = (Map<String, Object>) yaml.load(inputStream);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> node_types = (Map<String, Object>) load.get("node_types");
+		assertNotNull(node_types);
+
+		String toscaInterfaceName = node_types.keySet().stream().filter(p -> p.startsWith("org.openecomp.")).findAny().get();
+		Map<String, Object> toscaInterface = (Map<String, Object>) node_types.get(toscaInterfaceName);
+		assertNotNull(toscaInterface);
+		String derived_from = (String) toscaInterface.get("derived_from");
+		assertNotNull(derived_from);
+		assertEquals("Validate derived from generic", component.getDerivedFromGenericType(), derived_from);
+
+	}
+	
+	private void readNextEntry(StringBuffer sb, int len, byte[] buffer, ZipInputStream zip) throws IOException {
+		sb.setLength(0);
+
+		while ((len = zip.read(buffer)) > 0) {
+			sb.append(new String(buffer, 0, len));
+		}
+	}
+	
+	private boolean isImportsFileValidation(String fileName) {
+	
+		switch(fileName){
+			case "Definitions/artifacts.yml":
+			case "Definitions/capabilities.yml":
+			case "Definitions/data.yml":
+			case "Definitions/groups.yml":
+			case "Definitions/interfaces.yml":
+			case "Definitions/nodes.yml":
+			case "Definitions/policies.yml":
+			case "Definitions/relationships.yml":
+				return true;
+				
+		}
+		return false;
 	}
 }

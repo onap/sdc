@@ -52,6 +52,7 @@ import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedAuthenticationAudit
 import org.openecomp.sdc.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
@@ -120,24 +121,30 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	public void init() throws Exception {
 
 		sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		Resource resourceObject = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceObject = AtomicOperationUtils
+				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
 		resourceDetails = new ResourceReqDetails(resourceObject);
 		Service serviceObject = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
 		serviceDetails = new ServiceReqDetails(serviceObject);
 
 		deploymentArtifact = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
-		RestResponse response = ArtifactRestUtils.addInformationalArtifactToResource(deploymentArtifact, sdncUserDetails, resourceDetails.getUniqueId());
-		AssertJUnit.assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(), response.getErrorCode() == 200);
+		RestResponse response = ArtifactRestUtils.addInformationalArtifactToResource(deploymentArtifact,
+				sdncUserDetails, resourceDetails.getUniqueId());
+		AssertJUnit.assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(),
+				response.getErrorCode() == 200);
 
 		componentInstanceReqDetails = ElementFactory.getDefaultComponentInstance();
 		// certified resource
 		response = LifecycleRestUtils.certifyResource(resourceDetails);
-		AssertJUnit.assertTrue("certify resource request returned status:" + response.getErrorCode(), response.getErrorCode() == 200);
+		AssertJUnit.assertTrue("certify resource request returned status:" + response.getErrorCode(),
+				response.getErrorCode() == 200);
 
 		// add resource instance with HEAT deployment artifact to the service
 		componentInstanceReqDetails.setComponentUid(resourceDetails.getUniqueId());
-		response = ComponentInstanceRestUtils.createComponentInstance(componentInstanceReqDetails, sdncUserDetails, serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
-		AssertJUnit.assertTrue("response code is not 201, returned: " + response.getErrorCode(), response.getErrorCode() == 201);
+		response = ComponentInstanceRestUtils.createComponentInstance(componentInstanceReqDetails, sdncUserDetails,
+				serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
+		AssertJUnit.assertTrue("response code is not 201, returned: " + response.getErrorCode(),
+				response.getErrorCode() == 201);
 		expectedAuthenticationAudit = new ExpectedAuthenticationAudit();
 
 		// RestResponse addDeploymentArtifactResponse =
@@ -152,13 +159,18 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		// serviceDetails.getVersion(),
 		// ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
 
-		expectedDownloadResourceUrl = String.format(Urls.DISTRIB_DOWNLOAD_RESOURCE_ARTIFACT_RELATIVE_URL, ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
-				ValidationUtils.convertToSystemName(resourceDetails.getName()), resourceDetails.getVersion(), ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
-		expectedDownloadResourceUrl = expectedDownloadResourceUrl.substring("/asdc/".length(), expectedDownloadResourceUrl.length());
-
-		expectedDownloadServiceUrl = String.format(Urls.DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL, ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
+		expectedDownloadResourceUrl = String.format(Urls.DISTRIB_DOWNLOAD_RESOURCE_ARTIFACT_RELATIVE_URL,
+				ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
+				ValidationUtils.convertToSystemName(resourceDetails.getName()), resourceDetails.getVersion(),
 				ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
-		expectedDownloadServiceUrl = expectedDownloadServiceUrl.substring("/asdc/".length(), expectedDownloadServiceUrl.length());
+		expectedDownloadResourceUrl = expectedDownloadResourceUrl.substring("/asdc/".length(),
+				expectedDownloadResourceUrl.length());
+
+		expectedDownloadServiceUrl = String.format(Urls.DISTRIB_DOWNLOAD_SERVICE_ARTIFACT_RELATIVE_URL,
+				ValidationUtils.convertToSystemName(serviceDetails.getName()), serviceDetails.getVersion(),
+				ValidationUtils.normalizeFileName(deploymentArtifact.getArtifactName()));
+		expectedDownloadServiceUrl = expectedDownloadServiceUrl.substring("/asdc/".length(),
+				expectedDownloadServiceUrl.length());
 
 		sdncAdminUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
 		consumerDataDefinition = createConsumer();
@@ -185,19 +197,24 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		// RestResponse restResponse =
 		// ArtifactRestUtils.downloadServiceArtifact(serviceDetails,
 		// deploymentArtifact, sdncUserDetails, authorizationHeader);
-		RestResponse restResponse = ArtifactRestUtils.downloadResourceArtifact(serviceDetails, resourceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
-		AssertJUnit.assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
+		RestResponse restResponse = ArtifactRestUtils.downloadResourceArtifact(serviceDetails, resourceDetails,
+				deploymentArtifact, sdncUserDetails, authorizationHeader);
+		AssertJUnit.assertEquals("Check response code after download artifact", 200,
+				restResponse.getErrorCode().intValue());
 		AssertJUnit.assertFalse(restResponse.getHeaderFields().containsKey(HttpHeaderEnum.WWW_AUTHENTICATE.getValue()));
 
 		validateAuditAuthentication(USER, AUTH_SUCCESS, ComponentTypeEnum.RESOURCE);
 
 	}
 
-	protected void validateAuditAuthentication(String userName, String AuthStatus, ComponentTypeEnum compType) throws Exception {
+	protected void validateAuditAuthentication(String userName, String AuthStatus, ComponentTypeEnum compType)
+			throws Exception {
 		if (compType.equals(ComponentTypeEnum.RESOURCE)) {
-			expectedAuthenticationAudit = new ExpectedAuthenticationAudit(expectedDownloadResourceUrl, userName, auditAction, AuthStatus);
+			expectedAuthenticationAudit = new ExpectedAuthenticationAudit(expectedDownloadResourceUrl, userName,
+					auditAction, AuthStatus);
 		} else {
-			expectedAuthenticationAudit = new ExpectedAuthenticationAudit(expectedDownloadServiceUrl, userName, auditAction, AuthStatus);
+			expectedAuthenticationAudit = new ExpectedAuthenticationAudit(expectedDownloadServiceUrl, userName,
+					auditAction, AuthStatus);
 		}
 		AuditValidationUtils.validateAuthenticationAudit(expectedAuthenticationAudit);
 	}
@@ -213,9 +230,11 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 
 	@Test
 	public void sendAuthenticatedRequestWithoutHeadersTest() throws Exception, Exception {
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, new HashMap<String, String>());
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, new HashMap<String, String>());
 		assertEquals("Check response code after download artifact", 401, restResponse.getErrorCode().intValue());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_REQUIRED.name(), new ArrayList<String>(), restResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_REQUIRED.name(), new ArrayList<String>(),
+				restResponse.getResponse());
 		assertTrue(restResponse.getHeaderFields().containsKey(WWW_AUTHENTICATE));
 		List<String> getAuthenticateHeader = restResponse.getHeaderFields().get(WWW_AUTHENTICATE);
 		assertEquals("www-authenticate header contains more then one value", 1, getAuthenticateHeader.size());
@@ -228,9 +247,11 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	public void sendAuthenticatedRequestTest_userIsNotProvsioned() throws Exception, Exception {
 		String userName = "shay";
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(userName, "123456");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 403, restResponse.getErrorCode().intValue());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(), restResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(),
+				restResponse.getResponse());
 		assertFalse(restResponse.getHeaderFields().containsKey(WWW_AUTHENTICATE));
 
 		validateAuditAuthentication(userName, AUTH_FAILED_USER_NOT_FOUND, ComponentTypeEnum.SERVICE);
@@ -240,9 +261,11 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	public void sendAuthenticatedRequestTest_userIsNull() throws Exception, Exception {
 		String userName = "";
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(userName, "123456");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 403, restResponse.getErrorCode().intValue());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(), restResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(),
+				restResponse.getResponse());
 		assertFalse(restResponse.getHeaderFields().containsKey(WWW_AUTHENTICATE));
 
 		validateAuditAuthentication(userName, AUTH_FAILED_USER_NOT_FOUND, ComponentTypeEnum.SERVICE);
@@ -252,9 +275,11 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	public void sendAuthenticatedRequestTest_passwordIsNull() throws Exception, Exception {
 		String userName = "ci";
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(userName, "");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 403, restResponse.getErrorCode().intValue());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(), restResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(),
+				restResponse.getResponse());
 		assertFalse(restResponse.getHeaderFields().containsKey(WWW_AUTHENTICATE));
 
 		validateAuditAuthentication(userName, AUTH_FAILED_INVALID_PASSWORD, ComponentTypeEnum.SERVICE);
@@ -264,9 +289,11 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	public void sendAuthenticatedRequestTest_passowrdIsNotValidated() throws Exception, Exception {
 		String userCi = "ci";
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(userCi, "98765");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 403, restResponse.getErrorCode().intValue());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(), restResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.AUTH_FAILED.name(), new ArrayList<String>(),
+				restResponse.getResponse());
 		assertFalse(restResponse.getHeaderFields().containsKey(HttpHeaderEnum.WWW_AUTHENTICATE.getValue()));
 
 		validateAuditAuthentication(userCi, AUTH_FAILED_INVALID_PASSWORD, ComponentTypeEnum.SERVICE);
@@ -279,7 +306,8 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		String encodedUserCredentials = new String(encodeBase64);
 		Map<String, String> authorizationHeader = new HashMap<String, String>();
 		authorizationHeader.put(HttpHeaderEnum.AUTHORIZATION.getValue(), encodedUserCredentials);
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 400, restResponse.getErrorCode().intValue());
 		assertFalse(restResponse.getHeaderFields().containsKey(HttpHeaderEnum.WWW_AUTHENTICATE.getValue()));
 
@@ -289,11 +317,14 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	@Test(enabled = false)
 	public void sendTwoAuthenticatedRequestsTest() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(USER, PASSWORD);
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 
-		RestResponse secondRestResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
-		assertEquals("Check response code after second download artifact", 200, secondRestResponse.getErrorCode().intValue());
+		RestResponse secondRestResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
+		assertEquals("Check response code after second download artifact", 200,
+				secondRestResponse.getErrorCode().intValue());
 	}
 
 	@Test(enabled = false)
@@ -309,8 +340,10 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 		RestResponse createResponse = ConsumerRestUtils.createConsumer(consumer, sdncAdminUserDetails);
 		BaseRestUtils.checkCreateResponse(createResponse);
 
-		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(consumer.getConsumerName(), PASSWORD);
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(consumer.getConsumerName(),
+				PASSWORD);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 
 		deleteResponse = ConsumerRestUtils.deleteConsumer(consumer, sdncAdminUserDetails);
@@ -340,8 +373,10 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 
 		RestResponse createResponse = ConsumerRestUtils.createConsumer(consumer, sdncAdminUserDetails);
 		BaseRestUtils.checkCreateResponse(createResponse);
-		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(consumer.getConsumerName(), PASSWORD);
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader(consumer.getConsumerName(),
+				PASSWORD);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 
 		deleteResponse = ConsumerRestUtils.deleteConsumer(consumer, sdncAdminUserDetails);
@@ -354,7 +389,8 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	@Test(enabled = false)
 	public void sendAuthenticatedRequestTest_userValidation_3() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("a:", "123456");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 	}
 
@@ -369,7 +405,8 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	@Test(enabled = false)
 	public void sendAuthenticatedRequestTest_passwordValidation_1() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("A1", "123:456");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 	}
 
@@ -383,7 +420,8 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// users-configuration.yaml in runtime")
 	public void sendAuthenticatedRequestTest_passwordValidation_2() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("B2", "Sq123a456B");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 	}
 
@@ -396,7 +434,8 @@ public class BasicHttpAuthenticationTest extends ComponentBaseTest {
 	// @Ignore("add C3:111T-0-*# to file")
 	public void sendAuthenticatedRequestTest_passwordValidation_3() throws Exception, Exception {
 		Map<String, String> authorizationHeader = BaseRestUtils.addAuthorizeHeader("C3", "111T-0-*#");
-		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact, sdncUserDetails, authorizationHeader);
+		RestResponse restResponse = ArtifactRestUtils.downloadServiceArtifact(serviceDetails, deploymentArtifact,
+				sdncUserDetails, authorizationHeader);
 		assertEquals("Check response code after download artifact", 200, restResponse.getErrorCode().intValue());
 	}
 

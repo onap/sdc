@@ -34,7 +34,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
-import org.openecomp.sdc.be.resources.data.AttributeData;
+
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +78,10 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
-		try {
 
+		try {
 			// Get the resource from DB
-			Either<Resource, StorageOperationStatus> status = getResource(resourceId);
+			Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 			if (status.isRight()) {
 				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 			}
@@ -111,17 +111,16 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			// add the new attribute to resource on graph
 			// need to get StorageOpaerationStatus and convert to ActionStatus from
 			// componentsUtils
-			Either<AttributeData, StorageOperationStatus> either = attributeOperation.addAttribute(newAttributeDef, resourceId);
+			Either<AttributeDefinition, StorageOperationStatus> either = toscaOperationFacade.addAttributeOfResource(resource, newAttributeDef);
 			if (either.isRight()) {
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
 				return result;
 			}
-
-			result = Either.left(attributeOperation.convertAttributeDataToAttributeDefinition(either.left().value(), newAttributeDef.getName(), resourceId));
+			result = Either.left(either.left().value());
+		
 			return result;
 		} finally {
 			commitOrRollback(result);
-			// unlock component
 			graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
 		}
 
@@ -150,7 +149,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 		}
 
 		// Get the resource from DB
-		Either<Resource, StorageOperationStatus> status = getResource(resourceId);
+		Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 		}
@@ -185,16 +184,16 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 */
 	public Either<AttributeDefinition, ResponseFormat> updateAttribute(String resourceId, String attributeId, AttributeDefinition newAttDef, String userId) {
 		Either<AttributeDefinition, ResponseFormat> result = null;
-		
+
 		StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
 		if (lockResult != StorageOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeFailedLockObjectError(UPDATE_ATTRIBUTE, NodeTypeEnum.Resource.name().toLowerCase(), resourceId);
+			log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
-		
 		try {
 			// Get the resource from DB
-			Either<Resource, StorageOperationStatus> eitherResource = getResource(resourceId);
+			Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(resourceId);
 			if (eitherResource.isRight()) {
 				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 			}
@@ -204,7 +203,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			if (!ComponentValidationUtils.canWorkOnResource(resource, userId)) {
 				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
 			}
-			
+
 			// verify attribute exist in resource
 			Either<AttributeDefinition, ResponseFormat> eitherAttribute = getAttribute(resourceId, attributeId, userId);
 			if (eitherAttribute.isRight()) {
@@ -221,7 +220,15 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 				return Either.right(defaultValuesValidation.right().value());
 			}
 			// add the new property to resource on graph
-			Either<AttributeData, StorageOperationStatus> eitherAttUpdate = attributeOperation.updateAttribute(attributeId, newAttDef, eitherAllDataTypes.left().value());
+			
+			StorageOperationStatus validateAndUpdateAttribute = propertyOperation.validateAndUpdateProperty(newAttDef, eitherAllDataTypes.left().value());
+			if (validateAndUpdateAttribute != StorageOperationStatus.OK) {
+				log.debug("Problem while updating attribute with id {}. Reason - {}", attributeId, validateAndUpdateAttribute);
+				result = Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(validateAndUpdateAttribute), resource.getName()));
+			}
+
+			
+			Either<AttributeDefinition, StorageOperationStatus> eitherAttUpdate = toscaOperationFacade.updateAttributeOfResource(resource, newAttDef);
 
 			if (eitherAttUpdate.isRight()) {
 				log.debug("Problem while updating attribute with id {}. Reason - {}", attributeId, eitherAttUpdate.right().value());
@@ -229,12 +236,13 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 				return result;
 			}
 
-			result = Either.left(attributeOperation.convertAttributeDataToAttributeDefinition(eitherAttUpdate.left().value(), newAttDef.getName(), resourceId));
+			result = Either.left(eitherAttUpdate.left().value());
 			return result;
 		} finally {
 			commitOrRollback(result);
 			graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
 		}
+
 	}
 
 	/**
@@ -246,7 +254,9 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 * @return
 	 */
 	public Either<AttributeDefinition, ResponseFormat> deleteAttribute(String resourceId, String attributeId, String userId) {
+
 		Either<AttributeDefinition, ResponseFormat> result = null;
+
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Attribute", false);
 		if (resp.isRight()) {
 			return Either.right(resp.right().value());
@@ -255,13 +265,13 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 		StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
 		if (lockResult != StorageOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeFailedLockObjectError(DELETE_ATTRIBUTE, NodeTypeEnum.Resource.name().toLowerCase(), resourceId);
-			result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-			return result;
+			log.info("Failed to lock component {}. Error - {}", resourceId, lockResult);
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 
 		try {
 			// Get the resource from DB
-			Either<Resource, StorageOperationStatus> eitherResource = getResource(resourceId);
+			Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(resourceId);
 			if (eitherResource.isRight()) {
 				return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 			}
@@ -280,12 +290,13 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			String attributeName = eitherAttributeExist.left().value().getName();
 
 			// delete attribute of resource from graph
-			Either<AttributeData, StorageOperationStatus> eitherAttributeDelete = attributeOperation.deleteAttribute(attributeId);
-			if (eitherAttributeDelete.isRight()) {
-				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(eitherAttributeDelete.right().value()), resource.getName()));
+			StorageOperationStatus eitherAttributeDelete = toscaOperationFacade.deleteAttributeOfResource(resource, attributeName);
+			if (eitherAttributeDelete != StorageOperationStatus.OK) {
+				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(eitherAttributeDelete), resource.getName()));
 				return result;
 			}
-			result = Either.left(attributeOperation.convertAttributeDataToAttributeDefinition(eitherAttributeDelete.left().value(), attributeName, resourceId));
+
+			result = Either.left(eitherAttributeExist.left().value());
 			return result;
 		} finally {
 			commitOrRollback(result);

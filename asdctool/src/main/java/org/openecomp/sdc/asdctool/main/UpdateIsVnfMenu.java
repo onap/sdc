@@ -74,7 +74,7 @@ public class UpdateIsVnfMenu {
 			if (updatePropertyOnServiceAtLeastCertified == null) {
 				System.exit(2);
 			} else if (updatePropertyOnServiceAtLeastCertified.intValue() >= 0) {
-				log.debug("Number of updated services is {}", updatePropertyOnServiceAtLeastCertified.intValue());
+				log.debug("Number of updated services is {}",updatePropertyOnServiceAtLeastCertified.intValue());
 				System.exit(0);
 			}
 

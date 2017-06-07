@@ -29,6 +29,8 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 
+import java.util.Optional;
+
 public class MergedArtifactInfo {
 
 	private List<ArtifactDefinition> createdArtifact;
@@ -70,7 +72,25 @@ public class MergedArtifactInfo {
 	public List<ArtifactDefinition> getListToDissotiateArtifactFromGroup(List<ArtifactDefinition> deletedArtifacts) {
 		List<ArtifactDefinition> resList = new ArrayList<ArtifactDefinition>();
 		for (ArtifactDefinition artifactDefinition : createdArtifact) {
-			if (!parsetArtifactsNames.contains(artifactDefinition.getArtifactName())) {
+			boolean isDissotiate = true;
+			if(parsetArtifactsNames.contains(artifactDefinition.getArtifactName())){
+				isDissotiate = false;
+			}else{
+				if (artifactDefinition.getGeneratedFromId() != null && !artifactDefinition.getGeneratedFromId().isEmpty()){
+					Optional<ArtifactDefinition> op = createdArtifact.stream().filter(p -> p.getUniqueId().equals(artifactDefinition.getGeneratedFromId())).findAny();
+					if(op.isPresent()){
+						ArtifactDefinition generatedFromArt = op.get();
+						if(parsetArtifactsNames.contains(generatedFromArt.getArtifactName())){
+							isDissotiate = false;
+						}
+					}
+					else{
+						isDissotiate = true;
+					}
+						
+				}
+			}
+			if (isDissotiate) {
 				boolean isDeleted = false;
 				for (ArtifactDefinition deletedArtifact : deletedArtifacts) {
 					if (artifactDefinition.getUniqueId().equalsIgnoreCase(deletedArtifact.getUniqueId())) {

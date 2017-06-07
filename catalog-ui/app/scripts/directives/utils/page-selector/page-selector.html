@@ -1,9 +1,0 @@
-<div class="i-sdc-left-sidebar-page-nav">
-    <ul data-ng-class="{'expanded': expanded===true}">
-        <li data-ng-repeat="item in list | filter:exceptSelectedComparator"
-            data-ng-click="expanded=false"
-            class="sidebar-page-nav-item"
-            ui-sref="{{item.url}}">{{item.name}}</li>
-    </ul>
-    <div class="sidebar-page-nav-item-selected" data-ng-click="openCollapse()">{{selected}}<span data-ng-class="{'expanded': expanded===true}"></span></div>
-</div>

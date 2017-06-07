@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.Configuration.DeploymentArtifactTypeConfig;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -79,7 +79,7 @@ public class InformationDeployedArtifactsBusinessLogic {
 	 * String message = (response.isLeft()) ? "informationalDeployable artifact {} is valid" : "informationalDeployable artifact {} is not valid"; log.debug(message, artifactInfo.getArtifactName()); return response; }
 	 * 
 	 * private void validatePayloadContent(Wrapper<ResponseFormat> responseFormatWrapper, ArtifactDefinition artifactToVerify) { ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactToVerify.getArtifactType()); if( artifactType ==
-	 * ArtifactTypeEnum.YANG_XML ){ String rawPayloadData = artifactToVerify.getPayloadData(); String xmlToParse = Base64.isBase64(rawPayloadData) ? new String(org.apache.commons.codec.binary.Base64.decodeBase64(rawPayloadData )) : rawPayloadData;
+	 * ArtifactTypeEnum.YANG_XML ){ String rawPayloadData = artifactToVerify.getPayloadData(); String xmlToParse = new String(org.apache.commons.codec.binary.Base64.decodeBase64(rawPayloadData ));
 	 * 
 	 * boolean isXmlValid = artifactBusinessLogic.isValidXml(xmlToParse.getBytes()); if( !isXmlValid ){ ResponseFormat responseFormat = ResponseFormatManager.getInstance().getResponseFormat(ActionStatus. INVALID_XML,
 	 * artifactToVerify.getArtifactType()); responseFormatWrapper.setInnerElement(responseFormat); log.debug("Xml is not valid for artifact : {}", artifactToVerify.getArtifactName()); } } }

@@ -325,13 +325,13 @@ node_types:
         description: I Input provided at DESIGN TIME by Service Composer or Designer - password for login 
       domain_name: 
         type: string
-        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - login domain
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each cloud Region) - login domain
       time_zone: 
         type: string
-        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - time zone to set for vCE
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each cloud Region) - time zone to set for vCE
       login_session_timeout: 
         type: string
-        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each Cloud Region) - user login session timeout
+        description: Input provided at DESIGN TIME by Service Composer or Designer or (perhaps pre-defined for each cloud Region) - user login session timeout
       ipag_vlan_bandwidth: 
         type: integer
         description: Input provided at DESIGN TIME by Service Composer or Designer - bandwidth  allocation of customer VLAN requested by customer
@@ -343,54 +343,54 @@ node_types:
         description: Input provided at DESIGN TIME by Service Composer or Designer - QoS Policy name to be applied to this interface
       hostname: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - Host VM is created first and this value is input when the vCE image is later on installed by Cloud-PO
+        description: Input provided at RUN TIME by cloud-PO - Host VM is created first and this value is input when the vCE image is later on installed by cloud-PO
       host_ip: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - Host VM IP
+        description: Input provided at RUN TIME by cloud-PO - Host VM IP
       availability_zone: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - Cloud availability zone where VM is created
+        description: Input provided at RUN TIME by cloud-PO - cloud availability zone where VM is created
       oam_loopback_vlan_ip_address: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - OAM Network is pre-created - already exists in Data Center
+        description: Input provided at RUN TIME by cloud-PO - OAM Network is pre-created - already exists in Data Center
       ipag_vlan_ip_address: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - IPAG VLAN Network is created by Cloud-PO before the vCE is created or installed
+        description: Input provided at RUN TIME by cloud-PO - IPAG VLAN Network is created by cloud-PO before the vCE is created or installed
       vpe_vlan_ip_address: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - VPE VLAN Network is created by Cloud-PO before the vCE is created / installed
+        description: Input provided at RUN TIME by cloud-PO - VPE VLAN Network is created by cloud-PO before the vCE is created / installed
       vpe_vlan_id: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply VPE QoS Policy
+        description: Input provided at RUN TIME by cloud-PO - VLAN Id is created first by cloud-PO. It is required to apply VPE QoS Policy
       ipag_vlan_id: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - VLAN Id is created first by Cloud-PO. It is required to apply IPAG QoS Policy
+        description: Input provided at RUN TIME by cloud-PO - VLAN Id is created first by cloud-PO. It is required to apply IPAG QoS Policy
       oam_vlan_interface_name: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+        description: Input provided at RUN TIME by cloud-PO - This interfce is created first by cloud-PO. This is the interface to which QoS policy is applied
       vpe_vlan_interface_name: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
+        description: Input provided at RUN TIME by cloud-PO - This interfce is created first by cloud-PO. This is the interface to which QoS policy is applied
       ipag_vlan_interface_name: 
         type: string
-        description: Input provided at RUN TIME by Cloud-PO - This interfce is created first by Cloud-PO. This is the interface to which QoS policy is applied
-    #############ATTRIBUTES of vCE - These values are outputted by Cloud-PO when vCE is created / installed ##############
+        description: Input provided at RUN TIME by cloud-PO - This interfce is created first by cloud-PO. This is the interface to which QoS policy is applied
+    #############ATTRIBUTES of vCE - These values are outputted by cloud-PO when vCE is created / installed ##############
     attributes: 
       vce_name:
         type: string
-        description: Name assigned to vCE by Cloud-PO
+        description: Name assigned to vCE by cloud-PO
       oam_loopback_vlan_ipaddres:
         type: string
-        description: IP Address assigned by Cloud-PO to OAM VLAN
+        description: IP Address assigned by cloud-PO to OAM VLAN
       ipag_vlan_ipaddres:
         type: string
-        description: IP Address assigned by Cloud-PO to IPAG VLAN
+        description: IP Address assigned by cloud-PO to IPAG VLAN
       vpe_vlan_ipaddres:
         type: string
-        description: IP Address assigned by Cloud-PO to VPE VLAN
+        description: IP Address assigned by cloud-PO to VPE VLAN
       vnf_id: 
         type: string
-        description: unique id assigned to VNF by Cloud-PO - used for AAI metadata
+        description: unique id assigned to VNF by cloud-PO - used for AAI metadata
     
     #############CAPABILITIES of vCE - #########################
     capabilities: 

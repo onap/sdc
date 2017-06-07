@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.ci.tests.utils.general;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONException;
 import org.openecomp.sdc.be.datatypes.elements.ConsumerDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -212,7 +214,33 @@ public final class AtomicOperationUtils {
 		}
 		return Either.right(createProductResp);
 	}
-	
+
+	// public static ComponentReqDetails
+	// convertCompoentToComponentReqDetails(Component component){
+	//
+	// ComponentReqDetails componentReqDetails =
+	// ElementFactory.getDefaultService();
+	// componentReqDetails.setName(component.getName());
+	// componentReqDetails.setDescription(component.getDescription());
+	// componentReqDetails.setTags(component.getTags());
+	// componentReqDetails.setContactId(component.getContactId());
+	// componentReqDetails.setIcon(component.getIcon());
+	// componentReqDetails.setUniqueId(component.getUniqueId());
+	// componentReqDetails.setCreatorUserId(component.getCreatorUserId());
+	// componentReqDetails.setCreatorFullName(component.getCreatorFullName());
+	// componentReqDetails.setLastUpdaterUserId(component.getLastUpdaterUserId());
+	// componentReqDetails.setLastUpdaterFullName(component.getLastUpdaterFullName());
+	// componentReqDetails.setCreationDate(component.getCreationDate());
+	// componentReqDetails.setLastUpdateDate(component.getLastUpdateDate());
+	// componentReqDetails.setLifecycleState(component.getLifecycleState());
+	// componentReqDetails.setVersion(component.getVersion());
+	// componentReqDetails.setUuid(component.getUUID());
+	// componentReqDetails.setCategories(component.getCategories());
+	// componentReqDetails.setProjectCode(component.getProjectCode());
+	//
+	// return componentReqDetails;
+	// }
+
 	// *********** LIFECYCLE ***************
 
 	public static Pair<Component, RestResponse> changeComponentState(Component component, UserRoleEnum userRole, LifeCycleStatesEnum targetState, Boolean validateState) throws Exception {
@@ -224,6 +252,7 @@ public final class AtomicOperationUtils {
 		LifeCycleStatesEnum curentCompState = LifeCycleStatesEnum.findByCompState(component.getLifecycleState().toString());
 
 		if (curentCompState == targetState) {
+			component = getCompoenntObject(component, userRole);
 			return Pair.of(component, null);
 		}
 		// List<LifeCycleStatesEnum> lifeCycleStatesEnumOrigList = new
@@ -261,8 +290,7 @@ public final class AtomicOperationUtils {
 			}
 
 		}
-		component = getCompoenntObject(component, userRole);
-		Component componentJavaObject = convertReposnseToComponentObject(component, lifeCycleStatesResponse);
+		Component componentJavaObject = getCompoenntObject(component, userRole);
 
 		if (validateState == true && isValidationFailed == true) {
 			assertTrue("change state failed" + lifeCycleStatesResponse.getResponse(), false);
@@ -297,6 +325,29 @@ public final class AtomicOperationUtils {
 			assertTrue(distributionService.getErrorCode() == ProductRestUtils.STATUS_CODE_SUCCESS);
 			return distributionService;
 		}
+
+		return distributionService;
+
+	}
+	
+	public static RestResponse approveAndRejectServiceForDistribution(Component component) throws Exception {
+
+		Service service = (Service) component;
+
+		User opsUser = ElementFactory.getDefaultUser(UserRoleEnum.OPS);
+		opsUser.setRole("OPS");
+		User governotUser = ElementFactory.getDefaultUser(UserRoleEnum.GOVERNOR);
+
+		ServiceReqDetails serviceDetails = new ServiceReqDetails(service);
+		RestResponse distributionService = null;
+
+		RestResponse approveDistribution = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, governotUser, "approveService", DistributionStatusEnum.DISTRIBUTION_APPROVED);
+		if (approveDistribution.getErrorCode() == 200) {
+			distributionService = LifecycleRestUtils.changeDistributionStatus(serviceDetails, null, opsUser, "rejectService", DistributionStatusEnum.DISTRIBUTION_REJECTED);
+		}
+		
+		assertEquals(approveDistribution.getErrorCode(), new Integer(ProductRestUtils.STATUS_CODE_SUCCESS));
+		assertEquals(distributionService.getErrorCode(), new Integer(ProductRestUtils.STATUS_CODE_SUCCESS));
 
 		return distributionService;
 
@@ -361,10 +412,24 @@ public final class AtomicOperationUtils {
 		Resource container = ResponseParser.convertResourceResponseToJavaObject(restResponse.getResponse());
 		return container;
 	}
+	
+	public static Resource getResourceObjectByNameAndVersion(UserRoleEnum sdncModifierDetails, String resourceName, String resourceVersion) throws Exception {
+		User defaultUser = ElementFactory.getDefaultUser(sdncModifierDetails);
+		RestResponse resourceResponse = ResourceRestUtils.getResourceByNameAndVersion(defaultUser.getUserId(), resourceName, resourceVersion);
+		Resource container = ResponseParser.convertResourceResponseToJavaObject(resourceResponse.getResponse());
+		return container;
+	}
 
 	public static Service getServiceObject(Component containerDetails, UserRoleEnum userRole) throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		RestResponse serviceResponse = ServiceRestUtils.getService(containerDetails.getUniqueId(), defaultUser);
+		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
+		return container;
+	}
+	
+	public static Service getServiceObjectByNameAndVersion(UserRoleEnum sdncModifierDetails, String serviceName, String serviceVersion) throws Exception {
+		User defaultUser = ElementFactory.getDefaultUser(sdncModifierDetails);
+		RestResponse serviceResponse = ServiceRestUtils.getServiceByNameAndVersion(defaultUser, serviceName, serviceVersion);
 		Service container = ResponseParser.convertServiceResponseToJavaObject(serviceResponse.getResponse());
 		return container;
 	}
@@ -415,18 +480,18 @@ public final class AtomicOperationUtils {
 		}
 		return containerDetails;
 	}
-	
-	public static RestResponse associate2ResourceInstances(Component containerDetails, ComponentInstance fromNode, ComponentInstance toNode, String assocType, UserRoleEnum userRole, Boolean validateState) throws Exception {
+
+	public static RestResponse associate2ResourceInstances(Component containerDetails, ComponentInstance fromNode, ComponentInstance toNode, String assocType, UserRoleEnum userRole, Boolean validateState) throws IOException {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
 		RestResponse associate2ResourceInstancesResponse = ResourceRestUtils.associate2ResourceInstances(containerDetails, fromNode, toNode, assocType, defaultUser);
 
 		if (validateState) {
 			assertTrue(associate2ResourceInstancesResponse.getErrorCode() == ServiceRestUtils.STATUS_CODE_SUCCESS);
 		}
-		
+
 		return associate2ResourceInstancesResponse;
 	}
-	
+
 	public static Either<Pair<Component, ComponentInstance>, RestResponse> changeComponentInstanceVersion(Component containerDetails, ComponentInstance componentInstanceToReplace, Component newInstance, UserRoleEnum userRole, Boolean validateState)
 			throws Exception {
 		User defaultUser = ElementFactory.getDefaultUser(userRole);
@@ -559,7 +624,7 @@ public final class AtomicOperationUtils {
 
 		private static final long serialVersionUID = 1L;
 	};
-
+	
 	/**
 	 * Import resource from CSAR
 	 * 
@@ -572,15 +637,15 @@ public final class AtomicOperationUtils {
 	 */
 	public static Resource importResourceFromCSAR(ResourceTypeEnum resourceType, UserRoleEnum userRole, String fileName, String... filePath) throws Exception {
 		// Get the CSARs path
-		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars";
+		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars" ;
 		if (filePath != null && filePath.length > 0) {
 			realFilePath = filePath.toString();
 		}
-
+		
 		// Create default import resource & user
 		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
 		User sdncModifierDetails = ElementFactory.getDefaultUser(userRole);
-
+		
 		byte[] data = null;
 		Path path = Paths.get(realFilePath + File.separator + fileName);
 		data = Files.readAllBytes(path);
@@ -590,22 +655,22 @@ public final class AtomicOperationUtils {
 		resourceDetails.setCsarUUID(payloadName);
 		resourceDetails.setPayloadName(payloadName);
 		resourceDetails.setResourceType(resourceType.name());
-
+		
 		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
 		BaseRestUtils.checkCreateResponse(createResource);
-		return ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		return ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);		
 	};
-
+	
 	public static Either<Resource, RestResponse> importResourceByFileName(ResourceTypeEnum resourceType, UserRoleEnum userRole, String fileName, Boolean validateState, String... filePath) throws IOException {
 
-		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars";
+		String realFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator + "CI" + File.separator + "csars" ;
 		if (filePath != null && filePath.length > 0) {
 			realFilePath = filePath.toString();
 		}
 
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(userRole);
-			ResourceReqDetails defaultResource = ElementFactory.getDefaultResource(defaultUser);
+			ResourceReqDetails defaultResource = ElementFactory.getDefaultResource(defaultUser);			
 			ImportReqDetails defaultImportResource = ElementFactory.getDefaultImportResource(defaultResource);
 			ImportUtils.getImportResourceDetailsByPathAndName(defaultImportResource, realFilePath, fileName);
 			RestResponse resourceResp = ResourceRestUtils.createResource(defaultImportResource, defaultUser);

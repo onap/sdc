@@ -1,0 +1,36 @@
+@import '../../../../../../assets/styles/variables';
+
+.popover-input-wrapper {
+    display: flex;
+}
+
+/deep/ ui-element-popover-input {
+
+    .popover {
+        max-width: 350px;
+        width: 350px;
+    }
+
+    .edit-subnet-wrapper {
+        padding: 12px;
+
+        .subnet-value {
+            width: 100%;
+            resize: none;
+        }
+    }
+
+    input {
+        padding-right: 6px;
+        padding-left: 6px;
+        border: solid 1px @main_color_o;
+    }
+
+    .error {
+        border: solid 1px @func_color_q;
+        color: @func_color_q;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+}

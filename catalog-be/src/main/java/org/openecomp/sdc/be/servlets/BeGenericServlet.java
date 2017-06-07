@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
@@ -43,19 +44,27 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.VFComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.api.IElementDAO;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.externalapi.servlet.AssetMetadataConverter;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
+
+import fj.data.Either;
 
 public class BeGenericServlet extends BasicServlet {
 
@@ -64,11 +73,11 @@ public class BeGenericServlet extends BasicServlet {
 
 	private static Logger log = LoggerFactory.getLogger(BeGenericServlet.class.getName());
 
-	/******************** New error response mechanism **************/
-
+	/******************** New error response mechanism 
+	 * @param additionalParams **************/
+	
 	protected Response buildErrorResponse(ResponseFormat requestErrorWrapper) {
-		Response response = Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();
-		return response;
+		return Response.status(requestErrorWrapper.getStatus()).entity(gson.toJson(requestErrorWrapper.getRequestError())).build();		
 	}
 
 	protected Response buildOkResponse(ResponseFormat errorResponseWrapper, Object entity) {
@@ -96,43 +105,64 @@ public class BeGenericServlet extends BasicServlet {
 	}
 
 	/*******************************************************************************************************/
+	protected Either<User, ResponseFormat> getUser(final HttpServletRequest request, String userId) {
+		Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
+		if (eitherCreator.isRight()) {
+			log.info("createResource method - user is not listed. userId= {}", userId);
+			ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
+			User user = new User("", "", userId, "", null, null);
+
+			getComponentsUtils().auditResource(errorResponse, user, null, "", "", AuditingActionEnum.CHECKOUT_RESOURCE, null);
+			return Either.right(errorResponse);
+		}
+		return Either.left(eitherCreator.left().value());
+
+	}
 
 	protected UserBusinessLogic getUserAdminManager(ServletContext context) {
-		return getBusinessLogic(context, () -> UserBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> UserBusinessLogic.class);
 	}
 
 	protected ResourceBusinessLogic getResourceBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ResourceBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ResourceBusinessLogic.class);
 	}
 
 	protected ComponentsCleanBusinessLogic getComponentCleanerBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ComponentsCleanBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ComponentsCleanBusinessLogic.class);
 	}
 
 	protected ServiceBusinessLogic getServiceBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ServiceBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ServiceBusinessLogic.class);
 	}
 
 	protected ProductBusinessLogic getProductBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ProductBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ProductBusinessLogic.class);
 	}
 
 	protected ArtifactsBusinessLogic getArtifactBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ArtifactsBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ArtifactsBusinessLogic.class);
 	}
 
 	protected ElementBusinessLogic getElementBL(ServletContext context) {
-		return getBusinessLogic(context, () -> ElementBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> ElementBusinessLogic.class);
 	}
 
 	protected MonitoringBusinessLogic getMonitoringBL(ServletContext context) {
-		return getBusinessLogic(context, () -> MonitoringBusinessLogic.class);
+		return getClassFromWebAppContext(context, () -> MonitoringBusinessLogic.class);
 	}
 
-	protected <SomeBusinessLogic> SomeBusinessLogic getBusinessLogic(ServletContext context, Supplier<Class<SomeBusinessLogic>> businessLogicClassGen) {
+	protected AssetMetadataConverter getAssetUtils(ServletContext context) {
+		return getClassFromWebAppContext(context, () -> AssetMetadataConverter.class);
+	}
+	
+	protected LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
+		return getClassFromWebAppContext(context, () -> LifecycleBusinessLogic.class);
+	}
+	
+	protected <SomeClass> SomeClass getClassFromWebAppContext(ServletContext context, Supplier<Class<SomeClass>> businessLogicClassGen) {
 		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
 		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		SomeBusinessLogic monitoringBusinessLogic = webApplicationContext.getBean(businessLogicClassGen.get());
+		SomeClass monitoringBusinessLogic = webApplicationContext.getBean(businessLogicClassGen.get());
 		return monitoringBusinessLogic;
 	}
 

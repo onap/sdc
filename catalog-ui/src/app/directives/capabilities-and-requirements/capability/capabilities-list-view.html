@@ -1,0 +1,14 @@
+<div class="i-sdc-designer-sidebar-capabilities-requirements">
+    <div class="i-sdc-designer-sidebar-section-content-item-relations-group">
+        <div class="i-sdc-designer-sidebar-section-content-item-relations"
+             data-ng-repeat="capability in capabilities track by $index">
+            <div class="i-sdc-designer-sidebar-section-content-item-relations-details">
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{capability.name}}&nbsp;</div>
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-desc" sdc-smart-tooltip>
+                    {{capability.type}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

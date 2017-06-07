@@ -1,0 +1,122 @@
+.sdc-general-tab {
+
+    display: flex;
+    min-height: 100%;
+    flex-flow: column;
+
+    .sdc-edit-icon {
+        .sprite;
+        .e-sdc-small-icon-pencil;
+    }
+    .sdc-general-tab-title {
+
+        .f-color.a;
+        .f-type._14_m;
+        padding: 0px 0px 15px 20px;
+        border-bottom: 1px solid @main_color_o;
+    }
+
+    .sdc-general-tab-sub-title {
+
+        .f-color.a;
+        .f-type._14_m;
+        padding: 15px 20px 15px 20px;
+
+    }
+
+    //scrollbar
+    .general-tab-scrollbar-container {
+
+        .perfect-scrollbar;
+        width: 100%;
+    }
+
+    //plus minus expand collapse
+    .general-tab-expand-collapse {
+
+        &.expanded {
+            .expand-collapse-title {
+                .expand-collapse-title-icon {
+                    .expand-collapse-minus-icon;
+                }
+            }
+        }
+
+        .expand-collapse-title {
+
+            padding: 8px 20px 4px 20px;
+            cursor: pointer;
+            &:hover {
+                background-color: @main_color_o;
+            }
+
+            .expand-collapse-title-icon {
+                .hand;
+                .sprite-new;
+                .expand-collapse-plus-icon;
+            }
+            .expand-collapse-title-text {
+                max-width: 225px;
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-left: 10px;
+                line-height: 15px;
+            }
+        }
+        .selected {
+            background-color: @main_color_a;
+            .f-color.p;
+        }
+
+    }
+
+    .expand-collapse-sub-title {
+        max-width: 190px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 10px 0 0 43px;
+
+    }
+
+    //resizable view
+    .resizable-container {
+
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        height: 90%;
+
+        .resizable-section {
+            min-height: 50px;
+            flex: 1;
+            display: flex;
+            flex-flow: column;
+            &.resizable {
+                flex: 0 0 300px;
+            }
+        }
+
+        //this is the resizable icon custom design for the angular resizable directive
+        .rg-top {
+            span {
+                margin-top: -5px;
+                &:before {
+                    border-top: 1px dotted @main_color_m;
+                    content: '';
+                    display: inline-block;
+                    width: 39px;
+                    height: 6px;
+                }
+
+                border-top: 1px dotted @main_color_m;
+                border-bottom: 1px dotted @main_color_m;
+                width: 39px;
+                height: 4px;
+            }
+        }
+    }
+}

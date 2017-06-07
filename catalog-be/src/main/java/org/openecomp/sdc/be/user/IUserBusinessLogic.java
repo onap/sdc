@@ -31,6 +31,11 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
 
+/**
+ * 
+ * @author tg851x
+ *
+ */
 public interface IUserBusinessLogic {
 	public Either<User, ActionStatus> getUser(String userId, boolean inTransaction);
 

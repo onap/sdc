@@ -126,13 +126,11 @@
             "states":{
                 "NOT_CERTIFIED_CHECKOUT":[
                     {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"},
-                    {"text":"View"    ,"action":"openViewerModal"},
                     {"text":"Edit"    ,"action":"goToEntity"}
                 ],
                 "NOT_CERTIFIED_CHECKIN":[
                     {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
-                    {"text":"View"    ,"action":"openViewerModal"}
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
 
                 ],
                 "READY_FOR_CERTIFICATION":[],
@@ -147,22 +145,17 @@
                 "NOT_CERTIFIED_CHECKOUT":[
                     {"text":"Edit"    ,"action":"goToEntity"},
                     {"text":"Check in","action":"changeLifecycleState", "url":"CHECKIN"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
-                    {"text":"View"    ,"action":"openViewerModal"}
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
                 ],
                 "NOT_CERTIFIED_CHECKIN":[
                     {"text":"Check out","action":"changeLifecycleState", "url":"CHECKOUT"},
-                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"},
-                    {"text":"View"    ,"action":"openViewerModal"}
+                    {"text":"Submit for Testing","action":"changeLifecycleState", "url":"certificationRequest"}
                 ],
                 "READY_FOR_CERTIFICATION":[
-                    {"text":"View"    ,"action":"openViewerModal"}
                 ],
                 "CERTIFICATION_IN_PROGRESS":[
-                    {"text":"View"    ,"action":"openViewerModal"}
                 ],
                 "CERTIFIED":[
-                    {"text":"View"    ,"action":"openViewerModal"}
                 ]
             }
 

@@ -20,20 +20,19 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.GroupProperty;
 
 public class GroupDefinitionInfo {
 	private String name;
 
 	// the id is unique per group instance on graph.
 	private String uniqueId;
+	
+	// the id is unique per group instance on graph.
+	private String groupInstanceUniqueId;
 
 	// the group UUID should be changed when one of the artifacts/component
 	// instances has been changed.
@@ -46,12 +45,15 @@ public class GroupDefinitionInfo {
 	private String version;
 
 	private String invariantUUID;
+	private String customizationUUID;
 
 	Boolean isBase = null;
 
 	// artifacts - list of artifact uid. All artifacts in the group must already
 	// be uploaded to the VF
 	private List<ArtifactDefinitionInfo> artifacts;
+	
+	private List<? extends GroupProperty> properties;
 
 	public GroupDefinitionInfo() {
 		super();
@@ -63,6 +65,21 @@ public class GroupDefinitionInfo {
 		this.setVersion(other.getVersion());
 		this.setGroupUUID(other.getGroupUUID());
 		this.setInvariantUUID(other.getInvariantUUID());
+		this.setProperties(other.convertToGroupProperties());
+		
+
+	}
+	
+	public GroupDefinitionInfo(GroupInstance other) {
+		this.setName(other.getGroupName());
+		this.setUniqueId(other.getGroupUid());
+		this.setGroupInstanceUniqueId(other.getUniqueId());
+		this.setVersion(other.getVersion());
+		this.setGroupUUID(other.getGroupUUID());
+		this.setCustomizationUUID(other.getCustomizationUUID());
+		this.setInvariantUUID(other.getInvariantUUID());
+		this.setProperties(other.convertToGroupInstancesProperties());
+		
 
 	}
 
@@ -105,6 +122,15 @@ public class GroupDefinitionInfo {
 	public void setVersion(String version) {
 		this.version = version;
 	}
+	
+
+	public String getCustomizationUUID() {
+		return customizationUUID;
+	}
+
+	public void setCustomizationUUID(String customizationUUID) {
+		this.customizationUUID = customizationUUID;
+	}
 
 	public Boolean getIsBase() {
 		return isBase;
@@ -121,10 +147,29 @@ public class GroupDefinitionInfo {
 	public void setArtifacts(List<ArtifactDefinitionInfo> artifacts) {
 		this.artifacts = artifacts;
 	}
+	
+	public List<? extends GroupProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<? extends GroupProperty> properties) {
+		this.properties = properties;
+	}
+	
+	
+
+	public String getGroupInstanceUniqueId() {
+		return groupInstanceUniqueId;
+	}
+
+	public void setGroupInstanceUniqueId(String groupInstanceUniqueId) {
+		this.groupInstanceUniqueId = groupInstanceUniqueId;
+	}
 
 	@Override
 	public String toString() {
 		return "GroupDefinitionInfo [" + super.toString() + ", isBase=" + isBase + ", artifacts=" + artifacts + "]";
 	}
+	
 
 }

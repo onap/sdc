@@ -51,6 +51,22 @@ public class DistributionEngine implements IDistributionEngine {
 
 	public static final Pattern FQDN_PATTERN = Pattern.compile("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*(:[0-9]{2,4})*$", Pattern.CASE_INSENSITIVE);
 
+	public static void main(String[] args) {
+
+		List<String> servers = new ArrayList<>();
+
+		servers.add("uebsb91kcdc.it.att.com:3904");
+		servers.add("uebsb91kcdc.it.att.com:3904");
+		servers.add("uebsb91kcdc.it.att.com:3904");
+
+		YamlToObjectConverter converter = new YamlToObjectConverter();
+		DistributionEngineConfiguration distributionEngineConfiguration = converter.convert("src/test/resources/config/catalog-be/distribEngine1/distribution-engine-configuration.yaml", DistributionEngineConfiguration.class);
+
+		DistributionEngineInitTask distributionEngineInitTask = new DistributionEngineInitTask(2l, distributionEngineConfiguration, "PROD", new AtomicBoolean(false), null, null);
+		distributionEngineInitTask.startTask();
+
+	}
+
 	@javax.annotation.Resource
 	private ComponentsUtils componentUtils;
 
@@ -319,10 +335,8 @@ public class DistributionEngine implements IDistributionEngine {
 
 	@Override
 	public StorageOperationStatus notifyService(String distributionId, Service service, INotificationData notificationData, String envName, String userId, String modifierName) {
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug("Received notify service request. distributionId = {}, serviceUuid = {}, serviceUid = {}, envName = {}, userId = {}, modifierName {}", distributionId, service.getUUID(), service.getUniqueId(), envName, userId, modifierName);
-		}
+
+		logger.debug("Received notify service request. distributionId = {}, serviceUuid = {} serviceUid = {}, envName = {}, userId = {}, modifierName {}", distributionId, service.getUUID(), service.getUniqueId(), envName, userId, modifierName);
 
 		DistributionEngineConfiguration deConfiguration = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration();
 

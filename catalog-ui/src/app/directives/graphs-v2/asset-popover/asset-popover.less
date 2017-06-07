@@ -1,0 +1,64 @@
+.assetPopover {
+    font-family: omnes-regular,sans-serif;
+    font-size: 13px;
+    width:230px;
+    padding:0 15px;
+    position:absolute;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+
+    &.left {
+        align-items:flex-end;
+
+        .uib-custom-tooltip {
+            margin-left:-10px;
+        }
+    }
+
+    .display-name-tooltip {
+
+        border:solid 1px @main_color_p;
+        color: @main_color_p;
+        padding:5px 10px;
+        width:200px;
+        margin-bottom:10px;
+        border-radius: 2px;
+        background-color: rgba(80, 99, 113, 0.8);
+        box-shadow: 0px 3px 7.44px 0.56px rgba(0, 0, 0, 0.33);
+    }
+
+    .uib-custom-tooltip {
+        margin-left:20px;
+        font-family: omnes-regular,sans-serif;
+        font-size: 13px;
+    }
+
+    .assetMenu {
+
+        border-radius: 2px;
+        border: solid 1px @main_color_p;
+        background-color:  rgba(234, 234, 234, 0.7);
+        box-shadow: 0px 3px 7.44px 0.56px rgba(0, 0, 0, 0.33);
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items:center;
+
+        .sprite-new {
+            border-bottom:solid 1px #CCC;
+            &:hover:not(.disabled-icon) {
+                .hand;
+            }
+            &:active:not(.disabled-icon) {
+                background-color:  @main_color_a;
+                border-bottom-color: @main_color_a;
+            }
+            &.trash-icon {
+                border-bottom: none;
+            }
+        }
+
+
+    }
+}

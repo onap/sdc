@@ -23,16 +23,21 @@ package org.openecomp.sdc.ci.tests.execute.service;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpStatus;
+import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
@@ -54,12 +59,15 @@ import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import fj.data.Either;
 
@@ -81,7 +89,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 
 	// in case tests fail, run this method as test to create mapping in ES
 	public void updateElasticSearchMapping() throws IOException {
-		Either<String, Exception> fileContentUTF8 = FileUtils.getFileContentUTF8("src\\test\\resources\\CI\\other\\mapping.json");
+		Either<String, Exception> fileContentUTF8 = FileUtils
+				.getFileContentUTF8("src\\test\\resources\\CI\\other\\mapping.json");
 		AssertJUnit.assertTrue(fileContentUTF8.isLeft());
 
 		final String ES_TEMPLATE_URL = "http://%s:%s/_template/audit_template";
@@ -104,7 +113,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	public void testServiceAuditCertifiedVersion() throws Exception {
 
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(), versionZeroTwoIDWrapper = new Wrapper<String>();
+		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(),
+				versionZeroTwoIDWrapper = new Wrapper<String>();
 
 		createBasicServiceForAudit(versionZeroOneIDWrapper, versionZeroTwoIDWrapper, serviceDetails, true);
 		// First Certification
@@ -129,14 +139,35 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		// updates(tosca) + certification request + certification start +
 		// certification success
 		// + 3 A&AI(ArtifactDelete, ArtifactUpload, ArtifactUpdate)
-		AssertJUnit.assertTrue("expected: 17, actual: " + element.getAsJsonArray().size(), element.getAsJsonArray().size() == 17);
+		List<String> actions = new ArrayList<>();
+		JsonArray jsonArray = element.getAsJsonArray();
+		for( int i =0 ; i < jsonArray.size(); i++){
+			actions.add(jsonArray.get(i).getAsJsonObject().get(AuditingFieldsKeysEnum.AUDIT_ACTION.getDisplayName()).getAsString());
+		}
+		long checkinCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.CHECKIN_RESOURCE.getName())).count();
+		assertTrue(checkinCount == 5);
+		
+		long checkOutCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.CHECKOUT_RESOURCE.getName())).count();
+		assertTrue(checkOutCount == 4);
+		
+		long certificationRequestCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.CERTIFICATION_REQUEST_RESOURCE.getName())).count();
+		assertTrue(certificationRequestCount == 1);
+		
+		long certificationStartCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.START_CERTIFICATION_RESOURCE.getName())).count();
+		assertTrue(certificationStartCount == 1);
+		
+		long certificationSuccessCount = actions.stream().filter( e -> e.equals(AuditingActionEnum.CERTIFICATION_SUCCESS_RESOURCE.getName())).count();
+		assertTrue(certificationSuccessCount == 1);
+		
 
 	}
 
 	protected void certifyResource(ResourceReqDetails defaultResource) throws IOException {
-		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+				LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.STARTCERTIFICATION);
+		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser,
+				LifeCycleStatesEnum.STARTCERTIFICATION);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncTesterUser, LifeCycleStatesEnum.CERTIFY);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
@@ -148,7 +179,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 				put(Constants.USER_ID_HEADER, UserRoleEnum.ADMIN.getUserId());
 			}
 		};
-		String url = String.format(Urls.GET_COMPONENT_AUDIT_RECORDS, config.getCatalogBeHost(), config.getCatalogBePort(), componentType, componentId);
+		String url = String.format(Urls.GET_COMPONENT_AUDIT_RECORDS, config.getCatalogBeHost(),
+				config.getCatalogBePort(), componentType, componentId);
 
 		RestResponse httpSendGet = new HttpRequest().httpSendGet(url, headers);
 		AssertJUnit.assertTrue(httpSendGet.getErrorCode() == HttpStatus.SC_OK);
@@ -157,7 +189,9 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		return element;
 	}
 
-	protected void createBasicServiceForAudit(Wrapper<String> versionZeroOneIDWrapper, Wrapper<String> versionZeroTwoIDWrapper, ServiceReqDetails serviceDetails, Boolean withResInst) throws Exception {
+	protected void createBasicServiceForAudit(Wrapper<String> versionZeroOneIDWrapper,
+			Wrapper<String> versionZeroTwoIDWrapper, ServiceReqDetails serviceDetails, Boolean withResInst)
+			throws Exception {
 
 		User designerUser = sdncDesignerUser;
 
@@ -166,13 +200,17 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		versionZeroOneIDWrapper.setInnerElement(serviceDetails.getUniqueId());
 
 		if (withResInst) {
-			Resource resourceObj = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
-			AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceObj, UserRoleEnum.DESIGNER, true, true);
-			AtomicOperationUtils.changeComponentState(resourceObj, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true);
+			Resource resourceObj = AtomicOperationUtils
+					.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+			AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceObj, UserRoleEnum.DESIGNER, true,
+					true);
+			AtomicOperationUtils.changeComponentState(resourceObj, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY,
+					true);
 			ResourceReqDetails resource = new ResourceReqDetails(resourceObj);
 			ComponentInstanceReqDetails resourceInstanceReqDetails = ElementFactory.getDefaultComponentInstance();
 			resourceInstanceReqDetails.setComponentUid(resource.getUniqueId());
-			ComponentInstanceRestUtils.createComponentInstance(resourceInstanceReqDetails, sdncDesignerUser, serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
+			ComponentInstanceRestUtils.createComponentInstance(resourceInstanceReqDetails, sdncDesignerUser,
+					serviceDetails.getUniqueId(), ComponentTypeEnum.SERVICE);
 
 			// ServiceUtils.createCertResourceWithDeploymentArt(serviceDetails,
 			// "myResource");
@@ -200,14 +238,16 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	}
 
 	protected void increaseServiceVersion(ServiceReqDetails serviceDetails, String excpectedVersion) throws Exception {
-		RestResponse response = LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKOUT);
+		RestResponse response = LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser,
+				LifeCycleStatesEnum.CHECKOUT);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		AssertJUnit.assertTrue(serviceDetails.getVersion().equals(excpectedVersion));
 		response = LifecycleRestUtils.changeServiceState(serviceDetails, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}
 
-	protected void createBasicResourceForAudit(Wrapper<String> versionOnePointTwoIDWrapper, ResourceReqDetails defaultResource) throws Exception {
+	protected void createBasicResourceForAudit(Wrapper<String> versionOnePointTwoIDWrapper,
+			ResourceReqDetails defaultResource) throws Exception {
 
 		RestResponse response = ResourceRestUtils.createResource(defaultResource, sdncDesignerUser);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_CREATED);
@@ -218,11 +258,15 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 		// sdncDesignerUser, defaultResource.getVersion(), artifactDef);
 		// assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 
-		ArtifactReqDetails heatArtifactDetails = ElementFactory.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
-		response = ArtifactRestUtils.addInformationalArtifactToResource(heatArtifactDetails, sdncDesignerUser, defaultResource.getUniqueId());
-		AssertJUnit.assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(), response.getErrorCode() == 200);
+		ArtifactReqDetails heatArtifactDetails = ElementFactory
+				.getDefaultDeploymentArtifactForType(ArtifactTypeEnum.HEAT.getType());
+		response = ArtifactRestUtils.addInformationalArtifactToResource(heatArtifactDetails, sdncDesignerUser,
+				defaultResource.getUniqueId());
+		AssertJUnit.assertTrue("add HEAT artifact to resource request returned status:" + response.getErrorCode(),
+				response.getErrorCode() == 200);
 
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
+		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+				LifeCycleStatesEnum.CHECKIN);
 
 		increaseResourceVersion(defaultResource, "0.2");
 
@@ -247,11 +291,14 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 
 	}
 
-	protected void increaseResourceVersion(ResourceReqDetails defaultResource, String expectedVersion) throws IOException {
-		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser, LifeCycleStatesEnum.CHECKOUT);
+	protected void increaseResourceVersion(ResourceReqDetails defaultResource, String expectedVersion)
+			throws IOException {
+		RestResponse response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+				LifeCycleStatesEnum.CHECKOUT);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 		AssertJUnit.assertTrue(defaultResource.getVersion().equals(expectedVersion));
-		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser, LifeCycleStatesEnum.CHECKIN);
+		response = LifecycleRestUtils.changeResourceState(defaultResource, sdncDesignerUser,
+				LifeCycleStatesEnum.CHECKIN);
 		AssertJUnit.assertTrue(response.getErrorCode() == HttpStatus.SC_OK);
 	}
 
@@ -259,7 +306,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	public void testServiceAuditLastUncertifiedVersion() throws Exception {
 
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(), versionZeroTwoIDWrapper = new Wrapper<String>();
+		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(),
+				versionZeroTwoIDWrapper = new Wrapper<String>();
 
 		createBasicServiceForAudit(versionZeroOneIDWrapper, versionZeroTwoIDWrapper, serviceDetails, false);
 
@@ -273,7 +321,8 @@ public class GetComponentAuditApiTest extends ComponentBaseTest {
 	public void testServiceAuditFirstUncertifiedVersion() throws Exception {
 
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(), versionZeroTwoIDWrapper = new Wrapper<String>();
+		Wrapper<String> versionZeroOneIDWrapper = new Wrapper<String>(),
+				versionZeroTwoIDWrapper = new Wrapper<String>();
 
 		createBasicServiceForAudit(versionZeroOneIDWrapper, versionZeroTwoIDWrapper, serviceDetails, false);
 

@@ -108,13 +108,13 @@ public class PublishNotificationRunnable implements Runnable {
 		ThreadLocalsHolder.setUuid(this.requestId);
 
 		CambriaErrorResponse status = cambriaHandler.sendNotificationAndClose(topicName, deConfiguration.getUebPublicKey(), deConfiguration.getUebSecretKey(), deConfiguration.getUebServers(), data,
-				deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds().longValue());
+				deConfiguration.getDistributionNotificationTopic().getMaxWaitingAfterSendingSeconds());
 
 		logger.info("After publishing service {} of version {}. Status is {}", service.getName(), service.getVersion(), status.getHttpCode());
 		auditDistributionNotification(topicName, status, service, distributionId, envName, userId, modifierName);
 
 		long endTime = System.currentTimeMillis();
-		logger.debug("After building and publishing artifacts object. Total took {} milliseconds.", (endTime - startTime));
+		logger.debug("After building and publishing artifacts object. Total took {} milliseconds", (endTime - startTime));
 
 	}
 

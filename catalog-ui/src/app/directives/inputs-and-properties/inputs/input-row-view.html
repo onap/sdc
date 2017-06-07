@@ -1,0 +1,43 @@
+<div class="input-row">
+    <div class="title-text" ng-click="onNameClicked(input)" data-tests-id="inputName_{{input.name}}">
+        {{input.name}}
+    </div>
+    <div class="flex-container">
+        <div class="expand-collapse-inputs-table-icon"></div>
+        <div class="flex-item">
+            <div class="no-overflow">
+                <span class="title-text">Description:</span>
+                <span tooltips tooltip-content="{{input.description}}" data-tests-id="inputDescription_{{input.name}}">{{input.description}}</span>
+            </div>
+            <div class="text" tooltips tooltip-content="{{input.defaultValue}}">
+                <span class="title-text">Default Value:</span>
+                <span data-tests-id="inputDefaultValue_{{input.name}}">{{input.defaultValue}}</span>
+            </div>
+        </div>
+        <div class="flex-item ">
+            <div class="text">
+                <span class="title-text">VF Instance:</span>
+                <span tooltips tooltip-content="{{instanceName}}" data-tests-id="inputInstanceName_{{input.name}}">{{instanceName}}</span>
+            </div>
+            <div class="text">
+                <span class="title-text">Type:</span>
+                <span tooltips tooltip-content="{{input.type}}" data-tests-id="inputType_{{input.name}}">{{input.type}} </span>
+            </div>
+        </div>
+        <sdc-checkbox ng-if="instanceInputsMap"
+                      class="input-check-box"
+                      disabled="input.isAlreadySelected || isViewOnly"
+                      sdc-checklist-model="instanceInputsMap[instanceId]"
+                      sdc-checklist-value="input"
+                      sdc-checklist-change="onCheckboxClicked()"
+                      data-tests-id="inputsCheckbox_{{input.name}}"
+                      data-ng-click=" $event.stopPropagation()"></sdc-checkbox>
+
+        <div class="delete" ng-if="showDeleteIcon">
+            <span class="sprite-new delete-icon remove-input-icon"
+                  data-ng-class="{'disabled': isViewOnly || input.isDeleteDisabled}"
+                  data-ng-click="deleteInput(input); $event.stopPropagation();"
+                  data-tests-id="deleteInput_{{input.name}}"></span>
+        </div>
+    </div>
+</div>

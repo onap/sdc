@@ -80,7 +80,7 @@ public class CheckAndUpdateJob extends Job {
 		} catch (Exception e) {
 			log.debug("an exception was encountered during CheckAndUpdateJob", e);
 		} finally {
-			daoInfo.getResourceOperation().getTitanGenericDao().commit();
+			daoInfo.getToscaOperationFacade().commit();
 		}
 		return false;
 	}
@@ -109,8 +109,7 @@ public class CheckAndUpdateJob extends Job {
 		} else {
 			// update cache
 			// get component from grath
-			Either<Component, StorageOperationStatus> componentRes = getOperationByType(nodeTypeEnum)
-					.getComponent(componentId, true);
+			Either<Component, StorageOperationStatus> componentRes = daoInfo.getToscaOperationFacade().getToscaElement(componentId);
 			if (componentRes.isRight()) {
 				log.debug("failed to get full component:{} from graph status:{}", componentId,
 						componentRes.right().value());

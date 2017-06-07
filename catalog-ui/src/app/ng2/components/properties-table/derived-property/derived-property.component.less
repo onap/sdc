@@ -1,0 +1,35 @@
+.derived-property-row {
+    display:flex;
+    flex-direction:row;
+    position:relative;
+    border-top: #d2d2d2 solid 1px;
+    
+    &:first-child {
+        border-top:none;
+    }
+    .table-cell {
+        flex: 0 0 50%;
+        padding:5px;
+        position:relative;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:first-child {
+            border-right:#d2d2d2 solid 1px;
+            overflow:hidden;
+        }
+        span.expand-icon {
+            position: absolute;
+            right: 10px;
+            transition: 200ms transform ease-in-out;
+        }
+        span.expand-icon.expanded {
+            transform: rotate(-180deg);
+        }
+    }
+}
+.filtered {
+    /deep/ .checkbox-label-content{
+        background-color: yellow;
+    }
+}

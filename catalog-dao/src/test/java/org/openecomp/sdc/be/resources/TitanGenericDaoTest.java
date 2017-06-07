@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.resources;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,6 +73,8 @@ import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.TitanVertex;
 import com.thinkaurelius.titan.core.attribute.Text;
+import com.thinkaurelius.titan.core.schema.ConsistencyModifier;
+import com.thinkaurelius.titan.core.schema.TitanGraphIndex;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 
 import fj.data.Either;
@@ -122,7 +125,7 @@ public class TitanGenericDaoTest {
 	@Test
 	public void testCrudNode() {
 
-		String id = "user12345abc";
+		String id = "userId12345abc";
 		UserData userData = new UserData("Myname123", "Mylastname", id, "email123", "Tester",
 				UserStatusEnum.ACTIVE.name(), null);
 
@@ -163,7 +166,7 @@ public class TitanGenericDaoTest {
 	public void testGetByCategoryAndAll() {
 
 		// create 2 nodes
-		String id = "user12345abc";
+		String id = "userId12345abc";
 		UserData userData1 = new UserData("Myname123", "Mylastname", id, "email123", "Tester",
 				UserStatusEnum.ACTIVE.name(), null);
 
@@ -171,7 +174,7 @@ public class TitanGenericDaoTest {
 		assertTrue(node1.isLeft());
 		log.debug("{}", node1.left().value());
 
-		id = "userdfkoer45abc";
+		id = "userIddfkoer45abc";
 		UserData userData2 = new UserData("Mynadyhme123", "Mylasghtname", id, "emaighdl123", "Designer",
 				UserStatusEnum.ACTIVE.name(), null);
 		Either<UserData, TitanOperationStatus> node2 = titanDao.createNode(userData2, UserData.class);
@@ -216,7 +219,7 @@ public class TitanGenericDaoTest {
 
 	@Test
 	public void testGetEdgesForNode() {
-		String id = "user12345abc";
+		String id = "userId12345abc";
 		UserData userData = new UserData("Myname123", "Mylastname", id, "email123", UserRoleEnum.ADMIN.name(),
 				UserStatusEnum.ACTIVE.name(), null);
 		titanDao.createNode(userData, UserData.class);
@@ -262,7 +265,7 @@ public class TitanGenericDaoTest {
 
 	@Test
 	public void testLockElement() {
-
+		
 		ResourceMetadataData resourceData = new ResourceMetadataData();
 
 		resourceData.getMetadataDataDefinition().setName("resourceForLock");
@@ -307,7 +310,7 @@ public class TitanGenericDaoTest {
 
 	@Test
 	public void testReLockElement() throws InterruptedException {
-
+		
 		ResourceMetadataData resourceData = new ResourceMetadataData();
 
 		resourceData.getMetadataDataDefinition().setName("resourceForReLock");
@@ -505,27 +508,6 @@ public class TitanGenericDaoTest {
 	@Test
 	public void testDuplicateResultDueToTitanBug() {
 
-		// TitanGraph titanGraph = titanDao.getGraph().left().value();
-		// TitanManagement managementSystem = titanGraph.getManagementSystem();
-
-		// GraphPropertiesDictionary[] properties = {
-		// GraphPropertiesDictionary.IS_ABSTRACT,
-		// GraphPropertiesDictionary.ADDITIONAL_INFO_ID_TO_KEY,
-		// GraphPropertiesDictionary.POSITION_X,
-		// GraphPropertiesDictionary.ARTIFACT_TIMEOUT };
-		//
-		// for (GraphPropertiesDictionary property : properties) {
-		// if (false ==
-		// managementSystem.containsGraphIndex(property.getProperty())) {
-		// PropertyKey propKey1 =
-		// managementSystem.makePropertyKey(property.getProperty()).dataType(property.getClazz()).make();
-		// managementSystem.buildIndex(property.getProperty(),
-		// Vertex.class).addKey(propKey1).unique().buildCompositeIndex();
-		// }
-		// }
-
-		// managementSystem.commit();
-
 		ResourceMetadataData resourceData1 = new ResourceMetadataData();
 		resourceData1.getMetadataDataDefinition().setUniqueId("A");
 		((ResourceMetadataDataDefinition) resourceData1.getMetadataDataDefinition()).setAbstract(true);
@@ -667,7 +649,7 @@ public class TitanGenericDaoTest {
 
 	@Test
 	public void testDuplicateResultUSeHasNotQueryDueToTitanBug() {
-
+		
 		String name = "bbbb";
 
 		ResourceMetadataData resourceData1 = new ResourceMetadataData();
@@ -717,5 +699,5 @@ public class TitanGenericDaoTest {
 		titanDao.rollback();
 
 	}
-
+	
 }

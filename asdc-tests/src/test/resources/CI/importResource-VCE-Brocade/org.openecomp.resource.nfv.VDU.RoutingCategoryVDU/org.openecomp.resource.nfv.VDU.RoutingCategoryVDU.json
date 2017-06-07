@@ -1,6 +1,6 @@
 {
   "payloadName": "org.openecomp.resource.nfv.vdu.RoutingCategoryVDU.yaml",
-  "contactId": "jh0003",
+  "attContact": "jh0003",
   "name": "org.openecomp.resource.nfv.vdu.RoutingCategoryVDU",
   "description": "Node Type that represents a Module",
   "resourceIconPath": "defaulticon",

@@ -40,8 +40,6 @@ public interface IServiceOperation extends IComponentOperation {
 	public Either<Service, StorageOperationStatus> getService(String uniqueId);
 
 	public Either<Service, StorageOperationStatus> getService(String uniqueId, boolean inTransaction);
-	// public Either<Service, StorageOperationStatus> getService_tx(String
-	// uniqueId, boolean inTransaction);
 
 	public Either<Service, StorageOperationStatus> deleteService(String uniqueId);
 
@@ -49,40 +47,33 @@ public interface IServiceOperation extends IComponentOperation {
 
 	public Either<Boolean, StorageOperationStatus> validateServiceNameExists(String serviceName);
 
-	public Either<List<Service>, StorageOperationStatus> getFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
+	public Either<List<Service>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
 
 	public Either<Service, StorageOperationStatus> updateService(Service service, boolean inTransaction);
 
-	public Either<Set<Service>, StorageOperationStatus> getCatalogData(Map<String, Object> propertiesToMatch,
-			boolean inTransaction);
+	public Either<Set<Service>, StorageOperationStatus> getCatalogData(Map<String, Object> propertiesToMatch, boolean inTransaction);
 
-	public Either<List<Service>, StorageOperationStatus> getTesterFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, boolean inTransaction);
+	public Either<List<Service>, StorageOperationStatus> getTesterFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, boolean inTransaction);
 
-	public Either<Set<Service>, StorageOperationStatus> getCertifiedServicesWithDistStatus(
-			Map<String, Object> propertiesToMatch, Set<DistributionStatusEnum> distStatus, boolean inTransaction);
+	public Either<Set<Service>, StorageOperationStatus> getCertifiedServicesWithDistStatus(Map<String, Object> propertiesToMatch, Set<DistributionStatusEnum> distStatus, boolean inTransaction);
 
-	public Either<Service, StorageOperationStatus> updateDestributionStatus(Service service, User user,
-			DistributionStatusEnum distributionStatus);
+	public Either<Service, StorageOperationStatus> updateDestributionStatus(Service service, User user, DistributionStatusEnum distributionStatus);
 
 	public Either<List<Service>, StorageOperationStatus> getServiceCatalogData(boolean inTransaction);
 
-	public Either<List<Service>, StorageOperationStatus> getServiceCatalogDataLatestCertifiedAndNotCertified(
-			boolean inTransaction);
+	public Either<List<Service>, StorageOperationStatus> getServiceCatalogDataLatestCertifiedAndNotCertified(boolean inTransaction);
 
-	public Either<Service, StorageOperationStatus> getServiceByNameAndVersion(String name, String version,
-			Map<String, Object> additionalParams, boolean inTransaction);
+	public Either<Service, StorageOperationStatus> getServiceByNameAndVersion(String name, String version, Map<String, Object> additionalParams, boolean inTransaction);
 
 	public Either<Service, StorageOperationStatus> getServiceByNameAndVersion(String name, String version);
 
-	public Either<Service, StorageOperationStatus> getServiceBySystemNameAndVersion(String name, String version,
-			boolean inTransaction);
+	public Either<Service, StorageOperationStatus> getServiceBySystemNameAndVersion(String name, String version, boolean inTransaction);
 
 	public Either<List<Service>, StorageOperationStatus> getServiceListByUuid(String uuid, boolean inTransaction);
 
 	public Either<List<Service>, StorageOperationStatus> getLatestServiceByUuid(String uuid, boolean inTransaction);
 
-	public Either<List<Service>, StorageOperationStatus> getServiceListBySystemName(String systemName,
-			boolean inTransaction);
+	public Either<List<Service>, StorageOperationStatus> getServiceListBySystemName(String systemName, boolean inTransaction);
+
+	Either<List<Service> , StorageOperationStatus> getAll();
 }

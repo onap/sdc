@@ -91,7 +91,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -108,229 +107,226 @@ public class DownloadComponentArt extends ComponentBaseTest {
 	protected String contentTypeHeaderData = "application/json";
 	protected String acceptHeaderDate = "application/json";
 
+
+
 	protected Gson gson = new Gson();
 	protected JSONParser jsonParser = new JSONParser();
+
 
 	protected String serviceVersion;
 	protected ResourceReqDetails resourceDetails;
 	protected User sdncUserDetails;
 	protected ServiceReqDetails serviceDetails;
+	
 
 	@BeforeMethod
-	public void init() throws Exception {
+	public void init() throws Exception{
 		sdncUserDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		Resource resourceObj = AtomicOperationUtils
-				.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
+		Resource resourceObj = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VFC, UserRoleEnum.DESIGNER, true).left().value();
 		Service serviceObj = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true).left().value();
-
-		resourceDetails = new ResourceReqDetails(resourceObj);
+		
+		
+		resourceDetails = new ResourceReqDetails(resourceObj); 
 		serviceDetails = new ServiceReqDetails(serviceObj);
 	}
-
-	@Rule
+	
+	@Rule 
 	public static TestName name = new TestName();
 
 	public DownloadComponentArt() {
 		super(name, DownloadComponentArt.class.getName());
 
 	}
+		
 
+	
 	// External API - Download artifact for resource
 	@Test
 	public void downloadArtifactFromResourceViaExternalAPI() throws Exception {
 		Resource resourceDetailsVF;
-		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(
-				ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE,
-				UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = createdResource.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils
-				.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true)
-				.left().value();
-		resourceDetails = new ResourceReqDetails(resourceDetailsVF);
-
+		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
+		resourceDetails = new ResourceReqDetails(resourceDetailsVF); 
+		
 		String resourceUUID = resourceDetailsVF.getUUID();
 		String artifactUUID = heatArtifact.getArtifactUUID();
-
+		
 		System.out.println("Resource UUID: " + resourceUUID);
 		System.out.println("Artifact UUID: " + artifactUUID);
-
-		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID,
-				artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Resource");
-
+		
+		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Resource");
+		
 		Integer responseCode = restResponse.getErrorCode();
 		Integer expectedCode = 200;
-		Assert.assertEquals(responseCode, expectedCode, "Response code is not correct.");
-
+		Assert.assertEquals(responseCode,expectedCode, "Response code is not correct.");
+		
 		String response = restResponse.getResponse();
-
+		
 		String payloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDEzLTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTENCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIGltYWdlX25hbWVfMjoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogSW1hZ2UgTmFtZQ0KICAgIGRlc2NyaXB0aW9uOiBTQ09JTUFHRSBTcGVjaWZ5IGFuIGltYWdlIG5hbWUgZm9yIGluc3RhbmNlMg0KICAgIGRlZmF1bHQ6IGNpcnJvcy0wLjMuMS14ODZfNjQNCiAgbmV0d29ya19pZDoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogTmV0d29yayBJRA0KICAgIGRlc2NyaXB0aW9uOiBTQ09ORVRXT1JLIE5ldHdvcmsgdG8gYmUgdXNlZCBmb3IgdGhlIGNvbXB1dGUgaW5zdGFuY2UNCiAgICBoaWRkZW46IHRydWUNCiAgICBjb25zdHJhaW50czoNCiAgICAgIC0gbGVuZ3RoOiB7IG1pbjogNiwgbWF4OiA4IH0NCiAgICAgICAgZGVzY3JpcHRpb246IFBhc3N3b3JkIGxlbmd0aCBtdXN0IGJlIGJldHdlZW4gNiBhbmQgOCBjaGFyYWN0ZXJzLg0KICAgICAgLSByYW5nZTogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBSYW5nZSBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3ZhbHVlczoNCiAgICAgICAgLSBtMS5zbWFsbA0KICAgICAgICAtIG0xLm1lZGl1bQ0KICAgICAgICAtIG0xLmxhcmdlDQogICAgICAgIGRlc2NyaXB0aW9uOiBBbGxvd2VkIHZhbHVlcyBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbYS16QS1aMC05XSsiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IGNvbnNpc3Qgb2YgY2hhcmFjdGVycyBhbmQgbnVtYmVycyBvbmx5Lg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbQS1aXStbYS16QS1aMC05XSoiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IHN0YXJ0IHdpdGggYW4gdXBwZXJjYXNlIGNoYXJhY3Rlci4NCiAgICAgIC0gY3VzdG9tX2NvbnN0cmFpbnQ6IG5vdmEua2V5cGFpcg0KICAgICAgICBkZXNjcmlwdGlvbjogQ3VzdG9tIGRlc2NyaXB0aW9uDQoNCnJlc291cmNlczoNCiAgbXlfaW5zdGFuY2UxOg0KICAgIHR5cGU6IE9TOjpOb3ZhOjpTZXJ2ZXINCiAgICBwcm9wZXJ0aWVzOg0KICAgICAgaW1hZ2U6IHsgZ2V0X3BhcmFtOiBpbWFnZV9uYW1lXzEgfQ0KICAgICAgZmxhdm9yOiBtMS5zbWFsbA0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9DQogIG15X2luc3RhbmNlMjoNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8yIH0NCiAgICAgIGZsYXZvcjogbTEudGlueQ0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9";
 		String decodedPaypload = Decoder.decode(payloadData);
-
+		
 		Assert.assertEquals(response, decodedPaypload, "Response deployment artifact not correct.");
-
-		String auditAction = "ArtifactDownload";
-
+		
+		String auditAction = "DownloadArtifact";
+		
 		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ExpectedResourceAuditJavaObject();
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setResourceName(resourceDetails.getName());
 		expectedResourceAuditJavaObject.setResourceType("Resource");
 		expectedResourceAuditJavaObject.setStatus("200");
 		expectedResourceAuditJavaObject.setDesc("OK");
-
+		
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
 		String resource_url = String.format("/asdc/v1/catalog/resources/%s/artifacts/%s", resourceUUID, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
-
-		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null,
-				false);
+		
+		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
 	}
-
+	
+	
 	// External API - Download artifact for resource - negative test
 	@Test
 	public void downloadArtifactFromResourceViaExternalAPINegativeTest() throws Exception {
 		Resource resourceDetailsVF;
-		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(
-				ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE,
-				UserRoleEnum.DESIGNER, true);
+		Either<Resource, RestResponse> createdResource = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		resourceDetailsVF = createdResource.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils
-				.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true)
-				.left().value();
-		resourceDetails = new ResourceReqDetails(resourceDetailsVF);
-
+		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF, UserRoleEnum.DESIGNER, true, true).left().value();
+		resourceDetails = new ResourceReqDetails(resourceDetailsVF); 
+		
 		String resourceUUID = resourceDetailsVF.getUUID();
 		String artifactUUID = heatArtifact.getArtifactUUID();
-
+		
 		System.out.println("Resource UUID: " + resourceUUID);
 		System.out.println("Artifact UUID: " + artifactUUID);
-
-		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID,
-				"dfsgfdsg324", ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Resource");
-
+		
+		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, "dfsgfdsg324", ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Resource");
+		
 		Integer responseCode = restResponse.getErrorCode();
 		Integer expectedCode = 200;
-		Assert.assertEquals(responseCode, expectedCode, "Response code is not correct.");
+		Assert.assertEquals(responseCode,expectedCode, "Response code is not correct.");
 	}
-
+	
+	
+	
+	
+	
 	// External API - Download artifact for service - negative test
 	@Test
 	public void downloadArtifactFromServiceViaExternalAPI() throws Exception {
-
+		
 		Service resourceDetailsService;
-		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER,
-				true);
+		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetailsService = createdResource.left().value();
-
-		ArtifactDefinition heatArtifact = AtomicOperationUtils
-				.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsService, UserRoleEnum.DESIGNER, true, true)
-				.left().value();
+		
+		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.OTHER, resourceDetailsService, UserRoleEnum.DESIGNER, true, true).left().value();
 
 		String resourceUUID = resourceDetailsService.getUUID();
 		String artifactUUID = heatArtifact.getArtifactUUID();
-
+		
 		System.out.println("Resource UUID: " + resourceUUID);
 		System.out.println("Artifact UUID: " + artifactUUID);
-
-		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID,
-				artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Service");
-
+		
+		RestResponse restResponse = ArtifactRestUtils.getResourceDeploymentArtifactExternalAPI(resourceUUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Service");
+		
 		Integer responseCode = restResponse.getErrorCode();
 		Integer expectedCode = 200;
-		Assert.assertEquals(responseCode, expectedCode, "Response code is not correct.");
-
+		Assert.assertEquals(responseCode,expectedCode, "Response code is not correct.");
+		
 		String response = restResponse.getResponse();
-
+		
 		String payloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDEzLTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTENCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIGltYWdlX25hbWVfMjoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogSW1hZ2UgTmFtZQ0KICAgIGRlc2NyaXB0aW9uOiBTQ09JTUFHRSBTcGVjaWZ5IGFuIGltYWdlIG5hbWUgZm9yIGluc3RhbmNlMg0KICAgIGRlZmF1bHQ6IGNpcnJvcy0wLjMuMS14ODZfNjQNCiAgbmV0d29ya19pZDoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogTmV0d29yayBJRA0KICAgIGRlc2NyaXB0aW9uOiBTQ09ORVRXT1JLIE5ldHdvcmsgdG8gYmUgdXNlZCBmb3IgdGhlIGNvbXB1dGUgaW5zdGFuY2UNCiAgICBoaWRkZW46IHRydWUNCiAgICBjb25zdHJhaW50czoNCiAgICAgIC0gbGVuZ3RoOiB7IG1pbjogNiwgbWF4OiA4IH0NCiAgICAgICAgZGVzY3JpcHRpb246IFBhc3N3b3JkIGxlbmd0aCBtdXN0IGJlIGJldHdlZW4gNiBhbmQgOCBjaGFyYWN0ZXJzLg0KICAgICAgLSByYW5nZTogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBSYW5nZSBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3ZhbHVlczoNCiAgICAgICAgLSBtMS5zbWFsbA0KICAgICAgICAtIG0xLm1lZGl1bQ0KICAgICAgICAtIG0xLmxhcmdlDQogICAgICAgIGRlc2NyaXB0aW9uOiBBbGxvd2VkIHZhbHVlcyBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbYS16QS1aMC05XSsiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IGNvbnNpc3Qgb2YgY2hhcmFjdGVycyBhbmQgbnVtYmVycyBvbmx5Lg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbQS1aXStbYS16QS1aMC05XSoiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IHN0YXJ0IHdpdGggYW4gdXBwZXJjYXNlIGNoYXJhY3Rlci4NCiAgICAgIC0gY3VzdG9tX2NvbnN0cmFpbnQ6IG5vdmEua2V5cGFpcg0KICAgICAgICBkZXNjcmlwdGlvbjogQ3VzdG9tIGRlc2NyaXB0aW9uDQoNCnJlc291cmNlczoNCiAgbXlfaW5zdGFuY2UxOg0KICAgIHR5cGU6IE9TOjpOb3ZhOjpTZXJ2ZXINCiAgICBwcm9wZXJ0aWVzOg0KICAgICAgaW1hZ2U6IHsgZ2V0X3BhcmFtOiBpbWFnZV9uYW1lXzEgfQ0KICAgICAgZmxhdm9yOiBtMS5zbWFsbA0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9DQogIG15X2luc3RhbmNlMjoNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8yIH0NCiAgICAgIGZsYXZvcjogbTEudGlueQ0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9";
 		String decodedPaypload = Decoder.decode(payloadData);
-
+		
 		Assert.assertEquals(response, decodedPaypload, "Response deployment artifact not correct.");
-
-		String auditAction = "ArtifactDownload";
-
+		
+		String auditAction = "DownloadArtifact";
+		
 		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ExpectedResourceAuditJavaObject();
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setResourceName(resourceDetailsService.getName());
 		expectedResourceAuditJavaObject.setResourceType("Service");
 		expectedResourceAuditJavaObject.setStatus("200");
 		expectedResourceAuditJavaObject.setDesc("OK");
-
+		
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
 		String resource_url = String.format("/asdc/v1/catalog/services/%s/artifacts/%s", resourceUUID, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
-
-		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null,
-				false);
+		
+		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
 	}
-
-	// External API - Download ComponentInstance artifact of service - negative
-	// test
+	
+	
+	
+	
+	
+	
+	// External API - Download ComponentInstance artifact of service - negative test
 	@Test
 	public void downloadArtifactOfComponentInstanceFromServiceViaExternalAPI() throws Exception {
-
-		Either<Resource, RestResponse> resourceDetailsVF_01e = AtomicOperationUtils
-				.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT,
-						ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
+		
+		Either<Resource, RestResponse> resourceDetailsVF_01e = AtomicOperationUtils.createResourcesByTypeNormTypeAndCatregory(ResourceTypeEnum.VF, NormativeTypesEnum.ROOT, ResourceCategoryEnum.GENERIC_INFRASTRUCTURE, UserRoleEnum.DESIGNER, true);
 		Component resourceDetailsVF_01 = resourceDetailsVF_01e.left().value();
-		ArtifactDefinition heatArtifact = AtomicOperationUtils
-				.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF_01, UserRoleEnum.DESIGNER, true, true)
-				.left().value();
+		ArtifactDefinition heatArtifact = AtomicOperationUtils.uploadArtifactByType(ArtifactTypeEnum.HEAT, resourceDetailsVF_01, UserRoleEnum.DESIGNER, true, true).left().value();
 
-		resourceDetailsVF_01 = AtomicOperationUtils
-				.changeComponentState(resourceDetailsVF_01, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true)
-				.getLeft();
-
+		resourceDetailsVF_01 = AtomicOperationUtils.changeComponentState(resourceDetailsVF_01, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		
 		Service resourceDetailsService;
-		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER,
-				true);
+		Either<Service, RestResponse> createdResource = AtomicOperationUtils.createDefaultService(UserRoleEnum.DESIGNER, true);
 		resourceDetailsService = createdResource.left().value();
-
-		ComponentInstance resourceDetailsVF1ins_01 = AtomicOperationUtils
-				.addComponentInstanceToComponentContainer(resourceDetailsVF_01, resourceDetailsService,
-						UserRoleEnum.DESIGNER, true)
-				.left().value();
-
+		
+		
+		ComponentInstance resourceDetailsVF1ins_01 = AtomicOperationUtils.addComponentInstanceToComponentContainer(resourceDetailsVF_01, resourceDetailsService, UserRoleEnum.DESIGNER, true).left().value();
+		
+		
 		System.out.println("-----");
-
+		
+		
 		String resourceUUID = resourceDetailsService.getUUID();
-		String componentInstanceUID = resourceDetailsVF1ins_01.getUniqueId();
+		String componentNormalizedName = resourceDetailsVF1ins_01.getNormalizedName();
 		String artifactUUID = heatArtifact.getArtifactUUID();
-
+			
 		System.out.println("Resource UUID: " + resourceUUID);
-		System.out.println("Component instance UID: " + componentInstanceUID);
+		System.out.println("Component NormalizedName: " + componentNormalizedName);
 		System.out.println("Artifact UUID: " + artifactUUID);
-
-		RestResponse restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(resourceUUID,
-				componentInstanceUID, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Service");
-		//
+		
+		RestResponse restResponse = ArtifactRestUtils.getComponentInstanceDeploymentArtifactExternalAPI(resourceUUID, componentNormalizedName, artifactUUID, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER), "Service");
+//			
 		Integer responseCode = restResponse.getErrorCode();
 		Integer expectedCode = 200;
-		Assert.assertEquals(responseCode, expectedCode, "Response code is not correct.");
-
+		Assert.assertEquals(responseCode,expectedCode, "Response code is not correct.");
+			
 		String response = restResponse.getResponse();
-
+			
 		String payloadData = "aGVhdF90ZW1wbGF0ZV92ZXJzaW9uOiAyMDEzLTA1LTIzDQoNCmRlc2NyaXB0aW9uOiBTaW1wbGUgdGVtcGxhdGUgdG8gZGVwbG95IGEgc3RhY2sgd2l0aCB0d28gdmlydHVhbCBtYWNoaW5lIGluc3RhbmNlcw0KDQpwYXJhbWV0ZXJzOg0KICBpbWFnZV9uYW1lXzE6DQogICAgdHlwZTogc3RyaW5nDQogICAgbGFiZWw6IEltYWdlIE5hbWUNCiAgICBkZXNjcmlwdGlvbjogU0NPSU1BR0UgU3BlY2lmeSBhbiBpbWFnZSBuYW1lIGZvciBpbnN0YW5jZTENCiAgICBkZWZhdWx0OiBjaXJyb3MtMC4zLjEteDg2XzY0DQogIGltYWdlX25hbWVfMjoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogSW1hZ2UgTmFtZQ0KICAgIGRlc2NyaXB0aW9uOiBTQ09JTUFHRSBTcGVjaWZ5IGFuIGltYWdlIG5hbWUgZm9yIGluc3RhbmNlMg0KICAgIGRlZmF1bHQ6IGNpcnJvcy0wLjMuMS14ODZfNjQNCiAgbmV0d29ya19pZDoNCiAgICB0eXBlOiBzdHJpbmcNCiAgICBsYWJlbDogTmV0d29yayBJRA0KICAgIGRlc2NyaXB0aW9uOiBTQ09ORVRXT1JLIE5ldHdvcmsgdG8gYmUgdXNlZCBmb3IgdGhlIGNvbXB1dGUgaW5zdGFuY2UNCiAgICBoaWRkZW46IHRydWUNCiAgICBjb25zdHJhaW50czoNCiAgICAgIC0gbGVuZ3RoOiB7IG1pbjogNiwgbWF4OiA4IH0NCiAgICAgICAgZGVzY3JpcHRpb246IFBhc3N3b3JkIGxlbmd0aCBtdXN0IGJlIGJldHdlZW4gNiBhbmQgOCBjaGFyYWN0ZXJzLg0KICAgICAgLSByYW5nZTogeyBtaW46IDYsIG1heDogOCB9DQogICAgICAgIGRlc2NyaXB0aW9uOiBSYW5nZSBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3ZhbHVlczoNCiAgICAgICAgLSBtMS5zbWFsbA0KICAgICAgICAtIG0xLm1lZGl1bQ0KICAgICAgICAtIG0xLmxhcmdlDQogICAgICAgIGRlc2NyaXB0aW9uOiBBbGxvd2VkIHZhbHVlcyBkZXNjcmlwdGlvbg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbYS16QS1aMC05XSsiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IGNvbnNpc3Qgb2YgY2hhcmFjdGVycyBhbmQgbnVtYmVycyBvbmx5Lg0KICAgICAgLSBhbGxvd2VkX3BhdHRlcm46ICJbQS1aXStbYS16QS1aMC05XSoiDQogICAgICAgIGRlc2NyaXB0aW9uOiBQYXNzd29yZCBtdXN0IHN0YXJ0IHdpdGggYW4gdXBwZXJjYXNlIGNoYXJhY3Rlci4NCiAgICAgIC0gY3VzdG9tX2NvbnN0cmFpbnQ6IG5vdmEua2V5cGFpcg0KICAgICAgICBkZXNjcmlwdGlvbjogQ3VzdG9tIGRlc2NyaXB0aW9uDQoNCnJlc291cmNlczoNCiAgbXlfaW5zdGFuY2UxOg0KICAgIHR5cGU6IE9TOjpOb3ZhOjpTZXJ2ZXINCiAgICBwcm9wZXJ0aWVzOg0KICAgICAgaW1hZ2U6IHsgZ2V0X3BhcmFtOiBpbWFnZV9uYW1lXzEgfQ0KICAgICAgZmxhdm9yOiBtMS5zbWFsbA0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9DQogIG15X2luc3RhbmNlMjoNCiAgICB0eXBlOiBPUzo6Tm92YTo6U2VydmVyDQogICAgcHJvcGVydGllczoNCiAgICAgIGltYWdlOiB7IGdldF9wYXJhbTogaW1hZ2VfbmFtZV8yIH0NCiAgICAgIGZsYXZvcjogbTEudGlueQ0KICAgICAgbmV0d29ya3M6DQogICAgICAgIC0gbmV0d29yayA6IHsgZ2V0X3BhcmFtIDogbmV0d29ya19pZCB9";
 		String decodedPaypload = Decoder.decode(payloadData);
-
+			
 		Assert.assertEquals(response, decodedPaypload, "Response deployment artifact not correct.");
-
-		String auditAction = "ArtifactDownload";
-
+			
+		String auditAction = "DownloadArtifact";
+			
 		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = new ExpectedResourceAuditJavaObject();
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setResourceName(resourceDetailsVF1ins_01.getName());
 		expectedResourceAuditJavaObject.setResourceType("Service");
 		expectedResourceAuditJavaObject.setStatus("200");
 		expectedResourceAuditJavaObject.setDesc("OK");
-
+			
 		expectedResourceAuditJavaObject.setCONSUMER_ID("ci");
-		String resource_url = String.format("/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s",
-				resourceUUID, componentInstanceUID, artifactUUID);
+		String resource_url = String.format("/asdc/v1/catalog/services/%s/resourceInstances/%s/artifacts/%s", resourceUUID, componentNormalizedName, artifactUUID);
 		expectedResourceAuditJavaObject.setRESOURCE_URL(resource_url);
-
-		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null,
-				false);
+			
+		AuditValidationUtils.validateAuditDownloadExternalAPI(expectedResourceAuditJavaObject, auditAction, null, false);
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@Test
 	public void downloadArtifactFromResourceTest() throws Exception {
 
@@ -339,8 +335,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			String jsonBody = createUploadArtifactBodyJson();
 
 			String resourceId = resourceDetails.getUniqueId();
-			String url = String.format(Urls.ADD_ARTIFACT_TO_RESOURCE, config.getCatalogBeHost(),
-					config.getCatalogBePort(), resourceId);
+			String url = String.format(Urls.ADD_ARTIFACT_TO_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId);
 			HttpPost httppost = createPostAddArtifactRequeast(jsonBody, url, true);
 			HttpResponse response = httpclient.execute(httppost);
 			int status = response.getStatusLine().getStatusCode();
@@ -349,25 +344,21 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			ArtifactDefinition origArtifact = getArtifactDataFromJson(jsonBody);
 			addArtifactDataFromResponse(response, origArtifact);
 			String artifactId = origArtifact.getUniqueId();
-
-			url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(),
-					config.getCatalogBePort(), resourceId, artifactId);
+			
+			url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId, artifactId);
 			HttpGet httpGet = createGetRequest(url);
 			response = httpclient.execute(httpGet);
 			status = response.getStatusLine().getStatusCode();
 			AssertJUnit.assertEquals("failed to download artifact", 200, status);
-
+									
 			InputStream inputStream = response.getEntity().getContent();
 			ArtifactUiDownloadData artifactUiDownloadData = getArtifactUiDownloadData(IOUtils.toString(inputStream));
-			AssertJUnit.assertEquals("Downloaded payload is different from uploaded one", UPLOAD_ARTIFACT_PAYLOAD,
-					artifactUiDownloadData.getBase64Contents());
-			AssertJUnit.assertEquals("Downloaded artifact name is different from uploaded one", UPLOAD_ARTIFACT_NAME,
-					artifactUiDownloadData.getArtifactName());
+			AssertJUnit.assertEquals("Downloaded payload is different from uploaded one", UPLOAD_ARTIFACT_PAYLOAD, artifactUiDownloadData.getBase64Contents());
+			AssertJUnit.assertEquals("Downloaded artifact name is different from uploaded one", UPLOAD_ARTIFACT_NAME, artifactUiDownloadData.getArtifactName());
 
 			// validate audit
-
-			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
-					.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), sdncUserDetails);
+					
+			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), sdncUserDetails);
 			String auditAction = "ArtifactDownload";
 			expectedResourceAuditJavaObject.setAction(auditAction);
 			expectedResourceAuditJavaObject.setPrevState("");
@@ -379,7 +370,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			expectedResourceAuditJavaObject.setCurrArtifactUuid(origArtifact.getUniqueId());
 			expectedResourceAuditJavaObject.setPrevArtifactUuid("");
 			AuditValidationUtils.validateAudit(expectedResourceAuditJavaObject, auditAction, null, false);
-
+			
 		} finally {
 			httpclient.close();
 		}
@@ -395,8 +386,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 
 			String jsonStr = createUploadArtifactBodyJson();
 
-			String url = String.format(Urls.ADD_ARTIFACT_TO_SERVICE, config.getCatalogBeHost(),
-					config.getCatalogBePort(), serviceDetails.getUniqueId());
+			String url = String.format(Urls.ADD_ARTIFACT_TO_SERVICE, config.getCatalogBeHost(), config.getCatalogBePort(), serviceDetails.getUniqueId());
 			HttpPost httpPost = createPostAddArtifactRequeast(jsonStr, url, true);
 			CloseableHttpResponse result = httpclient.execute(httpPost);
 			int status = result.getStatusLine().getStatusCode();
@@ -406,22 +396,18 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			addArtifactDataFromResponse(result, origArtifact);
 			String artifactId = origArtifact.getUniqueId();
 
-			url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(),
-					serviceDetails.getUniqueId(), artifactId);
+			url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), serviceDetails.getUniqueId(), artifactId);
 			HttpGet httpGet = createGetRequest(url);
 			CloseableHttpResponse response2 = httpclient.execute(httpGet);
 			status = response2.getStatusLine().getStatusCode();
 			AssertJUnit.assertEquals("failed to download artifact", 200, status);
 			InputStream inputStream = response2.getEntity().getContent();
 			ArtifactUiDownloadData artifactUiDownloadData = getArtifactUiDownloadData(IOUtils.toString(inputStream));
-			AssertJUnit.assertEquals("Downloaded payload is different from uploaded one", UPLOAD_ARTIFACT_PAYLOAD,
-					artifactUiDownloadData.getBase64Contents());
-			AssertJUnit.assertEquals("Downloaded artifact name is different from uploaded one", UPLOAD_ARTIFACT_NAME,
-					artifactUiDownloadData.getArtifactName());
+			AssertJUnit.assertEquals("Downloaded payload is different from uploaded one", UPLOAD_ARTIFACT_PAYLOAD, artifactUiDownloadData.getBase64Contents());
+			AssertJUnit.assertEquals("Downloaded artifact name is different from uploaded one", UPLOAD_ARTIFACT_NAME, artifactUiDownloadData.getArtifactName());
 
 			// validate audit
-			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = AuditValidationUtils
-					.constructFieldsForAuditValidation(serviceDetails, serviceDetails.getVersion(), sdncUserDetails);
+			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = AuditValidationUtils.constructFieldsForAuditValidation(serviceDetails, serviceDetails.getVersion(), sdncUserDetails);
 			String auditAction = "ArtifactDownload";
 			expectedResourceAuditJavaObject.setAction(auditAction);
 			expectedResourceAuditJavaObject.setPrevState("");
@@ -432,14 +418,12 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			expectedResourceAuditJavaObject.setArtifactData(AuditValidationUtils.buildArtifactDataAudit(origArtifact));
 			expectedResourceAuditJavaObject.setCurrArtifactUuid(origArtifact.getUniqueId());
 			expectedResourceAuditJavaObject.setPrevArtifactUuid("");
-
+			
 			AuditValidationUtils.validateAudit(expectedResourceAuditJavaObject, auditAction, null, false);
 
 		} finally {
-			// RestResponse response =
-			// ServiceRestUtils.deleteService(serviceDetails, serviceVersion,
-			// sdncUserDetails );
-			// checkDeleteResponse(response);
+//			RestResponse response = ServiceRestUtils.deleteService(serviceDetails, serviceVersion, sdncUserDetails );
+//			checkDeleteResponse(response);
 			httpclient.close();
 		}
 	}
@@ -455,9 +439,8 @@ public class DownloadComponentArt extends ComponentBaseTest {
 
 			ArtifactDefinition origArtifact = new ArtifactDefinition();
 			origArtifact.setUniqueId(artifactIdNotFound);
-
-			String url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(),
-					config.getCatalogBePort(), resourceId, artifactIdNotFound);
+			
+			String url = String.format(Urls.UI_DOWNLOAD_RESOURCE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), resourceId, artifactIdNotFound);
 			HttpGet httpGet = createGetRequest(url);
 			CloseableHttpResponse response = httpclient.execute(httpGet);
 			int status = response.getStatusLine().getStatusCode();
@@ -465,8 +448,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 
 			// validate audit
 			ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_NOT_FOUND.name());
-			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
-					.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), sdncUserDetails);
+			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), sdncUserDetails);
 			String auditAction = "ArtifactDownload";
 			expectedResourceAuditJavaObject.setAction(auditAction);
 			expectedResourceAuditJavaObject.setPrevState("");
@@ -495,8 +477,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 			ArtifactDefinition origArtifact = new ArtifactDefinition();
 			origArtifact.setUniqueId(artifactIdNotFound);
 
-			String url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, config.getCatalogBeHost(),
-					config.getCatalogBePort(), serviceDetails.getUniqueId(), artifactIdNotFound);
+			String url = String.format(Urls.UI_DOWNLOAD_SERVICE_ARTIFACT, config.getCatalogBeHost(), config.getCatalogBePort(), serviceDetails.getUniqueId(), artifactIdNotFound);
 			HttpGet httpGet = createGetRequest(url);
 			CloseableHttpResponse response2 = httpclient.execute(httpGet);
 			int status = response2.getStatusLine().getStatusCode();
@@ -504,8 +485,7 @@ public class DownloadComponentArt extends ComponentBaseTest {
 
 			// validate audit
 			ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.ARTIFACT_NOT_FOUND.name());
-			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ServiceValidationUtils
-					.constructFieldsForAuditValidation(serviceDetails, serviceDetails.getVersion(), sdncUserDetails);
+			ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = ServiceValidationUtils.constructFieldsForAuditValidation(serviceDetails, serviceDetails.getVersion(), sdncUserDetails);
 			String auditAction = "ArtifactDownload";
 			expectedResourceAuditJavaObject.setAction(auditAction);
 			expectedResourceAuditJavaObject.setPrevState("");
@@ -529,11 +509,9 @@ public class DownloadComponentArt extends ComponentBaseTest {
 
 		ArtifactReqDetails defaultArtifact = ElementFactory.getDefaultArtifact();
 
-		RestResponse response = ArtifactRestUtils.addInformationalArtifactToResource(defaultArtifact, sdncUserDetails,
-				resourceDetails.getUniqueId());
+		RestResponse response = ArtifactRestUtils.addInformationalArtifactToResource(defaultArtifact, sdncUserDetails, resourceDetails.getUniqueId());
 		int status = response.getErrorCode();
-		AssertJUnit.assertEquals("add informational artifact request returned status: " + response.getErrorCode(), 200,
-				status);
+		AssertJUnit.assertEquals("add informational artifact request returned status: " + response.getErrorCode(), 200, status);
 
 		RestResponse resourceResp = ResourceRestUtils.getResource(resourceDetails.getUniqueId());
 		Resource resource = ResponseParser.convertResourceResponseToJavaObject(resourceResp.getResponse());
@@ -549,7 +527,8 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		}
 		AssertJUnit.assertTrue(isExist);
 	}
-
+	
+	
 	protected String createUploadArtifactBodyJson() {
 		Map<String, Object> jsonBody = new HashMap<String, Object>();
 		jsonBody.put("artifactName", UPLOAD_ARTIFACT_NAME);
@@ -561,12 +540,12 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		jsonBody.put("artifactLabel", "configure");
 		return gson.toJson(jsonBody);
 	}
-
+	
 	protected ArtifactDefinition getArtifactDataFromJson(String json) {
 		Gson gson = new Gson();
 		JsonObject jsonElement = new JsonObject();
 		jsonElement = gson.fromJson(json, jsonElement.getClass());
-		ArtifactDefinition artifact = new ArtifactDefinition();
+		ArtifactDefinition artifact = new ArtifactDefinition(); 
 		String payload = null;
 		JsonElement artifactPayload = jsonElement.get(Constants.ARTIFACT_PAYLOAD_DATA);
 		if (artifactPayload != null && !artifactPayload.isJsonNull()) {
@@ -575,18 +554,17 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		jsonElement.remove(Constants.ARTIFACT_PAYLOAD_DATA);
 		artifact = gson.fromJson(jsonElement, ArtifactDefinition.class);
 		artifact.setPayloadData(payload);
-
-		/*
-		 * atifact.setArtifactName(UPLOAD_ARTIFACT_NAME);
-		 * artifact.setArtifactDisplayName("configure");
-		 * artifact.setArtifactType("SHELL"); artifact.setMandatory(false);
-		 * artifact.setDescription("ff");
-		 * artifact.setPayloadData(UPLOAD_ARTIFACT_PAYLOAD);
-		 * artifact.setArtifactLabel("configure");
-		 */
+		
+		/*atifact.setArtifactName(UPLOAD_ARTIFACT_NAME);
+artifact.setArtifactDisplayName("configure");
+artifact.setArtifactType("SHELL");
+artifact.setMandatory(false);
+artifact.setDescription("ff");
+artifact.setPayloadData(UPLOAD_ARTIFACT_PAYLOAD);
+artifact.setArtifactLabel("configure");*/
 		return artifact;
 	}
-
+	
 	protected HttpGet createGetRequest(String url) {
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.addHeader(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
@@ -594,53 +572,49 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		httpGet.addHeader(HttpHeaderEnum.USER_ID.getValue(), sdncUserDetails.getUserId());
 		return httpGet;
 	}
-
+	
 	protected String getArtifactUid(HttpResponse response) throws HttpResponseException, IOException, ParseException {
 		String responseString = new BasicResponseHandler().handleResponse(response);
 		JSONObject responseMap = (JSONObject) jsonParser.parse(responseString);
 		String artifactId = (String) responseMap.get("uniqueId");
 		return artifactId;
 	}
-
+	
 	protected String getArtifactEsId(HttpResponse response) throws HttpResponseException, IOException, ParseException {
 		String responseString = new BasicResponseHandler().handleResponse(response);
 		JSONObject responseMap = (JSONObject) jsonParser.parse(responseString);
 		String esId = (String) responseMap.get("EsId");
 		return esId;
 	}
-
-	protected ArtifactDefinition addArtifactDataFromResponse(HttpResponse response, ArtifactDefinition artifact)
-			throws HttpResponseException, IOException, ParseException {
-		// String responseString = new
-		// BasicResponseHandler().handleResponse(response);
+	
+	protected ArtifactDefinition addArtifactDataFromResponse(HttpResponse response, ArtifactDefinition artifact) throws HttpResponseException, IOException, ParseException {
+		//String responseString = new BasicResponseHandler().handleResponse(response);
 		HttpEntity entity = response.getEntity();
-		String responseString = EntityUtils.toString(entity);
+		String responseString = EntityUtils.toString(entity);				
 		JSONObject responseMap = (JSONObject) jsonParser.parse(responseString);
-		artifact.setEsId((String) responseMap.get("esId"));
+		artifact.setEsId((String)responseMap.get("esId"));
 		artifact.setUniqueId((String) responseMap.get("uniqueId"));
 		artifact.setArtifactGroupType(ArtifactGroupTypeEnum.findType((String) responseMap.get("artifactGroupType")));
 		artifact.setTimeout(((Long) responseMap.get("timeout")).intValue());
 		return artifact;
 	}
-
-	protected String getLifecycleArtifactUid(CloseableHttpResponse response)
-			throws HttpResponseException, IOException, ParseException {
+	
+	protected String getLifecycleArtifactUid(CloseableHttpResponse response) throws HttpResponseException, IOException, ParseException {
 		String responseString = new BasicResponseHandler().handleResponse(response);
 		JSONObject responseMap = (JSONObject) jsonParser.parse(responseString);
 		responseMap = (JSONObject) responseMap.get("implementation");
 		String artifactId = (String) responseMap.get("uniqueId");
 		return artifactId;
 	}
-
+	
 	protected HttpDelete createDeleteArtifactRequest(String url) {
 		HttpDelete httpDelete = new HttpDelete(url);
 		httpDelete.addHeader(HttpHeaderEnum.USER_ID.getValue(), sdncUserDetails.getUserId());
 		httpDelete.addHeader(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		return httpDelete;
 	}
-
-	protected HttpPost createPostAddArtifactRequeast(String jsonBody, String url, boolean addMd5Header)
-			throws UnsupportedEncodingException {
+	
+	protected HttpPost createPostAddArtifactRequeast(String jsonBody, String url, boolean addMd5Header) throws UnsupportedEncodingException {
 		HttpPost httppost = new HttpPost(url);
 		httppost.addHeader(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		httppost.addHeader(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
@@ -651,10 +625,10 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		StringEntity input = new StringEntity(jsonBody);
 		input.setContentType("application/json");
 		httppost.setEntity(input);
-		log.debug("Executing request {}", httppost.getRequestLine());
+		log.debug("Executing request {}" , httppost.getRequestLine());
 		return httppost;
 	}
-
+	
 	protected String createLoadArtifactBody() {
 		Map<String, Object> json = new HashMap<String, Object>();
 		json.put("artifactName", "install_apache2.sh");
@@ -662,21 +636,20 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		json.put("description", "ddd");
 		json.put("payloadData", "UEsDBAoAAAAIAAeLb0bDQz");
 		json.put("artifactLabel", "name123");
-
+		
 		String jsonStr = gson.toJson(json);
 		return jsonStr;
 	}
-
+	
 	protected void checkDeleteResponse(RestResponse response) {
 		BaseRestUtils.checkStatusCode(response, "delete request failed", false, 204, 404);
 	}
-
+	
 	protected ArtifactUiDownloadData getArtifactUiDownloadData(String artifactUiDownloadDataStr) throws Exception {
-
+		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			ArtifactUiDownloadData artifactUiDownloadData = mapper.readValue(artifactUiDownloadDataStr,
-					ArtifactUiDownloadData.class);
+			ArtifactUiDownloadData artifactUiDownloadData = mapper.readValue(artifactUiDownloadDataStr, ArtifactUiDownloadData.class);
 			return artifactUiDownloadData;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -684,4 +657,5 @@ public class DownloadComponentArt extends ComponentBaseTest {
 		return null;
 	}
 
+	
 }

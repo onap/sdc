@@ -24,24 +24,34 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -53,13 +63,8 @@ import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -68,6 +73,9 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UserData;
+import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
+import org.openecomp.sdc.be.unittests.utils.FactoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -75,6 +83,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanGraphQuery;
+import com.thinkaurelius.titan.core.TitanVertex;
+import com.thinkaurelius.titan.graphdb.query.graph.GraphCentricQueryBuilder;
 
 import fj.data.Either;
 
@@ -100,7 +112,7 @@ public class ResourceOperationTest extends ModelTestBase {
 
 	@javax.annotation.Resource(name = "capability-type-operation")
 	private CapabilityTypeOperation capabilityTypeOperation;
-
+	
 	private static String CATEGORY_NAME = "category/mycategory";
 	private static String CATEGORY_NAME_UPDATED = "category1/updatedcategory";
 
@@ -110,8 +122,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		ModelTestBase.init();
 	}
 
-	public void setOperations(TitanGenericDao titanGenericDao, ResourceOperation resourceOperation,
-			PropertyOperation propertyOperation) {
+	public void setOperations(TitanGenericDao titanGenericDao, ResourceOperation resourceOperation, PropertyOperation propertyOperation) {
 		this.titanDao = titanGenericDao;
 		this.resourceOperation = resourceOperation;
 		this.propertyOperation = propertyOperation;
@@ -122,8 +133,7 @@ public class ResourceOperationTest extends ModelTestBase {
 
 	}
 
-	private Resource buildResourceMetadata(String userId, String category, String resourceName,
-			String resourceVersion) {
+	private Resource buildResourceMetadata(String userId, String category, String resourceName, String resourceVersion) {
 
 		Resource resource = new Resource();
 		resource.setName(resourceName);
@@ -164,8 +174,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
 	}
 
-	public Resource createResource(String userId, String category, String resourceName, String resourceVersion,
-			String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
+	public Resource createResource(String userId, String category, String resourceName, String resourceVersion, String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
 
 		String propName1 = "disk_size";
 		String propName2 = "num_cpus";
@@ -183,8 +192,7 @@ public class ResourceOperationTest extends ModelTestBase {
 
 		PropertyDefinition property1 = new PropertyDefinition();
 		property1.setDefaultValue("10");
-		property1.setDescription(
-				"Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
+		property1.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
 		property1.setType(ToscaType.INTEGER.name().toLowerCase());
 		List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
 		GreaterThanConstraint propertyConstraint1 = new GreaterThanConstraint("0");
@@ -226,16 +234,14 @@ public class ResourceOperationTest extends ModelTestBase {
 		// assertEquals("check resource unique id",
 		// UniqueIdBuilder.buildResourceUniqueId(resourceName,
 		// resourceVersion), resultResource.getUniqueId());
-		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT,
-				resultResource.getLifecycleState());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultResource.getLifecycleState());
 
 		// retrieve property from graph
 		String resourceId = resultResource.getUniqueId();
 		// String resourceId = UniqueIdBuilder.buildResourceUniqueId(
 		// resource.getResourceName(), resource.getResourceVersion());
 
-		Either<PropertyDefinition, StorageOperationStatus> either = propertyOperation.getPropertyOfResource(propName1,
-				resourceId);
+		Either<PropertyDefinition, StorageOperationStatus> either = propertyOperation.getPropertyOfResource(propName1, resourceId);
 
 		assertTrue(either.isLeft());
 		PropertyDefinition propertyDefinition = either.left().value();
@@ -243,11 +249,67 @@ public class ResourceOperationTest extends ModelTestBase {
 		assertEquals("check property description", property1.getDescription(), propertyDefinition.getDescription());
 		assertEquals("check property type", property1.getType(), propertyDefinition.getType());
 		assertEquals("check property unique id", property1.getUniqueId(), propertyDefinition.getUniqueId());
-		assertEquals("check property consitraints size", property1.getConstraints().size(),
-				propertyDefinition.getConstraints().size());
+		assertEquals("check property consitraints size", property1.getConstraints().size(), propertyDefinition.getConstraints().size());
 
 		return resultResource;
 
+	}
+	
+	public Resource createResourceOverrideProperty(String userId, String category, String resourceName, String resourceVersion, String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
+
+		String propName1 = "disk_size";
+
+		List<String> derivedFrom = new ArrayList<String>();
+		if (parentResourceName != null) {
+			derivedFrom.add(parentResourceName);
+		}
+		
+		Map<String, PropertyDefinition> properties = new HashMap<String, PropertyDefinition>();
+		PropertyDefinition property1 = new PropertyDefinition();
+		property1.setDefaultValue("9");
+		property1.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
+		property1.setType(ToscaType.INTEGER.name().toLowerCase());
+		List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
+		GreaterThanConstraint propertyConstraint1 = new GreaterThanConstraint("0");
+		log.debug("{}", propertyConstraint1);
+		constraints.add(propertyConstraint1);
+		LessOrEqualConstraint propertyConstraint2 = new LessOrEqualConstraint("10");
+		constraints.add(propertyConstraint2);
+		property1.setConstraints(constraints);
+		properties.put(propName1, property1);
+		
+		Resource resource = buildResourceMetadata(userId, category, resourceName, resourceVersion);
+		resource.setAbstract(isAbstract);
+		resource.setHighestVersion(isHighestVersion);
+		resource.setDerivedFrom(derivedFrom);
+		resource.setProperties(convertMapToList(properties));
+
+		Either<Resource, StorageOperationStatus> result = resourceOperation.createResource(resource, true);
+
+		assertTrue(result.isLeft());
+		Resource resultResource = result.left().value();
+
+		// assertEquals("check resource unique id",
+		// UniqueIdBuilder.buildResourceUniqueId(resourceName,
+		// resourceVersion), resultResource.getUniqueId());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultResource.getLifecycleState());
+
+		// retrieve property from graph
+		String resourceId = resultResource.getUniqueId();
+		// String resourceId = UniqueIdBuilder.buildResourceUniqueId(
+		// resource.getResourceName(), resource.getResourceVersion());
+
+		Either<PropertyDefinition, StorageOperationStatus> either = propertyOperation.getPropertyOfResource(propName1, resourceId);
+
+		assertTrue(either.isLeft());
+		PropertyDefinition propertyDefinition = either.left().value();
+		assertEquals("check property default value", property1.getDefaultValue(), propertyDefinition.getDefaultValue());
+		assertEquals("check property description", property1.getDescription(), propertyDefinition.getDescription());
+		assertEquals("check property type", property1.getType(), propertyDefinition.getType());
+		assertEquals("check property unique id", property1.getUniqueId(), propertyDefinition.getUniqueId());
+		assertEquals("check property consitraints size", property1.getConstraints().size(), propertyDefinition.getConstraints().size());
+
+		return resultResource;
 	}
 
 	public static List<PropertyDefinition> convertMapToList(Map<String, PropertyDefinition> properties) {
@@ -285,8 +347,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
 		lastStateStates.add(LifecycleStateEnum.CERTIFIED);
 
-		Either<List<Resource>, StorageOperationStatus> followed = resourceOperation.getFollowed(userId, lifecycleStates,
-				lastStateStates, false);
+		Either<List<Resource>, StorageOperationStatus> followed = resourceOperation.getFollowed(userId, lifecycleStates, lastStateStates, false);
 		assertTrue(followed.isLeft());
 		List<Resource> list = followed.left().value();
 
@@ -352,8 +413,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		propertyDefinition.setName("myProperty");
 		rootResource.getProperties().add(propertyDefinition);
 
-		Either<Resource, StorageOperationStatus> overrideResource = resourceOperation.overrideResource(rootResource,
-				rootResource, false);
+		Either<Resource, StorageOperationStatus> overrideResource = resourceOperation.overrideResource(rootResource, rootResource, false);
 
 		assertTrue(overrideResource.isLeft());
 		Resource resourceAfter = overrideResource.left().value();
@@ -399,8 +459,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		props.put(delaultProperty2.getName(), delaultProperty2);
 		capabilityTypeDefinition.setProperties(props);
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addTypeRes = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addTypeRes = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition);
 		assertTrue(addTypeRes.isLeft());
 
 		CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
@@ -423,8 +482,7 @@ public class ResourceOperationTest extends ModelTestBase {
 
 		capabilityDefinition.setProperties(properties);
 
-		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRes = capabilityOperation
-				.addCapability(rootResource.getUniqueId(), capabilityDefinition.getName(), capabilityDefinition);
+		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRes = capabilityOperation.addCapability(rootResource.getUniqueId(), capabilityDefinition.getName(), capabilityDefinition);
 		assertTrue(addCapabilityRes.isLeft());
 
 		List<PropertyDefinition> newProperties = new ArrayList<PropertyDefinition>();
@@ -442,8 +500,7 @@ public class ResourceOperationTest extends ModelTestBase {
 
 		CapabilityDefinition addedCap = addCapabilityRes.left().value();
 
-		Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesRes = capabilityOperation
-				.updatePropertiesOfCapability(addedCap.getUniqueId(), addedCap.getType(), newProperties);
+		Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesRes = capabilityOperation.updatePropertiesOfCapability(addedCap.getUniqueId(), addedCap.getType(), newProperties);
 		assertTrue(updatePropertiesRes.isLeft());
 
 		PropertyDefinition invalidProperty = new PropertyDefinition();
@@ -452,25 +509,20 @@ public class ResourceOperationTest extends ModelTestBase {
 		invalidProperty.setDefaultValue("666");
 		newProperties.add(invalidProperty);
 
-		Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesInvalidRes = capabilityOperation
-				.updatePropertiesOfCapability(addedCap.getUniqueId(), addedCap.getType(), newProperties);
+		Either<Map<String, PropertyData>, StorageOperationStatus> updatePropertiesInvalidRes = capabilityOperation.updatePropertiesOfCapability(addedCap.getUniqueId(), addedCap.getType(), newProperties);
 		assertTrue(updatePropertiesInvalidRes.isRight());
 
-		Either<CapabilityDefinition, StorageOperationStatus> getCapabilityRes = capabilityOperation
-				.getCapability(addedCap.getUniqueId());
+		Either<CapabilityDefinition, StorageOperationStatus> getCapabilityRes = capabilityOperation.getCapability(addedCap.getUniqueId());
 		assertTrue(getCapabilityRes.isLeft());
 
-		Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus> deletePropertiesOfCapabilityRes = capabilityOperation
-				.deletePropertiesOfCapability(addedCap.getUniqueId());
+		Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus> deletePropertiesOfCapabilityRes = capabilityOperation.deletePropertiesOfCapability(addedCap.getUniqueId());
 		assertTrue(deletePropertiesOfCapabilityRes.isLeft());
 
-		StorageOperationStatus deleteCapabilityRes = capabilityOperation
-				.deleteCapabilityFromGraph(addedCap.getUniqueId());
+		StorageOperationStatus deleteCapabilityRes = capabilityOperation.deleteCapabilityFromGraph(addedCap.getUniqueId());
 		assertTrue(deleteCapabilityRes.equals(StorageOperationStatus.OK));
 
 		getCapabilityRes = capabilityOperation.getCapability(addedCap.getUniqueId());
-		assertTrue(getCapabilityRes.isRight()
-				&& getCapabilityRes.right().value().equals(StorageOperationStatus.NOT_FOUND));
+		assertTrue(getCapabilityRes.isRight() && getCapabilityRes.right().value().equals(StorageOperationStatus.NOT_FOUND));
 
 		resourceOperation.deleteResource(rootResource.getUniqueId());
 	}
@@ -503,8 +555,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		Resource rootResource = buildResourceMetadata(userId, category, rootName, "1.1");
 		rootResource.setUniqueId(UniqueIdBuilder.buildResourceUniqueId());
 
-		Either<Resource, StorageOperationStatus> overrideResource = resourceOperation.overrideResource(rootResource,
-				rootResource, false);
+		Either<Resource, StorageOperationStatus> overrideResource = resourceOperation.overrideResource(rootResource, rootResource, false);
 
 		assertTrue(overrideResource.isRight());
 
@@ -524,8 +575,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		Map<String, Object> propertiesToMatch = new HashMap<>();
 		propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
 
-		Either<Set<Resource>, StorageOperationStatus> catalog = resourceOperation.getCatalogData(propertiesToMatch,
-				false);
+		Either<Set<Resource>, StorageOperationStatus> catalog = resourceOperation.getCatalogData(propertiesToMatch, false);
 		assertTrue(catalog.isLeft());
 		Set<Resource> catalogSet = catalog.left().value();
 		Set<String> idSet = new HashSet<>();
@@ -566,22 +616,19 @@ public class ResourceOperationTest extends ModelTestBase {
 		String resourceId3 = resultResource3.getUniqueId();
 
 		// update 1 resource to READY_FOR_CERTIFICATION
-		Either<Resource, StorageOperationStatus> certReqResponse = (Either<Resource, StorageOperationStatus>) lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Resource, resultResource, adminUser, adminUser, false);
+		Either<Resource, StorageOperationStatus> certReqResponse = (Either<Resource, StorageOperationStatus>) lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Resource, resultResource, adminUser, adminUser, false);
 		Resource RFCResource = certReqResponse.left().value();
 		assertEquals(RFCResource.getLifecycleState(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
 
 		// update 1 resource to CERTIFICATION_IN_PROGRESS
-		Either<Resource, StorageOperationStatus> startCertificationResponse = (Either<Resource, StorageOperationStatus>) lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Resource, resultResource2, testerUser, adminUser, false);
+		Either<Resource, StorageOperationStatus> startCertificationResponse = (Either<Resource, StorageOperationStatus>) lifecycleOperation.startComponentCertification(NodeTypeEnum.Resource, resultResource2, testerUser, adminUser, false);
 		Resource IPResource = startCertificationResponse.left().value();
 		assertEquals(IPResource.getLifecycleState(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		Either<List<Resource>, StorageOperationStatus> resources = resourceOperation.getTesterFollowed(testerUserId,
-				lifecycleStates, false);
+		Either<List<Resource>, StorageOperationStatus> resources = resourceOperation.getTesterFollowed(testerUserId, lifecycleStates, false);
 
 		assertTrue(resources.isLeft());
 		List<Resource> result = resources.left().value();
@@ -610,8 +657,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		String resourceId1 = newResource.getUniqueId();
 
 		User admin = new User("j", "h", userId, null, "ADMIN", System.currentTimeMillis());
-		Either<Resource, StorageOperationStatus> checkoutResource = (Either<Resource, StorageOperationStatus>) lifecycleOperation
-				.checkoutComponent(NodeTypeEnum.Resource, newResource, admin, admin, false);
+		Either<Resource, StorageOperationStatus> checkoutResource = (Either<Resource, StorageOperationStatus>) lifecycleOperation.checkoutComponent(NodeTypeEnum.Resource, newResource, admin, admin, false);
 		assertTrue(checkoutResource.isLeft());
 		Resource newResource2 = checkoutResource.left().value();
 		String resourceId2 = newResource2.getUniqueId();
@@ -619,9 +665,7 @@ public class ResourceOperationTest extends ModelTestBase {
 		Resource newResource3 = createResource(userId, category, resName, "0.1", null, false, true);
 		String resourceId3 = newResource3.getUniqueId();
 
-		Either<Map<String, String>, TitanOperationStatus> versionList = resourceOperation.getVersionList(
-				NodeTypeEnum.Resource, "0.2", newResource2.getUUID(), newResource2.getSystemName(),
-				ResourceMetadataData.class);
+		Either<Map<String, String>, TitanOperationStatus> versionList = resourceOperation.getVersionList(NodeTypeEnum.Resource, "0.2", newResource2.getUUID(), newResource2.getSystemName(), ResourceMetadataData.class);
 		assertTrue(versionList.isLeft());
 		Map<String, String> versionMap = versionList.left().value();
 
@@ -650,21 +694,17 @@ public class ResourceOperationTest extends ModelTestBase {
 		String resourceId1 = newResource.getUniqueId();
 
 		User admin = new User("j", "h", userId, null, "ADMIN", System.currentTimeMillis());
-		Either<Resource, StorageOperationStatus> checkoutResource = (Either<Resource, StorageOperationStatus>) lifecycleOperation
-				.checkoutComponent(NodeTypeEnum.Resource, newResource, admin, admin, false);
+		Either<Resource, StorageOperationStatus> checkoutResource = (Either<Resource, StorageOperationStatus>) lifecycleOperation.checkoutComponent(NodeTypeEnum.Resource, newResource, admin, admin, false);
 		assertTrue(checkoutResource.isLeft());
 		Resource newResource2 = checkoutResource.left().value();
 		String resourceId2 = newResource2.getUniqueId();
 
 		Either<Resource, StorageOperationStatus> resource = resourceOperation.getResource(resourceId1, false);
 		assertTrue(resource.isLeft());
-		Either<Component, StorageOperationStatus> markResourceToDelete = resourceOperation
-				.markComponentToDelete(resource.left().value(), false);
+		Either<Component, StorageOperationStatus> markResourceToDelete = resourceOperation.markComponentToDelete(resource.left().value(), false);
 		assertTrue(markResourceToDelete.isLeft());
 
-		Either<Map<String, String>, TitanOperationStatus> versionList = resourceOperation.getVersionList(
-				NodeTypeEnum.Resource, "0.2", newResource2.getUUID(), newResource2.getSystemName(),
-				ResourceMetadataData.class);
+		Either<Map<String, String>, TitanOperationStatus> versionList = resourceOperation.getVersionList(NodeTypeEnum.Resource, "0.2", newResource2.getUUID(), newResource2.getSystemName(), ResourceMetadataData.class);
 
 		assertTrue(versionList.isLeft());
 		Map<String, String> versionMap = versionList.left().value();
@@ -678,8 +718,63 @@ public class ResourceOperationTest extends ModelTestBase {
 		deleteResource = resourceOperation.deleteResource(resourceId2);
 		assertTrue(deleteResource.isLeft());
 	}
-	
-	@Test
+
+	// @Test
+	// public void getVersionListAfterCertify(){
+	// String resName = "myResource";
+	// String category = CATEGORY_NAME;
+	// deleteAndCreateCategory(category);
+	//
+	// Resource newResource = createResource(userId, category, resName, "1.0",
+	// null, false, true);
+	// String resourceId1 = newResource.getUniqueId();
+	//
+	// User admin = new User("j", "h", userId, null, "ADMIN",
+	// System.currentTimeMillis());
+	// Either<Resource, StorageOperationStatus> checkoutResource =
+	// lifecycleOperation.checkoutResource(newResource, admin, admin, false);
+	// assertTrue(checkoutResource.isLeft());
+	// Resource resourceToDelete = checkoutResource.left().value();
+	// String deletedId = resourceToDelete.getUniqueId();
+	//
+	// Either<Resource, StorageOperationStatus> resource =
+	// resourceOperation.getResource(deletedId, false);
+	// assertTrue(resource.isLeft());
+	// Either<Resource, StorageOperationStatus> markResourceToDelete =
+	// resourceOperation.markResourceToDelete(resource.left().value(), false);
+	// assertTrue(markResourceToDelete.isLeft());
+	//
+	//
+	// Resource newResource2 = createResource(userId, category, resName, "2.0",
+	// null, false, true);
+	// String resourceId2 = newResource2.getUniqueId();
+	//
+	//
+	// Either<Map<String, String>, TitanOperationStatus> versionList =
+	// resourceOperation
+	// .getVersionList(NodeTypeEnum.Resource, "2.0",
+	// newResource2.getUUID(), newResource2.getSystemName(),
+	// ResourceData.class);
+	// assertTrue(versionList.isLeft());
+	// Map<String, String> versionMap = versionList.left().value();
+	//
+	// assertTrue(versionMap.size()==2);
+	// assertTrue(versionMap.containsValue(resourceId1));
+	// assertTrue(versionMap.containsValue(resourceId2));
+	//
+	// assertFalse(versionMap.containsValue(deletedId));
+	//
+	// Either<Resource, StorageOperationStatus> deleteResource =
+	// resourceOperation.deleteResource(resourceId1);
+	// assertTrue(deleteResource.isLeft());
+	// deleteResource = resourceOperation.deleteResource(resourceId2);
+	// assertTrue(deleteResource.isLeft());
+	// deleteResource = resourceOperation.deleteResource(deletedId);
+	// assertTrue(deleteResource.isLeft());
+	//
+	// }
+
+//	@Test
 	public void testDerviedPropertiesInResource() {
 
 		try {
@@ -693,8 +788,7 @@ public class ResourceOperationTest extends ModelTestBase {
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(createResource1.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -702,33 +796,158 @@ public class ResourceOperationTest extends ModelTestBase {
 			String json = gson.toJson(createResource1);
 			log.debug(json);
 
-			Resource createResource2 = createResource(userId, category, "myResource2", "0.1", createResource1.getName(),
-					true, false);
-
+			Resource createResource2 = createResourceOverrideProperty(userId, category, "myResource2", "0.1", createResource1.getName(), true, false);
+			
 			json = gson.toJson(createResource2);
 			log.debug(json);
 
 			List<PropertyDefinition> propList1 = new ArrayList<>();
-			TitanOperationStatus findAllResourcePropertiesRecursively1 = propertyOperation
-					.findAllResourcePropertiesRecursively(createResource1.getUniqueId(), propList1);
-			assertEquals("check search properties succeed", findAllResourcePropertiesRecursively1,
-					TitanOperationStatus.OK);
+			TitanOperationStatus findAllResourcePropertiesRecursively1 = propertyOperation.findAllResourcePropertiesRecursively(createResource1.getUniqueId(), propList1);
+			assertEquals("check search properties succeed", findAllResourcePropertiesRecursively1, TitanOperationStatus.OK);
 
 			List<PropertyDefinition> propList2 = new ArrayList<>();
-			TitanOperationStatus findAllResourcePropertiesRecursively2 = propertyOperation
-					.findAllResourcePropertiesRecursively(createResource2.getUniqueId(), propList2);
-			assertEquals("check search properties succeed", findAllResourcePropertiesRecursively2,
-					TitanOperationStatus.OK);
-
-			assertEquals("check number of properties", propList1.size() * 2, propList2.size());
-
+			TitanOperationStatus findAllResourcePropertiesRecursively2 = propertyOperation.findAllResourcePropertiesRecursively(createResource2.getUniqueId(), propList2);
+			assertEquals("check search properties succeed", findAllResourcePropertiesRecursively2, TitanOperationStatus.OK);
+			// checks that properties with the same names have been overrided properly
+			// the sizes of the property lists should be same (we have 2 properties "disk_size" and "num_cpus" only)
+			assertEquals("check number of properties", propList1.size(), propList2.size());
+			// checks that not overrided property default value in child's list equals to the same property of the parent
+			assertEquals("check values of properties are the same", propList1.stream().filter(prop->prop.getName().equals("num_cpus")).findAny().get().getDefaultValue()
+					, propList2.stream().filter(prop->prop.getName().equals("num_cpus")).findAny().get().getDefaultValue());
+			// checks that an overrided property default value in child's list doesn't equal to the same property of the parent
+			assertTrue(!propList1.stream().filter(prop->prop.getName().equals("disk_size")).findAny().get().getDefaultValue().equals(
+					propList2.stream().filter(prop->prop.getName().equals("disk_size")).findAny().get().getDefaultValue()));
+			
 			resourceOperation.deleteResource(createResource1.getUniqueId());
 			resourceOperation.deleteResource(createResource2.getUniqueId());
 
 		} finally {
 
 		}
+
+		/*
+		 * "properties": { "disk_size": { "constraints": [ { "greaterThan": "0" }, { "lessOrEqual": "10" } ], "uniqueId": "res_myresource1.0.1.disk_size", "type": "integer", "required": false, "defaultValue": "10", "description":
+		 * "Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node." , "isPassword": false }, "num_cpus": { "constraints": [ { "inRange": [ "1", "4" ] } ], "uniqueId": "res_myresource1.0.1.num_cpus", "type":
+		 * "integer", "required": false, "defaultValue": "2", "description": "Number of (actual or virtual) CPUs associated with the Compute node." , "isPassword": false } },
+		 */
+	}
+	
+	@Test
+	public void getFilteredComponentsTest() {
+
+		TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+		IElementOperation elementOperation = Mockito.mock(ElementOperation.class);
+		IElementOperation prevElementOperation = this.resourceOperation.getElementOperation();
+		this.resourceOperation.setElementOperation(elementOperation);
+		this.resourceOperation.setTitanGenericDao(titanGenericDao);
 		
+		String subCategoryName = "Database";
+		String categoryName = "Generic";
+		String resourceTypeName = "VFC";
+		
+		Map<FilterKeyEnum, String> filters = new HashMap<>();
+		filters.put(FilterKeyEnum.CATEGORY, categoryName);
+		filters.put(FilterKeyEnum.SUB_CATEGORY, subCategoryName);
+		filters.put(FilterKeyEnum.RESOURCE_TYPE, resourceTypeName);
+
+		prepareMocks(titanGenericDao, elementOperation, subCategoryName, categoryName, resourceTypeName);
+		try{
+			//search by category, subCategory and resourceType
+			Either<List<Resource>, StorageOperationStatus> getFilteredComponentsRes = 
+					this.resourceOperation.getFilteredComponents(filters, false);
+			assertTrue(getFilteredComponentsRes.isLeft());
+			
+			//search by category and resourceType
+			filters.remove(FilterKeyEnum.SUB_CATEGORY);
+			getFilteredComponentsRes = 
+					this.resourceOperation.getFilteredComponents(filters, false);
+			assertTrue(getFilteredComponentsRes.isLeft());
+			
+			//search by resourceType
+			filters.remove(FilterKeyEnum.CATEGORY);
+			getFilteredComponentsRes = 
+					this.resourceOperation.getFilteredComponents(filters, false);
+			assertTrue(getFilteredComponentsRes.isLeft());
+		}finally{
+			this.resourceOperation.setTitanGenericDao(this.titanDao);
+			this.resourceOperation.setElementOperation(prevElementOperation);
+		}
+		
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private void prepareMocks(TitanGenericDao titanGenericDao, IElementOperation elementOperation, String subCategoryName, String categoryName, String resourceTypeName) {
+		//prepare resource
+		ResourceMetadataData resourceMeta = FactoryUtils.createResourceByType(resourceTypeName);
+		ImmutablePair<ResourceMetadataData, GraphEdge> resourcePair = new ImmutablePair<ResourceMetadataData, GraphEdge>(resourceMeta, new GraphEdge());
+		List<ImmutablePair<ResourceMetadataData, GraphEdge>> resourcePairList = new ArrayList<>();
+		resourcePairList.add(resourcePair);
+		Either<List<ImmutablePair<ResourceMetadataData, GraphEdge>>, TitanOperationStatus> parentNodes = Either.left(resourcePairList);
+		Map<String, Object> resourceProps = new HashMap<String, Object>();
+		resourceProps.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), resourceTypeName);
+		resourceProps.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
+		List<ResourceMetadataData> resourceList = new ArrayList<>();
+		resourceList.add(resourceMeta);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> getResources = Either.left(resourceList);
+		
+		//prepare subcategory
+		SubCategoryData subCategoryData = new SubCategoryData(NodeTypeEnum.ResourceSubcategory);
+		subCategoryData.getSubCategoryDataDefinition().setName(subCategoryName);
+		subCategoryData.getSubCategoryDataDefinition().setUniqueId(UUID.randomUUID().toString());
+		GraphEdge graphEdge = new GraphEdge();
+		Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategory = Optional.of(new ImmutablePair<>(subCategoryData, graphEdge));
+		List<ImmutablePair<SubCategoryData, GraphEdge>> subcategoriesList = new ArrayList<>();
+		subcategoriesList.add(subCategory.get());
+		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> subcategories = Either.left(subcategoriesList);
+		
+		//prepare category
+		CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceNewCategory);
+		categoryData.getCategoryDataDefinition().setUniqueId(UUID.randomUUID().toString());
+		categoryData.getCategoryDataDefinition().setName(categoryName);
+		Either<CategoryData, StorageOperationStatus> categoryResult = Either.left(categoryData);
+		List<CategoryData> categoryDataList = new ArrayList<>();
+		categoryDataList.add(categoryResult.left().value());
+		Either<ImmutablePair<CategoryData, GraphEdge>, TitanOperationStatus> categoryNode =
+				Either.left(new ImmutablePair<CategoryData, GraphEdge>(categoryData, new GraphEdge()));
+		Map<String, Object> categoryProps = new HashMap<>();
+		categoryProps.put(GraphPropertiesDictionary.NAME.getProperty(), categoryName);
+		
+		//prepare graph
+		Either<TitanGraph, TitanOperationStatus> graphResult = Either.left(Mockito.mock(TitanGraph.class));
+		TitanGraph titanGraph = graphResult.left().value();
+		TitanVertex vertex = Mockito.mock(TitanVertex.class);
+		Iterator<Edge> iterCreator = Mockito.mock(Iterator.class);
+		Vertex vertexCreator = Mockito.mock(Vertex.class);
+		Edge edge = Mockito.mock(Edge.class);
+		List<TitanVertex> verteciesList= new ArrayList<>();
+		verteciesList.add(vertex);
+		Iterable<TitanVertex> vertecies = new ArrayList<>(verteciesList);
+		@SuppressWarnings("rawtypes")
+		TitanGraphQuery qBuilder = Mockito.mock(GraphCentricQueryBuilder.class);
+
+		when(titanGenericDao.getByCriteria(NodeTypeEnum.ResourceNewCategory, categoryProps, CategoryData.class)).thenReturn(Either.left(categoryDataList));
+		when(elementOperation.getNewCategoryData(categoryName, NodeTypeEnum.ResourceNewCategory, CategoryData.class)).thenReturn(categoryResult);
+		when(titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), categoryData.getCategoryDataDefinition().getUniqueId(),
+				GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class)).thenReturn(subcategories);
+		when(titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), null,
+				GraphEdgeLabels.CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class)).thenReturn(subcategories);
+		when(titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceSubcategory), (String) subCategoryData.getSubCategoryDataDefinition().getUniqueId(),
+				GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceNewCategory, CategoryData.class)).thenReturn(categoryNode);
+		when(titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceSubcategory), subCategoryData.getSubCategoryDataDefinition().getUniqueId(),
+				GraphEdgeLabels.CATEGORY, NodeTypeEnum.Resource, ResourceMetadataData.class)).thenReturn(parentNodes);
+		when(titanGenericDao.getGraph()).thenReturn(graphResult);
+		when(vertex.edges(Direction.IN, GraphEdgeLabels.CREATOR.name())).thenReturn(iterCreator);
+		when(vertex.edges(Direction.IN, GraphEdgeLabels.LAST_MODIFIER.name())).thenReturn(iterCreator);
+		when(iterCreator.hasNext()).thenReturn(true);
+		when(iterCreator.next()).thenReturn(edge);
+		when(edge.outVertex()).thenReturn(vertexCreator);
+		when(titanGenericDao.getProperties(vertex)).thenReturn(resourceProps);
+		when(titanGraph.query()).thenReturn(qBuilder);
+		when(qBuilder.has(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceMeta.getUniqueId())).thenReturn(qBuilder);
+		when(qBuilder.vertices()).thenReturn(vertecies);
+		when(titanGenericDao.getByCriteria(NodeTypeEnum.Resource, resourceProps, ResourceMetadataData.class))
+		.thenReturn(getResources);
 	}
 
 }

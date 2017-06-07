@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
 
+import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+
 public class RequirementAndRelationshipPair implements Serializable {
 
 	/**
@@ -32,6 +34,7 @@ public class RequirementAndRelationshipPair implements Serializable {
 	private String requirement;
 	private String capabilityOwnerId;
 	private String requirementOwnerId;
+	private String id;
 
 	private RelationshipImpl relationship;
 
@@ -113,10 +116,42 @@ public class RequirementAndRelationshipPair implements Serializable {
 		this.requirementUid = requirementUid;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
 		return "RequirementAndRelationshipPair [requirement=" + requirement + ", relationship=" + relationship
 				+ ", capability=" + capability + "]";
 	}
 
+	public boolean equalsTo( RelationshipInstDataDefinition savedRelation){
+		if ( savedRelation == null ){
+			return false;
+		}
+		if ( !savedRelation.getType().equals(this.getRelationship().getType()) ){
+			return false;
+		}	
+		if ( !savedRelation.getCapabilityOwnerId().equals(this.getCapabilityOwnerId()) ){
+			return false;
+		}
+		if ( !savedRelation.getRequirementOwnerId().equals(this.getRequirementOwnerId()) ){
+			return false;
+		}
+		if ( !savedRelation.getRequirementId().equals(this.getRequirementUid()) ){
+			return false;
+		}
+		if ( !savedRelation.getCapabiltyId().equals(this.getCapabilityUid()) ){
+			return false;
+		}
+		if ( !savedRelation.getRequirement().equals(this.getRequirement()) ){
+			return false;
+		}
+		return true;
+	}
 }

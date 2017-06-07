@@ -23,8 +23,8 @@ package org.openecomp.sdc.be.model;
 import java.util.Map;
 
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.InputsValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 /**
  * Defines an operation available to manage particular aspects of the Node Type.
@@ -33,15 +33,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
  */
 public class Operation extends OperationDataDefinition implements IOperationParameter {
 
-	/** Implementation artifact for the interface. */
-	private ArtifactDefinition implementation;
 
-	/**
-	 * This OPTIONAL property contains a list of one or more input parameter
-	 * definitions.
-	 */
-	// @JsonDeserialize(contentUsing = OperationParameterDeserializer.class)
-	private Map<String, PropertyValueDefinition> inputs;
 
 	private boolean definition;
 
@@ -56,23 +48,21 @@ public class Operation extends OperationDataDefinition implements IOperationPara
 	 */
 	public Operation() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Operation(OperationDataDefinition p) {
 		super(p);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Operation(ArtifactDataDefinition implementation, String description,
-			Map<String, InputsValueDataDefinition> inputs) {
+			Map<String, PropertyDataDefinition> inputs) {
 		super(description);
-
+		setImplementation(implementation);
+		setInputs(inputs);
 	}
 
 	@Override
 	public boolean isDefinition() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -80,26 +70,15 @@ public class Operation extends OperationDataDefinition implements IOperationPara
 		this.definition = definition;
 	}
 
-	public ArtifactDefinition getImplementation() {
-		return implementation;
-	}
-
-	public void setImplementation(ArtifactDefinition implementation) {
-		this.implementation = implementation;
-	}
-
-	public Map<String, PropertyValueDefinition> getInputs() {
-		return inputs;
-	}
-
-	public void setInputs(Map<String, PropertyValueDefinition> inputs) {
-		this.inputs = inputs;
-	}
-
 	@Override
 	public String toString() {
-		return "Operation [implementation=" + implementation + ", inputs=" + inputs + ", definition=" + definition
-				+ "]";
+		return "Operation [definition=" + definition + "]";
 	}
 
+	public ArtifactDefinition getImplementationArtifact(){
+		if ( getImplementation() != null ){
+			return new ArtifactDefinition(getImplementation());
+		}
+		return null;
+	}
 }

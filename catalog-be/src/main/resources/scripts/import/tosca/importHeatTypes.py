@@ -21,22 +21,34 @@ import importCommon
 
 def importHeatTypes(beHost, bePort, adminUser, fileDir, updateversion):
 	
-	heatTypes = [ "cinderVolume",
-#				  "contrailVirtualNetwork",
+	heatTypes = [ "globalNetwork",
+				  "globalPort",
+				  "globalCompute",
+				  "volume",
+				  "cinderVolume",
+				  "contrailVirtualNetwork",
 				  "neutronNet",
 				  "neutronPort",
 				  "novaServer",
+				  "extVl",
+				  "internalVl",
+				  "extCp",
 				  "vl",
 				  "eline",
 				  "abstractSubstitute",
-#				  "contrailNetworkRules",
-#				  "contrailPort",
-#				  "contrailV2NetworkRules",
-#				  "contrailV2VirtualNetwork",
-				  "securityRules"
-#				  "contrailAbstractSubstitute",
-#				  "contrailCompute",
-#				  "contrailV2VirtualMachineInterface"
+				  "Generic_VFC", 
+				  "Generic_VF", 
+				  "Generic_Service",
+				  "contrailNetworkRules",
+				  "contrailPort",
+				  "contrailV2NetworkRules",
+				  "contrailV2VirtualNetwork",
+				  "securityRules",
+				  "contrailAbstractSubstitute",
+				  "contrailCompute",
+				  "contrailV2VirtualMachineInterface",
+				  "subInterface",
+				  "contrailV2VLANSubInterface"
 				  ]
 		
 	responseCodes = [200, 201]

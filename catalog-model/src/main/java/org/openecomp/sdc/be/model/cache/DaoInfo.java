@@ -20,34 +20,19 @@
 
 package org.openecomp.sdc.be.model.cache;
 
-import org.openecomp.sdc.be.model.operations.api.IProductOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 
 public class DaoInfo {
-	private IResourceOperation iResourceOperation;
-	private IServiceOperation iServiceOperation;
-	private IProductOperation iProductOperation;
+	private ToscaOperationFacade toscaOperationFacade;
 	private ComponentCache ComponentCache;
 
-	public DaoInfo(IResourceOperation iResourceOperation, IServiceOperation iServiceOperation,
-			IProductOperation iProductOperation, org.openecomp.sdc.be.model.cache.ComponentCache componentCache) {
-		this.iResourceOperation = iResourceOperation;
-		this.iServiceOperation = iServiceOperation;
-		this.iProductOperation = iProductOperation;
+	public DaoInfo(ToscaOperationFacade toscaOperationFacade, org.openecomp.sdc.be.model.cache.ComponentCache componentCache) {
+		this.toscaOperationFacade = toscaOperationFacade;
 		ComponentCache = componentCache;
 	}
 
-	public IResourceOperation getResourceOperation() {
-		return iResourceOperation;
-	}
-
-	public IServiceOperation getServiceOperation() {
-		return iServiceOperation;
-	}
-
-	public IProductOperation getProductOperation() {
-		return iProductOperation;
+	public ToscaOperationFacade getToscaOperationFacade() {
+		return toscaOperationFacade;
 	}
 
 	public org.openecomp.sdc.be.model.cache.ComponentCache getComponentCache() {

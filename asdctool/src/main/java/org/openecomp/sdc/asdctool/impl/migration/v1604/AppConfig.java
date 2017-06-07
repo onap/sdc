@@ -21,73 +21,63 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1604;
 
 import org.openecomp.sdc.asdctool.impl.PopulateComponentCache;
+import org.openecomp.sdc.asdctool.impl.migration.MigrationOperationUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1607.CsarMigration;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
+import org.openecomp.sdc.asdctool.impl.migration.v1702.DataTypesUpdate;
+import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.VfModulesPropertiesAdding;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
-import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
-import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ProductComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceImportManager;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceComponentInstanceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.VFComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.*;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
 import org.openecomp.sdc.be.dao.cassandra.ComponentCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
 import org.openecomp.sdc.be.dao.es.ElasticSearchClient;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.jsontitan.operations.GroupsOperation;
 import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
-import org.openecomp.sdc.be.model.operations.impl.AdditionalInformationOperation;
-import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
-import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
-import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityInstanceOperation;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.ComponentInstanceOperation;
-import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
-import org.openecomp.sdc.be.model.operations.impl.ElementOperation;
-import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
-import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.HeatParametersOperation;
-import org.openecomp.sdc.be.model.operations.impl.InputsOperation;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.OnboardingClient;
-import org.openecomp.sdc.be.model.operations.impl.ProductOperation;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.model.operations.impl.RequirementOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
-import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
+import org.openecomp.sdc.be.model.operations.impl.*;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
+@Import(DAOSpringConfig.class)
 public class AppConfig {
+
+	@Bean(name = "sdc-schema-files-cassandra-dao")
+	public SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao() {
+		return new SdcSchemaFilesCassandraDao();
+	}
+	@Bean(name = "componentsUtils")
+	public ComponentsUtils componentsUtils() {
+		return new ComponentsUtils();
+	}
+	@Bean(name = "updateDataTypes")
+	public DataTypesUpdate dataTypesUpdate() {
+		return new DataTypesUpdate();
+	}
 	@Bean(name = "serviceMigrationBean")
 	public ServiceMigration serviceMigration() {
 		return new ServiceMigration();
@@ -113,16 +103,6 @@ public class AppConfig {
 		return new CsarMigration();
 	}
 
-	@Bean(name = "titan-generic-dao")
-	public TitanGenericDao titanGenericDao() {
-		return new TitanGenericDao();
-	}
-
-	@Bean(name = "titan-client", initMethod = "createGraph")
-	public TitanGraphClient titanClient() {
-		return new TitanGraphClient();
-	}
-
 	@Bean(name = "resource-operation")
 	public ResourceOperation resourceOperation() {
 		return new ResourceOperation();
@@ -144,8 +124,9 @@ public class AppConfig {
 	}
 
 	@Bean(name = "property-operation")
-	public PropertyOperation propertyOperation() {
-		return new PropertyOperation();
+	@Primary
+	public PropertyOperation propertyOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+		return new PropertyOperation(titanGenericDao);
 	}
 
 	@Bean(name = "attribute-operation")
@@ -174,8 +155,9 @@ public class AppConfig {
 	}
 
 	@Bean(name = "element-operation")
-	public IElementOperation elementOperation() {
-		return new ElementOperation();
+	@Primary
+	public IElementOperation elementOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+		return new ElementOperation(titanGenericDao);
 	}
 
 	@Bean(name = "additional-information-operation")
@@ -213,9 +195,20 @@ public class AppConfig {
 		return new GroupOperation();
 	}
 
+	@Bean(name = "groups-operation")
+	public GroupsOperation jsonGroupsOperation() {
+		return new GroupsOperation();
+	}
+	
+	@Bean(name = "group-instance-operation")
+	public GroupInstanceOperation groupInstanceOperation() {
+		return new GroupInstanceOperation();
+	}
+	
 	@Bean(name = "group-type-operation")
-	public GroupTypeOperation groupTypeOperation() {
-		return new GroupTypeOperation();
+	@Primary
+	public GroupTypeOperation groupTypeOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenricDao, @Qualifier("property-operation")PropertyOperation propertyOperation) {
+		return new GroupTypeOperation(titanGenricDao, propertyOperation);
 	}
 
 	@Bean(name = "attribute-operation")
@@ -289,8 +282,9 @@ public class AppConfig {
 	 * @return
 	 */
 	@Bean(name = "user-operation")
-	public IUserAdminOperation userOperation() {
-		return new UserAdminOperation();
+	@Primary
+	public IUserAdminOperation userOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+		return new UserAdminOperation(titanGenericDao);
 	}
 
 	/**
@@ -534,5 +528,24 @@ public class AppConfig {
 	public ServiceComponentInstanceBusinessLogic serviceComponentInstanceBusinessLogic() {
 		return new ServiceComponentInstanceBusinessLogic();
 	}
+	/** 
+	 * 
+	 * @return new instance of migration1702
+	 */
+	@Bean(name = "migration1702")
+	public Migration1702 migration1702() {
+		return new Migration1702();
+	}
+
+
+	@Bean(name = "migrationUtils")
+	public MigrationOperationUtils migrationUtils() {
+		return new MigrationOperationUtils();
+	}
+
+    @Bean(name = "vfModulesPropertiesAdding")
+    public VfModulesPropertiesAdding vfModulesPropertiesAdding() {
+        return new VfModulesPropertiesAdding();
+    }
 
 }

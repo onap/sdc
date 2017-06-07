@@ -84,8 +84,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
 		PolicyTypeDefinition policyTypePreCreate = createPolicyTypeDef();
 		assertTrue(StringUtils.isEmpty(policyTypePreCreate.getUniqueId()));
-		Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType = policyTypeOperation
-				.addPolicyType(policyTypePreCreate);
+		Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType = policyTypeOperation.addPolicyType(policyTypePreCreate);
 		assertTrue(addPolicyType.isLeft());
 		PolicyTypeDefinition policyTypePostCreate = addPolicyType.left().value();
 		assertEquals(policyTypePostCreate.getType(), policyTypePreCreate.getType());
@@ -96,10 +95,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
 	@Test
 	public void testGetLatestPolicyTypeByType() {
-		PolicyTypeDefinition policyTypeCreated = policyTypeOperation.addPolicyType(createPolicyTypeDef()).left()
-				.value();
-		Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation
-				.getLatestPolicyTypeByType(policyTypeCreated.getType());
+		PolicyTypeDefinition policyTypeCreated = policyTypeOperation.addPolicyType(createPolicyTypeDef()).left().value();
+		Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation.getLatestPolicyTypeByType(policyTypeCreated.getType());
 		assertTrue(eitherPolicyTypeFetched.isLeft());
 		PolicyTypeDefinition policyTypeFetched = eitherPolicyTypeFetched.left().value();
 		assertEquals(policyTypeFetched.toString(), policyTypeCreated.toString());
@@ -108,8 +105,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
 	private PolicyTypeDefinition createPolicyTypeDef() {
 		PolicyTypeDataDefinition policyTypeDataDefinition = new PolicyTypeDataDefinition();
-		policyTypeDataDefinition
-				.setDescription("description: The TOSCA Policy Type all other TOSCA Policy Types derive from");
+		policyTypeDataDefinition.setDescription("description: The TOSCA Policy Type all other TOSCA Policy Types derive from");
 		policyTypeDataDefinition.setType("tosca.policies.Root");
 		PolicyTypeDefinition policyTypeDefinition = new PolicyTypeDefinition(policyTypeDataDefinition);
 		policyTypeDefinition.setHighestVersion(true);

@@ -61,9 +61,11 @@ public class ComponentCacheTableDescription implements ITableDescription {
 	}
 
 	enum PartialComponentFieldsDescription {
-		DATA("data", DataType.blob(), false), MODIFICATION_TIME("modification_time", DataType.timestamp(), false), TYPE(
-				"type", DataType.varchar(), false), IS_DIRTY("is_dirty", DataType.cboolean(),
-						false), IS_ZIPPED("is_zipped", DataType.cboolean(), false),;
+		DATA("data", DataType.blob(), false), 
+		MODIFICATION_TIME("modification_time", DataType.timestamp(), false), 
+		TYPE("type", DataType.varchar(), false), 
+		IS_DIRTY("is_dirty", DataType.cboolean(), false), 
+		IS_ZIPPED("is_zipped", DataType.cboolean(), false),;
 
 		private String name;
 		private DataType type;

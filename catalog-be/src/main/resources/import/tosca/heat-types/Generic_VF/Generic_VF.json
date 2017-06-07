@@ -1,0 +1,21 @@
+{
+  "payloadName": "Generic_VF.yml",
+  "contactId": "jh0003",
+  "name": "Generic_VF",
+  "description": "Represents a generic VF.",
+  "resourceIconPath": "defaulticon",
+  "resourceType": "ABSTRACT",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Abstract"
+      }
+    ]
+  }
+],
+  "tags": [
+    "Generic_VF"
+  ]
+}

@@ -23,12 +23,12 @@ package org.openecomp.sdc.be.model.operations.api;
 import java.util.Map;
 
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
@@ -51,7 +51,7 @@ public interface IArtifactOperation {
 
 	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> getArtifacts(String parentId, NodeTypeEnum parentType, boolean inTransaction, String groupType);
 
-	Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact(ArtifactDefinition artifactHeatEnv, ArtifactDefinition artifactHeat, String parentId, NodeTypeEnum parentType, boolean inTransaction);
+	Either<ArtifactDefinition, StorageOperationStatus> addHeatEnvArtifact(ArtifactDefinition artifactHeatEnv, ArtifactDefinition artifactHeat, String parentId, NodeTypeEnum parentType, boolean failIfExist);
 
 	public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion);
 
@@ -61,10 +61,20 @@ public interface IArtifactOperation {
 
 	public Either<ArtifactData, StorageOperationStatus> updateToscaArtifactNameOnGraph(ArtifactDefinition artifactInfo, String artifactId, NodeTypeEnum type, String id);
 
+
 	public StorageOperationStatus addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, TitanVertex parentVertex);
 
 	public Either<ArtifactData, StorageOperationStatus> getLatestArtifactDataByArtifactUUID(String artifactUUID, boolean inTransaction);
 
 	StorageOperationStatus addArifactToComponent(TitanVertex artifactInfo, TitanVertex parentVertex, String label);
+
+	public Either<ArtifactData, TitanOperationStatus> removeArtifactOnGraph(String id, String artifactId, NodeTypeEnum type, boolean deleteMandatoryArtifact);
+	
+	public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvPlaceholder(ArtifactDefinition artifactInfo, boolean inTransaction);
+
+	public Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact( String id, ArtifactDefinition artifactEnvInfo,  String oldArtifactId, String newArtifactId, NodeTypeEnum type, boolean inTransaction);
+	
+	public Either<ArtifactDefinition, StorageOperationStatus> getHeatEnvByGeneratedFromId(String generatedFromId);
+
 
 }

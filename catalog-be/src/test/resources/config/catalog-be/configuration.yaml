@@ -8,7 +8,7 @@ identificationHeaderFields:
 
 
 # catalog backend hostname
-beFqdn: localhost
+beFqdn: sdccatalog.att.com
 
 # catalog backend http port
 beHttpPort: 8080
@@ -24,6 +24,7 @@ beSslPort: 8443
 
 version: 1.0
 released: 2012-11-30
+toscaConformanceLevel: 3.0
 
 titanCfgFile: /home/vagrant/catalog-be/config/catalog-be/titan.properties
 titanInMemoryGraph: true
@@ -93,6 +94,9 @@ artifactTypes:
    - AAI_VF_MODULE_MODEL
    - AAI_VF_INSTANCE_MODEL
    - OTHER
+   - SNMP_POLL
+   - SNMP_TRAP
+   - GUIDE
 
 licenseTypes:
    - User
@@ -105,6 +109,7 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - VFCMT
  
 # validForResourceTypes usage
 #     validForResourceTypes:
@@ -160,7 +165,7 @@ informationalResourceArtifacts:
   testScripts:
       displayName: Test Scripts
       type: OTHER
-  cloudQuestionnaire:
+  CloudQuestionnaire:
       displayName: Cloud Questionnaire (completed)
       type: OTHER
   HEATTemplateFromVendor:
@@ -333,7 +338,13 @@ resourceDeploymentArtifacts:
     OTHER:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
-
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+        
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
         acceptedTypes:
@@ -341,6 +352,55 @@ resourceInstanceDeploymentArtifacts:
     VF_MODULES_METADATA:
         acceptedTypes:
             - json
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+
+resourceInformationalArtifacts:
+    CHEF:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    PUPPET:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SHELL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    HEAT:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    BPEL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    DG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    MURANO_PKG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    OTHER:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    GUIDE:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+            - VFC
 
 resourceInformationalDeployedArtifacts:
 
@@ -377,29 +437,27 @@ cassandraConfig:
         - { name: sdcartifact, replicationStrategy: SimpleStrategy, replicationInfo: ['1']}
        
 switchoverDetector:
-    gBeFqdn: 
-    gFeFqdn: 
-    beVip: 1.2.3.4
-    feVip: 1.2.3.4
+    gBeFqdn: AIO-BE.ecomp.idns.com
+    gFeFqdn: AIO-FE.ecomp.idns.com
+    beVip: 0.0.0.0
+    feVip: 0.0.0.0
     beResolveAttempts: 3
     feResolveAttempts: 3
     enabled: false
     interval: 60
     changePriorityUser: ecompasdc
     changePriorityPassword: ecompasdc123
-    publishNetworkUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
+    publishNetworkUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
     publishNetworkBody: '{"note":"publish network"}'
     groups:
-      beSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip?user=root",
-               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.cip","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
-      feSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip?user=root",
-               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.cip","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip"}'}
+      beSet: { changePriorityUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com?user=root",
+               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.com","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
+      feSet: { changePriorityUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com?user=root",
+               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.com","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com"}'}
     
        
-heatEnvArtifactHeader:
-    ""
-heatEnvArtifactFooter:
-    ""
+heatEnvArtifactHeader: ""
+heatEnvArtifactFooter: ""
 
 onboarding:
     protocol: http
@@ -424,4 +482,8 @@ applicationL2Cache:
         syncIntervalInSecondes: 60
         waitOnShutDownInMinutes: 30
         numberOfCacheWorkers: 4
+genericAssetNodeTypes:
+  VFC: org.openecomp.resource.abstract.nodes.VFC
+  VF : org.openecomp.resource.abstract.nodes.VF
+  Service: org.openecomp.resource.abstract.nodes.service
         

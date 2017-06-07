@@ -1,0 +1,35 @@
+.property-row {
+    border-bottom: 1px solid @border_color_d;
+    padding-left: 10px;
+    .property-name-container {
+        display: flex;
+        flex-grow: 3;
+    }
+
+    .type-schema-container {
+        flex-grow: 2;
+        border-left: 1px solid @border_color_d;
+        text-align: left;
+        line-height: 30px;
+        text-transform: capitalize;
+        width: 10px;
+    }
+
+    .property-check-box {
+        padding-right: 10px;
+        margin-top: 9px;
+    }
+}
+
+.property-row:hover {
+    background-color: @func_color_r;
+}
+
+&.expanded {
+    .flex-container {
+        .expand-collapse-inputs-table-icon {
+            transform: rotate(180deg);
+            left: 0px;
+        }
+    }
+}

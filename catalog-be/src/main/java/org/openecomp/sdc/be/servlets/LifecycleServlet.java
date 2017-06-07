@@ -40,7 +40,6 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.User;
@@ -50,7 +49,6 @@ import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.jcabi.aspects.Loggable;
 import com.wordnik.swagger.annotations.Api;
@@ -92,9 +90,9 @@ public class LifecycleServlet extends BeGenericServlet {
 
 		// get modifier from graph
 		log.debug("get modifier properties");
-		Either<User, Response> eitherGetUser = getUser(request, userId);
+		Either<User, ResponseFormat> eitherGetUser = getUser(request, userId);
 		if (eitherGetUser.isRight()) {
-			return eitherGetUser.right().value();
+			return buildErrorResponse(eitherGetUser.right().value());
 		}
 		User user = eitherGetUser.left().value();
 
@@ -130,27 +128,6 @@ public class LifecycleServlet extends BeGenericServlet {
 		try {
 			LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
 			ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(componentCollection);
-			// if (componentType == ComponentTypeEnum.RESOURCE){
-			// Either<Resource, ResponseFormat> actionResponse =
-			// businessLogic.changeState(resourceIdLower, user, transitionEnum,
-			// changeInfo, false);
-			//
-			// if (actionResponse.isRight()){
-			// log.info("failed to change resource state");
-			// response = buildErrorResponse(actionResponse.right().value());
-			// return response;
-			// }
-			//
-			// log.debug("change state successful !!!");
-			// Object resource =
-			// RepresentationUtils.toRepresentation(actionResponse.left().value());
-			// response =
-			// buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-			// resource);
-			// return response;
-			//
-			// } else if (componentType == ComponentTypeEnum.SERVICE ||
-			// componentType == ComponentTypeEnum.PRODUCT){
 			if (componentType != null) {
 				Either<? extends Component, ResponseFormat> actionResponse = businessLogic.changeComponentState(componentType, componentId, user, transitionEnum, changeInfo, false, true);
 
@@ -192,25 +169,25 @@ public class LifecycleServlet extends BeGenericServlet {
 		return Either.left(transitionEnum);
 	}
 
-	private LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
-		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
-		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
-		LifecycleBusinessLogic resourceBl = webApplicationContext.getBean(LifecycleBusinessLogic.class);
-		return resourceBl;
-	}
-
-	protected Either<User, Response> getUser(final HttpServletRequest request, String userId) {
-
-		Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
-		if (eitherCreator.isRight()) {
-			log.info("createResource method - user is not listed. userId={}", userId);
-			ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
-			User user = new User("", "", userId, "", null, null);
-
-			getComponentsUtils().auditResource(errorResponse, user, null, "", "", AuditingActionEnum.CHECKOUT_RESOURCE, null);
-			return Either.right(buildErrorResponse(errorResponse));
-		}
-		return Either.left(eitherCreator.left().value());
-
-	}
+//	private LifecycleBusinessLogic getLifecycleBL(ServletContext context) {
+//		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+//		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+//		LifecycleBusinessLogic resourceBl = webApplicationContext.getBean(LifecycleBusinessLogic.class);
+//		return resourceBl;
+//	}
+//
+//	protected Either<User, Response> getUser(final HttpServletRequest request, String userId) {
+//
+//		Either<User, ActionStatus> eitherCreator = getUserAdminManager(request.getSession().getServletContext()).getUser(userId, false);
+//		if (eitherCreator.isRight()) {
+//			log.info("createResource method - user is not listed. userId= {}", userId);
+//			ResponseFormat errorResponse = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_INFORMATION);
+//			User user = new User("", "", userId, "", null, null);
+//
+//			getComponentsUtils().auditResource(errorResponse, user, null, "", "", AuditingActionEnum.CHECKOUT_RESOURCE, null);
+//			return Either.right(buildErrorResponse(errorResponse));
+//		}
+//		return Either.left(eitherCreator.left().value());
+//
+//	}
 }

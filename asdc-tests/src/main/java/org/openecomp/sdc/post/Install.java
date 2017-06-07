@@ -22,6 +22,7 @@ package org.openecomp.sdc.post;
 
 import java.io.File;
 
+import org.openecomp.sdc.be.dao.DAOTitanStrategy;
 import org.openecomp.sdc.be.dao.titan.TitanGraphClient;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 
@@ -46,8 +47,8 @@ public class Install {
 	}
 
 	private static boolean createTitanSchema(String titanPropsFile) {
-		TitanGraphClient titanGraphClient = new TitanGraphClient();
-		TitanOperationStatus status = titanGraphClient.createGraph(titanPropsFile, true);
+		TitanGraphClient titanGraphClient = new TitanGraphClient(new DAOTitanStrategy());
+		TitanOperationStatus status = titanGraphClient.createGraph(titanPropsFile);
 		if (TitanOperationStatus.OK == status) {
 			System.out.println("Titan schema ,indexes and default values created successfully.");
 			return true;

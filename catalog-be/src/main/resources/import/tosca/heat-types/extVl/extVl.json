@@ -1,0 +1,21 @@
+{
+  "payloadName": "extVl.yml",
+  "contactId": "DS200P",
+  "name": "ExtVL",
+  "description": "ECOMP generic virtual link (network) base type for all other service-level and global networks",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+     {
+        "name": "Network Elements"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "ExtVL"
+  ]
+}

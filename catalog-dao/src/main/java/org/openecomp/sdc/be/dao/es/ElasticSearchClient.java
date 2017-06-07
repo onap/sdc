@@ -154,7 +154,7 @@ public class ElasticSearchClient {
 		if (node != null) {
 			node.close();
 		}
-		log.info("Closed ElasticSearch client for cluster <" + this.clusterName + ">");
+		log.info("Closed ElasticSearch client for cluster <{}>", this.clusterName);
 	}
 
 	/**

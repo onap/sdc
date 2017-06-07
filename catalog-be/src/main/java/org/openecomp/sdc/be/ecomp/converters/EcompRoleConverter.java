@@ -20,11 +20,10 @@
 
 package org.openecomp.sdc.be.ecomp.converters;
 
+import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.sdc.be.user.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 
 public final class EcompRoleConverter {
 

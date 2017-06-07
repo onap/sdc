@@ -1,14 +1,7 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: ContrailV2VirtualNetworkGlobalType
-  template_version: 1.0.0
-description: Contrail V2 Virtual Network Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork:
-    derived_from: tosca.nodes.network.Network
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
     properties:
       network_ipam_refs_data:
         type: list

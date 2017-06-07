@@ -22,8 +22,11 @@ package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.HeatParameterDataDefinition;
 
 public class ArtifactDefinition extends ArtifactDataDefinition implements Serializable {
 
@@ -37,9 +40,6 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 	 */
 	private byte[] payloadData;
 
-	private List<HeatParameterDefinition> heatParameters;
-
-	private String generatedFromId;
 
 	public byte[] getPayloadData() {
 		return payloadData;
@@ -58,10 +58,19 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 	public ArtifactDefinition() {
 		super();
 	}
+	public ArtifactDefinition(Map<String, Object> art) {
+		super(art);
+	}
 
 	public ArtifactDefinition(ArtifactDataDefinition a) {
 		super(a);
 
+	}
+	
+	public ArtifactDefinition(ArtifactDefinition a) {
+		super(a);
+		this.payloadData = a.payloadData;
+		
 	}
 
 	public ArtifactDefinition(ArtifactDataDefinition a, String payloadData) {
@@ -69,21 +78,25 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 		setPayloadData(payloadData);
 	}
 
-	public List<HeatParameterDefinition> getHeatParameters() {
-		return heatParameters;
+	public List<HeatParameterDefinition> getListHeatParameters() {
+		List<HeatParameterDefinition> res = null;
+		List<HeatParameterDataDefinition> heatParameters = super.getHeatParameters();
+		if(heatParameters != null){
+			res = heatParameters.stream().map(hp -> new HeatParameterDefinition(hp)).collect(Collectors.toList());
+		}
+		return res;
 	}
 
-	public void setHeatParameters(List<HeatParameterDefinition> properties) {
-		this.heatParameters = properties;
+	public void setListHeatParameters(List<HeatParameterDefinition> properties) {
+		List<HeatParameterDataDefinition> res = null;
+		
+		if(properties != null){
+			res = properties.stream().map(hp -> new HeatParameterDataDefinition(hp)).collect(Collectors.toList());
+		}
+		super.setHeatParameters(res);
 	}
 
-	public String getGeneratedFromId() {
-		return generatedFromId;
-	}
 
-	public void setGeneratedFromId(String generatedFromId) {
-		this.generatedFromId = generatedFromId;
-	}
 
 	public boolean checkEsIdExist() {
 		if ((getEsId() != null) && (!getEsId().trim().isEmpty())) {
@@ -96,8 +109,7 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((generatedFromId == null) ? 0 : generatedFromId.hashCode());
-		result = prime * result + ((heatParameters == null) ? 0 : heatParameters.hashCode());
+	
 		result = prime * result + ((payloadData == null) ? 0 : payloadData.hashCode());
 		return result;
 	}
@@ -111,23 +123,8 @@ public class ArtifactDefinition extends ArtifactDataDefinition implements Serial
 		if (getClass() != obj.getClass())
 			return false;
 		ArtifactDefinition other = (ArtifactDefinition) obj;
-		if (generatedFromId == null) {
-			if (other.generatedFromId != null)
-				return false;
-		} else if (!generatedFromId.equals(other.generatedFromId))
-			return false;
-		if (heatParameters == null) {
-			if (other.heatParameters != null)
-				return false;
-		} else if (heatParameters.size() != other.heatParameters.size())
-			return false;
-		else {
-			for (HeatParameterDefinition heatParam : heatParameters) {
-				if (!other.heatParameters.contains(heatParam)) {
-					return false;
-				}
-			}
-		}
+	
+	
 		if (payloadData == null) {
 			if (other.payloadData != null)
 				return false;

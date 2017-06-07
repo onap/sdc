@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -73,18 +75,18 @@ public class ResourceImportManagerTest {
 	static IAuditingManager auditingManager = Mockito.mock(IAuditingManager.class);
 	static ResponseFormatManager responseFormatManager = Mockito.mock(ResponseFormatManager.class);
 	static ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
-	static ResourceOperation resourceOperation = Mockito.mock(ResourceOperation.class);
 	static UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
+	static ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
 	static Logger log = Mockito.spy(Logger.class);
 
 	@BeforeClass
 	public static void beforeClass() throws IOException {
 		importManager = new ResourceImportManager();
 		importManager.setAuditingManager(auditingManager);
-		when(resourceOperation.getLatestByToscaResourceName(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(Either.left(null));
+		when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
 		importManager.setResponseFormatManager(responseFormatManager);
 		importManager.setResourceBusinessLogic(resourceBusinessLogic);
-		importManager.setResourceOperation(resourceOperation);
+		importManager.setToscaOperationFacade(toscaOperationFacade);
 		ResourceImportManager.setLog(log);
 
 		String appConfigDir = "src/test/resources/config/catalog-be";
@@ -221,7 +223,7 @@ public class ResourceImportManagerTest {
 
 					}
 				});
-		when(resourceBusinessLogic.createResourceByDao(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.anyBoolean())).thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
+		when(resourceBusinessLogic.createResourceByDao(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.any(EnumMap.class))).thenAnswer(new Answer<Either<Resource, ResponseFormat>>() {
 			public Either<Resource, ResponseFormat> answer(InvocationOnMock invocation) throws Throwable {
 				Object[] args = invocation.getArguments();
 				return Either.left((Resource) args[0]);
@@ -345,6 +347,7 @@ public class ResourceImportManagerTest {
 		assertTrue(resource.getDescription().equals(resourceMD.getDescription()));
 		assertTrue(resource.getIcon().equals(resourceMD.getResourceIconPath()));
 		assertTrue(resource.getName().equals(resourceMD.getName()));
+
 		assertTrue(resource.getContactId().equals(resourceMD.getContactId()));
 		assertTrue(resource.getCreatorUserId().equals(resourceMD.getContactId()));
 

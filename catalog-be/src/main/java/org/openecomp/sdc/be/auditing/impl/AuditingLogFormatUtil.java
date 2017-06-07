@@ -24,7 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Formatter;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -43,7 +45,7 @@ public class AuditingLogFormatUtil {
 	// This is the key by which audit marker is recognized in logback.xml
 	private static String AUDIT_MARKER_STR = "AUDIT_MARKER";
 
-	public static Marker auditMarker = MarkerFactory.getMarker(AUDIT_MARKER_STR);
+	public static final Marker auditMarker = MarkerFactory.getMarker(AUDIT_MARKER_STR);
 
 	protected static void logAuditEvent(EnumMap<AuditingFieldsKeysEnum, Object> auditingFields) {
 
@@ -77,7 +79,7 @@ public class AuditingLogFormatUtil {
 				log.info(auditMarker, formattedString);
 			}
 		} catch (Exception e) {
-			log.debug("unexpected error occurred: {} {}", e.getMessage(), e);
+			log.debug("unexpected error occurred: {}", e.getMessage(), e);
 
 		} finally {
 			formatter.close();
@@ -144,14 +146,13 @@ public class AuditingLogFormatUtil {
 		case ARTIFACT_METADATA_UPDATE:
 		case ARTIFACT_PAYLOAD_UPDATE:
 		case ARTIFACT_DOWNLOAD:
-			ArrayList<AuditingFieldsKeysEnum> artifactFieldsList = new ArrayList(Arrays.asList(AuditingLogFormatConstants.CREATE_RESOURCE_TEMPLATE_PREFIX_ARRAY));
-			artifactFieldsList.add(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID);
-			artifactFieldsList.add(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID);
-			artifactFieldsList.add(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA);
-			artifactFieldsList.addAll(Arrays.asList(AuditingLogFormatConstants.CREATE_RESOURCE_TEMPLATE_SUFFIX_ARRAY));
-			artifactFieldsList.addAll(Arrays.asList(AuditingLogFormatConstants.EXTERNAL_DOWNLOAD_ARTIFACT_ARRAY));
+			ArrayList<AuditingFieldsKeysEnum> artifactFieldsSet = new ArrayList<>(Arrays.asList(AuditingLogFormatConstants.CREATE_RESOURCE_TEMPLATE_PREFIX_ARRAY)) ;
+			artifactFieldsSet.add(AuditingFieldsKeysEnum.AUDIT_PREV_ARTIFACT_UUID);
+			artifactFieldsSet.add(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID);
+			artifactFieldsSet.add(AuditingFieldsKeysEnum.AUDIT_ARTIFACT_DATA);
+			artifactFieldsSet.addAll(Arrays.asList(AuditingLogFormatConstants.EXTERNAL_DOWNLOAD_ARTIFACT_ARRAY));
 			AuditingFieldsKeysEnum[] artifactFieldsArray = new AuditingFieldsKeysEnum[100];
-			artifactFieldsArray = artifactFieldsList.toArray(artifactFieldsArray);
+			artifactFieldsArray = artifactFieldsSet.toArray(artifactFieldsArray);
 			formattedString = buildStringAccrodingToArray(artifactFieldsArray, auditingFields);
 			break;
 		case DOWNLOAD_ARTIFACT:
@@ -224,6 +225,12 @@ public class AuditingLogFormatUtil {
 			AuditingFieldsKeysEnum[] uploadArtifactFieldsArray = new AuditingFieldsKeysEnum[100];
 			artifactFieldsArray = uploadArtifactFieldsList.toArray(uploadArtifactFieldsArray);
 			formattedString = buildStringAccrodingToArray(artifactFieldsArray, auditingFields);
+			break;
+		case CREATE_RESOURCE_BY_API:
+			formattedString = buildStringAccrodingToArray(AuditingLogFormatConstants.EXTERNAL_CRUD_API_ARRAY, auditingFields);
+			break;
+		case CHANGE_LIFECYCLE_BY_API:
+			formattedString = buildStringAccrodingToArray(AuditingLogFormatConstants.EXTERNAL_LYFECYCLE_API_ARRAY, auditingFields);
 			break;
 		default:
 			break;

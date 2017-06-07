@@ -38,6 +38,9 @@ public class IntegerConverter implements ToscaValueConverter {
 
 	@Override
 	public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+		if ( value == null || value.isEmpty() ){
+			return null;
+		}
 		return Integer.parseInt(value);
 	}
 

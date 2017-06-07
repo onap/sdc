@@ -65,9 +65,9 @@ public class UserRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.CREATE_USER, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		logger.debug("Send POST request to create user: {}", url);
-		logger.debug("User body: {}", userBodyJson);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send POST request to create user: {}",url);
+		logger.debug("User body: {}",userBodyJson);
+		logger.debug("User headers: {}",headersMap);
 		RestResponse sendCreateUserRequest = http.httpSendPost(url, userBodyJson, headersMap);
 
 		return sendCreateUserRequest;
@@ -119,7 +119,7 @@ public class UserRestUtils extends BaseRestUtils {
 
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(user);
-		logger.debug("userBodyJson: {}", userBodyJson);
+		logger.debug("userBodyJson: {}",userBodyJson);
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.UPDATE_USER, config.getCatalogBeHost(), config.getCatalogBePort(),
 				sdncModifierDetails.getUserId());
@@ -141,7 +141,7 @@ public class UserRestUtils extends BaseRestUtils {
 
 		Gson gson = new Gson();
 		String userBodyJson = gson.toJson(sdncUserDetails);
-		logger.debug("userBodyJson: {}", userBodyJson);
+		logger.debug("userBodyJson: {}",userBodyJson);
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.UPDATE_USER_ROLE, config.getCatalogBeHost(), config.getCatalogBePort(),
 				userIdToUpdate);
@@ -181,7 +181,7 @@ public class UserRestUtils extends BaseRestUtils {
 		// System.out.println(userBodyJson);
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.GET_ALL_ADMIN_USERS, config.getCatalogBeHost(), config.getCatalogBePort());
-		logger.debug("Send following url: {} and headers: {}", url, headersMap.toString());
+		logger.debug("Send following url: {} and headers: {}",url,headersMap.toString());
 		RestResponse sendGetUserRequest = http.httpSendGet(url, headersMap);
 
 		return sendGetUserRequest;
@@ -196,7 +196,6 @@ public class UserRestUtils extends BaseRestUtils {
 		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
 		headersMap.put(HttpHeaderEnum.ACCEPT.getValue(), acceptHeaderDate);
 		headersMap.put(HttpHeaderEnum.USER_ID.getValue(), sdncModifierDetails.getUserId());
-
 		HttpRequest http = new HttpRequest();
 		String url;
 		if (roles == "/") {
@@ -205,7 +204,7 @@ public class UserRestUtils extends BaseRestUtils {
 			url = String.format(Urls.GET_USERS_BY_ROLES, config.getCatalogBeHost(), config.getCatalogBePort(), roles);
 
 		}
-		logger.debug("Send following url: {} and headers: {}", url, headersMap.toString());
+		logger.debug("Send following url: {} and headers: {}",url,headersMap.toString());
 		RestResponse sendGetUserRequest = http.httpSendGet(url, headersMap);
 		return sendGetUserRequest;
 	}
@@ -245,12 +244,12 @@ public class UserRestUtils extends BaseRestUtils {
 			headersMap.put(HttpHeaderEnum.HTTP_CSP_EMAIL.getValue(), sdncUserDetails.getEmail());
 		}
 
-		logger.debug("headersMap: {}", headersMap.toString());
+		logger.debug("headersMap: {}",headersMap.toString());
 
 		Config config = Utils.getConfig();
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.AUTHORIZE_USER, config.getCatalogBeHost(), config.getCatalogBePort());
-		logger.debug("Send GET request to login as seal user : {}", url);
+		logger.debug("Send GET request to login as seal user : {}",url);
 		return http.httpSendGet(url, headersMap);
 	}
 
@@ -270,12 +269,12 @@ public class UserRestUtils extends BaseRestUtils {
 			headersMap.put(HttpHeaderEnum.HTTP_CSP_EMAIL.getValue(), sdncUserDetails.getEmail());
 		}
 
-		logger.debug("headersMap: {}", headersMap.toString());
+		logger.debug("headersMap: {}",headersMap.toString());
 
 		Config config = Utils.getConfig();
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.AUTHORIZE_USER, config.getCatalogBeHost(), config.getCatalogBePort());
-		logger.debug("Send GET request to login as seal user : {}", url);
+		logger.debug("Send GET request to login as seal user : {}",url);
 		return http.httpSendGet(url, headersMap);
 	}
 

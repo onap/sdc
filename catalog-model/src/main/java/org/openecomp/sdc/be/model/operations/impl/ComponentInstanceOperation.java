@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -50,10 +51,12 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -67,7 +70,8 @@ import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GetInputValueInfo;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.IComponentInstanceConnectedElement;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -78,6 +82,7 @@ import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.IAttributeOperation;
 import org.openecomp.sdc.be.model.operations.api.IComponentInstanceOperation;
@@ -99,6 +104,7 @@ import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
 import org.openecomp.sdc.be.resources.data.RequirementData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
+import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.config.EcompErrorName;
@@ -137,9 +143,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	private CapabilityInstanceOperation capabilityInstanceOperation;
 
 	@Autowired
-	private CapabilityTypeOperation capabilityTypeOperation;
-
-	@Autowired
 	private RequirementOperation requirementOperation;
 
 	@Autowired
@@ -159,6 +162,12 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	@Autowired
 	private ApplicationDataTypeCache dataTypeCache;
+
+	@Autowired
+	protected GroupOperation groupOperation;
+
+	@Autowired
+	protected GroupInstanceOperation groupInstanceOperation;
 
 	/**
 	 * FOR TEST ONLY
@@ -180,12 +189,15 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			NodeTypeEnum compInstNodeType, boolean allowDeleted, boolean inTransaction) {
 		Either<ComponentInstance, StorageOperationStatus> result = null;
 
+		if (!ValidationUtils.validateStringNotEmpty(componentInstance.getCustomizationUUID())) {
+			generateCustomizationUUID(componentInstance);
+		}
 		try {
 
 			Either<ComponentInstance, TitanOperationStatus> addRes = addComponentInstanceToContainerComponent(containerComponentId, containerNodeType, instanceNumber, isCreateLocgicalName, componentInstance, compInstNodeType, allowDeleted);
 			if (addRes.isRight()) {
 				TitanOperationStatus status = addRes.right().value();
-				log.error("Failed to add resource instance {} to service {}. Status is {}", componentInstance, containerComponentId, status);
+				log.error("Failed to add resource instance {} to service {}. status is {}", componentInstance, containerComponentId, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -246,7 +258,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (deleteRes.isRight()) {
 				TitanOperationStatus status = deleteRes.right().value();
-				log.error("Failed to remove resource instance {} from component {}. Status is {}", resourceInstUid, containerComponentId, status);
+				log.error("Failed to remove resource instance {} from component {}. status is {}", resourceInstUid, containerComponentId, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -288,7 +300,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (updateRes.isRight()) {
 			TitanOperationStatus status = updateRes.right().value();
-			log.error("Failed to find resource instance name {}. Status is {}", uniqId, status);
+			log.error("Failed to find resource instance name {}. status is {}", uniqId, status);
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 			return result;
 		}
@@ -366,10 +378,48 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Map<String, Object> properties = titanGenericDao.getProperties(ciVertex);
 		ComponentInstanceData createdComponentInstance = GraphElementFactory.createElement(NodeTypeEnum.ResourceInstance.getName(), GraphElementTypeEnum.Node, properties, ComponentInstanceData.class);
 
+		Either<ComponentInstance, TitanOperationStatus> createdResourceInstanceRes = createGroupInstancesOnComponentInstance(componentInstance, ciVertex, createdComponentInstance);
+		return createdResourceInstanceRes;
+	}
+
+
+	public Either<ComponentInstance, TitanOperationStatus> createGroupInstancesOnComponentInstance(ComponentInstance componentInstance, TitanVertex ciVertex, ComponentInstanceData createdComponentInstance) {
 		ComponentInstance createdResourceInstance = new ComponentInstance(createdComponentInstance.getComponentInstDataDefinition());
+		createdResourceInstance.setGroupInstances(componentInstance.getGroupInstances());
+		List<GroupInstance> groupInstancesList = new ArrayList<GroupInstance>();
+		List<GroupDefinition> group = null;
+		Either<List<GroupDefinition>, TitanOperationStatus> groupEither = groupOperation.getAllGroupsFromGraph(createdResourceInstance.getComponentUid(), NodeTypeEnum.Resource);
+		if (groupEither.isRight() && groupEither.right().value() != TitanOperationStatus.OK && groupEither.right().value() != TitanOperationStatus.NOT_FOUND) {
+			TitanOperationStatus status = groupEither.right().value();
+			log.debug("Failed to associate group instances to component instance {}. Status is {}", componentInstance.getUniqueId(), status);
+			return Either.right(status);
+		} else {
+			if (groupEither.isLeft()) {
+				group = groupEither.left().value();
+				if (group != null && !group.isEmpty()) {
+					List<GroupDefinition> vfGroupsList = group.stream().filter(p -> p.getType().equals("org.openecomp.groups.VfModule")).collect(Collectors.toList());
+					for (GroupDefinition groupDefinition : vfGroupsList) {
+						Either<GroupInstance, StorageOperationStatus> status = createGroupInstance(ciVertex, groupDefinition, createdResourceInstance);
+						if (status.isRight()) {
+							log.debug("Failed to associate group instances to component instance {}. Status is {}", componentInstance.getUniqueId(), status);
 
+						} else {
+							GroupInstance groupInstance = status.left().value();
+							groupInstancesList.add(groupInstance);
+						}
+
+					}
+					createdResourceInstance.setGroupInstances(groupInstancesList);
+				}
+			}
+
+		}
 		return Either.left(createdResourceInstance);
+	}
 
+	public void generateCustomizationUUID(ComponentInstance componentInstance) {
+		UUID uuid = UUID.randomUUID();
+		componentInstance.setCustomizationUUID(uuid.toString());
 	}
 
 	/**
@@ -409,7 +459,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 		String originType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.LABEL.getProperty());
 		String resourceType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty());
-		detectOriginType(originType, componentInstanceData, resourceType);
 
 		log.trace("Before adding component instance to graph. componentInstanceData = {}", componentInstanceData);
 
@@ -427,7 +476,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		TitanOperationStatus associateContainerRes = associateContainerCompToComponentInstance(metadataVertex, createdComponentInstanceVertex, logicalName);
 
 		String componentInstanceUniqueId = componentInstanceData.getUniqueId();
-		if (!associateContainerRes.equals(TitanOperationStatus.OK)) {
+		if (associateContainerRes != TitanOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
 			log.debug("Failed to associate container component {} to component instance {}. Status is {}", containerComponentId, componentInstanceUniqueId, associateContainerRes);
 			return Either.right(associateContainerRes);
@@ -435,20 +484,20 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		String originId = (String) titanGenericDao.getProperty(createdComponentInstanceVertex, GraphPropertiesDictionary.TYPE.getProperty());
 
 		TitanOperationStatus associateToInstOriginComponent = associateToInstOriginComponent(createdComponentInstanceVertex, originVertex, originId);
-		if (!associateToInstOriginComponent.equals(TitanOperationStatus.OK)) {
+		if (associateToInstOriginComponent != TitanOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
 			log.debug("Failed to associate component instance {} to its origin component {}. Status is {}", componentInstanceUniqueId, componentInstanceData.getComponentInstDataDefinition().getComponentUid(), associateToInstOriginComponent);
 			return Either.right(associateToInstOriginComponent);
 		}
 
 		TitanOperationStatus associateCompInstToRequirements = associateCompInstToRequirements(createdComponentInstanceVertex, containerNodeType, compInstNodeType, originId);
-		if (!associateCompInstToRequirements.equals(TitanOperationStatus.OK)) {
+		if (associateCompInstToRequirements != TitanOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
 			log.debug("Failed to associate component instance {} to its origin requirements. Status is {}", componentInstanceUniqueId, associateCompInstToRequirements);
 			return Either.right(associateCompInstToRequirements);
 		}
 		TitanOperationStatus associateCompInstToCapabilities = associateCompInstToCapabilities(createdComponentInstanceVertex, containerNodeType, compInstNodeType, originId);
-		if (!associateCompInstToCapabilities.equals(TitanOperationStatus.OK)) {
+		if (associateCompInstToCapabilities != TitanOperationStatus.OK) {
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Add Component Instance");
 			log.debug("Failed to associate component instance {} to its origin capabilities. Status is {}", componentInstanceUniqueId, associateCompInstToCapabilities);
 			return Either.right(associateCompInstToCapabilities);
@@ -469,7 +518,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		} else if (containerNodeType.equals(NodeTypeEnum.Resource) && componentInstance.getCapabilities() != null && !componentInstance.getCapabilities().isEmpty()) {
 			// in case of creation from scar
 			TitanOperationStatus addPropertiesRes = createCapabilityInstancesWithPropertyValues(createdComponentInstanceVertex, componentInstanceUniqueId, componentInstance.getCapabilities(), true);
-			if (!addPropertiesRes.equals(TitanOperationStatus.OK)) {
+			if (addPropertiesRes != TitanOperationStatus.OK) {
 				status = addPropertiesRes;
 				log.debug("Failed to create capability instances with property values for component instance {}. Status is {}", componentInstance.getUniqueId(), status);
 			}
@@ -490,13 +539,14 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				// in case of cloning of service
 				log.trace("Before associating created component instance {} to cloned capability instances.", componentInstanceUniqueId);
 				TitanOperationStatus associationStatus = associateCreatedComponentInstanceToClonedCapabilityInstances(createdComponentInstanceVertex, componentInstanceUniqueId, cloneCapabilityInstancesRes.left().value());
-				if (!associationStatus.equals(TitanOperationStatus.OK) && !associationStatus.equals(TitanOperationStatus.NOT_FOUND)) {
+				if (associationStatus != TitanOperationStatus.OK && associationStatus != TitanOperationStatus.NOT_FOUND) {
 					status = associationStatus;
 					log.debug("Failed to associate capability instances to component instance {}. Status is {}", componentInstance.getUniqueId(), status);
 				}
 				log.trace("After associating created component instance {} to cloned capability instances. Status is {}", componentInstanceUniqueId, status);
 			}
 		}
+
 		if (status == null) {
 			// ComponentInstance createdResourceInstance = new
 			// ComponentInstance(createdComponentInstance.getComponentInstDataDefinition());
@@ -536,7 +586,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			CapabilityDefinition capability = capailityEntry.getValue().get(0);
 			if (capability.getProperties() != null && !capability.getProperties().isEmpty()) {
 				TitanOperationStatus addPropertiesRes = addCapabilityPropertyValuesToResourceInstance(resourceInstanceVertex, resourceInstanceId, capability, isNewlyCreatedResourceInstance);
-				if (!addPropertiesRes.equals(TitanOperationStatus.OK)) {
+				if (addPropertiesRes != TitanOperationStatus.OK) {
 					result = addPropertiesRes;
 					log.debug("Failed to add property values to capabilities of component instance {}. Status is {}", resourceInstanceId, result);
 					return result;
@@ -555,7 +605,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 					capInstPair.getRight().getProperties());
 			if (associateComponentInstanceToCapabilityinstanceRes.isRight()) {
 				error = associateComponentInstanceToCapabilityinstanceRes.right().value();
-				log.debug("Failed to associate capability instance {} to resource instance {}. Status is {}.", capInstPair.getLeft().getUniqueId(), newComponentResourceId, error);
+				log.debug("Failed to associate capability instance {} to resource instance {} status is {}.", capInstPair.getLeft().getUniqueId(), newComponentResourceId, error);
 				break;
 			} else {
 				relationsToCapabilityInstances.add(associateComponentInstanceToCapabilityinstanceRes.left().value());
@@ -571,7 +621,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		TitanOperationStatus error = null;
 		for (ImmutablePair<TitanVertex, GraphEdge> capInstPair : capabilityInstances) {
 			TitanOperationStatus associateComponentInstanceToCapabilityinstanceRes = titanGenericDao.createEdge(riVertex, capInstPair.getLeft(), GraphEdgeLabels.CAPABILITY_INST, capInstPair.getRight().getProperties());
-			if (!associateComponentInstanceToCapabilityinstanceRes.equals(TitanOperationStatus.OK)) {
+			if (associateComponentInstanceToCapabilityinstanceRes != TitanOperationStatus.OK) {
 				error = associateComponentInstanceToCapabilityinstanceRes;
 				log.debug("Failed to associate capability instance {} to resource instance {} status is {} .", capInstPair.getLeft(), newComponentResourceId, error);
 				break;
@@ -595,7 +645,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
 		if (getAllResourceInstanceRes.isRight() && !getAllResourceInstanceRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 			error = getAllResourceInstanceRes.right().value();
-			log.debug("Failed to retrieve resource instances from resource {}. Status is {}.", resourceId, error);
+			log.debug("Failed to retrieve resource instances from resource {} status is {}.", resourceId, error);
 		}
 		if (getAllResourceInstanceRes.isLeft()) {
 			resourceInstancesPair = getAllResourceInstanceRes.left().value();
@@ -606,7 +656,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst, CapabilityInstData.class);
 				if (getCapabilityInstancesRes.isRight() && !getCapabilityInstancesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 					error = getCapabilityInstancesRes.right().value();
-					log.debug("Failed to retrieve capability instances of resource instance {}. Status is {}", ri.getUniqueId(), error);
+					log.debug("Failed to retrieve capability instances of resource instance {} status is {}.", ri.getUniqueId(), error);
 					break;
 				}
 				if (getCapabilityInstancesRes.isLeft()) {
@@ -620,7 +670,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						capInstPair.getRight().getProperties());
 				if (associateComponentInstanceToCapabilityinstanceRes.isRight()) {
 					error = associateComponentInstanceToCapabilityinstanceRes.right().value();
-					log.debug("Failed to associate capability instance {} to resource instance {}. Status is {}", capInstPair.getLeft().getUniqueId(), componentResourceId, error);
+					log.debug("Failed to associate capability instance {} to resource instance {} status is {}.", capInstPair.getLeft().getUniqueId(), componentResourceId, error);
 					break;
 				} else {
 					relationsToCapabilityInstances.add(associateComponentInstanceToCapabilityinstanceRes.left().value());
@@ -633,8 +683,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		return Either.right(error);
 	}
 
-	private void detectOriginType(String label, ComponentInstanceData componentInstanceData, String resourceTypeStr) {
-		switch (NodeTypeEnum.getByName(label)) {
+	private NodeTypeEnum detectOriginType(String label, ComponentInstanceData componentInstanceData, String resourceTypeStr) {
+		NodeTypeEnum res = null;
+		res = NodeTypeEnum.getByName(label);
+		switch (res) {
 		case Service:
 			componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.SERVICE);
 			break;
@@ -650,6 +702,9 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			case VFC:
 				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.VFC);
 				break;
+			case VFCMT:
+				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.VFCMT);
+				break;
 			case CP:
 				componentInstanceData.getComponentInstDataDefinition().setOriginType(OriginTypeEnum.CP);
 				break;
@@ -661,6 +716,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		default:
 			break;
 		}
+		return res;
 	}
 
 	private Either<GraphRelation, TitanOperationStatus> associateToInstOriginComponent(ComponentInstanceData componentInstanceData, NodeTypeEnum compInstNodeType) {
@@ -669,10 +725,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(componentInstanceData, resourceIdData, GraphEdgeLabels.INSTANCE_OF, null);
 
-		log.debug("After associating resource instance {} to resource {}. Status is {}", 
-				componentInstanceData.getUniqueId(), 
-				componentInstanceData.getComponentInstDataDefinition().getUniqueId(), 
-				createRelation);
+		log.debug("After associating resource instance {} to resource {}. status is {}", componentInstanceData.getUniqueId(), componentInstanceData.getComponentInstDataDefinition().getUniqueId(), createRelation);
 
 		return createRelation;
 	}
@@ -742,12 +795,12 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			props.put(GraphEdgePropertiesDictionary.OWNER_ID.getProperty(), componentInstanceData.getUniqueId());
 			if (requirementDef.getMinOccurrences() == null) {
-				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), RequirementData.MIN_OCCURRENCES);
+				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), RequirementDataDefinition.MIN_OCCURRENCES);
 			} else {
 				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), requirementDef.getMinOccurrences());
 			}
 			if (requirementDef.getMaxOccurrences() == null) {
-				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), RequirementData.MAX_DEFAULT_OCCURRENCES);
+				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES);
 			} else {
 				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), requirementDef.getMaxOccurrences());
 			}
@@ -784,12 +837,12 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			props.put(GraphEdgePropertiesDictionary.OWNER_ID.getProperty(), compoInstId);
 			if (requirementDef.getMinOccurrences() == null) {
-				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), RequirementData.MIN_OCCURRENCES);
+				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), RequirementDataDefinition.MIN_OCCURRENCES);
 			} else {
 				props.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), requirementDef.getMinOccurrences());
 			}
 			if (requirementDef.getMaxOccurrences() == null) {
-				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), RequirementData.MAX_DEFAULT_OCCURRENCES);
+				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES);
 			} else {
 				props.put(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty(), requirementDef.getMaxOccurrences());
 			}
@@ -857,8 +910,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						GraphEdge edge = calculatedReq.right;
 						Map<String, Object> properties = edge.getProperties();
 						String source = null;
-						String occurrences = RequirementData.MAX_DEFAULT_OCCURRENCES;
-						String minOccurrences = RequirementData.MIN_OCCURRENCES;
+						String occurrences = RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES;
+						String minOccurrences = RequirementDataDefinition.MIN_OCCURRENCES;
 
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.SOURCE.getProperty())) {
 							source = (String) properties.get(GraphEdgePropertiesDictionary.SOURCE.getProperty());
@@ -898,8 +951,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						Edge edge = calculatedReq.right;
 						Map<String, Object> properties = titanGenericDao.getProperties(edge);
 						String source = null;
-						String occurrences = RequirementData.MAX_DEFAULT_OCCURRENCES;
-						String minOccurrences = RequirementData.MIN_OCCURRENCES;
+						String occurrences = RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES;
+						String minOccurrences = RequirementDataDefinition.MIN_OCCURRENCES;
 
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.SOURCE.getProperty())) {
 							source = (String) properties.get(GraphEdgePropertiesDictionary.SOURCE.getProperty());
@@ -943,8 +996,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.SOURCE.getProperty())) {
 							source = (String) properties.get(GraphEdgePropertiesDictionary.SOURCE.getProperty());
 						}
-						String minOccurrences = CapabilityData.MIN_OCCURRENCES;
-						String occurrences = CapabilityData.MAX_OCCURRENCES;
+						String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
+						String occurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty())) {
 							minOccurrences = (String) properties.get(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty());
 						}
@@ -982,8 +1035,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.SOURCE.getProperty())) {
 							source = (String) properties.get(GraphEdgePropertiesDictionary.SOURCE.getProperty());
 						}
-						String minOccurrences = CapabilityData.MIN_OCCURRENCES;
-						String occurrences = CapabilityData.MAX_OCCURRENCES;
+						String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
+						String occurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
 						if (properties != null && properties.containsKey(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty())) {
 							minOccurrences = (String) properties.get(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty());
 						}
@@ -1021,8 +1074,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			log.trace("Creating calculated capability relation from component instance {} to capability {}", componentInstanceData.getUniqueId(), capabilityData.getUniqueId());
 			CapabilityData capabilityDataNode = new CapabilityData();
 			capabilityDataNode.setUniqueId(capabilityData.getUniqueId());
-			String minOccurrences = CapabilityData.MIN_OCCURRENCES;
-			String occurrences = CapabilityData.MAX_OCCURRENCES;
+			String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
+			String occurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
 			if (capabilityData.getMinOccurrences() != null) {
 				minOccurrences = capabilityData.getMinOccurrences();
 			}
@@ -1054,8 +1107,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			log.trace("Creating calculated capability relation from component instance {} to capability {}", compoInstId, capabilityData.getUniqueId());
 			CapabilityData capabilityDataNode = new CapabilityData();
 			capabilityDataNode.setUniqueId(capabilityData.getUniqueId());
-			String minOccurrences = CapabilityData.MIN_OCCURRENCES;
-			String occurrences = CapabilityData.MAX_OCCURRENCES;
+			String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
+			String occurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
 			if (capabilityData.getMinOccurrences() != null) {
 				minOccurrences = capabilityData.getMinOccurrences();
 			}
@@ -1220,7 +1273,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		// "_").toLowerCase();
 		dataDefinition.setName(logicalName);
 		if (dataDefinition.getNormalizedName() == null)
-			dataDefinition.setNormalizedName(ValidationUtils.normaliseComponentInstanceName(logicalName));
+			dataDefinition.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(logicalName));
 		dataDefinition.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentId, ciOriginComponentUid, dataDefinition.getNormalizedName()));
 
 		ComponentInstanceData resourceInstanceData = new ComponentInstanceData(dataDefinition);
@@ -1238,7 +1291,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			TitanOperationStatus status = node.right().value();
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "Remove Component Instance");
 			BeEcompErrorManager.getInstance().logBeDaoSystemError("Remove Component Instance");
-			log.debug("Failed to delete component instance {}. Status is {}", componentInstanceUid, status);
+			log.debug("Failed to delete component instance {}. status is {}", componentInstanceUid, status);
 			return Either.right(status);
 		}
 
@@ -1280,11 +1333,18 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				return Either.right(status);
 			}
 		}
+
+		// delete associated properties
+		status = deleteAssociatedGroupInstances(componentInstanceUid);
+		if (status != TitanOperationStatus.OK) {
+			return Either.right(status);
+		}
+
 		Either<ComponentInstanceData, TitanOperationStatus> deleteRI = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), componentInstanceUid, ComponentInstanceData.class);
 
 		if (deleteRI.isRight()) {
 			TitanOperationStatus deleteRiStatus = deleteRI.right().value();
-			log.error("Failed to delete resource instance {}. Status is {}", componentInstanceUid, deleteRiStatus);
+			log.error("Failed to delete resource instance {}. status is {}", componentInstanceUid, deleteRiStatus);
 			return Either.right(deleteRiStatus);
 		}
 
@@ -1293,6 +1353,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		ComponentInstance resourceInstance = new ComponentInstance(deletedResourceInst.getComponentInstDataDefinition());
 
 		return Either.left(resourceInstance);
+	}
+
+	private TitanOperationStatus deleteAssociatedGroupInstances(String componentInstanceUid) {
+
+		return this.groupInstanceOperation.deleteAllGroupInstances(componentInstanceUid);
 	}
 
 	private TitanOperationStatus deleteAssociatedCapabilityInstances(String resourceInstanceId) {
@@ -1326,7 +1391,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		if (artifactRes.isRight()) {
 			TitanOperationStatus status = artifactRes.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find artifacts of resource instance {}. Status is {}", resourceInstanceUid, status);
+				log.error("Failed to find artifacts of resource instance {}. status is {}", resourceInstanceUid, status);
 				return status;
 			}
 		} else {
@@ -1334,10 +1399,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			List<ImmutablePair<ArtifactData, GraphEdge>> artifactPairs = artifactRes.left().value();
 			for (ImmutablePair<ArtifactData, GraphEdge> pair : artifactPairs) {
 				String uniqueId = (String) pair.left.getUniqueId();
-				Either<ArtifactData, TitanOperationStatus> removeArifactFromGraph = artifactOperation.removeArtifactOnGraph(resourceInstanceUid, uniqueId, NodeTypeEnum.ResourceInstance, resourceInstanceUid, true);
+				Either<ArtifactData, TitanOperationStatus> removeArifactFromGraph = artifactOperation.removeArtifactOnGraph(resourceInstanceUid, uniqueId, NodeTypeEnum.ResourceInstance, true);
 				if (removeArifactFromGraph.isRight()) {
 					TitanOperationStatus status = removeArifactFromGraph.right().value();
-					log.error("Failed to delete artifact of resource instance {}. Status is {}", resourceInstanceUid, status);
+					log.error("Failed to delete artifact of resource instance {}. status is {}", resourceInstanceUid, status);
 					return status;
 				}
 
@@ -1404,7 +1469,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		if (relationsForTarget.isRight()) {
 			TitanOperationStatus status = relationsForTarget.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find the relationships of resource instance {}. Status is {}", resourceInstanceUid, status);
+				log.error("Failed to find the relationships of resource instance {}. status is {}", resourceInstanceUid, status);
 				return status;
 			}
 		} else {
@@ -1432,7 +1497,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		if (relationsForSource.isRight()) {
 			TitanOperationStatus status = relationsForSource.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find the relationships of resource instance " + resourceInstanceUid + ". status is " + status);
+				log.error("Failed to find the relationships of resource instance {}. status is {}", resourceInstanceUid, status);
 				return status;
 			}
 		} else {
@@ -1462,7 +1527,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				Either<RelationshipInstData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(relationshipTypeImplData, RelationshipInstData.class);
 				if (deleteNode.isRight()) {
 					TitanOperationStatus status = deleteNode.right().value();
-					log.error("Failed to delete relationship node {}. Status is {}", relationshipTypeImplData, status);
+					log.error("Failed to delete relationship node {}. status is {}", relationshipTypeImplData, status);
 					return status;
 				}
 			}
@@ -1495,7 +1560,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		Either<TitanVertex, TitanOperationStatus> riFrom = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), fromResInstanceUid);
 		if (riFrom.isRight()) {
-			log.debug("Failed to fetch component instance {}. Error: {}", fromResInstanceUid, riFrom.right().value());
+			log.debug("Failed to fetch component instance {}. error {}", fromResInstanceUid, riFrom.right().value());
 			return Either.right(riFrom.right().value());
 		}
 		Iterator<Edge> edgeIter = riFrom.left().value().edges(Direction.OUT, GraphEdgeLabels.RELATIONSHIP_INST.getProperty());
@@ -1504,7 +1569,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		List<RelationshipInstData> deletedRelations = new ArrayList<>();
-		List<String> vertexToDelete = new ArrayList<>();
+		Set<String> vertexToDelete = new HashSet<String>();
 		while (edgeIter.hasNext()) {
 			TitanEdge edge = (TitanEdge) edgeIter.next();
 			String name = (String) edge.property(GraphEdgePropertiesDictionary.NAME.getProperty()).value();
@@ -1531,7 +1596,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			// remove relation vertex
 			Either<RelationshipInstData, TitanOperationStatus> relationNode = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst), relationVertexId, RelationshipInstData.class);
 			if (relationNode.isRight()) {
-				log.debug("Failed to delete relation node with id {}. Error: {}", relationVertexId, relationNode.right().value());
+				log.debug("Failed to delete relation node with id {}. error {}", relationVertexId, relationNode.right().value());
 				return Either.right(relationNode.right().value());
 			}
 			RelationshipInstData deletedRelation = relationNode.left().value();
@@ -1555,7 +1620,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			Either<List<RelationshipInstData>, TitanOperationStatus> dissociateRes = disconnectResourcesInService(componentId, nodeType, requirementDef);
 			if (dissociateRes.isRight()) {
 				TitanOperationStatus status = dissociateRes.right().value();
-				log.error("Failed to dissociate resource instance " + fromResInstanceUid + " from resource instance " + toResInstanceUid + " in service " + componentId + ". status is " + status);
+				log.error("Failed to dissociate resource instance {} from resource instance {} in service {}. status is {}", fromResInstanceUid, toResInstanceUid, componentId, status);
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("dissociateComponentInstances");
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
@@ -1564,13 +1629,23 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			if (!updateCalculatedCapReqResult.equals(StorageOperationStatus.OK)) {
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "dissociateComponentInstances");
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("dissociateComponentInstances");
-				log.debug("Failed to dissociate component instances {}. Status is {}", requirementDef, updateCalculatedCapReqResult);
+				log.debug("Failed to dissociate component instances. {}. status is {}", requirementDef, updateCalculatedCapReqResult);
 				result = Either.right(updateCalculatedCapReqResult);
 				return result;
 			}
 
-			// RelationshipInstData relationshipInstData =
-			// dissociateRes.left().value();
+			StorageOperationStatus status;
+			status = updateCustomizationUUID(requirementDef.getFromNode());
+			if (status != StorageOperationStatus.OK) {
+				result = Either.right(status);
+				return result;
+			}
+			status = updateCustomizationUUID(requirementDef.getToNode());
+			if (status != StorageOperationStatus.OK) {
+				result = Either.right(status);
+				return result;
+			}
+
 			List<RelationshipInstData> relationshipInstData = dissociateRes.left().value();
 			RequirementCapabilityRelDef capabilityRelDef = buildCapabilityResult(fromResInstanceUid, toResInstanceUid, requirement, relationshipInstData);
 
@@ -1612,12 +1687,12 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	private StorageOperationStatus updateRequirementEdges(GraphEdgeLabels requirmentNewLabel, GraphEdgeLabels requirmentCurrentLabel, RequirementAndRelationshipPair pair, String requirementOwnerId) {
 		Either<TitanVertex, TitanOperationStatus> reqOwnerRI = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), requirementOwnerId);
 		if (reqOwnerRI.isRight()) {
-			log.debug("Failed to fetch requirment Owner by Id {}. Error: {}", requirementOwnerId, reqOwnerRI.right().value());
+			log.debug("Failed to fetch requirment Owner by Id {}  error {}", requirementOwnerId, reqOwnerRI.right().value());
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(reqOwnerRI.right().value());
 		}
 		Iterator<Edge> edgeIter = reqOwnerRI.left().value().edges(Direction.OUT, requirmentCurrentLabel.name(), requirmentNewLabel.name());
 		if (edgeIter == null) {
-			log.debug("No edges with label {} for woner RI {}", requirmentCurrentLabel, requirementOwnerId);
+			log.debug("No edges with label {} for owner RI {}", requirmentCurrentLabel, requirementOwnerId);
 			return StorageOperationStatus.GENERAL_ERROR;
 		}
 		boolean associate = requirmentNewLabel.equals(GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED) ? true : false;
@@ -1635,7 +1710,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						String leftOccurrences = (String) titanGenericDao.getProperty(edge, GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
 
 						String requiredOccurrencesNew = "0";
-						String leftOccurrencesNew = RequirementData.MAX_DEFAULT_OCCURRENCES;
+						String leftOccurrencesNew = RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES;
 						if (requiredOccurrences != null) {
 							Integer iOccurrences = Integer.parseInt(requiredOccurrences);
 							if (associate) {
@@ -1646,7 +1721,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 							} else {
 								String reqMinOccurrences = (String) titanGenericDao.getProperty(reqVertex, GraphPropertiesDictionary.MIN_OCCURRENCES.getProperty());
 								if (reqMinOccurrences == null) {
-									reqMinOccurrences = RequirementData.MIN_OCCURRENCES;
+									reqMinOccurrences = RequirementDataDefinition.MIN_OCCURRENCES;
 								}
 								if (Integer.parseInt(reqMinOccurrences) > iOccurrences) {
 									iOccurrences++;
@@ -1657,7 +1732,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						Map<String, Object> properties = titanGenericDao.getProperties(edge);
 						properties.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), requiredOccurrencesNew);
 
-						if (leftOccurrences != null && !leftOccurrences.equals(RequirementData.MAX_OCCURRENCES)) {
+						if (leftOccurrences != null && !leftOccurrences.equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
 							Integer iOccurrences = Integer.parseInt(leftOccurrences);
 							if (associate) {
 								if (iOccurrences > 0) {
@@ -1694,7 +1769,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	private StorageOperationStatus updateCapabiltyEdges(GraphEdgeLabels capabiltyNewLabel, GraphEdgeLabels capabiltyCurrentLabel, RequirementAndRelationshipPair pair, String capabiltyOwnerId) {
 		Either<TitanVertex, TitanOperationStatus> capOwnerRI = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), capabiltyOwnerId);
 		if (capOwnerRI.isRight()) {
-			log.debug("Failed to fetch requirment Owner by Id {}. Error: {}", capabiltyOwnerId, capOwnerRI.right().value());
+			log.debug("Failed to fetch requirment Owner by Id {}. error {}", capabiltyOwnerId, capOwnerRI.right().value());
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(capOwnerRI.right().value());
 		}
 		Iterator<Edge> edgeIter = capOwnerRI.left().value().edges(Direction.OUT, capabiltyCurrentLabel.name(), capabiltyNewLabel.name());
@@ -1719,7 +1794,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 					String leftOccurrences = (String) titanGenericDao.getProperty(edge, GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
 
 					String requiredOccurrencesNew = "0";
-					String leftOccurrencesNew = CapabilityData.MAX_OCCURRENCES;
+					String leftOccurrencesNew = CapabilityDataDefinition.MAX_OCCURRENCES;
 					if (requiredOccurrences != null) {
 						Integer iOccurrences = Integer.parseInt(requiredOccurrences);
 						if (associate) {
@@ -1730,7 +1805,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						} else {
 							String reqMinOccurrences = (String) titanGenericDao.getProperty(capVertex, GraphPropertiesDictionary.MIN_OCCURRENCES.getProperty());
 							if (reqMinOccurrences == null) {
-								reqMinOccurrences = CapabilityData.MIN_OCCURRENCES;
+								reqMinOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
 							}
 							if (Integer.parseInt(reqMinOccurrences) > iOccurrences) {
 								iOccurrences++;
@@ -1741,7 +1816,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 					Map<String, Object> properties = titanGenericDao.getProperties(edge);
 					properties.put(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty(), requiredOccurrencesNew);
 
-					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityData.MAX_OCCURRENCES)) {
+					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
 						Integer iOccurrences = Integer.parseInt(leftOccurrences);
 						if (associate) {
 							if (iOccurrences > 0) {
@@ -1806,24 +1881,24 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			relationship = relationPair.getRelationship().getType();
 		}
 
-		if (log.isDebugEnabled()) {
-			log.debug("Going to associate resource instance {} to resource instance {} under component {}. Requirement is {}.", fromResInstanceUid, toResInstanceUid, componentId, requirement);
-		}
+		log.debug("Going to associate resource instance {} to resource instance {} under component {}. Requirement is {}.", fromResInstanceUid, toResInstanceUid, componentId, requirement);
 
 		Either<ComponentInstanceData, TitanOperationStatus> fromResourceInstDataRes = findMandatoryResourceInstData(fromResInstanceUid);
 		if (fromResourceInstDataRes.isRight()) {
 			TitanOperationStatus status = fromResourceInstDataRes.right().value();
-			log.error("Failed to find resource instance {}. Status is {}", fromResInstanceUid, status);
+			log.error("Failed to find resource instance {}. status is {}", fromResInstanceUid, status);
 			return Either.right(status);
 		}
-		ComponentInstanceData fromResourceInstanceData = fromResourceInstDataRes.left().value();
+		ComponentInstanceData fromCI = fromResourceInstDataRes.left().value();
+		ComponentInstanceData fromResourceInstanceData = fromCI;
 		Either<ComponentInstanceData, TitanOperationStatus> toResourceInstDataRes = findMandatoryResourceInstData(toResInstanceUid);
 		if (toResourceInstDataRes.isRight()) {
 			TitanOperationStatus status = toResourceInstDataRes.right().value();
-			log.error("Failed to find resource instance " + toResInstanceUid + ". status is " + status);
+			log.error("Failed to find resource instance {}. status is {}", toResInstanceUid, status);
 			return Either.right(status);
 		}
-		ComponentInstanceData toResourceInstanceData = toResourceInstDataRes.left().value();
+		ComponentInstanceData toCI = toResourceInstDataRes.left().value();
+		ComponentInstanceData toResourceInstanceData = toCI;
 		// THE component NodeTypeEnum should be sent
 		TitanOperationStatus isResourceInstOfService = verifyResourceInstanceUnderComponent(nodeType, componentId, fromResInstanceUid);
 		if (isResourceInstOfService != TitanOperationStatus.OK) {
@@ -1837,24 +1912,24 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<ImmutablePair<RelationshipTypeData, String>, TitanOperationStatus> isValidRes = validateRequirementVsCapability(fromResourceInstanceData, toResourceInstanceData, requirement, relationship, relationPair);
 		if (isValidRes.isRight()) {
 			TitanOperationStatus status = isValidRes.right().value();
-			log.error("Failed to validate requirement {} between resource instance {} to resource instance {}. Status is {}", requirement, fromResInstanceUid, toResInstanceUid, status);
+			log.error("Failed to validate requirement {} between resource instance {} to resource instance {}. status is {}", requirement, fromResInstanceUid, toResInstanceUid, status);
 			return Either.right(status);
 		}
 
 		RelationshipTypeData relationshipTypeData = isValidRes.left().value().getKey();
 		String capabilityName = isValidRes.left().value().getValue();
 		RelationshipInstData relationshipInstData = buildRelationshipInstData(fromResInstanceUid, requirement, relationshipTypeData, relationPair);
-		Either<RelationshipInstData, TitanOperationStatus> createNode = createRelationshipInstData(fromResourceInstDataRes.left().value(), relationshipInstData, relationshipTypeData, requirement);
+		Either<RelationshipInstData, TitanOperationStatus> createNode = createRelationshipInstData(fromCI, relationshipInstData, relationshipTypeData, requirement);
 
 		if (createNode.isRight()) {
 			return Either.right(createNode.right().value());
 		}
 		RelationshipInstData createdRelInstData = createNode.left().value();
-		Either<GraphRelation, TitanOperationStatus> associateResInst = associateRelationshipInstToTarget(toResourceInstDataRes.left().value(), requirement, capabilityName, createdRelInstData);
+		Either<GraphRelation, TitanOperationStatus> associateResInst = associateRelationshipInstToTarget(toCI, requirement, capabilityName, createdRelInstData);
 
 		if (associateResInst.isRight()) {
 			TitanOperationStatus status = associateResInst.right().value();
-			log.error("Failed to associate relationship instance {} to target node {}. Status is {}", createdRelInstData.getUniqueId(), toResInstanceUid, status);
+			log.error("Failed to associate relationship instance {} to target node {}. status is {}", createdRelInstData.getUniqueId(), toResInstanceUid, status);
 			return Either.right(status);
 		}
 
@@ -1868,7 +1943,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (parentNode.isRight()) {
 			TitanOperationStatus status = parentNode.right().value();
-			log.error("Failed to find the service associated to the resource instance {}. Status is {}", resInstanceUid, status);
+			log.error("Failed to find the service associated to the resource instance {}. status is {}", resInstanceUid, status);
 			return status;
 		}
 
@@ -1881,7 +1956,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		} else {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeIncorrectServiceError, "Resource Instance - verifyResourceInstanceUnderComponent", containerComponentId);
 			BeEcompErrorManager.getInstance().logBeIncorrectComponentError("Resource Instance - verifyResourceInstanceUnderComponent", containerNodeType.getName(), containerComponentId);
-			log.debug("The provided component id {} is not equal to the component ({}) which associated to resource instance {}.", containerComponentId, uniqueId, resInstanceUid);
+			log.debug("The provided component id {} is not equal to the component ({}) which associated to resource instance {}", containerComponentId, uniqueId, resInstanceUid);
 			return TitanOperationStatus.INVALID_ID;
 		}
 
@@ -1919,7 +1994,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), capabilityName);
 		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(relInstData, toResInstance, GraphEdgeLabels.CAPABILITY_NODE, props);
-		log.debug("After creating relation between relationship instance {} to target node {}", relInstData.getUniqueId(), toResInstance.getUniqueId());
+		log.debug("After creatingrelation between relationship instance {} to target node {}", relInstData.getUniqueId(), toResInstance.getUniqueId());
 
 		return createRelation;
 
@@ -1950,7 +2025,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(resInstance, createdRelationshipInst, GraphEdgeLabels.RELATIONSHIP_INST, properties);
 		if (createRelation.isRight()) {
 			TitanOperationStatus status = createRelation.right().value();
-			log.error("Failed to associate resource instance " + resInstance.getUniqueIdKey() + " to relationship instance " + createdRelationshipInst.getUniqueId() + ". status is " + status);
+			log.error("Failed to associate resource instance {} to relationship instance {}. status is {}", resInstance.getUniqueIdKey(), createdRelationshipInst.getUniqueId(), status);
 			return Either.right(status);
 		}
 
@@ -1984,15 +2059,13 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 		Either<RequirementDefinition, TitanOperationStatus> requirementDefinitionE = requirementOperation.getRequirement(relationPair.getRequirementUid());
 		if (requirementDefinitionE.isRight()) {
-			log.error("The requirement cannot be found {}" , relationPair.getRequirementUid());
+			log.error("The requirement   cannot be found {}", relationPair.getRequirementUid());
 			return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
 		}
 		RequirementDefinition requirementDefinition = requirementDefinitionE.left().value();
 		String fetchedRequirementRelationship = requirementDefinition.getRelationship();
 
 		String fetchedRequirementCapability = requirementDefinition.getCapability();
-		// TODO temporary remove of capability sources validation - uncomment
-		// after  alignment
 		// String fetchedRequirementNodeName = requirementDefinition.getNode();
 
 		TitanOperationStatus status = validateAvailableRequirement(fromResInstance, relationPair);
@@ -2010,8 +2083,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			log.error("Failed to fetch the origin resource for capabilty resource instance with id {}, error {}", relationPair.getCapabilityOwnerId(), originCapabilty.right().value());
 			return Either.right(originCapabilty.right().value());
 		}
-		// TODO temporary remove of capability sources validation - uncomment
-		// after  alignment
 		// String originCapabId =
 		// originCapabilty.left().value().getComponentInstDataDefinition().getComponentUid();
 
@@ -2027,13 +2098,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		CapabilityDefinition capabilityDefinition = capabilityDefinitionE.left().value();
 		String capabilityName = requirement;
 
-		if (log.isDebugEnabled()) {
-			log.debug("The capability {} of resource {} appropriates to requiremt {} on resource {}", capabilityDefinition, toResourceUid, requirement, fromResourceUid);
-		}
+		log.debug("The capability {} of resource {} appropriates to requirement {} on resource {}", capabilityDefinition, toResourceUid, requirement, fromResourceUid);
 		String capabilityType = capabilityDefinition.getType();
 
 		if (false == fetchedRequirementCapability.equals(capabilityType)) {
-			log.error("The capability type in the requirement ({}) does not equal to the capability on the resource {}({})", fetchedRequirementCapability, toResourceUid, capabilityType);
+			log.error("The capability type in the requirement ({}) does not equal to the capability on the resource {} ({})", fetchedRequirementCapability, toResourceUid, capabilityType);
 			return Either.right(TitanOperationStatus.MATCH_NOT_FOUND);
 		}
 
@@ -2054,7 +2123,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	private TitanOperationStatus validateAvailableRequirement(ComponentInstanceData fromResInstance, RequirementAndRelationshipPair relationPair) {
 		Either<TitanVertex, TitanOperationStatus> fromRi = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), fromResInstance.getUniqueId());
 		if (fromRi.isRight()) {
-			log.debug("Failed to fetch component instance {}. Error: {}", fromResInstance.getUniqueId(), fromRi.right().value());
+			log.debug("Failed to fetch component instance {}  error {}", fromResInstance.getUniqueId(), fromRi.right().value());
 			return fromRi.right().value();
 		}
 		Iterator<Edge> edgeIter = fromRi.left().value().edges(Direction.OUT, GraphEdgeLabels.CALCULATED_REQUIREMENT.name());
@@ -2071,7 +2140,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				String ownerIdOnEdge = (String) edge.value(GraphEdgePropertiesDictionary.OWNER_ID.getProperty());
 				if (ownerIdOnEdge.equals(relationPair.getRequirementOwnerId())) {
 					String leftOccurrences = (String) titanGenericDao.getProperty(edge, GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
-					if (leftOccurrences != null && !leftOccurrences.equals(RequirementData.MAX_OCCURRENCES)) {
+					if (leftOccurrences != null && !leftOccurrences.equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
 						Integer leftIntValue = Integer.parseInt(leftOccurrences);
 						if (leftIntValue > 0) {
 							exist = true;
@@ -2106,7 +2175,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				String ownerIdOnEdge = (String) edge.value(GraphEdgePropertiesDictionary.OWNER_ID.getProperty());
 				if (ownerIdOnEdge.equals(relationPair.getCapabilityOwnerId())) {
 					String leftOccurrences = (String) titanGenericDao.getProperty(edge, GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
-					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityData.MAX_OCCURRENCES)) {
+					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
 						Integer leftIntValue = Integer.parseInt(leftOccurrences);
 						if (leftIntValue > 0) {
 							exist = true;
@@ -2150,7 +2219,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		List<ResourceMetadataData> resourcesPathList = new ArrayList<ResourceMetadataData>();
 		TitanOperationStatus status = resourceOperation.findResourcesPathRecursively(resourceUid, resourcesPathList);
 		if (status != TitanOperationStatus.OK) {
-			log.error("Failed to find the parent list of resource {}. Status is {}", resourceUid, status);
+			log.error("Failed to find the parent list of resource {}. status is {}", resourceUid, status);
 			return status;
 		}
 
@@ -2213,7 +2282,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (updateRes.isRight()) {
 				TitanOperationStatus status = updateRes.right().value();
-				log.error("Failed to update resource instance {}. Status is {}", resourceInstanceUid, status);
+				log.error("Failed to update resource instance {}. status is {}", resourceInstanceUid, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -2256,13 +2325,24 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		instance.setPropertyValueCounter(resourceInstance.getPropertyValueCounter());
 		instance.setAttributeValueCounter(resourceInstance.getAttributeValueCounter());
 		instance.setInputValueCounter(resourceInstance.getInputValueCounter());
+
+		boolean isNeedGenerate = isNeedGenerateCustomizationUUID(resourceInstance, currentInst);
+		if (isNeedGenerate) {
+			generateCustomizationUUID(instance);
+		} else {
+			instance.setCustomizationUUID(resourceInstance.getCustomizationUUID());
+		}
 		return instance;
+	}
+
+	private boolean isNeedGenerateCustomizationUUID(ComponentInstance resourceInstance, ComponentInstanceData currentInst) {
+		return !currentInst.getComponentInstDataDefinition().getName().equals(resourceInstance.getName());
 	}
 
 	private void printDiff(ComponentInstanceData currentInst, ComponentInstance resourceInstance) {
 
 		log.debug("The current Resource Instance details are : {}", currentInst);
-		log.debug("The received Resource Instance details for update are : {}", resourceInstance);
+		log.debug("The received Resource Instance details for update are :{}", resourceInstance);
 
 	}
 
@@ -2274,11 +2354,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	public Either<ComponentInstance, TitanOperationStatus> updateResourceInstanceInService(String serviceId, String resourceInstanceUid, ComponentInstance resourceInstance) {
 
-		log.debug("Going to update resource instance {}. Properties are {}", resourceInstanceUid, resourceInstance);
+		log.trace("Going to update resource instance {}. Properies are {}", resourceInstanceUid, resourceInstance);
 		Either<ComponentInstanceData, TitanOperationStatus> findInstRes = findResourceInstance(resourceInstanceUid);
 		if (findInstRes.isRight()) {
 			TitanOperationStatus status = findInstRes.right().value();
-			log.error("Failed to find resource instance {}. Status is {}", resourceInstanceUid, status);
+			log.error("Failed to find resource instance {}. status is {}", resourceInstanceUid, status);
 			return Either.right(status);
 		}
 
@@ -2294,7 +2374,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<ComponentInstanceData, TitanOperationStatus> updateNodeRes = titanGenericDao.updateNode(resourceInstanceData, ComponentInstanceData.class);
 		if (updateNodeRes.isRight()) {
 			TitanOperationStatus status = updateNodeRes.right().value();
-			log.error("Failed to update resource instance {}. Status is {}", resourceInstanceUid, status);
+			log.error("Failed to update resource instance {}. status is {}", resourceInstanceUid, status);
 			return Either.right(status);
 		}
 
@@ -2319,7 +2399,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			if (resInstancesOfService.isRight()) {
 				TitanOperationStatus status = resInstancesOfService.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to find resource instances of service {}. Status is {}", componentId, status);
+					log.error("Failed to find resource instances of service {}. status is {}", componentId, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
@@ -2348,7 +2428,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (updateRes.isRight()) {
 			TitanOperationStatus status = updateRes.right().value();
-			log.error("Failed to find component instance name {}. Status is {}", componentInstName, status);
+			log.error("Failed to find component instance name {}. status is {}", componentInstName, status);
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 			return result;
 		}
@@ -2422,7 +2502,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<ComponentMetadataData, TitanOperationStatus> componentRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(containerNodeType), componentId, ComponentMetadataData.class);
 		if (componentRes.isRight()) {
 			TitanOperationStatus status = componentRes.right().value();
-			log.error("Failed to find component {}. Status is {}", componentId, status);
+			log.error("Failed to find component {}. status is {}", componentId, status);
 			return Either.right(status);
 		}
 
@@ -2440,7 +2520,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		if (resourceInstances != null && false == resourceInstances.isEmpty()) {
 			Map<String, Map<String, CapabilityDefinition>> compInstCapabilities = new HashMap<String, Map<String, CapabilityDefinition>>();
 			Map<String, Map<String, RequirementDefinition>> compInstReq = new HashMap<String, Map<String, RequirementDefinition>>();
-			Map<String, Map<String, ArtifactDefinition>> compInstArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
+			Map<String, Map<String, ArtifactDefinition>> compInstDeploymentArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
+			Map<String, Map<String, ArtifactDefinition>> compInstInformationalArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
 			Map<String, Component> compInstOriginsMap = new HashMap<String, Component>();
 
 			for (ImmutablePair<ComponentInstanceData, GraphEdge> immutablePair : resourceInstances) {
@@ -2451,7 +2532,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 				ComponentInstance resourceInstance = new ComponentInstance(resourceInstanceData.getComponentInstDataDefinition());
 
-				TitanOperationStatus status = getFullComponentInstance(compInstCapabilities, compInstReq, compInstArtifacts, compInstOriginsMap, resourceInstance, compInstNodeType);
+				TitanOperationStatus status = getFullComponentInstance(compInstCapabilities, compInstReq, compInstDeploymentArtifacts, compInstOriginsMap, resourceInstance, compInstNodeType, compInstInformationalArtifacts);
 				if (status != TitanOperationStatus.OK) {
 					return Either.right(status);
 				}
@@ -2507,11 +2588,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (relationshipsRes.isRight()) {
 			status = relationshipsRes.right().value();
-			log.debug("After fetching all reslationships of resource instance {}. Status is {}", resourceInstanceUid, status);
+			log.debug("After fetching all reslationships of resource instance {}. status is {}", resourceInstanceUid, status);
 			if (status == TitanOperationStatus.NOT_FOUND) {
 				return Either.left(requirementsResult);
 			} else {
-				log.error("Failed to find relationhips of resource instance {}. Status is {}", resourceInstanceUid, status);
+				log.error("Failed to find relationhips of resource instance {}. status is {}", resourceInstanceUid, status);
 				return Either.right(status);
 			}
 		}
@@ -2545,11 +2626,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (relationshipsRes.isRight()) {
 			status = relationshipsRes.right().value();
-			log.debug("After fetching all reslationships of resource instance {}. Status is {}", resourceInstanceUid, status);
+			log.debug("After fetching all reslationships of resource instance {}. status is {}", resourceInstanceUid, status);
 			if (status == TitanOperationStatus.NOT_FOUND) {
 				return Either.left(requirementsResult);
 			} else {
-				log.error("Failed to find relationhips of resource instance {}. Status is {}", resourceInstanceUid, status);
+				log.error("Failed to find relationhips of resource instance {}. status is {}", resourceInstanceUid, status);
 				return Either.right(status);
 			}
 		}
@@ -2576,10 +2657,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	public Either<ComponentInstance, StorageOperationStatus> getFullComponentInstance(ComponentInstance componentInstance, NodeTypeEnum compInstNodeType) {
 		Map<String, Map<String, CapabilityDefinition>> compInstCapabilities = new HashMap<String, Map<String, CapabilityDefinition>>();
 		Map<String, Map<String, RequirementDefinition>> compInstReq = new HashMap<String, Map<String, RequirementDefinition>>();
-		Map<String, Map<String, ArtifactDefinition>> compInstArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
+		Map<String, Map<String, ArtifactDefinition>> compInstDeploymentArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
+		Map<String, Map<String, ArtifactDefinition>> compInstInformationalArtifacts = new HashMap<String, Map<String, ArtifactDefinition>>();
 		Map<String, Component> compInstOrigins = new HashMap<String, Component>();
 
-		TitanOperationStatus fullResourceInstance = getFullComponentInstance(compInstCapabilities, compInstReq, compInstArtifacts, compInstOrigins, componentInstance, compInstNodeType);
+		TitanOperationStatus fullResourceInstance = getFullComponentInstance(compInstCapabilities, compInstReq, compInstDeploymentArtifacts, compInstOrigins, componentInstance, compInstNodeType, compInstInformationalArtifacts);
 		if (!fullResourceInstance.equals(TitanOperationStatus.OK)) {
 			log.debug("failed to get full data of resource instance. error: {}", fullResourceInstance);
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(fullResourceInstance));
@@ -2588,7 +2670,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	}
 
 	private TitanOperationStatus getFullComponentInstance(Map<String, Map<String, CapabilityDefinition>> compInstCapabilities, Map<String, Map<String, RequirementDefinition>> compInstReq,
-			Map<String, Map<String, ArtifactDefinition>> compInstArtifacts, Map<String, Component> compInstOrigins, ComponentInstance compInst, NodeTypeEnum compInstNodeType) {
+			Map<String, Map<String, ArtifactDefinition>> compInstDeploymentArtifacts, Map<String, Component> compInstOrigins, ComponentInstance compInst, NodeTypeEnum compInstNodeType,
+			Map<String, Map<String, ArtifactDefinition>> compInstInformationalArtifacts) {
 		Component component = null;
 		ComponentOperation componentOperation = getComponentOperation(compInstNodeType);
 		String componentUid = compInst.getComponentUid();
@@ -2649,20 +2732,110 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		}
 
-		capStatus = setCompInstDeploymentArtifactsFromGraph(compInstArtifacts, componentUid, compInst);
+		capStatus = setCompInstDeploymentArtifactsFromGraph(compInstDeploymentArtifacts, componentUid, compInst);
 		if (capStatus != StorageOperationStatus.OK) {
 			log.debug("Failed to find resource deployment artifacts of resource {}. status is {}", componentName, capStatus);
 
 		}
 
-		capStatus = setCompInstArtifactsFromGraph(compInst);
+		capStatus = setCompInstInformationalArtifactsResourceFromGraph(compInstInformationalArtifacts, componentUid, compInst);
+		if (capStatus != StorageOperationStatus.OK) {
+			log.debug("Failed to find resource deployment artifacts of resource {}. status is {}", componentName, capStatus);
+
+		}
+
+		capStatus = setCompInstDeploymentArtifactsFromGraph(compInst);
 		if (capStatus != StorageOperationStatus.OK) {
 			log.debug("Failed to find resource deployment artifacts of resource instance {} . status is {}", compInst.getName(), capStatus);
+		}
+		
+		capStatus = setCompInstInformationaltArtifactsFromGraph(compInst);
+		if (capStatus != StorageOperationStatus.OK) {
+			log.debug("Failed to find resource informational artifacts of resource instance {} . status is {}", compInst.getName(), capStatus);
+		}
+
+		capStatus = setGroupInstFromGraph(compInst);
+		if (capStatus != StorageOperationStatus.OK) {
+			log.debug("Failed to find resource groups of resource instance {} . status is {}", compInst.getName(), capStatus);
 		}
 		return TitanOperationStatus.OK;
 	}
 
-	protected StorageOperationStatus setCompInstArtifactsFromGraph(ComponentInstance resourceInstance) {
+	private StorageOperationStatus setCompInstInformationaltArtifactsFromGraph(ComponentInstance resourceInstance) {
+		Map<String, ArtifactDefinition> informationalArtifacts = null;
+		if (resourceInstance.getArtifacts() == null) {
+			informationalArtifacts = new HashMap<String, ArtifactDefinition>();
+		} else {
+			informationalArtifacts = new HashMap<String, ArtifactDefinition>(resourceInstance.getArtifacts());
+		}
+
+		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> result = artifactOperation.getArtifacts(resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance, true, ArtifactGroupTypeEnum.INFORMATIONAL.getType());
+		if (result.isRight()) {
+			StorageOperationStatus status = result.right().value();
+			if (status != StorageOperationStatus.NOT_FOUND) {
+				return status;
+			}
+		} else {
+			informationalArtifacts.putAll(result.left().value());			
+		}
+		
+		resourceInstance.setArtifacts(informationalArtifacts);
+		return StorageOperationStatus.OK;
+	}
+
+	private StorageOperationStatus setGroupInstFromGraph(ComponentInstance compInst) {
+		List<GroupInstance> groupInstances = null;
+
+		Either<List<GroupInstance>, StorageOperationStatus> result = groupInstanceOperation.getAllGroupInstances(compInst.getUniqueId(), NodeTypeEnum.ResourceInstance);
+		if (result.isRight()) {
+			StorageOperationStatus status = result.right().value();
+			if (status != StorageOperationStatus.NOT_FOUND) {
+				return status;
+			} else {
+
+				return StorageOperationStatus.OK;
+			}
+		}
+
+		groupInstances = result.left().value();
+		compInst.setGroupInstances(groupInstances);
+
+		return StorageOperationStatus.OK;
+	}
+
+	private StorageOperationStatus setCompInstInformationalArtifactsResourceFromGraph(Map<String, Map<String, ArtifactDefinition>> resourcesInformationalArtifacts, String componentUid, ComponentInstance resourceInstance) {
+
+		if (resourcesInformationalArtifacts.containsKey(componentUid)) {
+			resourceInstance.setArtifacts(resourcesInformationalArtifacts.get(componentUid));
+			return StorageOperationStatus.OK;
+		}
+
+		Either<Map<String, ArtifactDefinition>, StorageOperationStatus> result = artifactOperation.getArtifacts(componentUid, NodeTypeEnum.Resource, true, ArtifactGroupTypeEnum.INFORMATIONAL.getType());
+		if (result.isRight()) {
+			StorageOperationStatus status = result.right().value();
+			if (status != StorageOperationStatus.NOT_FOUND) {
+				return status;
+			} else {
+				return StorageOperationStatus.OK;
+			}
+		}
+		Map<String, ArtifactDefinition> artifacts = result.left().value();
+		if (!artifacts.isEmpty()) {
+			Map<String, ArtifactDefinition> tempArtifacts = new HashMap<>(artifacts);
+			for (Entry<String, ArtifactDefinition> artifact : artifacts.entrySet()) {
+				if (!artifact.getValue().checkEsIdExist()) {
+					tempArtifacts.remove(artifact.getKey());
+				}
+			}
+			resourceInstance.setArtifacts(tempArtifacts);
+			resourcesInformationalArtifacts.put(componentUid, tempArtifacts);
+		}
+
+		return StorageOperationStatus.OK;
+
+	}
+
+	protected StorageOperationStatus setCompInstDeploymentArtifactsFromGraph(ComponentInstance resourceInstance) {
 
 		Map<String, ArtifactDefinition> deploymentArtifacts = null;
 		if (resourceInstance.getDeploymentArtifacts() == null) {
@@ -2691,7 +2864,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 						log.debug("failed to get heat parameters values for heat artifact {}", artifact.getUniqueId());
 						return heatParamsForEnv.right().value();
 					} else {
-						artifact.setHeatParameters(heatParamsForEnv.left().value());
+						artifact.setListHeatParameters(heatParamsForEnv.left().value());
 					}
 				}
 			}
@@ -2706,17 +2879,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	}
 
-	// resourceInstance) {
-	// ArrayList<HeatParameterDefinition>();
-	// heatEnvArtifact.getGeneratedFromId());
-	// Either<List<ImmutablePair<HeatParameterValueData, GraphEdge>>,
-	// TitanOperationStatus> heatEnvValuesWithEdges = titanGenericDao
-	// !heatEnvValuesWithEdges.right().value().equals(TitanOperationStatus.NOT_FOUND))
-	// {
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
-	// heatEnvValuesWithEdges.left().value()){
-	// pair.right.getProperties().get(GraphEdgePropertiesDictionary.NAME.getProperty());
-	// heatValuesMap.get(parameter.getName());
 	private Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> getAllComponentInstanceFromGraph(String componentId, NodeTypeEnum containerNodeType, boolean withEdges) {
 		if (log.isDebugEnabled())
 			log.debug("Going to fetch all resource instances nodes in graph associate to component {}", componentId);
@@ -2757,7 +2919,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 				if (targetNodeRes.isRight()) {
 					TitanOperationStatus status = targetNodeRes.right().value();
-					log.error("Failed to find the target node of relationship inst {}. Status is {}", relationshipInstData, status);
+					log.error("Failed to find the target node of relationship inst {}. status is {}", relationshipInstData, status);
 					return status;
 				}
 
@@ -2782,7 +2944,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 				if (sourceNodeRes.isRight()) {
 					TitanOperationStatus status = sourceNodeRes.right().value();
-					log.error("Failed to find the source node of relationship inst {}. Status is {}", relationshipInstData, status);
+					log.error("Failed to find the source node of relationship inst {}. status is {}", relationshipInstData, status);
 					return status;
 				}
 
@@ -2816,7 +2978,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			requirementCapabilityRelDef.setToNode(targetResourceUid);
 			String sourceUid = sourceToRel.getKey();
 			requirementCapabilityRelDef.setFromNode(sourceUid);
-
 			List<RequirementAndRelationshipPair> relationships = new ArrayList<RequirementAndRelationshipPair>();
 
 			populateRelationships(sourceToRel, relationships);
@@ -2860,6 +3021,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			pair.setCapabilityUid(relationshipInstData.getCapabiltyId());
 			pair.setRequirementOwnerId(relationshipInstData.getRequirementOwnerId());
 			pair.setRequirementUid(relationshipInstData.getRequirementId());
+			pair.setId(relationshipInstData.getUniqueId());
 			relationships.add(pair);
 		}
 	}
@@ -2874,16 +3036,16 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	}
 
 	@Override
-	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String componentId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation, boolean inTransaction) {
+	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String componentId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation, boolean inTransaction, boolean isClone) {
 
 		Either<RequirementCapabilityRelDef, StorageOperationStatus> result = null;
 		try {
-			Either<RequirementCapabilityRelDef, TitanOperationStatus> multiRequirements = associateResourceInstancesMultiRequirements(componentId, nodeType, relation);
+			Either<RequirementCapabilityRelDef, TitanOperationStatus> multiRequirements = associateResourceInstancesMultiRequirements(componentId, nodeType, relation, isClone);
 			if (multiRequirements.isRight()) {
 				TitanOperationStatus status = multiRequirements.right().value();
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "associateComponentInstances");
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("associateComponentInstances");
-				log.debug("Failed to associate component instances. {}. Status is {}", relation, status);
+				log.debug("Failed to associate component instances {}. status is {}", relation, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -2891,7 +3053,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			if (!updateCalculatedCapReqResult.equals(StorageOperationStatus.OK)) {
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "associateComponentInstances");
 				BeEcompErrorManager.getInstance().logBeDaoSystemError("associateComponentInstances");
-				log.debug("Failed to associate component instances. {}. Status is {}", relation, updateCalculatedCapReqResult);
+				log.debug("Failed to associate component instances. {}. status is {}", relation, updateCalculatedCapReqResult);
 				result = Either.right(updateCalculatedCapReqResult);
 				return result;
 			}
@@ -2906,7 +3068,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 	}
 
-	private Either<RequirementCapabilityRelDef, TitanOperationStatus> associateResourceInstancesMultiRequirements(String componentId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation) {
+	private Either<RequirementCapabilityRelDef, TitanOperationStatus> associateResourceInstancesMultiRequirements(String componentId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation, boolean isClone) {
 
 		String fromNode = relation.getFromNode();
 		String toNode = relation.getToNode();
@@ -2928,7 +3090,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				TitanOperationStatus status = associateRes.right().value();
 				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeFailedAddingResourceInstanceError, "AssociateResourceInstances", fromNode, componentId);
 				BeEcompErrorManager.getInstance().logBeFailedAddingResourceInstanceError("AssociateResourceInstances - missing relationship", fromNode, componentId);
-				log.debug("Failed to associate resource instance {} to resource instnace {}. Status is {}", fromNode, toNode, status);
+				log.debug("Failed to associate resource instance {} to resource instance {}. status is {}", fromNode, toNode, status);
 				return Either.right(status);
 			}
 
@@ -2942,6 +3104,18 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			requirementAndRelationshipPair.setCapabilityUid(immutablePair.getCapabilityUid());
 			requirementAndRelationshipPair.setRequirementUid(immutablePair.getRequirementUid());
 			relationshipsResult.add(requirementAndRelationshipPair);
+			if (!isClone) {
+				log.trace("update customization UUID for from CI {} and to CI {}", relation.getFromNode(), relation.getToNode());
+				StorageOperationStatus status;
+				status = updateCustomizationUUID(relation.getFromNode());
+				if (status != StorageOperationStatus.OK) {
+					return Either.right(TitanOperationStatus.GENERAL_ERROR);
+				}
+				status = updateCustomizationUUID(relation.getToNode());
+				if (status != StorageOperationStatus.OK) {
+					return Either.right(TitanOperationStatus.GENERAL_ERROR);
+				}
+			}
 
 		}
 
@@ -2955,7 +3129,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	@Override
 	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String componentId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation) {
-		return associateResourceInstances(componentId, nodeType, relation, false);
+		return associateResourceInstances(componentId, nodeType, relation, false, false);
 	}
 
 	@Override
@@ -2970,7 +3144,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "deleteAllResourceInstances - missing relationship");
 					BeEcompErrorManager.getInstance().logBeSystemError("deleteAllResourceInstances - missing relationship");
 				}
-				log.debug("Failed to delete resource instances of service {}. Status is {}", containerComponentId, status);
+				log.debug("Failed to delete resource instances of service {}. status is {}", containerComponentId, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 
@@ -3002,7 +3176,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		if (resourceInstancesRes.isRight()) {
 			TitanOperationStatus status = resourceInstancesRes.right().value();
-			log.debug("After fetching all resource instances of service {}. Status is {}", componentId, status);
+			log.debug("After fetching all resource instances of service {}. status is {}", componentId, status);
 			return Either.right(status);
 		}
 
@@ -3015,14 +3189,14 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			log.debug("After removing resource instance {}. Result is {}", resourceInstUid, removeResourceInstanceRes);
 			if (removeResourceInstanceRes.isRight()) {
 				TitanOperationStatus status = removeResourceInstanceRes.right().value();
-				log.error("After removing resource instance {}. Status is {}", resourceInstUid, status);
+				log.error("After removing resource instance {}. status is {}", resourceInstUid, status);
 				return Either.right(status);
 			}
 			ComponentInstance resourceInstance = removeResourceInstanceRes.left().value();
 			result.add(resourceInstance);
 		}
 
-		log.debug("The following resource instances was deleted from service {}:{}", componentId, result);
+		log.debug("The following resource instances was deleted from service {} : {}", componentId, result);
 
 		return Either.left(result);
 	}
@@ -3112,7 +3286,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				pair.setCapabilityOwnerId(capOwnerId);
 			}
 
-			Either<RequirementCapabilityRelDef, StorageOperationStatus> associateInstances = associateResourceInstances(component.getUniqueId(), containerNodeType, relation, true);
+			Either<RequirementCapabilityRelDef, StorageOperationStatus> associateInstances = associateResourceInstances(component.getUniqueId(), containerNodeType, relation, true, true);
 			if (associateInstances.isRight()) {
 				StorageOperationStatus status = associateInstances.right().value();
 				log.error("failed to assosiate resource instance {} and resource instance {}. status ={}", relation.getFromNode(), relation.getToNode(), status);
@@ -3131,33 +3305,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		ImmutablePair<List<ComponentInstance>, Map<String, String>> result = new ImmutablePair<List<ComponentInstance>, Map<String, String>>(list, oldCompInstToNew);
 
-		// Either<ImmutablePair<List<ComponentInstance>,
-		// List<RequirementCapabilityRelDef>>, StorageOperationStatus>
-		// allResourceInstances = getAllComponentInstances(componentIdFrom,
-		// containerNodeType, compInstNodeType, true);
-		//
-		//
-		// if (allResourceInstances.isRight()) {
-		// StorageOperationStatus status = allResourceInstances.right().value();
-		// if (status.equals(StorageOperationStatus.NOT_FOUND)) {
-		//
-		// return Either.left(result);
-		// } else {
-		// log.error("failed to get all resource instances for service {}.
-		// status={}", componentIdFrom, status);
-		// return Either.right(status);
-		// }
-		// }
-
-		// ImmutablePair<List<ComponentInstance>,
-		// List<RequirementCapabilityRelDef>> instanceRelationPair =
-		// allResourceInstances.left().value();
-
-		// ImmutablePair<List<ComponentInstance>,
-		// List<RequirementCapabilityRelDef>> instanceRelationPair = new
-		// ImmutablePair<List<ComponentInstance>,
-		// List<RequirementCapabilityRelDef>>(prevResource.getComponentInstances(),
-		// prevResource.getComponentInstancesRelations());
 		List<ComponentInstance> riList = prevResource.getComponentInstances();
 		Map<String, ComponentInstance> riMapper = new HashMap<>();
 		int instanceNumber = 0;
@@ -3238,7 +3385,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 					pair.setCapabilityOwnerId(capOwnerId);
 				}
 
-				Either<RequirementCapabilityRelDef, StorageOperationStatus> associateInstances = associateResourceInstances(componentIdTo, containerNodeType, relation, true);
+				Either<RequirementCapabilityRelDef, StorageOperationStatus> associateInstances = associateResourceInstances(componentIdTo, containerNodeType, relation, true, true);
 				if (associateInstances.isRight()) {
 					StorageOperationStatus status = associateInstances.right().value();
 					log.error("failed to assosiate resource instance {} and resource instance {}. status ={}", relation.getFromNode(), relation.getToNode(), status);
@@ -3251,7 +3398,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	private boolean isAtomicComponentInstance(ComponentInstance componentInstance) {
 		OriginTypeEnum originType = componentInstance.getOriginType();
-		if (originType.equals(OriginTypeEnum.VFC) || originType.equals(OriginTypeEnum.VL) || originType.equals(OriginTypeEnum.CP)) {
+		if (originType == OriginTypeEnum.VFC || originType == OriginTypeEnum.VFCMT || originType == OriginTypeEnum.VL || originType == OriginTypeEnum.CP) {
 			return true;
 		}
 		return false;
@@ -3269,9 +3416,14 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 
 		Map<String, ArtifactDefinition> artifacts = getArtifactsOfRI.left().value();
+		List<GroupInstance> groupInstancesFrom = fromResourceInstance.getGroupInstances();
+		List<GroupInstance> groupInstancesTo = toResourceInstance.getGroupInstances();
+		Map<String, List<String>> groupsInstanceArtifact = new HashMap<String, List<String>>();
 		for (Entry<String, ArtifactDefinition> entry : artifacts.entrySet()) {
 
 			ArtifactDefinition artifactDefinition = entry.getValue();
+			String generatedFromIdArtifactUid = artifactDefinition.getGeneratedFromId();
+
 			// US687135 Do not Add VF_MODULES_METADATA when checking out
 			if (ArtifactTypeEnum.VF_MODULES_METADATA.getType().equals(artifactDefinition.getArtifactType())) {
 				// The artifact of type VF_MODULES_METADATA should not be cloned
@@ -3287,7 +3439,37 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			if (addArifactToResource.isRight()) {
 				return addArifactToResource.right().value();
 			}
+
+			if (groupInstancesTo != null) {
+				for (GroupInstance groupInstanceTo : groupInstancesTo) {
+					Optional<String> op = groupInstanceTo.getArtifacts().stream().filter(p -> p.equals(generatedFromIdArtifactUid)).findAny();
+					if (op.isPresent()) {
+
+						List<String> artifactsUid = null;
+						if (groupsInstanceArtifact.containsKey(groupInstanceTo.getUniqueId())) {
+							artifactsUid = groupsInstanceArtifact.get(groupInstanceTo.getUniqueId());
+						} else {
+							artifactsUid = new ArrayList<String>();
+						}
+						artifactsUid.add(addArifactToResource.left().value().getUniqueId());
+						groupsInstanceArtifact.put(groupInstanceTo.getUniqueId(), artifactsUid);
+						break;
+					}
+				}
+
+			}
 		}
+		if (groupsInstanceArtifact != null && !groupsInstanceArtifact.isEmpty()) {
+			for (Map.Entry<String, List<String>> groupArtifact : groupsInstanceArtifact.entrySet()) {
+				groupInstanceOperation.associateArtifactsToGroupInstance(groupArtifact.getKey(), groupArtifact.getValue());
+			}
+		}
+		Either<List<GroupInstance>, StorageOperationStatus> groupInstanceStatus = groupInstanceOperation.getAllGroupInstances(toResourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance);
+		if (groupInstanceStatus.isRight()) {
+			log.debug("failed to get groupinstance for component inatance {}", toResourceInstance.getUniqueId());
+			return groupInstanceStatus.right().value();
+		}
+		toResourceInstance.setGroupInstances(groupInstanceStatus.left().value());
 		toResourceInstance.setDeploymentArtifacts(artifacts);
 		return StorageOperationStatus.OK;
 	}
@@ -3406,11 +3588,11 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			Either<List<String>, TitanOperationStatus> resInstancesOfService = getComponentInstancesNameOfService(serviceId, nodeType);
 
-			log.debug("After fetching resource instances of service {}. Result is {}", serviceId, resInstancesOfService);
+			log.debug("After fetching resource instances of service {}. result is {}", serviceId, resInstancesOfService);
 			if (resInstancesOfService.isRight()) {
 				TitanOperationStatus status = resInstancesOfService.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to find resource instances of service {}. Status is {}", serviceId, status);
+					log.error("Failed to find resource instances of service {}. status is {}", serviceId, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
@@ -3438,7 +3620,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> resourceInstancesRes = getAllComponentInstanceFromGraph(serviceId, nodeType, false);
 		if (resourceInstancesRes.isRight()) {
 			TitanOperationStatus status = resourceInstancesRes.right().value();
-			log.debug("Resource instance was found under service {}. Status is {}", serviceId, status);
+			log.debug("Resource instance was found under service {}. status is {}", serviceId, status);
 			return Either.right(status);
 		}
 
@@ -3570,18 +3752,36 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		return status;
 	}
 
+	@Override
 	public Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> getCapabilities(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum) {
-
 		DataNodeCollector<CapabilityData> collector = () -> titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum), compInstance.getUniqueId(), GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability,
 				CapabilityData.class);
+
+		return getDataFromGraph(collector);
+	}
+
+	@Override
+	public Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> getRequirements(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum) {
+
+		DataNodeCollector<RequirementData> collector = () -> titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum), compInstance.getUniqueId(), GraphEdgeLabels.CALCULATED_REQUIREMENT, NodeTypeEnum.Requirement,
+				RequirementData.class);
 
 		return getDataFromGraph(collector);
 
 	}
 
-	public Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> getRequirements(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum) {
+	@Override
+	public Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> getFulfilledCapabilities(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum) {
+		DataNodeCollector<CapabilityData> collector = () -> titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum), compInstance.getUniqueId(), GraphEdgeLabels.CALCULATED_CAPABILITY_FULLFILLED, NodeTypeEnum.Capability,
+				CapabilityData.class);
 
-		DataNodeCollector<RequirementData> collector = () -> titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum), compInstance.getUniqueId(), GraphEdgeLabels.CALCULATED_REQUIREMENT, NodeTypeEnum.Requirement,
+		return getDataFromGraph(collector);
+	}
+
+	@Override
+	public Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> getFulfilledRequirements(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum) {
+
+		DataNodeCollector<RequirementData> collector = () -> titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeTypeEnum), compInstance.getUniqueId(), GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED, NodeTypeEnum.Requirement,
 				RequirementData.class);
 
 		return getDataFromGraph(collector);
@@ -3608,7 +3808,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				String ownerIdOnEdge = (String) edge.value(GraphEdgePropertiesDictionary.OWNER_ID.getProperty());
 				if (ownerIdOnEdge.equals(relationPair.getRequirementOwnerId())) {
 					String leftOccurrences = (String) edge.value(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
-					if (leftOccurrences != null && !leftOccurrences.equals(RequirementData.MAX_OCCURRENCES)) {
+					if (leftOccurrences != null && !leftOccurrences.equals(RequirementDataDefinition.MAX_OCCURRENCES)) {
 						Integer leftIntValue = Integer.parseInt(leftOccurrences);
 						if (leftIntValue > 0) {
 							exist = true;
@@ -3626,7 +3826,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	public Either<Boolean, StorageOperationStatus> isAvailableCapabilty(ComponentInstance toResInstance, RequirementAndRelationshipPair relationPair) {
 		Either<TitanVertex, TitanOperationStatus> fromRi = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), toResInstance.getUniqueId());
 		if (fromRi.isRight()) {
-			log.debug("Failed to fetch component instance {}. Error: {}", toResInstance.getUniqueId(), fromRi.right().value());
+			log.debug("Failed to fetch component instance {} error {}", toResInstance.getUniqueId(), fromRi.right().value());
 			return Either.right(StorageOperationStatus.NOT_FOUND);
 		}
 		Iterator<Edge> edgeIter = fromRi.left().value().edges(Direction.OUT, GraphEdgeLabels.CALCULATED_CAPABILITY.name());
@@ -3643,7 +3843,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				String ownerIdOnEdge = (String) edge.value(GraphEdgePropertiesDictionary.OWNER_ID.getProperty());
 				if (ownerIdOnEdge.equals(relationPair.getCapabilityOwnerId())) {
 					String leftOccurrences = (String) edge.value(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
-					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityData.MAX_OCCURRENCES)) {
+					if (leftOccurrences != null && !leftOccurrences.equals(CapabilityDataDefinition.MAX_OCCURRENCES)) {
 						Integer leftIntValue = Integer.parseInt(leftOccurrences);
 						if (leftIntValue > 0) {
 							exist = true;
@@ -3727,7 +3927,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			List<ComponentInstanceAttribute> attributesOnInstance = compInstanceAttList.getInnerElement();
 			for (int i = 0; i < attributesOnInstance.size() && storageStatusWrapper.isEmpty(); i++) {
 				StorageOperationStatus result = cloneSingleAttributeOnResourceInstance(createdInstanceVertex, attributesOnInstance.get(i), instanceId);
-				if (!result.equals(StorageOperationStatus.OK)) {
+				if (result != StorageOperationStatus.OK) {
 					log.trace("Failed to clone attribute for instance {} error {}", instanceId, result);
 					return result;
 				}
@@ -4024,7 +4224,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			Either<ComponentInstanceProperty, TitanOperationStatus> addPropertyToResourceInstance = this.addPropertyToResourceInstance(property, toResourceInstance, false, index, resourceInstanceId);
 
-			if (addPropertyToResourceInstance.isRight() && !addPropertyToResourceInstance.right().value().equals(TitanOperationStatus.OK)) {
+			if (addPropertyToResourceInstance.isRight() && addPropertyToResourceInstance.right().value() != TitanOperationStatus.OK) {
 				StorageOperationStatus storageStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(addPropertyToResourceInstance.right().value());
 				return storageStatus;
 			}
@@ -4032,13 +4232,13 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				ComponentInstanceProperty newProp = addPropertyToResourceInstance.left().value();
 				Set<String> inputsKey = inputsPropMap.keySet();
 				String inputToAssName = null;
-				GetInputValueInfo getInputInfo = null;
+				GetInputValueDataDefinition getInputInfo = null;
 				for (String inputName : inputsKey) {
 					List<ComponentInstanceProperty> propsList = inputsPropMap.get(inputName);
 					Optional<ComponentInstanceProperty> op = propsList.stream().filter(p -> p.getUniqueId().equals(property.getUniqueId())).findAny();
 					if (op.isPresent()) {
 						ComponentInstanceProperty inpProp = op.get();
-						getInputInfo = new GetInputValueInfo();
+						getInputInfo = new GetInputValueDataDefinition();
 						getInputInfo.setPropName(inpProp.getName());
 						getInputInfo.setInputName(inputName);
 						inputToAssName = inputName;
@@ -4536,7 +4736,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			 * Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, value, innerType, allDataTypes.left().value());
 			 * 
 			 * String newValue = value; if (isValid.isRight()) { Boolean res = isValid.right().value(); if (res == false) { return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT); } } else { Object object = isValid.left().value(); if (object !=
-			 * null) { newValue = object.toString(); } } InputValueData propertyValueData = updateDataContainer.getValueDataWrapper().getInnerElement(); log.debug("Going to update property value from {} to {}", propertyValueData.getValue(), newValue); propertyValueData.setValue(newValue);
+			 * null) { newValue = object.toString(); } } InputValueData propertyValueData = updateDataContainer.getValueDataWrapper().getInnerElement(); log.debug("Going to update property value from " + propertyValueData.getValue() + " to " +
+			 * newValue); propertyValueData.setValue(newValue);
 			 * 
 			 * ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, resourceInstanceProerty.getRules(), innerType, allDataTypes.left().value()); if (pair.getRight() != null && pair.getRight() == false) {
 			 * BeEcompErrorManager.getInstance(). logBeInvalidValueError("Add property value", pair.getLeft(), resourceInstanceProerty.getName(), propertyType); return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT); }
@@ -4695,7 +4896,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			}
 
 			if (isPropertyValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) {
-				log.debug("After finding property value of {} on component instance {}", propertyId, resourceInstanceId);
+				log.debug("After finding property value of {} on componenet instance {}", propertyId, resourceInstanceId);
 				return Either.right(isPropertyValueExists.getLeft());
 			}
 
@@ -4771,8 +4972,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (createRelResult.isRight()) {
 				TitanOperationStatus operationStatus = createRelResult.right().value();
-				// TODO: change logger
-				log.error("Failed to associate property value " + uniqueId + " to property " + propertyId + " in graph. status is " + operationStatus);
+				log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
 				return Either.right(operationStatus);
 			}
 
@@ -4780,8 +4980,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (createRelResult.isRight()) {
 				TitanOperationStatus operationStatus = createRelResult.right().value();
-				// TODO: change logger
-				log.error("Failed to associate resource instance " + resourceInstanceId + " property value " + uniqueId + " in graph. status is " + operationStatus);
+				log.error("Failed to associate resource instance {} property value {} in graph. status is {}", resourceInstanceId, uniqueId, operationStatus);
 				return Either.right(operationStatus);
 			}
 
@@ -4879,7 +5078,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			log.trace("Before validateAndUpdateRules");
 			ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, resourceInstanceProperty.getRules(), innerType, allDataTypes.left().value(), isValidate);
-			log.debug("After validateAndUpdateRules. pair = {}", pair);
+			log.debug("After validateAndUpdateRules. pair = {} ", pair);
 			if (pair.getRight() != null && pair.getRight() == false) {
 				BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), resourceInstanceProperty.getName(), propertyType);
 				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
@@ -4900,20 +5099,19 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (createRelResult.isRight()) {
 				TitanOperationStatus operationStatus = createRelResult.right().value();
-				// TODO: change logger
-				log.error("Failed to associate property value " + uniqueId + " to property " + propertyId + " in graph. status is " + operationStatus);
+				log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
 				return Either.right(operationStatus);
 			}
 
 			TitanOperationStatus edgeResult = titanGenericDao.createEdge(resourceInstanceVertex, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE, null);
 
-			if (!edgeResult.equals(TitanOperationStatus.OK)) {
-				log.error("Failed to associate resource instance " + resourceInstanceId + " property value " + uniqueId + " in graph. status is " + edgeResult);
+			if (edgeResult != TitanOperationStatus.OK) {
+				log.error("Failed to associate resource instance {} property value {} in graph. status is {}", resourceInstanceId, uniqueId, edgeResult);
 				return Either.right(edgeResult);
 			}
 
 			ComponentInstanceProperty propertyValueResult = propertyOperation.buildResourceInstanceProperty(propertyValueData, resourceInstanceProperty);
-			log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult);
+			log.debug("The returned ResourceInstanceProperty is {} ", propertyValueResult);
 
 			return Either.left(propertyValueResult);
 		} else {
@@ -4963,7 +5161,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			ImmutablePair<TitanOperationStatus, String> isInputValueExists = inputOperation.findInputValue(resourceInstanceId, propertyId);
 			if (isInputValueExists.getLeft() == TitanOperationStatus.ALREADY_EXIST) {
-				log.debug("The property {} already added to the resource insance {}", propertyId, resourceInstanceId);
+				log.debug("The property {} already added to the resource instance {}", propertyId, resourceInstanceId);
 				resourceInstanceInput.setValueUniqueUid(isInputValueExists.getRight());
 				/*
 				 * Either<InputValueData, TitanOperationStatus> updatePropertyOfResourceInstance = updatePropertyOfResourceInstance(resourceInstanceInput, resourceInstanceId); if (updatePropertyOfResourceInstance.isRight()) {
@@ -4973,7 +5171,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			}
 
 			if (isInputValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) {
-				log.debug("After finding input value of {} on compnent instance {}", propertyId, resourceInstanceId);
+				log.debug("After finding input value of {} on componenet instance {}", propertyId, resourceInstanceId);
 				return Either.right(isInputValueExists.getLeft());
 			}
 
@@ -4992,7 +5190,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				}
 				PropertyDataDefinition propDef = def.getProperty();
 				if (propDef == null) {
-					log.debug("Property in Schema Definition inside property of type {} doesn't exists", type);
+					log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
 					return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
 				}
 				innerType = propDef.getType();
@@ -5005,21 +5203,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status, ErrorSeverity.ERROR);
 				return Either.right(status);
 			}
-		//	Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, value, innerType, allDataTypes.left().value());
-		//	log.debug("After validateAndUpdatePropertyValue. isValid = {}", isValid);
-
-			/*String newValue = value;
-			if (isValid.isRight()) {
-				Boolean res = isValid.right().value();
-				if (res == false) {
-					return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
-				}
-			} else {
-				Object object = isValid.left().value();
-				if (object != null) {
-					newValue = object.toString();
-				}
-			}*/
 
 			String uniqueId = UniqueIdBuilder.buildResourceInstanceInputValueUid(resourceInstanceData.getUniqueId(), index);
 			InputValueData propertyValueData = new InputValueData();
@@ -5028,7 +5211,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			log.debug("Before validateAndUpdateRules");
 			ImmutablePair<String, Boolean> pair = propertyOperation.validateAndUpdateRules(propertyType, resourceInstanceInput.getRules(), innerType, allDataTypes.left().value(), true);
-			log.debug("After validateAndUpdateRules. pair = {}", pair);
+			log.debug("After validateAndUpdateRules. pair = {} ", pair);
 			if (pair.getRight() != null && pair.getRight() == false) {
 				BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), resourceInstanceInput.getName(), propertyType);
 				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
@@ -5049,8 +5232,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (createRelResult.isRight()) {
 				TitanOperationStatus operationStatus = createRelResult.right().value();
-				// TODO: change logger
-				log.error("Failed to associate property value {} to property {} in graph. Status is {}", uniqueId, propertyId, operationStatus);
+				log.error("Failed to associate property value {} to property {} in graph. status is {}", uniqueId, propertyId, operationStatus);
 				return Either.right(operationStatus);
 			}
 
@@ -5063,8 +5245,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 			if (createRelResult.isRight()) {
 				TitanOperationStatus operationStatus = createNodeResult.right().value();
-				// TODO: change logger
-				log.error("Failed to associate resource instance {} property value {} in graph. Status is {}", resourceInstanceId, uniqueId, operationStatus);
+				log.error("Failed to associate resource instance {} property value {} in graph. status is {}", resourceInstanceId, uniqueId, operationStatus);
 				return Either.right(operationStatus);
 
 			}
@@ -5282,6 +5463,40 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		return Either.left(result);
 	}
 
+	// TODO Tal G US831698
+	public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstancesPropertiesAndValuesFromGraph(ComponentInstance resourceInstance) {
+
+		Map<String, List<PropertyDefinition>> alreadyProcessedResources = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> alreadyProcessedInstances = new HashMap<>();
+		Map<String, ImmutablePair<ComponentInstance, Integer>> processedInstances = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> resourceInstancesProperties = new HashMap<>();
+
+		List<String> path = new ArrayList<>();
+		path.add(resourceInstance.getUniqueId());
+		Either<List<ComponentInstanceProperty>, TitanOperationStatus> componentInstanceProperties = getComponentInstanceProperties(resourceInstance, alreadyProcessedResources, alreadyProcessedInstances, processedInstances, path);
+
+		if (componentInstanceProperties.isRight()) {
+			StorageOperationStatus convertTitanStatusToStorageStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(componentInstanceProperties.right().value());
+			return Either.right(convertTitanStatusToStorageStatus);
+		}
+
+		List<ComponentInstanceProperty> listOfProps = componentInstanceProperties.left().value();
+		resourceInstancesProperties.put(resourceInstance.getUniqueId(), listOfProps);
+
+		processedInstances.put(resourceInstance.getUniqueId(), new ImmutablePair<ComponentInstance, Integer>(resourceInstance, path.size()));
+		path.remove(path.size() - 1);
+
+		Either<Map<String, Map<String, ComponentInstanceProperty>>, TitanOperationStatus> findAllPropertiesValuesOnInstances = findAllPropertyValueOnInstances(processedInstances);
+		// 1. check status
+		if (findAllPropertiesValuesOnInstances.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(findAllPropertiesValuesOnInstances.right().value()));
+		}
+
+		propertyOperation.updatePropertiesByPropertyValues(resourceInstancesProperties, findAllPropertiesValuesOnInstances.left().value());
+
+		return Either.left(resourceInstancesProperties.get(resourceInstance.getUniqueId()));
+	}
+
 	public Either<List<ComponentInstanceProperty>, TitanOperationStatus> getComponentInstanceProperties(ComponentInstance resourceInstance, Map<String, List<PropertyDefinition>> alreadyProcessedResources,
 			Map<String, List<ComponentInstanceProperty>> alreadyProcessedInstances, Map<String, ImmutablePair<ComponentInstance, Integer>> processedInstances, List<String> path) {
 
@@ -5333,7 +5548,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				resourceInstancePropertyList.add(resourceInstanceProperty);
 
 			}
-
 		}
 
 		OriginTypeEnum originType = resourceInstance.getOriginType();
@@ -5381,7 +5595,9 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		case PRODUCT:
 			containerNodeType = NodeTypeEnum.Product;
 			compInstNodeType = NodeTypeEnum.Service;
+			break;
 		case VFC:
+		case VFCMT:
 		case VL:
 		case CP:
 			break;
@@ -5418,7 +5634,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			return null;
 		}
 
-		List<String> clonedList = new ArrayList();
+		List<String> clonedList = new ArrayList<String>();
 		clonedList.addAll(list);
 
 		return clonedList;
@@ -5441,7 +5657,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			ImmutablePair<ComponentInstance, Integer> pair = entry.getValue();
 
 			ComponentInstance componentInstance = pair.getLeft();
-			Integer level = pair.getRight();
 
 			Either<List<ComponentInstanceProperty>, TitanOperationStatus> propeprtyValueOnCIResult = findPropertyValueOnComponentInstance(componentInstance);
 
@@ -5454,10 +5669,10 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			}
 
 			List<ComponentInstanceProperty> propertyValuesOnCI = propeprtyValueOnCIResult.left().value();
-			if (propeprtyValueOnCIResult != null) {
+			if (propertyValuesOnCI != null) {
 				for (ComponentInstanceProperty instanceProperty : propertyValuesOnCI) {
 					boolean result = addPropertyValue(compInstUniqueId, instanceProperty, propertyToInstanceValue);
-					if (result == false) {
+					if (!result) {
 						return Either.right(TitanOperationStatus.ALREADY_EXIST);
 					}
 				}
@@ -5558,7 +5773,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				capability.getUniqueId(), capability.getName(), capability.getProperties(), !isNewlyCreatedResourceInstance);
 		if (addCapInstWithPropertiesRes.isRight()) {
 			error = addCapInstWithPropertiesRes.right().value();
-			log.debug("Failed to assotiate capability instance to resource instance {}. Status is {}", resourceInstanceId, error);
+			log.debug("Failed to assotiate capability instance to resource instance {}. status is {}", resourceInstanceId, error);
 		}
 		log.debug("After adding capability property values to resource instance {}. Status is {}", resourceInstanceId, error);
 		if (error == null) {
@@ -5573,7 +5788,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		TitanOperationStatus addCapInstWithPropertiesRes = capabilityInstanceOperation.createCapabilityInstanceOfCapabilityWithPropertyValuesForResourceInstance(resourceInstanceVertex, resourceInstanceId, capability.getUniqueId(),
 				capability.getName(), capability.getProperties(), !isNewlyCreatedResourceInstance);
-		if (!addCapInstWithPropertiesRes.equals(TitanOperationStatus.OK)) {
+		if (addCapInstWithPropertiesRes != TitanOperationStatus.OK) {
 			error = addCapInstWithPropertiesRes;
 			log.debug("Failed to assotiate capability instance to resource instance {} . status is {}", resourceInstanceId, error);
 		}
@@ -5596,7 +5811,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<List<PropertyValueData>, TitanOperationStatus> updateCapabilityPropertyValuesRes = capabilityInstanceOperation.updateCapabilityPropertyValues(resourceInstanceId, capabilityId, propertyValues);
 		if (updateCapabilityPropertyValuesRes.isRight()) {
 			error = updateCapabilityPropertyValuesRes.right().value();
-			log.debug("Failed to update property values of capability {} of resource instance {}. Status is {}", capabilityId, resourceInstanceId, error);
+			log.debug("Failed to update property values of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 		}
 		log.debug("After updating property values of capability {} of resource instance {}. Status is {}", capabilityId, resourceInstanceId, error);
 		if (error == null) {
@@ -5619,14 +5834,14 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<CapabilityInstData, TitanOperationStatus> getCapInstByCapabilityRes = capabilityInstanceOperation.getCapabilityInstanceOfCapabilityOfResourceInstance(resourceInstanceId, capabilityId);
 		if (getCapInstByCapabilityRes.isRight()) {
 			error = getCapInstByCapabilityRes.right().value();
-			log.debug("Failed to retrieve capability instance of capability {} of resource instance {}. Status is {}", capabilityId, resourceInstanceId, error);
+			log.debug("Failed to retrieve capability instance of capability {} of resource instance {}. status is {}", capabilityId, resourceInstanceId, error);
 		}
 		if (error == null) {
 			String capabilityInstanceId = getCapInstByCapabilityRes.left().value().getUniqueId();
 			deleteCapInstWithPropertiesRes = capabilityInstanceOperation.deleteCapabilityInstanceFromResourceInstance(resourceInstanceId, capabilityInstanceId);
 			if (deleteCapInstWithPropertiesRes.isRight()) {
 				error = deleteCapInstWithPropertiesRes.right().value();
-				log.debug("Failed to delete capability instance {} to resource instance {}. Status is {}", capabilityInstanceId, resourceInstanceId, error);
+				log.debug("Failed to delete capability instance {} to resource instance {}. status is {}", capabilityInstanceId, resourceInstanceId, error);
 			}
 		}
 		log.debug("After deleting property values of capability {} from resource instance {}. Status is {}", capabilityId, resourceInstanceId, error);
@@ -5653,7 +5868,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getAllCapabilityInstancesRes = capabilityInstanceOperation.getAllCapabilityInstancesOfResourceInstance(resourceInstanceId);
 		if (getAllCapabilityInstancesRes.isRight() && !getAllCapabilityInstancesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 			error = getAllCapabilityInstancesRes.right().value();
-			log.debug("Failed to get capability instances of component instance {}. Status is {}", resourceInstanceId, error);
+			log.debug("Failed to get capability instances of component instance {}. status is {}", resourceInstanceId, error);
 		}
 		if (getAllCapabilityInstancesRes.isLeft()) {
 			List<ImmutablePair<CapabilityInstData, GraphEdge>> capabilityInstances = getAllCapabilityInstancesRes.left().value();
@@ -5670,7 +5885,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				cloneAssociateCIWithPropertyValuesRes = capabilityInstanceOperation.cloneAssociateCapabilityInstanceWithPropertyValues(createdComponentInstance, relatedCapability, capabilityInstPair);
 				if (cloneAssociateCIWithPropertyValuesRes.isRight()) {
 					error = cloneAssociateCIWithPropertyValuesRes.right().value();
-					log.debug("Failed to clone capability instances {} of component instance {}. Status is {}", capabilityInstPair.getLeft().getUniqueId(), resourceInstanceId, error);
+					log.debug("Failed to clone capability instances {} of component instance {}. status is {}", capabilityInstPair.getLeft().getUniqueId(), resourceInstanceId, error);
 					break;
 				} else {
 					result.put(new ImmutablePair<CapabilityInstData, GraphEdge>(cloneAssociateCIWithPropertyValuesRes.left().value().getLeft(), capabilityInstPair.getRight()), cloneAssociateCIWithPropertyValuesRes.left().value().getRight());
@@ -5691,7 +5906,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 		Either<TitanVertex, TitanOperationStatus> cloneAssociateCIWithPropertyValuesRes = null;
 		Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getAllCapabilityInstancesRes = capabilityInstanceOperation.getAllCapabilityInstancesOfResourceInstance(resourceInstanceId);
-		if (getAllCapabilityInstancesRes.isRight() && !getAllCapabilityInstancesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
+		if (getAllCapabilityInstancesRes.isRight() && getAllCapabilityInstancesRes.right().value() != TitanOperationStatus.NOT_FOUND) {
 			error = getAllCapabilityInstancesRes.right().value();
 			log.debug("Failed to get capability instances of component instance {}. status is {}", resourceInstanceId, error);
 		}
@@ -5784,29 +5999,26 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 				if (getOverridedPropertyValuesRes.isRight()) {
 					error = getOverridedPropertyValuesRes.right().value();
 					log.debug("Failed to retrieve property values of capability instance {}. Status is {}", curCapInstUid, error);
-				}
-
-				log.debug("After getting all property values of capability instance {} of component istance {}. Status is {}", curCapInstUid, componentInstanceId, error);
-				Map<String, PropertyValueData> overridedPropertyValuesHM = new HashMap<>();
-				List<ImmutablePair<PropertyValueData, GraphEdge>> overridedPropertyValues = getOverridedPropertyValuesRes.left().value();
-				for (ImmutablePair<PropertyValueData, GraphEdge> curPropertyValuePair : overridedPropertyValues) {
-					PropertyValueData curPropertyValue = curPropertyValuePair.getLeft();
-					String propertyValueUid = curPropertyValue.getUniqueId();
-					log.debug("Before getting property related to property value {} of capability instance {} of component istance {}.", propertyValueUid, curCapInstUid, componentInstanceId);
-					Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> getPropertyDataRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curPropertyValue.getLabel())), propertyValueUid,
-							GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class);
-					if (getPropertyDataRes.isRight()) {
-						error = getOverridedPropertyValuesRes.right().value();
-						log.debug("Failed to retrieve property of property value {} Status is {}", propertyValueUid, error);
-					}
-					
-					if (log.isDebugEnabled()) {
+				} else {				
+					log.debug("After getting all property values of capability instance {} of component istance {}. Status is {}", curCapInstUid, componentInstanceId, error);
+					Map<String, PropertyValueData> overridedPropertyValuesHM = new HashMap<>();
+					List<ImmutablePair<PropertyValueData, GraphEdge>> overridedPropertyValues = getOverridedPropertyValuesRes.left().value();
+					for (ImmutablePair<PropertyValueData, GraphEdge> curPropertyValuePair : overridedPropertyValues) {
+						PropertyValueData curPropertyValue = curPropertyValuePair.getLeft();
+						String propertyValueUid = curPropertyValue.getUniqueId();
+						log.debug("Before getting property related to property value {} of capability instance {} of component istance {}.", propertyValueUid, curCapInstUid, componentInstanceId);
+						Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> getPropertyDataRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curPropertyValue.getLabel())), propertyValueUid,
+								GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class);
+						if (getPropertyDataRes.isRight()) {
+							error = getOverridedPropertyValuesRes.right().value();
+							log.debug("Failed to retrieve property of property value {} Status is {}", propertyValueUid, error);
+						}
 						log.debug("After getting property related to property value {} of capability instance {} of component istance {}. Status is {}", propertyValueUid, curCapInstUid, componentInstanceId, error);
+						PropertyData propertyData = getPropertyDataRes.left().value().getLeft();
+						overridedPropertyValuesHM.put((String) propertyData.getUniqueId(), curPropertyValue);
 					}
-					PropertyData propertyData = getPropertyDataRes.left().value().getLeft();
-					overridedPropertyValuesHM.put((String) propertyData.getUniqueId(), curPropertyValue);
+					overridedCapabilitiesHM.put((String) curCapabilityPair.getRight().getProperties().get(GraphPropertiesDictionary.CAPABILITY_ID.getProperty()), overridedPropertyValuesHM);
 				}
-				overridedCapabilitiesHM.put((String) curCapabilityPair.getRight().getProperties().get(GraphPropertiesDictionary.CAPABILITY_ID.getProperty()), overridedPropertyValuesHM);
 			}
 		}
 		if (error == null && !overridedCapabilitiesHM.isEmpty()) {
@@ -5838,7 +6050,6 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	@Override
 	public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(ComponentInstanceInput input, String resourceInstanceId, boolean b) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -5849,4 +6060,119 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		return result;
 	}
 
+	@Override
+	public StorageOperationStatus updateCustomizationUUID(String componentInstanceId) {
+		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), componentInstanceId);
+		if (vertexByProperty.isRight()) {
+			log.debug("Failed to fetch component instance by id {} error {}", componentInstanceId, vertexByProperty.right().value());
+			return DaoStatusConverter.convertTitanStatusToStorageStatus(vertexByProperty.right().value());
+		}
+		UUID uuid = UUID.randomUUID();
+		TitanVertex ciVertex = vertexByProperty.left().value();
+		ciVertex.property(GraphPropertiesDictionary.CUSTOMIZATION_UUID.getProperty(), uuid.toString());
+
+		return StorageOperationStatus.OK;
+	}
+
+	private Either<String, Boolean> handleGroupInstanceNameLogic(TitanVertex ciVertex, GroupInstance groupInstance, String componentInstanceId, String componentInstanceName, String groupName) {
+
+		groupInstance.setGroupName(groupName);
+
+		String logicalName = groupInstanceOperation.createGroupInstLogicalName(componentInstanceName, groupName);
+
+		Boolean eitherValidation = validateGroupInstanceName(logicalName, groupInstance, true);
+		if (!eitherValidation) {
+			return Either.right(false);
+		}
+		// groupInstance.setName(logicalName);
+		return Either.left(logicalName);
+	}
+
+	private Boolean validateGroupInstanceName(String groupInstanceName, GroupInstance groupInstance, boolean isCreate) {
+
+		if (!ValidationUtils.validateStringNotEmpty(groupInstanceName)) {
+			return false;
+		}
+		groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstanceName));
+		if (!isCreate) {
+			if (!ValidationUtils.validateResourceInstanceNameLength(groupInstanceName)) {
+				return false;
+			}
+			if (!ValidationUtils.validateResourceInstanceName(groupInstanceName)) {
+				return false;
+			}
+		}
+
+		return true;
+
+	}
+	// Evg: need to be public for reuse code in migration
+	public Either<GroupInstance, StorageOperationStatus> createGroupInstance(TitanVertex ciVertex, GroupDefinition groupDefinition, ComponentInstance componentInstance) {
+		// create VFC instance on VF
+		GroupInstance groupInstance = null;
+
+		boolean isCreateName = false;
+		List<GroupInstance> groupInstances = componentInstance.getGroupInstances();
+		if (groupInstances != null && !groupInstances.isEmpty()) {
+			Optional<GroupInstance> op = groupInstances.stream().filter(p -> p.getGroupUid().equals(groupDefinition.getUniqueId())).findAny();
+			if (op.isPresent()) {
+				groupInstance = op.get();
+
+			}
+		}
+		if (groupInstance == null) {
+			groupInstance = new GroupInstance();
+			groupInstance.setGroupUid(groupDefinition.getUniqueId());
+
+			groupInstance.setArtifacts(groupDefinition.getArtifacts());
+			Either<String, Boolean> handleNameLogic = handleGroupInstanceNameLogic(ciVertex, groupInstance, componentInstance.getUniqueId(), componentInstance.getNormalizedName(), groupDefinition.getName());
+			if (handleNameLogic.isRight() && !handleNameLogic.right().value()) {
+
+				if (handleNameLogic.isRight()) {
+					log.debug("failed to create logical name gor group instance {}", groupInstance.getName());
+					return Either.right(StorageOperationStatus.INVALID_ID);
+
+				}
+			}
+			isCreateName = true;
+			// groupInstance.setName(handleNameLogic.left().value());
+
+		}
+
+		return groupInstanceOperation.createGroupInstance(ciVertex, componentInstance.getUniqueId(), groupInstance, isCreateName);
+
+	}
+
+	@Override
+	public Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(ComponentInstance componentInstance, NodeTypeEnum componentInstanceType, Long modificationTime, boolean inTransaction) {
+		
+		log.debug("Going to update modification time of component instance {}. ", componentInstance.getName());
+		Either<ComponentInstanceData, StorageOperationStatus> result = null;
+		try{
+			ComponentInstanceData componentData = new ComponentInstanceData(componentInstance, componentInstance.getGroupInstances().size());
+			componentData.getComponentInstDataDefinition().setModificationTime(modificationTime);
+			componentData.getComponentInstDataDefinition().setCustomizationUUID(UUID.randomUUID().toString());
+			Either<ComponentInstanceData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentData, ComponentInstanceData.class);
+			if (updateNode.isRight()) {
+				log.error("Failed to update resource {}. status is {}", componentInstance.getUniqueId(), updateNode.right().value());
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
+			}else{
+				result = Either.left(updateNode.left().value());
+			}
+		}catch(Exception e){
+			log.error("Exception occured during  update modification date of compomemt instance{}. The message is {}. ", componentInstance.getName(), e.getMessage(), e);
+			result = Either.right(StorageOperationStatus.GENERAL_ERROR);
+		}finally {
+			if(!inTransaction){
+				if (result == null || result.isRight()) {
+					log.error("Going to execute rollback on graph.");
+					titanGenericDao.rollback();
+				} else {
+					log.debug("Going to execute commit on graph.");
+					titanGenericDao.commit();
+				}
+			}
+		}
+		return result;
+	}
 }

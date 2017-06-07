@@ -16,6 +16,7 @@ end
 template "cassandra-yaml-config" do
     path "/etc/cassandra/cassandra.yaml"
     source "cassandra.yaml.erb"
+    sensitive true
     owner "cassandra"
     group "cassandra"
     mode "0755"
@@ -43,7 +44,7 @@ template "cassandra-rackdc.properties" do
     group "cassandra"
     mode "0755"
     variables ({
-        :dc => "DC-"+node.chef_environment,
+        :dc => cluster_name,
         :rack => "Rack"+"#{rackNum}-"+node.chef_environment
     })
 end

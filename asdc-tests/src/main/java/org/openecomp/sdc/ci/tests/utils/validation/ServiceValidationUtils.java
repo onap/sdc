@@ -20,9 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.utils.validation;
 
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
-
+import static org.testng.AssertJUnit.assertEquals;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +72,8 @@ public class ServiceValidationUtils {
 		assertEquals("Check attContant name on response after create service",
 				expectedService.getContactId().toLowerCase(), service.getContactId());
 		assertEquals("Check icon name on response after create service", expectedService.getIcon(), service.getIcon());
-		assertEquals("Check LastUpdaterUserId after create service", updaterUser.getUserId(), service.getLastUpdaterUserId());
+		assertEquals("Check LastUpdaterUserId after create service", updaterUser.getUserId(),
+				service.getLastUpdaterUserId());
 		assertEquals("Check LastUpdaterName after create service",
 				updaterUser.getFirstName() + " " + updaterUser.getLastName(), service.getLastUpdaterFullName());
 		assertEquals("Check CreatorUserId after create service", creatorUser.getUserId(), service.getCreatorUserId());

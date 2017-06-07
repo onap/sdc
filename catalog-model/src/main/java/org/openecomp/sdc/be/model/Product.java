@@ -29,12 +29,12 @@ public class Product extends Component {
 
 	public Product() {
 		super(new ProductMetadataDefinition());
-		componentType = ComponentTypeEnum.PRODUCT;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
 	}
 
 	public Product(ProductMetadataDefinition productMetadataDefinition) {
 		super(productMetadataDefinition);
-		componentType = ComponentTypeEnum.PRODUCT;
+		this.getComponentMetadataDefinition().getMetadataDataDefinition().setComponentType(ComponentTypeEnum.PRODUCT);
 	}
 
 	public String getFullName() {

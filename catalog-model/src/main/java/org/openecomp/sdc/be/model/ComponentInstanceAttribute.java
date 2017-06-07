@@ -49,6 +49,10 @@ public class ComponentInstanceAttribute extends AttributeDefinition
 		setParentUniqueId(pd.getParentUniqueId());
 	}
 
+	public ComponentInstanceAttribute(AttributeDefinition attributeDefinition) {
+		super(attributeDefinition);
+	}
+
 	public String getValueUniqueUid() {
 		return valueUniqueUid;
 	}

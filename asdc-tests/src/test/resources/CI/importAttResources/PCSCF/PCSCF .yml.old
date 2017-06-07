@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+description: >
+  A Proxy-CSCF (P-CSCF) is a SIP proxy that is the first point of contact for the IMS terminal. 
+  It can be located either in the visited network (in full IMS networks) or in the home network 
+  (when the visited network is not IMS compliant yet). 
+  Some networks may use a Session Border Controller (SBC) for this function. 
+  The P-CSCF is at its core a specialized SBC for the User network interface which not only
+  protects the network, but also the IMS terminal. 
+  The use of an additional SBC between the IMS terminal and the P-CSCF is unnecessary and 
+  infeasible due to the signaling being encrypted on this leg. 
+  The terminal discovers its P-CSCF with either DHCP, or it may be configured 
+  (e.g. during initial provisioning or via a 3GPP IMS Management Object (MO)) 
+  or in the ISIM or assigned in the PDP Context (in General Packet Radio Service (GPRS)).
+  
+node_types:
+  att.nodes.ims.PCSCF:
+    derived_from: tosca.nodes.SoftwareComponent
+    capabilities:
+      pcscf_endpoint:
+        type: tosca.capabilities.Endpoint.Public
+        relationship: tosca.relationships.ConnectTo
+        occurrences: [0, UNBOUNDED]  
+        description: Connection with one ore more UAs
+    requirements:
+      icscf_endpoint: 
+        capability: tosca.capabilities.Endpoint  
+        node: att.nodes.ims.ICSCF
+        relationship: tosca.relationships.ConnectsTo

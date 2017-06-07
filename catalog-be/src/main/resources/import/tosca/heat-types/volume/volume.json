@@ -1,0 +1,20 @@
+{
+  "payloadName": "volume.yml",
+  "contactId": "jh0003",
+  "name": "volume",
+  "description": "Represents storage that provides the ability to store data as objects (or BLOBs of data) without consideration for the underlying filesystem or devices.",
+  "resourceIconPath": "objectStorage",
+  "categories": [
+  {
+    "name": "Generic",
+    "subcategories": [
+      {
+        "name": "Infrastructure"
+      }
+    ]
+  }
+],
+ "tags": [
+    "volume"
+  ]
+}

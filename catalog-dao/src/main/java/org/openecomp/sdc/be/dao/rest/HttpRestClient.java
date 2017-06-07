@@ -98,7 +98,6 @@ public class HttpRestClient {
 	//
 	//
 	// } catch (RestClientServiceExeption e) {
-	// // TODO Auto-generated catch block
 	// e.printStackTrace();
 	// }
 	//
@@ -116,23 +115,11 @@ public class HttpRestClient {
 
 	public boolean init(RestConfigurationInfo restConfigurationInfo) {
 
-		logger.debug("create HttpRestClient: restConfigurationInfo={}", restConfigurationInfo);
+		logger.debug("create HttpRestClient: restConfigurationInfo= {}", restConfigurationInfo);
 		boolean result = false;
-		// try {
 		createHttpClient(restConfigurationInfo);
 		result = true;
-		// } catch (KeyManagementException e) {
-		// String msg = "Failed creating client config for rest. "
-		// + e.getMessage();
-		// logger.debug(msg, e);
-		// //TODO: log. error
-		// } catch (NoSuchAlgorithmException e) {
-		// String msg = "Failed creating client config for rest. "
-		// + e.getMessage();
-		// logger.debug(msg, e);
-		// //TODO: log. error
-		// }
-
+		
 		logger.debug("Finish creating HttpRestClient. Result is {}", result);
 		return result;
 	}
@@ -225,7 +212,7 @@ public class HttpRestClient {
 
 	public RestResponse doPUT(String uri, Properties headers, String body) {
 
-		logger.debug("Before executing uri {}. headers = {}. body = ", uri, headers, body);
+		logger.debug("Before executing uri {}. headers = {}.body = {}", uri, headers, body);
 
 		HttpPut httpPut = new HttpPut(uri);
 		StringEntity data = new StringEntity(body, ContentType.APPLICATION_JSON);
@@ -237,7 +224,7 @@ public class HttpRestClient {
 
 	public RestResponse doPOST(String uri, Properties headers, String body) {
 
-		logger.debug("Before executing uri {}. headers = {}. body = {}", uri, headers, body);
+		logger.debug("Before executing uri {}. headers = {}.body = {}", uri, headers, body);
 
 		HttpPost httpPost = new HttpPost(uri);
 		StringEntity data = new StringEntity(body, ContentType.APPLICATION_JSON);
@@ -249,7 +236,7 @@ public class HttpRestClient {
 
 	public RestResponseAsByteArray doGetAsByteArray(String uri, Properties headers) {
 
-		logger.debug("Before executing uri {}. headers = {}.", uri, headers);
+		logger.debug("Before executing uri {}. headers = {}", uri, headers);
 
 		HttpGet httpGet = new HttpGet(uri);
 
@@ -282,7 +269,8 @@ public class HttpRestClient {
 
 			restResponse = buildRestResponseFromResult(httpResponse);
 
-			logger.debug("After executing uri {}. response = {}.", httpRequestBase.getURI().toString(), restResponse);
+			logger.debug("After executing uri {}. response = {}", httpRequestBase.getURI().toString(), restResponse);
+
 		} catch (Exception exception) {
 			httpRequestBase.abort();
 
@@ -351,7 +339,7 @@ public class HttpRestClient {
 			restResponse = buildRestResponseByteArrayFromResult(httpResponse);
 
 			if (restResponse != null) {
-				logger.debug("After executing uri {}. Response: {}.", httpRequestBase.getURI().toString(), restResponse.toPrettyString());
+				logger.debug("After executing uri {}. Response: {}", httpRequestBase.getURI().toString(), restResponse.toPrettyString());
 			}
 
 		} catch (Exception exception) {
@@ -379,7 +367,7 @@ public class HttpRestClient {
 	 *            name of method
 	 */
 	private void logResponse(String response, String method) {
-		logger.trace(method + " response = " + response);
+		logger.trace("{} response = {}", method, response);
 	}
 
 	private void releaseResource(CloseableHttpResponse response) {

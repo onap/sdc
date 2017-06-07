@@ -1,0 +1,196 @@
+.workspace-deployment-artifact {
+    width: 93%;
+    display: inline-block;
+    .table-container-flex .table .body .data-row + div.item-opened {
+        align-items: center;
+        padding: 10px 40px 10px 30px;
+    }
+
+    .w-sdc-classic-btn {
+        float: right;
+        margin-bottom: 10px;
+    }
+
+
+    .heat-env-connect-container{
+        background-color: white;
+        position: absolute;
+        height: 70px;
+        width:20px;
+        left: 0;
+        top:0;
+    }
+    .heat-env-connect-container-view-mode{
+        background-color: @tlv_color_t;
+    }
+    .heat-env-connect{
+        border-left: 1px #848586 solid;
+        height: 50px;
+        margin-left: 10px;
+        margin-top: 10px;
+        border-top: 1px #848586 solid;
+        border-bottom: 1px #848586 solid;
+        width: 11px;
+        float: left;
+
+    }
+
+    .artifact-name{
+        width:85%;
+    }
+
+    .table-container-flex .table .body .data-row div .heat-env-connect-container{
+        border-right: none;
+    }
+
+    .i-sdc-designer-sidebar-section-content-item-file-link::before{
+        content:"";
+        background-color: white;
+        width: 12px;
+
+    }
+
+
+
+    .table {
+        height:490px;
+        margin-bottom: 0;
+    }
+
+    .parameter-description {
+        .circle(18px, @color_p);
+        content: '?';
+        line-height: 18px;
+        vertical-align: middle;
+        margin-left: 5px;
+        cursor: default;
+        display: inline-block;
+        position: absolute;
+        top: 16px;
+    }
+
+    .table-container-flex {
+
+        margin-top: 27px;
+
+        .text{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .flex-item:nth-child(1) {
+            flex-grow: 15;
+            .hand;
+            padding-left: 30px;
+            position: relative;
+            span.table-arrow {
+                margin-right: 7px;
+            }
+            .description-popover-icon{
+                float:right;
+                margin-top:6px;
+            }
+        }
+
+        .flex-item:nth-child(2) {
+            flex-grow: 6;
+        }
+
+        .flex-item:nth-child(3) {
+            flex-grow: 9;
+        }
+
+        .flex-item:nth-child(4) {
+            flex-grow: 3;
+        }
+
+        .flex-item:nth-child(5) {
+            flex-grow: 20;
+        }
+
+        .flex-item:nth-child(6) {
+            flex-grow: 5;
+
+            &.table-btn-col {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                button {
+                    flex: 0 1 auto;
+                    background-color: transparent;
+                    border: 0;
+                    margin: 0;
+                }
+                .edit-paramtes-button {
+                    order: -1;
+                }
+            }
+        }
+    }
+    .w-sdc-form{
+        text-align: left;
+
+        .w-sdc-env-params{
+            border-top: 1px solid #cdcdcd;
+            margin: 25px 0 10px 0;
+        }
+
+        .i-sdc-form-textarea {
+            border: 1px solid @color_e;
+            min-height: 60px;
+            padding: 10px 13px;
+            width: 100%;
+            resize: none;
+
+        }
+
+        .w-sdc-form-item {
+            &.error {
+                .i-sdc-form-input,
+                .i-sdc-form-select,
+                .i-sdc-form-textarea {
+                    border-color: @color_h;
+                    outline: none;
+                    box-sizing: border-box;
+                }
+            }
+        }
+
+        .i-sdc-env-form-label{
+            font-family: @font-omnes-medium;
+            color: @main_color_m;
+            overflow: hidden;
+            max-width: 450px;
+            text-overflow: ellipsis;
+            display: inline-block;
+            white-space: nowrap;
+            margin-top: 14px;
+
+            &.required::before {
+                color: #f33;
+                content: '*';
+                margin-right: 4px;
+            }
+        }
+    }
+}
+
+.parameter-description-popover.deployment-artifact-view {
+    margin-left: -10px;
+    z-index: 1040;
+    min-width: 300px;
+    .input-error {
+        .q_12_m;
+    }
+    .error textarea{
+        border-color: @main_color_g;
+        color: @color_h;
+        outline: none;
+    }
+    .popover-content textarea {
+        width:100%;
+    }
+}

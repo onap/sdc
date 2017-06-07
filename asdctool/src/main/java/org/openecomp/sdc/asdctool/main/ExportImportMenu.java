@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import org.openecomp.sdc.asdctool.impl.GraphJsonValidator;
 import org.openecomp.sdc.asdctool.impl.GraphMLConverter;
 import org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer;
 
@@ -29,12 +30,17 @@ public class ExportImportMenu {
 		exportUsage();
 		importUsage();
 		exportUsersUsage();
+		validateJsonUsage();
 
 		System.exit(1);
 	}
 
 	private static void importUsage() {
 		System.out.println("Usage: import <titan.properties> <graph file location>");
+	}
+
+	private static void validateJsonUsage() {
+		System.out.println("Usage: validate-json <export graph path>");
 	}
 
 	private static void exportUsage() {
@@ -107,6 +113,14 @@ public class ExportImportMenu {
 				System.exit(2);
 			}
 			break;
+		case "validate-json":
+			String jsonFilePath = validateAndGetJsonFilePath(args);
+			GraphJsonValidator graphJsonValidator = new GraphJsonValidator();
+			if (graphJsonValidator.verifyTitanJson(jsonFilePath)) {
+				System.exit(2);
+			}
+			break;
+
 		case "export-as-graph-ml":
 			isValid = verifyParamsLength(args, 3);
 			if (false == isValid) {
@@ -150,6 +164,16 @@ public class ExportImportMenu {
 			usageAndExit();
 		}
 
+	}
+
+	private static String validateAndGetJsonFilePath(String[] args) {
+		boolean isValid;
+		isValid = verifyParamsLength(args, 2);
+		if (!isValid) {
+            validateJsonUsage();
+            System.exit(1);
+        }
+        return args[1];
 	}
 
 	private static boolean verifyParamsLength(String[] args, int i) {

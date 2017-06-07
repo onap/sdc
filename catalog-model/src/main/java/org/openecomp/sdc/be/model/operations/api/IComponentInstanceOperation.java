@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -34,8 +35,12 @@ import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.AttributeValueData;
+import org.openecomp.sdc.be.resources.data.CapabilityData;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
+import org.openecomp.sdc.be.resources.data.RequirementData;
+import org.openecomp.sdc.exception.ResponseFormat;
 
 import fj.data.Either;
 
@@ -52,9 +57,8 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ComponentInstance, StorageOperationStatus> createComponentInstance(String containerComponentId,
-			NodeTypeEnum containerNodeType, String instanceNumber, ComponentInstance componentInstance,
-			NodeTypeEnum instNodeType, boolean inTransaction);
+	public Either<ComponentInstance, StorageOperationStatus> createComponentInstance(String containerComponentId, NodeTypeEnum containerNodeType, String instanceNumber, ComponentInstance componentInstance, NodeTypeEnum instNodeType,
+			boolean inTransaction);
 
 	/**
 	 * add resource instance to service with internal transaction
@@ -64,9 +68,7 @@ public interface IComponentInstanceOperation {
 	 * @param componentInstance
 	 * @return
 	 */
-	public Either<ComponentInstance, StorageOperationStatus> createComponentInstance(String containerComponentId,
-			NodeTypeEnum containerNodeType, String instanceNumber, ComponentInstance componentInstance,
-			NodeTypeEnum instNodeType);
+	public Either<ComponentInstance, StorageOperationStatus> createComponentInstance(String containerComponentId, NodeTypeEnum containerNodeType, String instanceNumber, ComponentInstance componentInstance, NodeTypeEnum instNodeType);
 
 	/**
 	 * delete resource instance from component
@@ -78,11 +80,9 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ComponentInstance, StorageOperationStatus> deleteComponentInstance(NodeTypeEnum containerNodeType,
-			String containerComponentId, String resourceInstUid, boolean inTransaction);
+	public Either<ComponentInstance, StorageOperationStatus> deleteComponentInstance(NodeTypeEnum containerNodeType, String containerComponentId, String resourceInstUid, boolean inTransaction);
 
-	public Either<ComponentInstance, StorageOperationStatus> deleteComponentInstance(NodeTypeEnum containerNodeType,
-			String containerComponentId, String resourceInstUid);
+	public Either<ComponentInstance, StorageOperationStatus> deleteComponentInstance(NodeTypeEnum containerNodeType, String containerComponentId, String resourceInstUid);
 
 	/**
 	 * associate 2 resource instances for a given requirement
@@ -106,16 +106,13 @@ public interface IComponentInstanceOperation {
 	// String serviceId, NodeTypeEnum nodeType, String fromResInstanceUid,
 	// String toResInstanceUid, String requirement, String relationship);
 
-	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String serviceId,
-			NodeTypeEnum nodeType, RequirementCapabilityRelDef relation, boolean inTransaction);
+	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String serviceId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation, boolean inTransaction, boolean isClone);
 
-	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String serviceId,
-			NodeTypeEnum nodeType, RequirementCapabilityRelDef relation);
+	public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(String serviceId, NodeTypeEnum nodeType, RequirementCapabilityRelDef relation);
 
 	/**
 	 * 
-	 * dissociate the relation between 2 resource instances for a given
-	 * requirement
+	 * dissociate the relation between 2 resource instances for a given requirement
 	 * 
 	 * @param serviceId
 	 * @param fromResInstanceUid
@@ -124,11 +121,9 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<RequirementCapabilityRelDef, StorageOperationStatus> dissociateResourceInstances(String serviceId,
-			NodeTypeEnum nodeType, RequirementCapabilityRelDef requirementDef, boolean inTransaction);
+	public Either<RequirementCapabilityRelDef, StorageOperationStatus> dissociateResourceInstances(String serviceId, NodeTypeEnum nodeType, RequirementCapabilityRelDef requirementDef, boolean inTransaction);
 
-	public Either<RequirementCapabilityRelDef, StorageOperationStatus> dissociateResourceInstances(String serviceId,
-			NodeTypeEnum nodeType, RequirementCapabilityRelDef requirementDef);
+	public Either<RequirementCapabilityRelDef, StorageOperationStatus> dissociateResourceInstances(String serviceId, NodeTypeEnum nodeType, RequirementCapabilityRelDef requirementDef);
 
 	/**
 	 * update the properties of a given resource instance
@@ -139,30 +134,31 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ComponentInstance, StorageOperationStatus> updateResourceInstance(String serviceId,
-			NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance,
-			boolean inTransaction);
+	public Either<ComponentInstance, StorageOperationStatus> updateResourceInstance(String serviceId, NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance, boolean inTransaction);
 
-	public Either<ComponentInstance, StorageOperationStatus> updateResourceInstance(String serviceId,
-			NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance);
+	public Either<ComponentInstance, StorageOperationStatus> updateResourceInstance(String serviceId, NodeTypeEnum nodeType, String resourceInstanceName, ComponentInstance resourceInstance);
 
 	/**
-	 * get all resource instances of a given service and the relations between
-	 * the resource instances
+	 * get all resource instances of a given service and the relations between the resource instances
 	 * 
 	 * @param serviceId
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> getAllComponentInstances(
-			String componentId, NodeTypeEnum containerNodeType, NodeTypeEnum compInstNodeType, boolean inTransaction);
+	public Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> getAllComponentInstances(String componentId, NodeTypeEnum containerNodeType, NodeTypeEnum compInstNodeType, boolean inTransaction);
 
-	public Either<List<String>, StorageOperationStatus> getAllComponentInstancesNames(String componentId,
-			NodeTypeEnum nodeType, boolean inTransaction);
+	public Either<List<String>, StorageOperationStatus> getAllComponentInstancesNames(String componentId, NodeTypeEnum nodeType, boolean inTransaction);
 
-	public Either<List<String>, StorageOperationStatus> getAllComponentInstancesNames(String componentId,
-			NodeTypeEnum nodeType);
-
+	public Either<List<String>, StorageOperationStatus> getAllComponentInstancesNames(String componentId, NodeTypeEnum nodeType);
+	
+	/**
+	 * get all component instance properties and values from graph 
+	 * @param resourceInstance
+	 * @return
+	 */
+	public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstancesPropertiesAndValuesFromGraph(
+			ComponentInstance resourceInstance);
+	
 	/**
 	 * get resource instance from id
 	 * 
@@ -171,54 +167,38 @@ public interface IComponentInstanceOperation {
 	 */
 	public Either<ComponentInstance, StorageOperationStatus> getResourceInstanceById(String resourceId);
 
-	public Either<List<ComponentInstance>, StorageOperationStatus> deleteAllComponentInstances(String serviceId,
-			NodeTypeEnum nodeType, boolean inTransaction);
+	public Either<List<ComponentInstance>, StorageOperationStatus> deleteAllComponentInstances(String serviceId, NodeTypeEnum nodeType, boolean inTransaction);
 
-	public Either<List<ComponentInstance>, StorageOperationStatus> deleteAllComponentInstances(String serviceId,
-			NodeTypeEnum nodeType);
+	public Either<List<ComponentInstance>, StorageOperationStatus> deleteAllComponentInstances(String serviceId, NodeTypeEnum nodeType);
 
-	public Either<Integer, StorageOperationStatus> increaseAndGetResourceInstanceSpecificCounter(
-			String resourceInstanceId, GraphPropertiesDictionary counterType, boolean inTransaction);
+	public Either<Integer, StorageOperationStatus> increaseAndGetResourceInstanceSpecificCounter(String resourceInstanceId, GraphPropertiesDictionary counterType, boolean inTransaction);
 
 	public String createComponentInstLogicalName(String instanceNumber, String componentInstanceName);
 
-	public Either<Boolean, StorageOperationStatus> isComponentInstanceNameExist(String parentComponentId,
-			NodeTypeEnum parentNodeType, String compInstId, String componentInstName);
+	public Either<Boolean, StorageOperationStatus> isComponentInstanceNameExist(String parentComponentId, NodeTypeEnum parentNodeType, String compInstId, String componentInstName);
 
-	public Either<Boolean, StorageOperationStatus> validateParent(String parentId, String uniqId,
-			boolean inTransaction);
+	public Either<Boolean, StorageOperationStatus> validateParent(String parentId, String uniqId, boolean inTransaction);
 
-	public Either<ComponentInstance, StorageOperationStatus> getFullComponentInstance(
-			ComponentInstance componentInstance, NodeTypeEnum compInstNodeType);
+	public Either<ComponentInstance, StorageOperationStatus> getFullComponentInstance(ComponentInstance componentInstance, NodeTypeEnum compInstNodeType);
 
-	public Either<Boolean, StorageOperationStatus> isAvailableRequirement(ComponentInstance fromResInstance,
-			RequirementAndRelationshipPair relationPair);
+	public Either<Boolean, StorageOperationStatus> isAvailableRequirement(ComponentInstance fromResInstance, RequirementAndRelationshipPair relationPair);
 
-	public Either<Boolean, StorageOperationStatus> isAvailableCapabilty(ComponentInstance toResInstance,
-			RequirementAndRelationshipPair relationPair);
+	public Either<Boolean, StorageOperationStatus> isAvailableCapabilty(ComponentInstance toResInstance, RequirementAndRelationshipPair relationPair);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToResourceInstance(
-			ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, Integer index,
-			boolean inTransaction);
+	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToResourceInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, Integer index, boolean inTransaction);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToResourceInstance(
-			ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean isvalidate,
-			Integer index, boolean inTransaction);
+	public Either<ComponentInstanceProperty, StorageOperationStatus> addPropertyValueToResourceInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean isvalidate, Integer index, boolean inTransaction);
 
 	/**
 	 * Adds Attribute to resource instance
 	 * 
 	 * @param resourceInstanceAttribute
-	 *            * @param resourceInstanceId * @param index * @param
-	 *            inTransaction
+	 *            * @param resourceInstanceId * @param index * @param inTransaction
 	 * @return
 	 **/
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> addAttributeValueToResourceInstance(
-			ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId, Integer index,
-			boolean inTransaction);
+	public Either<ComponentInstanceAttribute, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction);
 
-	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInResourceInstance(
-			ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean inTransaction);
+	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInResourceInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean inTransaction);
 
 	/**
 	 * Updates Attribute on resource instance
@@ -228,19 +208,32 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> updateAttributeValueInResourceInstance(
-			ComponentInstanceAttribute attribute, String resourceInstanceId, boolean inTransaction);
+	public Either<ComponentInstanceAttribute, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceAttribute attribute, String resourceInstanceId, boolean inTransaction);
 
-	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(
-			ComponentInstanceAttribute attributeInstanceProperty, String resourceInstanceId);
+	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(ComponentInstanceAttribute attributeInstanceProperty, String resourceInstanceId);
 
-	public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(
-			ComponentInstanceInput input, String resourceInstanceId, Integer innerElement, boolean b);
+	public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput input, String resourceInstanceId, Integer innerElement, boolean b);
 
-	public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(
-			ComponentInstanceInput input, String resourceInstanceId, boolean b);
+	public Either<ComponentInstanceInput, StorageOperationStatus> updateInputValueInResourceInstance(ComponentInstanceInput input, String resourceInstanceId, boolean b);
 
-	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> fetchCIEnvArtifacts(
-			String componentInstanceId);
+	public Either<Map<String, ArtifactDefinition>, StorageOperationStatus> fetchCIEnvArtifacts(String componentInstanceId);
 
+	public StorageOperationStatus updateCustomizationUUID(String componentInstanceId);
+	/**
+	 * updates componentInstance modificationTime on graph node
+	 * @param componentInstance
+	 * @param componentInstanceType
+	 * @param modificationTime
+	 * @param inTransaction
+	 * @return
+	 */
+	public Either<ComponentInstanceData, StorageOperationStatus> updateComponentInstanceModificationTimeAndCustomizationUuidOnGraph(ComponentInstance componentInstance, NodeTypeEnum componentInstanceType, Long modificationTime, boolean inTransaction);
+
+	Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> getCapabilities(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum);
+
+	Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> getRequirements(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum);
+
+	Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> getFulfilledCapabilities(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum);
+
+	Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> getFulfilledRequirements(ComponentInstance compInstance, NodeTypeEnum nodeTypeEnum);
 }
