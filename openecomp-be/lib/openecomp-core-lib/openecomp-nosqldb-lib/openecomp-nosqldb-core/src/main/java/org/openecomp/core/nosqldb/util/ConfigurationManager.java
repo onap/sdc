@@ -97,9 +97,9 @@ public class ConfigurationManager {
     if (addresses != null) {
       return addresses.split(",");
     }
-    List locAddresses = (ArrayList) cassandraConfiguration.get(cassandraHostsKey);
+    List lsAddresses = (ArrayList) cassandraConfiguration.get(cassandraHostsKey);
     String[] addressesArray;
-    addressesArray = (String[]) locAddresses.toArray(new String[locAddresses.size()]);
+    addressesArray = (String[]) lsAddresses.toArray(new String[lsAddresses.size()]);
     return addressesArray;
 
   }
@@ -226,8 +226,8 @@ public class ConfigurationManager {
     InputStream is = null;
     try {
       is = new FileInputStream(file);
-    } catch (FileNotFoundException e0) {
-      e0.printStackTrace();
+    } catch (FileNotFoundException exception) {
+      exception.printStackTrace();
     }
     return is;
   }

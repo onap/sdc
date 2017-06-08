@@ -1,0 +1,126 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.smp:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    image_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP image
+      default: asc_base_image_smp
+    lab_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Lab name
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance
+      default: This_is_the_SCP_name
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_SCP_id
+    flavor_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP Flavor
+      default: a1.Small
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+    port_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: port name
+      default: port_name
+  node_templates:
+    port1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp1
+          relationship: tosca.relationships.network.BindsTo
+    server_smp1:
+      type: org.openecomp.resource.vfc.nodes.heat.smp
+      properties:
+        flavor:
+          get_input: flavor_smp_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: image_smp_name
+        metadata:
+          jx_vm_role: smp2
+          vnf_id:
+            get_input: vnf_id
+          jx_lab_name:
+            get_input: lab_name
+        user_data_format: RAW
+        name:
+          get_input: smp_name_1
+        scheduler_hints:
+          group: BE_Affinity_group
+    port2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        network:
+          get_input: port_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_smp1
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    FE_SMP_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - server_smp1
+    hot_template_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot_template.yml
+        description: ASC Template
+      members:
+      - port1
+      - server_smp1
+      - port2
+    BE_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - server_smp1
+  policies:
+    BE_Affinity_policy:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: def
+        affinity: host
+      targets:
+      - BE_Affinity_group
+    FE_SMP_Affinity_policy:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: abc
+        affinity: host
+      targets:
+      - FE_SMP_Affinity_group

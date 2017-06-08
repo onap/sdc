@@ -1,0 +1,976 @@
+tosca_definitions_version: tosca_simple_profile_for_ecomp_1_0
+
+description: vMMSC VF Topology Template
+
+metadata:
+  invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+  UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+  name: vMMC VF
+  description: |
+                        Delivers messages composed of text, images, and other media types (for example audio and video) 
+                        in an operator's network. It is responsible for storing and handling incoming and outgoing Multimedia
+                        Messages (MMs); therefore, acting as an MMS Relay and MMS Server at the same time.
+  type: VF
+  category: Mobility
+  subCategory: MMC
+  vendor: Nokia
+  vendorVersion: 6.0.2.14
+
+  
+ # reference to template definitions
+imports:
+  - tosca_simple_profile_for_ecomp_1_0.yml
+  
+topology_template:
+  
+   # This section provides the parameters which OPENECOMP is not providing values to during
+   # instantiation.
+   # It is expected that node template parameters which are not mapped to the Inputs section recieve value from OPENECOMP
+   # during the orchestration
+
+  inputs: 
+    
+  node_templates:
+
+    vMMSC: # vMMSC VFC
+      type: org.openecomp.resource.vfc.Generic
+
+      metadata:
+        invariantUUID: 673f8d08-2223-4a97-127c-11ab729d23bc
+        UUID: 2714db52-2116-a3af-1240-a236221ca004
+        version: 1.0
+        name: vMMC VFC
+        description:
+        type: VFC
+        category: Generic
+        subCategory: Generic_VFC
+        vendor: Nokia
+        vendorVersion: 6.0.2.14
+
+      properties:
+        vfc_ecomp_name: true
+        vfc_instance_name: # to be set by OPENECOMP during instantiation
+        vfc_type_tag:  # from HEAT ENV
+        vfc_description: vMMSC VFC
+        vfc_image_name: mmsc-6.0.2_v14.qcow2 # from HEAT / HEAT ENV
+        vfc_availability_zone: 
+
+
+      capabilities:
+        nfv_compute:
+          properties:
+            vfc_flavor: mmsc_flavor # from HEAT ENV
+        scaling:
+          properties:
+            min_instances: 5
+            max_instances: 5
+            initial_instance: 
+
+    vNEMS_FE: # vNEMS VFC
+      type: org.openecomp.resource.vfc.Generic
+
+      metadata:
+        invariantUUID: 673f8d08-2223-4a97-127c-11ab729d23bc
+        UUID: 2714db52-2116-a3af-1240-a236221ca004
+        version: 1.0
+        name: vNEMS_FE VFC
+        description: |
+                              Legacy support that makes it possible for subscribers without MMS-enabled phones to receive 
+                              multimedia messages (MMs) through a web or WAP interface.
+                              E-mail smart push that lets subscribers send and receive MMs to and from the Internet (MM3 interface).
+        type: VFC
+        category: Generic_VFC
+        subCategory: Generic_VFC
+        vendor: Nokia
+        vendorVersion: 2.1.2.44
+      
+      properties:
+        vfc_ecomp_name: true
+        vfc_instance_name: # to be set by OPENECOMP during instantiation
+        vfc_type_tag:  # from HEAT ENV
+        vfc_description: vNEMS_FE VFC
+        vfc_image_name: nems-2.1.2_v44.qcow2 # from HEAT / HEAT ENV
+        vfc_availability_zone: 
+
+
+      
+      capabilities:
+        nfv_compute:
+          properties:
+            vfc_flavor: nems_fe_flavor # from HEAT ENV
+        scaling:
+          properties:
+            min_instances: 2 # set by service designer
+            max_instances: 4 # set by service designer
+
+    vNEMS_BE: # vNEMS VFC
+      type: org.openecomp.resource.vfc.Generic
+
+      metadata:
+        invariantUUID: 673f8d08-2223-4a97-127c-11ab729d23bc
+        UUID: 2714db52-2116-a3af-1240-a236221ca004
+        version: 1.0
+        name: vNEMS_BE VFC
+        description: |
+                              Legacy support that makes it possible for subscribers without MMS-enabled phones to receive 
+                              multimedia messages (MMs) through a web or WAP interface.
+                              E-mail smart push that lets subscribers send and receive MMs to and from the Internet (MM3 interface).
+        type: VFC
+        category: Generic_VFC
+        subCategory: Generic_VFC
+        vendor: Nokia
+        vendorVersion: 2.1.2.44
+      
+      properties:
+        vfc_ecomp_name: true
+        vfc_instance_name: # to be set by OPENECOMP during instantiation
+        vfc_type_tag:  # from HEAT ENV
+        vfc_description: vNEMS_FE VFC
+        vfc_image_name: nems-2.1.2_v44.qcow2 # from HEAT / HEAT ENV
+        vfc_availability_zone: 
+
+
+      
+      capabilities:
+        nfv_compute:
+          properties:
+            vfc_flavor: nems_be_flavor # from HEAT ENV
+        scaling:
+          properties:
+            min_instances: 1 # set by service designer
+            max_instances: 2 # set by service designer
+
+    vECA_TRX: # vNEMS VFC
+      type: org.openecomp.resource.vfc.Generic
+
+      metadata:
+        invariantUUID: 673f8d08-2223-4a97-127c-11ab729d23bc
+        UUID: 2714db52-2116-a3af-1240-a236221ca004
+        version: 1.0
+        name: vECA_TRX VFC
+        description: Traffic handling
+        type: VFC
+        category: Generic_VFC
+        subCategory: Generic_VFC
+        vendor: Nokia
+        vendorVersion: 13
+      
+      properties:
+        vfc_ecomp_name: true
+        vfc_instance_name: # to be set by OPENECOMP during instantiation
+        vfc_type_tag:  # from HEAT ENV
+        vfc_description: vECA_TRX VFC
+        vfc_image_name: eca-v13-release.qcow2 # from HEAT / HEAT ENV
+        vfc_availability_zone: 
+
+
+      
+      capabilities:
+        nfv_compute:
+          properties:
+            vfc_flavor: eca_trx_flavor # from HEAT ENV
+        scaling:
+          properties:
+            min_instances: 20 # set by service designer
+            max_instances: 20 # set by service designer
+
+    vLB: # F5 VFC
+      type: org.openecomp.resource.vfc.Generic
+
+      metadata:
+        invariantUUID: 673f8d08-2223-4a97-127c-11ab729d23bc
+        UUID: 2714db52-2116-a3af-1240-a236221ca004
+        version: 1.0
+        name: F5 LB VFC
+        description: Load Balancer
+        type: VFC
+        category: Generic
+        subCategory: Generic_VFC
+        vendor: F5 Networks
+        vendorVersion: 11.5.3.163
+
+      properties:
+        vfc_ecomp_name: true
+        vfc_instance_name: # to be set by OPENECOMP during instantiation
+        vfc_type_tag:  # from HEAT ENV
+        vfc_description: F5 VFC
+        vfc_image_name: F5-11_5_3-EngHF-34_163.qcow2 # from HEAT / HEAT ENV
+        vfc_availability_zone: 
+
+
+
+      capabilities:
+        nfv_compute:
+          properties:
+            vfc_flavor: bigip_flavor # from HEAT ENV
+        scaling:
+          properties:
+            min_instances: 2
+            max_instances: 2
+
+   #  Internal VF Connection Points (VFCs connection points)
+
+    mmsc_oam: # external OAM CP to mobility OAM network
+      type: org.openecomp.cp.OAM
+      
+      metadata:
+        invariantUUID: 553f8d08-2223-4a97-127c-11ab729d1234 # generated by ASDC
+        UUID: ab14db52-2116-a3af-1240-a236221ca82a # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: OAM CP
+        description: OAM CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_Info:
+          ip_address:  # provided by OPENECOMP (SDNC)
+      
+
+    
+    mmsc_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_fe_oam: # external OAM CP to mobility OAM network
+      type: org.openecomp.cp.OAM
+      
+      metadata:
+        invariantUUID: 553f8d08-2223-4a97-127c-11ab729d1234 # generated by ASDC
+        UUID: ab14db52-2116-a3af-1240-a236221ca82a # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: OAM CP
+        description: OAM CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_Info:
+          ip_address:  # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_fe_internal:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_fe_imap:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_fe_web:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_fe_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_be_oam: # external OAM CP to mobility OAM network
+      type: org.openecomp.cp.OAM
+      
+      metadata:
+        invariantUUID: 553f8d08-2223-4a97-127c-11ab729d1234 # generated by ASDC
+        UUID: ab14db52-2116-a3af-1240-a236221ca82a # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: OAM CP
+        description: OAM CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      properties:
+        address_Info:
+          ip_address:  # provided by OPENECOMP (SDNC)
+
+
+    nems_be_internal:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    nems_be_imap:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    eca_trx_oam: # external OAM CP to mobility OAM network
+      type: org.openecomp.cp.OAM
+      
+      metadata:
+        invariantUUID: 553f8d08-2223-4a97-127c-11ab729d1234 # generated by ASDC
+        UUID: ab14db52-2116-a3af-1240-a236221ca82a # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: OAM CP
+        description: OAM CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_Info:
+          ip_address:  # provided by OPENECOMP (SDNC)
+      
+
+
+    eca_trx_internal:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    eca_trx_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_ha:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_mmsc_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_nems_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_nems_web:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_eca_traffic:
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_oam: # external OAM CP to mobility OAM network
+      type: org.openecomp.cp.OAM
+      
+      metadata:
+        invariantUUID: 553f8d08-2223-4a97-127c-11ab729d1234 # generated by ASDC
+        UUID: ab14db52-2116-a3af-1240-a236221ca82a # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: OAM CP
+        description: OAM CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_Info:
+          ip_address:  # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_dmz_protected: # external CP to mobility DMZ protected network
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    lb_core_direct: # external CP to mobility core direct network
+      type: org.openecomp.cp.CP
+      
+      metadata:
+        invariantUUID: 55df8d08-2ab3-4a97-127c-11ab729d100a # generated by ASDC
+        UUID: 12b4db52-2116-b5af-1240-a236221ca145 # generated by ASDC
+        version: 1.0 # set by ASDC
+        name: VFC CP
+        description: VFC CP
+        type: CP
+        category: CP
+        vendor: AT&T
+      
+      properties:
+        address_info:
+          mac_address: # provided by OPENECOMP (SDNC)
+      
+
+
+    # Intra-VF Virtual Links (Networks)
+  
+    mmsc_traffic_net:
+      type: org.openecomp.resource.vl.VL
+
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: MMSC traffic network
+        description: mmsc traffic network
+        type: VL
+        category: VL
+        vendor: Nokia
+      properties:
+        network_type: Tenant_Layer_3
+        network_role: Intra-service
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.253.0.0/17 # HEAT ENV
+          gateway_ip: 169.253.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    nems_imap_net:
+      type: org.openecomp.resource.vl.VL
+
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: NEMS IMAP network
+        description: NEMS internal IMAP network
+        type: VL
+        category: VL
+        vendor: Nokia
+      
+      properties:
+        network_type: Tenant_Layer_3
+        network_role: Intra-service
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.253.0.0/17 # HEAT ENV
+          gateway_ip: 169.253.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    nems_internal_net:
+      type: org.openecomp.resource.vl.VL
+
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: NEMS internal traffic network
+        description: NEMS internal traffic network
+        type: VL
+        category: VL
+        vendor: Nokia
+
+      properties:
+        network_type: Tenant_Layer_3
+        network_role: Intra-service
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.253.0.0/17 # HEAT ENV
+          gateway_ip: 169.253.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    nems_web_net:
+      type: org.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: NEMS web network
+        description: nems web nwtwork
+        type: VL
+        category: VL
+        vendor: Nokia
+      properties:
+        network_type: Tenant_Layer_3
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_2
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.255.0.0/17 # HEAT ENV
+          gateway_ip: 169.255.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    nems_traffic_net:
+      type: org.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: NEMS traffic network
+        description: NEMS traffic network
+        type: VL
+        category: VL
+        vendor: Nokia
+      properties:
+        network_type: Tenant_Layer_3
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          network_name: # provided by OPENECOMP (SDNC)
+          route_targets: 13979:105717
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 107.243.37.0/27 # HEAT ENV
+          gateway_ip: 107.243.37.1 # HEAT ENV
+          start_ip: 107.243.37.3 # HEAT ENV
+          end_ip: 107.243.37.30 # HEAT ENV
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    eca_traffic_net:
+      type: org.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: ECA traffic network
+        description: ECA traffic network
+        type: VL
+        category: VL
+        vendor: Nokia
+
+      properties:
+        network_type: Tenant_Layer_3
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          network_name: # provided by OPENECOMP (SDNC)
+          route_targets: 13979:105719
+        network_id:
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 107.243.37.32/24 # HEAT ENV
+          gateway_ip: 107.243.37.33 # HEAT ENV
+          start_ip: 107.243.37.35 # HEAT ENV
+          end_ip: 107.243.37.62 # HEAT ENV
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+    eca_internal_net:
+      type: org.openecomp.resource.vl.VL
+
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: ECA internal traffic network
+        description: ECA internal traffic network
+        type: VL
+        category: VL
+        vendor: Nokia
+
+      properties:
+        network_type: Tenant_Layer_3
+        network_role: Intra-service
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.253.0.0/17 # HEAT ENV
+          gateway_ip: 169.253.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP # service level network
+
+    lb_ha_net:
+      type: org.openecomp.resource.vl.VL
+
+      metadata:
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        version: 1.0
+        name: LB HA network
+        description: LB sync network
+        type: VL
+        category: VL
+        vendor: Nokia
+      properties:
+        network_type: Tenant_Layer_3
+        network_role: Intra-service
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input: network_deployment_node }
+        contrail_virtual_network:
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_forwarding_mode: l2
+          vn_shared: false
+          vn_external: false
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 169.253.0.0/17 # HEAT ENV
+          gateway_ip: 169.253.0.3 # HEAT ENV
+          dhcp_enabled: false # HEAT ENV
+      capabilities:
+        virtual_linkable:
+          valid_source_types: org.openecomp.resource.cp.CP
+
+
+  groups:
+
+    # Server Groups for applying placement policy
+    LbGroup:
+      type: tosca.groups.Root
+      members: [vLB]
+
+    mmscGroup:
+      type: tosca.groups.Root
+      members: [vMMSC]
+
+    nemas_feGroup:
+      type: tosca.groups.Root
+      members: [vNEMS_FE]
+
+    eca_trxGroup:
+      type: tosca.groups.Root
+      members: [vECA_TRX]
+    
+    # VF Modules
+    VFModuleMMSC_Expansion:
+      type: org.openecomp.groups.VfModule
+
+      metadata:
+        vfModuleModelName: vMMSC::module-1
+        vfModuleModelInvariantUUID: adf1a10a-f788-492f-9ea7-7ff91dd55f8c
+        vfModuleModelUUID: b020dd1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+        vfModuleModelVersion: 1
+
+      properties:
+        vf_module_type: Expansion # set by service designer
+        vf_module_description: vMMSC growth unit # set by service designer
+        contrail_service_instance: true # from HEAT
+        availability_zone_count: 1 # from HEAT
+        volume_group: false # from HEAT / service Designer
+        artifacts: # HEAT Templates
+          - 099a6909-290f-4293-a347-736f11b8ff18
+          - 0db84f21-d298-4a4b-b11e-37b92a734066
+      
+      members:
+      - vMMSC
+      - vNEMS_FE
+      - vNEMS_BE
+      - vECA_TRX
+      - vLB
+      - mmsc_oam
+      - mmsc_traffic
+      - nems_fe_web
+      - mmsc_traffic_net
+      - nems_imap_net
+      - nems_internal_net
+      
+
+  policies:
+     # Autoscaling policy
+    - mmsc_autoscale_policy:
+      type: org.openecomp.policy.Autoscaling
+
+      properties:
+        min_instances: 1
+        max_instances: 4
+        increment: 1
+        factor: bandwidth
+        threshold: 5 Gpbs
+
+      target: [ VFModuleMMSC_Expansion ]
+
+   # Placement policy
+    - mmsc_anti_affinity_placement_policy:
+      type: org.openecomp.policy.Placement
+
+      properties:
+        conatiner_type: compute
+        policy: anti_affinity
+
+      target: [ LbGroup, mmscGroup, nemas_feGroup, eca_trxGroup, eca_oamGroup, cmauiGroup ]

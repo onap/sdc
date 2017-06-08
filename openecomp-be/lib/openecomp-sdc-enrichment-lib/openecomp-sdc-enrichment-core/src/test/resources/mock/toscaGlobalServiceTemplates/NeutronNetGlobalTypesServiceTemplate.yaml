@@ -1,0 +1,99 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: NeutronNetGlobalTypes
+  template_version: 1.0.0
+description: Neutron Network TOSCA Global Types
+imports:
+- NetworkGlobalTypes:
+    file: NetworkGlobalTypesServiceTemplate.yaml
+- common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vl.nodes.heat.network.neutron.Net:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    properties:
+      dhcp_agent_ids:
+        type: list
+        description: The IDs of the DHCP agent to schedule the network
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      tenant_id:
+        type: string
+        description: The ID of the tenant which will own the network
+        required: false
+        status: SUPPORTED
+      port_security_enabled:
+        type: boolean
+        description: Flag to enable/disable port security on the network
+        required: false
+        status: SUPPORTED
+      shared:
+        type: boolean
+        description: Whether this network should be shared across all tenants
+        required: false
+        default: false
+        status: SUPPORTED
+      admin_state_up:
+        type: boolean
+        description: A boolean value specifying the administrative status of the network
+        required: false
+        default: true
+        status: SUPPORTED
+      qos_policy:
+        type: string
+        description: The name or ID of QoS policy to attach to this network
+        required: false
+        status: SUPPORTED
+      subnets:
+        type: map
+        description: Network related subnets
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+      value_specs:
+        type: map
+        description: Extra parameters to include in the request
+        required: false
+        default: {
+          }
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      qos_policy_id:
+        type: string
+        description: The QoS policy ID attached to this network
+        status: SUPPORTED
+      show:
+        type: string
+        description: Detailed information about resource
+        status: SUPPORTED
+      subnets_name:
+        type: list
+        description: Subnets name of this network
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        type: map
+        description: Network related subnets
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+      mtu:
+        type: scalar-unit.size
+        description: The maximum transmission unit size(in bytes) for the network
+        status: SUPPORTED
+      status:
+        type: string
+        description: The status of the network
+        status: SUPPORTED
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED

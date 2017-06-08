@@ -10,10 +10,11 @@
         {
           "file": "vmme_small.env",
           "type": "HEAT_ENV"
-        },{
+        },
+        {
           "file": "vmme_small_create_fsb.yml",
           "type": "HEAT_NET",
-          "data":[
+          "data": [
             {
               "file": "vmme_small_create_fsb.env",
               "type": "HEAT_ENV"
@@ -21,7 +22,8 @@
           ]
         }
       ]
-    },{
+    },
+    {
       "file": "create_stack.sh",
       "type": "SHELL"
     }

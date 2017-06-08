@@ -1,0 +1,25 @@
+.software-product-dependencies {
+    .software-product-dependencies-title {
+        @extend .heading-1;
+        @extend .text-uppercase !optional;
+        margin-bottom: 20px;
+        color: $blue;
+    }
+    .select-action-table-controllers {
+        justify-content: flex-end;
+        cursor: pointer;
+        color: $blue;
+        padding-right: 33px;
+        margin-bottom: 3px;
+        &:hover {
+            color: $dark-blue;
+        }
+    }
+    .select-action-table-view {        
+        min-width: 770px;
+    }
+    .select-action-table-header {
+        @extend .body-1-medium;
+        color: $text-black;
+    }
+}

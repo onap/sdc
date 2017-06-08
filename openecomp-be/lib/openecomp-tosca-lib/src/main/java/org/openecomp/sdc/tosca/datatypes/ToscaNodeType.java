@@ -20,143 +20,66 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-import org.openecomp.sdc.tosca.services.ToscaConstants;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
 
-/**
- * The enum Tosca node type.
- */
-public enum ToscaNodeType {
+public class ToscaNodeType {
 
-  /**
-   * Compute tosca node type.
-   */
-  COMPUTE("tosca.nodes.Compute"),
-  /**
-   * Root tosca node type.
-   */
-  ROOT("tosca.nodes.Root"),
-  /**
-   * Block storage tosca node type.
-   */
-  BLOCK_STORAGE("tosca.nodes.BlockStorage"),
-  /**
-   * Network tosca node type.
-   */
-  NETWORK("tosca.nodes.network.Network"),
-  /**
-   * Network port tosca node type.
-   */
-  NETWORK_PORT("tosca.nodes.network.Port"),
-  /**
-   * Nova server tosca node type.
-   */
-  NOVA_SERVER(ToscaConstants.NODES_PREFIX + "nova.Server"),
-  /**
-   * Cinder volume tosca node type.
-   */
-  CINDER_VOLUME(ToscaConstants.NODES_PREFIX + "cinder.Volume"),
-  /**
-   * Neutron net tosca node type.
-   */
-  NEUTRON_NET("org.openecomp.resource.vl.nodes.heat.network.neutron.Net"),
-  /**
-   * Neutron port tosca node type.
-   */
-  NEUTRON_PORT("org.openecomp.resource.cp.nodes.heat.network.neutron.Port"),
-  /**
-   * Neutron security rules tosca node type.
-   */
-  NEUTRON_SECURITY_RULES("org.openecomp.resource.vfc.rules.nodes"
-      + ".heat.network.neutron.SecurityRules"),
-  /**
-   * Contrail virtual network tosca node type.
-   */
-  CONTRAIL_VIRTUAL_NETWORK("org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork"),
-  /**
-   * Contrail network rule tosca node type.
-   */
-  CONTRAIL_NETWORK_RULE("org.openecomp.resource.vfc."
-      + "rules.nodes.heat.network.contrail.NetworkRules"),
-  /**
-   * Contrailv 2 virtual network tosca node type.
-   */
-  CONTRAILV2_VIRTUAL_NETWORK("org.openecomp.resource.vl.nodes."
-      + "heat.network.contrailV2.VirtualNetwork"),
-  /**
-   * Contrailv 2 network rule tosca node type.
-   */
-  CONTRAILV2_NETWORK_RULE(
-      "org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules"),
-  /**
-   * Contrailv 2 virtual machine interface tosca node type.
-   */
-  CONTRAILV2_VIRTUAL_MACHINE_INTERFACE(
-      "org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface"),
-  /**
-   * Abstract substitute tosca node type.
-   */
-  ABSTRACT_SUBSTITUTE("org.openecomp.resource.abstract.nodes.AbstractSubstitute"),
-  /**
-   * Contrail compute tosca node type.
-   */
-  CONTRAIL_COMPUTE(ToscaConstants.NODES_PREFIX + "contrail.Compute"),
-  /**
-   * Contrail port tosca node type.
-   */
-  CONTRAIL_PORT("org.openecomp.resource.cp.nodes.heat.network.contrail.Port"),
-  /**
-   * Contrail abstract substitute tosca node type.
-   */
-  CONTRAIL_ABSTRACT_SUBSTITUTE("org.openecomp.resource.abstract."
-      + "nodes.contrail.AbstractSubstitute"),;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  private static final Map<String, ToscaNodeType> mMap =
-      Collections.unmodifiableMap(initializeMapping());
-  private String displayName;
+  public static String VFC_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_VFC);
+  public static String CP_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_CP);
+  public static String NETWORK_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_NETWORK);
+  public static String ABSTRACT_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_ABSTARCT);
+  public static String RULE_NODE_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_NODE_TYPE_RULE);
 
-  ToscaNodeType(String displayName) {
-    this.displayName = displayName;
-  }
+  //TOSCA native types
+  public static String NATIVE_COMPUTE = "tosca.nodes.Compute";
+  public static String NATIVE_ROOT = "tosca.nodes.Root";
+  public static String NATIVE_BLOCK_STORAGE = "tosca.nodes.BlockStorage";
+  public static String NATIVE_NETWORK = "tosca.nodes.network.Network";
+  public static String NATIVE_NETWORK_PORT = "tosca.nodes.network.Port";
 
-  /**
-   * Initialize mapping map.
-   *
-   * @return the map
-   */
-  public static Map<String, ToscaNodeType> initializeMapping() {
-    Map<String, ToscaNodeType> toscaMap = new HashMap<>();
-    for (ToscaNodeType v : ToscaNodeType.values()) {
-      toscaMap.put(v.displayName, v);
-    }
-    return toscaMap;
-  }
+  //Additional types
+  public static String NOVA_SERVER = VFC_NODE_TYPE_PREFIX + "heat.nova.Server";
+  public static String CINDER_VOLUME = VFC_NODE_TYPE_PREFIX + "heat.cinder.Volume";
+  public static String COMPUTE = VFC_NODE_TYPE_PREFIX + "Compute";
+  public static String CONTRAIL_COMPUTE = VFC_NODE_TYPE_PREFIX + "heat.contrail.Compute";
 
-  /**
-   * Gets tosca node type by display name.
-   *
-   * @param displayName the display name
-   * @return the tosca node type by display name
-   */
-  public static ToscaNodeType getToscaNodeTypeByDisplayName(String displayName) {
-    if (mMap.containsKey(displayName)) {
-      return mMap.get(displayName);
-    }
-    return null;
-  }
+  public static String NEUTRON_SECURITY_RULES =
+      RULE_NODE_TYPE_PREFIX + "heat.network.neutron.SecurityRules";
+  public static String CONTRAILV2_NETWORK_RULE =
+      RULE_NODE_TYPE_PREFIX + "heat.network.contrailV2.NetworkRules";
+  public static String CONTRAIL_NETWORK_RULE =
+      RULE_NODE_TYPE_PREFIX + "heat.network.contrail.NetworkRules";
 
-  /**
-   * Gets display name.
-   *
-   * @return the display name
-   */
-  public String getDisplayName() {
-    return displayName;
-  }
+  public static String NEUTRON_NET = NETWORK_NODE_TYPE_PREFIX + "heat.network.neutron.Net";
+  public static String CONTRAILV2_VIRTUAL_NETWORK =
+      NETWORK_NODE_TYPE_PREFIX + "heat.network.contrailV2.VirtualNetwork";
+  public static String CONTRAIL_VIRTUAL_NETWORK =
+      NETWORK_NODE_TYPE_PREFIX + "heat.network.contrail.VirtualNetwork";
+  public static String NETWORK = NETWORK_NODE_TYPE_PREFIX + "network.Network";
 
+  public static String NEUTRON_PORT = CP_NODE_TYPE_PREFIX + "heat.network.neutron.Port";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_INTERFACE =
+      CP_NODE_TYPE_PREFIX + "heat.contrailV2.VirtualMachineInterface";
+  public static String CONTRAIL_PORT = CP_NODE_TYPE_PREFIX + "heat.network.contrail.Port";
+  public static String NETWORK_PORT = CP_NODE_TYPE_PREFIX + "network.Port";
+  public static String NETWORK_SUB_INTERFACE = CP_NODE_TYPE_PREFIX + "network.SubInterface";
+  public static String CONTRAILV2_VLAN_SUB_INTERFACE = CP_NODE_TYPE_PREFIX
+      + "heat.network.contrailV2.VLANSubInterface";
+
+  public static String ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "AbstractSubstitute";
+  public static String VFC_ABSTRACT_SUBSTITUTE = ABSTRACT_NODE_TYPE_PREFIX + "VFC";
+  public static String CONTRAIL_ABSTRACT_SUBSTITUTE =
+      ABSTRACT_NODE_TYPE_PREFIX + "contrail.AbstractSubstitute";
 
 }
+

@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     oam_net_ips:
@@ -222,15 +198,7 @@ topology_template:
         cps_net_mask:
           get_input: cps_net_mask
   groups:
-    hot-nimbus-pcm_v0.4_2:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4_2.yaml
-        description: heat template that creates PCRF Cluman stack
-      members:
-      - server_pcm_004
-      - server_pcm_003
-    hot-nimbus-pcm_v0.4:
+    hot-nimbus-pcm_v0.4_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
@@ -238,3 +206,11 @@ topology_template:
       members:
       - server_pcm_002
       - server_pcm_001
+    hot-nimbus-pcm_v0.4_2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4_2.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_004
+      - server_pcm_003

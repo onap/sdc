@@ -1,0 +1,126 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 9c5b8e77-6ae1-4817-994f-a14a03635868
+  UUID: 2722acbc-a8cb-4d73-ab14-9b2d79dc2131
+  name: AllottedIPMux
+  description: cbvbv
+  type: Service
+  category: Mobility
+  serviceEcompNaming: false
+  serviceHoming: false
+imports:
+- Tunnel_XConn:
+    file: resource-TunnelXconn-template.yml
+- IP_Mux_Demux:
+    file: resource-IpMuxDemux-template.yml
+topology_template:
+  node_templates:
+    Tunnel_XConn 3:
+      type: org.openecomp.resource.vf.TunnelXconn
+      metadata:
+        invariantUUID: fadbb726-37b6-4939-ba78-9e86974232c5
+        UUID: 68d68207-007a-49f3-a9ae-5f88757d5061
+        customizationUUID: ae051f74-0d64-40f8-877b-791330cd7801
+        version: '1.0'
+        name: Tunnel_XConn
+        description: stella
+        type: VF
+        category: Allotted Resource
+        subcategory: Tunnel XConnect
+    IP_Mux_Demux 2:
+      type: org.openecomp.resource.vf.IpMuxDemux
+      metadata:
+        invariantUUID: ec95fbf0-5d05-4fea-a11e-27869c0032e2
+        UUID: 41e4949f-85b3-4bc5-b7a2-2c166bf87270
+        customizationUUID: 8cb6b8f7-a9bc-4745-92bd-f815f68fa6bc
+        version: '1.0'
+        name: IP_Mux_Demux
+        description: nbvnbb
+        type: VF
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+    IP_Mux_Demux 1:
+      type: org.openecomp.resource.vf.IpMuxDemux
+      metadata:
+        invariantUUID: ec95fbf0-5d05-4fea-a11e-27869c0032e2
+        UUID: 41e4949f-85b3-4bc5-b7a2-2c166bf87270
+        customizationUUID: 7801f43f-f3f6-453f-89ea-4c182c569ad6
+        version: '1.0'
+        name: IP_Mux_Demux
+        description: nbvnbb
+        type: VF
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+  groups: {
+    }
+  substitution_mappings:
+    node_type: org.openecomp.service.Allottedipmux
+    capabilities:
+      IP_Mux_Demux 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Tunnel_XConn 3.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      IP_Mux_Demux 2.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Tunnel_XConn 3.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      IP_Mux_Demux 2.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      IP_Mux_Demux 2.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      IP_Mux_Demux 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      IP_Mux_Demux 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Tunnel_XConn 3.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

@@ -20,16 +20,18 @@
 
 package org.openecomp.sdc.versioning.dao.types;
 
+import com.datastax.driver.mapping.annotations.Transient;
 import com.datastax.driver.mapping.annotations.UDT;
 
 @UDT(name = "version", keyspace = "dox")
 public class Version {
-  public static final String VERSION_REGEX = "^\\d+\\.\\d+$";
   public static final String VERSION_STRING_VIOLATION_MSG =
       "Version string must be in the format of: {integer}.{integer}";
 
   private int major;
   private int minor;
+  @Transient
+  private VersionStatus status = VersionStatus.Available;
 
   public Version() {
   }
@@ -56,7 +58,7 @@ public class Version {
     }
     try {
       version = new Version(Integer.parseInt(versionLevels[0]), Integer.parseInt(versionLevels[1]));
-    } catch (Exception exception) {
+    } catch (Exception ex) {
       throw new IllegalArgumentException(VERSION_STRING_VIOLATION_MSG);
     }
 
@@ -79,6 +81,14 @@ public class Version {
     this.minor = minor;
   }
 
+  public VersionStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(VersionStatus status) {
+    this.status = status;
+  }
+
   public Version calculateNextCandidate() {
     return new Version(major, minor + 1);
   }
@@ -92,6 +102,13 @@ public class Version {
   }
 
   @Override
+  public int hashCode() {
+    int result = major;
+    result = 31 * result + minor;
+    return result;
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -101,15 +118,7 @@ public class Version {
     }
 
     Version version = (Version) obj;
-
     return major == version.major && minor == version.minor;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = major;
-    result = 31 * result + minor;
-    return result;
   }
 
   @Override

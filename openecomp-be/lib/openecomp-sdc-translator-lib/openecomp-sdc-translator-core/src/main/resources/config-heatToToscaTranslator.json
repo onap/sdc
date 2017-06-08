@@ -1,0 +1,35 @@
+{
+  "resourceTranslationImpl": {
+    "OS::Contrail::NetworkPolicy": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailNetworkPolicyImpl"
+    },
+    "OS::ContrailV2::NetworkPolicy": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailV2NetworkPolicyImpl"
+    },
+    "OS::Nova::ServerGroup": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNovaServerGroupsImpl"
+    },
+    "OS::Neutron::SecurityGroup": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNeutronSecurityGroupImpl"
+    },
+    "OS::Contrail::AttachPolicy": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailAttachPolicyImpl"
+    }
+  },
+  "namingConventionExtractImpl": {
+    "OS::Nova::Server": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor.NameExtractorNovaServerImpl"
+    },
+    "ContrailComputeNodeTypeName": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.nameextractor.NameExtractorContrailComputeImpl"
+    }
+  },
+  "_config": {
+    "namespace": "heatToToscaTranslator"
+  }
+}

@@ -11,18 +11,13 @@
   }
   .component-questionnaire-validation-form {
 
-
-    .section-sub-title {
-      @extend .heading-5;
-      padding-bottom: 10px;
-    }
     .section-field {
       textarea {
         height: 80px;
       }
     }
 
-    .rows-section {
+    .rows-section, .grid-items {
       .row-flex-components {
         display: flex;
       }

@@ -10,18 +10,40 @@
     @extend .body-1-medium;
   }
 }
+
+
 .software-product-view {
   display: flex;
   height:100%;
 
   .description {
     @extend .body-1;
-    overflow: hidden;
+    // overflow: hidden;
     padding-right: 20px;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    // text-overflow: ellipsis;
+    // display: -webkit-box;
+    // -webkit-line-clamp: 2;
+    // -webkit-box-orient: vertical;
+
+    .missing-license {
+      display: flex;
+      align-items: baseline;
+      .svg-icon.exclamation-triangle-full {
+        fill: $orange;
+      }
+      .warning-text {
+        position: relative;
+        top: -2px;
+      }
+      .svg-icon-wrapper {
+        margin-right: 7px;
+        margin-left: 3px;
+        .svg-icon {
+          height: 17px;
+          width: 17px;
+        }
+      }
+    }
   }
   .name {
     @extend .body-1-medium;
@@ -29,11 +51,6 @@
   .software-product-landing-view-right-side {
     @extend .flex;
     overflow-y: hidden;
-    .processes-page-title {
-      padding-top: 38px;
-      padding-left: 53px;
-      padding-bottom: 20px;
-    }
     .list-editor-view {
       .list-editor-view-title {
         margin-bottom: 0;
@@ -53,22 +70,36 @@
     .software-product-landing-view-top {
       .details-container {
         @extend .flex-column;
+
         .single-detail-section {
+
           @extend  .flex-column;
           &.title-section {
             flex: 0.8;
             @extend .heading-5-medium;
           }
+          &.title-text {
+            margin-bottom: 24px;
+          }
+          .description {
+              @include multiline-ellipsis();
+          }
+        }
+        .title {
+          @extend .body-3;
+          color: $gray;
+          &.extra-large {
+            min-width: 130px;
+          }
+        }
+        .details-section {
+          display: flex;
         }
         .multiple-details-section {
-          @extend .flex;
+          @extend .flex-column;
           justify-content: space-between;
           .detail-col {
-            .title {
-              &.extra-large {
-                min-width: 130px;
-              }
-            }
+            padding-bottom: 10px;
           }
         }
       }
@@ -107,8 +138,8 @@
         .software-product-landing-view-top-block {
           cursor: pointer;
           border: 1px solid $light-gray;
-          padding: 28px 28px;
-          height: 250px;
+          padding: 20px 18px 0 18px;
+          height: 215px;
           display: flex;
           justify-content: space-between;
           background-color: $white;
@@ -141,6 +172,7 @@
             flex-direction: column;
             justify-content: center;
             border: 2px dashed $light-gray;
+            margin-bottom: 20px;
             @extend .body-1;
             align-items: center;
             .upload-btn {
@@ -171,21 +203,10 @@
       margin: 43px 0;
       padding: 0 52px;
     }
-    .section-title {
-      padding: 50px 0 30px 0;
-      &.general {
-        padding-top: 0;
-      }
-    }
     .validation-form-content {
       .vsp-general-tab-inline-section {
         display: flex;
-        &.coupling-items {
-          justify-content: flex-start;
-          .validation-input-wrapper:not(:last-child) {
-            margin-right: 40px;
-          }
-        }
+
         .vsp-general-tab-sub-section:not(:last-of-type) {
           margin-right: 40px;
         }
@@ -205,16 +226,6 @@
           width: 440px;
         }
       }
-
-      .vsp-general-tab-section {
-        &.licenses {
-          >.vsp-general-tab-inline-section {
-            .validation-input-wrapper:first-child {
-              margin-right: 40px;
-            }
-          }
-        }
-      }
     }
     .validation-buttons {
       position: fixed;
@@ -223,7 +234,9 @@
       width: 66%;
     }
     .validation-input-wrapper {
-      flex: none;
+      select.form-control {
+        width: 100%;
+      }
     }
   }
 }

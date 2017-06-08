@@ -20,6 +20,7 @@
 
 package org.openecomp.core.factory.impl;
 
+
 import static org.openecomp.core.utilities.CommonMethods.isEmpty;
 import static org.openecomp.core.utilities.CommonMethods.newInstance;
 
@@ -27,20 +28,16 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * The type Abstract factory base.
- */
 public abstract class AbstractFactoryBase {
 
   /**
    * Temporary registry of default implementations. The map keeps class names rather then class
-   * types to allow unloading of those classes from memory by garbage collector if
-   * factory is not actually used.
+   * types to allow unloading of those classes from memory by garbage collector if factory is not
+   * actually used.
    */
   private static Map<String, String> registry = new ConcurrentHashMap<String, String>();
 
@@ -51,8 +48,8 @@ public abstract class AbstractFactoryBase {
       new ConcurrentHashMap<String, AbstractFactoryBase>();
 
   /**
-   * Registers implementor for an abstract factory. The method accepts Java classes rather
-   * then class names to ensure type safety at compilation time.
+   * Registers implementor for an abstract factory. The method accepts Java classes rather then
+   * class names to ensure type safety at compilation time.
    *
    * @param <I>     Java interface type instantiated by abstract factory
    * @param <F>     Type specific abstract factory for concrete Java interface
@@ -78,12 +75,6 @@ public abstract class AbstractFactoryBase {
     registry.put(factory.getName(), impl.getName());
   } // registerFactory
 
-  /**
-   * Register factory.
-   *
-   * @param factoryName the factory name
-   * @param implName    the impl name
-   */
   // TODO: Remove
   protected static void registerFactory(String factoryName, String implName) {
     registry.put(factoryName, implName);
@@ -197,15 +188,9 @@ public abstract class AbstractFactoryBase {
     }
   }
 
-  /**
-   * Init.
-   */
   protected void init() {
   }
 
-  /**
-   * Stop.
-   */
   protected void stop() {
   }
 

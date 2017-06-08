@@ -20,6 +20,7 @@
 
 package org.openecomp.core.nosqldb.impl.cassandra;
 
+
 import com.datastax.driver.core.Session;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;

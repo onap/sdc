@@ -93,7 +93,7 @@
         },
         "vmCloneUsage": {
           "type": "string",
-          "maximum": 300
+          "maxLength": 300
         }
       },
       "additionalProperties": false
@@ -198,6 +198,16 @@
     "highAvailabilityAndLoadBalancing": {
       "type": "object",
       "properties": {
+        "isComponentMandatory": {
+          "type": "string",
+          "enum": ["","YES", "NO"],
+          "default": ""
+        },
+        "highAvailabilityMode": {
+          "type": "string",
+          "enum": ["","geo-activeactive", "geo-activestandby", "local-activeactive", "local-activestandby"],
+          "default": ""
+        },
         "failureLoadDistribution": {
           "type": "string",
           "maxLength": 1000
@@ -274,8 +284,8 @@
             "backupNIC": {
               "type": "string",
               "enum": [
-                "", <#if nicNames??><#list nicNames as nicName>
-                "${nicName}"<#sep>,</#list></#if>
+                ""<#if nicNames??><#list nicNames as nicName>
+                , "${nicName}"</#list></#if>
               ],
               "default": ""
             }

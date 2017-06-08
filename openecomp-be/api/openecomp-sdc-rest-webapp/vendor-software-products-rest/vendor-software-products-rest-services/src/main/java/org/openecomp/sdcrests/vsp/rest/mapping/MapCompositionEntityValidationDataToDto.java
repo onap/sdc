@@ -21,7 +21,7 @@
 package org.openecomp.sdcrests.vsp.rest.mapping;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 
@@ -34,6 +34,7 @@ public class MapCompositionEntityValidationDataToDto
                         CompositionEntityValidationDataDto target) {
     target.setEntityType(source.getEntityType());
     target.setEntityId(source.getEntityId());
+    target.setEntityName(source.getEntityName());
     target.setErrors(source.getErrors());
     if (CollectionUtils.isNotEmpty(source.getSubEntitiesValidationData())) {
       target.setSubEntitiesValidationData(source.getSubEntitiesValidationData().stream()

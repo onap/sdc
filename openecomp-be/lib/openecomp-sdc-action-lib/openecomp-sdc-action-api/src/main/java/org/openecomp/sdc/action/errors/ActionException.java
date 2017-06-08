@@ -20,18 +20,31 @@
 
 package org.openecomp.sdc.action.errors;
 
+import org.openecomp.sdc.action.util.ActionUtil;
+
+/**
+ * Custom Exception class for handling Action Library error scenarios.
+ */
 public class ActionException extends RuntimeException {
 
   private String errorCode;
   private String description;
+  private int logResponseCode;
 
   public ActionException() {
 
   }
 
+  /**
+   * Instantiates a new Action exception.
+   *
+   * @param errorCode   the error code
+   * @param description the description
+   */
   public ActionException(String errorCode, String description) {
     this.errorCode = errorCode;
     this.description = description;
+    this.logResponseCode = ActionUtil.getLogResponseCode(this.errorCode);
   }
 
   public String getErrorCode() {
@@ -48,5 +61,13 @@ public class ActionException extends RuntimeException {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public int getLogResponseCode() {
+    return logResponseCode;
+  }
+
+  public void setLogResponseCode(int logResponseCode) {
+    this.logResponseCode = logResponseCode;
   }
 }

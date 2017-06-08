@@ -20,9 +20,6 @@
 
 package org.openecomp.sdcrests.action.types;
 
-/**
- * Defines DTO for capturing input for versioning operations.
- */
 public class ActionVersionDto {
 
   String status;

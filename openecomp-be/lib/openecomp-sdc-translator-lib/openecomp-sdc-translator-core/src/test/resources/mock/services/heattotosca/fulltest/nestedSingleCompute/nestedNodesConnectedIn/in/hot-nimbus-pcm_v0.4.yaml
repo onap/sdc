@@ -1,0 +1,173 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  shared_security_group_id1:
+      type: string
+      description: network name of jsa log network
+  shared_security_group_id2:
+      type: string
+      description: network name of jsa log network
+  pcm_server_names:
+    type: comma_delimited_list
+    label: PCRF CM server names
+    description: name of the PCRF CM instance
+  pcm_image_name:
+    type: string
+    label: PCRF CM image name
+    description: PCRF CM image name
+  pcm_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  oam_server_names:
+    type: comma_delimited_list
+    label: PCRF CM server names
+    description: name of the PCRF CM instance
+  oam_image_name:
+    type: string
+    label: PCRF CM image name
+    description: PCRF CM image name
+  oam_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  oam_net_name:
+    type: string
+    label: OAM network name
+    description: OAM network name
+  oam_net_ips:
+    type: comma_delimited_list
+    label: OAM network ips
+    description: OAM network ips
+  oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  oam_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcm_volumes:
+    type: comma_delimited_list
+    label: CPS Cluman Cinder Volume
+    description: CPS Cluman Cinder Volume
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  compute_image_name:
+    type: string
+  net_name:
+    type: string
+
+resources:
+  server_compute:
+    type: OS::Nova::Server
+    properties:
+      config_drive: {get_attr: [compute_port_0]}
+      name: { compute_name }
+      image: { get_param: compute_image_name }
+      flavor: { compute_flavor_name }
+      user_data_format: { get_attr: [server_pcm_001 , oam_net_gw] }
+      metadata: { get_attr: [server_pcm_001]}
+
+  server_pcm_001:
+    type: nested-pcm_v0.1.yaml
+    depends_on:
+      - server_compute
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      security_group_name: { get_param: security_group_name }
+      pcm_vol: { get_param: [pcm_volumes, 0] }
+      cps_net_name: { get_param: cps_net_name }
+      cps_net_ip: { get_param: [cps_net_ips, 0] }
+      cps_net_mask: { get_param: cps_net_mask }
+      oam_net_name: { get_param: oam_net_name }
+      oam_net_ip: { get_param: [oam_net_ips, 0] }
+      oam_net_mask: { get_param: oam_net_mask }
+      oam_net_gw: { get_param: oam_net_gw }
+
+  compute_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net_name }
+
+  jsa_security_group1:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: jsa_security_group1_name
+      rules: [{"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}]
+
+  jsa_security_group2:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: jsa_security_group2_name
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0}]
+
+  server_pcm_002:
+    type: nested-pcm_v0.1.yaml
+    depends_on:
+      - server_pcm_001
+    properties:
+      p1: { get_resource: jsa_security_group1}
+      p2: { get_resource: jsa_security_group2}
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+
+  server_oam_001:
+    type: nested-oam_v0.1.yaml
+    depends_on:
+      - server_pcm_001
+    properties:
+      oam_server_name: { get_param: [oam_server_names, 0] }
+      oam_image_name: { get_param: oam_image_name }
+      oam_flavor_name: { get_param: oam_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+      pcm_vol: { get_param: [pcm_volumes, 0] }
+      cps_net_name: { get_param: cps_net_name }
+      cps_net_ip: { get_param: [cps_net_ips, 0] }
+      cps_net_mask: { get_param: cps_net_mask }
+      oam_net_name: { get_param: oam_net_name }
+      oam_net_ip: { get_param: [oam_net_ips, 0] }
+      oam_net_mask: { get_param: oam_net_mask }
+      oam_net_gw: { get_param: oam_net_gw }
+
+  packet_mirror_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - server_pcm_001
+      - server_compute
+    properties:
+      name:
+        get_param: net_name
+
+outputs:
+    shared_security_group_id1:
+      value: {get_resource: jsa_security_group1}
+
+    shared_security_group_id2:
+          value: {get_resource: jsa_security_group2}

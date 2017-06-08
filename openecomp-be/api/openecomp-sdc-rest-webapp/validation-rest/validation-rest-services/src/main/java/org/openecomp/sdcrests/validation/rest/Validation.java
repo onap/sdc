@@ -46,7 +46,6 @@ public interface Validation {
   @POST
   @Path("{type}/validate")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Validate a package")
   Response validateFile(@PathParam("type") String type,
                         @Multipart("validate") InputStream fileToValidate);
 }

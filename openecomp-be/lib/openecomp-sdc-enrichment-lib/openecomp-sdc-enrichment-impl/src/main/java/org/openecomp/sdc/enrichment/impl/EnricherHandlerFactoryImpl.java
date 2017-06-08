@@ -26,8 +26,8 @@ import org.openecomp.sdc.enrichment.inter.EnricherHandler;
 
 public class EnricherHandlerFactoryImpl extends EnricherHandlerFactory {
 
-  @Override
-  public EnricherHandler createInterface() {
-    return new EnricherHandlerImpl();
-  }
+    @Override
+    public EnricherHandler createInterface() {
+        return new EnricherHandlerImpl();
+    }
 }

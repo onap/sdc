@@ -21,22 +21,26 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import io.swagger.annotations.ApiModel;
-
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
+import org.openecomp.sdcrests.common.types.VersionDto;
 
 import java.util.List;
 
+/**
+ * Created by TALIO on 4/25/2016.
+ */
 @ApiModel(value = "VspDetails")
 public class VspDetailsDto extends VspDescriptionDto {
 
   private String id;
-  private String version;
-  private List<String> viewableVersions;
-  private List<String> finalVersions;
+  private VersionDto version;
+  private List<VersionDto> viewableVersions;
+  private List<VersionDto> finalVersions;
   private VersionStatus status;
   private String lockingUser;
   private ValidationStructureList validationData;
+  private String isOldVersion;
 
   public String getId() {
     return id;
@@ -46,27 +50,27 @@ public class VspDetailsDto extends VspDescriptionDto {
     this.id = id;
   }
 
-  public String getVersion() {
+  public VersionDto getVersion() {
     return version;
   }
 
-  public void setVersion(String version) {
+  public void setVersion(VersionDto version) {
     this.version = version;
   }
 
-  public List<String> getViewableVersions() {
+  public List<VersionDto> getViewableVersions() {
     return viewableVersions;
   }
 
-  public void setViewableVersions(List<String> viewableVersions) {
+  public void setViewableVersions(List<VersionDto> viewableVersions) {
     this.viewableVersions = viewableVersions;
   }
 
-  public List<String> getFinalVersions() {
+  public List<VersionDto> getFinalVersions() {
     return finalVersions;
   }
 
-  public void setFinalVersions(List<String> finalVersions) {
+  public void setFinalVersions(List<VersionDto> finalVersions) {
     this.finalVersions = finalVersions;
   }
 
@@ -90,8 +94,18 @@ public class VspDetailsDto extends VspDescriptionDto {
     return validationData;
   }
 
+  public String getIsOldVersion() {
+    return isOldVersion;
+  }
+
+  public void setIsOldVersion(String isOldVersion) {
+    this.isOldVersion = isOldVersion;
+  }
+
   public void setValidationData(ValidationStructureList validationData) {
     this.validationData = validationData;
+
+
   }
 
 }

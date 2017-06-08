@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     availabilityzone_name:
@@ -688,10 +664,6 @@ topology_template:
           capability: tosca.capabilities.Attachment
           node: pcrf_oam_volume_id_22
           relationship: tosca.relationships.AttachesTo
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: server_pcrf_oam_001
-          relationship: tosca.relationships.DependsOn
     server_pcrf_ppd_003:
       type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
       directives:
@@ -1566,7 +1538,27 @@ topology_template:
         pcrf_security_group_name:
           get_input: pcrf_security_group_name
   groups:
-    hot-nimbus-ppd_v1.0:
+    hot-nimbus-pps_v1.0_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pps_v1.0.yaml
+        description: heat template that creates PCRF Policy Server stack
+      members:
+      - server_pcrf_pps_001
+      - server_pcrf_pps_002
+      - server_pcrf_pps_003
+      - server_pcrf_pps_004
+      - server_pcrf_pps_005
+      - server_pcrf_pps_006
+    hot-nimbus-oam_v1.0_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-oam_v1.0.yaml
+        description: heat template that creates multiple PCRF OAM nodes stack
+      members:
+      - server_pcrf_oam_001
+      - server_pcrf_oam_002
+    hot-nimbus-ppd_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot-nimbus-ppd_v1.0.yaml
@@ -1576,29 +1568,13 @@ topology_template:
       - server_pcrf_ppd_004
       - server_pcrf_ppd_001
       - server_pcrf_ppd_002
-    hot-nimbus-pcm_v1.0:
+    hot-nimbus-pcm-volumes_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
-        heat_file: ../Artifacts/hot-nimbus-pcm_v1.0.yaml
-        description: heat template that creates PCRF Cluman stack
+        heat_file: ../Artifacts/hot-nimbus-pcm-volumes_v1.0.yaml
       members:
-      - server_pcrf_pcm_001
-    hot-nimbus-oam_v1.0:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/hot-nimbus-oam_v1.0.yaml
-        description: heat template that creates multiple PCRF OAM nodes stack
-      members:
-      - server_pcrf_oam_001
-      - server_pcrf_oam_002
-    hot-nimbus-oam-volumes_v1.0:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/hot-nimbus-oam-volumes_v1.0.yaml
-      members:
-      - pcrf_oam_volume_id_11
-      - pcrf_oam_volume_id_22
-    hot-nimbus-psm_v1.0:
+      - pcrf_pcm_volume_id_1
+    hot-nimbus-psm_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot-nimbus-psm_v1.0.yaml
@@ -1616,24 +1592,20 @@ topology_template:
       - server_pcrf_psm_009
       - server_pcrf_psm_010
       - server_pcrf_psm_011
-    hot-nimbus-pcm-volumes_v1.0:
+    hot-nimbus-pcm_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
-        heat_file: ../Artifacts/hot-nimbus-pcm-volumes_v1.0.yaml
+        heat_file: ../Artifacts/hot-nimbus-pcm_v1.0.yaml
+        description: heat template that creates PCRF Cluman stack
       members:
-      - pcrf_pcm_volume_id_1
-    hot-nimbus-pps_v1.0:
+      - server_pcrf_pcm_001
+    hot-nimbus-oam-volumes_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
-        heat_file: ../Artifacts/hot-nimbus-pps_v1.0.yaml
-        description: heat template that creates PCRF Policy Server stack
+        heat_file: ../Artifacts/hot-nimbus-oam-volumes_v1.0.yaml
       members:
-      - server_pcrf_pps_001
-      - server_pcrf_pps_002
-      - server_pcrf_pps_003
-      - server_pcrf_pps_004
-      - server_pcrf_pps_005
-      - server_pcrf_pps_006
+      - pcrf_oam_volume_id_11
+      - pcrf_oam_volume_id_22
   outputs:
     pcrf_oam_volume_id_1:
       description: the oam 001 volume id

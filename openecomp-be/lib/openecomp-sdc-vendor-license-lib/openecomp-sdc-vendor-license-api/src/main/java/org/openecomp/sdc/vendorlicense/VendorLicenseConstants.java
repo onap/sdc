@@ -32,6 +32,8 @@ public final class VendorLicenseConstants {
   public static final String VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH =
       EXTERNAL_ARTIFACTS_DIR + File.separator + "vendor-license-model.xml";
   public static final String VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE = " xmlns=\"\"";
+    public static final String UNSUPPORTED_OPERATION_ERROR =
+            "An error has occurred: Unsupported operation for 1707 release.";
 
   public final class UniqueValues {
     public static final String VENDOR_NAME = "Vendor name";
@@ -39,5 +41,6 @@ public final class VendorLicenseConstants {
     public static final String FEATURE_GROUP_NAME = "Feature Group name";
     public static final String ENTITLEMENT_POOL_NAME = "Entitlement Pool name";
     public static final String LICENSE_KEY_GROUP_NAME = "License Key Group name";
+
   }
 }

@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    shared_network_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    test_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    cmaui_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: shared_network_id
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_net
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui
+      - cmaui_port_0

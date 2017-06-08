@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+/**
+ * Created by TALIO on 4/25/2016.
+ */
 public class PackageInfoDto {
 
   private String displayName;

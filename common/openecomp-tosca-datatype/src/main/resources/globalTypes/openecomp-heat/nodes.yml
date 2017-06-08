@@ -1,0 +1,1221 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp-heat/nodes.yml
+  version: '1.0'
+
+imports:
+- heat_index:
+    file: _index.yml
+
+node_types:
+
+  org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      availability_zone:
+        description: Availability zone to create servers in
+        type: string
+        status: SUPPORTED
+        required: false
+      static_routes_list:
+        description: Static routes enabled
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+        required: false
+      availability_zone_enable:
+        description: Indicates availability zone is enabled
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      service_template_name:
+        description: Service template name
+        type: string
+        status: SUPPORTED
+        required: false
+      ordered_interfaces:
+        description: Indicates if service interface are ordered
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      flavor:
+        description: flavor
+        type: string
+        status: SUPPORTED
+        required: false
+      image_name:
+        description: Image name
+        type: string
+        status: SUPPORTED
+        required: true
+      service_type:
+        description: Service type
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - firewall
+          - analyzer
+          - source-nat
+          - loadbalancer
+      service_interface_type_list:
+        description: List of interface types
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+          constraints:
+          - valid_values:
+            - management
+            - left
+            - right
+            - other
+        required: true
+      service_instance_name:
+        description: Service instance name
+        type: string
+        status: SUPPORTED
+        required: true
+      interface_list:
+        description: List of interfaces
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.InterfaceData
+        required: false
+      service_mode:
+        description: Service mode
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - transparent
+          - in-network
+          - in-network-nat
+      shared_ip_list:
+        description: Shared ips enabled
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: boolean
+        required: false
+    attributes:
+      tenant_id:
+        description: Tenant id of the Service Instance
+        type: string
+        status: SUPPORTED
+      fq_name:
+        description: The FQ name of the service instance
+        type: string
+        status: SUPPORTED
+      service_template_name:
+        description: Service Template of the Service Instance
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes
+        type: string
+        status: SUPPORTED
+      active_vms:
+        description: Number of service VMs active for this Service Instance
+        type: string
+        status: SUPPORTED
+      service_instance_name:
+        description: The name of the service instance
+        type: string
+        status: SUPPORTED
+      virtual_machines:
+        description: Service VMs for the Service Instance
+        type: string
+        status: SUPPORTED
+      status:
+        description: Status of the service instance
+        type: string
+        status: SUPPORTED
+        
+
+  org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface:
+    derived_from: org.openecomp.resource.cp.nodes.network.Port
+    properties:
+      name:
+        description: Virtual Machine Interface name
+        type: string
+        status: SUPPORTED
+        required: false
+      security_group_refs:
+        description: List of security groups.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_network_refs:
+        description: List of virtual networks.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_machine_interface_properties:
+        description: virtual machine interface properties.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties
+        status: SUPPORTED
+        required: false
+      port_tuple_refs:
+        description: List of port tuples.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_machine_interface_mac_addresses:
+        description: List of mac addresses.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_machine_interface_allowed_address_pairs:
+        description: Virtual Machine Interface allowed address pairs.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        status: SUPPORTED
+        required: false      
+
+    attributes:
+      fq_name:
+        description: The FQ name of the Virtual Network.
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes.
+        type: string
+        status: SUPPORTED
+    capabilities:
+      binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+
+  org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules:
+    derived_from: tosca.nodes.Root
+    properties:
+      entries:
+        description: A symbolic name for this contrail network rule
+        type: org.openecomp.datatypes.heat.contrail.network.rule.RuleList
+        status: SUPPORTED
+        required: false
+      name:
+        description: A symbolic name for this contrail network rule
+        type: string
+        status: SUPPORTED
+        required: false
+    attributes:
+      tenant_id:
+        description: tenant_id
+        type: string
+        status: SUPPORTED
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes.
+        type: string
+        status: SUPPORTED
+      rules:
+        description: List of rules
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    requirements:
+    - network:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules:
+    derived_from: tosca.nodes.Root
+    properties:
+      description:
+        description: Description of the security group
+        type: string
+        status: SUPPORTED
+        required: false
+      name:
+        description: A symbolic name for this security group, which is not required to be unique.
+        type: string
+        status: SUPPORTED
+        required: false
+      rules:
+        description: List of security group rules
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule
+        required: false
+    attributes:
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+    requirements:
+    - port:
+        capability: tosca.capabilities.Attachment
+        node: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    properties:
+      shared:
+        description: Is virtual network shared
+        type: string
+        status: SUPPORTED
+        required: false
+      forwarding_mode:
+        description: forwarding mode of the virtual network
+        type: string
+        status: SUPPORTED
+        required: false
+      external:
+        description: Is virtual network external
+        type: string
+        status: SUPPORTED
+        required: false
+      allow_transit:
+        description: Whether this network should be transitive.
+        type: string
+        status: SUPPORTED
+        required: false
+      flood_unknown_unicast:
+        description: flood L2 packets on network
+        type: string
+        status: SUPPORTED
+        required: false
+      route_targets:
+        description: route targets associated with the virtual network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+        required: false
+    attributes:
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes.
+        type: string
+        status: SUPPORTED
+      subnets_name:
+        description: Subnets name of this network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets_show:
+        description: Detailed information about each subnet
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+
+  org.openecomp.resource.vfc.nodes.heat.nova.Server:
+    derived_from: org.openecomp.resource.vfc.nodes.Compute
+    properties:
+      admin_pass:
+        description: The administrator password for the server
+        type: string
+        status: SUPPORTED
+        required: false
+      availability_zone:
+        description: Availability zone to create servers in
+        type: string
+        status: SUPPORTED
+        required: false
+      image:
+        description: The ID or name of the image to boot with
+        type: string
+        status: SUPPORTED
+        required: false
+      image_update_policy:
+        description: Policy on how to apply an image-id update
+        type: string
+        status: SUPPORTED
+        default: REBUILD
+        required: false
+        constraints:
+        - valid_values:
+          - REBUILD_PRESERVE_EPHEMERAL
+          - REPLACE
+          - REBUILD
+      metadata:
+        description: Arbitrary JSON metadata to store for this server
+        type: json
+        status: SUPPORTED
+        required: false
+      contrail_service_instance_ind:
+        description: Nova server related to service instance indicator
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      user_data_update_policy:
+        description: Policy on how to apply a user_data update
+        type: string
+        status: SUPPORTED
+        default: REPLACE
+        required: false
+        constraints:
+        - valid_values:
+          - REPLACE
+          - IGNORE
+      flavor_update_policy:
+        description: Policy on how to apply a flavor update
+        type: string
+        status: SUPPORTED
+        default: RESIZE
+        required: false
+        constraints:
+        - valid_values:
+          - RESIZE
+          - REPLACE
+      user_data:
+        description: User data script to be executed by cloud-init
+        type: string
+        status: SUPPORTED
+        default: ''
+        required: false
+      flavor:
+        description: The ID or name of the flavor to boot onto
+        type: string
+        status: SUPPORTED
+        required: true
+      key_name:
+        description: Name of keypair to inject into the server
+        type: string
+        status: SUPPORTED
+        required: false
+      reservation_id:
+        description: A UUID for the set of servers being requested
+        type: string
+        status: SUPPORTED
+        required: false
+      security_groups:
+        description: List of security group names or IDs
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: []
+        required: false
+      config_drive:
+        description: enable config drive on the server
+        type: boolean
+        status: SUPPORTED
+        required: false
+      personality:
+        description: A map of files to create/overwrite on the server upon boot
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: {}
+        required: false
+      software_config_transport:
+        description: How the server should receive the metadata required for software configuration
+        type: string
+        status: SUPPORTED
+        default: POLL_SERVER_CFN
+        required: false
+        constraints:
+        - valid_values:
+          - POLL_SERVER_CFN
+          - POLL_SERVER_HEAT
+          - POLL_TEMP_URL
+          - ZAQAR_MESSAGE
+      user_data_format:
+        description: How the user_data should be formatted for the server
+        type: string
+        status: SUPPORTED
+        default: HEAT_CFNTOOLS
+        required: false
+        constraints:
+        - valid_values:
+          - SOFTWARE_CONFIG
+          - RAW
+          - HEAT_CFNTOOLS
+      diskConfig:
+        description: Control how the disk is partitioned when the server is created
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - AUTO
+          - MANUAL
+      name:
+        description: Server name
+        type: string
+        status: SUPPORTED
+        required: false
+      scheduler_hints:
+        description: Arbitrary key-value pairs specified by the client to help boot a server
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+    attributes:
+      accessIPv4:
+        description: The manually assigned alternative public IPv4 address of the server
+        type: string
+        status: SUPPORTED
+      addresses:
+        description: A dict of all network addresses with corresponding port_id
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.novaServer.network.AddressInfo
+      accessIPv6:
+        description: The manually assigned alternative public IPv6 address of the server
+        type: string
+        status: SUPPORTED
+      instance_name:
+        description: AWS compatible instance name
+        type: string
+        status: SUPPORTED
+      name:
+        description: Name of the server
+        type: string
+        status: SUPPORTED
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+      console_urls:
+        description: URLs of servers consoles
+        type: string
+        status: SUPPORTED
+
+  org.openecomp.resource.vfc.rules.nodes.heat.network.contrailV2.NetworkRules:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        description: A symbolic name for this contrail v2 network rule
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries:
+        description: A symbolic name for this contrail v2 network rule
+        type: org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList
+        status: SUPPORTED
+        required: false
+    attributes:
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+    requirements:
+    - network:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.resource.cp.nodes.heat.network.neutron.Port:
+    derived_from: org.openecomp.resource.cp.nodes.network.Port
+    properties:
+      port_security_enabled:
+        description: Flag to enable/disable port security on the network
+        type: boolean
+        status: SUPPORTED
+        required: false
+      device_id:
+        description: Device ID of this port
+        type: string
+        status: SUPPORTED
+        required: false
+      qos_policy:
+        description: The name or ID of QoS policy to attach to this network
+        type: string
+        status: SUPPORTED
+        required: false
+      allowed_address_pairs:
+        description: Additional MAC/IP address pairs allowed to pass through the port
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AddressPair
+        required: false
+      binding:vnic_type:
+        description: The vnic type to be bound on the neutron port
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - macvtap
+          - direct
+          - normal
+      value_specs:
+        description: Extra parameters to include in the request
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: {}
+        required: false
+      device_owner:
+        description: Name of the network owning the port
+        type: string
+        status: SUPPORTED
+        required: false
+      network:
+        description: Network this port belongs to
+        type: string
+        status: SUPPORTED
+        required: false
+      replacement_policy:
+        description: Policy on how to respond to a stack-update for this resource
+        type: string
+        status: SUPPORTED
+        default: AUTO
+        required: false
+        constraints:
+        - valid_values:
+          - REPLACE_ALWAYS
+          - AUTO
+      security_groups:
+        description: List of security group names or IDs
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      fixed_ips:
+        description: Desired IPs for this port
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
+        required: false
+      mac_address:
+        description: MAC address to give to this port
+        type: string
+        status: SUPPORTED
+        required: false
+      admin_state_up:
+        description: A boolean value specifying the administrative status of the network
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      name:
+        description: A symbolic name for this port
+        type: string
+        status: SUPPORTED
+        required: false
+    attributes:
+      tenant_id:
+        description: Tenant owning the port
+        type: string
+        status: SUPPORTED
+      network_id:
+        description: Unique identifier for the network owning the port
+        type: string
+        status: SUPPORTED
+      qos_policy_id:
+        description: The QoS policy ID attached to this network
+        type: string
+        status: SUPPORTED
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+      subnets:
+        description: Subnets of this network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      status:
+        description: The status of the network
+        type: string
+        status: SUPPORTED
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+
+  org.openecomp.resource.vl.nodes.heat.network.neutron.Net:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    properties:
+      dhcp_agent_ids:
+        description: The IDs of the DHCP agent to schedule the network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      tenant_id:
+        description: The ID of the tenant which will own the network
+        type: string
+        status: SUPPORTED
+        required: false
+      port_security_enabled:
+        description: Flag to enable/disable port security on the network
+        type: boolean
+        status: SUPPORTED
+        required: false
+      shared:
+        description: Whether this network should be shared across all tenants
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      admin_state_up:
+        description: A boolean value specifying the administrative status of the network
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      qos_policy:
+        description: The name or ID of QoS policy to attach to this network
+        type: string
+        status: SUPPORTED
+        required: false
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+        required: false
+      value_specs:
+        description: Extra parameters to include in the request
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: {}
+        required: false
+    attributes:
+      qos_policy_id:
+        description: The QoS policy ID attached to this network
+        type: string
+        status: SUPPORTED
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+      subnets_name:
+        description: Subnets name of this network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+      mtu:
+        description: The maximum transmission unit size(in bytes) for the network
+        type: scalar-unit.size
+        status: SUPPORTED
+      status:
+        description: The status of the network
+        type: string
+        status: SUPPORTED
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+
+  org.openecomp.resource.cp.nodes.heat.network.contrail.Port:
+    derived_from: org.openecomp.resource.cp.nodes.network.Port
+    properties:
+      static_routes:
+        description: An ordered list of static routes to be added to this interface
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
+        required: false
+      virtual_network:
+        description: Virtual Network for this interface
+        type: string
+        status: SUPPORTED
+        required: true
+      static_route:
+        description: Static route enabled
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      allowed_address_pairs:
+        description: List of allowed address pair for this interface
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.AddressPair
+        required: false
+      shared_ip:
+        description: Shared ip enabled
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      ip_address:
+        description: IP for this interface
+        type: string
+        status: SUPPORTED
+        required: false
+      interface_type:
+        description: Interface type
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - management
+          - left
+          - right
+          - other
+    attributes:
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+
+  org.openecomp.resource.vfc.nodes.heat.contrail.Compute:
+    derived_from: org.openecomp.resource.vfc.nodes.Compute
+    properties:
+      flavor:
+        description: flavor
+        type: string
+        status: SUPPORTED
+        required: false
+      image_name:
+        description: Image name
+        type: string
+        status: SUPPORTED
+        required: true
+      availability_zone:
+        description: Availability zone to create servers in
+        type: string
+        status: SUPPORTED
+        required: false
+      service_type:
+        description: Service type
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - firewall
+          - analyzer
+          - source-nat
+          - loadbalancer
+      availability_zone_enable:
+        description: Indicates availability zone is enabled
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: false
+      service_template_name:
+        description: Service template name
+        type: string
+        status: SUPPORTED
+        required: false
+      service_instance_name:
+        description: Service instance name
+        type: string
+        status: SUPPORTED
+        required: true
+      service_mode:
+        description: Service mode
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - transparent
+          - in-network
+          - in-network-nat
+    attributes:
+      tenant_id:
+        description: Tenant id of the VM
+        type: string
+        status: SUPPORTED
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes
+        type: string
+        status: SUPPORTED
+      active_vms:
+        description: Number of active VMs
+        type: string
+        status: SUPPORTED
+      virtual_machines:
+        description: VMs of this compute
+        type: string
+        status: SUPPORTED
+      status:
+        description: status of the compute
+        type: string
+        status: SUPPORTED
+
+        
+  org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface:
+    derived_from: org.openecomp.resource.cp.nodes.network.SubInterface
+    properties:
+      virtual_machine_interface_refs:
+        description: List of virtual machine interface.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      name:
+        description: Virtual Machine Sub Interface VLAN name
+        type: string
+        status: SUPPORTED
+        required: false
+      virtual_network_refs:
+        description: List of virtual networks.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      virtual_machine_interface_properties:
+        description: virtual machine interface properties.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.Properties
+        status: SUPPORTED
+        required: false
+      virtual_machine_interface_allowed_address_pairs:
+        description: Virtual Machine Sub Interface allowed address pairs.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs
+        status: SUPPORTED
+        required: false
+      virtual_machine_interface_mac_addresses:
+        description: List of mac addresses.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress
+        status: SUPPORTED
+        required: false
+      security_group_refs:
+        description: List of security groups.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      port_tuple_refs:
+        description: List of port tuples.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+    attributes:
+      fq_name:
+        description: The FQ name of the Virtual Network.
+        type: string
+        status: SUPPORTED
+      show:
+        description: All attributes.
+        type: string
+        status: SUPPORTED
+    requirements:
+    - binding:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+
+  org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    properties:
+      network_ipam_refs_data:
+        description: IPAM references Data
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData
+        required: false
+      network_policy_refs_data:
+        description: Policy references data
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData
+        required: false
+      network_ipam_refs:
+        description: IPAM references
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      network_policy_refs:
+        description: Policy references
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+        required: false
+    attributes:
+      fq_name:
+        description: fq_name
+        type: string
+        status: SUPPORTED
+      subnets_name:
+        description: Subnets name of this network
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets_show:
+        description: Detailed information about each subnet
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        description: Network related subnets
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+
+  org.openecomp.resource.vfc.nodes.heat.cinder.Volume:
+    derived_from: org.openecomp.resource.vfc.nodes.volume
+    properties:
+      availability_zone:
+        description: The availability zone in which the volume will be created
+        type: string
+        status: SUPPORTED
+        required: false
+      image:
+        description: If specified, the name or ID of the image to create the volume from
+        type: string
+        status: SUPPORTED
+        required: false
+      metadata:
+        description: Key/value pairs to associate with the volume
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      volume_type:
+        description: If specified, the type of volume to use, mapping to a specific backend
+        type: string
+        status: SUPPORTED
+        required: false
+      description:
+        description: A description of the volume
+        type: string
+        status: SUPPORTED
+        required: false
+      device_type:
+        description: Device type
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - cdrom
+          - disk
+      disk_bus:
+        description: 'Bus of the device: hypervisor driver chooses a suitable default
+          if omitted'
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - ide
+          - lame_bus
+          - scsi
+          - usb
+          - virtio
+      backup_id:
+        description: If specified, the backup to create the volume from
+        type: string
+        status: SUPPORTED
+        required: false
+      source_volid:
+        description: If specified, the volume to use as source
+        type: string
+        status: SUPPORTED
+        required: false
+      boot_index:
+        description: Integer used for ordering the boot disks
+        type: integer
+        status: SUPPORTED
+        required: false
+      size:
+        description: The requested storage size (default unit is MB)
+        type: scalar-unit.size
+        status: SUPPORTED
+        required: false
+        constraints:
+        - greater_or_equal: 1 GB
+      read_only:
+        description: Enables or disables read-only access mode of volume
+        type: boolean
+        status: SUPPORTED
+        required: false
+      name:
+        description: A name used to distinguish the volume
+        type: string
+        status: SUPPORTED
+        required: false
+      scheduler_hints:
+        description: Arbitrary key-value pairs specified by the client to help the Cinder scheduler creating a volume
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+      swap_size:
+        description: The size of the swap, in MB
+        type: scalar-unit.size
+        status: SUPPORTED
+        required: false
+      delete_on_termination:
+        description: Indicate whether the volume should be deleted when the server is terminated
+        type: boolean
+        status: SUPPORTED
+        required: false
+      multiattach:
+        description: Whether allow the volume to be attached more than once
+        type: boolean
+        status: SUPPORTED
+        required: false
+    attributes:
+      display_description:
+        description: Description of the volume
+        type: string
+        status: SUPPORTED
+      attachments:
+        description: The list of attachments of the volume
+        type: string
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      encrypted:
+        description: Boolean indicating if the volume is encrypted or not
+        type: boolean
+        status: SUPPORTED
+      show:
+        description: Detailed information about resource
+        type: string
+        status: SUPPORTED
+      created_at:
+        description: The timestamp indicating volume creation
+        type: timestamp
+        status: SUPPORTED
+      display_name:
+        description: Name of the volume
+        type: string
+        status: SUPPORTED
+      metadata_values:
+        description: Key/value pairs associated with the volume in raw dict form
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      bootable:
+        description: Boolean indicating if the volume can be booted or not
+        type: boolean
+        status: SUPPORTED
+      status:
+        description: The current status of the volume
+        type: string
+        status: SUPPORTED

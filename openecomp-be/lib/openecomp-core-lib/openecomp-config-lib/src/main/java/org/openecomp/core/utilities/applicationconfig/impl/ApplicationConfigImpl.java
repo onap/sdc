@@ -32,9 +32,6 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import java.util.Collection;
 import java.util.Objects;
 
-/**
- * The type Application config.
- */
 public class ApplicationConfigImpl implements ApplicationConfig {
   private static final ApplicationConfigDao applicationConfigDao =
       ApplicationConfigDaoFactory.getInstance().createInterface();

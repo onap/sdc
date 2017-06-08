@@ -22,6 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.util.List;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class UploadFileStructure {
 
   private List<String> fileNames;

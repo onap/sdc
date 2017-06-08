@@ -86,9 +86,21 @@ resources:
       image: { get_param: compute_image_name }
       flavor: { compute_flavor_name }
       user_data_format: { get_attr: [server_pcm_001 , oam_net_gw] }
-      user_data: { get_attr: [server_pcm_001]}
+      metadata: { get_attr: [server_pcm_001]}
 
   compute_port_0:
     type: OS::Neutron::Port
     properties:
       network: { get_param: net_name }
+
+  packet_mirror_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - server_pcm_001
+    properties:
+      name:
+        get_param: net_name
+
+outputs:
+    output_attr_1:
+      value: {get_attr: [server_pcm_001 , pcm_vol] }

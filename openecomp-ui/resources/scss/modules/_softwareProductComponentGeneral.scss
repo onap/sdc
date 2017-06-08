@@ -3,6 +3,9 @@
     .one-line-textarea {
       height: 30px;
     }
+    .multi-line-textarea > textarea {
+      height: 113px;
+    }
   }
   .additional-validation-form {
     margin-top: 50px;

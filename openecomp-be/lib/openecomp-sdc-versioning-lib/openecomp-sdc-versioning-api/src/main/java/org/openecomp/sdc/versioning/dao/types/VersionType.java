@@ -22,5 +22,5 @@ package org.openecomp.sdc.versioning.dao.types;
 
 public enum VersionType {
   Draft,
-  Finalized
+  Finalized;
 }

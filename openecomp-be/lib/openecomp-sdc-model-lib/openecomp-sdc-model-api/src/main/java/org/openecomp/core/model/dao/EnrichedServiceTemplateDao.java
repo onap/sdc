@@ -20,7 +20,6 @@
 
 package org.openecomp.core.model.dao;
 
-
 public interface EnrichedServiceTemplateDao extends ServiceTemplateDaoInter {
 
 }

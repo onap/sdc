@@ -28,36 +28,36 @@ import java.util.List;
 import java.util.Map;
 
 public class EnrichmentInfo {
-  Map<String, List<Object>> additionalInfo = new HashMap<>();
-  Map<String, EntityInfo> entityInfo = new HashMap<>(); //componentName,EntityInfo
-  String key;
-  Version version;
+    Map<String, List<Object>> additionalInfo = new HashMap<>();
+    Map<String, EntityInfo> entitiesInfo = new HashMap<>();
+    String key;
+    Version version;
 
-  public Map<String, List<Object>> getAdditionalInfo() {
-    return additionalInfo;
-  }
+    public Map<String, List<Object>> getAdditionalInfo() {
+        return additionalInfo;
+    }
 
-  public Map<String, EntityInfo> getEntityInfo() {
-    return entityInfo;
-  }
+    public Map<String, EntityInfo> getEntityInfo() {
+        return entitiesInfo;
+    }
 
-  public void addEntityInfo(String type, EntityInfo entityInfo) {
-    this.entityInfo.put(type, entityInfo);
-  }
+    public void addEntityInfo(String entityKey, EntityInfo entityInfo) {
+        this.entitiesInfo.put(entityKey, entityInfo);
+    }
 
-  public String getKey() {
-    return key;
-  }
+    public String getKey() {
+        return key;
+    }
 
-  public void setKey(String key) {
-    this.key = key;
-  }
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-  public Version getVersion() {
-    return version;
-  }
+    public Version getVersion() {
+        return version;
+    }
 
-  public void setVersion(Version version) {
-    this.version = version;
-  }
+    public void setVersion(Version version) {
+        this.version = version;
+    }
 }

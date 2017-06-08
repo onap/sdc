@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.NetworkDaoZusammenImpl;
 
 public class NetworkDaoFactoryImpl extends NetworkDaoFactory {
-  private static final NetworkDao INSTANCE = new NetworkDaoCassandraImpl();
+  private static final NetworkDao INSTANCE = new NetworkDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public NetworkDao createInterface() {

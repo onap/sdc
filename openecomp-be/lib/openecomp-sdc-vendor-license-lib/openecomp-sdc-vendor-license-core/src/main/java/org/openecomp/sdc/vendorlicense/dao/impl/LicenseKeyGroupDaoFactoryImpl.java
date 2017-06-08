@@ -20,11 +20,13 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.LicenseKeyGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.LicenseKeyGroupZusammenDaoImpl;
 
 public class LicenseKeyGroupDaoFactoryImpl extends LicenseKeyGroupDaoFactory {
-  private static LicenseKeyGroupDao INSTANCE = new LicenseKeyGroupCassandraDaoImpl();
+    private static LicenseKeyGroupDao INSTANCE = new LicenseKeyGroupZusammenDaoImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public LicenseKeyGroupDao createInterface() {

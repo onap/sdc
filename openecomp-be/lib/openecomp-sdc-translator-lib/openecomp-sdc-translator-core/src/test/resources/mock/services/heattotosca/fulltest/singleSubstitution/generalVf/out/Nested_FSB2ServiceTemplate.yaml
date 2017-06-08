@@ -1,0 +1,438 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_FSB2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_FSB_OAM_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB_OAM_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB2_Internal2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_FSB2_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_FSB2_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB_OAM_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB2_Internal1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_FSB2_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal1_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB_OAM_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB2_Internal1_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB_OAM_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal2_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    FSB2_FSB_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_FSB_OAM_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_FSB_OAM_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_FSB_OAM_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_FSB_OAM_fixed_ips
+          - index_value
+        network:
+          get_input:
+          - port_FSB_OAM_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+    FSB2:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB2
+      properties:
+        availability_zone:
+          get_input:
+          - compute_FSB2_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        name:
+          get_input:
+          - compute_FSB2_name
+          - index_value
+    FSB2_FSB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_FSB2_Internal2_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_FSB2_Internal2_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_FSB2_Internal2_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_FSB2_Internal2_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+    FSB2_FSB2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_FSB2_Internal1_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_FSB2_Internal1_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_FSB2_Internal1_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_FSB2_Internal1_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.FSB2
+    capabilities:
+      network.outgoing.bytes.rate_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.outgoing.bytes.rate
+      disk.device.write.requests.rate_FSB2:
+      - FSB2
+      - disk.device.write.requests.rate
+      disk.read.bytes.rate_FSB2:
+      - FSB2
+      - disk.read.bytes.rate
+      disk.read.bytes_FSB2:
+      - FSB2
+      - disk.read.bytes
+      disk.capacity_FSB2:
+      - FSB2
+      - disk.capacity
+      disk.device.latency_FSB2:
+      - FSB2
+      - disk.device.latency
+      network.incoming.bytes.rate_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.incoming.bytes.rate
+      disk.allocation_FSB2:
+      - FSB2
+      - disk.allocation
+      disk.device.capacity_FSB2:
+      - FSB2
+      - disk.device.capacity
+      cpu_util_FSB2:
+      - FSB2
+      - cpu_util
+      network.outgoing.bytes_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.outgoing.bytes
+      network.incoming.bytes_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.incoming.bytes
+      network.incoming.bytes_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.incoming.bytes
+      feature_FSB2:
+      - FSB2
+      - feature
+      memory.resident_FSB2:
+      - FSB2
+      - memory.resident
+      disk.write.requests.rate_FSB2:
+      - FSB2
+      - disk.write.requests.rate
+      network.incoming.packets.rate_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.incoming.packets.rate
+      instance_FSB2:
+      - FSB2
+      - instance
+      cpu_FSB2:
+      - FSB2
+      - cpu
+      network.outgoing.bytes_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.outgoing.bytes
+      network.outgoing.bytes_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.outgoing.bytes
+      disk.device.read.bytes.rate_FSB2:
+      - FSB2
+      - disk.device.read.bytes.rate
+      network.incoming.packets.rate_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.incoming.packets.rate
+      disk.root.size_FSB2:
+      - FSB2
+      - disk.root.size
+      cpu.delta_FSB2:
+      - FSB2
+      - cpu.delta
+      disk.write.bytes_FSB2:
+      - FSB2
+      - disk.write.bytes
+      disk.device.read.requests.rate_FSB2:
+      - FSB2
+      - disk.device.read.requests.rate
+      binding_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - binding
+      binding_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - binding
+      disk.ephemeral.size_FSB2:
+      - FSB2
+      - disk.ephemeral.size
+      disk.device.read.requests_FSB2:
+      - FSB2
+      - disk.device.read.requests
+      binding_FSB2:
+      - FSB2
+      - binding
+      disk.device.write.bytes_FSB2:
+      - FSB2
+      - disk.device.write.bytes
+      attachment_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - attachment
+      network.incoming.packets_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.incoming.packets
+      attachment_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - attachment
+      network.outgoing.packets.rate_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.outgoing.packets.rate
+      attachment_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - attachment
+      memory_FSB2:
+      - FSB2
+      - memory
+      disk.device.read.bytes_FSB2:
+      - FSB2
+      - disk.device.read.bytes
+      scalable_FSB2:
+      - FSB2
+      - scalable
+      disk.write.bytes.rate_FSB2:
+      - FSB2
+      - disk.write.bytes.rate
+      disk.device.usage_FSB2:
+      - FSB2
+      - disk.device.usage
+      disk.write.requests_FSB2:
+      - FSB2
+      - disk.write.requests
+      os_FSB2:
+      - FSB2
+      - os
+      network.incoming.bytes.rate_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.incoming.bytes.rate
+      network.incoming.packets_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.incoming.packets
+      feature_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - feature
+      disk.usage_FSB2:
+      - FSB2
+      - disk.usage
+      network.incoming.bytes.rate_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.incoming.bytes.rate
+      network.incoming.packets_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.incoming.packets
+      binding_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - binding
+      disk.device.allocation_FSB2:
+      - FSB2
+      - disk.device.allocation
+      vcpus_FSB2:
+      - FSB2
+      - vcpus
+      host_FSB2:
+      - FSB2
+      - host
+      network.outpoing.packets_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.outpoing.packets
+      disk.device.write.bytes.rate_FSB2:
+      - FSB2
+      - disk.device.write.bytes.rate
+      endpoint_FSB2:
+      - FSB2
+      - endpoint
+      network.outgoing.bytes.rate_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.outgoing.bytes.rate
+      feature_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - feature
+      feature_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - feature
+      network.outpoing.packets_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.outpoing.packets
+      disk.latency_FSB2:
+      - FSB2
+      - disk.latency
+      network.outpoing.packets_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.outpoing.packets
+      disk.read.requests_FSB2:
+      - FSB2
+      - disk.read.requests
+      disk.device.iops_FSB2:
+      - FSB2
+      - disk.device.iops
+      network.incoming.bytes_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - network.incoming.bytes
+      disk.device.write.requests_FSB2:
+      - FSB2
+      - disk.device.write.requests
+      network.outgoing.packets.rate_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - network.outgoing.packets.rate
+      memory.usage_FSB2:
+      - FSB2
+      - memory.usage
+      disk.iops_FSB2:
+      - FSB2
+      - disk.iops
+    requirements:
+      dependency_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - dependency
+      link_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - link
+      dependency_FSB2_FSB2_Internal1:
+      - FSB2_FSB2_Internal1
+      - dependency
+      dependency_FSB2:
+      - FSB2
+      - dependency
+      link_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - link
+      dependency_FSB2_FSB_OAM:
+      - FSB2_FSB_OAM
+      - dependency
+      local_storage_FSB2:
+      - FSB2
+      - local_storage
+      link_FSB2_FSB2_Internal2:
+      - FSB2_FSB2_Internal2
+      - link

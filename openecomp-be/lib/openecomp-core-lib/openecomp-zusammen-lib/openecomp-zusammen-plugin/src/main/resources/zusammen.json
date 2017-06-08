@@ -1,0 +1,23 @@
+{
+  "configuration": {
+    "level": 10,
+    "plugins": {
+      "zusammen_state_store": {
+        "implementationClass": "org.openecomp.core.zusammen.plugin.main.CassandraStateStorePluginImpl"
+      },
+      "zusammen_collaborative_store": {
+        "implementationClass": "org.openecomp.core.zusammen.plugin.main.CassandraCollaborationStorePluginImpl",
+        "properties": {
+          "master.branch": "main",
+          "private.path": "C:\\git\\private",
+          "public.path": "C:\\git\\public",
+          "blueprint.path": "C:\\git\\BP",
+          "public.url": "C:\\git\\public"
+        }
+      }
+    },
+    "properties": {
+
+    }
+  }
+}

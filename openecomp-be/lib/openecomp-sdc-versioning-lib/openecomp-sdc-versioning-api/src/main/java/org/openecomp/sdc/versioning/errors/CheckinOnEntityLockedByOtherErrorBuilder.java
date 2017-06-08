@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.versioning.errors;
 
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes
-    .CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
@@ -32,8 +29,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 public class CheckinOnEntityLockedByOtherErrorBuilder extends BaseErrorBuilder {
 
   private static final String CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
-      "Can not check in versionable entity %s with id %s since it is "
-          + "checked out by other user: %s.";
+      "Can not check in versionable entity %s with id %s since it is checked out by other "
+          + "user: %s.";
 
   /**
    * Instantiates a new Checkin on entity locked by other error builder.
@@ -44,7 +41,7 @@ public class CheckinOnEntityLockedByOtherErrorBuilder extends BaseErrorBuilder {
    */
   public CheckinOnEntityLockedByOtherErrorBuilder(String entityType, String entityId,
                                                   String lockingUser) {
-    getErrorCodeBuilder().withId(CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER);
+    getErrorCodeBuilder().withId(VersioningErrorCodes.CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(String
         .format(CHECKIN_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG, entityType, entityId, lockingUser));

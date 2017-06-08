@@ -20,14 +20,31 @@
 
 package org.openecomp.sdc.versioning.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory;
+import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 
 public class VersionableEntityDaoFactoryImpl extends VersionableEntityDaoFactory {
-  private static VersionableEntityDao INSTANCE = new VersionableEntityDaoCassandraImpl();
+  private static VersionableEntityDao CASSANDRA_INSTANCE = new VersionableEntityDaoCassandraImpl();
+  private static VersionableEntityDao ZUSAMMEN_INSTANCE =
+      new VersionableEntityDaoZusammenImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public VersionableEntityDao createInterface() {
-    return INSTANCE;
+    throw new UnsupportedOperationException
+        ("Please use createInterface api with VersionableEntityStoreType argument.");
+  }
+
+  @Override
+  public VersionableEntityDao createInterface(VersionableEntityStoreType storeType) {
+    switch (storeType) {
+      case Cassandra:
+        return CASSANDRA_INSTANCE;
+      case Zusammen:
+        return ZUSAMMEN_INSTANCE;
+      default:
+        throw new IllegalArgumentException("Unssported state store");
+    }
   }
 }

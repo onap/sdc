@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.heat.datatypes.manifest;
 
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -75,6 +78,18 @@ public class FileData {
     this.data = data;
   }
 
+  /**
+   * Add file data.
+   *
+   * @param data the data
+   */
+  public void addFileData(FileData data) {
+    if (CollectionUtils.isEmpty(this.data)) {
+      this.data = new ArrayList<>();
+    }
+    this.data.add(data);
+  }
+
   public enum Type {
 
     HEAT("HEAT"),
@@ -101,6 +116,11 @@ public class FileData {
 
     public String getDisplayName() {
       return displayName;
+    }
+
+    public static boolean isArtifact(Type fileType)
+    {
+      return !Arrays.asList(HEAT,HEAT_ENV, HEAT_VOL).contains(fileType);
     }
 
   }

@@ -15,8 +15,15 @@
 .content-area {
   padding: 30px 60px 70px 60px;
   overflow-y: auto;
+	overflow-x: hidden;
   height: 100%;
   &.no-padding-content-area {
     padding: 0;
+  }
+}
+
+.onborading-modal {
+  .modal-title {
+    text-transform: uppercase;
   }
 }

@@ -24,7 +24,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
 
-
 public class MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity
     extends MappingBase<VendorLicenseModelRequestDto, VendorLicenseModelEntity> {
   @Override

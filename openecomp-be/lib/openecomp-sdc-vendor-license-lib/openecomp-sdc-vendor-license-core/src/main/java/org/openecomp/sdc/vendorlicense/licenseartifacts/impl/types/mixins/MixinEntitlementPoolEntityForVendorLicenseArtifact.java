@@ -22,13 +22,14 @@ package org.openecomp.sdc.vendorlicense.licenseartifacts.impl.types.mixins;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.AggregationFunctionForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementMetricForXml;
 import org.openecomp.sdc.vendorlicense.dao.types.xml.EntitlementTimeForXml;
@@ -36,6 +37,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.ThresholdForXml;
 
 import java.util.Set;
 
+@JsonPropertyOrder({ "entitlement-pool-invariant-uuid", "entitlement-pool-uuid" })
 public abstract class MixinEntitlementPoolEntityForVendorLicenseArtifact {
   @JsonProperty(value = "threshold-value")
   abstract ThresholdForXml getThresholdForArtifact();
@@ -43,23 +45,25 @@ public abstract class MixinEntitlementPoolEntityForVendorLicenseArtifact {
   @JsonProperty(value = "entitlement-pool-uuid")
   abstract String getVersionUuId();
 
-  @JsonProperty(value = "manufacturer-reference-number")
-  abstract String getManufacturerReferenceNumber();
-
   @JsonIgnore
   abstract Set<String> getReferencingFeatureGroups();
 
   @JsonIgnore
   abstract String getFirstClassCitizenId();
 
-  @JsonIgnore
+  @JsonProperty(value = "entitlement-pool-invariant-uuid")
   abstract String getId();
 
-  @JsonIgnore
-  abstract String getVersion();
+  @JsonProperty(value = "manufacturer-reference-number")
+  abstract String getManufacturerReferenceNumber();
+
+  @JsonProperty(value = "version")
+  abstract String getVersionForArtifact();
 
   @JsonIgnore
   abstract String getVendorLicenseModelId();
+
+
 
   @JsonIgnore
   abstract String getThresholdUnit();
@@ -79,7 +83,7 @@ public abstract class MixinEntitlementPoolEntityForVendorLicenseArtifact {
   @JsonIgnore
   abstract String getEntityType();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "value")
+  @JacksonXmlProperty(localName = "value")
   @JacksonXmlElementWrapper(localName = "operational-scope")
   abstract String getOperationalScopeForArtifact();
 

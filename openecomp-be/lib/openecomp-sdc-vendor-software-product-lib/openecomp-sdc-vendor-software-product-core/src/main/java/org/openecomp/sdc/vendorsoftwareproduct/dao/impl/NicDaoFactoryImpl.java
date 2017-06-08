@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NicDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.NicDaoZusammenImpl;
 
 public class NicDaoFactoryImpl extends NicDaoFactory {
-  private static final NicDao INSTANCE = new NicDaoCassandraImpl();
+  private static final NicDao INSTANCE = new NicDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public NicDao createInterface() {

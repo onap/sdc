@@ -1,0 +1,460 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VF Module ID
+      default: '888800008888'
+    cpm_mgt_gw_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default Gateway for the Management Interface, set during boot time
+      default: 192.168.254.1
+    mgt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Management interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e101
+    ctrl_fabric_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR of Control Fabric Network
+    data3_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the fourth Data interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b106
+    ctrl_fabric_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the control fabric interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e102
+    data0_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Data interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b103
+    cpmaSlot:
+      hidden: false
+      immutable: false
+      type: string
+      description: The slot value assigned to CPMA
+      default: A
+    OS::stack_id:
+      type: string
+      required: false
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF ID
+      default: '111100001111'
+    cpm_mgt_ip_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP that will be used by the Management Interface on CPMB
+      default: 192.168.254.12
+    cpm_smbios:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parameters to be passed to the CPM at boot up as key-value pairs
+      default: 'TiMOS: slot=$slt chassis=VSR card=cpm-v license-file=license.txt address=$adrp/24@active
+        address=$adrs/24@standby static-route=192.168.0.0/16@$oamGw persist=on features=795'
+    cpm_mgt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP that will be used by the Management Interface on CPMA
+      default: 192.168.254.11
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone where this component should be instantiated
+      default: nova
+    cpm_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM name for CPM B
+      default: vbng1-cpmb
+    OS::stack_name:
+      type: string
+      required: false
+    cpm_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor of the CPM VNF to be used
+      default: m1.medium
+    data2_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the third Data interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b105
+    cpm_mtu:
+      hidden: false
+      immutable: false
+      type: string
+      description: MTU size in bytes
+      default: '9000'
+    cpm_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM name for CPM A
+      default: vbng1-cpma
+    iom_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the IOM instance
+      default: VSR-14.0R4
+    iom1Slot:
+      hidden: false
+      immutable: false
+      type: string
+      description: The slot value assigned to IOM1
+      default: '1'
+    iom_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor of the IOM VNF to be used
+      default: m1.medium
+    iom_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM name for IOM 1
+      default: vbng1-iom1
+    data1_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the second Data interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e104
+    cpm_mgt_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management network to be used by CPM
+      default: 192.168.254.0/24
+    mgt_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Management interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b101
+    ctrl_fabric_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the control fabric interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b102
+    data0_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Data interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e103
+    data2_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the third Data interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e105
+    iom_mtu:
+      hidden: false
+      immutable: false
+      type: string
+      description: MTU size in bytes
+      default: '9000'
+    OS::project_id:
+      type: string
+      required: false
+    cpm_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the CPM instance
+      default: VSR-14.0R4
+    cpmbSlot:
+      hidden: false
+      immutable: false
+      type: string
+      description: The slot value assigned to CPMB
+      default: B
+    iom_smbios:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parameters to be passed to the IOM at boot up as key-value pairs
+      default: 'TiMOS: slot=$slt chassis=VSR card=iom-v mda/1=m20-v features=795'
+    data3_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the fourth Data interface
+      default: 1024b82c-0049-4503-8b0b-eb5ff952e106
+    data1_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the second Data interface
+      default: 90ad7ea9-596f-45f4-8869-226fc876b104
+    stack_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the HEAT stack
+      default:
+        type: string
+  node_templates:
+    IOM1:
+      type: org.openecomp.resource.abstract.nodes.heat.VSR_IOM_template_nested
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        iom_image_name:
+          get_input: iom_image_name
+        mgt_net_id:
+          get_input: mgt_net_id
+        data3_subnet_id:
+          get_input: data3_subnet_id
+        ctrl_fabric_net_id:
+          get_input: ctrl_fabric_net_id
+        iom_flavor_name:
+          get_input: iom_flavor_name
+        security_group: sec_group
+        iom_slot:
+          get_input: iom1Slot
+        data0_subnet_id:
+          get_input: data0_subnet_id
+        data1_net_id:
+          get_input: data1_net_id
+        mgt_subnet_id:
+          get_input: mgt_subnet_id
+        service_template_filter:
+          substitute_service_template: VSR_IOM_template_nestedServiceTemplate.yaml
+        ctrl_fabric_subnet_id:
+          get_input: ctrl_fabric_subnet_id
+        data0_net_id:
+          get_input: data0_net_id
+        data2_net_id:
+          get_input: data2_net_id
+        iom_mtu:
+          get_input: iom_mtu
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        iom_smbios:
+          str_replace:
+            template:
+              get_input: iom_smbios
+            params:
+              $slt:
+                get_input: iom1Slot
+        data2_subnet_id:
+          get_input: data2_subnet_id
+        data3_net_id:
+          get_input: data3_net_id
+        data1_subnet_id:
+          get_input: data1_subnet_id
+        stack_name:
+          get_input: OS::stack_name
+        vm_name:
+          get_input: iom_name_0
+    sec_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: vsr_security_group
+        description: Security group for vSR
+        rules:
+        - protocol: tcp
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 22
+          port_range_min: 22
+        - protocol: icmp
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_cpm_mgt_0_port
+          node: CPMA
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cpm_ctrl_fabric_0_port
+          node: CPMA
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cpm_mgt_0_port
+          node: CPMB
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cpm_ctrl_fabric_0_port
+          node: CPMB
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_data_3_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_data_2_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_mgt_0_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_ctrl_fabric_0_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_data_0_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_iom_data_1_port
+          node: IOM1
+          relationship: org.openecomp.relationships.AttachesTo
+    CPMB:
+      type: org.openecomp.resource.abstract.nodes.heat.VSR_CPM_base_template_nested
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        mgt_net_id:
+          get_input: mgt_net_id
+        cpm_mgt_ip:
+          get_input: cpm_mgt_ip_1
+        cpm_slot:
+          get_input: cpmbSlot
+        ctrl_fabric_net_id:
+          get_input: ctrl_fabric_net_id
+        security_group: sec_group
+        cpm_mgt_cidr:
+          get_input: cpm_mgt_cidr
+        mgt_subnet_id:
+          get_input: mgt_subnet_id
+        service_template_filter:
+          substitute_service_template: VSR_CPM_base_template_nestedServiceTemplate.yaml
+        ctrl_fabric_subnet_id:
+          get_input: ctrl_fabric_subnet_id
+        vnf_id:
+          get_input: vnf_id
+        cpm_smbios:
+          str_replace:
+            template:
+              get_input: cpm_smbios
+            params:
+              $adrs:
+                get_input: cpm_mgt_ip_1
+              $slt:
+                get_input: cpmbSlot
+              $adrp:
+                get_input: cpm_mgt_ip_0
+              $oamGw:
+                get_input: cpm_mgt_gw_ip
+        cpm_image_name:
+          get_input: cpm_image_name
+        availability_zone_0:
+          get_input: availability_zone_0
+        cpm_flavor_name:
+          get_input: cpm_flavor_name
+        cpm_mtu:
+          get_input: cpm_mtu
+        stack_name:
+          get_input: OS::stack_name
+        vm_name:
+          get_input: cpm_name_1
+    CPMA:
+      type: org.openecomp.resource.abstract.nodes.heat.VSR_CPM_base_template_nested
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        mgt_net_id:
+          get_input: mgt_net_id
+        cpm_mgt_ip:
+          get_input: cpm_mgt_ip_0
+        cpm_slot:
+          get_input: cpmaSlot
+        ctrl_fabric_net_id:
+          get_input: ctrl_fabric_net_id
+        security_group: sec_group
+        cpm_mgt_cidr:
+          get_input: cpm_mgt_cidr
+        mgt_subnet_id:
+          get_input: mgt_subnet_id
+        service_template_filter:
+          substitute_service_template: VSR_CPM_base_template_nestedServiceTemplate.yaml
+        ctrl_fabric_subnet_id:
+          get_input: ctrl_fabric_subnet_id
+        vnf_id:
+          get_input: vnf_id
+        cpm_smbios:
+          str_replace:
+            template:
+              get_input: cpm_smbios
+            params:
+              $adrs:
+                get_input: cpm_mgt_ip_1
+              $slt:
+                get_input: cpmaSlot
+              $adrp:
+                get_input: cpm_mgt_ip_0
+              $oamGw:
+                get_input: cpm_mgt_gw_ip
+        stack_id:
+          get_input: OS::stack_id
+        cpm_image_name:
+          get_input: cpm_image_name
+        availability_zone_0:
+          get_input: availability_zone_0
+        cpm_flavor_name:
+          get_input: cpm_flavor_name
+        cpm_mtu:
+          get_input: cpm_mtu
+        stack_name:
+          get_input: OS::stack_name
+        vm_name:
+          get_input: cpm_name_0
+  groups:
+    VSR_base_hot_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/VSR_base_hot.yaml
+      members:
+      - IOM1
+      - sec_group
+      - CPMB
+      - CPMA
+  outputs:
+    out1:
+      value:
+        get_input: OS::project_id

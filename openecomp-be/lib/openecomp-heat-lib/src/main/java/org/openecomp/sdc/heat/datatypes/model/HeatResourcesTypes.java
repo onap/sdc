@@ -26,93 +26,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * The enum Heat resources types.
- */
 public enum HeatResourcesTypes {
-  /**
-   * Nova server resource type heat resources types.
-   */
   NOVA_SERVER_RESOURCE_TYPE("OS::Nova::Server"),
-  /**
-   * Nova server group resource type heat resources types.
-   */
   NOVA_SERVER_GROUP_RESOURCE_TYPE("OS::Nova::ServerGroup"),
-  /**
-   * Neutron port resource type heat resources types.
-   */
   NEUTRON_PORT_RESOURCE_TYPE("OS::Neutron::Port"),
-  /**
-   * Contrail network rule resource type heat resources types.
-   */
   CONTRAIL_NETWORK_RULE_RESOURCE_TYPE("OS::Contrail::NetworkPolicy"),
-  /**
-   * Contrail network attach rule resource type heat resources types.
-   */
   CONTRAIL_NETWORK_ATTACH_RULE_RESOURCE_TYPE("OS::Contrail::AttachPolicy"),
-  /**
-   * Contrail virtual network resource type heat resources types.
-   */
   CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE("OS::Contrail::VirtualNetwork"),
-  /**
-   * Cinder volume resource type heat resources types.
-   */
   CINDER_VOLUME_RESOURCE_TYPE("OS::Cinder::Volume"),
-  /**
-   * Cinder volume attachment resource type heat resources types.
-   */
   CINDER_VOLUME_ATTACHMENT_RESOURCE_TYPE("OS::Cinder::VolumeAttachment"),
-  /**
-   * Neutron net resource type heat resources types.
-   */
   NEUTRON_NET_RESOURCE_TYPE("OS::Neutron::Net"),
-  /**
-   * Neutron subnet resource type heat resources types.
-   */
   NEUTRON_SUBNET_RESOURCE_TYPE("OS::Neutron::Subnet"),
-  /**
-   * Neutron security group resource type heat resources types.
-   */
   NEUTRON_SECURITY_GROUP_RESOURCE_TYPE("OS::Neutron::SecurityGroup"),
-  /**
-   * Heat software config type heat resources types.
-   */
   HEAT_SOFTWARE_CONFIG_TYPE("OS::Heat::SoftwareConfig"),
-  /**
-   * Heat cloud config type heat resources types.
-   */
   HEAT_CLOUD_CONFIG_TYPE("OS::Heat::CloudConfig"),
-  /**
-   * Heat multipart mime type heat resources types.
-   */
   HEAT_MULTIPART_MIME_TYPE("OS::Heat::MultipartMime"),
-  /**
-   * Heat contrail network ipam type heat resources types.
-   */
   HEAT_CONTRAIL_NETWORK_IPAM_TYPE("OS::Contrail::NetworkIpam"),
-  /**
-   * Contrail v 2 virtual network resource type heat resources types.
-   */
   CONTRAIL_V2_VIRTUAL_NETWORK_RESOURCE_TYPE("OS::ContrailV2::VirtualNetwork"),
-  /**
-   * Contrail v 2 virtual machine interface resource type heat resources types.
-   */
   CONTRAIL_V2_VIRTUAL_MACHINE_INTERFACE_RESOURCE_TYPE("OS::ContrailV2::VirtualMachineInterface"),
-  /**
-   * Contrail service template heat resources types.
-   */
   CONTRAIL_SERVICE_TEMPLATE("OS::Contrail::ServiceTemplate"),
-  /**
-   * Contrail service instance heat resources types.
-   */
   CONTRAIL_SERVICE_INSTANCE("OS::Contrail::ServiceInstance"),
-  /**
-   * Contrail v 2 network rule resource type heat resources types.
-   */
   CONTRAIL_V2_NETWORK_RULE_RESOURCE_TYPE("OS::ContrailV2::NetworkPolicy"),
-  /**
-   * Resource group resource type heat resources types.
-   */
   RESOURCE_GROUP_RESOURCE_TYPE("OS::Heat::ResourceGroup");
 
   private static Map<String, HeatResourcesTypes> stringToHeatResourceTypeMap;
@@ -132,22 +66,10 @@ public enum HeatResourcesTypes {
     this.heatResource = heatResource;
   }
 
-  /**
-   * Find by heat resource heat resources types.
-   *
-   * @param heatResource the heat resource
-   * @return the heat resources types
-   */
   public static HeatResourcesTypes findByHeatResource(String heatResource) {
     return stringToHeatResourceTypeMap.get(heatResource);
   }
 
-  /**
-   * Is resource type valid boolean.
-   *
-   * @param resourceType the resource type
-   * @return the boolean
-   */
   public static boolean isResourceTypeValid(String resourceType) {
     return Objects.nonNull(findByHeatResource(resourceType));
   }
@@ -159,6 +81,7 @@ public enum HeatResourcesTypes {
    * @return the boolean
    */
   public static boolean isResourceExpectedToBeExposed(String resourceType) {
+    //todo - check
     return (resourceType.equals(NOVA_SERVER_GROUP_RESOURCE_TYPE.getHeatResource())
         || resourceType.equals(CONTRAIL_VIRTUAL_NETWORK_RESOURCE_TYPE.getHeatResource())
         || resourceType.equals(NEUTRON_NET_RESOURCE_TYPE.getHeatResource())
@@ -184,21 +107,11 @@ public enum HeatResourcesTypes {
     return result;
   }
 
-  /**
-   * Gets heat resource.
-   *
-   * @return the heat resource
-   */
   public String getHeatResource() {
 
     return heatResource;
   }
 
-  /**
-   * Sets heat resource.
-   *
-   * @param heatResource the heat resource
-   */
   public void setHeatResource(String heatResource) {
     this.heatResource = heatResource;
   }

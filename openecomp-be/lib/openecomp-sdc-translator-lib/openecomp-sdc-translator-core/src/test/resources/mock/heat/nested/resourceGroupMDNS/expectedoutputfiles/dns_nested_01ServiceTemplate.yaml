@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: dns_nested_01
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.dns:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -132,6 +108,12 @@ topology_template:
     dns_oam_protected_0_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group
         fixed_ips:
@@ -139,12 +121,16 @@ topology_template:
             get_input:
             - dns_oam_protected_ips
             - get_input: index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         name:
           str_replace:
             template: VNF_NAME_dns_oam_port
             params:
               VNF_NAME:
                 get_input: vnf_name
+        network_role_tag: oam_protected
         network:
           get_input: oam_protected_net_name
       requirements:
@@ -155,6 +141,12 @@ topology_template:
     dns_int_bearer_0_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group
         fixed_ips:
@@ -166,12 +158,16 @@ topology_template:
             get_input:
             - dns_int_bearer_ipv6_ips
             - get_input: index
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         name:
           str_replace:
             template: VNF_NAME_dns_bearer_port
             params:
               VNF_NAME:
                 get_input: vnf_name
+        network_role_tag: int_bearer
         network:
           get_input: int_bearer_net_name
       requirements:
@@ -202,7 +198,7 @@ topology_template:
           - dns_names
           - get_input: index
   groups:
-    dns_nested_01:
+    dns_nested_01_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/dns_nested_01.yaml
@@ -216,24 +212,192 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.dns_nested_01
     capabilities:
-      host_dns_servers:
+      disk.read.bytes.rate_dns_servers:
       - dns_servers
-      - host
-      attachment_dns_int_bearer_0_port:
-      - dns_int_bearer_0_port
-      - attachment
+      - disk.read.bytes.rate
       attachment_dns_oam_protected_0_port:
       - dns_oam_protected_0_port
       - attachment
-      os_dns_servers:
+      network.outpoing.packets_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.outpoing.packets
+      memory.resident_dns_servers:
       - dns_servers
-      - os
-      endpoint_dns_servers:
+      - memory.resident
+      disk.device.write.requests.rate_dns_servers:
       - dns_servers
-      - endpoint
+      - disk.device.write.requests.rate
+      disk.root.size_dns_servers:
+      - dns_servers
+      - disk.root.size
+      disk.write.requests.rate_dns_servers:
+      - dns_servers
+      - disk.write.requests.rate
+      disk.device.write.requests_dns_servers:
+      - dns_servers
+      - disk.device.write.requests
+      network.incoming.bytes_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.incoming.bytes
+      network.incoming.packets.rate_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.incoming.bytes.rate
+      disk.read.bytes_dns_servers:
+      - dns_servers
+      - disk.read.bytes
+      disk.capacity_dns_servers:
+      - dns_servers
+      - disk.capacity
+      network.outgoing.packets.rate_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.outgoing.packets.rate
+      binding_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - binding
+      disk.device.iops_dns_servers:
+      - dns_servers
+      - disk.device.iops
+      disk.read.requests_dns_servers:
+      - dns_servers
+      - disk.read.requests
+      network.outpoing.packets_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.outpoing.packets
+      disk.device.capacity_dns_servers:
+      - dns_servers
+      - disk.device.capacity
+      host_dns_servers:
+      - dns_servers
+      - host
+      cpu.delta_dns_servers:
+      - dns_servers
+      - cpu.delta
+      network.incoming.bytes.rate_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.incoming.bytes.rate
       binding_dns_servers:
       - dns_servers
       - binding
+      instance_dns_servers:
+      - dns_servers
+      - instance
+      disk.device.read.requests.rate_dns_servers:
+      - dns_servers
+      - disk.device.read.requests.rate
+      disk.allocation_dns_servers:
+      - dns_servers
+      - disk.allocation
+      disk.ephemeral.size_dns_servers:
+      - dns_servers
+      - disk.ephemeral.size
+      disk.device.read.bytes_dns_servers:
+      - dns_servers
+      - disk.device.read.bytes
+      vcpus_dns_servers:
+      - dns_servers
+      - vcpus
+      feature_dns_servers:
+      - dns_servers
+      - feature
+      network.outgoing.bytes.rate_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.outgoing.bytes.rate
+      disk.write.bytes_dns_servers:
+      - dns_servers
+      - disk.write.bytes
+      network.outgoing.packets.rate_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.outgoing.packets.rate
+      network.incoming.packets_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.incoming.packets
+      disk.write.requests_dns_servers:
+      - dns_servers
+      - disk.write.requests
+      cpu_dns_servers:
+      - dns_servers
+      - cpu
+      memory.usage_dns_servers:
+      - dns_servers
+      - memory.usage
+      network.incoming.packets_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.incoming.packets
+      network.incoming.packets.rate_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.incoming.packets.rate
+      memory_dns_servers:
+      - dns_servers
+      - memory
+      disk.device.write.bytes.rate_dns_servers:
+      - dns_servers
+      - disk.device.write.bytes.rate
+      attachment_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - attachment
+      disk.device.latency_dns_servers:
+      - dns_servers
+      - disk.device.latency
+      binding_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - binding
+      disk.device.read.bytes.rate_dns_servers:
+      - dns_servers
+      - disk.device.read.bytes.rate
+      disk.write.bytes.rate_dns_servers:
+      - dns_servers
+      - disk.write.bytes.rate
+      network.outgoing.bytes_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - network.outgoing.bytes
+      disk.device.read.requests_dns_servers:
+      - dns_servers
+      - disk.device.read.requests
+      disk.iops_dns_servers:
+      - dns_servers
+      - disk.iops
+      network.outgoing.bytes_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.outgoing.bytes
+      network.incoming.bytes_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - network.incoming.bytes
+      os_dns_servers:
+      - dns_servers
+      - os
+      feature_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - feature
+      feature_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - feature
+      endpoint_dns_servers:
+      - dns_servers
+      - endpoint
+      cpu_util_dns_servers:
+      - dns_servers
+      - cpu_util
+      disk.device.allocation_dns_servers:
+      - dns_servers
+      - disk.device.allocation
+      disk.latency_dns_servers:
+      - dns_servers
+      - disk.latency
+      disk.device.usage_dns_servers:
+      - dns_servers
+      - disk.device.usage
+      disk.usage_dns_servers:
+      - dns_servers
+      - disk.usage
+      disk.device.write.bytes_dns_servers:
+      - dns_servers
+      - disk.device.write.bytes
       scalable_dns_servers:
       - dns_servers
       - scalable
@@ -241,9 +405,18 @@ topology_template:
       local_storage_dns_servers:
       - dns_servers
       - local_storage
+      dependency_dns_oam_protected_0_port:
+      - dns_oam_protected_0_port
+      - dependency
       link_dns_oam_protected_0_port:
       - dns_oam_protected_0_port
       - link
+      dependency_dns_servers:
+      - dns_servers
+      - dependency
       link_dns_int_bearer_0_port:
       - dns_int_bearer_0_port
       - link
+      dependency_dns_int_bearer_0_port:
+      - dns_int_bearer_0_port
+      - dependency

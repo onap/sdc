@@ -25,23 +25,31 @@ import java.util.List;
 
 public class VersionableEntityMetadata {
 
+  private VersionableEntityStoreType storeType;
   private String name;
   private String identifierName;
   private String versionIdentifierName;
   private List<UniqueValueMetadata> uniqueValuesMetadata = new ArrayList<>();
 
-  /**
-   * Instantiates a new Versionable entity metadata.
-   *
-   * @param name                  the name
-   * @param identifierName        the identifier name
-   * @param versionIdentifierName the version identifier name
-   */
   public VersionableEntityMetadata(String name, String identifierName,
                                    String versionIdentifierName) {
+    this(VersionableEntityStoreType.Cassandra, name, identifierName, versionIdentifierName);
+  }
+
+  public VersionableEntityMetadata(VersionableEntityStoreType storeType, String name,
+                                   String identifierName, String versionIdentifierName) {
+    this.storeType = storeType;
     this.name = name;
     this.identifierName = identifierName;
     this.versionIdentifierName = versionIdentifierName;
+  }
+
+  public VersionableEntityStoreType getStoreType() {
+    return storeType;
+  }
+
+  public void setStoreType(VersionableEntityStoreType storeType) {
+    this.storeType = storeType;
   }
 
   public String getName() {

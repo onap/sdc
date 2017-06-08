@@ -25,6 +25,12 @@ import com.datastax.driver.mapping.annotations.UDT;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 @UDT(keyspace = "dox", name = "choice_or_other")
 public class ChoiceOrOther<E extends Enum<E>> {
@@ -110,10 +116,13 @@ public class ChoiceOrOther<E extends Enum<E>> {
 
     try {
       choice = E.valueOf(enumClass, result);
-    } catch (IllegalArgumentException e0) {
+    } catch (IllegalArgumentException exception) {
       try {
         choice = E.valueOf(enumClass, OTHER_ENUM_VALUE);
       } catch (IllegalArgumentException ex) {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.VALIDATE_CHOICE_VALUE, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
         throw new CoreException(new ErrorCode.ErrorCodeBuilder()
             .withId(CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
             .withMessage(CHOICE_OR_OTHER_INVALID_ENUM_MSG)
@@ -121,6 +130,14 @@ public class ChoiceOrOther<E extends Enum<E>> {
       }
       other = result;
     }
+  }
+
+  @Override
+  public int hashCode() {
+    int result1 = choice != null ? choice.hashCode() : 0;
+    result1 = 31 * result1 + (other != null ? other.hashCode() : 0);
+    result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+    return result1;
   }
 
   @Override
@@ -142,13 +159,5 @@ public class ChoiceOrOther<E extends Enum<E>> {
     }
     return result != null ? result.equals(that.result) : that.result == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result1 = choice != null ? choice.hashCode() : 0;
-    result1 = 31 * result1 + (other != null ? other.hashCode() : 0);
-    result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
-    return result1;
   }
 }

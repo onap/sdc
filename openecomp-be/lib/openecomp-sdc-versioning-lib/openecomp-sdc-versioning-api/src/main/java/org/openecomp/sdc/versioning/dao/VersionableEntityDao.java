@@ -29,6 +29,8 @@ public interface VersionableEntityDao {
                    Version baseVersion, Version newVersion);
 
   void deleteVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
-                     Version versionToDelete);
+                     Version versionToDelete, Version backToVersion);
 
+  void closeVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
+                    Version versionToClose);
 }

@@ -1,0 +1,69 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-11-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  oam_net_name:
+    type: string
+    description: network name of OAM network
+  security_group_name:
+    type: string
+    description: security group name of JSA
+  MASTER_names:
+    type: string
+    description: JSA MASTER instance name
+  MASTER_image_name:
+    type: string
+    description: JSA MASTER instance image name
+  MASTER_flavor_name:
+    type: string
+    description: the flavor name of JSA MASTER instance
+  packet_internal_network_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+
+resources:
+  MASTER_instance:
+    type: OS::Nova::Server
+    depends_on:
+    - MASTER_mgmt_port
+    - packet_internal_network
+    properties:
+      name: {get_param: MASTER_names}
+      image: {get_param: MASTER_image_name}
+      flavor: {get_param: MASTER_flavor_name}
+      networks:
+        - port: {get_resource: MASTER_mgmt_port}
+
+  MASTER_instance_2:
+    type: OS::Nova::Server
+    depends_on:
+    - MASTER_instance
+    properties:
+      name: {get_param: MASTER_names}
+      image: {get_param: MASTER_image_name}
+      flavor: {get_param: MASTER_flavor_name}
+      networks:
+        - port: {get_resource: MASTER_mgmt_port}
+
+  MASTER_mgmt_port:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+
+  MASTER_mgmt_port_2:
+    type: OS::Neutron::Port
+    depends_on:
+    - MASTER_mgmt_port
+    - MASTER_instance
+    properties:
+      network: {get_param: oam_net_name}
+
+  packet_internal_network:
+    depends_on:
+    - MASTER_mgmt_port
+    properties:
+      name:
+        get_param: packet_internal_network_name
+    type: OS::Neutron::Net

@@ -1,0 +1,690 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: FEAdd_On_Module_vLBAgentTemplate
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vLBAgent:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+    packet_mirror_network:
+      hidden: false
+      immutable: false
+      type: string
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+    vProbe_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    vlb_agent_image_name:
+      hidden: false
+      immutable: false
+      type: string
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+    vLB_node_count:
+      hidden: false
+      immutable: false
+      type: float
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+    ntp_timezone:
+      hidden: false
+      immutable: false
+      type: string
+    packet_internal_network:
+      hidden: false
+      immutable: false
+      type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+    region_name:
+      hidden: false
+      immutable: false
+      type: string
+    manager_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    vLB_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    tenant_name:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_version_name:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_type:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_node_count:
+      hidden: false
+      immutable: false
+      type: float
+    vLBAgent_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+    vLBAgent_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_names:
+      hidden: false
+      immutable: false
+      type: list
+      entry_schema:
+        type: string
+    vLBAgent_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+    vLBAgent_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+    vLBAgent_index:
+      hidden: false
+      immutable: false
+      type: float
+    vLBAgent_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+    vLBAgent_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    manager_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+    rpmrepository_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    packet_mirror_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: packet_mirror_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vLBAgentInstance
+          relationship: tosca.relationships.network.BindsTo
+    vLBAgentInstance:
+      type: org.openecomp.resource.vfc.nodes.heat.vLBAgent
+      properties:
+        flavor:
+          get_input: vLBAgent_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: vlb_agent_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          packet_mirror_network_cidr:
+            get_attribute:
+            - packet_mirror_network_port
+            - subnets
+            - 0
+            - cidr
+          packet_internal_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port.fixed_ip_0s
+          version_number:
+            get_input: vLBAgent_version_name
+          machine_name:
+            get_input:
+            - vLBAgent_names
+            - get_input: vLBAgent_index
+          vf_module_name:
+            get_input: vf_module_name
+          vLB_node_count:
+            get_input: vLB_node_count
+          ntp_timezone:
+            get_input: ntp_timezone
+          vnf_id:
+            get_input: vnf_id
+          mount_colon__slash_log: vLBAgent_volume_1
+          mount_colon__slash_config: vLBAgent_volume_2
+          oam_private_network_cidr:
+            get_attribute:
+            - oam_private_net_network_port
+            - subnets
+            - 0
+            - cidr
+          tenant:
+            get_input: tenant_name
+          machine_type: vLBAgent
+          cluster_name:
+            get_input: vLBAgent_cluster_name
+          repo_ip_0:
+            get_input: rpmrepository_ip_0
+          mount_colon__slash_data: vLBAgent_volume_0
+          vLBAgentInstance:
+            get_input: vLBAgent_index
+          vLBAgent_id:
+          - UNSUPPORTED_RESOURCE_vLBAgent_id
+          vLBAgent_version_name:
+            get_input: vLBAgent_version_name
+          packet_internal_network_cidr:
+            get_attribute:
+            - packet_internal_network_port
+            - subnets
+            - 0
+            - cidr
+          vLBAgent_type:
+            get_input: vLBAgent_type
+          DPDK: DPDK_IP
+          oam_private_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          packet_mirror_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_packet_mirror_network_port.fixed_ip_0s
+          vLBAgent_name:
+            get_input:
+            - vLBAgent_names
+            - get_input: vLBAgent_index
+          region:
+            get_input: region_name
+          manager_oam_direct_ip_0:
+            get_input: manager_oam_direct_ip_0
+        config_drive: true
+        personality:
+          /root/RegisterStatus/register_status.py:
+            get_artifact:
+            - SELF
+            - register_status
+          /root/dependencies_with_vLB.json:
+            get_artifact:
+            - SELF
+            - vlbagentdependencies_with_vLB
+          /root/CheckAvailability/check_availability.py:
+            get_artifact:
+            - SELF
+            - check_availability
+          /root/dependencies_without_vLB.json:
+            get_artifact:
+            - SELF
+            - vlbagentdependencies_without_vLB
+          /tmp/wait_for_resources.py:
+            get_artifact:
+            - SELF
+            - wait_for_resources
+          /root/call_home.py:
+            get_artifact:
+            - SELF
+            - call_home
+        user_data_format: RAW
+        name:
+          get_input:
+          - vLBAgent_names
+          - get_input: vLBAgent_index
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vLBAgent_volume_0
+          relationship: vLBAgent_volume_0_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vLBAgent_volume_1
+          relationship: vLBAgent_volume_1_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vLBAgent_volume_2
+          relationship: vLBAgent_volume_2_att
+      artifacts:
+        call_home:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/call_home.py
+        check_availability:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/check_availability.py
+        vlbagentdependencies_without_vLB:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/vlbagentdependencies_without_vLB.json
+        vlbagentdependencies_with_vLB:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/vlbagentdependencies_with_vLB.json
+        wait_for_resources:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/wait_for_resources.py
+        register_status:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/register_status.py
+    vLBAgent_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vLBAgent_volume_type_0
+        size: '(get_input : vLBAgent_volume_size_0) * 1024'
+        description:
+          get_input: vLBAgent_volume_name_0
+    oam_private_net_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam_private
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vLBAgentInstance
+          relationship: tosca.relationships.network.BindsTo
+    vLBAgent_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vLBAgent_volume_type_1
+        size: '(get_input : vLBAgent_volume_size_1) * 1024'
+        description:
+          get_input: vLBAgent_volume_name_1
+    vLBAgent_volume_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vLBAgent_volume_type_2
+        size: '(get_input : vLBAgent_volume_size_2) * 1024'
+        description:
+          get_input: vLBAgent_volume_name_2
+    packet_internal_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: packet_internal_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vLBAgentInstance
+          relationship: tosca.relationships.network.BindsTo
+  relationship_templates:
+    vLBAgent_volume_0_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vLBAgent_volume_0
+        instance_uuid: vLBAgentInstance
+    vLBAgent_volume_2_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vLBAgent_volume_2
+        instance_uuid: vLBAgentInstance
+    vLBAgent_volume_1_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vLBAgent_volume_1
+        instance_uuid: vLBAgentInstance
+  groups:
+    FEAdd_On_Module_vLBAgentTemplate_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/FEAdd_On_Module_vLBAgentTemplate.yaml
+      members:
+      - packet_mirror_network_port
+      - vLBAgentInstance
+      - vLBAgent_volume_0
+      - oam_private_net_network_port
+      - vLBAgent_volume_1
+      - vLBAgent_volume_2
+      - packet_internal_network_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate
+    capabilities:
+      disk.device.read.requests_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.read.requests
+      attachment_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - attachment
+      network.incoming.packets_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.packets
+      disk.device.usage_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.usage
+      network.outgoing.bytes_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.outgoing.bytes
+      disk.read.requests_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.read.requests
+      network.outgoing.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes.rate
+      cpu_util_vLBAgentInstance:
+      - vLBAgentInstance
+      - cpu_util
+      network.outpoing.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outpoing.packets
+      feature_vLBAgent_volume_1:
+      - vLBAgent_volume_1
+      - feature
+      feature_vLBAgent_volume_0:
+      - vLBAgent_volume_0
+      - feature
+      feature_vLBAgent_volume_2:
+      - vLBAgent_volume_2
+      - feature
+      network.incoming.bytes.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.bytes.rate
+      network.outgoing.bytes.rate_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.outgoing.bytes.rate
+      disk.usage_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.usage
+      disk.device.capacity_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.capacity
+      disk.device.iops_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.iops
+      binding_packet_internal_network_port:
+      - packet_internal_network_port
+      - binding
+      disk.device.write.bytes_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.write.bytes
+      network.incoming.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes
+      feature_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - feature
+      network.outpoing.packets_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.outpoing.packets
+      network.incoming.bytes_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.incoming.bytes
+      network.incoming.packets_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.incoming.packets
+      endpoint_vLBAgentInstance:
+      - vLBAgentInstance
+      - endpoint
+      binding_vLBAgentInstance:
+      - vLBAgentInstance
+      - binding
+      disk.allocation_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.allocation
+      memory.resident_vLBAgentInstance:
+      - vLBAgentInstance
+      - memory.resident
+      attachment_packet_internal_network_port:
+      - packet_internal_network_port
+      - attachment
+      network.incoming.packets.rate_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.outgoing.packets.rate
+      disk.read.bytes_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.read.bytes
+      memory.usage_vLBAgentInstance:
+      - vLBAgentInstance
+      - memory.usage
+      network.incoming.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes.rate
+      scalable_vLBAgentInstance:
+      - vLBAgentInstance
+      - scalable
+      disk.latency_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.latency
+      disk.device.allocation_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.allocation
+      cpu_vLBAgentInstance:
+      - vLBAgentInstance
+      - cpu
+      disk.device.write.requests_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.write.requests
+      disk.write.bytes_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.write.bytes
+      network.outgoing.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes
+      memory_vLBAgentInstance:
+      - vLBAgentInstance
+      - memory
+      disk.device.write.bytes.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.write.bytes.rate
+      network.outgoing.packets.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.packets.rate
+      disk.iops_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.iops
+      instance_vLBAgentInstance:
+      - vLBAgentInstance
+      - instance
+      network.outgoing.bytes_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.bytes
+      network.incoming.bytes_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.bytes
+      disk.device.read.requests.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.read.requests.rate
+      os_vLBAgentInstance:
+      - vLBAgentInstance
+      - os
+      network.incoming.packets.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.packets.rate
+      attachment_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - attachment
+      disk.write.requests.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.write.requests.rate
+      attachment_vLBAgent_volume_0:
+      - vLBAgent_volume_0
+      - attachment
+      binding_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - binding
+      disk.device.read.bytes_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.read.bytes
+      attachment_vLBAgent_volume_2:
+      - vLBAgent_volume_2
+      - attachment
+      attachment_vLBAgent_volume_1:
+      - vLBAgent_volume_1
+      - attachment
+      host_vLBAgentInstance:
+      - vLBAgentInstance
+      - host
+      disk.device.write.requests.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.write.requests.rate
+      feature_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - feature
+      binding_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - binding
+      network.incoming.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets
+      network.incoming.bytes.rate_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - network.incoming.bytes.rate
+      network.incoming.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets.rate
+      disk.device.read.bytes.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.read.bytes.rate
+      cpu.delta_vLBAgentInstance:
+      - vLBAgentInstance
+      - cpu.delta
+      disk.capacity_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.capacity
+      disk.root.size_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.root.size
+      network.outgoing.bytes.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.bytes.rate
+      disk.ephemeral.size_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.ephemeral.size
+      feature_vLBAgentInstance:
+      - vLBAgentInstance
+      - feature
+      disk.device.latency_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.device.latency
+      disk.write.requests_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.write.requests
+      network.outpoing.packets_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outpoing.packets
+      vcpus_vLBAgentInstance:
+      - vLBAgentInstance
+      - vcpus
+      disk.read.bytes.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.read.bytes.rate
+      feature_packet_internal_network_port:
+      - packet_internal_network_port
+      - feature
+      disk.write.bytes.rate_vLBAgentInstance:
+      - vLBAgentInstance
+      - disk.write.bytes.rate
+      network.outgoing.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.packets.rate
+    requirements:
+      dependency_vLBAgentInstance:
+      - vLBAgentInstance
+      - dependency
+      dependency_packet_internal_network_port:
+      - packet_internal_network_port
+      - dependency
+      link_packet_internal_network_port:
+      - packet_internal_network_port
+      - link
+      dependency_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - dependency
+      dependency_vLBAgent_volume_1:
+      - vLBAgent_volume_1
+      - dependency
+      dependency_vLBAgent_volume_2:
+      - vLBAgent_volume_2
+      - dependency
+      dependency_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - dependency
+      link_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - link
+      dependency_vLBAgent_volume_0:
+      - vLBAgent_volume_0
+      - dependency
+      link_packet_mirror_network_port:
+      - packet_mirror_network_port
+      - link
+      local_storage_vLBAgentInstance:
+      - vLBAgentInstance
+      - local_storage

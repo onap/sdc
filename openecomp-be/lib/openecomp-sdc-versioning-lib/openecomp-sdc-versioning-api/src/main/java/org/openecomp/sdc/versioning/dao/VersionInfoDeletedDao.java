@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.versioning.dao;
 
-
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoDeletedEntity;
 

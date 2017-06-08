@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
@@ -6,7 +21,6 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
 import SoftwareProductProcessesEditor from './SoftwareProductComponentProcessesEditor.js';
-import SoftwareProductComponentsProcessesConfirmationModal from './SoftwareProductComponentsProcessesConfirmationModal.jsx';
 
 class SoftwareProductProcessesView extends React.Component {
 
@@ -22,12 +36,11 @@ class SoftwareProductProcessesView extends React.Component {
 		isModalInEditMode: React.PropTypes.bool,
 		onStorageSelect: React.PropTypes.func,
 		componentId: React.PropTypes.string,
-		softwareProductId: React.PropTypes.string
+		softwareProductId: React.PropTypes.string,
+		currentSoftwareProduct: React.PropTypes.object
 	};
 
 	render() {
-		let { softwareProductId, componentId} = this.props;
-
 		return (
 			<div className='vsp-processes-page'>
 				<div className='software-product-view'>
@@ -35,18 +48,15 @@ class SoftwareProductProcessesView extends React.Component {
 						{this.renderEditor()}
 						{this.renderProcessList()}
 					</div>
-					<SoftwareProductComponentsProcessesConfirmationModal
-						componentId={componentId}
-						softwareProductId={softwareProductId}/>
 				</div>
 			</div>
 		);
 	}
 
 	renderEditor() {
-		let {softwareProductId, componentId, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
+		let {softwareProductId, currentSoftwareProduct: {version}, componentId, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
 		return (
-			<Modal show={isDisplayModal} bsSize='large' animation={true}>
+			<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal'>
 				<Modal.Header>
 					<Modal.Title>{isModalInEditMode ? i18n('Edit Process Details') : i18n('Create New Process Details')}</Modal.Title>
 				</Modal.Header>
@@ -54,6 +64,7 @@ class SoftwareProductProcessesView extends React.Component {
 					<SoftwareProductProcessesEditor
 						componentId={componentId}
 						softwareProductId={softwareProductId}
+						version={version}
 						isReadOnlyMode={isReadOnlyMode}/>
 				</Modal.Body>
 			</Modal>
@@ -72,7 +83,8 @@ class SoftwareProductProcessesView extends React.Component {
 					placeholder={i18n('Filter Process')}
 					onAdd={onAddProcess}
 					isReadOnlyMode={isReadOnlyMode}
-					onFilter={filter => this.setState({localFilter: filter})}>
+					title={i18n('Process Details')}
+					onFilter={value => this.setState({localFilter: value})}>
 					{this.filterList().map(processes => this.renderProcessListItem(processes, isReadOnlyMode))}
 				</ListEditorView>
 			</div>
@@ -81,14 +93,14 @@ class SoftwareProductProcessesView extends React.Component {
 
 	renderProcessListItem(process, isReadOnlyMode) {
 		let {id, name, description, artifactName = ''} = process;
-		let {onEditProcessClick, onDeleteProcessClick} =  this.props;
+		let {currentSoftwareProduct: {version}, onEditProcessClick, onDeleteProcessClick} =  this.props;
 		return (
 			<ListEditorItemView
 				key={id}
 				className='list-editor-item-view'
 				isReadOnlyMode={isReadOnlyMode}
 				onSelect={() => onEditProcessClick(process)}
-				onDelete={() => onDeleteProcessClick(process)}>
+				onDelete={() => onDeleteProcessClick(process, version)}>
 
 				<div className='list-editor-item-view-field'>
 					<div className='title'>{i18n('Name')}</div>

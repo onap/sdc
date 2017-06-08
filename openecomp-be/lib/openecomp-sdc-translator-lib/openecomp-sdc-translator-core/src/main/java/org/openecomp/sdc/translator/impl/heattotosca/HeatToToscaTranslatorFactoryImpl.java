@@ -23,6 +23,7 @@ package org.openecomp.sdc.translator.impl.heattotosca;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.factory.HeatToToscaTranslatorFactory;
 
+
 public class HeatToToscaTranslatorFactoryImpl extends HeatToToscaTranslatorFactory {
 
   private static HeatToToscaTranslator INSTANCE = new HeatToToscaTranslatorImpl();

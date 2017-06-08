@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.heat.services;
 
+
 public class ErrorCodes {
   public static final String INVALID_BOOLEAN = "INVALID_BOOLEAN";
 }

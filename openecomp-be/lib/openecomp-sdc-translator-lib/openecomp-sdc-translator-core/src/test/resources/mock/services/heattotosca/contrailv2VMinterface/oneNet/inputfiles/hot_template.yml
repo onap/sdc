@@ -27,6 +27,9 @@ parameters:
   nems_traffic_name:
     description: dummy
     type: string
+  interface_param:
+    description: dummy
+    type: string
 
 resources:
   template_VMInt_OAM_lb_1:
@@ -39,6 +42,7 @@ resources:
       virtual_network_refs: [{ get_resource: jsa_net1 }]
       port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
       security_group_refs: [{ get_param: oam_sec_group_name}]
+      virtual_machine_interface_refs: [{ get_param: interface_param }]
 
   jsa_net1:
      properties:

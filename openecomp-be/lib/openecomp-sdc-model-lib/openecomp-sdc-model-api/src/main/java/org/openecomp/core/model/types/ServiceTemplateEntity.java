@@ -27,6 +27,13 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
@@ -56,7 +63,6 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
   @Column(name = "content_data")
   public ByteBuffer contentData;
 
-
   @Column(name = "base_name")
   private String baseName;
 
@@ -76,11 +82,14 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
     try {
       this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
     } catch (IOException ioException) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CREATE_SERVICE_TEMPLATE, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(),
+          LoggerErrorDescription.CREATE_SERVICE_TEMPLATE);
       throw new RuntimeException(ioException);
     }
 
   }
-
 
   public String getBaseName() {
     return baseName;
@@ -89,7 +98,6 @@ public class ServiceTemplateEntity implements ServiceElementEntity {
   public void setBaseName(String baseName) {
     this.baseName = baseName;
   }
-
 
   @Override
   public String getEntityType() {

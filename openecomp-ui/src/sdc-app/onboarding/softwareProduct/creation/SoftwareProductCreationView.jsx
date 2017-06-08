@@ -1,10 +1,27 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import ValidationInput from 'nfvo-components/input/validation/ValidationInput.jsx';
-import ValidationForm from 'nfvo-components/input/validation/ValidationForm.jsx';
+import Validator from 'nfvo-utils/Validator.js';
+import Input from 'nfvo-components/input/validation/Input.jsx';
+import Form from 'nfvo-components/input/validation/Form.jsx';
+import {SP_CREATION_FORM_NAME} from './SoftwareProductCreationConstants.js';
+import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
-
 
 const SoftwareProductPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
@@ -21,50 +38,66 @@ class SoftwareProductCreationView extends React.Component {
 		data: SoftwareProductPropType,
 		finalizedLicenseModelList: React.PropTypes.array,
 		softwareProductCategories: React.PropTypes.array,
+		VSPNames: React.PropTypes.object,
 		onDataChanged: React.PropTypes.func.isRequired,
 		onSubmit: React.PropTypes.func.isRequired,
 		onCancel: React.PropTypes.func.isRequired
 	};
 
 	render() {
-		let {softwareProductCategories, data = {}, onDataChanged, onCancel} = this.props;
+		let {softwareProductCategories, data = {}, onDataChanged, onCancel, genericFieldInfo, disableVendor} = this.props;
 		let {name, description, vendorId, subCategory} = data;
 
 		const vendorList = this.getVendorList();
-
 		return (
 			<div className='software-product-creation-page'>
-				<ValidationForm
-					ref='validationForm'
+				{ genericFieldInfo && <Form
+					ref={(validationForm) => this.validationForm = validationForm}
 					hasButtons={true}
 					onSubmit={() => this.submit() }
 					onReset={() => onCancel() }
-					labledButtons={true}>
+					labledButtons={true}
+					isValid={this.props.isFormValid}
+					formReady={this.props.formReady}
+					onValidateForm={() => this.validate() }>
 					<div className='software-product-form-row'>
 						<div className='software-product-inline-section'>
-							<ValidationInput
+							<Input
 								value={name}
 								label={i18n('Name')}
-								ref='software-product-name'
-								onChange={name => onDataChanged({name})}
-								validations={{validateName: true, maxLength: 25, required: true}}
+								isRequired={true}
+								onChange={name => onDataChanged({name},SP_CREATION_FORM_NAME, {name: name => this.validateName(name)})}
+								isValid={genericFieldInfo.name.isValid}
+								errorText={genericFieldInfo.name.errorText}
 								type='text'
-								className='field-section'/>
-							<ValidationInput
-								onEnumChange={vendorId => onDataChanged({vendorId})}
-								value={vendorId}
+								className='field-section'
+								data-test-id='new-vsp-name' />
+							<Input
 								label={i18n('Vendor')}
-								values={vendorList}
-								validations={{required: true}}
 								type='select'
-								className='field-section'/>
-							<ValidationInput
+								value={vendorId}
+								isRequired={true}
+								disabled={disableVendor}
+								onChange={e => this.onSelectVendor(e)}
+								isValid={genericFieldInfo.vendorId.isValid}
+								errorText={genericFieldInfo.vendorId.errorText}
+								className='input-options-select'
+								groupClassName='bootstrap-input-options'
+								data-test-id='new-vsp-vendor' >
+								{vendorList.map(vendor =>
+								<option key={vendor.title} value={vendor.enum}>{vendor.title}</option>)}
+							</Input>
+							<Input
 								label={i18n('Category')}
 								type='select'
 								value={subCategory}
-								onChange={subCategory => this.onSelectSubCategory(subCategory)}
-								validations={{required: true}}
-								className='options-input-category'>
+								isRequired={true}
+								onChange={e => this.onSelectSubCategory(e)}
+								isValid={genericFieldInfo.subCategory.isValid}
+								errorText={genericFieldInfo.subCategory.errorText}
+								className='input-options-select'
+								groupClassName='bootstrap-input-options'
+								data-test-id='new-vsp-category' >
 								<option key='' value=''>{i18n('please select…')}</option>
 								{softwareProductCategories.map(category =>
 									category.subcategories &&
@@ -74,20 +107,23 @@ class SoftwareProductCreationView extends React.Component {
 										<option key={sub.uniqueId} value={sub.uniqueId}>{`${sub.name} (${category.name})`}</option>)}
 									</optgroup>)
 								}
-							</ValidationInput>
+							</Input>
 						</div>
 						<div className='software-product-inline-section'>
-							<ValidationInput
+							<Input
 								value={description}
 								label={i18n('Description')}
-								ref='description'
-								onChange={description => onDataChanged({description})}
-								validations={{freeEnglishText: true, maxLength: 1000, required: true}}
+								isRequired={true}
+								overlayPos='bottom'
+								onChange={description => onDataChanged({description},SP_CREATION_FORM_NAME)}
+								isValid={genericFieldInfo.description.isValid}
+								errorText={genericFieldInfo.description.errorText}
 								type='textarea'
-								className='field-section'/>
+								className='field-section'
+								data-test-id='new-vsp-description' />
 						</div>
 					</div>
-				</ValidationForm>
+				</Form>}
 			</div>
 		);
 	}
@@ -95,28 +131,46 @@ class SoftwareProductCreationView extends React.Component {
 	getVendorList() {
 		let {finalizedLicenseModelList} =  this.props;
 
-		return [{enum: '', title: i18n('please select...')}].concat(finalizedLicenseModelList.map(vendor => {
-			return {
-				enum: vendor.id,
-				title: vendor.vendorName
-			};
-		}));
+		return [{enum: '', title: i18n('please select...')}].concat(
+			sortByStringProperty(finalizedLicenseModelList, 'vendorName').map(vendor => {
+				return {
+					enum: vendor.id,
+					title: vendor.vendorName
+				};
+			})
+		);
 	}
 
-	onSelectSubCategory(subCategory) {
+	onSelectVendor(e) {
+		const selectedIndex = e.target.selectedIndex;
+		const vendorId = e.target.options[selectedIndex].value;
+		this.props.onDataChanged({vendorId},SP_CREATION_FORM_NAME);
+	}
+
+	onSelectSubCategory(e) {
+		const selectedIndex = e.target.selectedIndex;
+		const subCategory = e.target.options[selectedIndex].value;
 		let {softwareProductCategories, onDataChanged} = this.props;
 		let category = SoftwareProductCategoriesHelper.getCurrentCategoryOfSubCategory(subCategory, softwareProductCategories);
-		onDataChanged({category, subCategory});
-	}
-
-	create(){
-		this.refs.validationForm.handleFormSubmit(new Event('dummy'));
+		onDataChanged({category, subCategory},SP_CREATION_FORM_NAME);
 	}
 
 	submit() {
-		const {data:softwareProduct, finalizedLicenseModelList} = this.props;
+		let  {data:softwareProduct, finalizedLicenseModelList} = this.props;
 		softwareProduct.vendorName = finalizedLicenseModelList.find(vendor => vendor.id === softwareProduct.vendorId).vendorName;
 		this.props.onSubmit(softwareProduct);
+	}
+
+	validateName(value) {
+		const {data: {id}, VSPNames} = this.props;
+		const isExists = Validator.isItemNameAlreadyExistsInList({itemId: id, itemName: value, list: VSPNames});
+
+		return !isExists ?  {isValid: true, errorText: ''} :
+			{isValid: false, errorText: i18n('Software product by the name \'' + value + '\' already exists. Software product name must be unique')};
+	}
+
+	validate() {
+		this.props.onValidateForm(SP_CREATION_FORM_NAME);
 	}
 }
 

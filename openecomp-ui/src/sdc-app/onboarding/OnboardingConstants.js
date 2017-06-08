@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 
 export const actionTypes = keyMirror({
@@ -29,16 +24,21 @@ export const enums = keyMirror({
 
 	BREADCRUMS: {
 		LICENSE_MODEL: 'LICENSE_MODEL',
+		LICENSE_MODEL_OVERVIEW: 'LICENSE_MODEL_OVERVIEW',
 		LICENSE_AGREEMENTS: 'LICENSE_AGREEMENTS',
 		FEATURE_GROUPS: 'FEATURE_GROUPS',
 		ENTITLEMENT_POOLS: 'ENTITLEMENT_POOLS',
 		LICENSE_KEY_GROUPS: 'LICENSE_KEY_GROUPS',
+		ACTIVITY_LOG: 'ACTIVITY_LOG',
 
 		SOFTWARE_PRODUCT: 'SOFTWARE_PRODUCT',
+		SOFTWARE_PRODUCT_LANDING_PAGE: 'SOFTWARE_PRODUCT_LANDING_PAGE',
 		SOFTWARE_PRODUCT_DETAILS: 'SOFTWARE_PRODUCT_DETAILS',
 		SOFTWARE_PRODUCT_ATTACHMENTS: 'SOFTWARE_PRODUCT_ATTACHMENTS',
 		SOFTWARE_PRODUCT_PROCESSES: 'SOFTWARE_PRODUCT_PROCESSES',
 		SOFTWARE_PRODUCT_NETWORKS: 'SOFTWARE_PRODUCT_NETWORKS',
+		SOFTWARE_PRODUCT_DEPENDENCIES: 'SOFTWARE_PRODUCT_DEPENDENCIES',
+		SOFTWARE_PRODUCT_ACTIVITY_LOG: 'SOFTWARE_PRODUCT_ACTIVITY_LOG',
 		SOFTWARE_PRODUCT_COMPONENTS: 'SOFTWARE_PRODUCT_COMPONENTS',
 		SOFTWARE_PRODUCT_COMPONENT_PROCESSES: 'SOFTWARE_PRODUCT_COMPONENT_PROCESSES',
 		SOFTWARE_PRODUCT_COMPONENT_STORAGE: 'SOFTWARE_PRODUCT_COMPONENT_STORAGE',
@@ -50,16 +50,20 @@ export const enums = keyMirror({
 
 	SCREEN: {
 		ONBOARDING_CATALOG: null,
+		LICENSE_MODEL_OVERVIEW: null,
 		LICENSE_AGREEMENTS: null,
 		FEATURE_GROUPS: null,
 		ENTITLEMENT_POOLS: null,
 		LICENSE_KEY_GROUPS: null,
+		ACTIVITY_LOG: null,
 
 		SOFTWARE_PRODUCT_LANDING_PAGE: null,
 		SOFTWARE_PRODUCT_DETAILS: null,
 		SOFTWARE_PRODUCT_ATTACHMENTS: null,
 		SOFTWARE_PRODUCT_PROCESSES: null,
 		SOFTWARE_PRODUCT_NETWORKS: null,
+		SOFTWARE_PRODUCT_DEPENDENCIES: null,
+		SOFTWARE_PRODUCT_ACTIVITY_LOG: null,
 		SOFTWARE_PRODUCT_COMPONENTS: null,
 		SOFTWARE_PRODUCT_COMPONENT_PROCESSES: null,
 		SOFTWARE_PRODUCT_COMPONENT_COMPUTE: null,

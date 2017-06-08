@@ -29,8 +29,8 @@ import org.openecomp.sdc.common.errors.ErrorCode;
  */
 public class ToscaInvalidSubstituteNodeTemplateErrorBuilder {
   private static final String INVALID_SUBSTITUTE_NODE_TEMPLATE_MSG =
-      "Invalid substitute node template, directives with substitutable value must be defined. "
-          + "node template id %s";
+      "Invalid substitute node template, directives with substitutable value must be defined."
+          + " node template id %s";
   private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**

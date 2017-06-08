@@ -24,6 +24,7 @@ package org.openecomp.core.validation.types;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+
 public class FileValidationContext {
   private String fileName;
   private MessageContainer messageContainer = new MessageContainer();
@@ -40,7 +41,8 @@ public class FileValidationContext {
   }
 
   public InputStream getContent() {
-    return new ByteArrayInputStream(content);
+    ByteArrayInputStream is = new ByteArrayInputStream(content);
+    return is;
   }
 
   public String getFileName() {

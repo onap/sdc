@@ -2,43 +2,12 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
-node_types:
-  org.openecomp.resource.vfc.nodes.heat.jsa:
-    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    shared_test_nova:
-      hidden: false
-      immutable: false
-      type: string
     shared_network_id1:
       hidden: false
       immutable: false
@@ -54,20 +23,7 @@ topology_template:
       immutable: false
       type: string
       description: network name of jsa log network
-    jsa_name:
-      hidden: false
-      immutable: false
-      type: string
   node_templates:
-    test_nestedInvalidConnectionToNetwork:
-      type: org.openecomp.resource.abstract.nodes.heat.nested1
-      directives:
-      - substitutable
-      properties:
-        service_template_filter:
-          substitute_service_template: nested1ServiceTemplate.yaml
-        shared_network_id1:
-          get_input: shared_test_nova
     test_net2:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -142,25 +98,8 @@ topology_template:
           capability: tosca.capabilities.network.Linkable
           node: test_net1
           relationship: tosca.relationships.network.LinksTo
-    test_nova:
-      type: org.openecomp.resource.vfc.nodes.heat.jsa
-      properties:
-        image: image
-        name:
-          get_input: jsa_name
   groups:
-    addOn:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/addOn.yml
-        description: |
-          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
-      members:
-      - test_nestedInvalidConnectionToNetwork
-      - test_nested2
-      - test_nested3
-      - test_nested1
-    main:
+    main_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/main.yml
@@ -169,4 +108,13 @@ topology_template:
       members:
       - test_net2
       - test_net1
-      - test_nova
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested2
+      - test_nested3
+      - test_nested1

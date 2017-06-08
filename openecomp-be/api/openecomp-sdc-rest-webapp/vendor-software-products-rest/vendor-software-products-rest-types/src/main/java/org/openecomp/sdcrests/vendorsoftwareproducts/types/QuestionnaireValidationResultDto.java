@@ -20,9 +20,12 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import java.util.List;
+import java.util.Set;
+
 public class QuestionnaireValidationResultDto {
   private boolean valid;
-  private CompositionEntityValidationDataDto validationData;
+  private Set<CompositionEntityValidationDataDto> validationData;
 
   public boolean isValid() {
     return valid;
@@ -32,11 +35,11 @@ public class QuestionnaireValidationResultDto {
     this.valid = valid;
   }
 
-  public CompositionEntityValidationDataDto getValidationData() {
+  public Set<CompositionEntityValidationDataDto> getValidationData() {
     return validationData;
   }
 
-  public void setValidationData(CompositionEntityValidationDataDto validationData) {
+  public void setValidationData(Set<CompositionEntityValidationDataDto> validationData) {
     this.validationData = validationData;
   }
 }

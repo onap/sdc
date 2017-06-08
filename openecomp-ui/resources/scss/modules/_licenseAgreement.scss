@@ -37,21 +37,6 @@
     padding: 0;
   }
   .license-agreement-form {
-      .button-tab{
-        @extend .body-1-medium;
-        color: $dark-gray;
-        padding: 6px;
-        border: 0;
-        background-color: $white;
-        box-shadow: none;
-        &:first-child {
-          margin-right: 28px;
-        }
-        &.active, &:hover {
-          color: $text-black;
-          border-bottom: 2px solid $blue;
-        }
-      }
     .no-items-msg {
       margin-top: 55px;
       color: $dark-gray;
@@ -66,21 +51,6 @@
           text-overflow: ellipsis;
           &:not(:last-of-type) {
             margin-right: 24px;
-          }
-        }
-      }
-    }
-    .license-agreement-form-row {
-      display: flex;
-      justify-content: space-between;
-      .license-agreement-form-col {
-        flex: 0 1 45%;
-      }
-      .validation-input-wrapper {
-        flex: 0 1 45%;
-        .form-group {
-          textarea {
-            height: 100px;
           }
         }
       }

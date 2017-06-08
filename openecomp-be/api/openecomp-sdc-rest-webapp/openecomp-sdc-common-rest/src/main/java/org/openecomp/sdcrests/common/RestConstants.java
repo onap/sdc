@@ -21,7 +21,8 @@
 package org.openecomp.sdcrests.common;
 
 public class RestConstants {
-  public static final String USER_HEADER_PARAM = "USER_ID";
+  public static final String USER_ID_HEADER_PARAM = "USER_ID";
+  // value Should be equal to com.tlv.sdc.common.api.Constants#USER_ID_HEADER
   public static final String USER_MISSING_ERROR_MSG =
       "Field does not conform to predefined criteria : user : may not be null";
   public static final String INVALID_JSON_ERROR_MESSAGE =

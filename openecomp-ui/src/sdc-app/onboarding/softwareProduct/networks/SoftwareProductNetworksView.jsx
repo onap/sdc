@@ -1,8 +1,24 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
+import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
 class SoftwareProductNetworksView extends React.Component {
 
@@ -27,7 +43,8 @@ class SoftwareProductNetworksView extends React.Component {
 					title={i18n('Networks')}
 					filterValue={localFilter}
 					placeholder={i18n('Filter Networks')}
-					onFilter={filter => this.setState({localFilter: filter})}>
+					onFilter={value => this.setState({localFilter: value})}
+					twoColumns>
 					{this.filterList().map(network => this.renderNetworksListItem(network))}
 				</ListEditorView>
 			</div>
@@ -42,14 +59,15 @@ class SoftwareProductNetworksView extends React.Component {
 				className='list-editor-item-view'
 				isReadOnlyMode={true}>
 
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Name')}</div>
+				<ListEditorItemViewField>
 					<div className='name'>{name}</div>
-				</div>
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('DHCP')}</div>
-					<div className='artifact-name'>{dhcp ? i18n('YES') : i18n('NO')}</div>
-				</div>
+				</ListEditorItemViewField>
+				<ListEditorItemViewField>
+					<div className='details'>
+						<div className='title'>{i18n('DHCP')}</div>
+						<div className='artifact-name'>{dhcp ? i18n('YES') : i18n('NO')}</div>
+					</div>
+				</ListEditorItemViewField>
 			</ListEditorItemView>
 		);
 	}

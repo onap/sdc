@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.activitylog.dao.ActivityLogDaoFactory": "org.openecomp.sdc.activitylog.dao.impl.ActivityLogDaoFactoryImpl"
+}

@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_openecomp_1_0
+metadata:
+  filename: openecomp/relationships.yml
+  version: '1.0'
+imports:
+- openecomp_index:
+    file: _index.yml
+relationship_types:
+  org.openecomp.relationships.VolumeAttachesTo:
+    derived_from: org.openecomp.relationships.AttachesTo
+    description: This type represents an attachment relationship for associating volume
+    properties:
+      volume_id:
+        type: string
+        description: The ID of the volume to be attached
+        required: true
+        status: SUPPORTED
+      instance_uuid:
+        type: string
+        description: The ID of the server to which the volume attaches
+        required: true
+        status: SUPPORTED
+    attributes:
+      show:
+        type: string
+        description: Detailed information about resource
+        status: SUPPORTED
+  org.openecomp.relationships.AttachesTo:
+    derived_from: tosca.relationships.AttachesTo
+    description: This type represents an attachment relationship
+    properties:
+      location:
+        type: string
+        description: The relative location (e.g., path on the file system), which provides the root location to address an attached node.
+        required: false
+        status: SUPPORTED

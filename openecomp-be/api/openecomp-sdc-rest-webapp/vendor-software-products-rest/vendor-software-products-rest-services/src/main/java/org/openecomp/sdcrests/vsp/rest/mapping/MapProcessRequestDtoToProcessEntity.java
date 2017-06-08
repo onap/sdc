@@ -30,5 +30,6 @@ public class MapProcessRequestDtoToProcessEntity
   public void doMapping(ProcessRequestDto source, ProcessEntity target) {
     target.setName(source.getName());
     target.setDescription(source.getDescription());
+    target.setType(source.getType());
   }
 }

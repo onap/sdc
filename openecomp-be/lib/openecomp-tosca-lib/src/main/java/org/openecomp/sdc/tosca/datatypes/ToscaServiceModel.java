@@ -27,6 +27,9 @@ import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Tosca service model.
+ */
 public class ToscaServiceModel implements AsdcModel {
   private FileContentHandler artifactFiles;
   private Map<String, ServiceTemplate> serviceTemplates;
@@ -48,24 +51,48 @@ public class ToscaServiceModel implements AsdcModel {
   }
 
 
+  /**
+   * Gets artifact files.
+   *
+   * @return the artifact files
+   */
   public FileContentHandler getArtifactFiles() {
-    return artifactFiles;//MapUtils.isEmpty(artifactFiles) ? Collections.EMPTY_MAP
-    // : Collections.unmodifiableMap(artifactFiles);
+    return artifactFiles;
   }
 
 
+  /**
+   * Gets service templates.
+   *
+   * @return the service templates
+   */
   public Map<String, ServiceTemplate> getServiceTemplates() {
     return Collections.unmodifiableMap(serviceTemplates);
   }
 
+  /**
+   * Sets service templates.
+   *
+   * @param serviceTemplates the service templates
+   */
   public void setServiceTemplates(Map<String, ServiceTemplate> serviceTemplates) {
     this.serviceTemplates = serviceTemplates;
   }
 
+  /**
+   * Gets entry definition service template.
+   *
+   * @return the entry definition service template
+   */
   public String getEntryDefinitionServiceTemplate() {
     return entryDefinitionServiceTemplate;
   }
 
+  /**
+   * Sets entry definition service template.
+   *
+   * @param entryDefinitionServiceTemplate the entry definition service template
+   */
   public void setEntryDefinitionServiceTemplate(String entryDefinitionServiceTemplate) {
     this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
   }

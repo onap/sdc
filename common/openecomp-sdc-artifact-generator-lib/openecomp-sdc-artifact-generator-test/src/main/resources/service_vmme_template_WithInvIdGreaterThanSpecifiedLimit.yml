@@ -1,0 +1,98 @@
+tosca_definitions_version: tosca_simple_profile_for_ecomp_1_0
+
+description: Service Template for deploing MME Service
+
+metadata:
+  invariantUUID: e255f20c-5331-4245-9ad5-8861a73080b70
+  UUID: 7787da18-7516-40cf-bec0-ebd4202c60f0
+  type: Service
+  name: vMME_Service
+  description: vMME_Service
+  category: Mobility
+  serviceEcompNaming: false
+  serviceHoming: false
+
+imports:
+  vmmeToscaTemplate:
+    file: vf_vmme_template_1.yml
+    
+topology_template:
+
+  inputs:    
+    mme_vf_instance_name:
+      type: string
+      description: VF instance name
+    mme_vf_deployment_node:
+      type: string
+      description: The target LCP node for deployment of this VF instance
+    gtp_net_network_name:
+      type: string
+      description: The GTP network route targets
+      default: MME-24474-Ericsson-WTC-lab_gn_GTP_net_1 # HEAT ENV
+    gtp_net_route_targets:
+      type: string
+      description: The GTP network route targets
+      default: "13979:105715" # HEAT ENV
+    gtp_net_cidr:
+      type: string
+      description: The GTP network cidr
+      default: 107.243.37.64/27 # HEAT ENV
+    gtp_net_gateway_ip:
+      type: string
+      description: The GTP network gateway
+      default: 107.243.37.65 # HEAT ENV
+    gtp_net_start_ip:
+      type: string
+      description: The GTP network start ip
+      default: 107.243.37.67 # HEAT ENV
+    gtp_net_end_ip:
+      type: string
+      description: The GTP network end ip
+      default: 107.243.37.94 # HEAT ENV
+     # more inputs were removed for brevity 
+      
+  node_templates:
+
+    mme: # vMME VNF
+      type: org.openecomp.resource.vf.vmme
+
+      metadata:
+          invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+          UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+          version: 1.0
+          name: vMME_VF
+          description: vMME_VF
+          type: VF
+          category: Application L4+
+          subcategory: Firewall
+          resourceVendor: Ericsson
+
+      properties:
+        vf_ecomp_name: false
+        vf_instance_name: { get_input: vf_instance_name }
+        vf_homing: false
+        vf_deployment_node: { get_input: vf_deployment_node }
+
+      requirements:
+        - vlc1_sctp_a.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_a_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_sctp_b.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_b_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_gtp_net.link:
+              capability: tosca.capabilities.network.Bindable
+              node: gtp_net
+              relationship: tosca.relationships.network.BindsTo
+
+  groups:
+
+    external_networks: # vMME_External_Network
+      type: org.openecomp.groups.externalNetworks
+      properties:
+        contrail_service_instance: true # from HEAT
+        availability_zone_count: 1 # from HEAT
+              
+      members: [ sctp_a_net, sctp_b_net, gtp_net ]

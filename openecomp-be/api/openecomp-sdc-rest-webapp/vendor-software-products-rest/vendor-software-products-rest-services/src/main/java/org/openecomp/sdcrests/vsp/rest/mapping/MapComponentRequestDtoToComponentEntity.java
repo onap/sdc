@@ -32,6 +32,7 @@ public class MapComponentRequestDtoToComponentEntity
     ComponentData component = new ComponentData();
     component.setName(source.getName());
     component.setDisplayName(source.getDisplayName());
+    component.setVfcCode(source.getVfcCode());
     component.setDescription(source.getDescription());
     target.setComponentCompositionData(component);
   }

@@ -20,12 +20,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.VendorSoftwareProductInfoDaoZusammenImpl;
 
 public class VendorSoftwareProductInfoDaoFactoryImpl extends VendorSoftwareProductInfoDaoFactory {
   private static final VendorSoftwareProductInfoDao INSTANCE =
-      new VendorSoftwareProductInfoDaoImpl();
+      new VendorSoftwareProductInfoDaoZusammenImpl(
+          ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public VendorSoftwareProductInfoDao createInterface() {

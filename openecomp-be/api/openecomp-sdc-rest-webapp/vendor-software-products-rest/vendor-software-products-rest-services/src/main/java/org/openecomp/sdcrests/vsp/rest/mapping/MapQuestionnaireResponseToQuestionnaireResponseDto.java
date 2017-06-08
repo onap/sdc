@@ -31,5 +31,6 @@ public class MapQuestionnaireResponseToQuestionnaireResponseDto
   public void doMapping(QuestionnaireResponse source, QuestionnaireResponseDto target) {
     target.setData(source.getData());
     target.setSchema(source.getSchema());
+    target.setErrorMessage(source.getErrorMessage());
   }
 }

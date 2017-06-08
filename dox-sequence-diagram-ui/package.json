@@ -3,6 +3,25 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "lint": "eslint . --ext .js --ext .jsx --cache"
+  },
+  "author": "ECOMP",
+  "license": "SEE LICENSE IN LICENSE.TXT",
+  "dependencies": {
+    "d3": "^3.5.16",
+    "lodash": "^4.12.0",
+    "react": "^15.1.0",
+    "react-dnd": "^2.1.2",
+    "react-dnd-html5-backend": "^2.1.2",
+    "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
+    "react-select": "^1.0.0-beta13",
+    "redux": "^3.5.2"
+  },
   "devDependencies": {
     "babel-core": "^6.2.4",
     "babel-eslint": "^6.0.4",
@@ -23,6 +42,7 @@
     "eslint-plugin-jsx-a11y": "^1.2.2",
     "eslint-plugin-react": "^5.1.1",
     "file-loader": "^0.8.5",
+    "gulp": "^3.9.1",
     "json-loader": "^0.5.4",
     "node-http-proxy": "^0.2.3",
     "node-sass": "^3.7.0",
@@ -36,28 +56,9 @@
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
   },
-  "author": "ECOMP",
-  "license": "SEE LICENSE IN LICENSE.TXT",
-  "dependencies": {
-    "d3": "^3.5.16",
-    "lodash": "^4.12.0",
-    "react": "^15.1.0",
-    "react-dnd": "^2.1.2",
-    "react-dnd-html5-backend": "^2.1.2",
-    "react-dom": "^15.1.0",
-    "react-redux": "^4.4.5",
-    "react-select": "^1.0.0-beta13",
-    "redux": "^3.5.2"
-  },
   "engines": {
     "node": ">=5.1",
     "npm": ">=3.3"
-  },
-  "scripts": {
-    "prepublish": "npm run build",
-    "buildbabel": "babel src -d lib && node tools/copy-assets",
-    "build": "webpack",
-    "start": "webpack-dev-server",
-    "lint": "eslint . --ext .js --ext .jsx --cache"
   }
+
 }

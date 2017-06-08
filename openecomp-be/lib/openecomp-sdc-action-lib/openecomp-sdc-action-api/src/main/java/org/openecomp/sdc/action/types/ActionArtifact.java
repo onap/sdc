@@ -26,6 +26,7 @@ import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+
 public class ActionArtifact {
   private String artifactUuId;
 

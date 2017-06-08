@@ -20,8 +20,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
-public class CompositionEntityResponse<T extends org.openecomp.sdc
-    .vendorsoftwareproduct.types.composition.CompositionDataEntity> {
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionDataEntity;
+
+public class CompositionEntityResponse<T extends CompositionDataEntity> {
 
   private String id;
   private String schema;

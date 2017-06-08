@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
-import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ProcessDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ProcessDaoZusammenImpl;
 
 public class ProcessDaoFactoryImpl extends ProcessDaoFactory {
-  private static final ProcessDao INSTANCE = new ProcessDaoCassandraImpl();
+  private static final ProcessDao INSTANCE = new ProcessDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public ProcessDao createInterface() {

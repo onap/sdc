@@ -30,7 +30,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.xml.LicenseKeyTypeForXml;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -87,14 +86,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     return getVendorLicenseModelId();
   }
 
-  public String getVendorLicenseModelId() {
-    return vendorLicenseModelId;
-  }
-
-  public void setVendorLicenseModelId(String vendorLicenseModelId) {
-    this.vendorLicenseModelId = vendorLicenseModelId;
-  }
-
   public String getId() {
     return id;
   }
@@ -109,6 +100,24 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
 
   public void setVersion(Version version) {
     this.version = version;
+  }
+
+  @Override
+  public String getVersionUuId() {
+    return versionUuId;
+  }
+
+  @Override
+  public void setVersionUuId(String uuId) {
+    versionUuId = uuId;
+  }
+
+  public String getVendorLicenseModelId() {
+    return vendorLicenseModelId;
+  }
+
+  public void setVendorLicenseModelId(String vendorLicenseModelId) {
+    this.vendorLicenseModelId = vendorLicenseModelId;
   }
 
   public String getName() {
@@ -153,17 +162,10 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   @Override
-  public String toString() {
-    return "LicenseKeyGroupEntity{" + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
-        + ", version=" + version
-        + ", id='" + id + '\''
-        + ", name='" + name + '\''
-        + ", description='" + description + '\''
-        + ", type=" + type
-        + ", operationalScope=" + operationalScope
-        + ", referencingFeatureGroups=" + referencingFeatureGroups
-        + ", versionUuId='" + versionUuId + '\''
-        + '}';
+  public int hashCode() {
+    return Objects
+        .hash(vendorLicenseModelId, version, id, name, description, type, operationalScope,
+            referencingFeatureGroups);
   }
 
   @Override
@@ -176,7 +178,6 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
     }
     LicenseKeyGroupEntity that = (LicenseKeyGroupEntity) obj;
     return Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
-        && Objects.equals(version, that.version)
         && Objects.equals(id, that.id)
         && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
@@ -186,10 +187,17 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   @Override
-  public int hashCode() {
-    return Objects
-        .hash(vendorLicenseModelId, version, id, name, description, type, operationalScope,
-            referencingFeatureGroups);
+  public String toString() {
+    return "LicenseKeyGroupEntity{" + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
+        + ", version=" + version
+        + ", id='" + id + '\''
+        + ", name='" + name + '\''
+        + ", description='" + description + '\''
+        + ", type=" + type
+        + ", operationalScope=" + operationalScope
+        + ", referencingFeatureGroups=" + referencingFeatureGroups
+        + ", versionUuId='" + versionUuId + '\''
+        + '}';
   }
 
   /**
@@ -206,6 +214,14 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
   }
 
   /**
+   * Gets version for artifact.
+   * @return version in format suitable for artifact
+   */
+  public String getVersionForArtifact() {
+    return version.toString();
+  }
+
+  /**
    * Gets type for artifact.
    *
    * @return the type for artifact
@@ -218,14 +234,5 @@ public class LicenseKeyGroupEntity implements VersionableEntity {
       typeXml.setValue(null);
     }
     return typeXml;
-  }
-
-
-  public String getVersionUuId() {
-    return versionUuId;
-  }
-
-  public void setVersionUuId(String uuId) {
-    versionUuId = uuId;
   }
 }

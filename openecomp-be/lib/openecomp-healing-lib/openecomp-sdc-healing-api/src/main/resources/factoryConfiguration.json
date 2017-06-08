@@ -1,0 +1,3 @@
+{
+  "org.openecomp.sdc.healing.factory.HealingManagerFactory" : "org.openecomp.sdc.healing.impl.HealingManagerFactoryImpl"
+}

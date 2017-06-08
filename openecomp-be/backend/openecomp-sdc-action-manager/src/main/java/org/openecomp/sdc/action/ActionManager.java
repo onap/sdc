@@ -24,9 +24,13 @@ package org.openecomp.sdc.action;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdc.action.types.ActionArtifact;
-import org.openecomp.sdc.action.types.EcompComponent;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
 
 import java.util.List;
+
+/**
+ * Created by uttamp on 7/1/2016.
+ */
 
 public interface ActionManager {
   public Action createAction(Action action, String user) throws ActionException;
@@ -38,7 +42,7 @@ public interface ActionManager {
   public List<Action> getFilteredActions(String filterType, String filterValue)
       throws ActionException;
 
-  public List<EcompComponent> getEcompComponents() throws ActionException;
+  public List<OpenEcompComponent> getOpenEcompComponents() throws ActionException;
 
   public List<Action> getActionsByActionInvariantUuId(String invariantId) throws ActionException;
 

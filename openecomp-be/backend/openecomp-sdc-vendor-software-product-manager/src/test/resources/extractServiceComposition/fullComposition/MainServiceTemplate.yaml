@@ -2,24 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pcrf_psm:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -370,7 +354,7 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcm_image_name
-        config_drive: 'True'
+        config_drive: true
         user_data_format: RAW
         name:
           get_input: pcm_server_name
@@ -395,7 +379,7 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcrf_psm_image_name
-        config_drive: 'True'
+        config_drive: true
         metadata:
           vnf_id:
             get_input: pcrf_vnf_id
@@ -403,6 +387,148 @@ topology_template:
         name:
           get_input: pcrf_psm_server_name
         user_data: UNSUPPORTED_RESOURCE_pcrf_server_init
+    template_Vlan_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - cmaui_port_1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - jsa_net1
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_input: mac_address
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_input: virtual_ip_address
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_input: mac_address
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_input: virtual_ipv6_address
+        virtual_machine_interface_mac_addresses:
+          virtual_machine_interface_mac_addresses_mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pcm_port_1
+          relationship: tosca.relationships.network.BindsTo
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_name: aaa
+    template_Vlan_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - template_VMInt_OAM_lb_2
+            - fq_name
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - jsa_net2
+            - fq_name
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_input: mac_address
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_input: virtual_ip_address
+          - virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac:
+              get_input: mac_address
+            virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix:
+                get_input: virtual_ipv6_address
+        virtual_machine_interface_mac_addresses:
+          virtual_machine_interface_mac_addresses_mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_2
+          relationship: tosca.relationships.network.BindsTo
+    template_VMInt_OAM_lb_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - jsa_net2
+            - fq_name
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1
+          relationship: tosca.relationships.network.BindsTo
     FSB1:
       type: org.openecomp.resource.vfc.nodes.heat.nova.Server
       properties:

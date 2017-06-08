@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     oam_net_ips:
@@ -128,6 +104,10 @@ topology_template:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        metadata:
+          get_attribute:
+          - server_pcm_001
+          - server_pcm_id
         availabilityzone_name:
           get_input: availabilityzone_name
         pcm_image_name:
@@ -153,6 +133,10 @@ topology_template:
           get_input: availabilityzone_name
         oam_net_gw:
           get_input: oam_net_gw
+        user_data_format:
+          get_attribute:
+          - server_pcm_002
+          - pcm_vol
         pcm_vol:
           get_input:
           - pcm_volumes
@@ -175,6 +159,16 @@ topology_template:
           get_input: oam_net_mask
         oam_net_name:
           get_input: oam_net_name
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: cps_net_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: server_pcm_001
+          relationship: tosca.relationships.DependsOn
     server_pcm_003:
       type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
@@ -199,14 +193,7 @@ topology_template:
         cps_net_mask:
           get_input: cps_net_mask
   groups:
-    hot-nimbus-pcm_v0.4_2:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4_2.yaml
-        description: heat template that creates PCRF Cluman stack
-      members:
-      - server_pcm_003
-    hot-nimbus-pcm_v0.4:
+    hot-nimbus-pcm_v0.4_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
@@ -214,3 +201,22 @@ topology_template:
       members:
       - server_pcm_002
       - server_pcm_001
+      - packet_mirror_network
+    hot-nimbus-pcm_v0.4_2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-nimbus-pcm_v0.4_2.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_pcm_003
+  outputs:
+    output_attr_1:
+      value:
+        get_attribute:
+        - server_pcm_001
+        - pcm_vol
+    output_attr_2:
+      value:
+        get_attribute:
+        - server_pcm_002
+        - oam_net_ip

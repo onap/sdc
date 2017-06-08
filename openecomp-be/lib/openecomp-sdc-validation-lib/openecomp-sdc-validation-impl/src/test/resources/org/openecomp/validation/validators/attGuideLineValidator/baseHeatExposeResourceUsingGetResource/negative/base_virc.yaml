@@ -1,0 +1,143 @@
+heat_template_version: 2015-04-30
+
+description: vIRC CC base template
+
+parameters:
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  vf_module_name:
+    type: string
+    description: Unique name for this VF Module instance
+  vm_roles:
+    type: comma_delimited_list
+    description: Unique roles for first group of instances
+  virc_names:
+    type: comma_delimited_list
+    description: List of names of vIRC CC instances in first availability zone
+  virc_image_name:
+    type: string
+    description: Image used for vIRC CC instances
+  virc_flavor_name:
+    type: string
+    description: Flavor of VM to use for vIRC CC instances
+  virc_ssh_public_key:
+    type: string
+    description: Public key for SSH access to vIRC CC instances
+  availability_zone_0:
+    type: string
+    description: First availability zone ID or name
+  management_net_name:
+    type: string
+    description: vIRC CC management network name
+  virc_management_dhcp:
+    type: string
+    description: For static IPs on management port, no. For DHCP assigned IPs, yes.
+  virc_management_ips:
+    type: comma_delimited_list
+    description: vIRC CC management network fixed ips for first availability zone if static
+  virc_management_netmask:
+    type: string
+    description: vIRC CC management netmask
+  virc_management_gateway:
+    type: string
+    description: vIRC CC management gateway
+  virc_management_default_route:
+    type: string
+    description: If management port is default route on OS, yes. If not, no. 
+  data_net_name:
+    type: string
+    description: vIRC CC data network name
+  virc_data_dhcp:
+    type: string
+    description: For static IPs on data port, no. For DHCP assigned IPs, yes.
+  virc_data_ips:
+    type: comma_delimited_list
+    description: vIRC CC data network fixed ips for first availability zone if static
+  virc_data_netmask:
+    type: string
+    description: vIRC CC data netmask
+  virc_data_gateway:
+    type: string
+    description: vIRC CC data gateway
+  virc_data_default_route:
+    type: string
+    description: If data port is default route on OS, yes. If not, no.
+  signaling_net_name:
+    type: string
+    description: vIRC CC signaling network name
+  virc_signaling_dhcp:
+    type: string
+    description: For static IPs on data port, no. For DHCP assigned IPs, yes.
+  virc_signaling_ips:
+    type: comma_delimited_list
+    description: vIRC CC signaling network fixed ips for first availability zone if static
+  virc_signaling_netmask:
+    type: string
+    description: vIRC CC signaling netmask
+  virc_signaling_gateway:
+    type: string
+    description: vIRC CC signaling gateway
+  virc_signaling_default_route:
+    type: string
+    description: If signaling port is default route on OS, yes. If not, no.
+  num_instances:
+    type: number
+    description: Number of instances to deploy in first availability zone
+    constraints:
+      - range: { min: 0, max: 18}
+  virc_sg_rules:
+    type: json
+    description: vIRC CC security group rules
+  virc_domain:
+    type: string
+    description: Domain of the vIRC CC instances
+  virc_dns1:
+    type: string
+    description: First DNS nameserver for vIRC CC instances
+  virc_dns2:
+    type: string
+    description: Second DNS nameserver for vIRC CC instances
+  virc_default_gateway:
+    type: string
+    description: Default gateway for vIRC CC instances
+  virc_version:
+    type: string
+    description: vIRC CC deployment version
+  virc_environment:
+    type: string
+    description: vIRC CC deployment environment
+  virc_version_file:
+    type: string
+    description: vIRC CC version file name
+
+resources:
+  virc_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_virc_keypair
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      public_key: { get_param: virc_ssh_public_key }
+      save_private_key: false
+
+
+  virc_RSG:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_virc_sg
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      rules: { get_param: virc_sg_rules }
+
+

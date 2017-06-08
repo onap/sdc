@@ -1,0 +1,185 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.QRouter:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    tenant_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of tenant to be used
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    packet_mirror_network_subnet_alloc_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start address for the allocation pool
+    packet_mirror_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    base_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The base ID or name of the image to boot with
+    cdr_network:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    packet_internal_network_subnet_alloc_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start address for the allocation pool
+    packet_internal_network_subnet_alloc_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End address for the allocation pool
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The servers domain
+    packet_mirror_network_subnet_alloc_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End address for the allocation pool
+    packet_internal_network_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the subnet
+    packet_mirror_network_subnet_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Classless Inter-Domain Routing
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement
+    packet_internal_network_subnet_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Classless Inter-Domain Routing
+    region_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of region to be used
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement
+    manager_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Name for Manager VM 0
+    manager_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The public ip address of the manager
+    packet_mirror_network_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the subnet
+    rpmrepository_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The public ip address of the repository
+  node_templates:
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+    QRouter:
+      type: org.openecomp.resource.vfc.nodes.heat.QRouter
+      properties:
+        flavor: FLAVOR-test
+        availability_zone: Availability-test
+        image: Image-test
+        config_drive: true
+        name: QRouter-name
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_internal_network_name
+    cdr_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: cdr_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+    oam_private_net_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam_private
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    input_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/input.yaml
+      members:
+      - packet_mirror_network
+      - QRouter
+      - packet_internal_network
+      - cdr_network_port
+      - oam_private_net_network_port

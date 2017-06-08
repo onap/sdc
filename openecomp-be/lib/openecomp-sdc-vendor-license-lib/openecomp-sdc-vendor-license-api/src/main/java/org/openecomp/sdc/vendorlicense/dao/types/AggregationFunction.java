@@ -23,5 +23,5 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 public enum AggregationFunction {
   Peak,
   Average,
-  Other
+  Other;
 }

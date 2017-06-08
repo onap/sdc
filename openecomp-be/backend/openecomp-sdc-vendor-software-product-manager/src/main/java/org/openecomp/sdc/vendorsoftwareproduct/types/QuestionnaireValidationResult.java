@@ -20,11 +20,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
+
+import java.util.List;
+import java.util.Set;
+
 public class QuestionnaireValidationResult {
   private boolean valid;
-  private CompositionEntityValidationData validationData;
+  private Set<CompositionEntityValidationData> validationData;
 
-  public QuestionnaireValidationResult(CompositionEntityValidationData validationData) {
+  public QuestionnaireValidationResult(Set<CompositionEntityValidationData> validationData) {
     this.validationData = validationData;
     valid = validationData == null;
   }
@@ -33,7 +38,7 @@ public class QuestionnaireValidationResult {
     return valid;
   }
 
-  public CompositionEntityValidationData getValidationData() {
+  public Set<CompositionEntityValidationData> getValidationData() {
     return validationData;
   }
 }

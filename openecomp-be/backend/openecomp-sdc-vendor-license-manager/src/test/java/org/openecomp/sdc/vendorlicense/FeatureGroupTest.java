@@ -1,39 +1,86 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+/*
+
 package org.openecomp.sdc.vendorlicense;
 
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
-import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
-import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
+import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
+import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
+import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacade;
+import org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory;
+import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
+import org.openecomp.sdc.versioning.dao.types.Version;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+*/
+/**
+ * Created by KATYR on 4/10/2016
+ *//*
 
 public class FeatureGroupTest {
   protected static final Version VERSION01 = new Version(0, 1);
   protected static final String USER1 = "FeatureGroupTest_User1";
   protected static VendorLicenseManager vendorLicenseManager = new VendorLicenseManagerImpl();
-  protected static VendorLicenseFacade vendorLicenseFacade = org.openecomp.sdc.vendorlicense.facade.VendorLicenseFacadeFactory
-      .getInstance().createInterface();
+  protected static VendorLicenseFacade vendorLicenseFacade =
+      VendorLicenseFacadeFactory.getInstance().createInterface();
 
 
   @Test
   public void testListFeatureGroups() throws Exception {
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel("vlmId_" + CommonMethods.nextUuId(), "vlm2Id desc", "icon2"), USER1).getId();
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg22 = LicenseAgreementTest.createFeatureGroup(vlmId, VERSION01, "fg2", "FG2", "FG2 desc", null, null);
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+            .createVendorLicenseModel("vlmId_" + CommonMethods.nextUuId(), "vlm2Id desc", "icon2"),
+        USER1).getId();
+    FeatureGroupEntity
+        fg22 = LicenseAgreementTest
+        .createFeatureGroup(vlmId, VERSION01, "fg2", "FG2", "FG2 desc", null, null);
     String fg22Id = vendorLicenseManager.createFeatureGroup(fg22, USER1).getId();
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg33 = LicenseAgreementTest.createFeatureGroup(vlmId, VERSION01, "fg3", "FG3", "FG3 desc", null, null);
+    FeatureGroupEntity fg33 = LicenseAgreementTest
+        .createFeatureGroup(vlmId, VERSION01, "fg3", "FG3", "FG3 desc", null, null);
     String fg33Id = vendorLicenseManager.createFeatureGroup(fg33, USER1).getId();
 
-    Collection<org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity> featureGroupEntities = vendorLicenseManager.listFeatureGroups(vlmId, null, USER1);
+    Collection<FeatureGroupEntity> featureGroupEntities =
+        vendorLicenseManager.listFeatureGroups(vlmId, null, USER1);
 
     Assert.assertEquals(featureGroupEntities.size(), 2);
     Set<String> actualIds = new HashSet<>();
-    for (org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
+    for (FeatureGroupEntity featureGroupEntity : featureGroupEntities) {
       actualIds.add(featureGroupEntity.getId());
     }
 
@@ -49,28 +96,36 @@ public class FeatureGroupTest {
   @Test
   public void testCreateFeatureGroup() throws Exception {
     String testName = "testCreateFeatureGroup";
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1).getId();
-    Set<org.openecomp.sdc.vendorlicense.dao.types.OperationalScope> opScopeChoices = new HashSet<>();
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Other);
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Data_Center);
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Network_Wide);
-    org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity
-        ep = EntitlementPoolTest.createEntitlementPool(vlmId, VERSION01, "EP1" + CommonMethods.nextUuId(), "EP1 dec", 80, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Absolute, org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric.Core, null, "inc1", org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction.Other, "agg func1", opScopeChoices, null, org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime.Hour, null, "sku1");
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+        .createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1)
+        .getId();
+    Set<OperationalScope> opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Other);
+    opScopeChoices.add(OperationalScope.Data_Center);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    EntitlementPoolEntity
+        ep = EntitlementPoolTest
+        .createEntitlementPool(vlmId, VERSION01, "EP1" + CommonMethods.nextUuId(), "EP1 dec", 80,
+            ThresholdUnit.Absolute, EntitlementMetric.Core, null, "inc1", AggregationFunction.Other,
+            "agg func1", opScopeChoices, null, EntitlementTime.Hour, null, "sku1");
     String epId = vendorLicenseManager.createEntitlementPool(ep, USER1).getId();
-    Set<org.openecomp.sdc.vendorlicense.dao.types.OperationalScope> opScopeChoicesLKG = new HashSet<>();
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.CPU);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.VM);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Availability_Zone);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Data_Center);
+    Set<OperationalScope> opScopeChoicesLKG = new HashSet<>();
+    opScopeChoicesLKG.add(OperationalScope.CPU);
+    opScopeChoicesLKG.add(OperationalScope.VM);
+    opScopeChoicesLKG.add(OperationalScope.Availability_Zone);
+    opScopeChoicesLKG.add(OperationalScope.Data_Center);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity
-        lkg = LicenseKeyGroupTest.createLicenseKeyGroup(vlmId, VERSION01, "LKG1", "LKG1 dec", org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType.One_Time, new org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther<>(opScopeChoicesLKG, null));
+    LicenseKeyGroupEntity
+        lkg = LicenseKeyGroupTest
+        .createLicenseKeyGroup(vlmId, VERSION01, "LKG1", "LKG1 dec", LicenseKeyType.One_Time,
+            new MultiChoiceOrOther<>(opScopeChoicesLKG, null));
     String lkgId = vendorLicenseManager.createLicenseKeyGroup(lkg, USER1).getId();
     lkg.setId(lkgId);
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg1 = createFGForTest(vlmId, "created" + CommonMethods.nextUuId(), Collections.singleton(epId), Collections.singleton(lkgId));
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg1FromDB = vendorLicenseManager.getFeatureGroupModel(fg1, USER1).getFeatureGroup();
+    FeatureGroupEntity fg1 =
+        createFGForTest(vlmId, "created" + CommonMethods.nextUuId(), Collections.singleton(epId),
+            Collections.singleton(lkgId));
+    FeatureGroupEntity fg1FromDB =
+        vendorLicenseManager.getFeatureGroupModel(fg1, USER1).getFeatureGroup();
     Assert.assertTrue(fg1FromDB.equals(fg1));
   }
 
@@ -78,51 +133,61 @@ public class FeatureGroupTest {
   @Test
   public void testCreateWithExistingName_negative() {
     String testName = "createExistingName";
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1).getId();
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+        .createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1)
+        .getId();
     createFGForTest(vlmId, "created", Collections.emptySet(), Collections.emptySet());
     try {
-      org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-          created = LicenseAgreementTest.createFeatureGroup(vlmId, null, "created", "created", "created desc", Collections.emptySet(), Collections.emptySet());
+      FeatureGroupEntity created = LicenseAgreementTest
+          .createFeatureGroup(vlmId, null, "created", "created", "created desc",
+              Collections.emptySet(), Collections.emptySet());
       vendorLicenseManager.createFeatureGroup(created, USER1);
       Assert.fail();
-    } catch (CoreException e) {
-      Assert.assertEquals(e.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
     }
   }
 
-  private org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity createFGForTest(String vlmId, String fgName, Set<String> epIds, Set<String> lkgIds) {
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        created = LicenseAgreementTest.createFeatureGroup(vlmId, null, null, fgName, "created desc", epIds, lkgIds);
+  private FeatureGroupEntity createFGForTest(String vlmId, String fgName, Set<String> epIds,
+                                             Set<String> lkgIds) {
+    FeatureGroupEntity created = LicenseAgreementTest
+        .createFeatureGroup(vlmId, null, null, fgName, "created desc", epIds, lkgIds);
     return vendorLicenseManager.createFeatureGroup(created, USER1);
   }
 
   @Test
   public void testUpdateFeatureGroup_addEP_andGET() throws Exception {
     String testName = "testUpdateFeatureGroup_addEP_andGET";
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1).getId();
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+        .createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1)
+        .getId();
 
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg5 = LicenseAgreementTest.createFeatureGroup(vlmId, VERSION01, "id" + CommonMethods.nextUuId(), "created" + CommonMethods.nextUuId(), "created desc", null, null);
+    FeatureGroupEntity fg5 = LicenseAgreementTest
+        .createFeatureGroup(vlmId, VERSION01, "id" + CommonMethods.nextUuId(),
+            "created" + CommonMethods.nextUuId(), "created desc", null, null);
     vendorLicenseManager.createFeatureGroup(fg5, USER1).getId();
 
 
-    Set<org.openecomp.sdc.vendorlicense.dao.types.OperationalScope> opScopeChoices = new HashSet<>();
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Other);
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Data_Center);
+    Set<OperationalScope> opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Other);
+    opScopeChoices.add(OperationalScope.Data_Center);
 
-    org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity
-        epToAdd = EntitlementPoolTest.createEntitlementPool(vlmId, VERSION01, "epToAdd", "epToAdd dec", 80, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Absolute, org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric.Core, null, "inc1", org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction.Other, "agg func1", opScopeChoices, null, org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime.Hour, null, "sku1");
+    EntitlementPoolEntity epToAdd = EntitlementPoolTest
+        .createEntitlementPool(vlmId, VERSION01, "epToAdd", "epToAdd dec", 80,
+            ThresholdUnit.Absolute, EntitlementMetric.Core, null, "inc1", AggregationFunction.Other,
+            "agg func1", opScopeChoices, null, EntitlementTime.Hour, null, "sku1");
     String epToAddId = vendorLicenseManager.createEntitlementPool(epToAdd, USER1).getId();
 
-    vendorLicenseManager.updateFeatureGroup(fg5, null, null, CommonMethods.toSingleElementSet(epToAddId), null, USER1);
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel
-        updatedFG = vendorLicenseManager.getFeatureGroupModel(fg5, USER1);
-    Set<org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity> updatedEPs = updatedFG.getEntitlementPools();
+    vendorLicenseManager
+        .updateFeatureGroup(fg5, null, null, CommonMethods.toSingleElementSet(epToAddId), null,
+            USER1);
+    FeatureGroupModel updatedFG = vendorLicenseManager.getFeatureGroupModel(fg5, USER1);
+    Set<EntitlementPoolEntity> updatedEPs = updatedFG.getEntitlementPools();
 
     epToAdd.setReferencingFeatureGroups(CommonMethods.toSingleElementSet(fg5.getId()));
 
     Assert.assertEquals(updatedEPs.size(), 1);
-    for (org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity updatedEP : updatedEPs) {
+    for (EntitlementPoolEntity updatedEP : updatedEPs) {
       Assert.assertTrue(updatedEP.getReferencingFeatureGroups().contains(fg5.getId()));
       Assert.assertEquals(updatedEP.getId(), epToAddId);
     }
@@ -131,46 +196,53 @@ public class FeatureGroupTest {
   @Test
   public void testUpdateFeatureGroup_removeLKG_andGET() throws Exception {
     String testName = "testUpdateFeatureGroup_removeLKG_andGET";
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1).getId();
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+        .createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1)
+        .getId();
 
-    Set<org.openecomp.sdc.vendorlicense.dao.types.OperationalScope> opScopeChoicesLKG = new HashSet<>();
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.CPU);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.VM);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Availability_Zone);
-    opScopeChoicesLKG.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Data_Center);
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity
-        lkg = LicenseKeyGroupTest.createLicenseKeyGroup(vlmId, VERSION01, "lkg" + CommonMethods.nextUuId(), "lkg desc", org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType.Unique, new org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther<>(opScopeChoicesLKG, null));
+    Set<OperationalScope> opScopeChoicesLKG = new HashSet<>();
+    opScopeChoicesLKG.add(OperationalScope.CPU);
+    opScopeChoicesLKG.add(OperationalScope.VM);
+    opScopeChoicesLKG.add(OperationalScope.Availability_Zone);
+    opScopeChoicesLKG.add(OperationalScope.Data_Center);
+    LicenseKeyGroupEntity lkg = LicenseKeyGroupTest
+        .createLicenseKeyGroup(vlmId, VERSION01, "lkg" + CommonMethods.nextUuId(), "lkg desc",
+            LicenseKeyType.Unique, new MultiChoiceOrOther<>(opScopeChoicesLKG, null));
     String lkgId = vendorLicenseManager.createLicenseKeyGroup(lkg, USER1).getId();
     lkg.setId(lkgId);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity
-        lkg_1 = LicenseKeyGroupTest.createLicenseKeyGroup(vlmId, VERSION01, "lkg" + CommonMethods.nextUuId(), "lkg_1 desc", org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType.Unique, new org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther<>(opScopeChoicesLKG, null));
+    LicenseKeyGroupEntity lkg_1 = LicenseKeyGroupTest
+        .createLicenseKeyGroup(vlmId, VERSION01, "lkg" + CommonMethods.nextUuId(), "lkg_1 desc",
+            LicenseKeyType.Unique, new MultiChoiceOrOther<>(opScopeChoicesLKG, null));
     String lkgId_1 = vendorLicenseManager.createLicenseKeyGroup(lkg_1, USER1).getId();
     lkg.setId(lkgId);
 
-    Set<org.openecomp.sdc.vendorlicense.dao.types.OperationalScope> opScopeChoices = new HashSet<>();
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Other);
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Data_Center);
-    opScopeChoices.add(org.openecomp.sdc.vendorlicense.dao.types.OperationalScope.Network_Wide);
-    org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity
-        ep = EntitlementPoolTest.createEntitlementPool(vlmId, VERSION01, "EP1" + CommonMethods.nextUuId(), "EP1 dec", 80, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Absolute, org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric.Core, null, "inc1", org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction.Other, "agg func1", opScopeChoices, null, org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime.Hour, null, "sku1");
+    Set<OperationalScope> opScopeChoices = new HashSet<>();
+    opScopeChoices.add(OperationalScope.Other);
+    opScopeChoices.add(OperationalScope.Data_Center);
+    opScopeChoices.add(OperationalScope.Network_Wide);
+    EntitlementPoolEntity ep = EntitlementPoolTest
+        .createEntitlementPool(vlmId, VERSION01, "EP1" + CommonMethods.nextUuId(), "EP1 dec", 80,
+            ThresholdUnit.Absolute, EntitlementMetric.Core, null, "inc1", AggregationFunction.Other,
+            "agg func1", opScopeChoices, null, EntitlementTime.Hour, null, "sku1");
     String epId = vendorLicenseManager.createEntitlementPool(ep, USER1).getId();
 
     Set<String> lkgs = new HashSet<>();
     lkgs.add(lkgId);
     lkgs.add(lkgId_1);
 
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg = LicenseAgreementTest.createFeatureGroup(vlmId, VERSION01, "fg11" + CommonMethods.nextUuId(), "FG1", "FG1 desc", CommonMethods.toSingleElementSet(epId), lkgs);
+    FeatureGroupEntity fg = LicenseAgreementTest
+        .createFeatureGroup(vlmId, VERSION01, "fg11" + CommonMethods.nextUuId(), "FG1", "FG1 desc",
+            CommonMethods.toSingleElementSet(epId), lkgs);
     String fgId = vendorLicenseManager.createFeatureGroup(fg, USER1).getId();
-    vendorLicenseManager.updateFeatureGroup(fg, null, CommonMethods.toSingleElementSet(lkgId), null, null, USER1);
+    vendorLicenseManager
+        .updateFeatureGroup(fg, null, CommonMethods.toSingleElementSet(lkgId), null, null, USER1);
 
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel
-        featureGroup = vendorLicenseManager.getFeatureGroupModel(fg, USER1);
-    Set<org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity> licenseKeyGroups = featureGroup.getLicenseKeyGroups();
+    FeatureGroupModel featureGroup = vendorLicenseManager.getFeatureGroupModel(fg, USER1);
+    Set<LicenseKeyGroupEntity> licenseKeyGroups = featureGroup.getLicenseKeyGroups();
     Assert.assertEquals(licenseKeyGroups.size(), 1);
     List<String> lkgIds = new ArrayList<>();
-    for (org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity licenseKeyGroup : licenseKeyGroups) {
+    for (LicenseKeyGroupEntity licenseKeyGroup : licenseKeyGroups) {
       lkgIds.add(licenseKeyGroup.getId());
     }
 
@@ -183,13 +255,16 @@ public class FeatureGroupTest {
   @Test
   public void testDeleteFeatureGroup() throws Exception {
     String testName = "testDeleteFeatureGroup";
-    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest.createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1).getId();
+    String vlmId = vendorLicenseFacade.createVendorLicenseModel(VendorLicenseModelTest
+        .createVendorLicenseModel(testName + CommonMethods.nextUuId(), testName, "icon1"), USER1)
+        .getId();
 
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg1 = createFGForTest(vlmId, "new", Collections.emptySet(), Collections.emptySet());
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        fg2 = createFGForTest(vlmId, "newer", Collections.emptySet(), Collections.emptySet());
-    Collection<org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity> featureGroupEntities = vendorLicenseManager.listFeatureGroups(vlmId, null, USER1);
+    FeatureGroupEntity fg1 =
+        createFGForTest(vlmId, "new", Collections.emptySet(), Collections.emptySet());
+    FeatureGroupEntity fg2 =
+        createFGForTest(vlmId, "newer", Collections.emptySet(), Collections.emptySet());
+    Collection<FeatureGroupEntity> featureGroupEntities =
+        vendorLicenseManager.listFeatureGroups(vlmId, null, USER1);
     Assert.assertEquals(featureGroupEntities.size(), 2); //precondition
 
     vendorLicenseManager.deleteFeatureGroup(fg1, USER1);
@@ -200,3 +275,4 @@ public class FeatureGroupTest {
 
 
 }
+*/

@@ -13,6 +13,7 @@ target/
 *.ear
 
 # Other
+*.kpf
 *.class
 *.orig
 catalog-ui/.*
@@ -77,7 +78,17 @@ ci/src/main/java/com/att/tlv/sdc/ci/tests/execute/ShayPracticeTests.java
 *.iml
 catalog-ui/npm-debug.log
 sdnc-tests/logs/wordnik.log
-distribution-ci/logs/*
+distribution-ci/logs/wordnik.log
+distribution-ci/logs/wordnik.log.1
+distribution-ci/logs/wordnik.log.10
+distribution-ci/logs/wordnik.log.2
+distribution-ci/logs/wordnik.log.3
+distribution-ci/logs/wordnik.log.4
+distribution-ci/logs/wordnik.log.5
+distribution-ci/logs/wordnik.log.6
+distribution-ci/logs/wordnik.log.7
+distribution-ci/logs/wordnik.log.8
+distribution-ci/logs/wordnik.log.9
 vagrant-asdc-all-in-one/
 catalog-ui/tests/Coverage/*
 catalog-ui/Chrome*
@@ -89,15 +100,50 @@ Vagrantfile
 sdnc-tests/test-output/*
 sdnc-tests-new-frame-work/test-output/*
 ui-ci/test-output/*
-
+ui-ci/test-output/Default suite/Default test.html
+ui-ci/test-output/Default suite/Default test.xml
+ui-ci/test-output/Default suite/testng-failed.xml
+ui-ci/test-output/emailable-report.html
+ui-ci/test-output/index.html
+ui-ci/test-output/old/Default suite/classes.html
+ui-ci/test-output/old/Default suite/methods.html
+ui-ci/test-output/old/Default suite/methods-alphabetical.html
+ui-ci/test-output/old/Default suite/testng.xml.html
+ui-ci/test-output/old/Default suite/toc.html
+ui-ci/test-output/old/index.html
+ui-ci/test-output/testng-failed.xml
+ui-ci/test-output/testng-results.xml
+ui-ci/src/main/resources/Files/outputMainServiceTemplate/*
+ui-ci/src/main/resources/Files/output/*
 
 sdnc-tests-new-frame-work/test-output/**
 asdc-tests/test-output/**
 
 asdc-chef/cookbooks/Deploy-SDandC/attributes/version.rb
 asdc-tests/ExtentReport/ASDC_CI_Extent_Report.html
-
-
-**/*.log
-sdctool.tar
-asdc-tests.tar
+*.orig
+test-apis-ci/ExtentReport/*
+test-apis-ci/test-output/*
+test-apis-ci/test-output/*
+test-apis-ci/ExtentReport/*
+ui-ci/ExtentReport/*
+test-apis-ci/test-output/*
+test-apis-ci/ExtentReport/ASDC_CI_Extent_Report.html
+test-apis-ci/extent.html
+sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
+sdc-os-chef/sdc-normatives/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
+catalog-be/test-output/*
+test-apis-ci/logfile.log*
+ui-ci/logfile.log*
+catalog-ui/node/*
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/audit.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug_by_package.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/Error.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/transaction.log
+openecomp-be/tools/swagger-ui/api-docs/api.html
+openecomp-be/tools/swagger-ui/api-docs/api.json
+dox-sequence-diagram-ui/node/*
+openecomp-ui/node/*
+sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
+sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar

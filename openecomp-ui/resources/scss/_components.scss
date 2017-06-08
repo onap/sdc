@@ -2,7 +2,6 @@
 @import "components/buttons";
 @import "components/forms";
 @import "components/validationForm";
-@import "components/slidePanel";
 @import "components/dualListBox";
 @import "components/listEditorView";
 @import "components/toggleInput";
@@ -16,6 +15,11 @@
 @import "components/dropzone";
 @import "components/submitErrorResponse";
 @import "components/expandableInput";
+@import "components/grid";
+@import "components/icon";
+@import "components/svgIcon";
+@import "components/activityLog";
+@import "components/selectActionTable";
 
 %noselect {
   -webkit-touch-callout: none;
@@ -53,7 +57,7 @@
   }
   .search-icon {
     position: relative;
-    left: -20px;
+    left: -23px;
     align-self: center;
     width: 0;
     color: $dark-gray;
@@ -70,4 +74,30 @@
 .warning-icon {
   margin-left: 50%;
   color: $yellow;
+}
+
+.chevron::before {
+  border-style: solid;
+  border-width: 0.15em 0.15em 0 0;
+  content: '';
+  display: inline-block;
+  height: 0.8em;
+  left: 0.15em;
+  position: relative;
+  top: 0.15em;
+  vertical-align: top;
+  width: 0.8em;
+}
+.chevron.right:before {
+  left: 0;
+  transform: rotate(45deg);
+}
+.chevron.down:before {
+  transform: rotate(135deg);
+}
+.chevron.left:before {
+  transform: rotate(-135deg);
+}
+.chevron.top:before {
+  transform: rotate(-45deg);
 }

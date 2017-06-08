@@ -1,0 +1,5 @@
+{
+  "InformationArtifactEnricher": "org.openecomp.sdc.enrichment.impl.external.artifact.VspInformationArtifactEnricher",
+  "MonitoringMibEnricher": "org.openecomp.sdc.enrichment.impl.external.artifact.MonitoringMibEnricher",
+  "ProcessArtifactEnricher": "org.openecomp.sdc.enrichment.impl.external.artifact.ProcessArtifactEnricher"
+}

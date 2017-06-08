@@ -1,0 +1,50 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Translate a list of JSON entries to a JSON mapped keyed
+  by the string verison of the list index (i.e. 0-->"0").
+
+parameters:
+
+  info:
+    type: json
+    description: Information map.
+
+outputs:
+
+  jout:
+    description: |
+      JSON map of list entries.
+    value: {
+      "0": {get_param: [info, 0]},
+      "1": {get_param: [info, 1]},
+      "2": {get_param: [info, 2]},
+      "3": {get_param: [info, 3]},
+      "4": {get_param: [info, 4]},
+      "5": {get_param: [info, 5]},
+      "6": {get_param: [info, 6]},
+      "7": {get_param: [info, 7]},
+      "8": {get_param: [info, 8]},
+      "9": {get_param: [info, 9]},
+      "10": {get_param: [info, 10]},
+      "11": {get_param: [info, 11]},
+      "12": {get_param: [info, 12]},
+      "13": {get_param: [info, 13]},
+      "14": {get_param: [info, 14]},
+      "15": {get_param: [info, 15]},
+      "16": {get_param: [info, 16]},
+      "17": {get_param: [info, 17]},
+      "18": {get_param: [info, 18]},
+      "19": {get_param: [info, 19]},
+      "20": {get_param: [info, 20]},
+      "21": {get_param: [info, 21]},
+      "22": {get_param: [info, 22]},
+      "23": {get_param: [info, 23]},
+      "24": {get_param: [info, 24]},
+      "25": {get_param: [info, 25]},
+      "26": {get_param: [info, 26]},
+      "27": {get_param: [info, 27]},
+      "28": {get_param: [info, 28]},
+      "29": {get_param: [info, 29]}
+    }
+

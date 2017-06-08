@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -8,8 +23,6 @@ import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.js
 import LicenseKeyGroupsEditor from './LicenseKeyGroupsEditor.js';
 import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
 import {optionsInputValues} from './LicenseKeyGroupsConstants';
-import LicenseKeyGroupsConfirmationModal from './LicenseKeyGroupsConfirmationModal.jsx';
-
 
 class LicenseKeyGroupsListEditorView extends React.Component {
 	static propTypes = {
@@ -33,35 +46,33 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 	};
 
 	render() {
-		let {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
+		let {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
 		let {onAddLicenseKeyGroupClick} = this.props;
 		const {localFilter} = this.state;
 
 		return (
 			<div className='license-key-groups-list-editor'>
 				<ListEditorView
-					title={i18n('License Key Groups for {vendorName} License Model', {vendorName})}
+					title={i18n('License Key Groups', {vendorName})}
 					plusButtonTitle={i18n('Add License Key Group')}
 					onAdd={onAddLicenseKeyGroupClick}
 					filterValue={localFilter}
-					onFilter={filter => this.setState({localFilter: filter})}
+					onFilter={value => this.setState({localFilter: value})}
 					isReadOnlyMode={isReadOnlyMode}>
 					{this.filterList().map(licenseKeyGroup => (this.renderLicenseKeyGroupListItem(licenseKeyGroup, isReadOnlyMode)))}
 				</ListEditorView>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='license-key-groups-modal'>
+				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-key-groups-modal'>
 					<Modal.Header>
 						<Modal.Title>{`${isModalInEditMode ? i18n('Edit License Key Group') : i18n('Create New License Key Group')}`}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						{
 							isDisplayModal && (
-								<LicenseKeyGroupsEditor licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>
+								<LicenseKeyGroupsEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode}/>
 							)
 						}
 					</Modal.Body>
 				</Modal>
-				<LicenseKeyGroupsConfirmationModal licenseModelId={licenseModelId}/>
-
 			</div>
 		);
 	}
@@ -134,5 +145,17 @@ class LicenseKeyGroupsListEditorView extends React.Component {
 
 export default LicenseKeyGroupsListEditorView;
 
-
-
+export function generateConfirmationMsg(licenseKeyGroupToDelete) {
+	let name = licenseKeyGroupToDelete ? licenseKeyGroupToDelete.name : '';
+	let msg = i18n('Are you sure you want to delete "{name}"?', {name});
+	let subMsg = licenseKeyGroupToDelete.referencingFeatureGroups
+	&& licenseKeyGroupToDelete.referencingFeatureGroups.length > 0 ?
+		i18n('This license key group is associated with one or more feature groups') :
+		'';
+	return (
+		<div>
+			<p>{msg}</p>
+			<p>{subMsg}</p>
+		</div>
+	);
+}

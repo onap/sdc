@@ -1,0 +1,138 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Policy Server stack
+
+parameters:
+  pcrf_pps_server_names:
+    type: comma_delimited_list
+    label: PCRF PS server names
+    description: PCRF PS server names
+  pcrf_pps_image_name:
+    type: string
+    default: True
+    label: PCRF PS image name
+    description: PCRF PS image name
+  pcrf_pps_flavor_name:
+    type: string
+    label: PCRF PS flavor name
+    description: flavor name of PCRF PS instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  pcrf_cps_net_name:
+    type: string
+    label: CPS network name
+    description: CPS network name
+  pcrf_cps_net_ips:
+    type: comma_delimited_list
+    label: CPS network ips
+    description: CPS network ips
+  pcrf_cps_net_mask:
+    type: string
+    label: CPS network mask
+    description: CPS network mask
+  pcrf_security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  pcrf_vnf_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+  pcrf_vnf_module_id:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+  pcrf_flavor:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+  pcrf_pps_server_name_4:
+    type: string
+    label: PCRF VNF Id
+    description: PCRF VNF Id
+
+
+resources:
+  nova_server_legal_name_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [pcrf_names, 0] }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+
+  nova_server_legal_name_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_name_4 }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_legal_name_3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_name_4 }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_name_a }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_nameds_a }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_3:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_pps_name_a }
+      flavor: { get_param: pcrf_pps_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_4:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_name_a }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_5:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: pcrf_name_a }
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }
+
+  nova_server_ilegal_name_6:
+    type: OS::Nova::Server
+    properties:
+      name: pcrf_name_a
+      flavor: { get_param: pcrf_flavor_name }
+      metadata:
+        vnf_id: { get_param: pcrf_vnf_id }
+        vf_module_id: { get_param: pcrf_vnf_module_id }

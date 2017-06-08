@@ -12,8 +12,8 @@
 ###
 ###
 ### Author: Avi Ziv
-### Version 2.0 for OPENECOMP
-### Date: 21 Sep 2016, added support for keyspace yes/no for OPENECOMP DevOps build
+### Version 2.0
+### Date: 21 Sep 2016, added support for keyspace yes/no for DevOps build
 ###
 ##############################################################################
 
@@ -31,7 +31,6 @@ main()
         fi
         echo "USE dox;"
         $RUN_PATH/parse-json.py -t create -f $1
-
 }
 
 #### Functions - End    ####

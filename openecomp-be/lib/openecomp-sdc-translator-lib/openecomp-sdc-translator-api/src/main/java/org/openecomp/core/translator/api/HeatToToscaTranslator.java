@@ -20,12 +20,16 @@
 
 package org.openecomp.core.translator.api;
 
+
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+
+
 
 public interface HeatToToscaTranslator {
 

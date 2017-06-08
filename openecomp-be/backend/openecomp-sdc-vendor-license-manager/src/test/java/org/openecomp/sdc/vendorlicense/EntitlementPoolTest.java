@@ -1,19 +1,42 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+/*
+
 package org.openecomp.sdc.vendorlicense;
 
+import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDao;
 import org.openecomp.sdc.vendorlicense.dao.EntitlementPoolDaoFactory;
-import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
-import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
-
 import org.openecomp.sdc.vendorlicense.dao.types.AggregationFunction;
+import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementMetric;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementTime;
+import org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
+import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
+import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
+import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.errors.VersioningErrorCodes;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -43,7 +66,7 @@ public class EntitlementPoolTest {
 
   public static EntitlementPoolEntity createEntitlementPool(String vlmId, Version version,
                                                             String name, String desc, int threshold,
-                                                            org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit thresholdUnit,
+                                                            ThresholdUnit thresholdUnit,
                                                             EntitlementMetric entitlementMetricChoice,
                                                             String entitlementMetricOther,
                                                             String increments,
@@ -61,13 +84,13 @@ public class EntitlementPoolTest {
     entitlementPool.setThresholdValue(threshold);
     entitlementPool.setThresholdUnit(thresholdUnit);
     entitlementPool
-        .setEntitlementMetric(new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(entitlementMetricChoice, entitlementMetricOther));
+        .setEntitlementMetric(new ChoiceOrOther<>(entitlementMetricChoice, entitlementMetricOther));
     entitlementPool.setIncrements(increments);
     entitlementPool.setAggregationFunction(
-        new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(aggregationFunctionChoice, aggregationFunctionOther));
+        new ChoiceOrOther<>(aggregationFunctionChoice, aggregationFunctionOther));
     entitlementPool.setOperationalScope(
-        new org.openecomp.sdc.vendorlicense.dao.types.MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
-    entitlementPool.setTime(new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(timeChoice, timeOther));
+        new MultiChoiceOrOther<>(operationalScopeChoices, operationalScopeOther));
+    entitlementPool.setTime(new ChoiceOrOther<>(timeChoice, timeOther));
     entitlementPool.setManufacturerReferenceNumber(sku);
     return entitlementPool;
   }
@@ -118,8 +141,8 @@ public class EntitlementPoolTest {
     opScopeChoices.add(OperationalScope.CPU);
     opScopeChoices.add(OperationalScope.Network_Wide);
     EntitlementPoolEntity ep2 =
-        createEntitlementPool(vlm1Id, null, EP2_NAME, "EP2 dec", 70, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Absolute,
-            EntitlementMetric.Other, "e metric2", "inc2", AggregationFunction.Average, null,
+        createEntitlementPool(vlm1Id, null, EP2_NAME, "EP2 dec", 70, ThresholdUnit.Absolute,
+            EntitlementMetric.Other, "exception metric2", "inc2", AggregationFunction.Average, null,
             opScopeChoices, null, EntitlementTime.Other, "time2", "sku2");
     ep2Id = vendorLicenseManager.createEntitlementPool(ep2, USER1).getId();
     ep2.setId(ep2Id);
@@ -129,7 +152,7 @@ public class EntitlementPoolTest {
     Set<OperationalScope> opScopeChoices = new HashSet<>();
     opScopeChoices.add(OperationalScope.Other);
     EntitlementPoolEntity ep1 =
-        createEntitlementPool(vlmId, null, name, EP1_V01_DESC, 80, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Percentage,
+        createEntitlementPool(vlmId, null, name, EP1_V01_DESC, 80, ThresholdUnit.Percentage,
             EntitlementMetric.Core, null, "inc1", AggregationFunction.Other, "agg func1",
             opScopeChoices, "op scope1", EntitlementTime.Other, "time1", "sku1");
     String ep1Id = vendorLicenseManager.createEntitlementPool(ep1, USER1).getId();
@@ -155,8 +178,8 @@ public class EntitlementPoolTest {
     EntitlementPoolEntity emptyEp1 = new EntitlementPoolEntity(vlm1Id, VERSION01, ep1Id);
 
     EntitlementPoolEntity ep1 = entitlementPoolDao.get(emptyEp1);
-    ep1.setEntitlementMetric(new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(EntitlementMetric.Other, "e metric1 updated"));
-    ep1.setAggregationFunction(new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(AggregationFunction.Other, "agg func1 updated"));
+    ep1.setEntitlementMetric(new ChoiceOrOther<>(EntitlementMetric.Other, "exception metric1 updated"));
+    ep1.setAggregationFunction(new ChoiceOrOther<>(AggregationFunction.Other, "agg func1 updated"));
 
     vendorLicenseManager.updateEntitlementPool(ep1, USER1);
 
@@ -170,8 +193,8 @@ public class EntitlementPoolTest {
       vendorLicenseManager
           .getEntitlementPool(new EntitlementPoolEntity(vlm1Id, new Version(48, 83), ep1Id), USER1);
       Assert.assertTrue(false);
-    } catch (CoreException e) {
-      Assert.assertEquals(e.code().id(), VersioningErrorCodes.REQUESTED_VERSION_INVALID);
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VersioningErrorCodes.REQUESTED_VERSION_INVALID);
     }
   }
 
@@ -183,8 +206,8 @@ public class EntitlementPoolTest {
       vendorLicenseManager
           .getEntitlementPool(new EntitlementPoolEntity(vlm1Id, new Version(0, 2), ep1Id), USER1);
       Assert.assertTrue(false);
-    } catch (CoreException e) {
-      Assert.assertEquals(e.code().id(), VersioningErrorCodes.REQUESTED_VERSION_INVALID);
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), VersioningErrorCodes.REQUESTED_VERSION_INVALID);
     }
   }
 
@@ -261,15 +284,16 @@ public class EntitlementPoolTest {
   private void testCreateWithExistingName_negative(String vlmId, String epName) {
     try {
       EntitlementPoolEntity ep1 =
-          createEntitlementPool(vlmId, null, epName, EP1_V01_DESC, 80, org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit.Percentage,
+          createEntitlementPool(vlmId, null, epName, EP1_V01_DESC, 80, ThresholdUnit.Percentage,
               EntitlementMetric.Core, null, "inc1", AggregationFunction.Other, "agg func1",
               Collections.singleton(OperationalScope.Other), "op scope1", EntitlementTime.Other,
               "time1", "sku1");
       vendorLicenseManager.createEntitlementPool(ep1, USER1).getId();
       Assert.fail();
-    } catch (CoreException e) {
-      Assert.assertEquals(e.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
     }
   }
 
 }
+*/

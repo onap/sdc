@@ -1,0 +1,565 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: FEAdd_On_Module_QRouterTemplate
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.qrouter:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+    version_number:
+      hidden: false
+      immutable: false
+      type: string
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+    ntp_timezone:
+      hidden: false
+      immutable: false
+      type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+    region_name:
+      hidden: false
+      immutable: false
+      type: string
+    manager_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_names:
+      hidden: false
+      immutable: false
+      type: list
+      entry_schema:
+        type: string
+    tenant_name:
+      hidden: false
+      immutable: false
+      type: string
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+    cdr_network:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_image_name:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_index:
+      hidden: false
+      immutable: false
+      type: float
+    qrouter_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_node_count:
+      hidden: false
+      immutable: false
+      type: float
+    qrouter_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+    qrouter_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+    manager_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+    rpmrepository_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    QRouter:
+      type: org.openecomp.resource.vfc.nodes.heat.qrouter
+      properties:
+        flavor:
+          get_input: qrouter_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: qrouter_image_name
+        metadata:
+          machine_type: qrouter
+          vf_module_id:
+            get_input: vf_module_id
+          cluster_name:
+            get_input: qrouter_cluster_name
+          cdr_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_cdr_network_port.fixed_ip_0s
+          repo_ip_0:
+            get_input: rpmrepository_ip_0
+          mount_colon__slash_data: qrouter_volume_0
+          version_number:
+            get_input: version_number
+          machine_name:
+            get_input:
+            - qrouter_names
+            - get_input: qrouter_index
+          vf_module_name:
+            get_input: vf_module_name
+          ntp_timezone:
+            get_input: ntp_timezone
+          vnf_id:
+            get_input: vnf_id
+          oam_private_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          mount_colon__slash_log: qrouter_volume_1
+          region:
+            get_input: region_name
+          mount_colon__slash_config: qrouter_volume_2
+          tenant:
+            get_input: tenant_name
+        config_drive: true
+        personality:
+          /root/RegisterStatus/register_status.py:
+            get_artifact:
+            - SELF
+            - register_status
+          /root/CheckAvailability/check_availability.py:
+            get_artifact:
+            - SELF
+            - check_availability
+          /tmp/wait_for_resources.py:
+            get_artifact:
+            - SELF
+            - wait_for_resources
+          /root/call_home.py:
+            get_artifact:
+            - SELF
+            - call_home
+          /root/dependencies.json:
+            get_artifact:
+            - SELF
+            - qrouterdependencies
+        user_data_format: RAW
+        name:
+          get_input:
+          - qrouter_names
+          - get_input: qrouter_index
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: qrouter_volume_0
+          relationship: qrouter_volume_0_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: qrouter_volume_1
+          relationship: qrouter_volume_1_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: qrouter_volume_2
+          relationship: qrouter_volume_2_att
+      artifacts:
+        call_home:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/call_home.py
+        check_availability:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/check_availability.py
+        qrouterdependencies:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/qrouterdependencies.json
+        wait_for_resources:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/wait_for_resources.py
+        register_status:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/register_status.py
+    qrouter_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: qrouter_volume_type_1
+        size: '(get_input : qrouter_volume_size_1) * 1024'
+        description:
+          get_input: qrouter_volume_name_1
+    qrouter_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: qrouter_volume_type_0
+        size: '(get_input : qrouter_volume_size_0) * 1024'
+        description:
+          get_input: qrouter_volume_name_0
+    cdr_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: cdr_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+    qrouter_volume_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: qrouter_volume_type_2
+        size: '(get_input : qrouter_volume_size_2) * 1024'
+        description:
+          get_input: qrouter_volume_name_2
+    oam_private_net_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam_private
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+  relationship_templates:
+    qrouter_volume_0_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: qrouter_volume_0
+        instance_uuid: QRouter
+    qrouter_volume_2_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: qrouter_volume_2
+        instance_uuid: QRouter
+    qrouter_volume_1_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: qrouter_volume_1
+        instance_uuid: QRouter
+  groups:
+    FEAdd_On_Module_QRouterTemplate_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/FEAdd_On_Module_QRouterTemplate.yaml
+      members:
+      - QRouter
+      - qrouter_volume_1
+      - qrouter_volume_0
+      - cdr_network_port
+      - qrouter_volume_2
+      - oam_private_net_network_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_QRouterTemplate
+    capabilities:
+      disk.usage_QRouter:
+      - QRouter
+      - disk.usage
+      network.outgoing.bytes_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.bytes
+      disk.write.bytes_QRouter:
+      - QRouter
+      - disk.write.bytes
+      attachment_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - attachment
+      feature_qrouter_volume_1:
+      - qrouter_volume_1
+      - feature
+      disk.device.write.bytes_QRouter:
+      - QRouter
+      - disk.device.write.bytes
+      feature_qrouter_volume_2:
+      - qrouter_volume_2
+      - feature
+      endpoint_QRouter:
+      - QRouter
+      - endpoint
+      feature_qrouter_volume_0:
+      - qrouter_volume_0
+      - feature
+      attachment_qrouter_volume_2:
+      - qrouter_volume_2
+      - attachment
+      disk.capacity_QRouter:
+      - QRouter
+      - disk.capacity
+      attachment_qrouter_volume_0:
+      - qrouter_volume_0
+      - attachment
+      disk.read.bytes.rate_QRouter:
+      - QRouter
+      - disk.read.bytes.rate
+      attachment_qrouter_volume_1:
+      - qrouter_volume_1
+      - attachment
+      attachment_cdr_network_port:
+      - cdr_network_port
+      - attachment
+      network.incoming.packets_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.packets
+      network.outgoing.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes.rate
+      instance_QRouter:
+      - QRouter
+      - instance
+      disk.device.latency_QRouter:
+      - QRouter
+      - disk.device.latency
+      disk.device.usage_QRouter:
+      - QRouter
+      - disk.device.usage
+      disk.ephemeral.size_QRouter:
+      - QRouter
+      - disk.ephemeral.size
+      disk.device.iops_QRouter:
+      - QRouter
+      - disk.device.iops
+      network.outpoing.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outpoing.packets
+      network.outpoing.packets_cdr_network_port:
+      - cdr_network_port
+      - network.outpoing.packets
+      disk.device.read.bytes_QRouter:
+      - QRouter
+      - disk.device.read.bytes
+      disk.iops_QRouter:
+      - QRouter
+      - disk.iops
+      feature_cdr_network_port:
+      - cdr_network_port
+      - feature
+      disk.device.read.requests.rate_QRouter:
+      - QRouter
+      - disk.device.read.requests.rate
+      disk.read.bytes_QRouter:
+      - QRouter
+      - disk.read.bytes
+      memory.resident_QRouter:
+      - QRouter
+      - memory.resident
+      host_QRouter:
+      - QRouter
+      - host
+      network.incoming.bytes_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.bytes
+      memory_QRouter:
+      - QRouter
+      - memory
+      disk.device.read.requests_QRouter:
+      - QRouter
+      - disk.device.read.requests
+      scalable_QRouter:
+      - QRouter
+      - scalable
+      os_QRouter:
+      - QRouter
+      - os
+      network.incoming.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes
+      disk.write.bytes.rate_QRouter:
+      - QRouter
+      - disk.write.bytes.rate
+      feature_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - feature
+      cpu_util_QRouter:
+      - QRouter
+      - cpu_util
+      network.incoming.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes.rate
+      disk.device.write.requests_QRouter:
+      - QRouter
+      - disk.device.write.requests
+      disk.device.read.bytes.rate_QRouter:
+      - QRouter
+      - disk.device.read.bytes.rate
+      network.incoming.bytes.rate_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.bytes.rate
+      disk.device.allocation_QRouter:
+      - QRouter
+      - disk.device.allocation
+      network.outgoing.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes
+      disk.device.capacity_QRouter:
+      - QRouter
+      - disk.device.capacity
+      feature_QRouter:
+      - QRouter
+      - feature
+      disk.read.requests_QRouter:
+      - QRouter
+      - disk.read.requests
+      disk.device.write.bytes.rate_QRouter:
+      - QRouter
+      - disk.device.write.bytes.rate
+      disk.write.requests_QRouter:
+      - QRouter
+      - disk.write.requests
+      disk.root.size_QRouter:
+      - QRouter
+      - disk.root.size
+      memory.usage_QRouter:
+      - QRouter
+      - memory.usage
+      network.outgoing.bytes.rate_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.bytes.rate
+      binding_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - binding
+      cpu_QRouter:
+      - QRouter
+      - cpu
+      vcpus_QRouter:
+      - QRouter
+      - vcpus
+      disk.allocation_QRouter:
+      - QRouter
+      - disk.allocation
+      network.incoming.packets.rate_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.packets.rate
+      network.incoming.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets
+      network.incoming.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets.rate
+      disk.device.write.requests.rate_QRouter:
+      - QRouter
+      - disk.device.write.requests.rate
+      cpu.delta_QRouter:
+      - QRouter
+      - cpu.delta
+      binding_QRouter:
+      - QRouter
+      - binding
+      binding_cdr_network_port:
+      - cdr_network_port
+      - binding
+      network.outgoing.packets.rate_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.packets.rate
+      disk.latency_QRouter:
+      - QRouter
+      - disk.latency
+      disk.write.requests.rate_QRouter:
+      - QRouter
+      - disk.write.requests.rate
+      network.outgoing.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.packets.rate
+    requirements:
+      local_storage_QRouter:
+      - QRouter
+      - local_storage
+      dependency_QRouter:
+      - QRouter
+      - dependency
+      dependency_qrouter_volume_1:
+      - qrouter_volume_1
+      - dependency
+      dependency_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - dependency
+      dependency_qrouter_volume_0:
+      - qrouter_volume_0
+      - dependency
+      dependency_cdr_network_port:
+      - cdr_network_port
+      - dependency
+      link_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - link
+      dependency_qrouter_volume_2:
+      - qrouter_volume_2
+      - dependency
+      link_cdr_network_port:
+      - cdr_network_port
+      - link

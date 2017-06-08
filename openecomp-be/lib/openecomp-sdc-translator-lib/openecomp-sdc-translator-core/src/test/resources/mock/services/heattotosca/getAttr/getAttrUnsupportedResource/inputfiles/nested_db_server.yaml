@@ -1,0 +1,204 @@
+heat_template_version: 2015-04-30
+
+description: Pronghorn Openstack Heat Template for Mongo DB
+
+parameters:
+  ###
+  # server group and index
+  ###
+  server_group_id:
+    label: Server Group ID
+    description: ID of the server group
+    type: string
+  deploy_timeout:
+    label: Deployment Timeout
+    description: Timeout before declaring the stack deployment as failed.
+    type: number
+    constraints:
+      - range: { min: 60, max: 3600 }
+
+  ###
+  # vnf info
+  ###
+  vnf_id:
+    label: VNF ID
+    description: Unique ID for this VF instance
+    type: string
+  vf_module_id:
+    label: VF Module ID
+    description: Unique ID for this VF Module instance
+    type: string
+  vm_role:
+    label: DB VM Role
+    description: VM Role for the db vms
+    type: string
+
+  ###
+  # availability zone
+  ###
+  availability_zone_0:
+    label: Availability Zone
+    description: Name of the availability zone for this server
+    type: string
+
+  ###
+  # database server networks, ips and hostnames
+  ###
+  db_name:
+    label: Database Hostname
+    description: Hostname of the database servers
+    type: string
+  oam_net_name:
+    label: OAM Network Name
+    description: Name of the oam network
+    type: string
+  db_oam_ip_0:
+    label: OAM IP Addresse
+    description: OAM IP Address of the database servers
+    type: string
+
+  ###
+  # database common server info (flavor, image, keypair)
+  ###
+  db_flavor_name:
+    label: Flavor
+    description: Flavor to be used for the server
+    type: string
+  db_image_name:
+    label: Image
+    description: Image to be used for the server
+    type: string
+  keypair_id:
+    label: Key Name
+    description: Name of the security key for the server
+    type: string
+
+  ###
+  # security groups
+  ###
+  security_group_ids:
+    label: Security Group IDs
+    description: IDs of the security groups for the server
+    type: comma_delimited_list
+  
+  ###
+  # database volume ids
+  ###
+  db_volume_id_0:
+    label: Data Volume IDs for disk 0
+    description: IDs to be used for the database volume
+    type: string
+  db_volume_id_1:
+    label: Data Volume IDs for disk 1
+    description: IDs to be used for the database volume
+    type: string
+  db_volume_id_2:
+    label: Data Volume IDs for disk 2
+    description: IDs to be used for the database volume
+    type: string
+  db_volume_id_3:
+    label: Data Volume IDs for disk 3
+    description: IDs to be used for the database volume
+    type: string
+
+
+resources:
+  ###
+  # setup wait condition and handler for heat
+  ###
+  wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: {get_resource: wait_handle}
+      timeout: {get_param: deploy_timeout }
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+  ###
+  # software configuration
+  ###
+  db_config_complete:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          params:
+            wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
+          template: |
+            #!/bin/bash
+            echo "sending completion notification to heat"
+            wc_notify --data-binary '{"status":"SUCCESS"}'
+
+  db_config:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+        - config: { get_resource: db_config_complete }
+
+  ###
+  # create the database server
+  ###
+  db_server_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: db_name }
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints:
+        group: { get_param: server_group_id }
+      flavor: { get_param: db_flavor_name }
+      image: { get_param: db_image_name }
+      key_name: { get_param: keypair_id }
+      security_groups: { get_param: security_group_ids }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vm_role: { get_param: vm_role }
+      networks:
+        - network: { get_param: oam_net_name }
+          fixed_ip: { get_param: db_oam_ip_0 }
+      user_data_format: RAW
+      #user_data: { get_resource: db_config }
+      user_data:
+        str_replace:
+          params:
+            wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
+          template: |
+            #!/bin/bash
+            ROOT_PW="dan1tom2"
+            (
+            echo "$ROOT_PW"
+            echo "$ROOT_PW"
+            ) | passwd --stdin root
+            wc_notify --data-binary '{"status":"SUCCESS"}'
+
+  ###
+  # attach the data volumes to the server
+  ###
+  db_volume_attachment_0:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: db_server_0 }
+      volume_id:  { get_param: db_volume_id_0 }
+  db_volume_attachment_1:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: db_server_0 }
+      volume_id:  { get_param: db_volume_id_1 }
+  db_volume_attachment_2:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: db_server_0 }
+      volume_id:  { get_param: db_volume_id_2 }
+  db_volume_attachment_3:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: db_server_0 }
+      volume_id:  { get_param: db_volume_id_3 }
+
+
+outputs:
+  ###
+  # No outputs as the base_pronghorn is the only VNF component
+  ###

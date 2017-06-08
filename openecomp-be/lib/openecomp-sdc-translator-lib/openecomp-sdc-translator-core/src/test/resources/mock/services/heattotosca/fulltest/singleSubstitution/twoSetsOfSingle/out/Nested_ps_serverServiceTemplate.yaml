@@ -1,0 +1,277 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_ps_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.ps_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    compute_ps_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    compute_ps_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_ps_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_ps01_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_ps01_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_ps01_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_ps01_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    ps_server:
+      type: org.openecomp.resource.vfc.nodes.heat.ps_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_ps_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_ps_server_name
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_ps_server_user_data_format
+          - index_value
+    ps_server_ps01_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_ps01_port_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_ps01_port_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_ps01_port_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_ps01_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps_server
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.ps_server
+    capabilities:
+      network.incoming.packets.rate_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.incoming.packets.rate
+      instance_ps_server:
+      - ps_server
+      - instance
+      network.outpoing.packets_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.outpoing.packets
+      host_ps_server:
+      - ps_server
+      - host
+      network.incoming.packets_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.incoming.packets
+      cpu.delta_ps_server:
+      - ps_server
+      - cpu.delta
+      disk.write.bytes.rate_ps_server:
+      - ps_server
+      - disk.write.bytes.rate
+      feature_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - feature
+      feature_ps_server:
+      - ps_server
+      - feature
+      disk.root.size_ps_server:
+      - ps_server
+      - disk.root.size
+      disk.device.read.requests.rate_ps_server:
+      - ps_server
+      - disk.device.read.requests.rate
+      cpu_ps_server:
+      - ps_server
+      - cpu
+      disk.device.write.bytes_ps_server:
+      - ps_server
+      - disk.device.write.bytes
+      disk.device.read.bytes_ps_server:
+      - ps_server
+      - disk.device.read.bytes
+      disk.read.bytes_ps_server:
+      - ps_server
+      - disk.read.bytes
+      disk.device.iops_ps_server:
+      - ps_server
+      - disk.device.iops
+      network.outgoing.packets.rate_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.outgoing.packets.rate
+      disk.device.latency_ps_server:
+      - ps_server
+      - disk.device.latency
+      disk.read.bytes.rate_ps_server:
+      - ps_server
+      - disk.read.bytes.rate
+      memory_ps_server:
+      - ps_server
+      - memory
+      scalable_ps_server:
+      - ps_server
+      - scalable
+      disk.write.requests.rate_ps_server:
+      - ps_server
+      - disk.write.requests.rate
+      disk.write.requests_ps_server:
+      - ps_server
+      - disk.write.requests
+      disk.latency_ps_server:
+      - ps_server
+      - disk.latency
+      disk.ephemeral.size_ps_server:
+      - ps_server
+      - disk.ephemeral.size
+      disk.device.capacity_ps_server:
+      - ps_server
+      - disk.device.capacity
+      disk.iops_ps_server:
+      - ps_server
+      - disk.iops
+      disk.device.read.bytes.rate_ps_server:
+      - ps_server
+      - disk.device.read.bytes.rate
+      cpu_util_ps_server:
+      - ps_server
+      - cpu_util
+      memory.resident_ps_server:
+      - ps_server
+      - memory.resident
+      network.incoming.bytes_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.incoming.bytes
+      disk.device.read.requests_ps_server:
+      - ps_server
+      - disk.device.read.requests
+      disk.write.bytes_ps_server:
+      - ps_server
+      - disk.write.bytes
+      network.outgoing.bytes.rate_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.outgoing.bytes.rate
+      disk.device.write.requests.rate_ps_server:
+      - ps_server
+      - disk.device.write.requests.rate
+      disk.read.requests_ps_server:
+      - ps_server
+      - disk.read.requests
+      disk.allocation_ps_server:
+      - ps_server
+      - disk.allocation
+      memory.usage_ps_server:
+      - ps_server
+      - memory.usage
+      binding_ps_server:
+      - ps_server
+      - binding
+      attachment_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - attachment
+      os_ps_server:
+      - ps_server
+      - os
+      disk.device.usage_ps_server:
+      - ps_server
+      - disk.device.usage
+      binding_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - binding
+      disk.device.write.bytes.rate_ps_server:
+      - ps_server
+      - disk.device.write.bytes.rate
+      vcpus_ps_server:
+      - ps_server
+      - vcpus
+      disk.usage_ps_server:
+      - ps_server
+      - disk.usage
+      disk.device.write.requests_ps_server:
+      - ps_server
+      - disk.device.write.requests
+      endpoint_ps_server:
+      - ps_server
+      - endpoint
+      disk.capacity_ps_server:
+      - ps_server
+      - disk.capacity
+      network.incoming.bytes.rate_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.incoming.bytes.rate
+      disk.device.allocation_ps_server:
+      - ps_server
+      - disk.device.allocation
+      network.outgoing.bytes_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - network.outgoing.bytes
+    requirements:
+      dependency_ps_server:
+      - ps_server
+      - dependency
+      link_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - link
+      dependency_ps_server_ps01_port:
+      - ps_server_ps01_port
+      - dependency
+      local_storage_ps_server:
+      - ps_server
+      - local_storage

@@ -37,9 +37,9 @@ import java.util.Collection;
 
 public interface VendorLicenseFacade {
 
-  void checkin(String vendorLicenseModelId, String user);
+  Version checkin(String vendorLicenseModelId, String user);
 
-  void submit(String vendorLicenseModelId, String user);
+  Version submit(String vendorLicenseModelId, String user);
 
   FeatureGroupEntity getFeatureGroup(FeatureGroupEntity featureGroup, String user);
 
@@ -53,8 +53,6 @@ public interface VendorLicenseFacade {
 
   EntitlementPoolEntity createEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
 
-  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
-
   void updateEntitlementPool(EntitlementPoolEntity entitlementPool, String user);
 
   Collection<LicenseKeyGroupEntity> listLicenseKeyGroups(String vlmId, Version version,
@@ -64,6 +62,8 @@ public interface VendorLicenseFacade {
                                                          String user);
 
   void updateLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
+
+  LicenseKeyGroupEntity createLicenseKeyGroup(LicenseKeyGroupEntity licenseKeyGroup, String user);
 
 
   VersionedVendorLicenseModel getVendorLicenseModel(String vlmId, Version version, String user);

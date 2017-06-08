@@ -1,0 +1,692 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_VLC2
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.VLC2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_VLC_SCTP_A_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_OAM_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_GTP_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
+    port_VLC_SCTP_B_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal2_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_OAM_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_image_name:
+      type: string
+      required: true
+    port_VLC2_Internal1_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal1_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_B_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_GTP_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_VLC2_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_VLC_SCTP_B_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_GTP_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_VLC2_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_GTP_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_B_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    VLC2_VLC2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC2_Internal2_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC2_Internal2_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_VLC2_Internal2_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_VLC2_Internal2_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_VLC_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC_OAM_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC_OAM_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC_OAM_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_VLC_OAM_fixed_ips
+          - index_value
+        network:
+          get_input:
+          - port_VLC_OAM_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_VLC2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC2_Internal1_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC2_Internal1_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_VLC2_Internal1_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_VLC2_Internal1_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_VLC_SCTP_A:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC_SCTP_A_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC_SCTP_A_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_VLC_SCTP_A_fixed_ips
+          - index_value
+        network:
+          get_input:
+          - port_VLC_SCTP_A_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_VLC_SCTP_B:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC_SCTP_B_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC_SCTP_B_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_VLC_SCTP_B_fixed_ips
+          - index_value
+        network:
+          get_input:
+          - port_VLC_SCTP_B_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2_VLC_GTP:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_VLC_GTP_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_VLC_GTP_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_VLC_GTP_fixed_ips
+          - index_value
+        network:
+          get_input:
+          - port_VLC_GTP_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: VLC2
+          relationship: tosca.relationships.network.BindsTo
+    VLC2:
+      type: org.openecomp.resource.vfc.nodes.heat.VLC2
+      properties:
+        availability_zone:
+          get_input:
+          - compute_VLC2_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_VLC2_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.VLC2
+    capabilities:
+      network.incoming.bytes_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.incoming.bytes
+      disk.device.allocation_VLC2:
+      - VLC2
+      - disk.device.allocation
+      network.outgoing.bytes.rate_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.outgoing.bytes.rate
+      network.incoming.packets.rate_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.incoming.packets.rate
+      binding_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - binding
+      feature_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - feature
+      binding_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - binding
+      network.incoming.packets_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.incoming.packets
+      network.outgoing.packets.rate_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.outgoing.packets.rate
+      network.incoming.bytes.rate_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.incoming.bytes.rate
+      disk.device.read.bytes_VLC2:
+      - VLC2
+      - disk.device.read.bytes
+      scalable_VLC2:
+      - VLC2
+      - scalable
+      disk.device.usage_VLC2:
+      - VLC2
+      - disk.device.usage
+      network.incoming.bytes.rate_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.incoming.bytes.rate
+      attachment_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - attachment
+      network.incoming.bytes.rate_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.incoming.bytes.rate
+      attachment_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - attachment
+      network.outgoing.packets.rate_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.outgoing.packets.rate
+      endpoint_VLC2:
+      - VLC2
+      - endpoint
+      disk.device.iops_VLC2:
+      - VLC2
+      - disk.device.iops
+      feature_VLC2:
+      - VLC2
+      - feature
+      network.incoming.bytes.rate_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.incoming.bytes.rate
+      network.outpoing.packets_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.outpoing.packets
+      network.incoming.packets_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.incoming.packets
+      network.incoming.packets_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.incoming.packets
+      feature_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - feature
+      disk.device.capacity_VLC2:
+      - VLC2
+      - disk.device.capacity
+      network.outpoing.packets_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.outpoing.packets
+      feature_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - feature
+      disk.device.write.requests.rate_VLC2:
+      - VLC2
+      - disk.device.write.requests.rate
+      disk.read.bytes.rate_VLC2:
+      - VLC2
+      - disk.read.bytes.rate
+      network.incoming.bytes_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.incoming.bytes
+      network.incoming.bytes_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.incoming.bytes
+      disk.iops_VLC2:
+      - VLC2
+      - disk.iops
+      network.outpoing.packets_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.outpoing.packets
+      disk.latency_VLC2:
+      - VLC2
+      - disk.latency
+      network.outgoing.bytes.rate_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.outgoing.bytes.rate
+      disk.ephemeral.size_VLC2:
+      - VLC2
+      - disk.ephemeral.size
+      disk.device.latency_VLC2:
+      - VLC2
+      - disk.device.latency
+      disk.allocation_VLC2:
+      - VLC2
+      - disk.allocation
+      cpu_util_VLC2:
+      - VLC2
+      - cpu_util
+      disk.write.bytes_VLC2:
+      - VLC2
+      - disk.write.bytes
+      cpu_VLC2:
+      - VLC2
+      - cpu
+      instance_VLC2:
+      - VLC2
+      - instance
+      attachment_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - attachment
+      attachment_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - attachment
+      vcpus_VLC2:
+      - VLC2
+      - vcpus
+      memory.resident_VLC2:
+      - VLC2
+      - memory.resident
+      disk.device.read.requests.rate_VLC2:
+      - VLC2
+      - disk.device.read.requests.rate
+      network.outgoing.bytes_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.outgoing.bytes
+      os_VLC2:
+      - VLC2
+      - os
+      network.incoming.packets.rate_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.incoming.packets.rate
+      feature_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - feature
+      binding_VLC2:
+      - VLC2
+      - binding
+      disk.device.write.bytes_VLC2:
+      - VLC2
+      - disk.device.write.bytes
+      network.outgoing.packets.rate_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.outgoing.packets.rate
+      feature_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - feature
+      disk.root.size_VLC2:
+      - VLC2
+      - disk.root.size
+      network.outgoing.bytes_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.outgoing.bytes
+      network.outpoing.packets_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.outpoing.packets
+      network.outgoing.bytes_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.outgoing.bytes
+      network.outpoing.packets_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.outpoing.packets
+      network.incoming.packets_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.incoming.packets
+      memory_VLC2:
+      - VLC2
+      - memory
+      network.incoming.packets_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.incoming.packets
+      disk.device.write.requests_VLC2:
+      - VLC2
+      - disk.device.write.requests
+      host_VLC2:
+      - VLC2
+      - host
+      network.outgoing.bytes_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.outgoing.bytes
+      network.outgoing.bytes_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.outgoing.bytes
+      binding_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - binding
+      disk.device.write.bytes.rate_VLC2:
+      - VLC2
+      - disk.device.write.bytes.rate
+      network.outgoing.bytes.rate_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.outgoing.bytes.rate
+      feature_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - feature
+      network.outgoing.packets.rate_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.outgoing.packets.rate
+      memory.usage_VLC2:
+      - VLC2
+      - memory.usage
+      disk.usage_VLC2:
+      - VLC2
+      - disk.usage
+      disk.read.requests_VLC2:
+      - VLC2
+      - disk.read.requests
+      attachment_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - attachment
+      network.outgoing.bytes_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.outgoing.bytes
+      network.outgoing.bytes.rate_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.outgoing.bytes.rate
+      disk.write.bytes.rate_VLC2:
+      - VLC2
+      - disk.write.bytes.rate
+      network.outgoing.bytes.rate_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.outgoing.bytes.rate
+      network.incoming.bytes_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - network.incoming.bytes
+      network.incoming.bytes_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - network.incoming.bytes
+      disk.read.bytes_VLC2:
+      - VLC2
+      - disk.read.bytes
+      network.incoming.packets.rate_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.incoming.packets.rate
+      disk.capacity_VLC2:
+      - VLC2
+      - disk.capacity
+      network.incoming.packets_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.incoming.packets
+      network.incoming.packets.rate_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - network.incoming.packets.rate
+      network.incoming.bytes_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - network.incoming.bytes
+      attachment_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - attachment
+      disk.write.requests.rate_VLC2:
+      - VLC2
+      - disk.write.requests.rate
+      network.incoming.bytes.rate_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.incoming.bytes.rate
+      network.outpoing.packets_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - network.outpoing.packets
+      binding_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - binding
+      binding_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - binding
+      disk.write.requests_VLC2:
+      - VLC2
+      - disk.write.requests
+      disk.device.read.requests_VLC2:
+      - VLC2
+      - disk.device.read.requests
+      disk.device.read.bytes.rate_VLC2:
+      - VLC2
+      - disk.device.read.bytes.rate
+      cpu.delta_VLC2:
+      - VLC2
+      - cpu.delta
+      binding_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - binding
+    requirements:
+      link_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - link
+      link_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - link
+      link_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - link
+      dependency_VLC2:
+      - VLC2
+      - dependency
+      local_storage_VLC2:
+      - VLC2
+      - local_storage
+      link_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - link
+      dependency_VLC2_VLC_SCTP_A:
+      - VLC2_VLC_SCTP_A
+      - dependency
+      link_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - link
+      dependency_VLC2_VLC_SCTP_B:
+      - VLC2_VLC_SCTP_B
+      - dependency
+      dependency_VLC2_VLC2_Internal2:
+      - VLC2_VLC2_Internal2
+      - dependency
+      dependency_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - dependency
+      link_VLC2_VLC2_Internal1:
+      - VLC2_VLC2_Internal1
+      - link
+      dependency_VLC2_VLC_OAM:
+      - VLC2_VLC_OAM
+      - dependency
+      dependency_VLC2_VLC_GTP:
+      - VLC2_VLC_GTP
+      - dependency

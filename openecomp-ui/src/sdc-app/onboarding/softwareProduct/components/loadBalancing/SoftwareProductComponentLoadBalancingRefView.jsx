@@ -1,11 +1,29 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
-import FontAwesome from 'react-fontawesome';
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-import ValidationForm from 'nfvo-components/input/validation/ValidationForm.jsx';
-import ValidationInput from'nfvo-components/input/validation/ValidationInput.jsx';
+import Form from 'nfvo-components/input/validation/Form.jsx';
+import Input from'nfvo-components/input/validation/Input.jsx';
 
-const prefix = '/highAvailabilityAndLoadBalancing/';
+import GridSection from 'nfvo-components/grid/GridSection.jsx';
+import GridItem from 'nfvo-components/grid/GridItem.jsx';
+
+const prefix = 'highAvailabilityAndLoadBalancing/';
 
 const pointers = [
 	{
@@ -33,6 +51,31 @@ const pointers = [
 	}
 ];
 
+const TextAreaItem = ({item, toggle, expanded, genericFieldInfo, dataMap, onQDataChanged}) => (
+		<GridItem colSpan={3} key={item.key} >
+			<div className={expanded ? 'title' : 'title add-padding'}
+				 data-test-id={`btn-${item.key}`}
+				 onClick={() => toggle(item.key)}>
+					<SVGIcon name={expanded ? 'chevron-up' : 'chevron-down'}/>
+					<span className='title-text'>{i18n(item.description)}</span>
+					{item.added && <div className='new-line'>{i18n(item.added)}</div>}
+			</div>
+			<div className={expanded ? 'collapse in' : 'collapse'}>
+				<div>
+					<div>
+						<Input
+							data-test-id={`input-${item.key}`}
+							type='textarea'
+							isValid={genericFieldInfo[`${prefix}${item.key}`].isValid}
+							errorText={genericFieldInfo[`${prefix}${item.key}`].errorText}
+							value={dataMap[`${prefix}${item.key}`]}
+							onChange={(val) => onQDataChanged({[`${prefix}${item.key}`] : val})} />
+					</div>
+				</div>
+			</div>
+		</GridItem>
+);
+
 class SoftwareProductComponentLoadBalancingView extends React.Component {
 	static propTypes = {
 		componentId: React.PropTypes.string.isRequired,
@@ -46,42 +89,65 @@ class SoftwareProductComponentLoadBalancingView extends React.Component {
 		expanded: {}
 	};
 
-	renderTextAreaItem(item) {
-		return (
-			<div className='question'>
-				<div className={this.state.expanded[item.key] ? 'title' : 'title add-padding'}
-					 onClick={() => this.toggle(item.key)}>
-					<FontAwesome name={this.state.expanded[item.key] ? 'chevron-up' : 'chevron-down'}/>
-					{i18n(item.description)}
-					{item.added && <div className='new-line'>{i18n(item.added)}</div>}
-				</div>
-				<div className={this.state.expanded[item.key] ? 'collapse in' : 'collapse'}>
-					<div className='row'>
-						<div className='col-md-9'>
-							<ValidationInput
-								type='textarea'
-								pointer={`${prefix}${item.key}`}
-								maxLength='1000' />
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	render() {
-		let {qdata, qschema, onQDataChanged, isReadOnlyMode} = this.props;
+		let {dataMap, genericFieldInfo, onQDataChanged, isReadOnlyMode} = this.props;
 		return (
 			<div className='vsp-components-load-balancing'>
 				<div className='halb-data'>
-					<div className='load-balancing-page-title'>{i18n('High Availability & Load Balancing')}</div>
-					<ValidationForm
-						onDataChanged={onQDataChanged}
-						data={qdata} schema={qschema}
+					{ genericFieldInfo && <Form
+						formReady={null}
+						isValid={true}
+						onSubmit={() => this.save()}
 						isReadOnlyMode={isReadOnlyMode}
 						hasButtons={false}>
-						{pointers.map(pointer => this.renderTextAreaItem(pointer))}
-					</ValidationForm>
+						<GridSection title={i18n('High Availability & Load Balancing')}>
+							<GridItem colSpan={1}>
+								<Input
+									data-test-id='input-is-component-mandatory'
+									label={i18n('Is Component Mandatory')}
+									type='select'
+									className='input-options-select'
+									groupClassName='bootstrap-input-options'
+									isValid={genericFieldInfo[`${prefix}isComponentMandatory`].isValid}
+									errorText={genericFieldInfo[`${prefix}isComponentMandatory`].errorText}
+									value={dataMap[`${prefix}isComponentMandatory`]}
+									onChange={(e) => {
+										const selectedIndex = e.target.selectedIndex;
+										const val = e.target.options[selectedIndex].value;
+										onQDataChanged({[`${prefix}isComponentMandatory`] : val});}
+									}>
+									 <option key='placeholder' value=''>{i18n('Select...')}</option>
+									{ genericFieldInfo[`${prefix}isComponentMandatory`].enum.map(isMan => <option value={isMan.enum} key={isMan.enum}>{isMan.title}</option>) }
+								</Input>
+							</GridItem>
+							<GridItem colSpan={3}/>
+							<GridItem colSpan={1}>
+								<Input
+									data-test-id='input-high-availability-mode'
+									label={i18n('High Availability Mode')}
+									type='select'
+									className='input-options-select'
+									groupClassName='bootstrap-input-options'
+									isValid={genericFieldInfo[`${prefix}highAvailabilityMode`].isValid}
+									errorText={genericFieldInfo[`${prefix}highAvailabilityMode`].errorText}
+									value={dataMap[`${prefix}highAvailabilityMode`]}
+									onChange={(e) => {
+										const selectedIndex = e.target.selectedIndex;
+										const val = e.target.options[selectedIndex].value;
+										onQDataChanged({[`${prefix}highAvailabilityMode`] : val});}
+									}>
+									<option key='placeholder' value=''>{i18n('Select...')}</option>
+									{genericFieldInfo[`${prefix}highAvailabilityMode`].enum.map(hmode => <option value={hmode.enum} key={hmode.enum}>{hmode.title}</option>)}
+								</Input>
+							</GridItem>
+							<GridItem colSpan={3}/>
+						</GridSection>
+						<GridSection>
+						{pointers.map(pointer => <TextAreaItem onQDataChanged={onQDataChanged}
+							   genericFieldInfo={genericFieldInfo} dataMap={dataMap} item={pointer} key={pointer.key + 'pKey'}
+							   expanded={this.state.expanded[pointer.key]} toggle={(name)=>{this.toggle(name);}} />)}
+						</GridSection>
+					</Form> }
 				</div>
 			</div>
 		);

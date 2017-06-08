@@ -32,6 +32,14 @@ public class ErrorCode implements Serializable {
 
   protected ErrorCode() {
   }
+  /*
+    For backward compatibility only - will be removed soon
+  */
+
+  @Override
+  public String toString() {
+    return message;
+  }
 
   public String id() {
     return id;
@@ -58,11 +66,6 @@ public class ErrorCode implements Serializable {
   @Deprecated
   protected void category(ErrorCategory category) {
     this.category = category;
-  }
-
-  @Override
-  public String toString() {
-    return message;
   }
 
   public static class ErrorCodeBuilder {

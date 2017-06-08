@@ -1,18 +1,3 @@
-
-$plus-circle-icon-size: 18px;
-.plus-icon-button {
-  background: url($plus-circle-icon) no-repeat;
-  background-size: $plus-circle-icon-size;
-  width: $plus-circle-icon-size;
-  height: $plus-circle-icon-size;
-  cursor: pointer;
-  &.small {
-    background-size: $plus-circle-icon-size - 6;
-    width: $plus-circle-icon-size - 6;
-    height: $plus-circle-icon-size - 6;
-  }
-}
-
 .primary-btn{
   border: 1px solid;
   border-color: $blue;

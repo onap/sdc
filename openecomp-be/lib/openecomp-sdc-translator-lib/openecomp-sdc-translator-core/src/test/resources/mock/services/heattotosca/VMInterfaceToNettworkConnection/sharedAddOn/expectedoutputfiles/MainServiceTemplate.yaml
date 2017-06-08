@@ -1,0 +1,188 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    shared_network_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    shared_network_id1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    shared_network_id2:
+      hidden: false
+      immutable: false
+      type: list
+      description: Flavor for CMAUI server
+      entry_schema:
+        type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    template_VMInt_OAM_lb_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - get_input: shared_network_id
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+    template_VMInt_OAM_lb_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - get_input: shared_network_id
+        - get_input: shared_network_id1
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+    template_VMInt_OAM_lb_3:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - get_input:
+          - shared_network_id2
+          - 0
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+    test_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        contrail_service_instance_ind: true
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    test_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_net1
+      - test_net
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: cmaui server template for vMMSC
+      members:
+      - template_VMInt_OAM_lb_1
+      - template_VMInt_OAM_lb_2
+      - template_VMInt_OAM_lb_3
+      - server_cmaui

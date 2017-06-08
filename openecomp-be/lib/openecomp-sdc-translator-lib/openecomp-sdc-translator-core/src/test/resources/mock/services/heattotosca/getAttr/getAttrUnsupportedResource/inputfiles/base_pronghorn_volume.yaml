@@ -1,0 +1,77 @@
+heat_template_version: 2015-04-30
+
+description: Pronghorn Data Volume
+
+parameters:
+  ###
+  # size of each database storage volume
+  ###
+  db_volume_size_0:
+    label: Data Volume Size
+    description: Size of the data volume
+    type: number
+    constraints:
+      - range: { min: 1, max: 2000 }
+        description: Volume size should be an integer between 1 and 2000 (GB)
+
+
+resources:
+  ###
+  # define database storage volumes
+  # four volumes are created for each server
+  # these four volumes will be combined in a RAID 10 array
+  ###
+  db_volumes_0:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: OS::Cinder::Volume
+        properties:
+          name: db_volume_%index%_0
+          size: { get_param: db_volume_size_0 }
+  db_volumes_1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: OS::Cinder::Volume
+        properties:
+          name: db_volume_%index%_1
+          size: { get_param: db_volume_size_0 }
+  db_volumes_2:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: OS::Cinder::Volume
+        properties:
+          name: db_volume_%index%_2
+          size: { get_param: db_volume_size_0 }
+  db_volumes_3:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: OS::Cinder::Volume
+        properties:
+          name: db_volume_%index%_3
+          size: { get_param: db_volume_size_0 }
+
+
+outputs:
+  ###
+  # database storage volume outputs
+  ###
+  db_volume_id_0:
+    description: IDs of the database volumes
+    value: { get_attr: [db_volumes_0, refs, 1] }
+  # db_volume_id_1:
+  #   description: IDs of the database volumes
+  #   value: { get_attr: [db_volumes_1, refs, 1] }
+  # db_volume_id_2:
+  #   description: IDs of the database volumes
+  #   value: { get_attr: [db_volumes_2, refs, 1] }
+  # db_volume_id_3:
+  #   description: IDs of the database volumes
+  #   value: { get_attr: [db_volumes_3, refs, 1] }

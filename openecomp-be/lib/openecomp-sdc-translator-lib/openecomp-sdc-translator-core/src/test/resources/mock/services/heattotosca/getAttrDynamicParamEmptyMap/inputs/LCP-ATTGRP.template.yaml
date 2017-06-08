@@ -1,0 +1,352 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Generate group_info for a single VM type.
+
+parameters:
+
+  vmtype_index:
+    type: number
+    description: Index of the VM type.
+
+  vmtype_list:
+    type: comma_delimited_list
+    description: List of VM type tags.
+
+  vm_info:
+    type: json
+    description: |
+      Provides keys into type-specific parameters and vnic info.
+    default: {}
+
+  availability_zones:
+    type: comma_delimited_list
+    description: CDL of availability zones.
+
+  flavors:
+    type: json
+    description: Maps VM type tags to the flavor ID for that type.
+    default: {}
+
+  name_lists:
+    type: json
+    description: Maps VM type tags to the list of VM names for that type.
+
+outputs:
+
+  # The approach used here limits the number of pairs per
+  # group that are possible but also limts the number of
+  # openstack resources used just to generate this data
+  # (vs. use of a per-pair resource group).
+
+  vmtype_info:
+    description: Group_info for one VM group.
+    value: {
+      "defaults": {
+        "flavor": {
+          "0": {get_param: [flavors, {get_param: [vmtype_list, {get_param: vmtype_index}]}]},
+          "1": {get_param: [flavors, {get_param: [vmtype_list, {get_param: vmtype_index}]}]},
+        }
+      },
+      "0": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "0", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_000"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "0", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_001"]]}
+        }
+      },
+      "1": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "1", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_010"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "1", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_011"]]}
+        }
+      },
+      "2": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "2", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_020"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "2", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_021"]]}
+        }
+      },
+      "3": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "3", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_030"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "3", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_031"]]}
+        }
+      },
+      "4": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "4", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_040"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "4", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_041"]]}
+        }
+      },
+      "5": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "5", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_050"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "5", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_051"]]}
+        }
+      },
+      "6": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "6", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_060"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "6", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_061"]]}
+        }
+      },
+      "7": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "7", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_070"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "7", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_071"]]}
+        }
+      },
+      "8": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "8", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_080"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "8", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_081"]]}
+        }
+      },
+      "9": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "9", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_090"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {ge: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "9", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_091"]]}
+        }
+      },
+      "10": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "10", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_100"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "10", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_101"]]}
+        }
+      },
+      "11": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "11", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_110"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "11", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_111"]]}
+        }
+      },
+      "12": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "12", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_120"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "12", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_121"]]}
+        }
+      },
+      "13": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "13", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_130"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "13", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_131"]]}
+        }
+      },
+      "14": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "14", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_140"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "14", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_141"]]}
+        }
+      },
+      "15": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "15", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_150"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "15", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_151"]]}
+        }
+      },
+      "16": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "16", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_160"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "16", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_161"]]}
+        }
+      },
+      "17": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "17", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_170"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "17", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_171"]]}
+        }
+      },
+      "18": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "18", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_180"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "18", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_181"]]}
+        }
+      },
+      "19": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "19", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_190"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "19", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_191"]]}
+        }
+      },
+      "20": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "20", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_200"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "20", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_201"]]}
+        }
+      },
+      "21": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "21", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_210"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "21", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_211"]]}
+        }
+      },
+      "22": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "22", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_220"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "22", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_221"]]}
+        }
+      },
+      "23": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "23", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_230"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "23", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_231"]]}
+        }
+      },
+      "24": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "24", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_240"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "24", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_241"]]}
+        }
+      },
+      "25": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "25", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_250"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "25", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_251"]]}
+        }
+      },
+      "26": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "26", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_260"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "26", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_261"]]}
+        }
+      },
+      "27": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "27", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_270"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "27", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_271"]]}
+        }
+      },
+      "28": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "28", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_280"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "28", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_281"]]}
+        }
+      },
+      "29": {
+        "0": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "29", "0", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_290"]]}
+        },
+        "1": {
+          "name": {get_param: [name_lists, {get_param: [vmtype_list, {get_param: vmtype_index}]}, {get_param: [vm_info, {get_param: [vmtype_list, {get_param: vmtype_index}]}, "29", "1", "index"]}]},
+          "storage_name": {list_join: ["", [{get_param: [vmtype_list, {get_param: vmtype_index}]}, "_volume_291"]]}
+        }
+      }
+    }
+

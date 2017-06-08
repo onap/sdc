@@ -53,3 +53,9 @@ resources:
      properties:
        volume_id: {get_param: cmaui_volume_param}
        instance_uuid: {get_resource: server_cmaui}
+
+  cmaui_volume_attachment1:
+     type: OS::Cinder::VolumeAttachment
+     properties:
+       volume_id: {get_param: [cmaui_volume_param,0]}
+       instance_uuid: {get_resource: server_cmaui}
