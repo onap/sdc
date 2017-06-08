@@ -1,0 +1,87 @@
+{
+  "validatorImplementations": {
+    "sharedResourceGuideLineValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.SharedResourceGuideLineValidator"
+    },
+    "forbiddenResourceGuideLineValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.ForbiddenResourceGuideLineValidator",
+      "properties": {
+        "forbiddenResourceTypes": {
+          "OS::Neutron::FloatingIP": {
+            "enable": true
+          }
+        }
+      }
+    },
+    "contrailValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.ContrailValidator"
+    },
+    "resourceHeatValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.HeatResourceValidator",
+      "properties": {
+        "resourceBaseValidator": {
+          "OS::Nova::Server": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NovaServerResourceValidator"
+          },
+          "OS::Nova::ServerGroup": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NovaServerGroupResourceValidator"
+          },
+          "OS::Heat::ResourceGroup": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.ResourceGroupResourceValidator"
+          },
+          "OS::Neutron::Port": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NeutronPortResourceValidator"
+          },
+          "OS::Contrail::NetworkPolicy": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.ContrailNetworkPolicyResourceValidator"
+          },
+          "OS::Neutron::SecurityGroup":{
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NeutronSecurityGroupResourceValidator"
+          },
+          "nestedResource": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.heatresource.NestedResourceValidator"
+          }
+        }
+      }
+    },
+    "namingConventionGuideLineValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.NamingConventionGuideLineValidator",
+      "properties": {
+        "resourceBaseValidator": {
+          "OS::Nova::Server": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.NovaServerNamingConventionGuideLineValidator"
+          },
+          "OS::Neutron::Port": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.NeutronPortNamingConventionValidator"
+          },
+          "OS::Contrail::ServiceTemplate": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.ContrailServiceTemplateNamingConventionValidator"
+          },
+          "OS::Contrail::ServiceInstance": {
+            "enable": true,
+            "implementationClass": "org.openecomp.sdc.validation.impl.validators.namingconvention.ContrailServiceInstanceNamingConventionValidator"
+          }
+        }
+      }
+    }
+  },
+
+  "_config":{
+    "namespace": "validation"
+  }
+}

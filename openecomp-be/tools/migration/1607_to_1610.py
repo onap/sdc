@@ -52,7 +52,7 @@ def main(argv):
     Service.server(host)
 
     webHandler=WebHandler(host=host, port=DEFAULT_PORT)
-    response, headers = webHandler.rest(url=VSP_LIST_PATH, method='GET', data=None, attuid=username)
+    response, headers = webHandler.rest(url=VSP_LIST_PATH, method='GET', data=None, userId=username)
     jResult = json.loads(response)
     jSrvices = jResult["results"]
     reportFileName = 'upgradereport.csv'  #datetime.now()
@@ -137,24 +137,24 @@ class Service(object):
     def line(self):
         return '{0},{1},{2},{3},{4}\n'.format(self.serviceName, self.vspId ,self.vendorName, self.lockingUser, self.uploadStatus)
 
-    def Checkout(self, attuid):
+    def Checkout(self, userId):
         # /v1.0/vendor-software-products/{vspId}/actions
         urlpath=VSP_ACTIONS_PATH.format(vspId=self.vspId)
-        response, headers = self.webHandler.rest( url=urlpath, method='PUT', data={"action": "Checkout"}, attuid=attuid)
-        self.lockingUser=attuid #we will later use this user to checkin
+        response, headers = self.webHandler.rest( url=urlpath, method='PUT', data={"action": "Checkout"}, userId=userId)
+        self.lockingUser=userId #we will later use this user to checkin
         return response
 
     def Checkin(self):
         # /v1.0/vendor-software-products/{vspId}/actions
         urlpath = VSP_ACTIONS_PATH.format(vspId=self.vspId)
-        response, headers = self.webHandler.rest(url=urlpath, method='PUT', data={"action": "Checkin"}, attuid=self.lockingUser)
+        response, headers = self.webHandler.rest(url=urlpath, method='PUT', data={"action": "Checkin"}, userId=self.lockingUser)
         return response
 
     def Get(self):
         # /v1.0/vendor-software-products/{vspId}
         urlpath = VSP_GET_URL.format(vspId=self.vspId)
         try:
-            response, headers = self.webHandler.rest(url=urlpath, method='GET', data=None, attuid=self.lockingUser)
+            response, headers = self.webHandler.rest(url=urlpath, method='GET', data=None, userId=self.lockingUser)
         except HttpError as e:
             print e.message
             response = e.status
@@ -178,7 +178,7 @@ class Service(object):
     def DownloadHeat(self):
         urlpath=VSP_DOWNLOAD_PATH.format(vspId=self.vspId)
         try:
-            response, headers = self.webHandler.rest(url=urlpath, method='Get', data=None, attuid=self.lockingUser, accept='application/octet-stream')
+            response, headers = self.webHandler.rest(url=urlpath, method='Get', data=None, userId=self.lockingUser, accept='application/octet-stream')
         except HttpError as e:
             if e.status == 404:
                 return ""
@@ -204,12 +204,12 @@ class WebHandler(object):
         self.host = host
         self.port = port
 
-    def rest(self, url, method, data, attuid, accept='application/json', content_type='application/json'):
+    def rest(self, url, method, data, userId, accept='application/json', content_type='application/json'):
         connection = httplib.HTTPConnection(host=self.host, port=self.port)
 
         try:
             headers = {'Content-Type':content_type ,'Accept':accept}
-            headers['USER_ID'] = attuid
+            headers['USER_ID'] = userId
 
             connection.request(method=method, headers=headers, body=json.dumps(data), url=url)
             response = connection.getresponse()
@@ -220,7 +220,7 @@ class WebHandler(object):
         finally:
             connection.close()
 
-    def post_multipart(self, scheme, selector, fields, files, attuid):
+    def post_multipart(self, scheme, selector, fields, files, userId):
         """
         Post fields and files to an http host as multipart/form-data.
         fields is a sequence of (name, value) elements for regular form fields.
@@ -236,7 +236,7 @@ class WebHandler(object):
         h.putheader('content-type', content_type)
         h.putheader('content-length', str(len(body)))
         h.putheader('Accept', 'application/json')
-        h.putheader('USER_ID', attuid)
+        h.putheader('USER_ID', userId)
 
         h.endheaders()
         h.send(body)

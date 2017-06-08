@@ -24,6 +24,9 @@ import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfig
 import org.openecomp.sdcrests.applicationconfiguration.types.ApplicationConfigDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
+/**
+ * Created by Talio on 8/10/2016.
+ */
 public class MapApplicationConfigEntityToApplicationConfigDto
     extends MappingBase<ApplicationConfigEntity, ApplicationConfigDto> {
   @Override

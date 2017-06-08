@@ -1,8 +1,8 @@
 {
-  "org.openecomp.core.model.dao.ServiceModelDaoFactory":"org.openecomp.sdc.model.impl.ServiceModelDaoFactoryImpl",
-  "org.openecomp.core.model.dao.ServiceTemplateDaoFactory":"org.openecomp.sdc.model.impl.ServiceTemplateDaoCassandraFactoryImpl",
-  "org.openecomp.core.model.dao.ServiceArtifactDaoFactory":"org.openecomp.sdc.model.impl.ServiceArtifactDaoCassandraFactoryImpl",
-  "org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory":"org.openecomp.sdc.model.impl.EnrichedServiceModelDaoFactoryImpl",
-  "org.openecomp.core.model.dao.EnrichedServiceTemplateDaoFactory":"org.openecomp.sdc.model.impl.EnrichedServiceTemplateDaoCassandraFactoryImpl",
-  "org.openecomp.core.model.dao.EnrichedServiceArtifactDaoFactory":"org.openecomp.sdc.model.impl.EnrichedServiceArtifactDaoCassandraFactoryImpl"
+  "org.openecomp.core.model.dao.ServiceModelDaoFactory": "org.openecomp.sdc.model.impl.ServiceModelDaoFactoryImpl",
+  "org.openecomp.core.model.dao.ServiceTemplateDaoFactory": "org.openecomp.sdc.model.impl.ServiceTemplateDaoCassandraFactoryImpl",
+  "org.openecomp.core.model.dao.ServiceArtifactDaoFactory": "org.openecomp.sdc.model.impl.ServiceArtifactDaoCassandraFactoryImpl",
+  "org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory": "org.openecomp.sdc.model.impl.EnrichedServiceModelDaoFactoryImpl",
+  "org.openecomp.core.model.dao.EnrichedServiceTemplateDaoFactory": "org.openecomp.sdc.model.impl.EnrichedServiceTemplateDaoCassandraFactoryImpl",
+  "org.openecomp.core.model.dao.EnrichedServiceArtifactDaoFactory": "org.openecomp.sdc.model.impl.EnrichedServiceArtifactDaoCassandraFactoryImpl"
 }

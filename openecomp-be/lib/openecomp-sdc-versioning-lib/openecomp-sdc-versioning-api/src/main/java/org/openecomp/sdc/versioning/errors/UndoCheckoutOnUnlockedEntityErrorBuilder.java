@@ -20,12 +20,8 @@
 
 package org.openecomp.sdc.versioning.errors;
 
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes
-    .UNDO_CHECKOUT_ON_UNLOCKED_ENTITY;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
-
 
 /**
  * The type Undo checkout on unlocked entity error builder.
@@ -42,7 +38,7 @@ public class UndoCheckoutOnUnlockedEntityErrorBuilder extends BaseErrorBuilder {
    * @param entityId   the entity id
    */
   public UndoCheckoutOnUnlockedEntityErrorBuilder(String entityType, String entityId) {
-    getErrorCodeBuilder().withId(UNDO_CHECKOUT_ON_UNLOCKED_ENTITY);
+    getErrorCodeBuilder().withId(VersioningErrorCodes.UNDO_CHECKOUT_ON_UNLOCKED_ENTITY);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder()
         .withMessage(String.format(UNDO_CHECKOUT_ON_UNLOCKED_ENTITY_MSG, entityType, entityId));

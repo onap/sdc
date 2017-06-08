@@ -21,23 +21,24 @@
 package org.openecomp.core.validation.types;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.core.utilities.CommonMethods;
-import org.openecomp.core.validation.interfaces.Validator;
-import org.openecomp.sdc.common.utils.AsdcCommon;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
 
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public class GlobalValidationContext {
 
-  private static Logger logger = LoggerFactory.getLogger(Validator.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(GlobalValidationContext.class);
   private Map<String, FileValidationContext> fileContextMap = new HashMap<>();
   private Map<String, MessageContainer> messageContainerMap = new HashMap<>();
 
@@ -47,18 +48,21 @@ public class GlobalValidationContext {
    * @param fileName the file name
    * @param level    the level
    * @param message  the message
+   * @param targetServiceName  the target service name
+   * @param errorDescription  the error details
    */
-  public void addMessage(String fileName, ErrorLevel level, String message) {
+  public void addMessage(String fileName, ErrorLevel level, String message,
+                         String targetServiceName, String errorDescription) {
 
-    printLog(fileName, message, level);
+    printLog(fileName, message, level, targetServiceName, errorDescription);
 
     if (fileContextMap.containsKey(fileName)) {
-      fileContextMap.get(fileName).getMessageContainer().getMessageBuilder().setMessage(message)
-          .setLevel(level).create();
+      fileContextMap.get(fileName).getMessageContainer().getMessageBuilder()
+          .setMessage(level.toString() + ": " + message).setLevel(level).create();
     } else {
-      if (CommonMethods.isEmpty(fileName)) {
-        fileName = AsdcCommon.UPLOAD_FILE;
-      }
+//      if (CommonMethods.isEmpty(fileName)) {
+//        fileName = SdcCommon.UPLOAD_FILE;
+//      }
       MessageContainer messageContainer;
       synchronized (this) {
         messageContainer = messageContainerMap.get(fileName);
@@ -67,7 +71,8 @@ public class GlobalValidationContext {
           messageContainerMap.put(fileName, messageContainer);
         }
       }
-      messageContainer.getMessageBuilder().setMessage(message).setLevel(level).create();
+      messageContainer.getMessageBuilder().setMessage(level.toString() + ": " + message)
+          .setLevel(level).create();
     }
   }
 
@@ -77,12 +82,12 @@ public class GlobalValidationContext {
    * @param fileName the file name
    * @return the file content
    */
-  public InputStream getFileContent(String fileName) {
+  public Optional<InputStream> getFileContent(String fileName) {
     FileValidationContext fileContext = fileContextMap.get(fileName);
     if (fileContext == null || fileContext.isEmpty()) {
-      return null;
+      return Optional.empty();
     }
-    return fileContext.getContent();
+    return Optional.of(fileContext.getContent());
   }
 
   public void addFileContext(String fileName, byte[] fileContent) {
@@ -100,7 +105,8 @@ public class GlobalValidationContext {
     fileContextMap.entrySet().stream().filter(entry -> CollectionUtils
         .isNotEmpty(entry.getValue().getMessageContainer().getErrorMessageList())).forEach(
           entry -> contextMessageContainer.put(
-            entry.getKey(), entry.getValue().getMessageContainer()));
+             entry.getKey(), entry.getValue()
+             .getMessageContainer()));
     messageContainerMap.entrySet().stream()
         .filter(entry -> CollectionUtils.isNotEmpty(entry.getValue().getErrorMessageList()))
         .forEach(entry -> contextMessageContainer.put(entry.getKey(), entry.getValue()));
@@ -111,9 +117,12 @@ public class GlobalValidationContext {
     return fileContextMap;
   }
 
-  private void printLog(String fileName, String message, ErrorLevel level) {
+  private void printLog(String fileName, String message, ErrorLevel level, String targetServiceName,
+                        String errorDescription) {
 
     String messageToPrint = message + " in file[" + fileName + "]";
+    MdcUtil.setValuesForMdc(LoggerConstants.TARGET_ENTITY_API, targetServiceName, level.name(),
+        LoggerErrorCode.DATA_ERROR.getErrorCode(), errorDescription);
 
     switch (level) {
       case ERROR:
@@ -129,6 +138,7 @@ public class GlobalValidationContext {
         break;
     }
   }
+
 
   public Collection<String> files(BiPredicate<String, GlobalValidationContext> func) {
     return fileContextMap.keySet().stream().filter(t -> func.test(t, this))

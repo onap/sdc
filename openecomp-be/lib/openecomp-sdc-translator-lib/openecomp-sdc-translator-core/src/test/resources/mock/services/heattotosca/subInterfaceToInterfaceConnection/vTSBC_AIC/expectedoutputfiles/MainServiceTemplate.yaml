@@ -1,0 +1,737 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    ssc_a_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of VM A of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    mgmt_net_plen:
+      hidden: false
+      immutable: false
+      type: float
+      description: Management network prefix length
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    ssc_b_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of VM B of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    rtp_msc_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: Count of required RTP MSCs
+    ssc_b_untrusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on untrusted/access network for SSC B. Only required when predefining fixed IPs.
+    perimeta_param_server_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of server group to set anti-affinity policy for Perimeta instance.  Only used when doing healing.
+    int_ha_net_plen:
+      hidden: false
+      immutable: false
+      type: float
+      description: Intermal HA network prefix length.
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    untrusted_vlan_networks:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list
+      entry_schema:
+        type: string
+    ssc_mgmt_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management virtual IP address to use for SSC.  Only required when predefining VIPs.
+    untrusted_vlan_ids:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of VLAN IDs to use on the untrusted/access network
+      entry_schema:
+        type: string
+    perimeta_keypair:
+      hidden: false
+      immutable: false
+      type: string
+      description: Keypair to use for accessing these Perimeta instances
+      constraints: [
+        ]
+    mgmt_net_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Management network security groups
+      entry_schema:
+        type: string
+    ssc_trusted_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on trusted/core network for SSC.
+    ssc_untrusted_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on untrusted/access network for SSC. Only required when predefining virtual IPs.
+    rtp_msc_mgmt_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Management virtual IP addresses to use for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    ssc_b_trusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on trusted/core network for SSC B. Only required when predefining fixed IPs.
+    untrusted_num_vlans:
+      hidden: false
+      immutable: false
+      type: float
+      description: Number of VLANs to connect to on the untrusted/access network
+    rtp_msc_untrusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Virtual IPv4 address on untrusted/access network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_system_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of system names of RTP MSC instances
+      entry_schema:
+        type: string
+    ssc_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Glance image to use for launching SSC Perimeta instances.
+      constraints: [
+        ]
+    trusted_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network ID of trusted/core network.
+      constraints: [
+        ]
+    ntp_server_ip_addrs:
+      hidden: false
+      immutable: false
+      type: string
+      description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
+      constraints:
+      - pattern: ((?:\d{1,3}\.){3}\d{1,3},)*((?:\d{1,3}\.){3}\d{1,3})
+    ssc_b_untrusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv6 address on untrusted/access network for SSC B. Only required when predefining fixed IPs.
+    rtp_msc_untrusted_v6_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Virtual IPv6 address on untrusted/access network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    ssc_system_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: System name of SSC
+      constraints:
+      - pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+    ssc_b_rf_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on management/Rf network for SSC B. Only required when predefining fixed IPs.
+    ssc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for creating SSC VM instance
+      constraints: [
+        ]
+    mgmt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management network ID
+      constraints: [
+        ]
+    rtp_msc_a_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of names of RTP MSC VM A instances
+      entry_schema:
+        type: string
+    rtp_msc_trusted_vips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Virtual IPv4 addresses on trusted/core network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    untrusted_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network ID of untrusted/access network.
+      constraints: [
+        ]
+    unused_port_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unused network ID
+      constraints: [
+        ]
+    rtp_msc_b_untrusted_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv6 address on untrusted/access network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_b_mgmt_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Management fixed IP addresses to use for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    ssc_a_int_ha_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA fixed IP address to use for SSC A.  Only required when predefining fixed IPs.
+    ssc_b_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management fixed IP address to use for SSC B.  Only required when predefining fixed IPs.
+    rtp_msc_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to use for creating RTP MSC VM instances
+      constraints: [
+        ]
+    rtp_msc_b_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of names of RTP MSC VM B instances
+      entry_schema:
+        type: string
+    rtp_msc_b_untrusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 address on untrusted/access network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    int_ha_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal HA network ID
+      constraints: [
+        ]
+    ssc_b_int_ha_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: HA fixed IP address to use for SSC B.  Only required when predefining fixed IPs.
+    ssc_a_trusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on trusted/core network for SSC A. Only required when predefining fixed IPs.
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of VNF
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone for A instances.
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone for B instances.
+    untrusted_net_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Security groups associated with untrusted/access network
+      entry_schema:
+        type: string
+    ssc_a_untrusted_v6_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv6 address on untrusted/access network for SSC A. Only required when predefining fixed IPs.
+    ssc_rf_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv4 address on management/Rf network for SSC. Only required when predefining virtual IPs.
+    rtp_msc_a_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: HA fixed IP addresses to use for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_b_trusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 address on trusted/core network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_a_trusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 addresses on trusted/core network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Glance image to use for launching RTP MSC Perimeta instances.
+      constraints: [
+        ]
+    ssc_a_mgmt_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Management fixed IP address to use for SSC A.  Only required when predefining fixed IPs.
+    rtp_msc_b_int_ha_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: HA fixed IP addresses to use for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    ssc_untrusted_v6_vip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Virtual IPv6 address on untrusted/access network for SSC. Only required when predefining virtual IPs.
+    rtp_msc_a_mgmt_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Management fixed IP addresses to use for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_a_untrusted_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv4 address on untrusted/access network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    rtp_msc_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of RTP MSC to create/heal.
+    ssc_a_rf_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on management/Rf network for SSC A. Only required when predefining fixed IPs.
+    ssc_a_untrusted_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IPv4 address on untrusted/access network for SSC A. Only required when predefining fixed IPs.
+    rtp_msc_a_untrusted_v6_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IPv6 address on untrusted/access network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+      entry_schema:
+        type: string
+    mgmt_net_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default gateway for management network
+    trusted_net_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Security groups associated with trusted/core network
+      entry_schema:
+        type: string
+    int_ha_net_sec_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: Security groups associated with internal HA network
+      entry_schema:
+        type: string
+  node_templates:
+    perimeta_ssc:
+      type: org.openecomp.resource.abstract.nodes.heat.perimeta_ha_swmu_a
+      directives:
+      - substitutable
+      properties:
+        mgmt_net_plen:
+          get_input: mgmt_net_plen
+        untrusted_b_ips:
+        - get_input: ssc_b_untrusted_ip_0
+        ha_net_id:
+          get_input: int_ha_net_id
+        perimeta_param_server_group:
+          get_input: perimeta_param_server_group
+        untrusted_vlan_networks:
+          get_input: untrusted_vlan_networks
+        perimeta_instance_index: 0
+        untrusted_vlan_ids:
+          get_input: untrusted_vlan_ids
+        service_template_filter:
+          substitute_service_template: perimeta_ha_swmu_aServiceTemplate.yaml
+        serv3_net_id:
+          get_input: mgmt_net_id
+        perimeta_keypair:
+          get_input: perimeta_keypair
+        mgmt_vips:
+        - get_input: ssc_mgmt_vip_0
+        untrusted_vips:
+        - get_input: ssc_untrusted_vip_0
+        serv3_a_ips:
+        - get_input: ssc_a_rf_ip_0
+        unused_net_id:
+          get_input: unused_port_net_id
+        untrusted_v6_vips:
+        - get_input: ssc_untrusted_v6_vip_0
+        ha_sec_groups:
+          get_input: int_ha_net_sec_groups
+        untrusted_num_vlans:
+          get_input: untrusted_num_vlans
+        system_names:
+        - get_input: ssc_system_name_0
+        vm_b_names:
+        - get_input: ssc_b_name_0
+        trusted_vips:
+        - get_input: ssc_trusted_vip_0
+        trusted_net_id:
+          get_input: trusted_net_id
+        untrusted_a_v6_ips:
+        - get_input: ssc_a_untrusted_v6_ip_0
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        perimeta_flavor_name:
+          get_input: ssc_flavor_name
+        ha_network_plen:
+          get_input: int_ha_net_plen
+        vf_module_id:
+          get_input: vf_module_id
+        untrusted_net_id:
+          get_input: untrusted_net_id
+        perimeta_config:
+          str_replace:
+            template:
+              get_artifact:
+              - SELF
+              - ssc_a_template
+            params:
+              $COMPLETION_PARAMS: ''
+              $NTP_SERVER_IP_ADDRS:
+                get_input: ntp_server_ip_addrs
+        vm_a_names:
+        - get_input: ssc_a_name_0
+        serv3_vips:
+        - get_input: ssc_rf_vip_0
+        mgmt_sec_groups:
+          get_input: mgmt_net_sec_groups
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        availability_zone_1:
+          get_input: availability_zone_1
+        ha_a_ips:
+        - get_input: ssc_a_int_ha_ip_0
+        trusted_a_ips:
+        - get_input: ssc_a_trusted_ip_0
+        trusted_sec_groups:
+          get_input: trusted_net_sec_groups
+        serv3_sec_groups:
+          get_input: mgmt_net_sec_groups
+        serv3_b_ips:
+        - get_input: ssc_b_rf_ip_0
+        ha_b_ips:
+        - get_input: ssc_b_int_ha_ip_0
+        untrusted_b_v6_ips:
+        - get_input: ssc_b_untrusted_v6_ip_0
+        mgmt_a_ips:
+        - get_input: ssc_a_mgmt_ip_0
+        vm_role: ssc
+        trusted_b_ips:
+        - get_input: ssc_b_trusted_ip_0
+        perimeta_image_name:
+          get_input: ssc_image_name
+        mgmt_net_default_gateway:
+          get_input: mgmt_net_default_gateway
+        untrusted_a_ips:
+        - get_input: ssc_a_untrusted_ip_0
+        untrusted_sec_groups:
+          get_input: untrusted_net_sec_groups
+        mgmt_b_ips:
+        - get_input: ssc_b_mgmt_ip_0
+      artifacts:
+        ssc_a_template:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/ssc_a_template.json
+    perimeta_rtp_mscs:
+      type: org.openecomp.resource.abstract.nodes.heat.perimeta_ha_sw_a
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        untrusted_net_id:
+          get_input: untrusted_net_id
+        mgmt_net_plen:
+          get_input: mgmt_net_plen
+        perimeta_config:
+          str_replace:
+            template:
+              get_artifact:
+              - SELF
+              - msc_a_template
+            params:
+              $COMPLETION_PARAMS: ''
+              $NTP_SERVER_IP_ADDRS:
+                get_input: ntp_server_ip_addrs
+        vm_a_names:
+          get_input: rtp_msc_a_names
+        untrusted_b_ips:
+          get_input: rtp_msc_b_untrusted_ips
+        ha_net_id:
+          get_input: int_ha_net_id
+        perimeta_param_server_group:
+          get_input: perimeta_param_server_group
+        untrusted_vlan_networks:
+          get_input: untrusted_vlan_networks
+        mgmt_sec_groups:
+          get_input: mgmt_net_sec_groups
+        perimeta_instance_index:
+          get_input: rtp_msc_index
+        untrusted_vlan_ids:
+          get_input: untrusted_vlan_ids
+        service_template_filter:
+          substitute_service_template: perimeta_ha_sw_aServiceTemplate.yaml
+        perimeta_keypair:
+          get_input: perimeta_keypair
+        mgmt_vips:
+          get_input: rtp_msc_mgmt_vips
+        untrusted_vips:
+          get_input: rtp_msc_untrusted_vips
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        availability_zone_1:
+          get_input: availability_zone_1
+        ha_a_ips:
+          get_input: rtp_msc_a_int_ha_ips
+        untrusted_v6_vips:
+          get_input: rtp_msc_untrusted_v6_vips
+        ha_sec_groups:
+          get_input: int_ha_net_sec_groups
+        trusted_a_ips:
+          get_input: rtp_msc_a_trusted_ips
+        untrusted_num_vlans:
+          get_input: untrusted_num_vlans
+        system_names:
+          get_input: rtp_msc_system_names
+        vm_b_names:
+          get_input: rtp_msc_b_names
+        trusted_sec_groups:
+          get_input: trusted_net_sec_groups
+        trusted_vips:
+          get_input: rtp_msc_trusted_vips
+        trusted_net_id:
+          get_input: trusted_net_id
+        ha_b_ips:
+          get_input: rtp_msc_b_int_ha_ips
+        untrusted_a_v6_ips:
+          get_input: rtp_msc_a_untrusted_v6_ips
+        untrusted_b_v6_ips:
+          get_input: rtp_msc_b_untrusted_v6_ips
+        mgmt_a_ips:
+          get_input: rtp_msc_a_mgmt_ips
+        vm_role: rtp_msc
+        trusted_b_ips:
+          get_input: rtp_msc_b_trusted_ips
+        perimeta_image_name:
+          get_input: rtp_msc_image_name
+        mgmt_net_default_gateway:
+          get_input: mgmt_net_default_gateway
+        untrusted_a_ips:
+          get_input: rtp_msc_a_untrusted_ips
+        untrusted_sec_groups:
+          get_input: untrusted_net_sec_groups
+        mgmt_net_id:
+          get_input: mgmt_net_id
+        perimeta_flavor_name:
+          get_input: rtp_msc_flavor_name
+        ha_network_plen:
+          get_input: int_ha_net_plen
+        mgmt_b_ips:
+          get_input: rtp_msc_b_mgmt_ips
+      artifacts:
+        msc_a_template:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/msc_a_template.json
+  groups:
+    base_perimeta_deployment_create_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_perimeta_deployment_create.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_ssc
+      - perimeta_rtp_mscs
+    module_2_perimeta_rtp_msc_rebuild_scaling_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_rtp_msc_rebuild_scaling.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_rtp_mscs
+    module_2_perimeta_rtp_msc_a_healing_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_rtp_msc_a_healing.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_rtp_mscs
+    module_1_perimeta_ssc_rebuild_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_1_perimeta_ssc_rebuild.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_ssc
+    module_1_perimeta_ssc_b_healing_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_1_perimeta_ssc_b_healing.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_ssc
+    module_2_perimeta_rtp_msc_b_healing_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_2_perimeta_rtp_msc_b_healing.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_rtp_mscs
+    module_1_perimeta_ssc_a_healing_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/module_1_perimeta_ssc_a_healing.yaml
+        description: |
+          HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+      members:
+      - perimeta_ssc
+  outputs:
+    ssc_server_group:
+      description: Server group for SSC pair
+      value:
+        get_attribute:
+        - perimeta_ssc
+        - server_group_used
+    rtp_msc_server_groups:
+      description: Server groups for RTP MSC pairs
+      value:
+        get_attribute:
+        - perimeta_rtp_mscs
+        - server_group_used
+    msw_template_version:
+      description: Version of the heat templates used to instantiate the VMs
+      value: 4.0.1 - 2016-10-28

@@ -22,6 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.util.List;
 
+/**
+ * Created by TALIO on 5/15/2016.
+ */
 public class LicensingData {
 
   private String licenseAgreement;

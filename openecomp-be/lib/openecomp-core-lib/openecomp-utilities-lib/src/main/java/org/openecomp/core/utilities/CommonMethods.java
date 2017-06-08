@@ -21,6 +21,7 @@
 package org.openecomp.core.utilities;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections4.MapUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,14 +48,12 @@ import java.util.UUID;
  * This class provides auxiliary static methods.
  */
 public class CommonMethods {
-  //private static final Logger logger = LoggerFactory.getLogger(CommonMethods.class);
-
-  private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
   private static final char[] CHARS = new char[]{
       '0', '1', '2', '3', '4', '5', '6', '7',
       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
+  private static final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
   /**
    * Private default constructor to prevent instantiation of the class objects.
@@ -73,8 +74,8 @@ public class CommonMethods {
       ObjectOutputStream ds = new ObjectOutputStream(byteArray);
       ds.writeObject(object);
       ds.close();
-    } catch (IOException e0) {
-      throw new RuntimeException(e0);
+    } catch (IOException exception) {
+      throw new RuntimeException(exception);
     }
 
     return byteArray.toByteArray();
@@ -93,8 +94,8 @@ public class CommonMethods {
       ObjectInputStream stream = new ObjectInputStream(new ByteArrayInputStream(bytes));
       obj = (Serializable) stream.readObject();
       stream.close();
-    } catch (IOException | ClassNotFoundException e0) {
-      throw new RuntimeException(e0);
+    } catch (IOException | ClassNotFoundException exception) {
+      throw new RuntimeException(exception);
     }
 
     return obj;
@@ -185,8 +186,8 @@ public class CommonMethods {
   /**
    * Converts the array with Long elements to the array with long (primitive type).
    *
-   * @param array input array with Long elements.
-   * @return array with the same elements converted to the long type (primitive).
+   * @param array input array with Long elements
+   * @return array with the same elements converted to the long type (primitive)
    */
   public static long[] toPrimitive(Long[] array) {
     if (array == null) {
@@ -255,12 +256,12 @@ public class CommonMethods {
    * empty.
    *
    * @param <T>   the type parameter
-   * @param left  Elements of this array will be copied to positions from 0 to
-   *              <tt>left.length - 1</tt> in the target array.
-   * @param right Elements of this array will be copied to positions from
-   *              <tt>left.length</tt> to <tt>left.length + right.length</tt>
-   * @return A newly allocate Java array that accommodates elements of source (left/right)
-    arraysor one of source arrays if another is empty, <tt>null</tt> - otherwise.
+   * @param left  Elements of this array will be copied to positions from 0 to <tt>left.length -
+   *              1</tt> in the target array.
+   * @param right Elements of this array will be copied to positions from <tt>left.length</tt> to
+   *              <tt>left.length + right.length</tt>
+   * @return A newly allocate Java array that accommodates elements of source (left/right) arrays
+    orone of source arrays if another is empty, <tt>null</tt> - otherwise.
    */
   @SuppressWarnings("unchecked")
   public static <T> T[] concat(T[] left, T[] right) {
@@ -288,25 +289,25 @@ public class CommonMethods {
    *
    * @param <B> the type parameter
    * @param <D> the type parameter
-   * @param b0  An object instance to be casted to the specified Java type.
+   * @param b1  An object instance to be casted to the specified Java type.
    * @param cls Target Java type.
    * @return Object instance safely casted to the requested Java type.
-   * @throws ClassCastException In case which is the given object is not instance of the
-   *                            specified Java type.
+   * @throws ClassCastException In case which is the given object is not instance of the specified
+   *                            Java type.
    */
   @SuppressWarnings("unchecked")
-  public static <B, D> D cast(B b0, Class<D> cls) {
-    D d0 = null;
-    if (b0 != null) {
-      if (!cls.isInstance(b0)) {
+  public static <B, D> D cast(B b1, Class<D> cls) {
+    D d1 = null;
+    if (b1 != null) {
+      if (!cls.isInstance(b1)) {
         throw new ClassCastException(String
-            .format("Failed to cast from '%s' to '%s'", b0.getClass().getName(), cls.getName()));
+            .format("Failed to cast from '%s' to '%s'", b1.getClass().getName(), cls.getName()));
       } else {
-        d0 = (D) b0;
+        d1 = (D) b1;
       }
     }
 
-    return d0;
+    return d1;
   } // cast
 
   /**
@@ -349,8 +350,8 @@ public class CommonMethods {
       Class<? extends T> impl = (Class<? extends T>) temp;
 
       return newInstance(impl);
-    } catch (ClassNotFoundException e0) {
-      throw new IllegalArgumentException(e0);
+    } catch (ClassNotFoundException exception) {
+      throw new IllegalArgumentException(exception);
     }
   }
 
@@ -364,10 +365,10 @@ public class CommonMethods {
   public static <T> T newInstance(Class<T> cls) {
     try {
       return cls.newInstance();
-    } catch (InstantiationException e0) {
-      throw new RuntimeException(e0);
-    } catch (IllegalAccessException e0) {
-      throw new RuntimeException(e0);
+    } catch (InstantiationException exception) {
+      throw new RuntimeException(exception);
+    } catch (IllegalAccessException exception) {
+      throw new RuntimeException(exception);
     }
   }
 
@@ -388,15 +389,15 @@ public class CommonMethods {
   /**
    * Gets stack trace.
    *
-   * @param t0 the t 0
+   * @param throwable the throwable
    * @return the stack trace
    */
-  public static String getStackTrace(Throwable t0) {
-    if (null == t0) {
+  public static String getStackTrace(Throwable throwable) {
+    if (null == throwable) {
       return "";
     }
     StringWriter sw = new StringWriter();
-    t0.printStackTrace(new PrintWriter(sw));
+    throwable.printStackTrace(new PrintWriter(sw));
     return sw.toString();
   }
 
@@ -416,8 +417,8 @@ public class CommonMethods {
     String str = sw.toString();
     try {
       sw.close();
-    } catch (IOException e0) {
-      System.err.println(e0);
+    } catch (IOException exception) {
+      System.err.println(exception);
     }
     return str;
 
@@ -530,10 +531,10 @@ public class CommonMethods {
   public static String bytesToHex(byte[] bytes) {
     char[] hexChars = new char[bytes.length * 2];
     for (int j = 0; j < bytes.length; j++) {
-      int v0 = bytes[j] & 0xFF;
-      int x0 = j << 1;
-      hexChars[x0] = hexArray[v0 >>> 4];
-      hexChars[x0 + 1] = hexArray[v0 & 0x0F];
+      int var = bytes[j] & 0xFF;
+      int x1 = j << 1;
+      hexChars[x1] = hexArray[var >>> 4];
+      hexChars[x1 + 1] = hexArray[var & 0x0F];
     }
     return new String(hexChars);
   }
@@ -543,13 +544,106 @@ public class CommonMethods {
    *
    * @param <T>     the class of the objects in the set
    * @param element the single element to be contained in the returned Set
-   * @return an immutable set containing only the specified object.The returned set is serializable.
+   * @return an immutable set containing only the specified object. The returned set is
+    serializable.
    */
   public static <T> Set<T> toSingleElementSet(T element) {
     return Collections.singleton(element);
 
   }
 
+  /**
+   * Merge lists of map list.
+   *
+   * @param <T>    the type parameter
+   * @param <S>    the type parameter
+   * @param target the target
+   * @param source the source
+   * @return the list
+   */
+  public static <T, S> List<Map<T, S>> mergeListsOfMap(List<Map<T, S>> target,
+                                                       List<Map<T, S>> source) {
+    List<Map<T, S>> retList = new ArrayList<>();
+    if (Objects.nonNull(target)) {
+      retList.addAll(target);
+    }
+
+    if (Objects.nonNull(source)) {
+      for (Map<T, S> sourceMap : source) {
+        for (Map.Entry<T, S> entry : sourceMap.entrySet()) {
+          mergeEntryInList(entry.getKey(), entry.getValue(), retList);
+        }
+      }
+    }
+    return retList;
+  }
+
+  /**
+   * Merge lists list.
+   *
+   * @param <T>    the type parameter
+   * @param target the target
+   * @param source the source
+   * @return the list
+   */
+  public static <T> List<T> mergeLists(List<T> target, List<T> source) {
+    List<T> retList = new ArrayList<>();
+
+    if (Objects.nonNull(source)) {
+      retList.addAll(source);
+    }
+    if (Objects.nonNull(target)) {
+      retList.addAll(target);
+    }
+
+    return retList;
+  }
+
+  /**
+   * Merge entry in list.
+   *
+   * @param <T>    the type parameter
+   * @param <S>    the type parameter
+   * @param key    the key
+   * @param value  the value
+   * @param target the target
+   */
+  public static <T, S> void mergeEntryInList(T key, S value, List<Map<T, S>> target) {
+    boolean found = false;
+    for (Map<T, S> map : target) {
+      if (map.containsKey(key)) {
+        map.put(key, value);
+        found = true;
+      }
+    }
+
+    if (!found) {
+      Map<T, S> newMap = new HashMap<>();
+      newMap.put(key, value);
+      target.add(newMap);
+    }
+  }
+
+
+  /**
+   * Merge maps map.
+   *
+   * @param <T>    the type parameter
+   * @param <S>    the type parameter
+   * @param target the target
+   * @param source the source
+   * @return the map
+   */
+  public static <T, S> Map<T, S> mergeMaps(Map<T, S> target, Map<T, S> source) {
+    Map<T, S> retMap = new HashMap<>();
+    if (MapUtils.isNotEmpty(source)) {
+      retMap.putAll(source);
+    }
+    if (MapUtils.isNotEmpty(target)) {
+      retMap.putAll(target);
+    }
+    return retMap;
+  }
 
 }
 

@@ -1,4 +1,13 @@
 .vsp-components-load-balancing {
+	.svg-icon-wrapper {
+		position: relative;
+    top: -3px;
+		.svg-icon.chevron-up, .svg-icon.chevron-down {
+			width: 10px;
+			height: 10px;
+		}
+	}
+
   .halb-data {
     .load-balancing-page-title {
       @extend .section-title;
@@ -14,21 +23,14 @@
     }
     .title {
       @extend .body-1-medium;
-      cursor: pointer;
       margin-bottom: 8px;
-      .fa {
+			cursor: pointer;
+      .svg-icon {
         @include transition(transform 0.3s);
         margin-right: 5px;
-        font-size: $icon-font-size;
         position: relative;
-        top: -1px;
+        top: 4px;
       }
-    }
-    .row {
-      padding-left: 24px;
-    }
-    .col-md-9 {
-      padding-left: 8px;
     }
     .add-padding {
       padding-bottom: 20px;

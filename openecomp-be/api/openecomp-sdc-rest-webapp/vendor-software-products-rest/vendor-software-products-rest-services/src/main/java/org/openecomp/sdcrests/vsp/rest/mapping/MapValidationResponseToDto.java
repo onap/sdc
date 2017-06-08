@@ -26,6 +26,7 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdcrests.common.mapping.MapErrorCodeToDto;
 import org.openecomp.sdcrests.common.mapping.MapErrorMessageToDto;
 import org.openecomp.sdcrests.common.types.ErrorCodeDto;
@@ -35,10 +36,12 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityVali
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireValidationResultDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
 
-
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MapValidationResponseToDto
@@ -60,9 +63,14 @@ public class MapValidationResponseToDto
     QuestionnaireValidationResultDto questionnaireValidationResultDto =
         new QuestionnaireValidationResultDto();
     questionnaireValidationResultDto.setValid(questionnaireValidationResult.isValid());
-    questionnaireValidationResultDto.setValidationData(new MapCompositionEntityValidationDataToDto()
-        .applyMapping(questionnaireValidationResult.getValidationData(),
-            CompositionEntityValidationDataDto.class));
+
+    Set<CompositionEntityValidationDataDto> validationDataDto = new HashSet<>();
+    for(CompositionEntityValidationData validationData : questionnaireValidationResult.getValidationData()){
+      validationDataDto.add(new MapCompositionEntityValidationDataToDto().applyMapping
+          (validationData, CompositionEntityValidationDataDto.class));
+    }
+
+    questionnaireValidationResultDto.setValidationData(validationDataDto);
     return questionnaireValidationResultDto;
   }
 

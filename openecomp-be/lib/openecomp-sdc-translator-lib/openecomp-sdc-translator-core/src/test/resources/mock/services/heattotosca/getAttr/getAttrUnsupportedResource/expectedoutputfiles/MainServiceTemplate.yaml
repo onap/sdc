@@ -1,0 +1,453 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vf_module_id:
+      label: VF Module ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+      default: base
+    db_ports:
+      label: Database Ports
+      hidden: false
+      immutable: false
+      type: list
+      description: List of ports to apply to the security group for the database VMs
+      default:
+      - '27017'
+      entry_schema:
+        type: string
+    app_protocols:
+      label: Application Protocols
+      hidden: false
+      immutable: false
+      type: list
+      description: List of protocols associated with the app_ports
+      default:
+      - tcp
+      entry_schema:
+        type: string
+    db_volume_size_0:
+      label: Data Volume Size
+      hidden: false
+      immutable: false
+      type: float
+      description: Size of the data volume
+      default: 1
+      constraints:
+      - in_range:
+        - 1
+        - 2000
+    app_ports:
+      label: Application Ports
+      hidden: false
+      immutable: false
+      type: list
+      description: List of ports to apply to the security group for the application VMs
+      default:
+      - '8443'
+      entry_schema:
+        type: string
+    vnf_id:
+      label: VNF ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+      default: pronghorn
+    availability_zone_0:
+      label: First Availability Zone
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the first availability zone
+      default: nova
+    app_public_key:
+      label: Application Public Key
+      hidden: false
+      immutable: false
+      type: string
+      description: Public ssh key for the application servers
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGe+nL1U3mFHrbtmsvNWR+oDdUyyOX5KejZqe/80uwDiPNyOJjHWIVuX812AEdAAH94nQnkYr2dBiSu1FPh+auMuk3FfegchKT7pYetqELY3ryLUPEh67PmKrdlT9cQ/wQZROq672AA6qlZAYIooeLZVSzUhABfsITk0RhfcWZGIcZwv0Tja3nnhNgtqCxoTXs6fzfcCaypgwy3F0S4RewUfcz/9g7f0tze1CmWRUtPkNK2nX2/T2AJzHgy+vItwpalnon1egIszJfj7uxp+VotQlQ2PN8sI0J5zgpBFe/lxqEwtIKeiTJ16JlyDXtin/RCjCCdtvIaVCff3Z031UV jspaeth@Jonathons-MBP
+    db_image_name:
+      label: Database Image
+      hidden: false
+      immutable: false
+      type: string
+      description: Image of the database server
+      default: pronghorn-ubuntu14
+    db_volume_id_3:
+      label: Data Volume IDs for disk 3
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volumes
+      default: 454a7b1c-a58f-4bac-bed2-a7afa3836dd4
+    db_volume_id_2:
+      label: Data Volume IDs for disk 2
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volumes
+      default: 6f4d6f1a-1e88-492b-8020-b5a169381434
+    oam_net_name:
+      label: Database OAM Network
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the OAM network for the database servers
+      default: oam
+    db_flavor_name:
+      label: Database Flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor of the database server
+      default: s1.test
+    db_volume_id_1:
+      label: Data Volume IDs for disk 1
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volumes
+      default: 5db48c7a-eb2d-4960-a90c-88a2d0052a71
+    common_protocols:
+      label: Common Protocols
+      hidden: false
+      immutable: false
+      type: list
+      description: List of protocols associated with the common_ports
+      default:
+      - tcp
+      - udp
+      - udp
+      - udp
+      entry_schema:
+        type: string
+    db_volume_id_0:
+      label: Data Volume IDs for disk 0
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volumes
+      default: e8abc8da-f477-4e5c-8266-98b43c982fe4
+    db_protocols:
+      label: Database Protocols
+      hidden: false
+      immutable: false
+      type: list
+      description: List of protocols associated with the db_ports
+      default:
+      - tcp
+      entry_schema:
+        type: string
+    app_flavor_name:
+      label: App Flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to be used for the application server
+      default: s1.test
+    app_deploy_timeout:
+      label: Application Deployment Timeout
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout in seconds before declaring the application stack as failed
+      default: 300
+      constraints:
+      - in_range:
+        - 60
+        - 3600
+    common_ports:
+      label: Common Ports
+      hidden: false
+      immutable: false
+      type: list
+      description: List of ports to apply to the security group for all VMs
+      default:
+      - '22'
+      - '53'
+      - '123'
+      - '161'
+      entry_schema:
+        type: string
+    app_name:
+      label: Application Hostname
+      hidden: false
+      immutable: false
+      type: string
+      description: Hostname of the application server
+      default: pronghorn-app01
+    db_name:
+      label: Database Hostname
+      hidden: false
+      immutable: false
+      type: string
+      description: Hostname of the database server
+      default: pronghorn-db01
+    app_oam_ip_0:
+      label: Application OAM IP Address
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM IP Address of the application server
+      default: 10.0.0.21
+    app_vm_role:
+      label: App VM Role
+      hidden: false
+      immutable: false
+      type: string
+      description: Role for the App VM
+      default: app
+    app_image_name:
+      label: App Image
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the application server
+      default: pronghorn-ubuntu14
+    db_public_key:
+      label: Database Public Key
+      hidden: false
+      immutable: false
+      type: string
+      description: Public ssh key for the database servers
+      default: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGe+nL1U3mFHrbtmsvNWR+oDdUyyOX5KejZqe/80uwDiPNyOJjHWIVuX812AEdAAH94nQnkYr2dBiSu1FPh+auMuk3FfegchKT7pYetqELY3ryLUPEh67PmKrdlT9cQ/wQZROq672AA6qlZAYIooeLZVSzUhABfsITk0RhfcWZGIcZwv0Tja3nnhNgtqCxoTXs6fzfcCaypgwy3F0S4RewUfcz/9g7f0tze1CmWRUtPkNK2nX2/T2AJzHgy+vItwpalnon1egIszJfj7uxp+VotQlQ2PN8sI0J5zgpBFe/lxqEwtIKeiTJ16JlyDXtin/RCjCCdtvIaVCff3Z031UV jspaeth@Jonathons-MBP
+    db_oam_ip_0:
+      label: Database OAM IP Addresse
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM IP Address of the database server
+      default: 10.0.0.20
+    db_vm_role:
+      label: DB VM Role
+      hidden: false
+      immutable: false
+      type: string
+      description: Role for the DB VM
+      default: database
+    db_deploy_timeout:
+      label: Database Deployment Timeout
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout in seconds before declaring the database stack as failed
+      default: 300
+      constraints:
+      - in_range:
+        - 60
+        - 3600
+  node_templates:
+    app_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: app security group
+        rules:
+        - protocol:
+            get_input:
+            - app_protocols
+            - 0
+          port_range_max:
+            get_input:
+            - app_ports
+            - 0
+          port_range_min:
+            get_input:
+            - app_ports
+            - 0
+    common_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: common security group
+        rules:
+        - protocol:
+            get_input:
+            - common_protocols
+            - 0
+          port_range_max:
+            get_input:
+            - common_ports
+            - 0
+          port_range_min:
+            get_input:
+            - common_ports
+            - 0
+        - protocol:
+            get_input:
+            - common_protocols
+            - 1
+          port_range_max:
+            get_input:
+            - common_ports
+            - 1
+          port_range_min:
+            get_input:
+            - common_ports
+            - 1
+        - protocol:
+            get_input:
+            - common_protocols
+            - 2
+          port_range_max:
+            get_input:
+            - common_ports
+            - 2
+          port_range_min:
+            get_input:
+            - common_ports
+            - 2
+        - protocol:
+            get_input:
+            - common_protocols
+            - 3
+          port_range_max:
+            get_input:
+            - common_ports
+            - 3
+          port_range_min:
+            get_input:
+            - common_ports
+            - 3
+    db_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: data security group
+        rules:
+        - protocol:
+            get_input:
+            - db_protocols
+            - 0
+          port_range_max:
+            get_input:
+            - db_ports
+            - 0
+          port_range_min:
+            get_input:
+            - db_ports
+            - 0
+    db_servers:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_db_server
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        security_group_ids:
+        - common_security_group
+        - db_security_group
+        vm_role:
+          get_input: db_vm_role
+        service_template_filter:
+          substitute_service_template: nested_db_serverServiceTemplate.yaml
+          count: 1
+          mandatory: true
+        db_name:
+          get_input: db_name
+        vnf_id:
+          get_input: vnf_id
+        server_group_id: db_server_group_group
+        availability_zone_0:
+          get_input: availability_zone_0
+        keypair_id: UNSUPPORTED_RESOURCE_db_keypair
+        db_image_name:
+          get_input: db_image_name
+        db_volume_id_3:
+          get_input: db_volume_id_3
+        db_volume_id_2:
+          get_input: db_volume_id_2
+        oam_net_name:
+          get_input: oam_net_name
+        db_oam_ip_0:
+          get_input: db_oam_ip_0
+        db_flavor_name:
+          get_input: db_flavor_name
+        db_volume_id_1:
+          get_input: db_volume_id_1
+        deploy_timeout:
+          get_input: db_deploy_timeout
+        db_volume_id_0:
+          get_input: db_volume_id_0
+    app_servers:
+      type: org.openecomp.resource.abstract.nodes.heat.nested_app_server
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        app_flavor_name:
+          get_input: app_flavor_name
+        security_group_ids:
+        - common_security_group
+        - app_security_group
+        vm_role:
+          get_input: app_vm_role
+        app_name:
+          get_input: app_name
+        service_template_filter:
+          substitute_service_template: nested_app_serverServiceTemplate.yaml
+          count: 1
+          mandatory: true
+        vnf_id:
+          get_input: vnf_id
+        app_oam_ip_0:
+          get_input: app_oam_ip_0
+        server_group_id: app_server_group_group
+        availability_zone_0:
+          get_input: availability_zone_0
+        keypair_id: UNSUPPORTED_RESOURCE_app_keypair
+        app_image_name:
+          get_input: app_image_name
+        oam_net_name:
+          get_input: oam_net_name
+        deploy_timeout:
+          get_input: app_deploy_timeout
+  groups:
+    base_pronghorn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_pronghorn.yaml
+        description: Pronghorn Openstack Heat Template
+      members:
+      - app_security_group
+      - common_security_group
+      - db_security_group
+      - db_servers
+      - app_servers
+    db_server_group_group:
+      type: tosca.groups.Root
+      members: [
+        ]
+    app_server_group_group:
+      type: tosca.groups.Root
+      members: [
+        ]
+  outputs:
+    db_volume_id_0:
+      description: IDs of the database volumes
+      value:
+      - UNSUPPORTED_ATTRIBUTE_db_volumes_0.refs
+  policies:
+    app_server_group_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name: app server group
+        container_type: host
+      targets:
+      - app_server_group_group
+    db_server_group_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name: data server group
+        container_type: host
+      targets:
+      - db_server_group_group

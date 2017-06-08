@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.model.impl;
 
-
 import org.openecomp.core.model.dao.ServiceTemplateDao;
 import org.openecomp.core.model.dao.ServiceTemplateDaoFactory;
 

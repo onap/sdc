@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.ComponentDaoZusammenImpl;
 
 public class ComponentDaoFactoryImpl extends ComponentDaoFactory {
-  private static final ComponentDao INSTANCE = new ComponentDaoCassandraImpl();
+  private static final ComponentDao INSTANCE = new ComponentDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public ComponentDao createInterface() {

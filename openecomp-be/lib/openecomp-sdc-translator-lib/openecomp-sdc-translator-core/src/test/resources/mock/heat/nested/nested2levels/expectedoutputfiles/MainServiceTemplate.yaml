@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     security_group_name:
@@ -54,6 +30,20 @@ topology_template:
       type: string
       description: network name of jsa log network
   node_templates:
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared:
+          get_attribute:
+          - test_nested
+          - output_attr_1
+        network_name:
+          get_input: jsa_net_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: test_nested
+          relationship: tosca.relationships.DependsOn
     jsa_security_group1:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:
@@ -131,7 +121,15 @@ topology_template:
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
       - port:
+          capability: attachment_cmaui_port_22_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
           capability: attachment_cmaui_port_1
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_11_test_nested2
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
     jsa_security_group2:
@@ -210,6 +208,10 @@ topology_template:
           capability: attachment_cmaui_port_1
           node: test_nested
           relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cmaui_port_11_test_nested2
+          node: test_nested
+          relationship: org.openecomp.relationships.AttachesTo
     test_nested:
       type: org.openecomp.resource.abstract.nodes.heat.nested
       directives:
@@ -222,15 +224,7 @@ topology_template:
         shared_security_group_id1:
           get_input: shared_security_group_id1
   groups:
-    addOn:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/addOn.yml
-        description: |
-          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
-      members:
-      - test_nested
-    base:
+    base_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/base.yml
@@ -239,3 +233,12 @@ topology_template:
       members:
       - jsa_security_group1
       - jsa_security_group2
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - packet_mirror_network
+      - test_nested

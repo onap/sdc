@@ -8,38 +8,84 @@
   },
   "basePath" : "/onboarding-api",
   "tags" : [ {
-    "name" : "Vendor Software Product Component NICs"
-  }, {
-    "name" : "Vendor Software Product Component Processes"
+    "name" : "Vendor Software Product Networks"
   }, {
     "name" : "Vendor Software Product Component MIB Uploads"
   }, {
-    "name" : "Vendor License Model - License Key Groups"
-  }, {
     "name" : "Application Configuration"
-  }, {
-    "name" : "Vendor License Model - License Agreements"
-  }, {
-    "name" : "Vendor License Model - Feature Groups"
   }, {
     "name" : "Vendor Software Product Processes"
   }, {
-    "name" : "Actions"
-  }, {
     "name" : "Validation"
   }, {
-    "name" : "Vendor Software Product Components"
-  }, {
-    "name" : "Vendor Software Products"
-  }, {
-    "name" : "Vendor Software Product Networks"
+    "name" : "Vendor Software Product Component Processes"
   }, {
     "name" : "Vendor License Model - Entitlement Pools"
   }, {
     "name" : "Vendor License Models"
+  }, {
+    "name" : "Vendor Software Products"
+  }, {
+    "name" : "Item Activity Log"
+  }, {
+    "name" : "Vendor License Model - License Agreements"
+  }, {
+    "name" : "Actions"
+  }, {
+    "name" : "Vendor Software Product Components"
+  }, {
+    "name" : "Vendor Software Product Component NICs"
+  }, {
+    "name" : "Vendor Software Product Component Dependency Model"
+  }, {
+    "name" : "Vendor License Model - License Key Groups"
+  }, {
+    "name" : "Vendor License Model - Feature Groups"
+  }, {
+    "name" : "Orchestration Template Candidate"
   } ],
   "schemes" : [ "http" ],
   "paths" : {
+    "/v1.0/activity-logs/{itemId}/versions/{versionId}" : {
+      "get" : {
+        "tags" : [ "Item Activity Log" ],
+        "summary" : "List actions log of item",
+        "description" : "",
+        "operationId" : "getActivityLog",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "itemId",
+          "in" : "path",
+          "description" : "Item Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ActivityLogDto"
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1.0/application-configuration" : {
       "post" : {
         "tags" : [ "Application Configuration" ],
@@ -137,12 +183,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "in" : "body",
-          "name" : "body",
+          "name" : "validate",
+          "in" : "formData",
           "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/InputStream"
-          }
+          "type" : "file"
         } ],
         "responses" : {
           "default" : {
@@ -212,7 +256,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}" : {
       "get" : {
         "tags" : [ "Vendor License Models" ],
         "summary" : "Get vendor license model",
@@ -227,9 +271,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -268,6 +313,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -294,6 +345,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -307,7 +364,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/actions" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/actions" : {
       "put" : {
         "tags" : [ "Vendor License Models" ],
         "summary" : "Update vendor license model",
@@ -329,6 +386,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -342,7 +405,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/entitlement-pools" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools" : {
       "get" : {
         "tags" : [ "Vendor License Model - Entitlement Pools" ],
         "summary" : "List vendor entitlement pools",
@@ -357,9 +420,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -401,6 +465,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -414,7 +484,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/entitlement-pools/{entitlementPoolId}" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools/{entitlementPoolId}" : {
       "get" : {
         "tags" : [ "Vendor License Model - Entitlement Pools" ],
         "summary" : "Get vendor entitlement pool",
@@ -429,9 +499,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "entitlementPoolId",
@@ -475,6 +546,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "entitlementPoolId",
           "in" : "path",
           "required" : true,
@@ -506,6 +583,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "entitlementPoolId",
           "in" : "path",
           "required" : true,
@@ -524,7 +607,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/feature-groups" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups" : {
       "get" : {
         "tags" : [ "Vendor License Model - Feature Groups" ],
         "summary" : "List vendor feature groups",
@@ -539,9 +622,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -583,6 +667,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -596,7 +686,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/feature-groups/{featureGroupId}" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups/{featureGroupId}" : {
       "get" : {
         "tags" : [ "Vendor License Model - Feature Groups" ],
         "summary" : "Get vendor feature group",
@@ -611,9 +701,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "featureGroupId",
@@ -657,6 +748,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "featureGroupId",
           "in" : "path",
           "required" : true,
@@ -688,6 +785,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "featureGroupId",
           "in" : "path",
           "required" : true,
@@ -706,7 +809,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/license-agreements" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements" : {
       "get" : {
         "tags" : [ "Vendor License Model - License Agreements" ],
         "summary" : "List vendor license agreements",
@@ -721,9 +824,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -765,6 +869,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -778,7 +888,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/license-agreements/{licenseAgreementId}" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements/{licenseAgreementId}" : {
       "get" : {
         "tags" : [ "Vendor License Model - License Agreements" ],
         "summary" : "Get vendor license agreement",
@@ -793,9 +903,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "licenseAgreementId",
@@ -839,6 +950,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "licenseAgreementId",
           "in" : "path",
           "required" : true,
@@ -870,6 +987,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "licenseAgreementId",
           "in" : "path",
           "required" : true,
@@ -888,7 +1011,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/license-key-groups" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups" : {
       "get" : {
         "tags" : [ "Vendor License Model - License Key Groups" ],
         "summary" : "List vendor license key groups",
@@ -903,9 +1026,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -947,6 +1071,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -960,7 +1090,7 @@
         }
       }
     },
-    "/v1.0/vendor-license-models/{vlmId}/license-key-groups/{licenseKeyGroupId}" : {
+    "/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups/{licenseKeyGroupId}" : {
       "get" : {
         "tags" : [ "Vendor License Model - License Key Groups" ],
         "summary" : "Get vendor license key group",
@@ -975,9 +1105,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "licenseKeyGroupId",
@@ -1021,6 +1152,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "licenseKeyGroupId",
           "in" : "path",
           "required" : true,
@@ -1052,6 +1189,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor license model version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "licenseKeyGroupId",
           "in" : "path",
           "required" : true,
@@ -1075,13 +1218,13 @@
         "tags" : [ "Vendor Software Products" ],
         "summary" : "Get list of vendor software products and their description",
         "description" : "",
-        "operationId" : "getVspList",
+        "operationId" : "listVsps",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "versionFilter",
           "in" : "query",
-          "description" : "Currently supported values: 'Final' - only vendor software products with final version will be return - with their latest final version",
+          "description" : "Currently supported values: 'Final' - only vendor software products with final  version will be return - with their latest final version",
           "required" : false,
           "type" : "string"
         }, {
@@ -1101,7 +1244,7 @@
         "tags" : [ "Vendor Software Products" ],
         "summary" : "Create a new vendor software product",
         "description" : "",
-        "operationId" : "createNewVsp",
+        "operationId" : "createVsp",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
@@ -1204,11 +1347,11 @@
       }
     },
     "/v1.0/vendor-software-products/{vspId}" : {
-      "get" : {
+      "delete" : {
         "tags" : [ "Vendor Software Products" ],
-        "summary" : "Get details of a vendor software product",
+        "summary" : "Deletes vendor software product by given id",
         "description" : "",
-        "operationId" : "getVspDetails",
+        "operationId" : "deleteVsp",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
@@ -1217,9 +1360,36 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
+          "name" : "USER_ID",
+          "in" : "header",
           "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}" : {
+      "get" : {
+        "tags" : [ "Vendor Software Products" ],
+        "summary" : "Get details of a vendor software product",
+        "description" : "",
+        "operationId" : "getVsp",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -1247,6 +1417,11 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "body",
           "required" : false,
@@ -1265,34 +1440,9 @@
             "description" : "successful operation"
           }
         }
-      },
-      "delete" : {
-        "tags" : [ "Vendor Software Products" ],
-        "summary" : "Deletes vendor software product by given id",
-        "description" : "",
-        "operationId" : "deleteVsp",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "vspId",
-          "in" : "path",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "USER_ID",
-          "in" : "header",
-          "required" : false,
-          "type" : "string",
-          "default" : ""
-        } ],
-        "responses" : {
-          "default" : {
-            "description" : "successful operation"
-          }
-        }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/actions" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/actions" : {
       "put" : {
         "tags" : [ "Vendor Software Products" ],
         "summary" : "Actions on a vendor software product",
@@ -1302,6 +1452,11 @@
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -1326,7 +1481,86 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/component-dependency-model" : {
+      "get" : {
+        "tags" : [ "Vendor Software Product Component Dependency Model" ],
+        "summary" : "Get component dependency Model for vendor software product",
+        "description" : "",
+        "operationId" : "list",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ComponentDependencyModelRequestDto"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Vendor Software Product Component Dependency Model" ],
+        "summary" : "Create a vendor software product component dependency model",
+        "description" : "",
+        "operationId" : "create",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ComponentDependencyModelRequestDto"
+          }
+        }, {
+          "name" : "vspId",
+          "in" : "path",
+          "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components" : {
       "get" : {
         "tags" : [ "Vendor Software Product Components" ],
         "summary" : "List vendor software product components",
@@ -1341,9 +1575,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -1385,6 +1620,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -1411,6 +1652,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -1424,7 +1671,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}" : {
       "get" : {
         "tags" : [ "Vendor Software Product Components" ],
         "summary" : "Get vendor software product component",
@@ -1439,15 +1686,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -1486,6 +1734,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1518,6 +1772,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1537,7 +1797,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component MIB Uploads" ],
         "summary" : "Get the filenames of uploaded MIB definitions",
@@ -1549,6 +1809,12 @@
           "name" : "vspId",
           "in" : "path",
           "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -1575,7 +1841,7 @@
       },
       "delete" : {
         "tags" : [ "Vendor Software Product Component MIB Uploads" ],
-        "summary" : "Delete vendor software product MIB Poll Definitions file",
+        "summary" : "Delete vendor software product MIB SNMP_POLL Definitions file",
         "description" : "",
         "operationId" : "deletePollMibFile",
         "consumes" : [ "application/json" ],
@@ -1587,6 +1853,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1606,10 +1878,10 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp-trap" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp-trap" : {
       "delete" : {
         "tags" : [ "Vendor Software Product Component MIB Uploads" ],
-        "summary" : "Delete vendor software product MIB Trap Definitions file",
+        "summary" : "Delete vendor software product MIB SNMP_TRAP Definitions file",
         "description" : "",
         "operationId" : "deleteTrapMibFile",
         "consumes" : [ "application/json" ],
@@ -1621,9 +1893,15 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
-          "description" : "Vendor software product component Id",
+          "description" : "Component Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -1640,10 +1918,10 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp-trap/upload" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp-trap/upload" : {
       "post" : {
         "tags" : [ "Vendor Software Product Component MIB Uploads" ],
-        "summary" : "Upload vendor software product MIB Trap Definitions file",
+        "summary" : "Upload vendor software product MIB SNMP_TRAP Definitions file",
         "description" : "",
         "operationId" : "uploadTrapMibFile",
         "consumes" : [ "multipart/form-data" ],
@@ -1662,9 +1940,15 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
-          "description" : "Vendor software product component Id",
+          "description" : "Component Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -1681,10 +1965,10 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp/upload" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp/upload" : {
       "post" : {
         "tags" : [ "Vendor Software Product Component MIB Uploads" ],
-        "summary" : "Upload vendor software product MIB Poll Definitions file",
+        "summary" : "Upload vendor software product MIB SNMP_POLL Definitions file",
         "description" : "",
         "operationId" : "uploadPollMibFile",
         "consumes" : [ "multipart/form-data" ],
@@ -1703,6 +1987,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1722,7 +2012,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/nics" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component NICs" ],
         "summary" : "List vendor software product component NICs",
@@ -1737,15 +2027,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -1787,6 +2078,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1806,7 +2103,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/nics/{nicId}" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics/{nicId}" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component NICs" ],
         "summary" : "Get vendor software product NIC",
@@ -1821,6 +2118,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1831,11 +2134,6 @@
           "in" : "path",
           "description" : "Vendor software product NIC Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -1871,6 +2169,12 @@
           "name" : "vspId",
           "in" : "path",
           "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -1912,6 +2216,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1937,7 +2247,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/nics/{nicId}/questionnaire" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics/{nicId}/questionnaire" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component NICs" ],
         "summary" : "Get vendor software product component NIC questionnaire",
@@ -1952,6 +2262,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -1962,11 +2278,6 @@
           "in" : "path",
           "description" : "Vendor software product NIC Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2005,6 +2316,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2030,7 +2347,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/processes" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component Processes" ],
         "summary" : "List vendor software product component processes",
@@ -2045,15 +2362,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2095,6 +2413,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2127,6 +2451,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2146,7 +2476,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/processes/{processId}" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes/{processId}" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component Processes" ],
         "summary" : "Get vendor software product process",
@@ -2161,6 +2491,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2171,11 +2507,6 @@
           "in" : "path",
           "description" : "Vendor software product process Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2211,6 +2542,12 @@
           "name" : "vspId",
           "in" : "path",
           "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -2252,6 +2589,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2277,7 +2620,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/processes/{processId}/upload" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes/{processId}/upload" : {
       "get" : {
         "tags" : [ "Vendor Software Product Component Processes" ],
         "summary" : "Get vendor software product process uploaded file",
@@ -2292,6 +2635,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2302,11 +2651,6 @@
           "in" : "path",
           "description" : "Vendor software product process Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2339,6 +2683,12 @@
           "name" : "vspId",
           "in" : "path",
           "description" : "Vendor software product Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
           "required" : true,
           "type" : "string"
         }, {
@@ -2380,6 +2730,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2405,7 +2761,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/components/{componentId}/questionnaire" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/questionnaire" : {
       "get" : {
         "tags" : [ "Vendor Software Product Components" ],
         "summary" : "Get vendor software product component questionnaire",
@@ -2420,15 +2776,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2467,6 +2824,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "componentId",
           "in" : "path",
           "description" : "Vendor software product component Id",
@@ -2486,16 +2849,21 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/downloadHeat" : {
-      "get" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/heal" : {
+      "put" : {
         "tags" : [ "Vendor Software Products" ],
-        "summary" : "Get uploaded HEAT file",
-        "description" : "Downloads the latest HEAT package",
-        "operationId" : "getLatestHeatPackage",
+        "summary" : "Checkout and heal vendor software product questionnaire",
+        "description" : "",
+        "operationId" : "heal",
         "consumes" : [ "application/json" ],
-        "produces" : [ "application/octet-stream" ],
+        "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -2510,13 +2878,13 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/File"
+              "$ref" : "#/definitions/QuestionnaireResponseDto"
             }
           }
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/networks" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/networks" : {
       "get" : {
         "tags" : [ "Vendor Software Product Networks" ],
         "summary" : "List vendor software product networks",
@@ -2531,9 +2899,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2575,6 +2944,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -2588,7 +2963,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/networks/{networkId}" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/networks/{networkId}" : {
       "get" : {
         "tags" : [ "Vendor Software Product Networks" ],
         "summary" : "Get vendor software product network",
@@ -2603,15 +2978,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "networkId",
           "in" : "path",
           "description" : "Vendor software product network Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2650,6 +3026,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "networkId",
           "in" : "path",
           "description" : "Vendor software product network Id",
@@ -2682,6 +3064,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "networkId",
           "in" : "path",
           "description" : "Vendor software product network Id",
@@ -2701,7 +3089,226 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/processes" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template" : {
+      "get" : {
+        "tags" : [ "Vendor Software Products" ],
+        "summary" : "Get Orchestration Template (HEAT) file",
+        "description" : "Downloads the latest HEAT package",
+        "operationId" : "getOrchestrationTemplate",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/File"
+            }
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate" : {
+      "get" : {
+        "tags" : [ "Orchestration Template Candidate" ],
+        "summary" : "Get uploaded candidate HEAT file",
+        "description" : "Downloads in process candidate HEAT file",
+        "operationId" : "get",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/octet-stream" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/File"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Vendor Software Products" ],
+        "summary" : "Uploads a HEAT package to translate",
+        "description" : "",
+        "operationId" : "uploadOrchestrationTemplateCandidate",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "upload",
+          "in" : "formData",
+          "required" : false,
+          "type" : "file"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UploadFileResponseDto"
+            }
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate/manifest" : {
+      "get" : {
+        "tags" : [ "Orchestration Template Candidate" ],
+        "summary" : "Get uploaded HEAT file files data structure",
+        "description" : "Downloads the latest HEAT package",
+        "operationId" : "getFilesDataStructure",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/FileDataStructureDto"
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Orchestration Template Candidate" ],
+        "summary" : "Update an existing vendor software product",
+        "description" : "",
+        "operationId" : "updateFilesDataStructure",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/FileDataStructureDto"
+          }
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "successful operation"
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate/process" : {
+      "put" : {
+        "tags" : [ "Orchestration Template Candidate" ],
+        "summary" : "process Orchestration Template Candidate",
+        "description" : "",
+        "operationId" : "process",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vspId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "USER_ID",
+          "in" : "header",
+          "required" : false,
+          "type" : "string",
+          "default" : ""
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/UploadFileResponseDto"
+            }
+          }
+        }
+      }
+    },
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes" : {
       "get" : {
         "tags" : [ "Vendor Software Product Processes" ],
         "summary" : "List vendor software product processes",
@@ -2716,9 +3323,10 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2760,6 +3368,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -2786,6 +3400,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -2799,7 +3419,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/processes/{processId}" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes/{processId}" : {
       "get" : {
         "tags" : [ "Vendor Software Product Processes" ],
         "summary" : "Get vendor software product process",
@@ -2814,15 +3434,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2861,6 +3482,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
@@ -2893,6 +3520,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
@@ -2912,7 +3545,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/processes/{processId}/upload" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes/{processId}/upload" : {
       "get" : {
         "tags" : [ "Vendor Software Product Processes" ],
         "summary" : "Get vendor software product process uploaded file",
@@ -2927,15 +3560,16 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
           "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -2971,6 +3605,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
@@ -3003,6 +3643,12 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Vendor software product version Id",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "processId",
           "in" : "path",
           "description" : "Vendor software product process Id",
@@ -3022,7 +3668,7 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/questionnaire" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/questionnaire" : {
       "get" : {
         "tags" : [ "Vendor Software Products" ],
         "summary" : "Get vendor software product questionnaire",
@@ -3036,9 +3682,9 @@
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "version",
-          "in" : "query",
-          "required" : false,
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
           "type" : "string"
         }, {
           "name" : "USER_ID",
@@ -3076,6 +3722,11 @@
           "required" : true,
           "type" : "string"
         }, {
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "USER_ID",
           "in" : "header",
           "required" : false,
@@ -3089,26 +3740,24 @@
         }
       }
     },
-    "/v1.0/vendor-software-products/{vspId}/upload" : {
-      "post" : {
+    "/v1.0/vendor-software-products/{vspId}/versions/{versionId}/vspInformationArtifact" : {
+      "get" : {
         "tags" : [ "Vendor Software Products" ],
-        "summary" : "Uploads a HEAT package to translate",
+        "summary" : "Get vendor software product information artifact for specified version",
         "description" : "",
-        "operationId" : "uploadFile",
-        "consumes" : [ "multipart/form-data" ],
-        "produces" : [ "application/json" ],
+        "operationId" : "getVspInformationArtifact",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "text/plain" ],
         "parameters" : [ {
           "name" : "vspId",
           "in" : "path",
           "required" : true,
           "type" : "string"
         }, {
-          "in" : "body",
-          "name" : "body",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/InputStream"
-          }
+          "name" : "versionId",
+          "in" : "path",
+          "required" : true,
+          "type" : "string"
         }, {
           "name" : "USER_ID",
           "in" : "header",
@@ -3120,7 +3769,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/UploadFileResponseDto"
+              "$ref" : "#/definitions/File"
             }
           }
         }
@@ -3191,9 +3840,9 @@
     "/workflow/v1.0/actions/components" : {
       "get" : {
         "tags" : [ "Actions" ],
-        "summary" : "List ECOMP Components supported by Action Library",
+        "summary" : "List OPENECOMP Components supported by Action Library",
         "description" : "",
-        "operationId" : "getEcompComponents",
+        "operationId" : "getOpenEcompComponents",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "responses" : {
@@ -3203,16 +3852,16 @@
         }
       }
     },
-    "/workflow/v1.0/actions/{actionInvariantUUID}" : {
+    "/workflow/v1.0/actions/{actionInvariantUuId}" : {
       "get" : {
         "tags" : [ "Actions" ],
-        "summary" : "List Actions For Given Action Invariant UUID",
+        "summary" : "List Actions For Given Action Invariant UuId",
         "description" : "",
         "operationId" : "getActionsByActionInvariantUuId",
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3236,7 +3885,7 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3262,7 +3911,7 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3288,7 +3937,7 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3300,7 +3949,7 @@
         }
       }
     },
-    "/workflow/v1.0/actions/{actionInvariantUUID}/artifacts" : {
+    "/workflow/v1.0/actions/{actionInvariantUuId}/artifacts" : {
       "post" : {
         "tags" : [ "Actions" ],
         "summary" : "Upload new Artifact",
@@ -3309,7 +3958,7 @@
         "consumes" : [ "multipart/form-data" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3355,12 +4004,10 @@
           "type" : "string",
           "default" : ""
         }, {
-          "in" : "body",
-          "name" : "body",
+          "name" : "uploadArtifact",
+          "in" : "formData",
           "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/Attachment"
-          }
+          "type" : "file"
         } ],
         "responses" : {
           "default" : {
@@ -3369,7 +4016,7 @@
         }
       }
     },
-    "/workflow/v1.0/actions/{actionInvariantUUID}/artifacts/{artifactUUID}" : {
+    "/workflow/v1.0/actions/{actionInvariantUuId}/artifacts/{artifactUuId}" : {
       "put" : {
         "tags" : [ "Actions" ],
         "summary" : "Update an existing artifact",
@@ -3378,12 +4025,12 @@
         "consumes" : [ "multipart/form-data" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "artifactUUID",
+          "name" : "artifactUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3429,12 +4076,10 @@
           "type" : "string",
           "default" : ""
         }, {
-          "in" : "body",
-          "name" : "body",
+          "name" : "updateArtifact",
+          "in" : "formData",
           "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/Attachment"
-          }
+          "type" : "file"
         } ],
         "responses" : {
           "default" : {
@@ -3450,12 +4095,12 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "actionInvariantUUID",
+          "name" : "actionInvariantUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "artifactUUID",
+          "name" : "artifactUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3467,7 +4112,7 @@
         }
       }
     },
-    "/workflow/v1.0/actions/{actionUUID}/artifacts/{artifactUUID}" : {
+    "/workflow/v1.0/actions/{actionUuId}/artifacts/{artifactUuId}" : {
       "get" : {
         "tags" : [ "Actions" ],
         "summary" : "Downloads artifact for action",
@@ -3476,12 +4121,12 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/octet-stream" ],
         "parameters" : [ {
-          "name" : "actionUUID",
+          "name" : "actionUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
         }, {
-          "name" : "artifactUUID",
+          "name" : "artifactUuId",
           "in" : "path",
           "required" : true,
           "type" : "string"
@@ -3495,6 +4140,42 @@
     }
   },
   "definitions" : {
+    "ActivityLogDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "timestamp" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "comment" : {
+          "type" : "string"
+        },
+        "user" : {
+          "type" : "string"
+        },
+        "status" : {
+          "$ref" : "#/definitions/ActivityStatus"
+        }
+      }
+    },
+    "ActivityStatus" : {
+      "type" : "object",
+      "properties" : {
+        "success" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
     "Attachment" : {
       "type" : "object",
       "properties" : {
@@ -3513,14 +4194,14 @@
         "contentType" : {
           "$ref" : "#/definitions/MediaType"
         },
-        "contentId" : {
-          "type" : "string"
+        "dataHandler" : {
+          "$ref" : "#/definitions/DataHandler"
         },
         "contentDisposition" : {
           "$ref" : "#/definitions/ContentDisposition"
         },
-        "dataHandler" : {
-          "$ref" : "#/definitions/DataHandler"
+        "contentId" : {
+          "type" : "string"
         }
       }
     },
@@ -3598,6 +4279,34 @@
         },
         "displayName" : {
           "type" : "string"
+        },
+        "vfcCode" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ComponentDependencyModel" : {
+      "type" : "object",
+      "properties" : {
+        "sourceId" : {
+          "type" : "string"
+        },
+        "targetId" : {
+          "type" : "string"
+        },
+        "relationType" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ComponentDependencyModelRequestDto" : {
+      "type" : "object",
+      "properties" : {
+        "componentDependencyModels" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ComponentDependencyModel"
+          }
         }
       }
     },
@@ -3608,6 +4317,9 @@
           "type" : "string"
         },
         "displayName" : {
+          "type" : "string"
+        },
+        "vfcCode" : {
           "type" : "string"
         },
         "description" : {
@@ -3625,6 +4337,9 @@
           "type" : "string"
         },
         "displayName" : {
+          "type" : "string"
+        },
+        "vfcCode" : {
           "type" : "string"
         },
         "description" : {
@@ -3740,11 +4455,11 @@
         "content" : {
           "type" : "object"
         },
-        "contentType" : {
-          "type" : "string"
-        },
         "outputStream" : {
           "$ref" : "#/definitions/OutputStream"
+        },
+        "contentType" : {
+          "type" : "string"
         },
         "allCommands" : {
           "type" : "array",
@@ -3775,11 +4490,11 @@
         "inputStream" : {
           "$ref" : "#/definitions/InputStream"
         },
-        "contentType" : {
-          "type" : "string"
-        },
         "outputStream" : {
           "$ref" : "#/definitions/OutputStream"
+        },
+        "contentType" : {
+          "type" : "string"
         }
       }
     },
@@ -4118,6 +4833,35 @@
         }
       }
     },
+    "FileDataStructureDto" : {
+      "type" : "object",
+      "properties" : {
+        "modules" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Module"
+          }
+        },
+        "unassigned" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "artifacts" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "nested" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
     "InputStream" : {
       "type" : "object"
     },
@@ -4343,11 +5087,11 @@
             "type" : "string"
           }
         },
-        "wildcardType" : {
+        "wildcardSubtype" : {
           "type" : "boolean",
           "default" : false
         },
-        "wildcardSubtype" : {
+        "wildcardType" : {
           "type" : "boolean",
           "default" : false
         }
@@ -4360,6 +5104,30 @@
           "type" : "string"
         },
         "snmpPoll" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Module" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "isBase" : {
+          "type" : "boolean",
+          "default" : false
+        },
+        "yaml" : {
+          "type" : "string"
+        },
+        "env" : {
+          "type" : "string"
+        },
+        "vol" : {
+          "type" : "string"
+        },
+        "volEnv" : {
           "type" : "string"
         }
       }
@@ -4495,6 +5263,10 @@
         "description" : {
           "type" : "string"
         },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "Lifecycle_Operations", "Other" ]
+        },
         "id" : {
           "type" : "string"
         },
@@ -4512,6 +5284,10 @@
         },
         "description" : {
           "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "Lifecycle_Operations", "Other" ]
         }
       }
     },
@@ -4523,18 +5299,15 @@
         },
         "data" : {
           "type" : "string"
+        },
+        "errorMessage" : {
+          "$ref" : "#/definitions/ErrorMessage"
         }
       }
     },
     "UploadFileResponseDto" : {
       "type" : "object",
       "properties" : {
-        "fileNames" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string"
-          }
-        },
         "errors" : {
           "type" : "object",
           "additionalProperties" : {
@@ -4580,7 +5353,7 @@
           "type" : "string"
         },
         "version" : {
-          "type" : "string"
+          "$ref" : "#/definitions/VersionDto"
         },
         "status" : {
           "type" : "string",
@@ -4592,13 +5365,13 @@
         "viewableVersions" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "$ref" : "#/definitions/VersionDto"
           }
         },
         "finalVersions" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "$ref" : "#/definitions/VersionDto"
           }
         }
       }
@@ -4618,6 +5391,17 @@
           "maxLength" : 1000
         },
         "iconRef" : {
+          "type" : "string"
+        }
+      }
+    },
+    "VersionDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "label" : {
           "type" : "string"
         }
       }
@@ -4665,7 +5449,7 @@
           "type" : "string"
         },
         "licensingVersion" : {
-          "type" : "string"
+          "$ref" : "#/definitions/VersionDto"
         },
         "licensingData" : {
           "$ref" : "#/definitions/LicensingData"

@@ -20,10 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -31,28 +27,19 @@ import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.nio.ByteBuffer;
 
-@Table(keyspace = "dox", name = "vsp_information")
 public class UploadDataEntity implements VersionableEntity {
   private static final String ENTITY_TYPE = "Vendor Software Product Upload data";
 
-  @PartitionKey
-  @Column(name = "vsp_id")
   private String id;
 
-  @PartitionKey(value = 1)
-  @Frozen
   private Version version;
 
-  @Column(name = "package_name")
   private String packageName;
 
-  @Column(name = "package_version")
   private String packageVersion;
 
-  @Column(name = "validation_data")
   private String validationData;
 
-  @Column(name = "content_data")
   private ByteBuffer contentData;
 
   public UploadDataEntity() {

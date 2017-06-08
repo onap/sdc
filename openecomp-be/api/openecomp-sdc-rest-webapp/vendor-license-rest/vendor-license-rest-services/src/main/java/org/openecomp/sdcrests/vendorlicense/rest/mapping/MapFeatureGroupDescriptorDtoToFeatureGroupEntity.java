@@ -24,7 +24,6 @@ import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.FeatureGroupDescriptorDto;
 
-
 public class MapFeatureGroupDescriptorDtoToFeatureGroupEntity
     extends MappingBase<FeatureGroupDescriptorDto, FeatureGroupEntity> {
   @Override

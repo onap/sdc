@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pd_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -490,6 +466,12 @@ topology_template:
     cm01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -497,6 +479,10 @@ topology_template:
             get_input:
             - oam_net_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -507,6 +493,12 @@ topology_template:
     cm01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -514,6 +506,9 @@ topology_template:
             get_input:
             - csb_net_ips
             - 10
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -527,8 +522,17 @@ topology_template:
     sm02_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -554,7 +558,7 @@ topology_template:
           - ps_server_names
           - 3
         scheduler_hints:
-          group: servergroup_mog03
+          group: servergroup_mog03_group
     server_ps03:
       type: org.openecomp.resource.vfc.nodes.heat.ps_server
       properties:
@@ -570,12 +574,21 @@ topology_template:
           - ps_server_names
           - 2
         scheduler_hints:
-          group: servergroup_mog03
+          group: servergroup_mog03_group
     sm01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -589,6 +602,12 @@ topology_template:
     sm02_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -596,6 +615,10 @@ topology_template:
             get_input:
             - repl_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: repl
         network:
           get_input: repl_net_name
     server_ps02:
@@ -613,12 +636,21 @@ topology_template:
           - ps_server_names
           - 1
         scheduler_hints:
-          group: servergroup_mog03
+          group: servergroup_mog03_group
     sm01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_0
       requirements:
       - link:
@@ -632,8 +664,17 @@ topology_template:
     sm02_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_0
       requirements:
       - link:
@@ -659,7 +700,7 @@ topology_template:
           - ps_server_names
           - 0
         scheduler_hints:
-          group: servergroup_mog03
+          group: servergroup_mog03_group
     csb_net:
       type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
@@ -681,6 +722,12 @@ topology_template:
     sm01_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -688,11 +735,21 @@ topology_template:
             get_input:
             - repl_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: repl
         network:
           get_input: repl_net_name
     pd01_port_5:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -700,9 +757,13 @@ topology_template:
             get_input:
             - ran_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: ran_net_floating_ip
+        network_role_tag: ran
         network:
           get_input: ran_net_name
       requirements:
@@ -713,8 +774,17 @@ topology_template:
     pd01_port_4:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_1
       requirements:
       - link:
@@ -728,6 +798,12 @@ topology_template:
     pd02_port_5:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -735,9 +811,13 @@ topology_template:
             get_input:
             - ran_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: ran_net_floating_ip
+        network_role_tag: ran
         network:
           get_input: ran_net_name
       requirements:
@@ -748,6 +828,12 @@ topology_template:
     pd01_port_6:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -755,9 +841,13 @@ topology_template:
             get_input:
             - sl_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: sl_net_floating_ip
+        network_role_tag: sl
         network:
           get_input: sl_net_name
       requirements:
@@ -768,6 +858,12 @@ topology_template:
     pd02_port_6:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -775,9 +871,13 @@ topology_template:
             get_input:
             - sl_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: sl_net_floating_ip
+        network_role_tag: sl
         network:
           get_input: sl_net_name
       requirements:
@@ -800,12 +900,21 @@ topology_template:
           - sm_server_names
           - 1
         scheduler_hints:
-          group: servergroup_mog02
+          group: servergroup_mog02_group
     ps02_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -819,8 +928,17 @@ topology_template:
     ps04_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -834,8 +952,17 @@ topology_template:
     ps03_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -849,8 +976,17 @@ topology_template:
     ps01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -876,7 +1012,7 @@ topology_template:
           - sm_server_names
           - 0
         scheduler_hints:
-          group: servergroup_mog02
+          group: servergroup_mog02_group
     dummy_net_0:
       type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
@@ -910,7 +1046,7 @@ topology_template:
           - cm_server_names
           - 0
         scheduler_hints:
-          group: servergroup_mog03
+          group: servergroup_mog03_group
     server_pd_02:
       type: org.openecomp.resource.vfc.nodes.heat.pd_server
       properties:
@@ -926,7 +1062,7 @@ topology_template:
           - pd_server_names
           - 1
         scheduler_hints:
-          group: servergroup_mog01
+          group: servergroup_mog01_group
     server_pd_01:
       type: org.openecomp.resource.vfc.nodes.heat.pd_server
       properties:
@@ -942,7 +1078,7 @@ topology_template:
           - pd_server_names
           - 0
         scheduler_hints:
-          group: servergroup_mog01
+          group: servergroup_mog01_group
     server_oam01:
       type: org.openecomp.resource.vfc.nodes.heat.oam_server
       properties:
@@ -958,7 +1094,7 @@ topology_template:
           - oam_server_names
           - 0
         scheduler_hints:
-          group: servergroup_mog02
+          group: servergroup_mog02_group
     server_oam02:
       type: org.openecomp.resource.vfc.nodes.heat.oam_server
       properties:
@@ -974,7 +1110,7 @@ topology_template:
           - oam_server_names
           - 1
         scheduler_hints:
-          group: servergroup_mog02
+          group: servergroup_mog02_group
     dummy_net_1:
       type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
       properties:
@@ -1156,6 +1292,12 @@ topology_template:
     pd01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1163,6 +1305,10 @@ topology_template:
             get_input:
             - oam_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1173,6 +1319,12 @@ topology_template:
     pd02_port_3:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1180,9 +1332,13 @@ topology_template:
             get_input:
             - rx_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: rx_net_floating_ip
+        network_role_tag: rx
         network:
           get_input: rx_net_name
       requirements:
@@ -1193,8 +1349,17 @@ topology_template:
     pd01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -1208,8 +1373,17 @@ topology_template:
     pd02_port_4:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_1
       requirements:
       - link:
@@ -1223,6 +1397,12 @@ topology_template:
     pd01_port_3:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1230,9 +1410,13 @@ topology_template:
             get_input:
             - rx_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: rx_net_floating_ip
+        network_role_tag: rx
         network:
           get_input: rx_net_name
       requirements:
@@ -1243,6 +1427,12 @@ topology_template:
     pd02_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1250,6 +1440,10 @@ topology_template:
             get_input:
             - oam_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1260,8 +1454,17 @@ topology_template:
     pd01_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_0
       requirements:
       - link:
@@ -1275,8 +1478,17 @@ topology_template:
     pd02_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: dummy_net_0
       requirements:
       - link:
@@ -1290,6 +1502,12 @@ topology_template:
     oam01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1297,6 +1515,10 @@ topology_template:
             get_input:
             - oam_net_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1307,8 +1529,17 @@ topology_template:
     pd02_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -1322,6 +1553,12 @@ topology_template:
     oam02_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
         fixed_ips:
@@ -1329,6 +1566,10 @@ topology_template:
             get_input:
             - oam_net_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1339,8 +1580,17 @@ topology_template:
     oam01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -1354,8 +1604,17 @@ topology_template:
     oam02_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - mog_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: csb_net
       requirements:
       - link:
@@ -1367,19 +1626,7 @@ topology_template:
           node: server_oam02
           relationship: tosca.relationships.network.BindsTo
   groups:
-    servergroup_mog01:
-      type: tosca.groups.Root
-      members:
-      - server_pd_01
-      - server_pd_02
-    servergroup_mog02:
-      type: tosca.groups.Root
-      members:
-      - server_oam01
-      - server_oam02
-      - server_sm01
-      - server_sm02
-    servergroup_mog03:
+    servergroup_mog03_group:
       type: tosca.groups.Root
       members:
       - server_ps01
@@ -1387,7 +1634,12 @@ topology_template:
       - server_ps03
       - server_ps04
       - server_cm01
-    hot-mog-0108-bs1271:
+    servergroup_mog01_group:
+      type: tosca.groups.Root
+      members:
+      - server_pd_01
+      - server_pd_02
+    hot-mog-0108-bs1271_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
@@ -1438,22 +1690,29 @@ topology_template:
       - oam02_port_1
       - oam01_port_0
       - oam02_port_0
+    servergroup_mog02_group:
+      type: tosca.groups.Root
+      members:
+      - server_oam01
+      - server_oam02
+      - server_sm01
+      - server_sm02
   policies:
-    servergroup_mog01:
+    servergroup_mog03_policy:
       type: org.openecomp.policies.placement.Antilocate
       properties:
         container_type: host
       targets:
-      - servergroup_mog01
-    servergroup_mog02:
+      - servergroup_mog03_group
+    servergroup_mog01_policy:
       type: org.openecomp.policies.placement.Antilocate
       properties:
         container_type: host
       targets:
-      - servergroup_mog02
-    servergroup_mog03:
+      - servergroup_mog01_group
+    servergroup_mog02_policy:
       type: org.openecomp.policies.placement.Antilocate
       properties:
         container_type: host
       targets:
-      - servergroup_mog03
+      - servergroup_mog02_group

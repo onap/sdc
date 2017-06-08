@@ -1,0 +1,474 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    oam_net_ips:
+      label: internet network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ip of the OAM network
+      default:
+      - 107.250.172.213
+      - 107.250.172.214
+      - 107.250.172.215
+      - 107.250.172.216
+      - 107.250.172.217
+      entry_schema:
+        type: string
+    dummy_net_name_1:
+      label: csb ineternal cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: csb internal cidr
+      default: mog_dummy_1
+    cm_server_names:
+      label: CM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the CM instance
+      default:
+      - ZRDM1MOGX01MCM001
+      entry_schema:
+        type: string
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    VMME_pd_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+      default: 49201898-333d-4c88-b58d-cf573b091633
+    oam_flavor_name:
+      label: OAM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of OAM instance
+      default: m3.xlarge
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+      default: MOG_BASE_8.0
+    packet_mirror_network_name:
+      label: packet mirror network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the network
+      default: mog_packet_1
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      default:
+      - ZRDM1MOGX01MPD001
+      - ZRDM1MOGX01MPD002
+      entry_schema:
+        type: string
+    sm_server_names:
+      label: SM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the SM instance
+      default:
+      - ZRDM1MOGX01MSM001
+      - ZRDM1MOGX01MSM002
+      entry_schema:
+        type: string
+    VMME_ps_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+      default: 43ccf5ba-2d50-427b-a38f-e8c7d8670eee
+    VMME_oam_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+      default: 4c35b5f1-ce99-4220-a6e2-cda6e2d713a0
+    cm_flavor_name:
+      label: CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of CM instance
+      default: m3.xlarge
+    sm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: SM image name
+      default: MOG_BASE_8.0
+    cm_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: CM image name
+      default: MOG_BASE_8.0
+    sm_flavor_name:
+      label: SM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of SM instance
+      default: m2.xlarge4
+    ps_server_names:
+      label: PS server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PS instance
+      default:
+      - ZRDM1MOGX01MPS001
+      - ZRDM1MOGX01MPS002
+      - ZRDM1MOGX01MPS003
+      - ZRDM1MOGX01MPS004
+      entry_schema:
+        type: string
+    ps_image_name:
+      label: PS image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PS image name
+      default: MOG_BASE_8.0
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM image name
+      default: MOG_BASE_8.0
+    oam_server_names:
+      label: OAM server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the OAM instance
+      default:
+      - ZRDM1MOGX01OAM001
+      - ZRDM1MOGX01OAM002
+      entry_schema:
+        type: string
+    ps_flavor_name:
+      label: PS flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PS instance
+      default: m3.xlarge
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+      default: oam_protected_net_0
+  node_templates:
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        compute_pd_server_scheduler_hints:
+        - group: BE_Affinity_group
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_network:
+        - get_input: oam_net_name
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
+        port_pd01_port_security_groups:
+        - - jsa_security_group
+        port_pd01_port_network_role_tag:
+        - oam
+        compute_pd_server_user_data_format:
+        - RAW
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - dependency_pd_server:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+    abstract_ps_server:
+      type: org.openecomp.resource.abstract.nodes.ps_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        compute_ps_server_name:
+        - get_input:
+          - ps_server_names
+          - 0
+        vm_image_name:
+          get_input: pd_image_name
+        compute_ps_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_ps_server_user_data_format:
+        - RAW
+        compute_ps_server_scheduler_hints:
+        - group: BE_Affinity_group
+        port_pd01_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_network:
+        - get_attribute:
+          - network_policy_server
+          - name
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
+        port_pd01_port_security_groups:
+        - - jsa_security_group
+        service_template_filter:
+          substitute_service_template: Nested_ps_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - dependency_ps_server:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+    abstract_oam_server:
+      type: org.openecomp.resource.abstract.nodes.oam_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        compute_oam_server_availability_zone:
+        - get_input: availabilityzone_name
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_network:
+        - get_input: oam_net_name
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
+        compute_oam_server_user_data_format:
+        - RAW
+        compute_oam_server_name:
+        - get_input:
+          - oam_server_names
+          - 0
+        port_pd01_port_security_groups:
+        - - jsa_security_group
+        port_pd01_port_network_role_tag:
+        - oam
+        compute_oam_server_scheduler_hints:
+        - group: BE_Affinity_group
+        service_template_filter:
+          substitute_service_template: Nested_oam_serverServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - dependency_oam_server:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+    network_policy_server_ps:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        name:
+          get_attribute:
+          - abstract_ps_server
+          - ps_server_accessIPv4
+    resources_with_dependOn:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties: {
+        }
+      requirements:
+      - dependency:
+          capability: feature_oam_server
+          node: abstract_oam_server
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: feature_pd_server
+          node: abstract_pd_server
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: feature_ps_server
+          node: abstract_ps_server
+          relationship: tosca.relationships.DependsOn
+    network_policy_server_oam:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        name:
+          get_attribute:
+          - abstract_oam_server
+          - oam_server_accessIPv4
+    jsa_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: Test-SecurityGroup
+        description: ems security group
+        rules:
+        - protocol: icmp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+      requirements:
+      - port:
+          capability: attachment_ps_server_pd01_port
+          node: abstract_ps_server
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_pd_server_pd01_port
+          node: abstract_pd_server
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_server_pd01_port
+          node: abstract_oam_server
+          relationship: org.openecomp.relationships.AttachesTo
+    network_policy_server_pd:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        name:
+          get_attribute:
+          - abstract_pd_server
+          - pd_server_accessIPv4
+    network_policy_server:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        name:
+          get_input: dummy_net_name_1
+  groups:
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: heat template that creates MOG stack
+      members:
+      - packet_mirror_network
+      - network_policy_server_ps
+      - resources_with_dependOn
+      - network_policy_server_oam
+      - jsa_security_group
+      - network_policy_server_pd
+      - network_policy_server
+      - abstract_pd_server
+      - abstract_ps_server
+      - abstract_oam_server
+    BE_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_pd_server
+      - abstract_ps_server
+      - abstract_oam_server
+  outputs:
+    out2:
+      description: output_regula
+      value:
+        get_attribute:
+        - abstract_ps_server
+        - ps_server_accessIPv4
+    out3:
+      description: output_regula
+      value:
+        get_attribute:
+        - abstract_oam_server
+        - oam_server_accessIPv4
+    out4:
+      description: output_regula
+      value:
+        get_attribute:
+        - abstract_pd_server
+        - pd_server_pd01_port_device_owner
+    out5:
+      description: output_regula
+      value:
+        get_attribute:
+        - abstract_ps_server
+        - ps_server_pd01_port_device_id
+    out1:
+      description: output_regula
+      value:
+        get_attribute:
+        - abstract_pd_server
+        - pd_server_accessIPv4
+  policies:
+    BE_Affinity_policy:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: def
+        affinity: host
+      targets:
+      - BE_Affinity_group

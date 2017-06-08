@@ -1,0 +1,27 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "VSR_CPM_base_template_nested.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "VSR_IOM_template_nested.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "VSR_base_hot.yaml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "VSR_base_hot.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }
+    ]
+}

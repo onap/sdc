@@ -21,6 +21,7 @@
 package org.openecomp.core.validation.api;
 
 
+import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 import java.util.List;
@@ -32,4 +33,5 @@ public interface ValidationManager {
 
   void addFile(String fileName, byte[] validationContent);
 
+  void updateGlobalContext(GlobalValidationContext globalContext);
 }

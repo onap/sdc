@@ -29,8 +29,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 public class CheckoutOnLockedEntityErrorBuilder extends BaseErrorBuilder {
 
   private static final String CHECKOT_ON_LOCKED_ENTITY_MSG =
-      "Can not check out versionable entity %s with id %s since it is "
-          + "checked out by other user: %s.";
+      "Can not check out versionable entity %s with id %s since it is checked out by "
+          + "other user: %s.";
 
   /**
    * Instantiates a new Checkout on locked entity error builder.

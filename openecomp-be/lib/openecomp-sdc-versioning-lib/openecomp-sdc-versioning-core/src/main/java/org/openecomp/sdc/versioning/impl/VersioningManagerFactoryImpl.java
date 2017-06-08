@@ -22,9 +22,14 @@ package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
+import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
 
 public class VersioningManagerFactoryImpl extends VersioningManagerFactory {
-  private static final VersioningManager INSTANCE = new VersioningManagerImpl();
+  private static final VersioningManager INSTANCE = new VersioningManagerImpl(
+      VersionInfoDaoFactory.getInstance().createInterface(),
+      VersionInfoDeletedDaoFactory.getInstance().createInterface()
+  );
 
   @Override
   public VersioningManager createInterface() {

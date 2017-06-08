@@ -30,6 +30,8 @@ public class MapComponentDataToComponentDto extends MappingBase<ComponentData, C
     target.setName(source.getName());
     target.setDisplayName(
         source.getDisplayName() == null ? source.getName() : source.getDisplayName());
+    target.setVfcCode(
+        source.getVfcCode() == null ? target.getDisplayName() : source.getVfcCode());
     target.setDescription(source.getDescription());
   }
 }

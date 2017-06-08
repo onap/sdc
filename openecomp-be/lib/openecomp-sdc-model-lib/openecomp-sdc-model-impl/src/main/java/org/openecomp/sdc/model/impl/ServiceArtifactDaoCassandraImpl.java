@@ -43,18 +43,18 @@ import java.util.stream.Collectors;
 public class ServiceArtifactDaoCassandraImpl implements ServiceArtifactDao {
 
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-  private static final Mapper<ServiceArtifactEntity> mapper =
-      noSqlDb.getMappingManager().mapper(ServiceArtifactEntity.class);
+  private static final Mapper<ServiceArtifactEntity> mapper = noSqlDb.getMappingManager().mapper(
+      ServiceArtifactEntity.class);
   private static final VspServiceArtifactAccessor accessor =
-      noSqlDb.getMappingManager().createAccessor(VspServiceArtifactAccessor.class);
+      noSqlDb.getMappingManager().createAccessor(
+          VspServiceArtifactAccessor.class);
   private static final UDTMapper<Version> versionMapper =
       noSqlDb.getMappingManager().udtMapper(Version.class);
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-    VersioningManagerFactory.getInstance().createInterface()
-        .register(versionableEntityType, new VersionableEntityMetadata(
-            mapper.getTableMetadata().getName(),
+    VersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
+        new VersionableEntityMetadata(mapper.getTableMetadata().getName(),
             mapper.getTableMetadata().getPartitionKey().get(0).getName(),
             mapper.getTableMetadata().getPartitionKey().get(1).getName()));
   }
@@ -94,10 +94,10 @@ public class ServiceArtifactDaoCassandraImpl implements ServiceArtifactDao {
     accessor.delete(vspId, versionMapper.toUDT(version));
   }
 
-  //    @Override
-  //    public void deleteArtifacts(String vspId, Version version){
-  //        accessor.delete(vspId, versionMapper.toUDT(version));
-  //    }
+  // @Override
+  // public void deleteArtifacts(String vspId, Version version){
+  // accessor.delete(vspId, versionMapper.toUDT(version));
+  // }
 
   @Override
   public Object[] getKeys(String vspId, Version version) {
@@ -107,7 +107,8 @@ public class ServiceArtifactDaoCassandraImpl implements ServiceArtifactDao {
   @Override
   public ServiceArtifact getArtifactInfo(String vspId, Version version, String name) {
     ServiceArtifactEntity serviceArtifactEntity =
-        accessor.getArtifactInfo(vspId, versionMapper.toUDT(version), name).one();
+        accessor.getArtifactInfo(vspId, versionMapper.toUDT(version),
+            name).one();
     if (serviceArtifactEntity == null) {
       return null;
     }
@@ -115,6 +116,10 @@ public class ServiceArtifactDaoCassandraImpl implements ServiceArtifactDao {
     return serviceArtifactEntity.getServiceArtifact();
   }
 
+  @Override
+  public void deleteAll(String vspId, Version version) {
+    accessor.deleteAll(vspId, versionMapper.toUDT(version));
+  }
 
   @Accessor
   interface VspServiceArtifactAccessor {
@@ -124,16 +129,19 @@ public class ServiceArtifactDaoCassandraImpl implements ServiceArtifactDao {
 
     @Query(
         "SELECT vsp_id, version, name ,content_data "
-                + "FROM vsp_service_artifact where vsp_id=? and version=? ")
+            + "FROM vsp_service_artifact where vsp_id=? and version=? ")
     Result<ServiceArtifactEntity> list(String vspId, UDTValue version);
 
     @Query(
-        "SELECT vsp_id,version,name,content_data FROM "
-                + "vsp_service_artifact where vsp_id=? and version=? and name=?")
+        "SELECT vsp_id,version,name,content_data FROM"
+            + " vsp_service_artifact where vsp_id=? and version=? and name=?")
     Result<ServiceArtifactEntity> getArtifactInfo(String vspId, UDTValue version, String name);
 
     @Query("DELETE from vsp_service_artifact where vsp_id=? and version=?")
     ResultSet delete(String vspId, UDTValue version);
+
+    @Query("DELETE FROM vsp_service_artifact where vsp_id=? and version=?")
+    ResultSet deleteAll(String vspId, UDTValue version);
   }
 
 }

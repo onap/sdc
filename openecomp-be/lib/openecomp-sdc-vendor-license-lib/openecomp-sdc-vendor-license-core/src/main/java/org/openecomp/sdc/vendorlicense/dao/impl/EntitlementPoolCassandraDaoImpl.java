@@ -133,7 +133,7 @@ public class EntitlementPoolCassandraDaoImpl extends CassandraBaseDao<Entitlemen
 
     @Query(
         "UPDATE entitlement_pool SET ref_fg_ids = ref_fg_ids + ? WHERE vlm_id=? AND version=? "
-            + "AND ep_id=?")
+            + " AND ep_id=?")
     ResultSet addReferencingFeatureGroups(Set<String> referencingFeatureGroups,
                                           String vendorLicenseModelId,
                                           UDTValue vendorLicenseModelVersion, String id);

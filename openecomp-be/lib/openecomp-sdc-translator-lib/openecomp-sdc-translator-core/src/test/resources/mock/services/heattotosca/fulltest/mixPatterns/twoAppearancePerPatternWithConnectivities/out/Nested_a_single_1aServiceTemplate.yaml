@@ -1,0 +1,386 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_a_single_1a
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.a_single_1a:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    compute_a_single_1a_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_a_single_1a_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_a_single_1a_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_1a_t1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1a_t2_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_1a_t2_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1a_t1_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1a_t1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_1a_t2_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_a_single_1a_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_a_single_1a_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1a_t2_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    a_single_1a_1a_t1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_1a_t1_port_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_1a_t1_port_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_1a_t1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: a_single_1a
+          relationship: tosca.relationships.network.BindsTo
+    a_single_1a:
+      type: org.openecomp.resource.vfc.nodes.heat.a_single_1a
+      properties:
+        availability_zone:
+          get_input:
+          - compute_a_single_1a_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_a_single_1a_metadata
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_a_single_1a_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_a_single_1a_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_a_single_1a_user_data_format
+          - index_value
+    a_single_1a_1a_t2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_1a_t2_port_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_1a_t2_port_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_1a_t2_port_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_1a_t2_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: a_single_1a
+          relationship: tosca.relationships.network.BindsTo
+  outputs:
+    a_single_1a_instance_name:
+      type: list
+      value:
+        get_attribute:
+        - a_single_1a
+        - instance_name
+      entry_schema:
+        type: string
+    a_single_1a_1a_t1_port_tenant_id:
+      type: list
+      value:
+        get_attribute:
+        - a_single_1a_1a_t1_port
+        - tenant_id
+      entry_schema:
+        type: string
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.a_single_1a
+    capabilities:
+      disk.read.bytes_a_single_1a:
+      - a_single_1a
+      - disk.read.bytes
+      network.incoming.bytes.rate_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.incoming.bytes.rate
+      disk.usage_a_single_1a:
+      - a_single_1a
+      - disk.usage
+      attachment_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - attachment
+      scalable_a_single_1a:
+      - a_single_1a
+      - scalable
+      network.outgoing.bytes.rate_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.outgoing.bytes.rate
+      host_a_single_1a:
+      - a_single_1a
+      - host
+      endpoint_a_single_1a:
+      - a_single_1a
+      - endpoint
+      disk.root.size_a_single_1a:
+      - a_single_1a
+      - disk.root.size
+      memory.resident_a_single_1a:
+      - a_single_1a
+      - memory.resident
+      network.incoming.packets.rate_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.incoming.packets.rate
+      cpu.delta_a_single_1a:
+      - a_single_1a
+      - cpu.delta
+      disk.device.write.requests_a_single_1a:
+      - a_single_1a
+      - disk.device.write.requests
+      network.incoming.bytes.rate_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.incoming.bytes.rate
+      disk.iops_a_single_1a:
+      - a_single_1a
+      - disk.iops
+      network.incoming.bytes_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.incoming.bytes
+      cpu_util_a_single_1a:
+      - a_single_1a
+      - cpu_util
+      os_a_single_1a:
+      - a_single_1a
+      - os
+      disk.device.usage_a_single_1a:
+      - a_single_1a
+      - disk.device.usage
+      network.incoming.packets.rate_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.incoming.packets.rate
+      network.outgoing.packets.rate_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.outgoing.packets.rate
+      disk.read.requests_a_single_1a:
+      - a_single_1a
+      - disk.read.requests
+      disk.read.bytes.rate_a_single_1a:
+      - a_single_1a
+      - disk.read.bytes.rate
+      disk.write.bytes.rate_a_single_1a:
+      - a_single_1a
+      - disk.write.bytes.rate
+      attachment_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - attachment
+      cpu_a_single_1a:
+      - a_single_1a
+      - cpu
+      memory.usage_a_single_1a:
+      - a_single_1a
+      - memory.usage
+      disk.device.write.requests.rate_a_single_1a:
+      - a_single_1a
+      - disk.device.write.requests.rate
+      binding_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - binding
+      network.incoming.packets_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.incoming.packets
+      disk.device.read.requests_a_single_1a:
+      - a_single_1a
+      - disk.device.read.requests
+      disk.device.latency_a_single_1a:
+      - a_single_1a
+      - disk.device.latency
+      instance_a_single_1a:
+      - a_single_1a
+      - instance
+      binding_a_single_1a:
+      - a_single_1a
+      - binding
+      disk.latency_a_single_1a:
+      - a_single_1a
+      - disk.latency
+      network.outgoing.bytes_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.outgoing.bytes
+      disk.device.allocation_a_single_1a:
+      - a_single_1a
+      - disk.device.allocation
+      disk.write.bytes_a_single_1a:
+      - a_single_1a
+      - disk.write.bytes
+      feature_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - feature
+      network.outpoing.packets_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.outpoing.packets
+      network.outpoing.packets_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.outpoing.packets
+      disk.device.read.bytes.rate_a_single_1a:
+      - a_single_1a
+      - disk.device.read.bytes.rate
+      disk.device.write.bytes_a_single_1a:
+      - a_single_1a
+      - disk.device.write.bytes
+      disk.device.write.bytes.rate_a_single_1a:
+      - a_single_1a
+      - disk.device.write.bytes.rate
+      memory_a_single_1a:
+      - a_single_1a
+      - memory
+      disk.allocation_a_single_1a:
+      - a_single_1a
+      - disk.allocation
+      network.outgoing.packets.rate_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.outgoing.packets.rate
+      feature_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - feature
+      disk.capacity_a_single_1a:
+      - a_single_1a
+      - disk.capacity
+      disk.device.read.bytes_a_single_1a:
+      - a_single_1a
+      - disk.device.read.bytes
+      network.incoming.packets_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.incoming.packets
+      feature_a_single_1a:
+      - a_single_1a
+      - feature
+      network.outgoing.bytes_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.outgoing.bytes
+      disk.ephemeral.size_a_single_1a:
+      - a_single_1a
+      - disk.ephemeral.size
+      vcpus_a_single_1a:
+      - a_single_1a
+      - vcpus
+      binding_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - binding
+      disk.device.iops_a_single_1a:
+      - a_single_1a
+      - disk.device.iops
+      disk.write.requests_a_single_1a:
+      - a_single_1a
+      - disk.write.requests
+      disk.device.read.requests.rate_a_single_1a:
+      - a_single_1a
+      - disk.device.read.requests.rate
+      disk.device.capacity_a_single_1a:
+      - a_single_1a
+      - disk.device.capacity
+      disk.write.requests.rate_a_single_1a:
+      - a_single_1a
+      - disk.write.requests.rate
+      network.incoming.bytes_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - network.outgoing.bytes.rate
+    requirements:
+      link_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - link
+      link_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - link
+      dependency_a_single_1a:
+      - a_single_1a
+      - dependency
+      dependency_a_single_1a_1a_t2_port:
+      - a_single_1a_1a_t2_port
+      - dependency
+      dependency_a_single_1a_1a_t1_port:
+      - a_single_1a_1a_t1_port
+      - dependency
+      local_storage_a_single_1a:
+      - a_single_1a
+      - local_storage

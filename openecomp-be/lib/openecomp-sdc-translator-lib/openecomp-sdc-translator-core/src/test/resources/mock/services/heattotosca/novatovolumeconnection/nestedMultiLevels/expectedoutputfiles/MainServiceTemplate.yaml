@@ -1,0 +1,154 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.jsa:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_cinder_volume_size:
+      hidden: false
+      immutable: false
+      type: string
+    contrail_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    CMAUI_volume_type:
+      hidden: false
+      immutable: false
+      type: string
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    test_nested1Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: test_vol1
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+        p2: test_vol2
+      requirements:
+      - local_storage_server_cmaui2:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui1:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui1:
+          capability: tosca.capabilities.Attachment
+          node: test_vol2
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui4_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui3_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui3_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol2
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui6_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui8_test_nested4Level_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui7_test_nested4Level_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui7_test_nested4Level_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui5_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui5_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+    test_nestedInvalidConnectionToNova:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: test_nova
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+    test_vol1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    test_resourceGroup:
+      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      directives:
+      - substitutable
+      properties:
+        p1: test_vol1
+        service_template_filter:
+          substitute_service_template: nested3ServiceTemplate.yaml
+          count: 9
+          mandatory: true
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - local_storage_server_cmaui7_test_nested4Level:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+      - local_storage_server_cmaui5:
+          capability: tosca.capabilities.Attachment
+          node: test_vol1
+          relationship: tosca.relationships.AttachesTo
+    test_vol2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    test_nova:
+      type: org.openecomp.resource.vfc.nodes.heat.jsa
+      properties:
+        image: image
+        name:
+          get_input: jsa_name
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested1Level
+      - test_nestedInvalidConnectionToNova
+      - test_vol1
+      - test_resourceGroup
+      - test_vol2
+      - test_nova

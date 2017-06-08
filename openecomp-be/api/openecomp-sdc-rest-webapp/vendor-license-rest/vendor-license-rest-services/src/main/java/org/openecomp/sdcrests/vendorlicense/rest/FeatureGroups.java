@@ -20,9 +20,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -49,7 +46,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/feature-groups")
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
+
+@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Vendor License Model - Feature Groups")
@@ -63,9 +64,8 @@ public interface FeatureGroups {
       responseContainer = "List")
   Response listFeatureGroups(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @Pattern(regexp = Version.VERSION_REGEX, message = Version.VERSION_STRING_VIOLATION_MSG)
-      @QueryParam("version") String version,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
@@ -73,8 +73,9 @@ public interface FeatureGroups {
   Response createFeatureGroup(@Valid FeatureGroupRequestDto request,
                               @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
                                   String vlmId,
+                              @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
-                              @HeaderParam(USER_HEADER_PARAM) String user);
+                              @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{featureGroupId}")
@@ -82,9 +83,10 @@ public interface FeatureGroups {
   Response updateFeatureGroup(@Valid FeatureGroupUpdateRequestDto request,
                               @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
                                   String vlmId,
+                              @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
                               @PathParam("featureGroupId") String featureGroupId,
                               @NotNull(message = USER_MISSING_ERROR_MSG)
-                              @HeaderParam(USER_HEADER_PARAM) String user);
+                              @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{featureGroupId}")
@@ -92,17 +94,17 @@ public interface FeatureGroups {
       response = FeatureGroupModelDto.class)
   Response getFeatureGroup(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @Pattern(regexp = Version.VERSION_REGEX, message = Version.VERSION_STRING_VIOLATION_MSG)
-      @QueryParam("version") String version,
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("featureGroupId") String featureGroupId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{featureGroupId}")
   @ApiOperation(value = "Delete vendor feature group")
   Response deleteFeatureGroup(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("featureGroupId") String featureGroupId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
 }

@@ -25,7 +25,6 @@ import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_ENTITY
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_INTERNAL_SERVER_ERR_CODE;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_CODE;
 import static org.openecomp.sdc.action.errors.ActionErrorConstants.ACTION_QUERY_FAILURE_MSG;
-import static org.openecomp.sdc.action.util.ActionUtil.actionLogPostProcessor;
 
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.mapping.Mapper;
@@ -33,8 +32,8 @@ import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;
 import com.datastax.driver.mapping.annotations.Query;
 import org.openecomp.core.dao.impl.CassandraBaseDao;
-import org.openecomp.core.logging.api.Logger;
-import org.openecomp.core.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.action.dao.ActionArtifactDao;
@@ -49,12 +48,13 @@ import org.openecomp.sdc.action.util.ActionUtil;
 import java.util.Collection;
 import java.util.List;
 
+
 public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity>
     implements ActionArtifactDao {
-  private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-  private static final Mapper<ActionArtifactEntity> mapper =
+  private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
+  private static Mapper<ActionArtifactEntity> mapper =
       noSqlDb.getMappingManager().mapper(ActionArtifactEntity.class);
-  private static final ActionArtifactAccessor accessor =
+  private static ActionArtifactAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(ActionArtifactAccessor.class);
   private final Logger log = (Logger) LoggerFactory.getLogger(this.getClass().getName());
 
@@ -97,7 +97,7 @@ public class ActionArtifactDaoImpl extends CassandraBaseDao<ActionArtifactEntity
     try {
       ActionUtil
           .actionLogPreProcessor(ActionSubOperation.GET_ARTIFACT_BY_ARTIFACTUUID, TARGET_ENTITY_DB);
-      Result<ActionArtifactEntity> result;
+      Result<ActionArtifactEntity> result = null;
       result = accessor.getArtifactByUuId(effectiveVersion, artifactUuId);
       ActionUtil.actionLogPostProcessor(StatusCode.COMPLETE, null, "", false);
       log.metrics("");

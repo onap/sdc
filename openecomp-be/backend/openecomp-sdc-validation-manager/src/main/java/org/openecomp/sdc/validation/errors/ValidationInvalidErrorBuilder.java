@@ -20,8 +20,6 @@
 
 package org.openecomp.sdc.validation.errors;
 
-import static org.openecomp.sdc.validation.errors.ValidationErrorCodes.VALIDATION_INVALID;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -29,9 +27,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Validation invalid error builder.
- */
 public class ValidationInvalidErrorBuilder extends BaseErrorBuilder {
   private static final String VALIDATION_INVALID_DETAILED_MSG = "File is invalid: %s";
   private static final String VALIDATION_INVALID_MSG = "Validated file is invalid";
@@ -42,7 +37,7 @@ public class ValidationInvalidErrorBuilder extends BaseErrorBuilder {
    * @param errors the errors
    */
   public ValidationInvalidErrorBuilder(Map<String, List<ErrorMessage>> errors) {
-    getErrorCodeBuilder().withId(VALIDATION_INVALID);
+    getErrorCodeBuilder().withId(ValidationErrorCodes.VALIDATION_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder()
         .withMessage(String.format(VALIDATION_INVALID_DETAILED_MSG, toString(errors)));
@@ -52,7 +47,7 @@ public class ValidationInvalidErrorBuilder extends BaseErrorBuilder {
    * Instantiates a new Validation invalid error builder.
    */
   public ValidationInvalidErrorBuilder() {
-    getErrorCodeBuilder().withId(VALIDATION_INVALID);
+    getErrorCodeBuilder().withId(ValidationErrorCodes.VALIDATION_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(VALIDATION_INVALID_MSG);
   }

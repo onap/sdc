@@ -1,0 +1,204 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    fsb1-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    cps_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    fsb1-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type Gold
+    fsb_zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    oam_net_gw:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    jsa_net_name:
+      label: jsa_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_net_name
+      default: jsa_log_net_0
+    pcrf_psm_server_name:
+      label: pcrf_psm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_server_name
+    pcm_flavor_name:
+      label: pcm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_flavor_name
+    oam_net_id:
+      label: oam_net_id
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_id
+    oam_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    oam_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+  node_templates:
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_attribute:
+          - FSB1_Internal1
+          - network_id
+        dhcp_agent_ids:
+          get_attribute:
+          - FSB1_template
+          - addresses
+        tenant_id:
+          get_attribute:
+          - FSB2_Internal2
+          - network_id
+        qos_policy:
+          get_attribute:
+          - FSB2_Internal2
+          - network_id
+    cmaui_volume1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_attribute:
+          - FSB1_template
+          - addresses
+          - get_attribute:
+            - FSB2_Internal2
+            - index
+        size:
+          get_attribute:
+          - FSB1_Internal1
+          - addresses
+          - get_input:
+            - CMAUI_volume_type
+            - get_attribute:
+              - FSB1_OAM
+              - oam_index
+          - 0
+          - OS-EXT-IPS-MAC:mac_addr
+    cmaui_volume2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size:
+          get_input:
+          - a
+          - addresses
+          - get_input:
+            - CMAUI_volume_type
+            - get_attribute:
+              - FSB1_template
+              - accessIPv6
+          - 0
+          - OS-EXT-IPS-MAC:mac_addr
+    FSB1:
+      type: org.openecomp.resource.abstract.nodes.FSB1
+      directives:
+      - substitutable
+      properties:
+        network_name:
+          get_attribute:
+          - FSB2
+          - FSB2_FSB1_Internal_network_id
+        dhcp_agent_ids_1:
+          get_attribute:
+          - FSB2
+          - FSB1_addresses
+        dhcp_agent_ids_2:
+          get_attribute:
+          - FSB2
+          - FSB1_addresses
+        dhcp_agent_ids_3:
+          get_attribute:
+          - FSB1_template_3
+          - addresses
+        tenant_id:
+          get_attribute:
+          - FSB2
+          - FSB2_FSB2_Internal_network_id
+        port_FSB1_Internal_mac_address:
+        - get_input: fsb1-Internal1-mac
+  groups:
+    ep-jsa_net_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - cmaui_volume1
+      - cmaui_volume2
+      - jsa_net1
+      - FSB1

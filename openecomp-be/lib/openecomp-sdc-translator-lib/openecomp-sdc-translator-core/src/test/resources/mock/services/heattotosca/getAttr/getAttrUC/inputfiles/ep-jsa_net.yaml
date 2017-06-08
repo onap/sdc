@@ -1,0 +1,256 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: Paul Phillips, pp2854 PROD)
+
+parameters:
+      security_group_name:
+        type: comma_delimited_list
+        description: CMAUI1, CMAUI2 server names
+      pcrf_security_group_name:
+        type: comma_delimited_list
+        description: CMAUI1, CMAUI2 server names
+      volume_type:
+        type: string
+        label:  volume type
+        description: volume type Gold
+
+      volume_size:
+        type: number
+        label:  volume size
+        description: my volume size 320GB
+
+      FSB_1_image:
+        type: string
+        label: MME_FSB1
+        description: MME_FSB1_15B-CP04-r5a01
+
+      FSB1_volume_name:
+        type: string
+        label: FSB1_volume
+        description: FSB1_volume_1
+
+      fsb1-name:
+        type: string
+        label: FSB1_name
+        description: FSB1_name
+
+      fsb1-flavor:
+        type: string
+        label: FSB1_flavor
+        description: FSB1_flavor
+
+      fsb1-zone:
+        type: string
+        label: FSB1_zone
+        description: FSB1_zone
+
+      fsb_zone:
+        type: string
+        label: FSB1_zone
+        description: FSB1_zone
+
+      fsb1-Internal1-mac:
+        type: string
+        label: FSB1_internal_mac
+        description: FSB1_internal_mac
+
+      fsb1-Internal2-mac:
+        type: string
+        label: FSB1_internal_mac
+        description: FSB1_internal_mac
+
+      fsb2-Internal1-mac:
+        type: string
+        label: FSB1_internal_mac
+        description: FSB1_internal_mac
+
+      oam_net_id:
+        type: string
+        label: oam_net_id
+        description: oam_net_id
+
+      jsa_net_name:
+        type: string
+        label: jsa_net_name
+        description: jsa_net_name
+
+      jsa_cidr:
+        type: string
+        label: jsa_cidr
+        description: jsa_cidr
+
+      pcrf_cps_net_name:
+        type: string
+        label: pcrf_cps_net_name
+        description: pcrf_cps_net_name
+
+      pcrf_psm_server_name:
+        type: string
+        label: pcrf_psm_server_name
+        description: pcrf_psm_server_name
+
+      pcrf_psm_image_name:
+        type: string
+        label: pcrf_psm_image_name
+        description: pcrf_psm_image_name
+
+      pcrf_psm_flavor_name:
+        type: string
+        label: pcrf_psm_flavor_name
+        description: pcrf_psm_flavor_name
+
+      availabilityzone_name:
+        type: string
+        label: availabilityzone_name
+        description: availabilityzone_name
+
+      pcm_server_name:
+        type: string
+        label: pcm_server_name
+        description: pcm_server_name
+
+      pcm_image_name:
+        type: string
+        label: pcm_image_name
+        description: pcm_image_name
+
+      pcm_flavor_name:
+        type: string
+        label: pcm_flavor_name
+        description: pcm_flavor_name
+
+      Internal1_net_name:
+        type: string
+        label: Internal1_net_name
+        description: Internal1_net_name
+
+      Internal1_forwarding_mode:
+        type: string
+        label: Internal1_forwarding_mode
+        description: Internal1_forwarding_mode
+
+      Internal1_shared:
+        type: string
+        label: Internal1_shared
+        description: Internal1_shared
+
+      Internal1_external:
+        type: string
+        label: Internal1_external
+        description: Internal1_external
+
+      Internal2_name:
+        type: string
+        label: Internal2_name
+        description: Internal2_name
+
+      Internal2_shared:
+        type: string
+        label: Internal2_shared
+        description: Internal2_shared
+
+      Internal2_external:
+        type: string
+        label: Internal2_external
+        description: Internal2_external
+
+      Internal2_forwarding_mode:
+        type: string
+        label: Internal2_forwarding_mode
+        description: Internal2_forwarding_mode
+
+      cps_net_name:
+        type: string
+        label: cps_net_name
+        description: cps_net_name
+
+      oam_net_name:
+        type: string
+        label: oam_net_name
+        description: oam_net_name
+      oam_net_gw:
+        type: string
+        description: prop
+      cps_net_ip:
+        type: string
+        description: prop
+      cps_net_mask:
+        type: string
+        description: prop
+      oam_net_ip:
+        type: string
+        description: prop
+      oam_net_mask:
+        type: string
+        description: prop
+      fsb1-oam-ip:
+        type: string
+        description: prop
+      pcrf_cps_net_ip:
+        type: string
+        description: prop
+      pcrf_vnf_id:
+        type: string
+        description: prop
+      pcm_vol:
+        type: string
+        description: prop
+      pcm_vol_01:
+        type: string
+        description: prop
+      snapshot01:
+        type: string
+        description: prop
+      snapshot02:
+        type: string
+        description: prop
+      VMME_FSB1_boot_volume:
+        type: string
+      network_name:
+        type: string
+        description: prop
+      port_name:
+        type: string
+        description: prop
+      vipr_atm_name_0:
+        type: string
+        description: prop
+
+
+resources:
+  VMI1:
+      type: OS::ContrailV2::VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_3
+            params:
+              VM_NAME: { get_param: vipr_atm_name_0 }
+        virtual_machine_interface_properties:
+          {
+          virtual_machine_interface_properties_service_interface_type: 'left'
+          }
+        port_tuple_refs: [{ get_param: port_name }]
+        virtual_network_refs: [{ get_param: network_name }]
+
+  FSB1:
+      type: OS::Nova::Server
+      properties:
+        name: { get_attr: [VMI1, name] }
+        block_device_mapping: [{device_name: "vda", volume_id : {get_param: VMME_FSB1_boot_volume }, delete_on_termination: "false" }]
+        flavor: { get_param: fsb1-flavor }
+        availability_zone: { get_param: fsb_zone }
+        networks:
+          - network: {get_param: network_name}
+
+  FSB2:
+      type: OS::Nova::Server
+      properties:
+        name: { get_attr: [VMI1, virtual_machine_interface_allowed_address_pairs,
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair,
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip, virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix] }
+        flavor: { get_param: fsb1-flavor }
+        availability_zone: { get_param: fsb_zone }
+        networks:
+          - network: {get_param: network_name}

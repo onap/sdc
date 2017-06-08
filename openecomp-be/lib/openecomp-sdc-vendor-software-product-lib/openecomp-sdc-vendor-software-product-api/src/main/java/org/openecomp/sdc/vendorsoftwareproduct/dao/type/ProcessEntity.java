@@ -22,11 +22,14 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.Enumerated;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
+
+import java.nio.ByteBuffer;
 
 @Table(keyspace = "dox", name = "vsp_process")
 public class ProcessEntity implements VersionableEntity {
@@ -45,8 +48,12 @@ public class ProcessEntity implements VersionableEntity {
   private String id;
   private String name;
   private String description;
+  @Column(name = "type")
+  @Enumerated
+  private ProcessType type;
   @Column(name = "artifact_name")
   private String artifactName;
+  private ByteBuffer artifact;
 
   public ProcessEntity() {
 
@@ -75,14 +82,6 @@ public class ProcessEntity implements VersionableEntity {
     this.vspId = vspId;
   }
 
-  public Version getVersion() {
-    return version;
-  }
-
-  public void setVersion(Version version) {
-    this.version = version;
-  }
-
   public String getComponentId() {
     return componentId;
   }
@@ -109,8 +108,16 @@ public class ProcessEntity implements VersionableEntity {
     this.id = id;
   }
 
+  public Version getVersion() {
+    return version;
+  }
+
+  public void setVersion(Version version) {
+    this.version = version;
+  }
+
   public String getName() {
-    return name;
+    return name == null ? "" : name;
   }
 
   public void setName(String name) {
@@ -125,6 +132,14 @@ public class ProcessEntity implements VersionableEntity {
     this.description = description;
   }
 
+  public ProcessType getType() {
+    return type;
+  }
+
+  public void setType(ProcessType type) {
+    this.type = type;
+  }
+
   public String getArtifactName() {
     return artifactName;
   }
@@ -133,16 +148,24 @@ public class ProcessEntity implements VersionableEntity {
     this.artifactName = artifactName;
   }
 
+  public ByteBuffer getArtifact() {
+    return artifact;
+  }
+
+  public void setArtifact(ByteBuffer artifact) {
+    this.artifact = artifact;
+  }
+
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public boolean equals(Object other) {
+    if (this == other) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (other == null || getClass() != other.getClass()) {
       return false;
     }
 
-    ProcessEntity that = (ProcessEntity) obj;
+    ProcessEntity that = (ProcessEntity) other;
 
     if (vspId != null ? !vspId.equals(that.vspId) : that.vspId != null) {
       return false;
@@ -159,10 +182,22 @@ public class ProcessEntity implements VersionableEntity {
     if (name != null ? !name.equals(that.name) : that.name != null) {
       return false;
     }
-    return description != null ? description.equals(that.description) : that.description == null
-        &&
-        (artifactName != null ? artifactName.equals(that.artifactName) : that.artifactName == null);
+    if (description != null ? !description.equals(that.description) : that.description != null) {
+      return false;
+    }
+    if (artifactName != null ? !artifactName.equals(that.artifactName)
+        : that.artifactName != null) {
+      return false;
+    }
+    if (artifact != null ? !artifact.equals(that.artifact) : that.artifact != null) {
+      return false;
+    }
 
+    if (type != null ? !type.equals(that.type) : that.type != null) {
+      return false;
+    }
+
+    return true;
   }
 
   @Override
@@ -173,7 +208,23 @@ public class ProcessEntity implements VersionableEntity {
     result = 31 * result + (id != null ? id.hashCode() : 0);
     result = 31 * result + (name != null ? name.hashCode() : 0);
     result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + (artifactName != null ? artifactName.hashCode() : 0);
+    result = 31 * result + (artifact != null ? artifact.hashCode() : 0);
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "ProcessEntity{" +
+        "vspId='" + vspId + '\'' +
+        ", version=" + version +
+        ", componentId='" + componentId + '\'' +
+        ", id='" + id + '\'' +
+        ", name='" + name + '\'' +
+        ", description='" + description + '\'' +
+        ", type=" + type +
+        ", artifactName='" + artifactName + '\'' +
+        '}';
   }
 }

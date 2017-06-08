@@ -1,44 +1,36 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
-import {expect} from 'chai';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
-import {cloneAndSet} from 'test-utils/Util.js';
+import {cloneAndSet, buildListFromFactory} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
+import {LicenseKeyGroupStoreFactory, LicenseKeyGroupPostFactory} from 'test-utils/factories/licenseModel/LicenseKeyGroupFactories.js';
 
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
+import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
 
 describe('License Key Groups Module Tests', function () {
 
 	const LICENSE_MODEL_ID = '555';
+	const version = VersionControllerUtilsFactory.build().version;
+
 	it('Load License Key Group', () => {
-		const licenseKeyGroupsList = [
-			{
-				name: 'lsk1',
-				description: 'string',
-				type: 'Unique',
-				operationalScope: {'choices': ['Data_Center'], 'other': ''},
-				id: '0'
-			}
-		];
+
+		const licenseKeyGroupsList = buildListFromFactory(LicenseKeyGroupStoreFactory);
+
 		deepFreeze(licenseKeyGroupsList);
 		const store = storeCreator();
 		deepFreeze(store.getState());
@@ -46,27 +38,21 @@ describe('License Key Groups Module Tests', function () {
 		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', licenseKeyGroupsList);
 
 		mockRest.addHandler('fetch', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/license-key-groups`);
-			expect(data).to.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return {results: licenseKeyGroupsList};
 		});
 
-		return LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(store.dispatch, {licenseModelId: LICENSE_MODEL_ID}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+		return LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(store.dispatch, {licenseModelId: LICENSE_MODEL_ID, version}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
 	it('Delete License Key Group', () => {
-		const licenseKeyGroupsList = [
-			{
-				name: 'lsk1',
-				description: 'string',
-				type: 'Unique',
-				operationalScope: {'choices': ['Data_Center'], 'other': ''},
-				id: '0'
-			}
-		];
+
+		const licenseKeyGroupsList = buildListFromFactory(LicenseKeyGroupStoreFactory, 1);
+
 		deepFreeze(licenseKeyGroupsList);
 		const store = storeCreator({
 			licenseModel: {
@@ -76,20 +62,21 @@ describe('License Key Groups Module Tests', function () {
 			}
 		});
 		deepFreeze(store.getState());
-		const toBeDeletedLicenseKeyGroupId = '0';
+		const toBeDeletedLicenseKeyGroupId = licenseKeyGroupsList[0].id;
 		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', []);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/license-key-groups/${toBeDeletedLicenseKeyGroupId}`);
-			expect(data).to.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${toBeDeletedLicenseKeyGroupId}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 		});
 
 		return LicenseKeyGroupsActionHelper.deleteLicenseKeyGroup(store.dispatch, {
 			licenseKeyGroupId: toBeDeletedLicenseKeyGroupId,
-			licenseModelId: LICENSE_MODEL_ID
+			licenseModelId: LICENSE_MODEL_ID,
+			version
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -98,56 +85,34 @@ describe('License Key Groups Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const licenseKeyGroupPostRequest = {
-			name: 'lsk1_ADDED',
-			description: 'string_ADDED',
-			type: 'Unique_ADDED',
-			operationalScope: {'choices': ['Data_Center'], 'other': ''}
-		};
-		deepFreeze(licenseKeyGroupPostRequest);
+		const LicenseKeyGroupPost = LicenseKeyGroupPostFactory.build();
+		deepFreeze(LicenseKeyGroupPost);
 
-		const licenseKeyGroupToAdd = {
-			...licenseKeyGroupPostRequest
-		};
+		const LicenseKeyGroupStore = LicenseKeyGroupStoreFactory.build();
+		deepFreeze(LicenseKeyGroupStore);
 
-		deepFreeze(licenseKeyGroupToAdd);
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [LicenseKeyGroupStore]);
 
-		const licenseKeyGroupIdFromResponse = 'ADDED_ID';
-		const licenseKeyGroupAfterAdd = {
-			...licenseKeyGroupToAdd,
-			id: licenseKeyGroupIdFromResponse
-		};
-		deepFreeze(licenseKeyGroupAfterAdd);
-
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [licenseKeyGroupAfterAdd]);
-
-		mockRest.addHandler('create', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/license-key-groups`);
-			expect(data).to.deep.equal(licenseKeyGroupPostRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('post', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups`);
+			expect(data).toEqual(LicenseKeyGroupPost);
+			expect(options).toEqual(undefined);
 			return {
-				value: licenseKeyGroupIdFromResponse
+				value: LicenseKeyGroupStore.id
 			};
 		});
 
 		return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(store.dispatch, {
-			licenseKeyGroup: licenseKeyGroupToAdd,
-			licenseModelId: LICENSE_MODEL_ID
+			licenseKeyGroup: LicenseKeyGroupPost,
+			licenseModelId: LICENSE_MODEL_ID,
+			version
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
 	it('Update License Key Group', () => {
-		const licenseKeyGroupsList = [
-			{
-				name: 'lsk1',
-				description: 'string',
-				type: 'Unique',
-				operationalScope: {'choices': ['Data_Center'], 'other': ''},
-				id: '0'
-			}
-		];
+		const licenseKeyGroupsList = buildListFromFactory(LicenseKeyGroupStoreFactory, 1);
 		deepFreeze(licenseKeyGroupsList);
 		const store = storeCreator({
 			licenseModel: {
@@ -160,37 +125,35 @@ describe('License Key Groups Module Tests', function () {
 		const toBeUpdatedLicenseKeyGroupId = licenseKeyGroupsList[0].id;
 		const previousLicenseKeyGroupData = licenseKeyGroupsList[0];
 
-		const licenseKeyGroupUpdateData = {
-			...licenseKeyGroupsList[0],
+		const licenseKeyGroupUpdatedData = LicenseKeyGroupPostFactory.build({
 			name: 'lsk1_UPDATE',
 			description: 'string_UPDATE',
-			type: 'Unique',
-			operationalScope: {'choices': ['Data_Center'], 'other': ''}
-		};
-		deepFreeze(licenseKeyGroupUpdateData);
+			id: toBeUpdatedLicenseKeyGroupId
+		});
+		deepFreeze(licenseKeyGroupUpdatedData);
 
-		const licenseKeyGroupPutRequest = {
+		const licenseKeyGroupPutRequest = LicenseKeyGroupPostFactory.build({
 			name: 'lsk1_UPDATE',
-			description: 'string_UPDATE',
-			type: 'Unique',
-			operationalScope: {'choices': ['Data_Center'], 'other': ''}
-		};
+			description: 'string_UPDATE'
+		});
+
 		deepFreeze(licenseKeyGroupPutRequest);
 
-		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [licenseKeyGroupUpdateData]);
+		const expectedStore = cloneAndSet(store.getState(), 'licenseModel.licenseKeyGroup.licenseKeyGroupsList', [licenseKeyGroupUpdatedData]);
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/license-key-groups/${toBeUpdatedLicenseKeyGroupId}`);
-			expect(data).to.deep.equal(licenseKeyGroupPutRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${LICENSE_MODEL_ID}/versions/${version.id}/license-key-groups/${toBeUpdatedLicenseKeyGroupId}`);
+			expect(data).toEqual(licenseKeyGroupPutRequest);
+			expect(options).toEqual(undefined);
 		});
 
 		return LicenseKeyGroupsActionHelper.saveLicenseKeyGroup(store.dispatch, {
 			previousLicenseKeyGroup: previousLicenseKeyGroupData,
-			licenseKeyGroup: licenseKeyGroupUpdateData,
-			licenseModelId: LICENSE_MODEL_ID
+			licenseKeyGroup: licenseKeyGroupUpdatedData,
+			licenseModelId: LICENSE_MODEL_ID,
+			version
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 

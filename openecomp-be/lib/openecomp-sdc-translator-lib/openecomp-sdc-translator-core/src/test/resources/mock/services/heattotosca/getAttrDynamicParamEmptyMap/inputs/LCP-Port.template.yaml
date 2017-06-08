@@ -1,0 +1,719 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Wrapper used to create an OS::Neutron::Port for a particular
+  vNIC for each VM in a group.
+
+parameters:
+
+  # This parameter should not be overridden.
+  abe2ip:
+    type: json
+    description: |
+      Step 1 maps "anything but empty" (abe) to an empty string
+      and an empty string to "no_comma".
+      Step 2 maps an empty string to: "ip_address": "
+      (i.e. part of ip_address json entry).
+      Step 3 maps an empty string to the closing quote of the json entry.
+    default: {
+      "step1": {"": "no_comma"},
+      "step2": {"": ", \"ip_address\": \""},
+      "step3": {"": "\""}
+    }
+
+
+  # This parameter should not be overridden.
+  getkey:
+    type: json
+    description: |
+      Maps the empty string to "EMPTY" and anything else to "".
+      This is used in generating PortIpInfo where we only want
+      to produce output for lines in the ENV that are actually
+      populated (checking if subnet is set is good enough).
+    default: {"": "EMPTY"}
+
+  # This parameter should not be overridden.
+  checkit:
+    type: json
+    description: |
+      Used to get the str_replace template lines for PortIpInfo.
+      Combined with getkey use of this map will result in only
+      including populated lines in the output.
+    default: {
+      "EMPTY": {},
+      "": {
+        "0": '{"label":"$label00", "subnet":"$snet00", "ip":"$rip00$arip00"},',
+        "1": '{"label":"$label01", "subnet":"$snet01", "ip":"$rip01$arip01"},',
+        "2": '{"label":"$label02", "subnet":"$snet02", "ip":"$rip02$arip02"},',
+        "3": '{"label":"$label03", "subnet":"$snet03", "ip":"$rip03$arip03"},',
+        "4": '{"label":"$label04", "subnet":"$snet04", "ip":"$rip04$arip04"},',
+        "5": '{"label":"$label05", "subnet":"$snet05", "ip":"$rip05$arip05"},',
+        "6": '{"label":"$label06", "subnet":"$snet06", "ip":"$rip06$arip06"},',
+        "7": '{"label":"$label07", "subnet":"$snet07", "ip":"$rip07$arip07"},',
+        "8": '{"label":"$label08", "subnet":"$snet08", "ip":"$rip08$arip08"},',
+        "9": '{"label":"$label09", "subnet":"$snet09", "ip":"$rip09$arip09"},',
+        "10": '{"label":"$label10", "subnet":"$snet10", "ip":"$rip10$arip10"},',
+        "11": '{"label":"$label11", "subnet":"$snet11", "ip":"$rip11$arip11"},',
+        "12": '{"label":"$label12", "subnet":"$snet12", "ip":"$rip12$arip12"},',
+        "13": '{"label":"$label13", "subnet":"$snet13", "ip":"$rip13$arip13"},',
+        "14": '{"label":"$label14", "subnet":"$snet14", "ip":"$rip14$arip14"},',
+        "15": '{"label":"$label15", "subnet":"$snet15", "ip":"$rip15$arip15"},',
+        "16": '{"label":"$label16", "subnet":"$snet16", "ip":"$rip16$arip16"},',
+        "17": '{"label":"$label17", "subnet":"$snet17", "ip":"$rip17$arip17"},',
+        "18": '{"label":"$label18", "subnet":"$snet18", "ip":"$rip18$arip18"},',
+        "19": '{"label":"$label19", "subnet":"$snet19", "ip":"$rip19$arip19"},',
+        "20": '{"label":"$label20", "subnet":"$snet20", "ip":"$rip20$arip20"},',
+        "21": '{"label":"$label21", "subnet":"$snet21", "ip":"$rip21$arip21"},',
+        "22": '{"label":"$label22", "subnet":"$snet22", "ip":"$rip22$arip22"},',
+        "23": '{"label":"$label23", "subnet":"$snet23", "ip":"$rip23$arip23"},',
+        "24": '{"label":"$label24", "subnet":"$snet24", "ip":"$rip24$arip24"},',
+        "25": '{"label":"$label25", "subnet":"$snet25", "ip":"$rip25$arip25"},'
+      }
+    }
+
+  config_info:
+    type: json
+    description: VM configuration info.
+
+  # This parameter should not be overridden.
+  default_name:
+    type: json
+    description: |
+      Default port names. The first key is the override value from
+      the ENV file. The second key is the vnic index.
+      Note that if the override value is empty the default name is
+      found. If the override value is not empty the empty string is found.
+    default: {
+      "": {
+        "0": "eth0", "1": "eth1", "2": "eth2", "3": "eth3", "4": "eth4",
+        "5": "eth5", "6": "eth6", "7": "eth7", "8": "eth8", "9": "eth9",
+        "10": "eth10", "11": "eth11", "12": "eth12", "13": "eth13",
+        "14": "eth14", "15": "eth15"
+     }
+    }
+
+  default_name_base:
+    type: json
+    description: |
+      Default base name for resources. The first key is the override
+      value from the ENV file. If it is empty the result will be
+      the default value. Otherwise the result will be empty.
+
+  group_index:
+    type: string
+    description: Index of the VM pair within the elastic group.
+
+  group_tag:
+    type: string
+    description: Key into "usage_info" for members of this elastic group.
+
+  group_id:
+    type: string
+    description: ID number of the elastic group this pair is a member of.
+
+  ext_net_info:
+    type: json
+    description: Information about all provider subnets.
+
+  int_net_info:
+    type: json
+    description: Information about internal networks.
+
+  name_delimiter:
+    type: string
+    description: Flexname name prefix/suffix delimiter.
+
+  open_sec_group:
+    type: string
+    description: UUID of the open security group.
+
+  override_chk:
+    type: json
+    description: Maps anything but empty to empty and empty to "defaults".
+    default: {"": "defaults"}
+
+  # This parameter should not be overridden.
+  int_net_chk:
+    type: json
+    description: |
+      Index in with the subnet ID from the external network
+      and then with the desired subnet ID. If the internal networks
+      are provider networks then the result will be "". Otherwise
+      it will be the desired subnet ID which can be used to key
+      into int_net_info to get the UUID.
+    default: {
+      "": {"INTERNALnet0": "INTERNALnet0", "INTERNALnet1": "INTERNALnet1"},
+    }
+
+  stack:
+    type: string
+    description: Stack name.
+    constraints:
+      - allowed_pattern: "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+
+  usage_info:
+    type: json
+    description: Per-vnic/per-VM network usage info (e.g. IP address values).
+
+  vm_index:
+    type: string
+    description: VM group member index.
+
+  vnic_index:
+    type: string
+    description: VNIC number within the VM.
+
+resources:
+
+  # When looking at access into the config_info per_VM vnic_info attribute,
+  # keep in mind that the 0th entry holds the count of requested IPs so
+  # the "0th" IP is in entry 1 and so on.
+
+  # Get CIDRs of all subnets to generate the allowed_address_pairs list.
+  #
+  # Note that there will only be at most one internal subnet on
+  # any VNIC (and there won't be an external at the same time).
+  NOKIA-LCP-CIDRxlate:
+    type: LCP-Xlate.template.yaml
+    properties:
+      info:
+        str_replace:
+          template: |
+            {
+              "0": {"ip_address": "$int000$ext000"},
+              "1": {"ip_address": "$ext001"},
+              "2": {"ip_address": "$ext002"},
+              "3": {"ip_address": "$ext003"},
+              "4": {"ip_address": "$ext004"},
+              "5": {"ip_address": "$ext005"},
+              "6": {"ip_address": "$ext006"},
+              "7": {"ip_address": "$ext007"},
+              "8": {"ip_address": "$ext008"},
+              "9": {"ip_address": "$ext009"},
+              "10": {"ip_address": "$ext010"},
+              "11": {"ip_address": "$ext011"},
+              "12": {"ip_address": "$ext012"},
+              "13": {"ip_address": "$ext013"},
+              "14": {"ip_address": "$ext014"},
+              "15": {"ip_address": "$ext015"},
+              "16": {"ip_address": "$ext016"},
+              "17": {"ip_address": "$ext017"},
+              "18": {"ip_address": "$ext018"},
+              "19": {"ip_address": "$ext019"},
+              "20": {"ip_address": "$ext020"},
+              "21": {"ip_address": "$ext021"},
+              "22": {"ip_address": "$ext022"},
+              "23": {"ip_address": "$ext023"},
+              "24": {"ip_address": "$ext024"},
+              "25": {"ip_address": "$ext025"}
+            }
+          params:
+            $int000: {get_param: [int_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 0]}, cidr]}
+            $ext000: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 0]}, cidr]}
+            $ext001: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 1]}, cidr]}
+            $ext002: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 2]}, cidr]}
+            $ext003: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 3]}, cidr]}
+            $ext004: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 4]}, cidr]}
+            $ext005: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 5]}, cidr]}
+            $ext006: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 6]}, cidr]}
+            $ext007: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 7]}, cidr]}
+            $ext008: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 8]}, cidr]}
+            $ext009: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 9]}, cidr]}
+            $ext010: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 10]}, cidr]}
+            $ext011: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 11]}, cidr]}
+            $ext012: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 12]}, cidr]}
+            $ext013: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 13]}, cidr]}
+            $ext014: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 14]}, cidr]}
+            $ext015: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 15]}, cidr]}
+            $ext016: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 16]}, cidr]}
+            $ext017: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 17]}, cidr]}
+            $ext018: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 18]}, cidr]}
+            $ext019: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 19]}, cidr]}
+            $ext020: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 20]}, cidr]}
+            $ext021: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 21]}, cidr]}
+            $ext022: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 22]}, cidr]}
+            $ext023: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 23]}, cidr]}
+            $ext024: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 24]}, cidr]}
+            $ext025: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, allowed_subnets, 25]}, cidr]}
+
+  # Generate a JSON list keyed by "0", ..., "7" and then use
+  # the Xlate functionality to grab the VNIC-specific "count"
+  # entries in it to use as the fixed IP list for the port.
+  #
+  # Note that there will only be at most one internal IP on
+  # any VNIC (and there won't be an external at the same time).
+  NOKIA-LCP-IPxlate:
+    type: LCP-Xlate.template.yaml
+    properties:
+      info:
+        str_replace:
+          template: |
+            {
+              "0": {"subnet": "$sni$sn00" $com00$acom00$ip00$aip00$cq00$acq00},
+              "1": {"subnet": "$sn01" $com01$acom01$ip01$aip01$cq01$acq01},
+              "2": {"subnet": "$sn02" $com02$acom02$ip02$aip02$cq02$acq02},
+              "3": {"subnet": "$sn03" $com03$acom03$ip03$aip03$cq03$acq03},
+              "4": {"subnet": "$sn04" $com04$acom04$ip04$aip04$cq04$acq04},
+              "5": {"subnet": "$sn05" $com05$acom05$ip05$aip05$cq05$acq05},
+              "6": {"subnet": "$sn06" $com06$acom06$ip06$aip06$cq06$acq06},
+              "7": {"subnet": "$sn07" $com07$acom07$ip07$aip07$cq07$acq07},
+              "8": {"subnet": "$sn08" $com08$acom08$ip08$aip08$cq08$acq08},
+              "9": {"subnet": "$sn09" $com09$acom09$ip09$aip09$cq09$acq09},
+              "10": {"subnet": "$sn10" $com10$acom10$ip10$aip10$cq10$acq10},
+              "11": {"subnet": "$sn11" $com11$acom11$ip11$aip11$cq11$acq11},
+              "12": {"subnet": "$sn12" $com12$acom12$ip12$aip12$cq12$acq12},
+              "13": {"subnet": "$sn13" $com13$acom13$ip13$aip13$cq13$acq13},
+              "14": {"subnet": "$sn14" $com14$acom14$ip14$aip14$cq14$acq14},
+              "15": {"subnet": "$sn15" $com15$acom15$ip15$aip15$cq15$acq15},
+              "16": {"subnet": "$sn16" $com16$acom16$ip16$aip16$cq16$acq16},
+              "17": {"subnet": "$sn17" $com17$acom17$ip17$aip17$cq17$acq17},
+              "18": {"subnet": "$sn18" $com18$acom18$ip18$aip18$cq18$acq18},
+              "19": {"subnet": "$sn19" $com19$acom19$ip19$aip19$cq19$acq19},
+              "20": {"subnet": "$sn20" $com20$acom20$ip20$aip20$cq20$acq20},
+              "21": {"subnet": "$sn21" $com21$acom21$ip21$aip21$cq21$acq21},
+              "22": {"subnet": "$sn22" $com22$acom22$ip22$aip22$cq22$acq22},
+              "23": {"subnet": "$sn23" $com23$acom23$ip23$aip23$cq23$acq23},
+              "24": {"subnet": "$sn24" $com24$acom24$ip24$aip24$cq24$acq24},
+              "25": {"subnet": "$sn25" $com25$acom25$ip25$aip25$cq25$acq25}
+            }
+          params:
+            $sni: {get_param: [int_net_info, {get_param: [int_net_chk, {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, "subnet"]}, subnet_id]}, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, "subnet"]}]}, subnet_id]}
+            $sn00: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "subnet"]}, subnet_id]}
+            $com00: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}]}]}]}
+            $acom00: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}, "source"]}]}]}
+            $ip00: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}]}
+            $aip00: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}, "index"]}]}
+            $cq00: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}]}]}]}
+            $acq00: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}]}]}]}
+            $sn01: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "subnet"]}, subnet_id]}
+            $com01: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}]}]}]}
+            $acom01: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}, "source"]}]}]}
+            $ip01: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}]}
+            $aip01: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}, "index"]}]}
+            $cq01: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}]}]}]}
+            $acq01: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}]}]}]}
+            $sn02: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "subnet"]}, subnet_id]}
+            $com02: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}]}]}]}
+            $acom02: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}, "source"]}]}]}
+            $ip02: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}]}
+            $aip02: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}, "index"]}]}
+            $cq02: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}]}]}]}
+            $acq02: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}]}]}]}
+            $sn03: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "subnet"]}, subnet_id]}
+            $com03: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}]}]}]}
+            $acom03: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}, "source"]}]}]}
+            $ip03: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}]}
+            $aip03: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}, "index"]}]}
+            $cq03: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}]}]}]}
+            $acq03: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}]}]}]}
+            $sn04: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "subnet"]}, subnet_id]}
+            $com04: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}]}]}]}
+            $acom04: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}, "source"]}]}]}
+            $ip04: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}]}
+            $aip04: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}, "index"]}]}
+            $cq04: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}]}]}]}
+            $acq04: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}]}]}]}
+            $sn05: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "subnet"]}, subnet_id]}
+            $com05: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}]}]}]}
+            $acom05: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}, "source"]}]}]}
+            $ip05: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}]}
+            $aip05: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}, "index"]}]}
+            $cq05: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}]}]}]}
+            $acq05: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}]}]}]}
+            $sn06: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "subnet"]}, subnet_id]}
+            $com06: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}]}]}]}
+            $acom06: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}, "source"]}]}]}
+            $ip06: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}]}
+            $aip06: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}, "index"]}]}
+            $cq06: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}]}]}]}
+            $acq06: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}]}]}]}
+            $sn07: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "subnet"]}, subnet_id]}
+            $com07: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}]}]}]}
+            $acom07: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}, "source"]}]}]}
+            $ip07: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}]}
+            $aip07: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}, "index"]}]}
+            $cq07: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}]}]}]}
+            $acq07: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}]}]}]}
+            $sn08: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "subnet"]}, subnet_id]}
+            $com08: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}]}]}]}
+            $acom08: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}, "source"]}]}]}
+            $ip08: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}]}
+            $aip08: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}, "index"]}]}
+            $cq08: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}]}]}]}
+            $acq08: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}]}]}]}
+            $sn09: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "subnet"]}, subnet_id]}
+            $com09: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}]}]}]}
+            $acom09: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}, "source"]}]}]}
+            $ip09: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}]}
+            $aip09: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}, "index"]}]}
+            $cq09: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}]}]}]}
+            $acq09: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}]}]}]}
+            $sn10: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "subnet"]}, subnet_id]}
+            $com10: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}]}]}]}
+            $acom10: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}, "source"]}]}]}
+            $ip10: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}]}
+            $aip10: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}, "index"]}]}
+            $cq10: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}]}]}]}
+            $acq10: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}]}]}]}
+            $sn11: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "subnet"]}, subnet_id]}
+            $com11: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}]}]}]}
+            $acom11: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}, "source"]}]}]}
+            $ip11: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}]}
+            $aip11: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}, "index"]}]}
+            $cq11: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}]}]}]}
+            $acq11: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}]}]}]}
+            $sn12: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "subnet"]}, subnet_id]}
+            $com12: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}]}]}]}
+            $acom12: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}, "source"]}]}]}
+            $ip12: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}]}
+            $aip12: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}, "index"]}]}
+            $cq12: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}]}]}]}
+            $acq12: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}]}]}]}
+            $sn13: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "subnet"]}, subnet_id]}
+            $com13: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}]}]}]}
+            $acom13: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}, "source"]}]}]}
+            $ip13: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}]}
+            $aip13: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}, "index"]}]}
+            $cq13: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}]}]}]}
+            $acq13: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}]}]}]}
+            $sn14: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "subnet"]}, subnet_id]}
+            $com14: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}]}]}]}
+            $acom14: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}, "source"]}]}]}
+            $ip14: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}]}
+            $aip14: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}, "index"]}]}
+            $cq14: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}]}]}]}
+            $acq14: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}]}]}]}
+            $sn15: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "subnet"]}, subnet_id]}
+            $com15: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}]}]}]}
+            $acom15: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}, "source"]}]}]}
+            $ip15: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}]}
+            $aip15: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}, "index"]}]}
+            $cq15: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}]}]}]}
+            $acq15: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}]}]}]}
+            $sn16: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "subnet"]}, subnet_id]}
+            $com16: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}]}]}]}
+            $acom16: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}, "source"]}]}]}
+            $ip16: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}]}
+            $aip16: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}, "index"]}]}
+            $cq16: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}]}]}]}
+            $acq16: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}]}]}]}
+            $sn17: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "subnet"]}, subnet_id]}
+            $com17: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}]}]}]}
+            $acom17: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}, "source"]}]}]}
+            $ip17: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}]}
+            $aip17: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}, "index"]}]}
+            $cq17: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}]}]}]}
+            $acq17: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}]}]}]}
+            $sn18: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "subnet"]}, subnet_id]}
+            $com18: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}]}]}]}
+            $acom18: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}, "source"]}]}]}
+            $ip18: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}]}
+            $aip18: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}, "index"]}]}
+            $cq18: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}]}]}]}
+            $acq18: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}]}]}]}
+            $sn19: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "subnet"]}, subnet_id]}
+            $com19: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}]}]}]}
+            $acom19: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}, "source"]}]}]}
+            $ip19: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}]}
+            $aip19: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}, "index"]}]}
+            $cq19: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}]}]}]}
+            $acq19: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}]}]}]}
+            $sn20: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "subnet"]}, subnet_id]}
+            $com20: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}]}]}]}
+            $acom20: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}, "source"]}]}]}
+            $ip20: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}]}
+            $aip20: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}, "index"]}]}
+            $cq20: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}]}]}]}
+            $acq20: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}]}]}]}
+            $sn21: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "subnet"]}, subnet_id]}
+            $com21: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}]}]}]}
+            $acom21: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}, "source"]}]}]}
+            $ip21: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}]}
+            $aip21: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}, "index"]}]}
+            $cq21: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}]}]}]}
+            $acq21: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}]}]}]}
+            $sn22: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "subnet"]}, subnet_id]}
+            $com22: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}]}]}]}
+            $acom22: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}, "source"]}]}]}
+            $ip22: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}]}
+            $aip22: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}, "index"]}]}
+            $cq22: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}]}]}]}
+            $acq22: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}]}]}]}
+            $sn23: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "subnet"]}, subnet_id]}
+            $com23: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}]}]}]}
+            $acom23: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}, "source"]}]}]}
+            $ip23: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}]}
+            $aip23: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}, "index"]}]}
+            $cq23: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}]}]}]}
+            $acq23: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}]}]}]}
+            $sn24: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "subnet"]}, subnet_id]}
+            $com24: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}]}]}]}
+            $acom24: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}, "source"]}]}]}
+            $ip24: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}]}
+            $aip24: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}, "index"]}]}
+            $cq24: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}]}]}]}
+            $acq24: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}]}]}]}
+            $sn25: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "subnet"]}, subnet_id]}
+            $com25: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}]}]}]}
+            $acom25: {get_param: [abe2ip, step2, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}, "source"]}]}]}
+            $ip25: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}]}
+            $aip25: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}, "source"]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}, "index"]}]}
+            $cq25: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, "set_ips", {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}]}]}]}
+            $acq25: {get_param: [abe2ip, step3, {get_param: [abe2ip, step1, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}]}]}]}
+  NOKIA-LCP-Port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $stk$delim$base$default$override
+          params:
+            $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, "portname"]}]}
+            $default: {get_param: [default_name, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, "portname"]}, {get_param: vnic_index}]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, "portname"]}
+            $delim: {get_param: name_delimiter}
+            $stk: {get_param: stack}
+      # All entries for this port must be on the same network
+      # so it is sufficient to use the network ID from the first one.
+      network:
+        str_replace:
+          template: $int$ext
+          params:
+            $ext: {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, "subnet"]}, id]}
+            $int: {get_param: [int_net_info, {get_param: [int_net_chk, {get_param: [ext_net_info, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, "subnet"]}, id]}, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, "subnet"]}]}, id]}
+      replacement_policy: AUTO
+      binding:vnic_type:
+        str_replace:
+          template: $default$override
+          params:
+            $default: {get_param: [usage_info, {get_param: [override_chk, {get_param: [usage_info, "group_info", {get_param: group_id}, "binding_type", {get_param: vnic_index}]}]}, binding_type]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, "binding_type", {get_param: vnic_index}]}
+      security_groups: [{get_param: open_sec_group}]
+      allowed_address_pairs: {get_attr: [NOKIA-LCP-CIDRxlate, by_count, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, "subnet_count"]}]}
+      fixed_ips: {get_attr: [NOKIA-LCP-IPxlate, by_count, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, "count"]}]}
+
+outputs:
+
+  PortEntry:
+    description: Entry for VM networks list.
+    value: {
+      port: {get_resource: NOKIA-LCP-Port}
+    }
+
+  PortIpInfo:
+    description: |
+      Data to facilitate mapping IPs assigned on this port to the IP
+      usage labels provided in the input.
+    value:
+      str_replace:
+        template:
+          str_replace:
+            template: |
+              {
+                "count": "$cnt",
+                "binding_type": "$bindtype",
+                "mac_address": "$macaddr",
+                "assigned_ips": ["$ip00", "$ip01", "$ip02", "$ip03", "$ip04", "$ip05", "$ip06", "$ip07", "$ip08", "$ip09", "$ip10", "$ip11", "$ip12", "$ip13", "$ip14", "$ip15", "$ip16", "$ip17", "$ip18", "$ip19", "$ip20", "$ip21", "$ip22", "$ip23", "$ip24", "$ip25"],
+                "label2info": [$line000 $line001 $line002 $line003 $line004 $line005 $line006 $line007 $line008 $line009 $line010 $line011 $line012 $line013 $line014 $line015 $line016 $line017 $line018 $line019 $line020 $line021 $line022 $line023 $line024 $line025 {"label":"connectivity_ip", "snet":"dummy", "ip":""}]
+              }
+            params:
+              $line000: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 1, subnet]}]}, "0"]}
+              $line001: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 2, subnet]}]}, "1"]}
+              $line002: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 3, subnet]}]}, "2"]}
+              $line003: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 4, subnet]}]}, "3"]}
+              $line004: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 5, subnet]}]}, "4"]}
+              $line005: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 6, subnet]}]}, "5"]}
+              $line006: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 7, subnet]}]}, "6"]}
+              $line007: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 8, subnet]}]}, "7"]}
+              $line008: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 9, subnet]}]}, "8"]}
+              $line009: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 10, subnet]}]}, "9"]}
+              $line010: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 11, subnet]}]}, "10"]}
+              $line011: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 12, subnet]}]}, "11"]}
+              $line012: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 13, subnet]}]}, "12"]}
+              $line013: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 14, subnet]}]}, "13"]}
+              $line014: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 15, subnet]}]}, "14"]}
+              $line015: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 16, subnet]}]}, "15"]}
+              $line016: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 17, subnet]}]}, "16"]}
+              $line017: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 18, subnet]}]}, "17"]}
+              $line018: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 19, subnet]}]}, "18"]}
+              $line019: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 20, subnet]}]}, "19"]}
+              $line020: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 21, subnet]}]}, "20"]}
+              $line021: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 22, subnet]}]}, "21"]}
+              $line022: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 23, subnet]}]}, "22"]}
+              $line023: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 24, subnet]}]}, "23"]}
+              $line024: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 25, subnet]}]}, "24"]}
+              $line025: {get_param: [checkit, {get_param: [getkey, {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 26, subnet]}]}, "25"]}
+        params:
+          $cnt: {get_param: [config_info, {get_param: vm_index}, vnic_info, {get_param: vnic_index}, 0, "count"]}
+          $bindtype: {str_replace: {template: $default$override, params: {$default: {get_param: [usage_info, {get_param: [override_chk, {get_param: [usage_info, "group_info", {get_param: group_id}, "binding_type", {get_param: vnic_index}]}]}, binding_type]}, $override: {get_param: [usage_info, "group_info", {get_param: group_id}, "binding_type", {get_param: vnic_index}]}}}}
+          $macaddr: {get_attr: [NOKIA-LCP-Port, mac_address]}
+          $ip00: {get_attr: [NOKIA-LCP-Port, fixed_ips, 0, ip_address]}
+          $ip01: {get_attr: [NOKIA-LCP-Port, fixed_ips, 1, ip_address]}
+          $ip02: {get_attr: [NOKIA-LCP-Port, fixed_ips, 2, ip_address]}
+          $ip03: {get_attr: [NOKIA-LCP-Port, fixed_ips, 3, ip_address]}
+          $ip04: {get_attr: [NOKIA-LCP-Port, fixed_ips, 4, ip_address]}
+          $ip05: {get_attr: [NOKIA-LCP-Port, fixed_ips, 5, ip_address]}
+          $ip06: {get_attr: [NOKIA-LCP-Port, fixed_ips, 6, ip_address]}
+          $ip07: {get_attr: [NOKIA-LCP-Port, fixed_ips, 7, ip_address]}
+          $ip08: {get_attr: [NOKIA-LCP-Port, fixed_ips, 8, ip_address]}
+          $ip09: {get_attr: [NOKIA-LCP-Port, fixed_ips, 9, ip_address]}
+          $ip10: {get_attr: [NOKIA-LCP-Port, fixed_ips, 10, ip_address]}
+          $ip11: {get_attr: [NOKIA-LCP-Port, fixed_ips, 11, ip_address]}
+          $ip12: {get_attr: [NOKIA-LCP-Port, fixed_ips, 12, ip_address]}
+          $ip13: {get_attr: [NOKIA-LCP-Port, fixed_ips, 13, ip_address]}
+          $ip14: {get_attr: [NOKIA-LCP-Port, fixed_ips, 14, ip_address]}
+          $ip15: {get_attr: [NOKIA-LCP-Port, fixed_ips, 15, ip_address]}
+          $ip16: {get_attr: [NOKIA-LCP-Port, fixed_ips, 16, ip_address]}
+          $ip17: {get_attr: [NOKIA-LCP-Port, fixed_ips, 17, ip_address]}
+          $ip18: {get_attr: [NOKIA-LCP-Port, fixed_ips, 18, ip_address]}
+          $ip19: {get_attr: [NOKIA-LCP-Port, fixed_ips, 19, ip_address]}
+          $ip20: {get_attr: [NOKIA-LCP-Port, fixed_ips, 20, ip_address]}
+          $ip21: {get_attr: [NOKIA-LCP-Port, fixed_ips, 21, ip_address]}
+          $ip22: {get_attr: [NOKIA-LCP-Port, fixed_ips, 22, ip_address]}
+          $ip23: {get_attr: [NOKIA-LCP-Port, fixed_ips, 23, ip_address]}
+          $ip24: {get_attr: [NOKIA-LCP-Port, fixed_ips, 24, ip_address]}
+          $ip25: {get_attr: [NOKIA-LCP-Port, fixed_ips, 25, ip_address]}
+          $rip00: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}]}
+          $arip00: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}, "index"]}]}
+          $snet00: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "subnet"]}
+          $label00: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 1, "label"]}
+          $rip01: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}]}
+          $arip01: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}, "index"]}]}
+          $snet01: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "subnet"]}
+          $label01: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 2, "label"]}
+          $rip02: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}]}
+          $arip02: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}, "index"]}]}
+          $snet02: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "subnet"]}
+          $label02: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 3, "label"]}
+          $rip03: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}]}
+          $arip03: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}, "index"]}]}
+          $snet03: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "subnet"]}
+          $label03: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 4, "label"]}
+          $rip04: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}]}
+          $arip04: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}, "index"]}]}
+          $snet04: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "subnet"]}
+          $label04: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 5, "label"]}
+          $rip05: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}]}
+          $arip05: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}, "index"]}]}
+          $snet05: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "subnet"]}
+          $label05: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 6, "label"]}
+          $rip06: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}]}
+          $arip06: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}, "index"]}]}
+          $snet06: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "subnet"]}
+          $label06: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 7, "label"]}
+          $rip07: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}]}
+          $arip07: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}, "index"]}]}
+          $snet07: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "subnet"]}
+          $label07: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 8, "label"]}
+          $rip08: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}]}
+          $arip08: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}, "index"]}]}
+          $snet08: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "subnet"]}
+          $label08: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 9, "label"]}
+          $rip09: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}]}
+          $arip09: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}, "index"]}]}
+          $snet09: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "subnet"]}
+          $label09: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 10, "label"]}
+          $rip10: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}]}
+          $arip10: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}, "index"]}]}
+          $snet10: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "subnet"]}
+          $label10: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 11, "label"]}
+          $rip11: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}]}
+          $arip11: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}, "index"]}]}
+          $snet11: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "subnet"]}
+          $label11: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 12, "label"]}
+          $rip12: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}]}
+          $arip12: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}, "index"]}]}
+          $snet12: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "subnet"]}
+          $label12: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 13, "label"]}
+          $rip13: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}]}
+          $arip13: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}, "index"]}]}
+          $snet13: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "subnet"]}
+          $label13: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 14, "label"]}
+          $rip14: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}]}
+          $arip14: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}, "index"]}]}
+          $snet14: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "subnet"]}
+          $label14: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 15, "label"]}
+          $rip15: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}]}
+          $arip15: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}, "index"]}]}
+          $snet15: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "subnet"]}
+          $label15: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 16, "label"]}
+          $rip16: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}]}
+          $arip16: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}, "index"]}]}
+          $snet16: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "subnet"]}
+          $label16: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 17, "label"]}
+          $rip17: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}]}
+          $arip17: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}, "index"]}]}
+          $snet17: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "subnet"]}
+          $label17: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 18, "label"]}
+          $rip18: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}]}
+          $arip18: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}, "index"]}]}
+          $snet18: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "subnet"]}
+          $label18: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 19, "label"]}
+          $rip19: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}]}
+          $arip19: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}, "index"]}]}
+          $snet19: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "subnet"]}
+          $label19: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 20, "label"]}
+          $rip20: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}]}
+          $arip20: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}, "index"]}]}
+          $snet20: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "subnet"]}
+          $label20: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 21, "label"]}
+          $rip21: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}]}
+          $arip21: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}, "index"]}]}
+          $snet21: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "subnet"]}
+          $label21: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 22, "label"]}
+          $rip22: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}]}
+          $arip22: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}, "index"]}]}
+          $snet22: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "subnet"]}
+          $label22: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 23, "label"]}
+          $rip23: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}]}
+          $arip23: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}, "index"]}]}
+          $snet23: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "subnet"]}
+          $label23: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 24, "label"]}
+          $rip24: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}]}
+          $arip24: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}, "index"]}]}
+          $snet24: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "subnet"]}
+          $label24: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 25, "label"]}
+          $rip25: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, set_ips, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}]}
+          $arip25: {get_param: [usage_info, "ATT_ip_lists", {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}, source]}, {get_param: [usage_info, "ATT_vm_info", {get_param: group_tag}, {get_param: group_index}, {get_param: vm_index}, "label2ip", {get_param: vnic_index}, {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}, "index"]}]}
+          $snet25: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "subnet"]}
+          $label25: {get_param: [config_info, {get_param: vm_index}, "vnic_info", {get_param: vnic_index}, 26, "label"]}
+
+  Version:
+    description: |
+      Template file version number. This should be updated
+      each time a non-comment change is made to this file.
+    value: K1
+
+  ASSIGNED_IPS:
+    description: IP addresses assigned to this port.
+    value:
+      str_replace:
+        template: |
+          $ip00, $ip01, $ip02, $ip03, $ip04, $ip05, $ip06, $ip07, $ip08, $ip09, $ip10, $ip11, $ip12, $ip13, $ip14, $ip15, $ip16, $ip17, $ip18, $ip19, $ip20, $ip21, $ip22, $ip23, $ip24, $ip25
+        params:
+          $ip00: {get_attr: [NOKIA-LCP-Port, fixed_ips, 0, ip_address]}
+          $ip01: {get_attr: [NOKIA-LCP-Port, fixed_ips, 1, ip_address]}
+          $ip02: {get_attr: [NOKIA-LCP-Port, fixed_ips, 2, ip_address]}
+          $ip03: {get_attr: [NOKIA-LCP-Port, fixed_ips, 3, ip_address]}
+          $ip04: {get_attr: [NOKIA-LCP-Port, fixed_ips, 4, ip_address]}
+          $ip05: {get_attr: [NOKIA-LCP-Port, fixed_ips, 5, ip_address]}
+          $ip06: {get_attr: [NOKIA-LCP-Port, fixed_ips, 6, ip_address]}
+          $ip07: {get_attr: [NOKIA-LCP-Port, fixed_ips, 7, ip_address]}
+          $ip08: {get_attr: [NOKIA-LCP-Port, fixed_ips, 8, ip_address]}
+          $ip09: {get_attr: [NOKIA-LCP-Port, fixed_ips, 9, ip_address]}
+          $ip10: {get_attr: [NOKIA-LCP-Port, fixed_ips, 10, ip_address]}
+          $ip11: {get_attr: [NOKIA-LCP-Port, fixed_ips, 11, ip_address]}
+          $ip12: {get_attr: [NOKIA-LCP-Port, fixed_ips, 12, ip_address]}
+          $ip13: {get_attr: [NOKIA-LCP-Port, fixed_ips, 13, ip_address]}
+          $ip14: {get_attr: [NOKIA-LCP-Port, fixed_ips, 14, ip_address]}
+          $ip15: {get_attr: [NOKIA-LCP-Port, fixed_ips, 15, ip_address]}
+          $ip16: {get_attr: [NOKIA-LCP-Port, fixed_ips, 16, ip_address]}
+          $ip17: {get_attr: [NOKIA-LCP-Port, fixed_ips, 17, ip_address]}
+          $ip18: {get_attr: [NOKIA-LCP-Port, fixed_ips, 18, ip_address]}
+          $ip19: {get_attr: [NOKIA-LCP-Port, fixed_ips, 19, ip_address]}
+          $ip20: {get_attr: [NOKIA-LCP-Port, fixed_ips, 20, ip_address]}
+          $ip21: {get_attr: [NOKIA-LCP-Port, fixed_ips, 21, ip_address]}
+          $ip22: {get_attr: [NOKIA-LCP-Port, fixed_ips, 22, ip_address]}
+          $ip23: {get_attr: [NOKIA-LCP-Port, fixed_ips, 23, ip_address]}
+          $ip24: {get_attr: [NOKIA-LCP-Port, fixed_ips, 24, ip_address]}
+          $ip25: {get_attr: [NOKIA-LCP-Port, fixed_ips, 25, ip_address]}
+

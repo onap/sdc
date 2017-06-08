@@ -1,0 +1,61 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  FSB2_legal_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: fsb_name_2 }
+      flavor: { get_param: fsb_flavor_name }
+      image: { get_param: fsb_image_name }
+      metadata:
+        VnF_id: { get_param: vnfvfVF_id }
+        vf_module_id: { get_param: vf_module_id }
+
+  FSB2_legal_2:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: CE_server_name }
+        image: { get_param: CE_image_name }
+        flavor: { get_param: CE_flavor_name }
+        metadata:
+          VnF_id: { get_param: vnfvfVF_id }
+          vf_module_id: { get_param: vf_module_id }
+
+  FSB2_legal_3:
+        type: OS::Nova::Server
+        properties:
+          name: { get_param: fsb_name_2 }
+          flavor: { get_param: fsb_flavor_names }
+          image: { get_param: fsb_image_name }
+          metadata:
+            VnF_id: { get_param: vnfvfVF_id }
+            vf_module_id: { get_param: vf_module_id }
+
+  FSB2_illegal_1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: fsb_name_2 }
+      flavor: {get_param: scp_flavor_name}
+      image: { get_param: pcrf_image_name }
+      metadata:
+        VnF_id: { get_param: vnfvfVF_id }
+        vf_module_id: { get_param: vf_module_id }
+
+  FSB2_illegal_2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [fsb_names, 1] }
+      flavor: {get_param: scp_flavor_name}
+      image: { get_param: scp_image_name }
+      metadata:
+        VnF_id: { get_param: vnfvfVF_id }
+        vf_module_id: { get_param: vf_module_id }
+
+outputs:
+  expose_resource_nove_output:
+    description: the pcrf_server
+    value: { get_resource: FSB2 }
+
+

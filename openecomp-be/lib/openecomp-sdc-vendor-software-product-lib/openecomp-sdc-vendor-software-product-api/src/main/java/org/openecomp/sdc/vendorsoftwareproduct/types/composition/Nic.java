@@ -68,15 +68,24 @@ public class Nic implements CompositionDataEntity {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public int hashCode() {
+    int result = name != null ? name.hashCode() : 0;
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (networkId != null ? networkId.hashCode() : 0);
+    result = 31 * result + (networkType != null ? networkType.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    Nic nic = (Nic) obj;
+    Nic nic = (Nic) object;
 
     if (name != null ? !name.equals(nic.name) : nic.name != null) {
       return false;
@@ -89,14 +98,5 @@ public class Nic implements CompositionDataEntity {
     }
     return networkType == nic.networkType;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (networkId != null ? networkId.hashCode() : 0);
-    result = 31 * result + (networkType != null ? networkType.hashCode() : 0);
-    return result;
   }
 }

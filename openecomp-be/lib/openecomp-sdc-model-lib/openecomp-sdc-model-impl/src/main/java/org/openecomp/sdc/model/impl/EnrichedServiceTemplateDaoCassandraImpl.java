@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.model.impl;
 
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
@@ -43,27 +44,20 @@ public class EnrichedServiceTemplateDaoCassandraImpl implements EnrichedServiceT
 
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static final Mapper<EnrichedServiceTemplateEntity> mapper =
-      noSqlDb.getMappingManager().mapper(EnrichedServiceTemplateEntity.class);
+      noSqlDb.getMappingManager().mapper(
+          EnrichedServiceTemplateEntity.class);
   private static final VspServiceTemplateAccessor accessor =
-      noSqlDb.getMappingManager().createAccessor(VspServiceTemplateAccessor.class);
+      noSqlDb.getMappingManager().createAccessor(
+          VspServiceTemplateAccessor.class);
   private static final UDTMapper<Version> versionMapper =
       noSqlDb.getMappingManager().udtMapper(Version.class);
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-    VersioningManagerFactory.getInstance().createInterface()
-        .register(versionableEntityType, new VersionableEntityMetadata(
-            mapper.getTableMetadata().getName(),
+    VersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
+        new VersionableEntityMetadata(mapper.getTableMetadata().getName(),
             mapper.getTableMetadata().getPartitionKey().get(0).getName(),
             mapper.getTableMetadata().getPartitionKey().get(1).getName()));
-  }
-
-  @Override
-  public Collection<ServiceTemplate> list(String vspId, Version version) {
-
-    List<EnrichedServiceTemplateEntity> entityList = accessor.list(vspId, version).all();
-    return entityList.stream().map(entity -> entity.getServiceTemplate())
-        .collect(Collectors.toList());
   }
 
   @Override
@@ -90,7 +84,6 @@ public class EnrichedServiceTemplateDaoCassandraImpl implements EnrichedServiceT
     mapper.delete(vspId, version);
   }
 
-
   @Override
   public Object[] getKeys(String vspId, Version version) {
     return new Object[]{vspId, versionMapper.toUDT(version)};
@@ -98,12 +91,20 @@ public class EnrichedServiceTemplateDaoCassandraImpl implements EnrichedServiceT
 
   @Override
   public ServiceTemplate getTemplateInfo(String vspId, Version version, String name) {
-    EnrichedServiceTemplateEntity enrichedServiceTemplateEntity =
-        accessor.getTemplateInfo(vspId, versionMapper.toUDT(version), name).one();
+    EnrichedServiceTemplateEntity enrichedServiceTemplateEntity = accessor.getTemplateInfo(vspId,
+        versionMapper.toUDT(version), name).one();
     if (enrichedServiceTemplateEntity == null) {
       return null;
     }
     return enrichedServiceTemplateEntity.getServiceTemplate();
+  }
+
+  @Override
+  public Collection<ServiceTemplate> list(String vspId, Version version) {
+
+    List<EnrichedServiceTemplateEntity> entityList = accessor.list(vspId, version).all();
+    return entityList.stream().map(entity -> entity.getServiceTemplate())
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -119,6 +120,10 @@ public class EnrichedServiceTemplateDaoCassandraImpl implements EnrichedServiceT
     return null;
   }
 
+  @Override
+  public void deleteAll(String vspId, Version version) {
+    accessor.deleteAll(vspId, versionMapper.toUDT(version));
+  }
 
   @Accessor
   interface VspServiceTemplateAccessor {
@@ -128,20 +133,23 @@ public class EnrichedServiceTemplateDaoCassandraImpl implements EnrichedServiceT
     Result<EnrichedServiceTemplateEntity> listAll();
 
     @Query(
-        "SELECT vsp_id, version, name, base_name ,content_data FROM vsp_enriched_service_template "
-            + "where vsp_id=? and version=?")
+        "SELECT vsp_id, version, name, base_name ,content_data FROM "
+            + "vsp_enriched_service_template where vsp_id=? and version=?")
     Result<EnrichedServiceTemplateEntity> list(String vspId, Version version);
 
-
     @Query(
-        "SELECT vsp_id, version, name, base_name ,content_data FROM vsp_enriched_service_template "
-            + "where vsp_id=? and version=? and name=?")
+        "SELECT vsp_id, version, name, base_name ,content_data FROM "
+            + "vsp_enriched_service_template where vsp_id=? and version=? and name=?")
     Result<EnrichedServiceTemplateEntity> getTemplateInfo(String vspId, UDTValue version,
                                                           String name);
 
     @Query(
-        "SELECT vsp_id, version, name, base_name  FROM vsp_enriched_service_template "
-            + "where vsp_id=? and version=?")
+        "SELECT vsp_id, version, name, base_name  FROM "
+            + "vsp_enriched_service_template where vsp_id=? and version=?")
     Result<EnrichedServiceTemplateEntity> getBase(String vspId, UDTValue version);
+
+    @Query("DELETE FROM vsp_enriched_service_template where vsp_id = ? and version = ?")
+    ResultSet deleteAll(String vspId, UDTValue version);
   }
+
 }

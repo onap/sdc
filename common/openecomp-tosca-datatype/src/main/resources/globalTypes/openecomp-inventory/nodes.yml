@@ -1,0 +1,5148 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp-inventory/nodes.yml
+  version: '1.0'
+
+imports:
+- inventory_index:
+    file: _index.yml
+
+node_types:
+
+  org.openecomp.nodes.inventory.LagInterface:
+    description: Link aggregate interface
+    attributes:
+      interface_name:
+        description: Name that identifies the link aggregate interface
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      interface_description:
+        description: Human friendly text regarding this interface.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      speed_value:
+        description: Captures the numeric part of the speed
+        type: string
+      speed_units:
+        description: Captures the units corresponding to the speed
+        type: string
+      interface_id:
+        description: ID of interface
+        type: string
+        annotations:
+          index:
+          - inventory
+      interface_role:
+        description: Role assigned to this Interface, should use values as defined in OPENECOMP Yang models.
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+    capabilities:
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - lag_link:
+        capability: tosca.capabilities.network.Linkable
+        node: org.openecomp.nodes.inventory.network.LagLink
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - p_interface:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.PInterface
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pnf:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.Pnf
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - pserver:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpe:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.Vpe
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpls_pe:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.VplsPe
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.cloud.infrastructure.VirtualDataCenter:
+    description: Virtual organization of cloud infrastructure elements in a data center context
+    attributes:
+      vdc_id:
+        description: Unique ID of the vdc
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      vdc_name:
+        description: Name of the virtual data center
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      connector:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.business.Connector
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+
+  org.openecomp.nodes.inventory.network.Pnf:
+    description: PNF represents a physical network function. typically equipment used in the D1 world. in 1607, this will be populated by SDN-C to represent a premises router that a uCPE connects to. But this can be used to represent any physical device that is not an OPENECOMP node or uCPE.
+    attributes:
+      pnf_name:
+        description: unique name of Physical Network Function.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      pnf_name2:
+        description: name of Physical Network Function.
+        type: string
+      pnf_name2_source:
+        description: source of name2
+        type: string
+      pnf_id:
+        description: id of pnf
+        type: string
+      equip_type:
+        description: Equipment type.  Source of truth should define valid values.
+        type: string
+      equip_vendor:
+        description: Equipment vendor.  Source of truth should define valid values.
+        type: string
+      equip_model:
+        description: Equipment model.  Source of truth should define valid values.
+        type: string
+      management_option:
+        description: identifier of managed by OPENECOMP or customer
+        type: string
+      ipaddress_v4_oam:
+        description: ipv4-oam-address with new naming convention for IP addresses
+        type: string
+      sw_version:
+        description: sw-version is the version of SW for the hosted application on the PNF.
+        type: string
+      in_maint:
+        description: Used to indicate whether or not this object is in maintenance mode (maintenance mode = true). This field (in conjunction with prov-status) is used to suppress alarms and vSCL on VNFs/VMs.
+        type: boolean
+      frame_id:
+        description: ID of the physical frame (relay rack) where pnf is installed.
+        type: string
+      serial_number:
+        description: Serial number of the device
+        type: string
+      ipaddress_v4_loopback_0:
+        description: IPV4 Loopback 0 address
+        type: string
+      ipaddress_v6_loopback_0:
+        description: IPV6 Loopback 0 address
+        type: string
+      ipaddress_v4_aim:
+        description: IPV4 AIM address
+        type: string
+      ipaddress_v6_aim:
+        description: IPV6 AIM address
+        type: string
+      ipaddress_v6_oam:
+        description: IPV6 OAM address
+        type: string
+      inv_status:
+        description: CANOPI's inventory status.  Only set with values exactly as defined by CANOPI.
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      prov_status:
+        description: Prov Status of this device (not under canopi control) Valid values [PREPROV/NVTPROV/PROV]
+        type: string
+      nf_role:
+        description: Nf Role is the role performed by this instance in the network.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      p_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.PInterface
+      lag_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LagInterface
+    capabilities:
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Bridgeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      p_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PInterface
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Locates
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+    - instance_group:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.InstanceGroup
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - zone:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Zone
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+
+  org.openecomp.nodes.inventory.network.InstanceGroup:
+    description: General mechanism for grouping instances
+    attributes:
+      id:
+        description: Instance Group ID, UUID assigned to this instance.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      description:
+        description: Descriptive text to help identify the usage of this instance-group
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      type:
+        description: Only valid value today is lower case ha for high availability
+        type: string
+        annotations:
+          index:
+          - inventory
+      sub_type:
+        description: Valid values for ha type are [geo-activeactive, geo-activestandby, local-activeactive, local-activestandby]
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      allotted_resource:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AllottedResource
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      pnf:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Pnf
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+
+  org.openecomp.nodes.inventory.LInterface:
+    description: Logical interfaces, e.g., a vnic.
+    attributes:
+      interface_name:
+        description: Name given to the interface
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      interface_role:
+        description: E.g., CUSTOMER, UPLINK, etc.
+        type: string
+      v6_wan_link_ip:
+        description: Questionably placed - v6 ip addr of this interface (is in vr-lan-interface from Mary B.
+        type: string
+      selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      interface_id:
+        description: ID of interface
+        type: string
+        annotations:
+          index:
+          - inventory
+      macaddr:
+        description: MAC address for the interface
+        type: string
+        annotations:
+          index:
+          - inventory
+      network_name:
+        description: Name of the network
+        type: string
+        annotations:
+          index:
+          - inventory
+      management_option:
+        description: Whether A&AI should be managing this interface of not. Could have value like CUSTOMER
+        type: string
+      interface_description:
+        description: Human friendly text regarding this interface.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      vlans:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Vlan
+      sriov_vfs:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.SriovVf
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+        occurrences:
+        - 0
+        - UNBOUNDED
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+      sriov_vf:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.SriovVf
+    requirements:
+    - generic_vnf:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - lag_interface:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.LagInterface
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - linking:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - newvce:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.Newvce
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - p_interface:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.PInterface
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpe:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.Vpe
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vserver:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.Vlan:
+    description: Definition of vlan
+    attributes:
+      vlan_interface:
+        description: String that identifies the interface
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      vlan_id_inner:
+        description: Inner VLAN tag
+        type: long
+        annotations:
+          index:
+          - inventory
+      vlan_id_outer:
+        description: Outer VLAN tag
+        type: long
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      speed_value:
+        description: Captures the numeric part of the speed
+        type: string
+      speed_units:
+        description: Captures the units corresponding to the speed
+        type: string
+      vlan_description:
+        description: Used to describe (the service associated with) the vlan
+        type: string
+      backdoor_connection:
+        description: Whether customer is going to use this VLAN for backdoor connection to another customer premise device.
+        type: string
+      vpn_id:
+        description: This indicates the customers VPN ID associated with this vlan
+        type: string
+        annotations:
+          unique:
+          - inventory
+          index:
+          - inventory
+      orchestration_status:
+        description: Status of a vnf's vlan interface, on which the customer circuit resides, mastered by SDN-C.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+        occurrences:
+        - 0
+        - UNBOUNDED
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      allotted_resource:
+        type: org.openecomp.capabilities.inventory.Allot
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AllottedResource
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Linkable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+    requirements:
+    - logical_link:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.LogicalLink
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - multicast_configuration:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.MulticastConfiguration
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Vserver:
+    description: Virtual Servers, aka virtual machine or VM.
+    attributes:
+      vserver_id:
+        description: Unique identifier for this vserver relative to its tenant
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      vserver_name:
+        description: Name of vserver
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      vserver_name2:
+        description: Alternative name of vserver
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      vserver_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      in_maint:
+        description: Used to indicate whether or not this object is in maintenance mode (maintenance mode = true). This field (in conjunction with prov-status) is used to suppress alarms and vSCL on VNFs/VMs.
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      is_closed_loop_disabled:
+        description: Used to indicate whether closed loop function is enabled on this node
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      volumes:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Volume
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      vce:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Vce
+      vf_module:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VfModule
+      vnfc:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Vnfc
+      vpe:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Vpe
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+    requirements:
+    - tenant:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.Tenant
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - flavor:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.Flavor
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - 1
+    - image:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.Image
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - 1
+    - pserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - 1
+    - snapshot:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.Snapshot
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - 1
+    - volume:
+        capability: org.openecomp.capabilities.inventory.Attachment
+        node: org.openecomp.nodes.inventory.Volume
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.VolumeGroup:
+    description: Persistent block-level storage.
+    attributes:
+      volume_group_id:
+        description: Unique ID of volume-group.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      volume_group_name:
+        description: Name of the volume group.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      heat_stack_id:
+        description: Heat stack id corresponding to this volume-group
+        type: string
+        annotations:
+          index:
+          - inventory
+      vnf_type:
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as OPENECOMP matures.
+        type: string
+        annotations:
+          index:
+          - inventory
+      orchestration_status:
+        description: Orchestration status of this volume-group
+        type: string
+      persona_model_customization_id:
+        description: captures the id of all the configuration used to customize the resource for the service.
+        type: string
+      vf_module_persona_model_customization_id:
+        description: helps relate the volume group to the vf-module whose components will require the volume group
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Node
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      tenant:
+        type: org.openecomp.capabilities.inventory.Node
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Tenant
+      vf_module:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VfModule
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.IpsecConfiguration:
+    description: IPSec configuration node will contain various configuration data for the NMTE VNF. This node will have an edge to the generic-vnf (vnf type = TE). Starting 1607, this data will be populated by SDN-C
+    attributes:
+      ipsec_configuration_id:
+        description: UUID of this configuration
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      requested_vig_address_type:
+        description: Indicate the type of VIG server like AVPN, INTERNET, BOTH
+        type: string
+      requested_encryption_strength:
+        description: Encryption values like 3des-cbc, des-cbc, aes-128-cbc, aes-192-cbc, aes-265-cbc
+        type: string
+      requested_dmz_type:
+        description: OPENECOMP can offer a shared DMZ or a DMZ specific to a customer
+        type: string
+      shared_dmz_network_address:
+        description: Network address of shared DMZ
+        type: string
+      requested_customer_name:
+        description: If the DMZ is a custom DMZ, this field will indicate the customer information
+        type: string
+      ike_version:
+        description: can be 1 or 2
+        type: string
+      ikev1_authentication:
+        description: Contains values like md5, sha1, sha256, sha384
+        type: string
+      ikev1_encryption:
+        description: Encyption values like 3des-cbc, des-cbc, aes-128-cbc, aes-192-cbc, aes-265-cbc
+        type: string
+      ikev1_dh_group:
+        description: Diffie-Hellman group like DH-GROUP2, DH-GROUP5, DH-GROUP14
+        type: string
+      ikev1_am_group_id:
+        description: Group name defined in VIG for clients using aggressive mode
+        type: string
+      ikev1_am_password:
+        description: 'pre-shared key for the above group name '
+        type: string
+      ikev1_sa_lifetime:
+        description: Lifetime for IKEv1 SA
+        type: string
+      ipsec_authentication:
+        description: md5, sha1, sha256, sha384
+        type: string
+      ipsec_encryption:
+        description: 3des-cbc, des-cbc, aes-128-cbc, aes-192-cbc, aes-265-cbc
+        type: string
+      ipsec_sa_lifetime:
+        description: Life time for IPSec SA
+        type: string
+      ipsec_pfs:
+        description: enable PFS or not
+        type: string
+      xauth_userid:
+        description: user ID for xAuth, sm-user,ucpeHostName,nmteHostName
+        type: string
+      xauth_user_password:
+        description: Encrypted using the Juniper $9$ algorithm
+        type: string
+      dpd_interval:
+        description: The time between DPD probe
+        type: string
+      dpd_frequency:
+        description: Maximum number of DPD before claiming the tunnel is down
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      vig_servers:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.VigServer
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      vig_server:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VigServer
+
+  org.openecomp.nodes.inventory.cloud.infrastructure.Pserver:
+    description: Compute host whose hostname must be unique and must exactly match what is sent as a relationship to a vserver.
+    attributes:
+      hostname:
+        description: Value from executing hostname on the compute node.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      ptnii_equip_name:
+        description: PTNII name
+        type: string
+      number_of_cpus:
+        description: Number of cpus
+        type: integer
+      disk_in_gigabytes:
+        description: Disk size, in GBs
+        type: integer
+      ram_in_megabytes:
+        description: RAM size, in MBs
+        type: integer
+      equip_type:
+        description: Equipment type.  Source of truth should define valid values.
+        type: string
+      equip_vendor:
+        description: Equipment vendor.  Source of truth should define valid values.
+        type: string
+      equip_model:
+        description: Equipment model.  Source of truth should define valid values.
+        type: string
+      fqdn:
+        description: Fully-qualified domain name
+        type: string
+      pserver_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      ipv4_oam_address:
+        description: Used to configure device, also used for troubleshooting and is IP used for traps generated by device.
+        type: string
+        annotations:
+          search:
+          - inventory
+      serial_number:
+        description: Serial number, may be queried
+        type: string
+      ipaddress_v4_loopback_0:
+        description: IPV4 Loopback 0 address
+        type: string
+      ipaddress_v6_loopback_0:
+        description: IPV6 Loopback 0 address
+        type: string
+      ipaddress_v4_aim:
+        description: IPV4 AIM address
+        type: string
+      ipaddress_v6_aim:
+        description: IPV6 AIM address
+        type: string
+      ipaddress_v6_oam:
+        description: IPV6 OAM address
+        type: string
+      inv_status:
+        description: CANOPI's inventory status.  Only set with values exactly as defined by CANOPI.
+        type: string
+        annotations:
+          index:
+          - inventory
+      pserver_id:
+        description: ID of Pserver
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      internet_topology:
+        description: internet topology of Pserver
+        type: string
+      in_maint:
+        description: used to indicate whether or not this object is in maintenance mode (maintenance mode = true). This field (in conjunction with prov-status) is used to suppress alarms and vSCL on VNFs/VMs.
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      pserver_name2:
+        description: alternative pserver name
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      purpose:
+        description: purpose of pserver
+        type: string
+      prov_status:
+        description: Prov Status of this device (not under canopi control) Valid values [PREPROV/NVTPROV/PROV]
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      p_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.PInterface
+      lag_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LagInterface
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Bridgeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      p_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PInterface
+      vserver:
+        type: org.openecomp.capabilities.inventory.Container
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+    requirements:
+    - availability_zone:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.AvailabilityZone
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - 1
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Locates
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+    - group_assignment:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.GroupAssignment
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - 1
+    - zone:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Zone
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+
+  org.openecomp.nodes.inventory.SriovVf:
+    description: SR-IOV Virtual Function (not to be confused with virtual network function)
+    attributes:
+      pci_id:
+        description: PCI ID used to identify the sriov-vf
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      vf_vlan_filter:
+        description: This metadata provides option to specify list of VLAN filters applied on VF to pass the traffic to VM.
+        type: string
+        annotations:
+          index:
+          - inventory
+      vf_mac_filter:
+        description: When MAC filters are specified, VF-agent service configures VFs to do MAC level filtering before the traffic is passed to VM.
+        type: string
+        annotations:
+          index:
+          - inventory
+      vf_vlan_strip:
+        description: When this field is set to true, VF will configured to strip the outer TAG before the traffic is passed to VM.
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      vf_vlan_anti_spoof_check:
+        description: This option ensures anti VLAN spoof checks are done at the VF level to comply with security. The disable check will also be honored per the VNF needs for trusted VMs.
+        type: boolean
+      vf_mac_anti_spoof_check:
+        description: This option ensures anti MAC spoof checks are done at the VF level to comply with security. The disable check will also be honored per the VNF needs for trusted VMs.
+        type: boolean
+      vf_mirrors:
+        description: This option defines the set of Mirror objects which essentially mirrors the traffic from source to set of collector VNF Ports.
+        type: string
+      vf_broadcast_allow:
+        description: This option, if set to true, sets the VF in promiscuous mode and allows all broadcast traffic to reach the VM
+        type: boolean
+      vf_unknown_multicast_allow:
+        description: This option, if set to true, sets the VF in promiscuous mode and allows unknown multicast traffic to reach the VM
+        type: boolean
+      vf_unknown_unicast_allow:
+        description: This option, if set to true, sets the VF in promiscuous mode and allows unknown unicast traffic to reach the VM
+        type: boolean
+      vf_insert_stag:
+        description: This option, if set to true, instructs to insert outer tag after traffic comes out of VM.
+        type: boolean
+      vf_link_status:
+        description: This option is used to set the link status.  Valid values as of 1607 are on, off, and auto.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      neutron_network_id:
+        description: Neutron network id of the interface
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - l_interface:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.LInterface
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.AvailabilityZone:
+    description: Availability zone, a collection of compute hosts/pservers
+    attributes:
+      availability_zone_name:
+        description: Name of the availability zone.  Unique across a cloud region
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      hypervisor_type:
+        description: Type of hypervisor.  Source of truth should define valid values.
+        type: string
+      operational_state:
+        description: State that indicates whether the availability zone should be used, etc.  Source of truth should define valid values.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      ctag_pool:
+        type: org.openecomp.capabilities.inventory.Applicable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.CtagPool
+      dvs_switch:
+        type: org.openecomp.capabilities.inventory.Applicable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.DvsSwitch
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Origin
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      pserver:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+      vce:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Vce
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.ServiceInstance:
+    description: Instance of a service
+    attributes:
+      service_instance_id:
+        description: Uniquely identifies this instance of a service
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      service_instance_name:
+        description: This field will store a name assigned to the service-instance.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      bandwidth_total:
+        description: Indicates the total bandwidth to be used for this service.
+        type: string
+      bandwidth_up_wan1:
+        description: indicates the upstream bandwidth this service will use on the WAN1 port of the physical device.
+        type: string
+      bandwidth_down_wan1:
+        description: indicates the downstream bandwidth this service will use on the WAN1 port of the physical device.
+        type: string
+      bandwidth_up_wan2:
+        description: indicates the upstream bandwidth this service will use on the WAN2 port of the physical device.
+        type: string
+      bandwidth_down_wan2:
+        description: indicates the downstream bandwidth this service will use on the WAN2 port of the physical device.
+        type: string
+      vhn_portal_url:
+        description: URL customers will use to access the vHN Portal.
+        type: string
+      operational_status:
+        description: Operational status of the service-instance.
+        type: string
+      service_instance_location_id:
+        description: An identifier that customers assign to the location where this service is being used.
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      selflink:
+        description: Path to the controller object.
+        type: string
+      orchestration_status:
+        description: Orchestration status of this service.
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      metadata:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Metadatum
+      allotted_resources:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.AllottedResource
+    capabilities:
+      allotted_resource:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AllottedResource
+      metadatum:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Metadatum
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - connector:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.business.Connector
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - ctag_assignment:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.CtagAssignment
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - cvlan_tag:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.CvlanTagEntry
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - instance_group:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.InstanceGroup
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - logical_link:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.LogicalLink
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pnf:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.network.Pnf
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - service_instance:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.ServiceInstance
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vce:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.network.Vce
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vlan:
+        capability: org.openecomp.capabilities.inventory.Composeable
+        node: org.openecomp.nodes.inventory.Vlan
+        relationship: org.openecomp.relationships.inventory.ComposedOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - service_subscription:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.ServiceSubscription
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.Newvce:
+    description: This object fills in the gaps from vce that were incorporated into generic-vnf.  This object will be retired with vce.
+    attributes:
+      vnf_id2:
+        description: Unique id of VNF, can't use same attribute name right now until we promote this new object
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_name:
+        description: Name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      vnf_name2:
+        description: Alternate name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_type:
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as OPENECOMP matures.
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this VNF by BAU Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      operational_state:
+        description: Indicator for whether the resource is considered operational
+        type: string
+      license_key:
+        description: OBSOLETE -  do not use
+        type: string
+      ipv4_oam_address:
+        description: Address tail-f uses to configure vpe, also used for troubleshooting and is IP used for traps generated by VPE (v4-loopback0-ip-address).
+        type: string
+      equipment_role:
+        description: Client should send valid enumerated value, e.g., VPE.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      ipv4_loopback0_address:
+        description: v4 Loopback0 address
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO.
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+    capabilities:
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+
+  org.openecomp.nodes.inventory.Flavor:
+    description: Openstack flavor.
+    attributes:
+      flavor_id:
+        description: Flavor id, expected to be unique across cloud-region.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      flavor_name:
+        description: Flavor name
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      flavor_vcpus:
+        description: Number of CPUs
+        type: integer
+      flavor_ram:
+        description: Amount of memory
+        type: integer
+      flavor_disk:
+        description: Disk space
+        type: integer
+      flavor_ephemeral:
+        description: Amount of ephemeral disk space
+        type: integer
+      flavor_swap:
+        description: amount of swap space allocation
+        type: string
+      flavor_is_public:
+        description: whether flavor is available to all users or private to the tenant it was created in.
+        type: boolean
+      flavor_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      flavor_disabled:
+        description: Boolean as to whether this flavor is no longer enabled
+        type: boolean
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      vserver:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.DvsSwitch:
+    description: 'Digital virtual switch metadata, used by SDN-C to configure VCEs.  A&AI
+      needs to receive this data from the PO deployment team and administer it using
+      the provisioningTool.sh into A&AI. '
+    attributes:
+      switch_name:
+        description: DVS switch name
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      vcenter_url:
+        description: URL used to reach the vcenter
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - availability_zone:
+        capability: org.openecomp.capabilities.inventory.Applicable
+        node: org.openecomp.nodes.inventory.AvailabilityZone
+        relationship: org.openecomp.relationships.inventory.AppliesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Entitlement:
+    description: Metadata for entitlement group.
+    attributes:
+      group_uuid:
+        description: Unique ID for the entitlement group the resource comes from, should be uuid.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_uuid:
+        description: 'Unique ID of an entitlement resource. '
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vce:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Vce
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpe:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Vpe
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.PInterface:
+    description: Physical interface (e.g., nic)
+    attributes:
+      interface_name:
+        description: Name that identifies the physical interface
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      speed_value:
+        description: Captures the numeric part of the speed
+        type: string
+      speed_units:
+        description: Captures the units corresponding to the speed
+        type: string
+      port_description:
+        description: Nature of the services and connectivity on this port.
+        type: string
+      equipment_identifier:
+        description: CLEI or other specification for p-interface hardware.
+        type: string
+      interface_role:
+        description: Role specification for p-interface hardware.
+        type: string
+      interface_type:
+        description: Indicates the physical properties of the interface.
+        type: string
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+    capabilities:
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+    requirements:
+    - logical_link:
+        capability: tosca.capabilities.network.Linkable
+        node: org.openecomp.nodes.inventory.network.LogicalLink
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 0
+        - 1
+    - physical_link:
+        capability: tosca.capabilities.network.Linkable
+        node: org.openecomp.nodes.inventory.network.PhysicalLink
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pnf:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.Pnf
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - pserver:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpls_pe:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.nodes.inventory.network.VplsPe
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.LagLink:
+    description: LAG links can connect lag-interfaces
+    attributes:
+      link_name:
+        description: Alphabetical concatenation of lag-interface names
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Linkable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+
+  org.openecomp.nodes.inventory.Volume:
+    description: Ephemeral Block storage volume.
+    attributes:
+      volume_id:
+        description: Unique ID of block storage volume relative to the vserver.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      volume_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      vserver:
+        type: org.openecomp.capabilities.inventory.Attachment
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+
+  org.openecomp.nodes.inventory.network.Zone:
+    description: A zone is a grouping of assets in a location homing to the same connections into the CBB
+    attributes:
+      zone_id:
+        description: Code assigned by OPENECOMP to the zone
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      zone_name:
+        description: English name associated with the zone
+        type: string
+        annotations:
+          summary_property: true
+      design_type:
+        description: Design of zone [Medium/Large�]
+        type: string
+        annotations:
+          index:
+          - inventory
+      zone_context:
+        description: Context of zone [production/test]
+        type: string
+        annotations:
+          index:
+          - inventory
+      status:
+        description: Status of a zone.
+        type: string
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      cloud_region:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+      pnf:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Pnf
+      pserver:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+
+  org.openecomp.nodes.inventory.SegmentationAssignment:
+    description: Openstack segmentation assignment.
+    attributes:
+      segmentation_id:
+        description: Route Table Reference id, UUID assigned to this instance.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.SitePair:
+    attributes:
+      site_pair_id:
+        description: unique identifier of probe
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      source_ip:
+        description: Prefix address
+        type: string
+      destination_ip:
+        description: Prefix address
+        type: string
+      ip_version:
+        description: ip version, v4, v6
+        type: string
+      destination_hostname:
+        description: Hostname of the destination equipment to which SLAs are measured against.
+        type: string
+      destination_equip_type:
+        description: The type of destinatination equipment. Could be Router, UCPE, etc.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      classes_of_service:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.ClassOfService
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      class_of_service:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ClassOfService
+    requirements:
+    - routing_instance:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.RoutingInstance
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.VplsPe:
+    description: VPLS Provider Edge routers.
+    attributes:
+      equipment_name:
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this VNF by BAU Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      ipv4_oam_address:
+        description: Address tail-f uses to configure vpe, also used for troubleshooting and is IP used for traps generated by VPE (v4-loopback0-ip-address).
+        type: string
+      equipment_role:
+        description: Client should send valid enumerated value, e.g., VPLS-PE.
+        type: string
+      vlan_id_outer:
+        description: Temporary location for stag to get to VCE
+        type: long
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      p_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.PInterface
+      lag_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LagInterface
+    capabilities:
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      p_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PInterface
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Locates
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - ctag_pool:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.CtagPool
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Subnet:
+    attributes:
+      subnet_id:
+        description: Subnet ID, should be UUID.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      subnet_name:
+        description: Name associated with the subnet.
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      neutron_subnet_id:
+        description: Neutron id of this subnet
+        type: string
+      gateway_address:
+        description: gateway ip address
+        type: string
+      network_start_address:
+        description: network start address
+        type: string
+      cidr_mask:
+        description: cidr mask
+        type: string
+      ip_version:
+        description: ip version
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO
+        type: string
+      dhcp_enabled:
+        description: dhcp enabled
+        type: boolean
+      dhcp_start:
+        description: the start address reserved for use by dhcp
+        type: string
+      dhcp_end:
+        description: the last address reserved for use by dhcp
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.service.design.and.creation.VnfImage:
+    description: Image object that pertain to a VNF that doesn't have associated vservers.  This is a kludge.
+    attributes:
+      att_uuid:
+        description: Unique ID of this asset
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      application:
+        description: The application that the image instantiates.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_vendor:
+        description: The vendor of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_version:
+        description: The version of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+
+  org.openecomp.nodes.inventory.network.RouteTableReference:
+    description: Openstack route table reference.
+    attributes:
+      route_table_reference_id:
+        description: Route Table Reference id, UUID assigned to this instance.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      route_table_reference_fqdn:
+        description: FQDN entry in the route table.
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      l3_network:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.L3Network
+
+  org.openecomp.nodes.inventory.License:
+    description: Metadata for license group.
+    attributes:
+      group_uuid:
+        description: Unique ID for the license group the resource belongs to, should be uuid.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_uuid:
+        description: 'Unique ID of a license resource. '
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vce:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Vce
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vpe:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Vpe
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.GroupAssignment:
+    description: Openstack group-assignment used to store exclusivity groups (EG).
+    attributes:
+      group_id:
+        description: Group id, expected to be unique across cloud-region.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      group_type:
+        description: Group type - the type of group this instance refers to
+        type: string
+        annotations:
+          index:
+          - inventory
+      group_name:
+        description: Group name - name assigned to the group
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      group_description:
+        description: Group description - description of the group
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      pserver:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+      tenant:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Tenant
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.VfModule:
+    description: a deployment unit of VNFCs
+    attributes:
+      vf_module_id:
+        description: Unique ID of vf-module.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      vf_module_name:
+        description: Name of vf-module
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance.
+        type: string
+        annotations:
+          index:
+          - inventory
+      orchestration_status:
+        description: orchestration status of this vf-module, mastered by MSO
+        type: string
+      is_base_vf_module:
+        description: used to indicate whether or not this object is base vf module
+        type: boolean
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_customization_id:
+        description: captures the id of all the configuration used to customize the resource for the service.
+        type: string
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      contrail_service_instance_fqdn:
+        description: the Contrail unique ID for a service-instance
+        type: string
+        annotations:
+          index:
+          - inventory
+      module_index:
+        description: the index will track the number of modules of a given type that have been deployed in a VNF, starting with 0, and always choosing the lowest available digit
+        type: integer
+      selflink:
+        description: Path to the controller object.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - l3_network:
+        capability: tosca.capabilities.Node
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vnfc:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.Vnfc
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - volume_group:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.VolumeGroup
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - 1
+    - vserver:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Metadatum:
+    description: Key/value pairs
+    attributes:
+      metaname:
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      metaval:
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+    requirements:
+    - connector:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.business.Connector
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - image:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.Image
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - service_instance:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.ServiceInstance
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.VigServer:
+    description: vig-server contains information about a vig server used for IPSec-configuration. Populated by SDN-C from 1607
+    attributes:
+      vig_address_type:
+        description: indicates whether the VIG is for AVPN or INTERNET
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      ipaddress_v4_vig:
+        description: v4 IP of the vig server
+        type: string
+        occurrences:
+        - 0
+        - UNBOUNDED
+      ipaddress_v6_vig:
+        description: v6 IP of the vig server
+        type: string
+        occurrences:
+        - 0
+        - UNBOUNDED
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - ipsec_configuration:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.IpsecConfiguration
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion:
+    description: cloud-region designates an installation of a cloud cluster or region or instantiation. In AT&Ts OPENECOMP cloud, this could be an LCP or DCP. Cloud regions are uniquely identified by a composite key, cloud-owner + cloud-region-id. The format of the cloud-owner is vendor-cloudname and we will use OPENECOMP.
+    attributes:
+      cloud_owner:
+        description: Identifies the vendor and cloud name, e.g., OPENECOMP. First part of composite key should be formatted as vendor-cloudname
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      cloud_region_id:
+        description: Identifier used by the vendor for the region. Second part of composite key
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      cloud_type:
+        description: Type of the cloud (e.g., openstack)
+        type: string
+        annotations:
+          index:
+          - inventory
+      owner_defined_type:
+        description: Cloud-owner defined type indicator (e.g., dcp, lcp)
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      cloud_region_version:
+        description: Software version employed at the site.  NOTE - THIS FIELD IS NOT KEPT UP TO DATE.
+        type: string
+      identity_url:
+        description: URL of the keystone identity service
+        type: string
+      cloud_zone:
+        description: Zone where the cloud is homed.  NOTE - THIS FIELD IS NOT CORRECTLY POPULATED.
+        type: string
+      complex_name:
+        description: complex name for cloud-region instance.  NOTE - THIS FIELD IS NOT CORRECTLY POPULATED.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      volume_groups:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.VolumeGroup
+      tenants:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Tenant
+        annotations:
+          max_query_depth: 0
+      flavors:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Flavor
+      group_assignments:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.GroupAssignment
+      snapshots:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Snapshot
+      images:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Image
+      dvs_switches:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.DvsSwitch
+      oam_networks:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.OamNetwork
+      availability_zones:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.AvailabilityZone
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      availability_zone:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AvailabilityZone
+      dvs_switch:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.DvsSwitch
+      flavor:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Flavor
+      group_assignment:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.GroupAssignment
+      image:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Image
+      oam_network:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.OamNetwork
+      snapshot:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Snapshot
+      tenant:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Tenant
+      volume_group:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VolumeGroup
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+      pserver:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - zone:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Zone
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+
+  org.openecomp.nodes.inventory.network.Vpe:
+    derived_from: org.openecomp.nodes.inventory.Vnf
+    description: Relationship-list must include related to info for complex.
+    attributes:
+      vnf_id:
+        description: Unique id of VNF.  This is unique across the graph.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_name:
+        description: Name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      vnf_name2:
+        description: Alternate name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_type:
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as OPENECOMP matures.
+        type: string
+        annotations:
+          index:
+          - inventory
+      service_id:
+        description: Unique identifier of service.  Does not map strictly to ASDC services.  SOON TO BE DEPRECATED
+        type: string
+        annotations:
+          index:
+          - inventory
+      regional_resource_zone:
+        description: Regional way of organizing pservers, source of truth should define values
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      operational_state:
+        description: Indicator for whether the resource is considered operational
+        type: string
+      license_key:
+        description: OBSOLETE -  do not use.  See child relationships.
+        type: string
+      equipment_role:
+        description: Client should send valid enumerated value
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      ipv4_oam_address:
+        description: Address tail-f uses to configure vpe, also used for troubleshooting and is IP used for traps generated by VPE (v4-loopback0-ip-address).
+        type: string
+      ipv4_oam_gateway_address_prefix_length:
+        description: Prefix length for oam-address
+        type: integer
+      ipv4_oam_gateway_address:
+        description: Gateway address
+        type: string
+      v4_loopback0_ip_address:
+        description: Loopback0 address
+        type: string
+      vlan_id_outer:
+        description: Temporary location for stag to get to VCE
+        type: long
+      as_number:
+        description: as-number of the VPE
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      summary_status:
+        description: details regarding the vpe operation, PLEASE DISCONTINUE USE OF THIS FIELD.
+        type: string
+      encrypted_access_flag:
+        description: indicates whether vpe access uses SSH
+        type: boolean
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+      lag_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LagInterface
+      licenses:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.License
+      entitlements:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Entitlement
+    capabilities:
+      entitlement:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Entitlement
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      license:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.License
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+    requirements:
+    - ctag_pool:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.CtagPool
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Image:
+    description: Openstack image.
+    attributes:
+      image_id:
+        description: Image id, expected to be unique across cloud region
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      image_name:
+        description: Image name
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      image_architecture:
+        description: Operating system architecture.
+        type: string
+      image_os_distro:
+        description: The common name of the operating system distribution in lowercase
+        type: string
+      image_os_version:
+        description: The operating system version as specified by the distributor.
+        type: string
+      application:
+        description: The application that the image instantiates.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_vendor:
+        description: The vendor of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_version:
+        description: The version of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      image_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      metadata:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Metadatum
+    capabilities:
+      metadatum:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Metadatum
+      vserver:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.GenericVnf:
+    derived_from: org.openecomp.nodes.inventory.Vnf
+    description: General purpose VNF
+    attributes:
+      vnf_id:
+        description: Unique id of VNF.  This is unique across the graph.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_name:
+        description: Name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      vnf_name2:
+        description: Alternate name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_type:
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as OPENECOMP matures.
+        type: string
+        annotations:
+          index:
+          - inventory
+      service_id:
+        description: Unique identifier of service, does not necessarily map to ASDC service models.  SOON TO BE DEPRECATED
+        type: string
+        annotations:
+          index:
+          - inventory
+      regional_resource_zone:
+        description: Regional way of organizing pservers, source of truth should define values
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      operational_state:
+        description: Indicator for whether the resource is considered operational.  Valid values are in-service-path and out-of-service-path.
+        type: string
+      license_key:
+        description: OBSOLETE -  do not use
+        type: string
+      equipment_role:
+        description: Client should send valid enumerated value
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, used by MSO.
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      management_option:
+        description: identifier of managed by OPENECOMP or customer
+        type: string
+      ipv4_oam_address:
+        description: Address tail-f uses to configure generic-vnf, also used for troubleshooting and is IP used for traps generated by generic-vnf.
+        type: string
+      ipv4_loopback0_address:
+        description: v4 Loopback0 address
+        type: string
+      nm_lan_v6_address:
+        description: v6 Loopback address
+        type: string
+      management_v6_address:
+        description: v6 management address
+        type: string
+      vcpu:
+        description: number of vcpus ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only by uCPE
+        type: long
+      vcpu_units:
+        description: units associated with vcpu, used for VNFs with no vservers/flavors, to be used only by uCPE
+        type: string
+      vmemory:
+        description: number of GB of memory ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only by uCPE
+        type: long
+      vmemory_units:
+        description: units associated with vmemory, used for VNFs with no vservers/flavors, to be used only by uCPE
+        type: string
+      vdisk:
+        description: number of vdisks ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only uCPE
+        type: long
+      vdisk_units:
+        description: units associated with vdisk, used for VNFs with no vservers/flavors, to be used only by uCPE
+        type: string
+      in_maint:
+        description: used to indicate whether or not this object is in maintenance mode (maintenance mode = true). This field (in conjunction with prov-status) is used to suppress alarms and vSCL on VNFs/VMs.
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      is_closed_loop_disabled:
+        description: used to indicate whether closed loop function is enabled on this node
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      summary_status:
+        description: details regarding the generic-vnf operation, PLEASE DISCONTINUE USE OF THIS FIELD.
+        type: string
+      encrypted_access_flag:
+        description: indicates whether generic-vnf access uses SSH
+        type: boolean
+      entitlement_assignment_group_uuid:
+        description: UUID of the Entitlement group used for licensing VNFs, OBSOLETE -  See child relationships.
+        type: string
+      entitlement_resource_uuid:
+        description: UUID of the specific entitlement resource.  OBSOLETE -  See child relationships.
+        type: string
+      license_assignment_group_uuid:
+        description: UUID of the license assignment group.  OBSOLETE -  See child relationships.
+        type: string
+      license_key_uuid:
+        description: UUID of the actual license resource.  OBSOLETE -  See child relationships.
+        type: string
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_customization_id:
+        description: captures the id of all the configuration used to customize the resource for the service.
+        type: string
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      as_number:
+        description: as-number of the VNF
+        type: string
+      regional_resource_subzone:
+        description: represents sub zone of the rr plane
+        type: string
+      selflink:
+        description: Path to the controller object.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      l_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LInterface
+      lag_interfaces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.LagInterface
+      vf_modules:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.VfModule
+      licenses:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.License
+      entitlements:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Entitlement
+    capabilities:
+      allotted_resource:
+        type: org.openecomp.capabilities.inventory.Allot
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AllottedResource
+      entitlement:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Entitlement
+      lag_interface:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LagInterface
+      license:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.License
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Bindable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+      vf_module:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VfModule
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Bridgeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+      network_profile:
+        type: org.openecomp.capabilities.inventory.Applicable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.NetworkProfile
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+      site_pair_set:
+        type: org.openecomp.capabilities.inventory.Applicable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.SitePairSet
+    requirements:
+    - availability_zone:
+        capability: org.openecomp.capabilities.inventory.Origin
+        node: org.openecomp.nodes.inventory.AvailabilityZone
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - instance_group:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.InstanceGroup
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - ipsec_configuration:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.IpsecConfiguration
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - 1
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - license_key_resource:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.license.management.LicenseKeyResource
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - virtual_data_center:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.VirtualDataCenter
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vnfc:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.Vnfc
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vnf_image:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.service.design.and.creation.VnfImage
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - volume_group:
+        capability: tosca.capabilities.Node
+        node: org.openecomp.nodes.inventory.VolumeGroup
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.Snapshot:
+    description: Openstack snapshot
+    attributes:
+      snapshot_id:
+        description: Snapshot id, this is the key UUID assoc associated in glance with the snapshots.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      snapshot_name:
+        description: Snapshot name
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      snapshot_architecture:
+        description: Operating system architecture
+        type: string
+      snapshot_os_distro:
+        description: The common name of the operating system distribution in lowercase
+        type: string
+      snapshot_os_version:
+        description: The operating system version as specified by the distributor.
+        type: string
+      application:
+        description: The application that the image instantiates.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_vendor:
+        description: The vendor of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      application_version:
+        description: The version of the application.
+        type: string
+        annotations:
+          index:
+          - inventory
+      snapshot_selflink:
+        description: URL to endpoint where AAI can get more details
+        type: string
+      prev_snapshot_id:
+        description: This field contains the UUID of the previous snapshot (if any).
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      vserver:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.LogicalLink:
+    description: Logical links generally connect l-interfaces but are used to express logical connectivity between two points
+    attributes:
+      link_name:
+        description: e.g., evc-name, or vnf-nameA_interface-nameA_vnf-nameZ_interface-nameZ
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      link_type:
+        description: Type of logical link, e.g., evc
+        type: string
+      speed_value:
+        description: Captures the numeric part of the speed
+        type: string
+      speed_units:
+        description: Captures the units corresponding to the speed
+        type: string
+      ip_version:
+        description: v4, v6, or ds for dual stack (should be openecomp-ip-version)
+        type: string
+      routing_protocol:
+        description: For example, static or BGP
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      operational_status:
+        description: Indication of operational status of the logical link.
+        type: string
+      prov_status:
+        description: Trigger for operational monitoring of this VNF by BAU Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      link_role:
+        description: Indication of the network use of the logical link.
+        type: string
+      link_name2:
+        description: Alias or alternate name (CLCI or D1 name).
+        type: string
+      link_id:
+        description: UUID of the logical-link, SDNC generates this.
+        type: string
+        annotations:
+          unique:
+          - inventory
+          index:
+          - inventory
+      circuit_id:
+        description: Circuit id
+        type: string
+        annotations:
+          index:
+          - inventory
+      purpose:
+        description: Reason for this entity, role it is playing
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      l_interface:
+        type: org.openecomp.capabilities.inventory.Linkable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.LInterface
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+      p_interface:
+        type: org.openecomp.capabilities.inventory.Linkable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PInterface
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+      vlan:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vlan
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Bridgeable
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.BridgedTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - lag_link:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.LagLink
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - logical_link:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.LogicalLink
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pnf:
+        capability: org.openecomp.capabilities.inventory.Bridgeable
+        node: org.openecomp.nodes.inventory.network.Pnf
+        relationship: org.openecomp.relationships.inventory.BridgedTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - pserver:
+        capability: org.openecomp.capabilities.inventory.Bridgeable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        relationship: org.openecomp.relationships.inventory.BridgedTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - virtual_data_center:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.VirtualDataCenter
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vpn_binding:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.VpnBinding
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.NetworkPolicy:
+    attributes:
+      network_policy_id:
+        description: UUID representing unique key to this instance
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      network_policy_fqdn:
+        description: Contrail FQDN for the policy
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      heat_stack_id:
+        description: ID for the openStack Heat instance
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      l3_network:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.L3Network
+
+  org.openecomp.nodes.inventory.TunnelXconnect:
+    description: Represents the specifics of a tunnel cross connect piece of a resource that gets separately allotted
+    attributes:
+      id:
+        description: Allotted Resource id UUID assigned to this instance.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      bandwidth_up_wan1:
+        description: The WAN uplink bandwidth for WAN1
+        type: string
+      bandwidth_down_wan1:
+        description: The WAN downlink bandwidth for WAN1
+        type: string
+      bandwidth_up_wan2:
+        description: The WAN uplink bandwidth for WAN2
+        type: string
+      bandwidth_down_wan2:
+        description: The WAN downlink bandwidth for WAN2
+        type: string
+      resource_version:
+        description: Concurrency value
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - allotted_resource:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.AllottedResource
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.OamNetwork:
+    description: 'OAM network, to be deprecated shortly.  Do not use for new purposes. '
+    attributes:
+      network_uuid:
+        description: UUID of the network. Unique across a cloud-region
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      network_name:
+        description: Name of the network.
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      cvlan_tag:
+        description: cvlan-id
+        type: long
+        annotations:
+          index:
+          - inventory
+      ipv4_oam_gateway_address:
+        description: Used for VNF firewall rule so customer cannot send customer traffic over this oam network
+        type: string
+      ipv4_oam_gateway_address_prefix_length:
+        description: Used for VNF firewall rule so customer cannot send customer traffic over this oam network
+        type: integer
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Applicable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.AppliesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.SitePairSet:
+    description: Set of instances for probes used to measure service level agreements
+    attributes:
+      site_pair_set_id:
+        description: Unique id of site pair set.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      routing_instances:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.RoutingInstance
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      routing_instance:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.RoutingInstance
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Applicable
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.AppliesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.CvlanTagEntry:
+    attributes:
+      cvlan_tag:
+        description: See mis-na-virtualization-platform.yang
+        type: long
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - port_group:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.PortGroup
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.ClassOfService:
+    attributes:
+      cos:
+        description: unique identifier of probe
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      probe_id:
+        description: identifier of probe
+        type: string
+      probe_type:
+        description: type of probe
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - site_pair:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.SitePair
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.CtagPool:
+    description: A collection of C tags (vlan tags) grouped for a specific purpose.
+    attributes:
+      target_pe:
+        description: The Target provider edge router
+        type: string
+        annotations:
+          primary_id: true
+      availability_zone_name:
+        description: Name of the availability zone
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      ctag_pool_purpose:
+        description: Describes what the intended purpose of this pool is.
+        type: string
+      ctag_values:
+        description: Comma separated list of ctags
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      vpe:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Vpe
+      vpls_pe:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.VplsPe
+    requirements:
+    - complex:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - availability_zone:
+        capability: org.openecomp.capabilities.inventory.Applicable
+        node: org.openecomp.nodes.inventory.AvailabilityZone
+        relationship: org.openecomp.relationships.inventory.AppliesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.MulticastConfiguration:
+    attributes:
+      multicast_configuration_id:
+        description: Unique id of multicast configuration.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      multicast_protocol:
+        description: protocol of multicast configuration
+        type: string
+      rp_type:
+        description: rp type of multicast configuration
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      vlan:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vlan
+
+  org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList:
+    description: IPv4 Address Range
+    attributes:
+      l3_interface_ipv4_address:
+        description: IP address
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      l3_interface_ipv4_prefix_length:
+        description: Prefix length, 32 for single address
+        type: long
+      vlan_id_inner:
+        description: Inner VLAN tag
+        type: long
+        annotations:
+          index:
+          - inventory
+      vlan_id_outer:
+        description: Outer VLAN tag
+        type: long
+      is_floating:
+        description: Indicator of fixed or floating address
+        type: boolean
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      neutron_network_id:
+        description: Neutron network id of the interface that address belongs to
+        type: string
+        annotations:
+          index:
+          - inventory
+      neutron_subnet_id:
+        description: Neutron id of subnet that address belongs to
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.MemberOf.network
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - subnet:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.Subnet
+        relationship: org.openecomp.relationships.inventory.MemberOf.network
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - l_interface:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.LInterface
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vlan:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.Vlan
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.VpnBinding:
+    description: VPN binding
+    attributes:
+      vpn_id:
+        description: VPN ID, globally unique within A&AI
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      vpn_name:
+        description: VPN Name
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      global_route_target:
+        description: Number used to identify a VPN, globally unique in the network
+        type: string
+        annotations:
+          index:
+          - inventory
+      vpn_platform:
+        description: the platform associated with the VPN example AVPN, Mobility
+        type: string
+      vpn_type:
+        description: Type of the vpn, should be taken from enumerated/valid values
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      route_distinguisher:
+        description: Used to distinguish the distinct VPN routes of separate customers who connect to the provider in an MPLS network.
+        type: string
+      route_target_role:
+        description: Role assigned to this route target
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        description: l3-networks relate to vpn-bindings
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      l3_network:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.L3Network
+      logical_link:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.LogicalLink
+
+  org.openecomp.nodes.inventory.Vnf:
+    description: Abstract vnf class
+    attributes:
+      vnf_id:
+        description: Unique id of VNF.  This is unique across the graph.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+
+  org.openecomp.nodes.inventory.Tenant:
+    description: Openstack tenant
+    attributes:
+      tenant_id:
+        description: Unique id relative to the cloud-region.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      tenant_name:
+        description: Readable name of tenant
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      vservers:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Vserver
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_subscription:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceSubscription
+      vserver:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Vserver
+    requirements:
+    - cloud_region:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - group_assignment:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.GroupAssignment
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - volume_group:
+        capability: tosca.capabilities.Node
+        node: org.openecomp.nodes.inventory.VolumeGroup
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.business.Customer:
+    description: customer identifiers to provide linkage back to BSS information.
+    attributes:
+      global_customer_id:
+        description: Global customer id used across OPENECOMP to uniquely identify customer.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      subscriber_name:
+        description: Subscriber name, an alternate way to retrieve a customer.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      subscriber_type:
+        description: Subscriber type, a way to provide VID with only the INFRA customers.
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      service_subscriptions:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.ServiceSubscription
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_subscription:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceSubscription
+
+  org.openecomp.nodes.inventory.AllottedResource:
+    description: Represents a slice or partial piece of a resource that gets separately allotted
+    attributes:
+      id:
+        description: Allotted Resource id UUID assigned to this instance.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      description:
+        description: The descriptive information assigned to this allotted resource instance
+        type: string
+        annotations:
+          summary_property: true
+      selflink:
+        description: Link back to more information in the controller
+        type: string
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Concurrency value
+        type: string
+      tunnel_xconnects:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.TunnelXconnect
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      tunnel_xconnect:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.TunnelXconnect
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Allot
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.PartOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - instance_group:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.InstanceGroup
+        relationship: org.openecomp.relationships.inventory.MemberOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Allot
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.PartOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vlan:
+        capability: org.openecomp.capabilities.inventory.Allot
+        node: org.openecomp.nodes.inventory.Vlan
+        relationship: org.openecomp.relationships.inventory.PartOf
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - service_instance:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.ServiceInstance
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.cloud.infrastructure.Complex:
+    description: Collection of physical locations that can house cloud-regions.
+    attributes:
+      physical_location_id:
+        description: Unique identifier for physical location, e.g., CLLI
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      data_center_code:
+        description: Data center code which can be an alternate way to identify a complex
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      complex_name:
+        description: Gamma complex name for LCP instance.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      identity_url:
+        description: URL of the keystone identity service
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      physical_location_type:
+        description: Type, e.g., central office, data center.
+        type: string
+      street1:
+        type: string
+        annotations:
+          search:
+          - inventory
+      street2:
+        type: string
+        annotations:
+          search:
+          - inventory
+      city:
+        type: string
+      state:
+        type: string
+      postal_code:
+        type: string
+        annotations:
+          search:
+          - inventory
+      country:
+        type: string
+      region:
+        type: string
+      latitude:
+        type: string
+      longitude:
+        type: string
+      elevation:
+        type: string
+      lata:
+        type: string
+      ctag_pools:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.CtagPool
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      availability_zone:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AvailabilityZone
+      cloud_region:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+      ctag_pool:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.CtagPool
+      oam_network:
+        type: org.openecomp.capabilities.inventory.Applicable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.OamNetwork
+      pnf:
+        type: org.openecomp.capabilities.inventory.Locates
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Pnf
+      pserver:
+        type: org.openecomp.capabilities.inventory.Locates
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+      volume_group:
+        type: org.openecomp.capabilities.inventory.Existable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VolumeGroup
+      vpls_pe:
+        type: org.openecomp.capabilities.inventory.Locates
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.VplsPe
+      zone:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.Zone
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.CtagAssignment:
+    attributes:
+      vlan_id_inner:
+        description: id.
+        type: long
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.RoutingInstance:
+    attributes:
+      routing_instance_id:
+        description: Unique id of routing instance
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      rpm_owner:
+        description: rpm owner
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      site_pairs:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.SitePair
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      site_pair:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.SitePair
+    requirements:
+    - site_pair_set:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.SitePairSet
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.cloud.infrastructure.NetworkProfile:
+    description: Network profile populated by SDN-GP for SNMP
+    attributes:
+      nm_profile_name:
+        description: Unique name of network profile.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      community_string:
+        description: Encrypted SNMP community string
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - generic_vnf:
+        capability: org.openecomp.capabilities.inventory.Applicable
+        node: org.openecomp.nodes.inventory.network.GenericVnf
+        relationship: org.openecomp.relationships.inventory.AppliesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.Vnfc:
+    attributes:
+      vnfc_name:
+        description: Unique ID of vnfc.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      vnfc_function_code:
+        description: function code
+        type: string
+        annotations:
+          index:
+          - inventory
+      vnfc_type:
+        description: type
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: prov status of this vnfc
+        type: string
+        annotations:
+          index:
+          - inventory
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by APP-C
+        type: string
+      ipaddress_v4_oam_vip:
+        description: Oam V4 vip address of this vnfc
+        type: string
+        annotations:
+          index:
+          - inventory
+      in_maint:
+        description: used to indicate whether or not this object is in maintenance mode (maintenance mode = true)
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      is_closed_loop_disabled:
+        description: used to indicate whether closed loop function is enabled on this node
+        type: boolean
+        annotations:
+          index:
+          - inventory
+      group_notation:
+        description: Group notation of VNFC
+        type: string
+        annotations:
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      vf_module:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VfModule
+    requirements:
+    - vserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.Vce:
+    derived_from: org.openecomp.nodes.inventory.Vnf
+    description: Virtual Customer Edge Router, used specifically for Gamma.  This object is deprecated.
+    attributes:
+      vnf_id:
+        description: Unique id of VNF.  This is unique across the graph.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_name:
+        description: Name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      vnf_name2:
+        description: Alternate name of VNF.
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      vnf_type:
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as OPENECOMP matures.
+        type: string
+        annotations:
+          index:
+          - inventory
+      service_id:
+        description: Unique identifier of service, does not strictly map to ASDC services, SOON TO BE DEPRECATED.
+        type: string
+        annotations:
+          index:
+          - inventory
+      regional_resource_zone:
+        description: Regional way of organizing pservers, source of truth should define values
+        type: string
+        annotations:
+          index:
+          - inventory
+      prov_status:
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+        type: string
+        annotations:
+          index:
+          - inventory
+      operational_state:
+        description: Indicator for whether the resource is considered operational
+        type: string
+      license_key:
+        description: OBSOLETE -  do not use
+        type: string
+      equipment_role:
+        description: Network role being played by this VNF
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      vpe_id:
+        description: Unique ID of VPE connected to this VCE.
+        type: string
+        annotations:
+          index:
+          - inventory
+      v6_vce_wan_address:
+        description: Valid v6 IP address for the WAN Link on this router.  Implied length of /64.
+        type: string
+      ipv4_oam_address:
+        description: Address tail-f uses to configure vce, also used for troubleshooting and is IP used for traps generated by VCE.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      ipv4_loopback0_address:
+        description: Loopback0 address
+        type: string
+      entitlement_resource_uuid:
+        description: OBSOLETE -  see child relationships
+        type: string
+      port_groups:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.PortGroup
+      licenses:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.License
+      entitlements:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Entitlement
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+      entitlement:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Entitlement
+      license:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.License
+      port_group:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PortGroup
+    requirements:
+    - availability_zone:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.AvailabilityZone
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vserver:
+        capability: tosca.capabilities.Container
+        node: org.openecomp.nodes.inventory.Vserver
+        relationship: tosca.relationships.HostedOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.ServiceSubscription:
+    description: Object that group service instances.
+    attributes:
+      service_type:
+        description: Value defined by orchestration to identify this service across OPENECOMP.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      temp_ub_sub_account_id:
+        description: This property will be deleted from A&AI in the near future. Only stop gap solution.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      service_instances:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.ServiceInstance
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - customer:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.business.Customer
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - tenant:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.Tenant
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.PortGroup:
+    description: Used to capture the network interfaces of this VCE
+    attributes:
+      interface_id:
+        description: Unique ID of the interface
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      neutron_network_id:
+        description: Neutron network id of this Interface
+        type: string
+      neutron_network_name:
+        description: Neutron network name of this Interface
+        type: string
+      interface_role:
+        description: Role assigned to this Interface, should use values as defined in OPENECOMP Yang models.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      port_group_id:
+        description: Unique ID for port group in vmware
+        type: string
+        annotations:
+          index:
+          - inventory
+      port_group_name:
+        description: Likely to duplicate value of neutron network name
+        type: string
+        annotations:
+          summary_property: true
+      switch_name:
+        description: DVS or standard switch name (should be non-null for port groups associated with DVS)
+        type: string
+        annotations:
+          index:
+          - inventory
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      cvlan_tags:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.CvlanTagEntry
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      cvlan_tag:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.CvlanTagEntry
+    requirements:
+    - vce:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.network.Vce
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.business.Connector:
+    description: Collection of resource instances used to connect a variety of disparate inventory widgets
+    attributes:
+      resource_instance_id:
+        description: Unique id of resource instance.
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+      metadata:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Metadatum
+    capabilities:
+      metadatum:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Metadatum
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+    requirements:
+    - virtual_data_center:
+        capability: org.openecomp.capabilities.inventory.Existable
+        node: org.openecomp.nodes.inventory.cloud.infrastructure.VirtualDataCenter
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.nodes.inventory.network.PhysicalLink:
+    description: Collection of physical connections, typically between p-interfaces
+    attributes:
+      link_name:
+        description: e.g., hostnameA_p-connection_nameA_hostnameZ+p_connection-nameZ
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+          search:
+          - inventory
+      speed_value:
+        description: Captures the numeric part of the speed
+        type: string
+      speed_units:
+        description: Captures the units corresponding to the speed
+        type: string
+      circuit_id:
+        description: Circuit it
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+      dual_mode:
+        description: Dual access mode (e.g., primary, secondary
+        type: string
+      management_option:
+        description: To provide information on who manages this circuit. A&AI or 3rd party transport provider
+        type: string
+      service_provider_name:
+        description: Name of the service Provider on this link.
+        type: string
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      p_interface:
+        type: org.openecomp.capabilities.inventory.Linkable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.PInterface
+
+  org.openecomp.nodes.inventory.license.management.LicenseKeyResource:
+    description: 'OBSOLETE OBJECT:  do not use'
+    attributes:
+      att_uuid:
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+      assignment_type:
+        type: string
+      assignment_status:
+        type: string
+      assignment_group_uuid:
+        type: string
+        annotations:
+          index:
+          - inventory
+      assignment_date:
+        type: string
+      name:
+        type: string
+        annotations:
+          index:
+          - inventory
+          summary_property: true
+      model_uuid:
+        type: string
+      model_version:
+        type: string
+      license_key:
+        type: string
+      license_key_file_url:
+        type: string
+      supplier_release_list:
+        type: string
+        occurrences:
+        - 0
+        - UNBOUNDED
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+
+  org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList:
+    description: IPv6 Address Range
+    attributes:
+      l3_interface_ipv6_address:
+        description: IP address
+        type: string
+        annotations:
+          primary_id: true
+          index:
+          - inventory
+      l3_interface_ipv6_prefix_length:
+        description: Prefix length, 128 for single address
+        type: long
+      vlan_id_inner:
+        description: Inner VLAN tag
+        type: long
+        annotations:
+          index:
+          - inventory
+      vlan_id_outer:
+        description: Outer VLAN tag
+        type: long
+      is_floating:
+        description: Indicator of fixed or floating address
+        type: boolean
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      neutron_network_id:
+        description: Neutron network id of the interface that address belongs to
+        type: string
+        annotations:
+          index:
+          - inventory
+      neutron_subnet_id:
+        description: Neutron id of subnet that address belongs to
+        type: string
+        annotations:
+          index:
+          - inventory
+      relationship_list:
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    requirements:
+    - l3_network:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.network.L3Network
+        relationship: org.openecomp.relationships.inventory.MemberOf.network
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - subnet:
+        capability: org.openecomp.capabilities.inventory.Composite
+        node: org.openecomp.nodes.inventory.Subnet
+        relationship: org.openecomp.relationships.inventory.MemberOf.network
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - l_interface:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.LInterface
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+    - vlan:
+        capability: org.openecomp.capabilities.inventory.Belonging
+        node: org.openecomp.nodes.inventory.Vlan
+        relationship: org.openecomp.relationships.inventory.BelongsTo
+        occurrences:
+        - 0
+        - 1
+        annotations:
+          is_child: true
+
+  org.openecomp.nodes.inventory.network.L3Network:
+    description: Generic network definition
+    attributes:
+      network_id:
+        description: Network ID, should be uuid. Unique across A&AI.
+        type: string
+        annotations:
+          primary_id: true
+          unique:
+          - inventory
+          index:
+          - inventory
+          search:
+          - inventory
+      network_name:
+        description: Name of the network, governed by some naming convention..
+        type: string
+        annotations:
+          index:
+          - inventory
+          search:
+          - inventory
+          summary_property: true
+      network_type:
+        description: Type of the network - who defines these values?
+        type: string
+      network_role:
+        description: Role the network plans - who defines these values?
+        type: string
+        annotations:
+          index:
+          - inventory
+      network_technology:
+        description: Network technology - who defines these values?
+        type: string
+      neutron_network_id:
+        description: Neutron network id of this Interface
+        type: string
+      is_bound_to_vpn:
+        description: Set to true if bound to VPN
+        type: boolean
+      service_id:
+        description: Unique identifier of service from ASDC.  Does not strictly map to ASDC services.  SOON TO BE DEPRECATED
+        type: string
+        annotations:
+          index:
+          - inventory
+      network_role_instance:
+        description: network role instance
+        type: long
+      resource_version:
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+        type: string
+      orchestration_status:
+        description: Orchestration status of this VNF, mastered by MSO
+        type: string
+      heat_stack_id:
+        description: Heat stack id corresponding to this instance, managed by MSO
+        type: string
+        annotations:
+          index:
+          - inventory
+      mso_catalog_key:
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+        type: string
+      contrail_network_fqdn:
+        description: Contrail FQDN for the network
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_id:
+        description: the ASDC model id for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_version:
+        description: the ASDC model version for this resource or service model.
+        type: string
+        annotations:
+          index:
+          - inventory
+      persona_model_customization_id:
+        description: captures the id of all the configuration used to customize the resource for the service.
+        type: string
+      widget_model_id:
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      widget_model_version:
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+        type: string
+        annotations:
+          index:
+          - inventory
+      physical_network_name:
+        description: Name associated with the physical network.
+        type: string
+      is_provider_network:
+        description: boolean indicatating whether or not network is a provider network.
+        type: boolean
+      is_shared_network:
+        description: boolean indicatating whether or not network is a shared network.
+        type: boolean
+      is_external_network:
+        description: boolean indicatating whether or not network is an external network.
+        type: boolean
+      selflink:
+        description: Path to the controller object.
+        type: string
+      subnets:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.Subnet
+      ctag_assignments:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.CtagAssignment
+      segmentation_assignments:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.SegmentationAssignment
+      relationship_list:
+        description: Relates to tenant (or is it a child of tenant), complex, service, vpn-binding
+        type: list
+        entry_schema:
+          type: org.openecomp.datatypes.inventory.Relationship
+    capabilities:
+      allotted_resource:
+        type: org.openecomp.capabilities.inventory.Allot
+        valid_source_types:
+        - org.openecomp.nodes.inventory.AllottedResource
+      cloud_region:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+      complex:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+      generic_vnf:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.network.GenericVnf
+      l3_interface_ipv4_address_list:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv4AddressList
+      l3_interface_ipv6_address_list:
+        type: org.openecomp.capabilities.inventory.Composite
+        valid_source_types:
+        - org.openecomp.nodes.inventory.L3InterfaceIpv6AddressList
+      ctag_assignment:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.CtagAssignment
+      segmentation_assignment:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.SegmentationAssignment
+      subnet:
+        type: org.openecomp.capabilities.inventory.Belonging
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Subnet
+      service_instance:
+        type: org.openecomp.capabilities.inventory.Composeable
+        valid_source_types:
+        - org.openecomp.nodes.inventory.ServiceInstance
+      tenant:
+        type: org.openecomp.capabilities.inventory.Multiuse
+        valid_source_types:
+        - org.openecomp.nodes.inventory.Tenant
+      vf_module:
+        type: org.openecomp.capabilities.inventory.Node
+        valid_source_types:
+        - org.openecomp.nodes.inventory.VfModule
+    requirements:
+    - network_policy:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.NetworkPolicy
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - route_table_reference:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.RouteTableReference
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - vpn_binding:
+        capability: org.openecomp.capabilities.inventory.Multiuse
+        node: org.openecomp.nodes.inventory.network.VpnBinding
+        relationship: org.openecomp.relationships.inventory.Uses
+        occurrences:
+        - 0
+        - UNBOUNDED

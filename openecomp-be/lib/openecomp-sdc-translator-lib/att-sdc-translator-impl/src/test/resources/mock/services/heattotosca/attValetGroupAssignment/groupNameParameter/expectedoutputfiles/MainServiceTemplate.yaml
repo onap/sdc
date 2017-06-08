@@ -1,0 +1,610 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vipr_atm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for the VF Module instance
+      default: '5678'
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_ha_two_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron UUID of the second high availability network for the vIPR-ATM firewal
+      default: b75e27cf-452f-48ef-b107-8777e645c22d
+      constraints: [
+        ]
+    vipr_atm_oam_net_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of the security group to apply to the vIPR-ATM firewall management port
+      default:
+      - c2369210-d154-4e4a-984d-047674beb5da
+      entry_schema:
+        type: string
+    vipr_atm_valet_eg_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Valet 1.0 Exclusivity Group for the vIPR-ATM firewall virtual machine
+      default: CORE_INFRASTRUCTURE_VNFs
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the vIPR-ATM firewall virtual machine
+      default: zrcs1cctvpr001
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image name of the vIPR-ATM firewall virtual machine
+      default: vipr-atm-pan7.1
+      constraints: [
+        ]
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique Name for this VF instance
+      default: RD3TX100vfw
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_service_left_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: FQDN of the Left service network for the vIPR-ATM firewall
+      default: default-domain:vIPR-ATM:vIPR-ATM-service-left
+      constraints:
+      - pattern: ^(?:[^:]{1,64}:){2}(?:[^:]{1,255})$
+    vipr_atm_ha_one_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP to apply to the vIPR-ATM firewall ha0 port
+      default: 192.168.35.1
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    vipr_atm_ha_one_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron UUID of the first high availability network for the vIPR-ATM firewall
+      default: 4abaafc8-b8af-40b9-b0d0-32bd91f958ee
+      constraints: [
+        ]
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+      default: '1234'
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for the vIPR-ATM firewall virtual machine
+      default: m1.vipr-atm-pan
+      constraints: [
+        ]
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability Zone for the vIPR-ATM firewall virtual machine
+      default: nova
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_server_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: Server Group with anti-affinity policy for the vIPR-ATM firewall virtual machine
+      default: 885dbf7f-fcb2-42d2-a694-a5930ce35b71
+      constraints:
+      - max_length: 255
+      - min_length: 1
+    vipr_atm_service_left_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Left vIPR-ATM service network IP address prefix
+      default: 10.254.3.0
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    vipr_atm_ha_one_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: vIPR-ATM private High Availability Network One IP address CIDR
+      default: 192.168.35.0/29
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(?:3[0-2]|[12]?[0-9])$
+    vipr_atm_service_right_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: FQDN of the Right service network for the vIPR-ATM firewall
+      default: default-domain:vIPR-ATM:vIPR-ATM-service-right
+      constraints:
+      - pattern: ^(?:[^:]{1,64}:){2}(?:[^:]{1,255})$
+    vipr_atm_service_right_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: Right vIPR-ATM service network IP address prefix length
+      default: 24
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    vipr_atm_ha_two_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP to apply to the vIPR-ATM firewall ha1 port
+      default: 192.168.35.9
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    vipr_atm_ha_two_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: vIPR-ATM private High Availability Network Two IP address CIDR
+      default: 192.168.35.8/29
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(?:3[0-2]|[12]?[0-9])$
+    oam_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Neutron UUID for the managemnet network name of the vIPR-ATM firewall
+      default: 1ac9d738-f545-413a-a9a2-b44309edc511
+      constraints: [
+        ]
+    vipr_atm_service_right_ip_prefix:
+      hidden: false
+      immutable: false
+      type: string
+      description: Right vIPR-ATM service network IP address prefix
+      default: 10.254.4.0
+      constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+    vipr_atm_service_left_ip_prefix_len:
+      hidden: false
+      immutable: false
+      type: float
+      description: Left vIPR-ATM service network IP address prefix length
+      default: 24
+      constraints:
+      - in_range:
+        - 0
+        - 32
+    vipr_atm_contrail_service_instance_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: FQDN of the vIPR-ATM firewall Contrail service instance for the port tuple
+      default: default-domain:vIPR-ATM:vIPR-ATM-service-instance
+      constraints:
+      - pattern: ^(?:[^:]{1,64}:){2}(?:[^:]{1,255})$
+    vipr_atm_ha_two_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of the security group to apply to the vIPR-ATM firewall ha1 port
+      default:
+      - 29e29a4a-b45d-42c2-ac14-b12a70036ae6
+      entry_schema:
+        type: string
+    vipr_atm_ha_one_security_groups:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of the security group to apply to the vIPR-ATM firewall ha0 port
+      default:
+      - cbf8049e-69e8-48c3-a06f-255634391403
+      entry_schema:
+        type: string
+  node_templates:
+    vIPR_ATM_OAM_SG:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_OAM_SG
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - protocol: tcp
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 22
+          port_range_min: 22
+        - protocol: tcp
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 443
+          port_range_min: 443
+        - protocol: tcp
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 3978
+          port_range_min: 3978
+        - protocol: icmp
+          remote_ip_prefix: 0.0.0.0/0
+    vIPR_ATM_Left_RVMI:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_3
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        virtual_network_refs:
+        - get_input: vipr_atm_service_left_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type: left
+        port_tuple_refs:
+        - UNSUPPORTED_RESOURCE_vIPR_ATM_RPT
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: vIPR_ATM_Service_Left
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vIPR_ATM_Firewall
+          relationship: tosca.relationships.network.BindsTo
+    vIPR_ATM_Service_Right:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: vipr_atm_service_right_ip_prefix_len
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: vipr_atm_service_right_ip_prefix
+        network_name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_SERVICE_RIGHT_NETWORK
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_ipam_refs:
+        - default-domain:default-project:default-network-ipam
+    vIPR_ATM_Ha_Two:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: false
+        network_name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_HA_TWO_NETWORK
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        subnets:
+          vIPR_ATM_Ha_Two_Subnet:
+            enable_dhcp: false
+            name:
+              str_replace:
+                template: NET_NAME_SUBNET
+                params:
+                  NET_NAME:
+                    get_attribute:
+                    - vIPR_ATM_Ha_Two
+                    - network_name
+            cidr:
+              get_input: vipr_atm_ha_two_cidr
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: vIPR_ATM_Ha_Two
+          relationship: tosca.relationships.DependsOn
+    vIPR_ATM_HA_TWO_SG:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_HA_TWO_SG
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - remote_mode: remote_group_id
+    vIPR_ATM_HA_ONE_SG:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_HA_ONE_SG
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        rules:
+        - remote_mode: remote_group_id
+    vIPR_ATM_Ha_One:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: false
+        network_name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_HA_ONE_NETWORK
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        subnets:
+          vIPR_ATM_Ha_One_Subnet:
+            enable_dhcp: false
+            name:
+              str_replace:
+                template: NET_NAME_SUBNET
+                params:
+                  NET_NAME:
+                    get_attribute:
+                    - vIPR_ATM_Ha_One
+                    - network_name
+            cidr:
+              get_input: vipr_atm_ha_one_cidr
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: vIPR_ATM_Ha_One
+          relationship: tosca.relationships.DependsOn
+    vIPR_ATM_OAM_0_Port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: vipr_atm_oam_net_security_groups
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VM_NAME_PORT_0
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        network_role_tag: oam
+        network:
+          get_input: oam_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vIPR_ATM_Firewall
+          relationship: tosca.relationships.network.BindsTo
+    vIPR_ATM_Service_Left:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: vipr_atm_service_left_ip_prefix_len
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: vipr_atm_service_left_ip_prefix
+        network_name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_SERVICE_LEFT_NETWORK
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        network_ipam_refs:
+        - default-domain:default-project:default-network-ipam
+    vIPR_ATM_Right_RVMI:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_4
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        virtual_network_refs:
+        - get_input: vipr_atm_service_right_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type: right
+        port_tuple_refs:
+        - UNSUPPORTED_RESOURCE_vIPR_ATM_RPT
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: vIPR_ATM_Service_Right
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vIPR_ATM_Firewall
+          relationship: tosca.relationships.network.BindsTo
+    vIPR_ATM_Ha_Two_0_Port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: vipr_atm_ha_two_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: vipr_atm_ha_two_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VM_NAME_PORT_2
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        network:
+          get_input: vipr_atm_ha_two_id
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: vIPR_ATM_Ha_Two
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vIPR_ATM_Firewall
+          relationship: tosca.relationships.network.BindsTo
+    vIPR_ATM_Firewall:
+      type: org.openecomp.resource.vfc.nodes.heat.vipr_atm
+      properties:
+        flavor:
+          get_input: vipr_atm_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: vipr_atm_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+        contrail_service_instance_ind: true
+        name:
+          get_input: vipr_atm_name_0
+        scheduler_hints:
+          group:
+            get_input: vipr_atm_server_group
+    vIPR_ATM_Ha_One_0_Port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+          get_input: vipr_atm_ha_one_security_groups
+        fixed_ips:
+        - ip_address:
+            get_input: vipr_atm_ha_one_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        name:
+          str_replace:
+            template: VM_NAME_PORT_1
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        network:
+          get_input: vipr_atm_ha_one_id
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: vIPR_ATM_Ha_One
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vIPR_ATM_Firewall
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    vIPR_ATM_Server_Group_group:
+      type: tosca.groups.Root
+      members:
+      - vIPR_ATM_Firewall
+    vIPR-ATM-Base_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vIPR-ATM-Base.yaml
+        description: "HOT template to create the vIPR-ATM firwall service template\
+          \ and instance. This template creates the following - Two service virtual\
+          \ networks for each side (left and right) of the vIPR-ATM firewalls - Two\
+          \ virtual networks for high availability between the vIPR-ATM firewalls\
+          \ - A Contrail Service Template for the vIPR-ATM service - A Contrail Service\
+          \ Instance for the vIPR-ATM service\nThe firewall virtual machines connected\
+          \ to these created networks and managed by the vIPR-ATM service instance\
+          \ will be created by the vIPR-ATM-Instance.yaml HOT template.\nNetwork Policy\
+          \ that includes the vIPR-ATM service instance will be created by client\
+          \ specific HOT templates or Contrail APIs. \n"
+      members:
+      - vIPR_ATM_Ha_One
+      - vIPR_ATM_OAM_SG
+      - vIPR_ATM_Service_Left
+      - vIPR_ATM_Service_Right
+      - vIPR_ATM_Ha_Two
+      - vIPR_ATM_HA_TWO_SG
+      - vIPR_ATM_HA_ONE_SG
+    vIPR_ATM_Valet_EG_0_group:
+      type: tosca.groups.Root
+      members:
+      - vIPR_ATM_Firewall
+    vIPR-ATM-Instance_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vIPR-ATM-Instance.yaml
+        description: |
+          HOT template to create a vIPR-ATM firwall service instance. This template creates the following - Contrail Port Tuple for this firwall service instance - Virtual machine interfaces and IP addresses attached to the two  service virtual networks.  These virtual machine interfaces will be used by the vIPR firewall service instance - Neutron ports for OAM, HA0, and HA1 networks - OS::Nova::Server with the created virtual machine interface and ports. This is the firewall service instance virtual machine.
+      members:
+      - vIPR_ATM_Left_RVMI
+      - vIPR_ATM_OAM_0_Port
+      - vIPR_ATM_Right_RVMI
+      - vIPR_ATM_Ha_Two_0_Port
+      - vIPR_ATM_Firewall
+      - vIPR_ATM_Ha_One_0_Port
+  outputs:
+    vipr_atm_contrail_service_instance_fqdn:
+      description: The FQDN for the Contrail Service Instance that is needed to create tenant OAM network policy to service change through the vIPR-ATM firewall.
+      value:
+        list_join:
+        - ':'
+        - get_attr:
+          - vIPR_ATM_Service_Instance
+          - fq_name
+  policies:
+    vIPR_ATM_Valet_EG_0_policy:
+      type: org.openecomp.policies.placement.valet.Exclusivity
+      properties:
+        level: host
+      targets:
+      - vIPR_ATM_Valet_EG_0_group
+    vIPR_ATM_Server_Group_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_VIPR_ATM_SERVER_GROUP
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        container_type: host
+      targets:
+      - vIPR_ATM_Server_Group_group

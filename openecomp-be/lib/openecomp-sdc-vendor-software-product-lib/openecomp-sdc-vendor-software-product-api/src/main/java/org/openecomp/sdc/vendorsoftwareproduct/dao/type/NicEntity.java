@@ -34,7 +34,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 @Table(keyspace = "dox", name = "vsp_component_nic")
 public class NicEntity implements CompositionEntity {
-  private static final String ENTITY_TYPE = "Vendor Software Product ComponentData NIC";
+  private static final String ENTITY_TYPE = "Vendor Software Product NIC";
 
   @PartitionKey
   @Column(name = "vsp_id")
@@ -83,22 +83,32 @@ public class NicEntity implements CompositionEntity {
         new CompositionEntityId(getComponentId(), new CompositionEntityId(getVspId(), null)));
   }
 
+  @Override
+  public String getCompositionData() {
+    return compositionData;
+  }
+
+  @Override
+  public void setCompositionData(String compositionData) {
+    this.compositionData = compositionData;
+  }
+
+  @Override
+  public String getQuestionnaireData() {
+    return questionnaireData;
+  }
+
+  @Override
+  public void setQuestionnaireData(String questionnaireData) {
+    this.questionnaireData = questionnaireData;
+  }
+
   public String getVspId() {
     return vspId;
   }
 
   public void setVspId(String vspId) {
     this.vspId = vspId;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
   }
 
   @Override
@@ -109,14 +119,6 @@ public class NicEntity implements CompositionEntity {
   @Override
   public String getFirstClassCitizenId() {
     return getVspId();
-  }
-
-  public String getComponentId() {
-    return componentId;
-  }
-
-  public void setComponentId(String componentId) {
-    this.componentId = componentId;
   }
 
   @Override
@@ -130,13 +132,21 @@ public class NicEntity implements CompositionEntity {
   }
 
   @Override
-  public String getCompositionData() {
-    return compositionData;
+  public Version getVersion() {
+    return version;
   }
 
   @Override
-  public void setCompositionData(String compositionData) {
-    this.compositionData = compositionData;
+  public void setVersion(Version version) {
+    this.version = version;
+  }
+
+  public String getComponentId() {
+    return componentId;
+  }
+
+  public void setComponentId(String componentId) {
+    this.componentId = componentId;
   }
 
   public Nic getNicCompositionData() {
@@ -148,25 +158,26 @@ public class NicEntity implements CompositionEntity {
   }
 
   @Override
-  public String getQuestionnaireData() {
-    return questionnaireData;
+  public int hashCode() {
+    int result = vspId != null ? vspId.hashCode() : 0;
+    result = 31 * result + (version != null ? version.hashCode() : 0);
+    result = 31 * result + (componentId != null ? componentId.hashCode() : 0);
+    result = 31 * result + (id != null ? id.hashCode() : 0);
+    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
+    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
+    return result;
   }
 
   @Override
-  public void setQuestionnaireData(String questionnaireData) {
-    this.questionnaireData = questionnaireData;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    NicEntity nicEntity = (NicEntity) obj;
+    NicEntity nicEntity = (NicEntity) object;
 
     if (vspId != null ? !vspId.equals(nicEntity.vspId) : nicEntity.vspId != null) {
       return false;
@@ -188,16 +199,5 @@ public class NicEntity implements CompositionEntity {
     return questionnaireData != null ? questionnaireData.equals(nicEntity.questionnaireData)
         : nicEntity.questionnaireData == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = vspId != null ? vspId.hashCode() : 0;
-    result = 31 * result + (version != null ? version.hashCode() : 0);
-    result = 31 * result + (componentId != null ? componentId.hashCode() : 0);
-    result = 31 * result + (id != null ? id.hashCode() : 0);
-    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
-    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
-    return result;
   }
 }

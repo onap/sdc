@@ -1,0 +1,787 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  a_single_1a_names:
+    type: string
+  a_single_2a_names:
+    type: string
+  oam_net_name:
+    type: string
+  ppds_net_name:
+    type: string
+  b_single_1b_names:
+    type: string
+  b_single_2b_names:
+    type: string
+  1c11_scalling_instance_names:
+    type: string
+  1c12_scalling_instance_names:
+    type: string
+  myIPs:
+    type: string
+  1c2_catalog_instance_names:
+    type: string
+  pcm_server_names:
+    type: string
+  pcm_image_name:
+    type: string
+  pcm_flavor_name:
+    type: string
+  net_name:
+    type: string
+  security_group_name:
+    type: string
+resources:
+  1a_single_1A_1:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [a_single_1a_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1a_t1_port_0}
+        - port: {get_resource: 1a_t2_port_0}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02 : {get_attr : [1b02_single_1B_1, instance_name,{get_attr : [1b01_single_1B_1, instance_name]}]},
+                  connectivityTo1C1_T2_01 : {get_attr : [1c1_t2_port_01, tenant_id]},
+                  connectivityTo1C1_T2_02 : {get_attr : [1c1_t2_port_02, tenant_id]},
+                  connectivityTo1C1_T2_11 : {get_attr : [1c1_t2_port_11, tenant_id]},
+                  connectivityTo1C1_T2_12 : {get_attr : [1c1_t2_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  2a_single_1A_2:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [a_single_2a_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1a_t1_port_1}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1B01 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02 : {get_attr : [1b02_single_1B_2, instance_name,{get_attr : [1b01_single_1B_2, instance_name]}]},
+                  connectivityTo1C1_T2_01 : {get_attr : [1c1_t2_port_01, tenant_id]},
+                  connectivityTo1C1_T2_02 : {get_attr : [1c1_t2_port_02, tenant_id]},
+                  connectivityTo1C1_T2_11 : {get_attr : [1c1_t2_port_11, tenant_id]},
+                  connectivityTo1C1_T2_12 : {get_attr : [1c1_t2_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+
+  1a_t1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: a_single_1a_network}
+  1a_t2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+  1a_t1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: a_single_1a_network}
+  a_single_1a_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  ########################################   SINGLE SUBSTITUTION (Pattern 1B)  ###################
+
+  1b01_single_1B_1:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [b_single_1b_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_01}
+        - port: {get_resource: 1b_t2_port_01}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1b_t1_port_01:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_attr: [1b01_single_1B_1, accessIPv6]}
+
+  1b_t2_port_01:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network_1}
+
+  b_single_1b_network_1:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1b02_single_1B_1:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [b_single_1b_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_11}
+        - port: {get_resource: 1b_t2_port_11}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1b_t1_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      value_specs: {get_attr: [1a_t1_port_0, tenant_id]}
+
+  1b_t2_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network_1}
+
+  1b01_single_1B_2:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [b_single_2b_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_02}
+        - port: {get_resource: 1b_t2_port_02}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1b_t1_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_attr: [1b01_single_1B_2, accessIPv6]}
+
+  1b_t2_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network_2}
+
+  b_single_1b_network_2:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1b02_single_1B_2:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [b_single_2b_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_12}
+        - port: {get_resource: 1b_t2_port_12}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1b_t1_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+      value_specs: {get_attr: [1a_t1_port_0, tenant_id]}
+
+  1b_t2_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network_2}
+
+  ########################################    SCALING INSTANCES (Pattern 1C1)  #####################
+
+  1c101_scalling_instance_1C11:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c11_scalling_instance_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_01}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c1_t1_port_01:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
+      name: 1c1_t1_port_01
+  1c1_t2_port_01:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 2]}}]
+      name: 1c1_t2_port_01
+
+  1c1_scalling_instance_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1c102_scalling_instance_1C11:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c11_scalling_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_02}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c1_t1_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 3]}}]
+      name: 1c1_t1_port_11
+
+  1c1_t2_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 4]}}]
+      name: 1c1_t2_port_11
+
+  1c101_scalling_instance_1C12:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c12_scalling_instance_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_11}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c1_t1_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
+      name: 1c1_t1_port_02
+  1c1_t2_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 2]}}]
+      name: 1c1_t2_port_02
+
+  1c102_scalling_instance_1C12:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c12_scalling_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_12}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c1_t1_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 3]}}]
+      name: 1c1_t1_port_12
+
+  1c1_t2_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 4]}}]
+      name: 1c1_t2_port_12
+
+  ########################################    CATALOG INSTANCES (Pattern 1C2)  #####################
+
+  1c201_catalog_instance_1C21:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_02}
+        - port: {get_resource: 1c2_t2_port_02}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c2_t1_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_02:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+  1c2_catalog_instance_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1c202_catalog_instance_1C21:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_11}
+        - port: {get_resource: 1c2_t2_port_11}
+      user_data_format:  {get_attr: [1c201_catalog_instance_1C21, instance_name]}
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c2_t1_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_11:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+  1c201_catalog_instance_1C22:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_022}
+        - port: {get_resource: 1c2_t2_port_022}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+      metadata: { connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                  connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                  connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                  connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                  connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                  connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                  connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                  connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                  connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                  connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                  connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                  connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                  connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                  connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                  connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                  connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                }
+
+  1c2_t1_port_022:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_022:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+  1c202_catalog_instance_1C22:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names,3]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_12}
+        - port: {get_resource: 1c2_t2_port_12}
+      user_data_format:  {get_attr: [1c201_catalog_instance_1C22, instance_name]}
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c2_t1_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_12:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+  ########################################    NESTED PATTERN  ##################################
+
+  4p_nested_1:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+      connectivityChk: {  connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                          connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                          connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                          connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                          connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                          connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                          connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                          connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                          connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                          connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                          connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                          connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                          connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                          connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                          connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                      }
+
+
+  nested_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  4p_nested_2:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+      connectivityChk: {  connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                          connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                          connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                          connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                          connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                          connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                          connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                          connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                          connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                          connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                          connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                          connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                          connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                          connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]},
+                          connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                      }
+
+
+  nestedNoUnified_1:
+    type: nested-no_vfc_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+      connectivityChk: {  connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                          connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                          connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                          connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                          connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                          connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                          connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                          connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                          connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                          connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                          connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                          connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                          connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                          connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                          connectivityToNoUnifiedNested_2 : {get_attr : [nestedNoUnified_2, portId]}
+                      }
+
+  nestedNoUnified_2:
+    type: nested-no_vfc_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+      connectivityChk: {  connectivityTo1A_1 : {get_attr : [1a_single_1A_1, instance_name]},
+                          connectivityTo1A_2 : {get_attr : [2a_single_1A_2, instance_name]},
+                          connectivityTo1B01_1 : {get_attr : [1b01_single_1B_1, instance_name]},
+                          connectivityTo1B02_1 : {get_attr : [1b02_single_1B_1, instance_name]},
+                          connectivityTo1B01_2 : {get_attr : [1b01_single_1B_2, instance_name]},
+                          connectivityTo1B02_2 : {get_attr : [1b02_single_1B_2, instance_name]},
+                          connectivityTo1C1_T1_01 : {get_attr : [1c1_t1_port_01, tenant_id]},
+                          connectivityTo1C1_T1_02 : {get_attr : [1c1_t1_port_02, tenant_id]},
+                          connectivityTo1C1_T1_11 : {get_attr : [1c1_t1_port_11, tenant_id]},
+                          connectivityTo1C1_T1_12 : {get_attr : [1c1_t1_port_12, tenant_id]},
+                          connectivityTo1C2_1_1 : {get_attr : [1c201_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_2_1 : {get_attr : [1c202_catalog_instance_1C21, instance_name]},
+                          connectivityTo1C2_1_2 : {get_attr : [1c201_catalog_instance_1C22, instance_name]},
+                          connectivityTo1C2_2_2 : {get_attr : [1c202_catalog_instance_1C22, instance_name]},
+                          connectivityTo4PNested_1 : {get_attr : [4p_nested_1, server_pcm_id]},
+                          connectivityTo4PNested_2 : {get_attr : [4p_nested_2, server_pcm_id]},
+                          connectivityToNoUnifiedNested_1 : {get_attr : [nestedNoUnified_1, portId]}
+                      }
+
+  jsa_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+  dependsOn_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - nestedNoUnified_1
+      - nestedNoUnified_2
+      - 4p_nested_1
+      - 4p_nested_2
+      - 1c2_t1_port_11
+      - 1c2_t1_port_02
+      - 1c201_catalog_instance_1C21
+      - 1c202_catalog_instance_1C21
+      - 1c201_catalog_instance_1C22
+      - 1c202_catalog_instance_1C22
+      - 1c101_scalling_instance_1C11
+      - 1c101_scalling_instance_1C12
+      - 1c102_scalling_instance_1C11
+      - 1c102_scalling_instance_1C12
+      - 1c1_t2_port_02
+      - 1c1_t2_port_12
+      - 1b01_single_1B_1
+      - 1b02_single_1B_1
+      - 1b_t1_port_01
+      - 1b_t1_port_11
+      - 1a_single_1A_1
+      - 2a_single_1A_2
+      - 1a_t1_port_0
+    properties:
+      name:
+        get_param: net_name
+
+  nodeGetAttIn_network:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_attr: [nestedNoUnified_1, portId, {get_attr: [4p_nested_2, server_pcm_id]}]}
+      dhcp_agent_ids: { get_attr: [1c2_t1_port_11, tenant_id, {get_attr: [1c2_t1_port_02, tenant_id, {get_attr: [1c201_catalog_instance_1C22, instance_name, {get_attr: [1c202_catalog_instance_1C21,instance_name]}]}]}]}
+      tenant_id: { get_attr:[1c101_scalling_instance_1C11, instance_name,
+      {get_attr:[1c102_scalling_instance_1C11, instance_name, {get_attr:[1c1_t2_port_02, tenant_id, {get_attr:[1c1_t2_port_11, tenant_id]}, {get_attr:[1c1_t2_port_12, tenant_id]}, {get_attr:[1c102_scalling_instance_1C12, instance_name]}]}]}]}
+      value_specs: {get_attr:[1b01_single_1B_1, instance_name, get_attr:[1b02_single_1B_1,instance_name, {get_attr:[1b_t1_port_01, tenant_id, {get_attr:[1b_t1_port_11, tenant_id]}]}]] }
+      qos_policy: {get_attr:[1a_single_1A_1, instance_name]}
+      admin_state_up: {get_attr:[1a_t1_port_0, tenant_id]}
+
+  BE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["affinity"]
+      name: def
+
+outputs:
+  out1:
+    value: { get_attr: [nestedNoUnified_1, portId, {get_attr: [4p_nested_2, server_pcm_id]}]}
+  out2:
+    value: { get_attr: [1c2_t1_port_11, tenant_id, {get_attr: [1c2_t1_port_02, tenant_id, {get_attr: [1c201_catalog_instance_1C22, instance_name, {get_attr: [1c202_catalog_instance_1C21,instance_name]}]}]}]}
+  out3:
+    value: { get_attr:[1c101_scalling_instance_1C11, instance_name, {get_attr:[1c102_scalling_instance_1C11, instance_name, {get_attr:[1c1_t2_port_02, tenant_id,{get_attr:[1c1_t2_port_11, tenant_id]}, {get_attr:[1c1_t2_port_12, tenant_id]}, {get_attr:[1c102_scalling_instance_1C12, instance_name]}]}]}]}
+  out4:
+    value: {get_attr:[1b01_single_1B_1, instance_name, get_attr:[1b02_single_1B_1,instance_name, {get_attr:[1b_t1_port_01, tenant_id, {get_attr:[1b_t1_port_11, tenant_id]}]}]] }
+  out5:
+    value: {get_attr:[1a_single_1A_1, instance_name]}
+  out6:
+    value: {get_attr:[1a_t1_port_0, tenant_id]}
+  out7:
+    value: {get_attr:[2a_single_1A_2, instance_name]}

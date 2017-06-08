@@ -1,0 +1,17 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "base_firstnet_fgi_frwl.yml",
+            "type": "HEAT", 
+            "isBase": "true",
+            "data": [
+                {
+                    "file": "base_firstnet_fgi_frwl.env",
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }
+    ]
+}

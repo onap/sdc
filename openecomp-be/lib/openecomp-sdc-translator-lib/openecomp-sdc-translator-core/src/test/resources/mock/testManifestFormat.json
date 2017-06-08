@@ -24,10 +24,12 @@
     {
       "file": "im_nested_heat.yml",
       "type": "HEAT",
-      "data": [{
-        "file": "alpha.env",
-        "type": "HEAT_ENV"
-      }]
+      "data": [
+        {
+          "file": "alpha.env",
+          "type": "HEAT_ENV"
+        }
+      ]
     },
     {
       "file": "vSRX_VM.yml",
@@ -40,10 +42,12 @@
         {
           "file": "im_network_heat.yml",
           "type": "HEAT_NET",
-          "data": [{
-            "file": "mika.env",
-            "type": "HEAT_ENV"
-          }]
+          "data": [
+            {
+              "file": "mika.env",
+              "type": "HEAT_ENV"
+            }
+          ]
         },
         {
           "file": "im_volume_heat.yml",

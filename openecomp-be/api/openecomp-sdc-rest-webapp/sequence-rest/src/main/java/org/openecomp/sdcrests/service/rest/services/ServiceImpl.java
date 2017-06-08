@@ -22,5 +22,8 @@ package org.openecomp.sdcrests.service.rest.services;
 
 import org.openecomp.sdcrests.service.rest.Service;
 
+/**
+ * Created by zivl on 6/30/16.
+ */
 public class ServiceImpl implements Service {
 }

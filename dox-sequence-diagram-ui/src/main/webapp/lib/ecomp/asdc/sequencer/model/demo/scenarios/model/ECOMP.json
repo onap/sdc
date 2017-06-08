@@ -2,7 +2,7 @@
   "diagram": {
     "metadata": {
       "id": "ECOMP1",
-      "name": "Detailed flow in Ecomp1",
+      "name": "Detailed SRIOV Flow in AIC 3.0 Release",
       "ref": "ECOMP"
     },
     "lifelines": [

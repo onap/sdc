@@ -1,0 +1,343 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    vlan_ids:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    lb_st_vlan_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    cmaui_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network: test_net1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui_nova
+          relationship: tosca.relationships.network.BindsTo
+    test_nested_invalidConnection:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        p1: test_Vlan1
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+        p2: server_cmaui_nova
+    test_net2:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    template_VMInt_OAM_lb_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - test_net1
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui_nova
+          relationship: tosca.relationships.network.BindsTo
+    test_resourceGroup:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        p1: template_VMInt_OAM_lb_1
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+          count: 9
+          mandatory: true
+        p2: cmaui_port_2
+        net2: test_net2
+        net1: test_net1
+      requirements:
+      - link_template_Vlan_2:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net2
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_1:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding_template_Vlan_2:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_port_2
+          relationship: tosca.relationships.network.BindsTo
+      - binding_template_Vlan_1:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_1
+          relationship: tosca.relationships.network.BindsTo
+    test_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    test_Vlan2:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - template_VMInt_OAM_lb_1
+        name: vlan
+        virtual_network_refs:
+        - test_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_1
+          relationship: tosca.relationships.network.BindsTo
+    test_Vlan1:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - test_Vlan2
+        name: vlan
+        virtual_network_refs:
+        - test_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+    server_cmaui_nova:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        contrail_service_instance_ind: true
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    test_nested:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        p1: template_VMInt_OAM_lb_1
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+        p2: cmaui_port_2
+        net2: test_net2
+        net1: test_net1
+      requirements:
+      - link_template_Vlan_2:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net2
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_Vlan_1:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding_template_Vlan_2:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_port_2
+          relationship: tosca.relationships.network.BindsTo
+      - binding_template_Vlan_1:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_1
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - cmaui_port_2
+      - test_nested_invalidConnection
+      - test_net2
+      - template_VMInt_OAM_lb_1
+      - test_resourceGroup
+      - test_net1
+      - test_Vlan2
+      - test_Vlan1
+      - server_cmaui_nova
+      - test_nested

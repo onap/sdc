@@ -1,7 +1,14 @@
 
 .idea
-
+.vscode
+debug.log
 dist
 node_modules
 devConfig.json
 .npmrc
+test/coverage
+npm-debug.log
+**/.DS_Store
+coverage
+.storybook-dist
+.storybook/resources

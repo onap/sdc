@@ -1,0 +1,390 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-oam_v0.1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.oam_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    oam_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    oam_server_name:
+      label: oam server name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam server name
+    pcm_vol:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam image name
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    shared_security_group_id1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+  node_templates:
+    oam_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: shared_security_group_id1
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: cps
+        network:
+          get_input: cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_oam
+          relationship: tosca.relationships.network.BindsTo
+    server_oam:
+      type: org.openecomp.resource.vfc.nodes.heat.oam_server
+      properties:
+        flavor:
+          get_input: oam_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: oam_image_name
+        config_drive: true
+        name:
+          get_input: oam_server_name
+    oam_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: shared_security_group_id1
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_oam
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-oam_v0.1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-oam_v0.1.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - oam_port_0
+      - server_oam
+      - oam_port_1
+  outputs:
+    server_oam_id:
+      description: the oam nova service id
+      value: server_oam
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.oam_server
+    capabilities:
+      cpu_server_oam:
+      - server_oam
+      - cpu
+      memory_server_oam:
+      - server_oam
+      - memory
+      disk.write.requests_server_oam:
+      - server_oam
+      - disk.write.requests
+      network.incoming.bytes.rate_oam_port_1:
+      - oam_port_1
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_oam_port_0:
+      - oam_port_0
+      - network.incoming.bytes.rate
+      network.outgoing.bytes_oam_port_0:
+      - oam_port_0
+      - network.outgoing.bytes
+      memory.resident_server_oam:
+      - server_oam
+      - memory.resident
+      network.outgoing.bytes_oam_port_1:
+      - oam_port_1
+      - network.outgoing.bytes
+      disk.device.iops_server_oam:
+      - server_oam
+      - disk.device.iops
+      network.incoming.bytes_oam_port_0:
+      - oam_port_0
+      - network.incoming.bytes
+      network.incoming.bytes_oam_port_1:
+      - oam_port_1
+      - network.incoming.bytes
+      disk.device.write.requests_server_oam:
+      - server_oam
+      - disk.device.write.requests
+      network.outgoing.bytes.rate_oam_port_0:
+      - oam_port_0
+      - network.outgoing.bytes.rate
+      disk.allocation_server_oam:
+      - server_oam
+      - disk.allocation
+      network.outgoing.bytes.rate_oam_port_1:
+      - oam_port_1
+      - network.outgoing.bytes.rate
+      disk.device.usage_server_oam:
+      - server_oam
+      - disk.device.usage
+      network.outgoing.packets.rate_oam_port_0:
+      - oam_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_oam_port_1:
+      - oam_port_1
+      - network.outgoing.packets.rate
+      disk.usage_server_oam:
+      - server_oam
+      - disk.usage
+      disk.device.write.bytes_server_oam:
+      - server_oam
+      - disk.device.write.bytes
+      attachment_oam_port_1:
+      - oam_port_1
+      - attachment
+      attachment_oam_port_0:
+      - oam_port_0
+      - attachment
+      disk.ephemeral.size_server_oam:
+      - server_oam
+      - disk.ephemeral.size
+      disk.device.latency_server_oam:
+      - server_oam
+      - disk.device.latency
+      disk.root.size_server_oam:
+      - server_oam
+      - disk.root.size
+      memory.usage_server_oam:
+      - server_oam
+      - memory.usage
+      disk.read.bytes_server_oam:
+      - server_oam
+      - disk.read.bytes
+      os_server_oam:
+      - server_oam
+      - os
+      disk.read.requests_server_oam:
+      - server_oam
+      - disk.read.requests
+      disk.capacity_server_oam:
+      - server_oam
+      - disk.capacity
+      feature_oam_port_0:
+      - oam_port_0
+      - feature
+      disk.device.read.bytes_server_oam:
+      - server_oam
+      - disk.device.read.bytes
+      endpoint_server_oam:
+      - server_oam
+      - endpoint
+      disk.device.read.requests.rate_server_oam:
+      - server_oam
+      - disk.device.read.requests.rate
+      vcpus_server_oam:
+      - server_oam
+      - vcpus
+      feature_oam_port_1:
+      - oam_port_1
+      - feature
+      disk.read.bytes.rate_server_oam:
+      - server_oam
+      - disk.read.bytes.rate
+      disk.write.bytes_server_oam:
+      - server_oam
+      - disk.write.bytes
+      disk.iops_server_oam:
+      - server_oam
+      - disk.iops
+      network.incoming.packets.rate_oam_port_0:
+      - oam_port_0
+      - network.incoming.packets.rate
+      disk.device.allocation_server_oam:
+      - server_oam
+      - disk.device.allocation
+      network.incoming.packets.rate_oam_port_1:
+      - oam_port_1
+      - network.incoming.packets.rate
+      disk.write.requests.rate_server_oam:
+      - server_oam
+      - disk.write.requests.rate
+      network.outpoing.packets_oam_port_0:
+      - oam_port_0
+      - network.outpoing.packets
+      scalable_server_oam:
+      - server_oam
+      - scalable
+      disk.device.read.bytes.rate_server_oam:
+      - server_oam
+      - disk.device.read.bytes.rate
+      binding_oam_port_0:
+      - oam_port_0
+      - binding
+      network.incoming.packets_oam_port_1:
+      - oam_port_1
+      - network.incoming.packets
+      network.incoming.packets_oam_port_0:
+      - oam_port_0
+      - network.incoming.packets
+      cpu_util_server_oam:
+      - server_oam
+      - cpu_util
+      binding_oam_port_1:
+      - oam_port_1
+      - binding
+      network.outpoing.packets_oam_port_1:
+      - oam_port_1
+      - network.outpoing.packets
+      cpu.delta_server_oam:
+      - server_oam
+      - cpu.delta
+      host_server_oam:
+      - server_oam
+      - host
+      disk.device.write.bytes.rate_server_oam:
+      - server_oam
+      - disk.device.write.bytes.rate
+      binding_server_oam:
+      - server_oam
+      - binding
+      disk.device.capacity_server_oam:
+      - server_oam
+      - disk.device.capacity
+      disk.latency_server_oam:
+      - server_oam
+      - disk.latency
+      instance_server_oam:
+      - server_oam
+      - instance
+      disk.device.read.requests_server_oam:
+      - server_oam
+      - disk.device.read.requests
+      disk.device.write.requests.rate_server_oam:
+      - server_oam
+      - disk.device.write.requests.rate
+      feature_server_oam:
+      - server_oam
+      - feature
+      disk.write.bytes.rate_server_oam:
+      - server_oam
+      - disk.write.bytes.rate
+    requirements:
+      link_oam_port_0:
+      - oam_port_0
+      - link
+      dependency_oam_port_1:
+      - oam_port_1
+      - dependency
+      dependency_oam_port_0:
+      - oam_port_0
+      - dependency
+      local_storage_server_oam:
+      - server_oam
+      - local_storage
+      link_oam_port_1:
+      - oam_port_1
+      - link
+      dependency_server_oam:
+      - server_oam
+      - dependency

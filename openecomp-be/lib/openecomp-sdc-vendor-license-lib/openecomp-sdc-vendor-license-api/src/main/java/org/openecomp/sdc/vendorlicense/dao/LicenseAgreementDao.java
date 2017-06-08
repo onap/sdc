@@ -1,8 +1,8 @@
 /*-
- * ============LICENSE_START=======================================================
+ * ============LICENSE_SLicenseAgreementEntityARLicenseAgreementEntity=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 ALicenseAgreementEntity&LicenseAgreementEntity Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WILicenseAgreementEntityHOULicenseAgreementEntity WARRANLicenseAgreementEntityIES OR CONDILicenseAgreementEntityIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
@@ -24,9 +24,10 @@ import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
+import java.util.Collection;
 import java.util.Set;
 
-public interface LicenseAgreementDao extends VersionableDao, BaseDao<LicenseAgreementEntity> {
+public interface LicenseAgreementDao extends VersionableDao{
 
   long count(LicenseAgreementEntity entity);
 
@@ -37,4 +38,13 @@ public interface LicenseAgreementDao extends VersionableDao, BaseDao<LicenseAgre
   void updateColumnsAndDeltaFeatureGroupIds(LicenseAgreementEntity licenseAgreement,
                                             Set<String> addedFeatureGroupIds,
                                             Set<String> removedFeatureGroupIds);
+  Collection<LicenseAgreementEntity> list(LicenseAgreementEntity entity);
+
+  void create(LicenseAgreementEntity entity);
+
+  void update(LicenseAgreementEntity entity);
+
+  LicenseAgreementEntity get(LicenseAgreementEntity entity);
+
+  void delete(LicenseAgreementEntity entity);
 }

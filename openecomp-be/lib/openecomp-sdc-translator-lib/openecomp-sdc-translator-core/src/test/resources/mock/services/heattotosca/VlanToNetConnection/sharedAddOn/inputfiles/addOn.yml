@@ -1,0 +1,230 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  cmaui_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  security_group_name:
+      type: comma_delimited_list
+      description: CMAUI1, CMAUI2 server names
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  shared_network_id:
+    type: string
+    description: Flavor for CMAUI server
+  shared_network_id1:
+    type: string
+    description: Flavor for CMAUI server
+  shared_network_id2:
+    type: comma_delimited_list
+    description: Flavor for CMAUI server
+  cmaui_oam_ips:
+    type: string
+  oam_sec_group_name:
+    type: string
+  lb_st_interface_type_oam:
+    type: string
+  template_PortTuple_LB1:
+    type: string
+  lb_st_vlan_type_oam:
+    description: dummy
+    type: string
+  mac_address:
+    type: string
+  virtual_ip_address:
+    type: string
+  virtual_ipv6_address:
+    type: string
+  vlan_ids:
+    type: string
+  subinterface_name_prefix:
+    type: string
+  subinterface_instance_index:
+    type: number
+
+resources:
+  template_VMInt_OAM_lb_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb_st_interface_type_oam },
+        }
+      virtual_network_refs: [{ get_param: shared_network_id }]
+      port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
+      security_group_refs: [{ get_param: oam_sec_group_name}]
+
+  template_Vlan_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME$VLAN
+          params:
+            $NAME: { get_param: subinterface_name_prefix }
+            $VLAN: { get_param: [ vlan_ids, { get_param: subinterface_instance_index } ] }
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+        virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
+        }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: [
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ip_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              }
+            },
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ipv6_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              }
+            }
+          ]
+        }
+      virtual_network_refs: [{ get_param: shared_network_id }]
+      virtual_machine_interface_refs: [{ get_resource: template_VMInt_OAM_lb_1 }]
+
+  template_VMInt_OAM_lb_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb_st_interface_type_oam },
+        }
+      virtual_network_refs: [{ get_param: shared_network_id }, { get_param: shared_network_id1 }]
+      port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
+      security_group_refs: [{ get_param: oam_sec_group_name}]
+
+  template_Vlan_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME$VLAN
+          params:
+            $NAME: { get_param: subinterface_name_prefix }
+            $VLAN: { get_param: [ vlan_ids, { get_param: subinterface_instance_index } ] }
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+        virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
+        }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: [
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ip_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              }
+            },
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ipv6_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              }
+            }
+          ]
+        }
+      virtual_network_refs: [{ get_param: shared_network_id }, { get_param: shared_network_id1 }]
+      virtual_machine_interface_refs: [{ get_resource: template_VMInt_OAM_lb_1 }]
+
+  template_VMInt_OAM_lb_3:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb_st_interface_type_oam },
+        }
+      virtual_network_refs: [{ get_param: [ shared_network_id2, 0] }]
+      port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
+      security_group_refs: [{ get_param: oam_sec_group_name}]
+
+  template_Vlan_3:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME$VLAN
+          params:
+            $NAME: { get_param: subinterface_name_prefix }
+            $VLAN: { get_param: [ vlan_ids, { get_param: subinterface_instance_index } ] }
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+        virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
+        }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: [
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ip_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              }
+            },
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ipv6_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              }
+            }
+          ]
+        }
+      virtual_network_refs: [{ get_param: [ shared_network_id2, 0] }]
+      virtual_machine_interface_refs: [{ get_resource: template_VMInt_OAM_lb_1 }]
+
+  server_cmaui:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: template_VMInt_OAM_lb_1 }
+      - port: { get_resource: template_VMInt_OAM_lb_2 }

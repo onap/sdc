@@ -1,0 +1,227 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested-oam_v0.1
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.oam_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    oam_net_gw:
+      label: CPS network gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network gateway
+    oam_flavor_name:
+      label: PCRF CM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PCRF CM instance
+    security_group_name:
+      label: security group name
+      hidden: false
+      immutable: false
+      type: string
+      description: the name of security group
+    cps_net_ip:
+      label: CPS network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network ip
+    oam_server_name:
+      label: oam server name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam server name
+    pcm_vol:
+      label: CPS Cluman Cinder Volume
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS Cluman Cinder Volume
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam image name
+    cps_net_name:
+      label: CPS network name
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_ip:
+      label: OAM network ip
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network ip
+    oam_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
+  node_templates:
+    server_oam:
+      type: org.openecomp.resource.vfc.nodes.heat.oam_server
+      properties:
+        flavor:
+          get_input: oam_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: oam_image_name
+        config_drive: true
+        name:
+          get_input: oam_server_name
+    pcm_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: oam_net_ip
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_oam
+          relationship: tosca.relationships.network.BindsTo
+    pcm_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input: cps_net_ip
+        network:
+          get_input: cps_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_oam
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested-oam_v0.1_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested-oam_v0.1.yaml
+        description: heat template that creates PCRF Cluman stack
+      members:
+      - server_oam
+      - pcm_port_1
+      - pcm_port_0
+  outputs:
+    server_oam_id:
+      description: the oam nova service id
+      value: server_oam
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v0.1
+    capabilities:
+      host_server_oam:
+      - server_oam
+      - host
+      endpoint_server_oam:
+      - server_oam
+      - endpoint
+      os_server_oam:
+      - server_oam
+      - os
+      feature_server_oam:
+      - server_oam
+      - feature
+      feature_pcm_port_1:
+      - pcm_port_1
+      - feature
+      scalable_server_oam:
+      - server_oam
+      - scalable
+      feature_pcm_port_0:
+      - pcm_port_0
+      - feature
+      binding_server_oam:
+      - server_oam
+      - binding
+      attachment_pcm_port_0:
+      - pcm_port_0
+      - attachment
+      attachment_pcm_port_1:
+      - pcm_port_1
+      - attachment
+      binding_pcm_port_0:
+      - pcm_port_0
+      - binding
+      binding_pcm_port_1:
+      - pcm_port_1
+      - binding
+    requirements:
+      link_pcm_port_0:
+      - pcm_port_0
+      - link
+      link_pcm_port_1:
+      - pcm_port_1
+      - link
+      local_storage_server_oam:
+      - server_oam
+      - local_storage

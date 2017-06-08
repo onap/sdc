@@ -1,0 +1,125 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  lb_st_vlan_type_oam:
+    description: dummy
+    type: string
+  mac_address:
+    type: string
+  virtual_ip_address:
+    type: string
+  virtual_ipv6_address:
+    type: string
+  vlan_ids:
+    type: string
+  subinterface_name_prefix:
+    type: string
+  subinterface_instance_index:
+    type: number
+  net1:
+    type: string
+  net2:
+    type: string
+  port1:
+    type: string
+  port2:
+    type: string
+  indx:
+    type: number
+resources:
+
+  template_Vlan_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME$VLAN
+          params:
+            $NAME: { get_param: subinterface_name_prefix }
+            $VLAN: { get_param: [ vlan_ids, { get_param: indx } ] }
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+        virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
+        }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: [
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ip_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              }
+            },
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ipv6_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              }
+            }
+          ]
+        }
+      virtual_network_refs: [{ get_param: net1 }]
+      virtual_machine_interface_refs: [{ get_param: port1 }]
+
+  template_Vlan_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: $NAME$VLAN
+          params:
+            $NAME: { get_param: subinterface_name_prefix }
+            $VLAN: { get_param: [ vlan_ids, { get_param: indx } ] }
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: lb_st_vlan_type_oam }
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+        virtual_machine_interface_mac_addresses_mac_address: [{ get_param: mac_address }],
+        }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+        virtual_machine_interface_allowed_address_pairs_allowed_address_pair: [
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ip_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 32
+              }
+            },
+            {
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: active-standby,
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: mac_address },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+              {
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: virtual_ipv6_address },
+                virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: 128
+              }
+            }
+          ]
+        }
+      virtual_network_refs: [{ get_param: net2 }]
+      virtual_machine_interface_refs: [{ get_param: port2 }]
+
+  test_nested2Level:
+    type: nested2.yml
+    properties:
+      net1: { get_param: net1}
+      net2: { get_param: net2}
+      port1: { get_param: port1}
+      port2: { get_param: port2}

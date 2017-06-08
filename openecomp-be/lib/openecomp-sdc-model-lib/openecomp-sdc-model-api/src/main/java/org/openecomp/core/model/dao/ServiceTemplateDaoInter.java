@@ -43,4 +43,6 @@ public interface ServiceTemplateDaoInter extends VersionableDao {
 
   String getBase(String vspId, Version version);
 
+  void deleteAll(String vspId, Version version);
+
 }

@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response;
 /**
  * This class represents an error object to be returned in failed REST instead of just returning one
  * of HTTP fail statuses.
- *
  */
 public class ErrorCodeAndMessage {
 

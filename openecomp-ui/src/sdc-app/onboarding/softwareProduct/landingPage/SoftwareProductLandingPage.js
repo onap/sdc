@@ -1,33 +1,27 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import {connect} from 'react-redux';
-
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import VersionControllerUtils from 'nfvo-components/panel/versionController/VersionControllerUtils.js';
-import NotificationConstants from 'nfvo-components/notifications/NotificationConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import LandingPageView from './SoftwareProductLandingPageView.jsx';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
 
-const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) => {
+export const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) => {
 	let {softwareProductEditor: {data:currentSoftwareProduct = {}}, softwareProductComponents, softwareProductCategories = []} = softwareProduct;
 	let {licensingData = {}} = currentSoftwareProduct;
 	let {licenseAgreementList} = licenseAgreement;
@@ -35,6 +29,8 @@ const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) =>
 	let licenseAgreementName = licenseAgreementList.find(la => la.id === licensingData.licenseAgreement);
 	if (licenseAgreementName) {
 		licenseAgreementName = licenseAgreementName.name;
+	} else if (licenseAgreementList.length === 0) { // otherwise the state of traingle svgicon will be updated post unmounting
+		licenseAgreementName = null;
 	}
 
 	let categoryName = '', subCategoryName = '', fullCategoryDisplayName = '';
@@ -62,27 +58,44 @@ const mapStateToProps = ({softwareProduct, licenseModel: {licenseAgreement}}) =>
 
 const mapActionsToProps = (dispatch, {version}) => {
 	return {
-		onDetailsSelect: ({id: softwareProductId, vendorId: licenseModelId}) => OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {
+		onDetailsSelect: ({id: softwareProductId, vendorId: licenseModelId, version}) => OnboardingActionHelper.navigateToSoftwareProductDetails(dispatch, {
 			softwareProductId,
-			licenseModelId
+			licenseModelId,
+			version
 		}),
-		onAttachmentsSelect: ({id: softwareProductId}) => OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId}),
+		onAttachmentsSelect: ({id: softwareProductId}) => OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version}),
 		onUpload: (softwareProductId, formData) =>
 			SoftwareProductActionHelper.uploadFile(dispatch, {
 				softwareProductId,
 				formData,
-				failedNotificationTitle: i18n('Upload validation failed')
+				failedNotificationTitle: i18n('Upload validation failed'),
+				version
 			}),
+
 		onUploadConfirmation: (softwareProductId, formData) =>
-			SoftwareProductActionHelper.uploadConfirmation(dispatch, {
-				softwareProductId,
-				formData,
-				failedNotificationTitle: i18n('Upload validation failed')}),
+			dispatch({
+				type: modalActionTypes.GLOBAL_MODAL_WARNING,
+				data:{
+					msg: i18n('Upload will erase existing data. Do you want to continue?'),
+					confirmationButtonText: i18n('Continue'),
+					title: i18n('Warning'),
+					onConfirmed: ()=>SoftwareProductActionHelper.uploadFile(dispatch, {
+						softwareProductId,
+						formData,
+						failedNotificationTitle: i18n('Upload validation failed'),
+						version
+					}),
+					onDeclined: () => dispatch({
+						type: modalActionTypes.GLOBAL_MODAL_CLOSE
+					})
+				}
+			}),
 
 		onInvalidFileSizeUpload: () => dispatch({
-			type: NotificationConstants.NOTIFY_ERROR,
+			type: modalActionTypes.GLOBAL_MODAL_ERROR,
 			data: {
 				title: i18n('Upload Failed'),
+				confirmationButtonText: i18n('Continue'),
 				msg: i18n('no zip file was uploaded or zip file doesn\'t exist')
 			}
 		}),

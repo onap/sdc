@@ -89,6 +89,11 @@ public class LicenseKeyGroupCassandraDaoImpl extends CassandraBaseDao<LicenseKey
   }
 
   @Override
+  public long count(LicenseKeyGroupEntity licenseKeyGroup) {
+    return 0;
+  }
+
+  @Override
   public void deleteAll(LicenseKeyGroupEntity entity) {
     accessor.deleteByVlmVersion(entity.getVendorLicenseModelId(),
         versionMapper.toUDT(entity.getVersion())).all();
@@ -115,8 +120,8 @@ public class LicenseKeyGroupCassandraDaoImpl extends CassandraBaseDao<LicenseKey
     Result<LicenseKeyGroupEntity> deleteByVlmVersion(String vendorLicenseModelId, UDTValue version);
 
     @Query(
-        "UPDATE license_key_group SET ref_fg_ids = ref_fg_ids + ? WHERE vlm_id=? AND version=?"
-            + " AND lkg_id=?")
+        "UPDATE license_key_group SET ref_fg_ids = ref_fg_ids + ? WHERE vlm_id=? AND version=? "
+            + "AND lkg_id=?")
     ResultSet addReferencingFeatureGroups(Set<String> referencingFeatureGroups,
                                           String vendorLicenseModelId, UDTValue version, String id);
 

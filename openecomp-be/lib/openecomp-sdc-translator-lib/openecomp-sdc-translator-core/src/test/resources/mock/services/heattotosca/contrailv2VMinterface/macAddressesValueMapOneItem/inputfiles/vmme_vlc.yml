@@ -1,0 +1,61 @@
+heat_template_version: 2015-04-30
+
+description: >
+  Module HOT template to create vmme 2 vlc
+
+parameters:
+  vlc1_Internal1_mac:
+    type: string
+    description: static mac address assigned to vlc1_Internal1
+  vlc1_Internal2_mac:
+    type: string
+    description: static mac address assigned to vlc1_Internal2
+  vlc_st_interface_type_int1:
+    type: string  
+    description: service_interface_type for the ServiceTemplate
+  vlc_st_interface_type_int2:
+    type: string
+    description: service_interface_type for the ServiceTemplate
+  internal_net_id_0:
+    type: string
+    description: UUID of Internal1_net
+  internal_net_id_1:
+    type: string
+    description: UUID of Internal2_net
+  security_group_int1_id:
+    type: string
+    description: Security Group UUID for output
+  security_group_int2_id:
+    type: string
+    description: Security Group UUID for output
+
+resources:
+
+  template_VMInt_INT1_VLC_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: vlc_st_interface_type_int1 }
+        }
+      virtual_network_refs: [{ get_param: internal_net_id_0}]
+      virtual_machine_interface_mac_addresses:
+        {
+          virtual_machine_interface_mac_addresses_mac_address: [{ get_param: vlc1_Internal1_mac }]
+        }
+      security_group_refs: [{get_param: security_group_int1_id}]
+
+  template_VMInt_INT2_VLC_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: vlc_st_interface_type_int2 }
+        }
+      virtual_network_refs: [{ get_param: internal_net_id_1 }]
+      virtual_machine_interface_mac_addresses:
+        {
+          virtual_machine_interface_mac_addresses_mac_address: [{ get_param: vlc1_Internal2_mac }]
+        }
+      security_group_refs: [{get_param: security_group_int2_id}]
+

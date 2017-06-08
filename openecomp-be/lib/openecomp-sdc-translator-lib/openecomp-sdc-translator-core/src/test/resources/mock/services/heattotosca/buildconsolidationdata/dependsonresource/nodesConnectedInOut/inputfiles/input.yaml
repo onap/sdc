@@ -1,0 +1,105 @@
+heat_template_version: '2014-10-16'
+
+parameters:
+  base_image_name:
+    description: The base ID or name of the image to boot with
+    type: string
+  cdr_network:
+    description: A string specifying a symbolic name for the network
+    type: string
+  domain_name:
+    description: The servers domain
+    type: string
+  manager_name_0:
+    description: VM Name for Manager VM 0
+    type: string
+  manager_oam_direct_ip_0:
+    description: The public ip address of the manager
+    type: string
+  oam_private_net_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_internal_network_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_internal_network_subnet_alloc_end:
+    description: End address for the allocation pool
+    type: string
+  packet_internal_network_subnet_alloc_start:
+    description: Start address for the allocation pool
+    type: string
+  packet_internal_network_subnet_cidr:
+    description: The Classless Inter-Domain Routing
+    type: string
+  packet_internal_network_subnet_name:
+    description: The name of the subnet
+    type: string
+  packet_mirror_network_name:
+    description: A string specifying a symbolic name for the network
+    type: string
+  packet_mirror_network_subnet_alloc_end:
+    description: End address for the allocation pool
+    type: string
+  packet_mirror_network_subnet_alloc_start:
+    description: Start address for the allocation pool
+    type: string
+  packet_mirror_network_subnet_cidr:
+    description: The Classless Inter-Domain Routing
+    type: string
+  packet_mirror_network_subnet_name:
+    description: The name of the subnet
+    type: string
+  availability_zone_0:
+    description: Name of the availability zone for server placement
+    type: string
+  region_name:
+    description: Name of region to be used
+    type: string
+  rpmrepository_ip_0:
+    description: The public ip address of the repository
+    type: string
+  tenant_name:
+    description: Name of tenant to be used
+    type: string
+  availability_zone_1:
+    description: Name of the availability zone for server placement
+    type: string
+resources:
+  packet_internal_network:
+    properties:
+      name:
+        get_param: packet_internal_network_name
+    type: OS::Neutron::Net
+  QRouter:
+    depends_on:
+    - packet_internal_network
+    properties:
+      availability_zone: Availability-test
+      config_drive: true
+      flavor: FLAVOR-test
+      image: Image-test
+      name: QRouter-name
+      networks:
+      - port:
+          get_resource: oam_private_net_network_port
+      - port:
+          get_resource: cdr_network_port
+    type: OS::Nova::Server
+  packet_mirror_network:
+    depends_on:
+    - QRouter
+    properties:
+      name:
+        get_param: packet_mirror_network_name
+    type: OS::Neutron::Net
+  cdr_network_port:
+    properties:
+      network:
+        get_param: cdr_network
+    type: OS::Neutron::Port
+  oam_private_net_network_port:
+    properties:
+      network:
+        get_param: oam_private_net_name
+    type: OS::Neutron::Port
+

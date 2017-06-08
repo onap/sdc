@@ -43,7 +43,7 @@ parameters:
   st_image:
     type: string
     description: Name of the image
-  st_flavor:
+  st_flavor_name:
     type: string
     description: Flavor
   st_service_interface_type_list:
@@ -87,7 +87,7 @@ resources:
       service_mode: { get_param: st_mode }
       service_type: { get_param: st_type }
       image_name: { get_param: st_image }
-      flavor: { get_param: st_flavor }
+      flavor: { get_param: st_flavor_name }
       service_interface_type_list: { "Fn::Split" : [ ",", Ref: st_service_interface_type_list ] }
       shared_ip_list: [ true, on, no, 0 ]
       static_routes_list: { "Fn::Split" : [ ";", "n;false;false;false" ] }

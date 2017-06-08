@@ -1,0 +1,103 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.QRouter:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    packet_mirror_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security group name
+    cdr_network:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+  node_templates:
+    QRouter:
+      type: org.openecomp.resource.vfc.nodes.heat.QRouter
+      properties:
+        flavor: FLAVOR-test
+        availability_zone: Availability-test
+        image: Image-test
+        config_drive: true
+        name: QRouter-name
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: QRouter
+          relationship: tosca.relationships.DependsOn
+    cdr_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        network:
+          get_input: cdr_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+    oam_private_net_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: QRouter
+          relationship: tosca.relationships.network.BindsTo
+    jsa_security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          get_input: security_group_name
+        description: ems security group
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          port_range_max: 65535
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+          port_range_min: 1
+      requirements:
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: cdr_network_port
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: tosca.capabilities.Attachment
+          node: oam_private_net_network_port
+          relationship: org.openecomp.relationships.AttachesTo
+  groups:
+    input_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/input.yaml
+      members:
+      - QRouter
+      - packet_mirror_network
+      - packet_internal_network
+      - cdr_network_port
+      - oam_private_net_network_port

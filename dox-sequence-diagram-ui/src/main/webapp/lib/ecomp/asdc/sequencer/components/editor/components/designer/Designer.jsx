@@ -28,8 +28,8 @@ import Messages from './components/message/Messages';
 import Metadata from './components/metadata/Metadata';
 
 import Icon from '../../../icons/Icon';
-import iconExpanded from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/expanded.svg';
-import iconCollapsed from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/collapsed.svg';
+import iconExpanded from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/expanded.svg';
+import iconCollapsed from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/collapsed.svg';
 
 /**
  * LHS design wid` view.

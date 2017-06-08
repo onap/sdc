@@ -1,0 +1,54 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    label: oam network name
+    description: name of the oam network
+  dummy_net_name_1:
+    type: string
+    label: csb ineternal cidr
+    description: csb internal cidr
+
+resources:
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+#      config_drive: "True"
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_attr: [network_policy_server, name]}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd01_port_1}
+      user_data_format:  RAW
+
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_attr: [network_policy_server, name]}
+  pd01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+
+  network_policy_server:
+    type: OS::Contrail::NetworkPolicy
+    properties:
+      name: {get_param: dummy_net_name_1}
+

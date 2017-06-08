@@ -20,12 +20,15 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDao;
 import org.openecomp.sdc.vendorlicense.dao.VendorLicenseModelDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.VendorLicenseModelDaoZusammenImpl;
 
 public class VendorLicenseModelDaoFactoryImpl extends VendorLicenseModelDaoFactory {
 
-  private static VendorLicenseModelDao INSTANCE = new VendorLicenseModelCassandraDaoImpl();
+  private static VendorLicenseModelDao INSTANCE = new VendorLicenseModelDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public VendorLicenseModelDao createInterface() {

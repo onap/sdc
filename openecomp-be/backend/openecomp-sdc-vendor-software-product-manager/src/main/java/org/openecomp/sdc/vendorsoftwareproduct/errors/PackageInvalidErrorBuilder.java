@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .PACKAGE_INVALID;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
+
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.PACKAGE_INVALID;
 
 /**
  * The type Package invalid error builder.
@@ -45,8 +45,8 @@ public class PackageInvalidErrorBuilder {
   public PackageInvalidErrorBuilder(String vendorSoftwareProductId, Version version) {
     builder.withId(PACKAGE_INVALID);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(
-        String.format(PACKAGE_INVALID_MSG, vendorSoftwareProductId, version.toString()));
+    builder.withMessage(String.format(PACKAGE_INVALID_MSG,
+        vendorSoftwareProductId, version == null ? null : version.toString()));
   }
 
   /**

@@ -1,0 +1,13 @@
+{
+  "forbiddenResourceGuideLineValidator": {
+    "enable": true,
+    "implementationClass": "org.openecomp.sdc.validation.impl.validators.ForbiddenResourceGuideLineValidator",
+    "properties": {
+      "forbiddenResourceTypes": {
+        "OS::Neutron::FloatingIP": {
+          "enable": true
+        }
+      }
+    }
+  }
+}

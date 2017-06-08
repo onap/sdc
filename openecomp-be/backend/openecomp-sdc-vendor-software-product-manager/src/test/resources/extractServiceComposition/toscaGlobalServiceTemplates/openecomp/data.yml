@@ -1,0 +1,463 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp/data.yml
+  version: '1.0'
+
+imports:
+- openecomp_index:
+    file: _index.yml
+
+data_types:
+
+  org.openecomp.datatypes.network.ProviderNetwork:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      is_provider_network:
+        description: \"true\" indicates that this a Neutron provider type of network
+        type: boolean
+        required: true
+      physical_network_name:
+        description: |
+          Identifies the NUMA processor cluster to which this physical network interface belongs. NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. \"01\" = NUMA 0, \"11\" = NUMA 1)
+        type: string
+        required: false
+        constraints:
+        - valid_values:
+          - Physnet41
+          - Physnet42
+          - Physnet43
+          - Physnet44
+          - Physnet21
+          - Physnet22
+      numa:
+        description: |
+          PNIC instance within the NUMA processor cluster PNIC Instance correlates to the second digit of the Physical Network Name suffix (e.g. "01" = PNIC 1, "02" = "PNIC 2)
+        type: string
+        required: false
+        constraints:
+        - valid_values:
+          - NUMA 0
+          - NUMA 1
+      pnic_instance:
+        description: PNIC instance within the NUMA processor cluster
+        type: integer
+        required: false
+
+  org.openecomp.datatypes.DeploymentFlavor:
+    derived_from: tosca.datatypes.Root
+    description: Deployment Flavor
+    properties:
+      name:
+        description: Deployment Flavor Name
+        type: string
+        status: SUPPORTED
+        required: true
+      license_feature_group:
+        description: license feature group associated with Deployment Flavor
+        type: org.openecomp.datatypes.FeatureGroup
+        status: SUPPORTED
+        required: true
+      compute_size:
+        description: Size of VM
+        type: org.openecomp.datatypes.ComputeFlavor
+        status: SUPPORTED
+        required: true
+
+  org.openecomp.datatypes.FeatureGroup:
+    derived_from: tosca.datatypes.Root
+    description: License Feature Group
+    properties:
+      license_feature_group_ref:
+        description: Deployment Flavor Name
+        type: string
+        status: SUPPORTED
+        required: true
+      part_number:
+        description: refrence part number related to feature group
+        type: string
+        status: SUPPORTED
+        required: true
+        
+  org.openecomp.datatypes.EcompHoming:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ecomp_selected_instance_node_target:
+        description: |
+          "true" indicates that the target deployment node for this instance will be auto-selected by OPENECOMP "false" indicates operator-supplied instance target deployment node required (e.g. VID will present a prompt to operator and collect the operator-selected target node for the deployment of this Network instance).
+        type: boolean
+        default: false
+        required: true
+      homing_policy:
+        description: Referenc to a service level homing policy that OPENECOMP will use for instance deployment target node
+        type: string
+        required: false
+      instance_node_target:
+        description: Instance target deployment node
+        type: string
+        required: false
+
+  org.openecomp.datatypes.AssignmentRequirements:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      is_required:
+        description: |
+          "true" indicates that assignment is required
+        type: boolean
+        default: false
+        required: true
+      count:
+        description: number of assignments required
+        type: integer
+        required: false    
+
+
+  org.openecomp.datatypes.network.IpRequirements:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ip_version:
+        type: integer
+        required: true
+        constraints:
+        - valid_values:
+          - 4
+          - 6
+      ip_count:
+        description: identifies the number of ip address to assign to the CP from the plan
+        type: org.openecomp.datatypes.AssignmentRequirements
+        required: true
+      floating_ip_count:
+        type: org.openecomp.datatypes.AssignmentRequirements
+        required: false
+      subnet_role:
+        type: string
+        required: false
+      assingment_method:
+        type: string
+        required: true
+        constraints:
+        - valid_values:
+          - fixed
+          - dhcp
+
+  org.openecomp.datatypes.network.PhysicalNetwork:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      provider_network:
+        description: true indicates that this a Neutron provider type of network
+        type: boolean
+        required: true
+      physical_network_name:
+        description: |
+          Identifies the NUMA processor cluster to which this physical network interface belongs. NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. "01" = NUMA 0, "11" = NUMA 1)
+        type: string
+        required: false
+        constraints:
+        - valid_values:
+          - Physnet-SRIOV-1
+          - Physnet-SRIOV-2
+          - Physnet-SRIOV-11
+          - Physnet-SRIOV-12
+      numa:
+        description: |
+          PNIC instance within the NUMA processor cluster PNIC Instance correlates to the second digit of the Physical Network Name suffix (e.g. "01" = PNIC 1, "02" = "PNIC 2)
+        type: string
+        required: false
+        constraints:
+        - valid_values:
+          - NUMA 0
+          - NUMA 1
+      pnic_instance:
+        description: PNIC instance within the NUMA processor cluster
+        type: integer
+        required: false
+
+  org.openecomp.datatypes.network.VlanRequirements:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      vlan_range_plan:
+        description: reference to a vlan range plan
+        type: string
+        required: true
+      vlan_type:
+        description: identifies the vlan type (e.g., c-tag)
+        type: string
+        required: true
+        constraints:
+        - valid_values:
+          - c-tag
+          - s-tag
+      vlan_count:
+        description: identifies the number of vlan tags to assign to the CP from the plan
+        type: integer
+        required: true
+
+  org.openecomp.datatypes.ComputeFlavor:
+    derived_from: tosca.datatypes.Root
+    description: Compute Flavor (Size)
+    properties:
+      name:
+        description: Compute Flavor Name
+        type: string
+        status: SUPPORTED
+        required: true
+      num_cpus:
+        description: Number of cpu
+        type: integer
+        status: SUPPORTED
+        required: true
+      disk_size:
+        description: Disk size
+        type: scalar-unit.size
+        status: SUPPORTED
+        required: true
+      mem_size:
+        description: Memory size
+        type: scalar-unit.size
+        status: SUPPORTED
+        required: true
+
+  org.openecomp.datatypes.network.MacAssignments:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      mac_range_plan:
+        description: reference to a MAC address range plan
+        type: string
+        required: true
+      mac_count:
+        description: identifies the number of MAC addresses to assign to the CP from the plan
+        type: integer
+        required: true
+
+  org.openecomp.datatypes.network.MacRequirements:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      mac_range_plan:
+        description: reference to a MAC address range plan
+        type: string
+        required: true
+      mac_count:
+        description: identifies the number of MAC addresses to assign to the CP from the plan
+        type: org.openecomp.datatypes.AssignmentRequirements
+        required: true
+
+  org.openecomp.datatypes.network.SubnetAssignments:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ip_network_address_plan:
+        description: Reference to EIPAM, VLAN or other address plan ID used to assign subnets to this network
+        type: string
+        required: false
+      dhcp_enabled:
+        description: \"true\" indicates the network has 1 or more policies
+        type: boolean
+        required: false
+      ip_version:
+        description: The IP version of the subnet
+        type: integer
+        required: true
+        constraints:
+        - valid_values:
+          - 4
+          - 6
+      cidr_mask:
+        description: The default subnet CIDR mask
+        type: integer
+        required: true
+      min_subnets_count:
+        description: Quantity of subnets that must be initially assigned
+        type: integer
+        default: 1
+        required: true
+
+  org.openecomp.datatypes.Artifact:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      artifact_name:
+        description: Artifcat name
+        type: string
+        required: true
+      artifact_type:
+        description: Artifcat type
+        type: string
+        required: true
+      artifact_uuid:
+        description: Artifcat UUID
+        type: string
+        required: true
+      artifact_checksum:
+        description: Artifact checksum
+        type: string
+        required: true
+      artifact_url:
+        description: Artifcay URL. Can also include only the file name
+        type: string
+        required: true
+
+  org.openecomp.datatypes.network.IPv4SubnetAssignments:
+    derived_from: org.openecomp.datatypes.network.SubnetAssignments
+    properties:
+      use_ipv4:
+        description: Indicates IPv4 subnet assignments
+        type: boolean
+        required: true
+
+  org.openecomp.datatypes.Root:
+    derived_from: tosca.datatypes.Root
+    description: |
+      The AT&T root Data Type all other Data Types derive from
+    properties:
+      supplemental_data:
+        type: map
+        entry_schema:
+          type: string
+          description: |
+            A placeholder for missing properties that would be included in future openecomp model
+            versions. fromat <key>:<value>
+
+
+  org.openecomp.datatypes.substitution.SubstitutionFiltering:
+    derived_from: tosca.datatypes.Root
+    description: Substitution Filter
+    properties:
+      substitute_service_template:
+        description: Substitute Service Template
+        type: string
+        status: SUPPORTED
+        required: true
+      index_value:
+        description: Index value of the substitution service template runtime instance
+        type: integer
+        status: SUPPORTED
+        default: 0
+        required: false
+        constraints:
+        - greater_or_equal: 0
+      count:
+        description: Count
+        type: string
+        status: SUPPORTED
+        default: 1
+        required: false
+      scaling_enabled:
+        description: Indicates whether service scaling is enabled
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      mandatory:
+        description: Mandatory
+        type: boolean
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.network.NetworkFlows:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      is_network_policy:
+        description: true indicates the network has 1 or more policies
+        type: boolean
+        default: false
+        required: false
+      network_policy:
+        description: Identifies the specific OPENECOMP Contrail network policy that must be applied to this network (source - from Policy Manager)
+        type: string
+        required: false
+      vpn_binding:
+        description: Identifies the specific VPN Binding entry in A&AI that must be applied when creating this network (source - A&AI)
+        type: string
+        required: false
+
+  org.openecomp.datatypes.network.NetworkAssignments:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ecomp_generated_network_assignment:
+        description: |
+          "true" indicates that the network assignments will be auto-generated by OPENECOMP "false" indicates operator-supplied Network assignments file upload is required (e.g. VID will present prompt to operator to upload operator-supplied Network assignments file).
+        type: boolean
+        default: false
+        required: true
+      network_assignments_file:
+        description: Filename of the template that specifies all of the configurable name/value pairs of Network assignments in this Network model
+        type: string
+        required: false
+      multi_tenant:
+        description: true means this network is shared by multiple Openstack tenants
+        type: boolean
+        default: true
+        required: true
+      min_subnets_count:
+        description: Quantity of subnets that must be initially assigned
+        type: integer
+        required: true
+      ip_network_address_plan:
+        description: Reference to EIPAM, VLAN or other address plan ID used to assign subnets to this network
+        type: string
+        required: true
+      vlan_network_address_plan:
+        description: Reference to VLAN or other address plan ID used to assign subnets to this network
+        type: string
+        required: true
+
+  org.openecomp.datatypes.network.IPv6SubnetAssignments:
+    derived_from: org.openecomp.datatypes.network.SubnetAssignments
+    properties:
+      use_ipv6:
+        description: Indicates IPv6 subnet assignments
+        type: boolean
+        required: true
+
+  org.openecomp.datatypes.EcompNaming:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ecomp_generated_naming:
+        description: |
+          "true" indicates that the name for the instance will be auto-generated by OPENECOMP. "false" indicates operator-supplied name required (e.g. VID will present prompt to operator and collect the operator-supplied instance name).
+        type: boolean
+        default: true
+        required: true
+      naming_policy:
+        description: Referenc to naming policy that OPENECOMP will use when the name is auto-generated
+        type: string
+        required: false
+                
+  org.openecomp.datatypes.Naming:
+    derived_from: org.openecomp.datatypes.Root
+    properties:
+      ecomp_generated_naming:
+        description: |
+          "true" indicates that the name for the instance will be auto-generated by OPENECOMP. "false" indicates operator-supplied name required (e.g. VID will present prompt to operator and collect the operator-supplied instance name).
+        type: boolean
+        default: true
+        required: true
+  
+  org.openecomp.datatypes.EcompGeneratedNaming:
+    derived_from: org.openecomp.datatypes.Naming
+    properties:
+      naming_policy:
+        description: Referenc to naming policy that OPENECOMP will use when the name is auto-generated
+        type: string
+        required: false
+                                
+  org.openecomp.datatypes.UserDefinedNaming:
+    derived_from: org.openecomp.datatypes.Naming
+    properties:
+      instance_name:
+        description: Reference to naming policy that OPENECOMP will use when the name is auto-generated
+        type: string
+        required: false
+        

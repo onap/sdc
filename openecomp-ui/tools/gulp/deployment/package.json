@@ -10,7 +10,7 @@
     "gulp-replace": "^0.5.4",
     "prompt": "^0.2.14"
   },
-  "author": "ECOMP",
+  "author": "OPENECOMP",
   "license": "LicenseRef-LICENSE",
   "scripts": {
     "start": "gulp run",

@@ -1,6 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>openecomp-sdc-model-core</name>
+    <artifactId>openecomp-sdc-model-core</artifactId>
+
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -9,26 +14,14 @@
         <relativePath>../..</relativePath>
     </parent>
 
-    <name>openecomp-sdc-model-core</name>
-    <artifactId>openecomp-sdc-model-core</artifactId>
-
     <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.10</version>
-
-        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.2</version>
-
+            <version>${logback.version}</version>
         </dependency>
-
-       
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -42,7 +35,6 @@
             <artifactId>openecomp-sdc-versioning-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-datatypes-lib</artifactId>
@@ -52,14 +44,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
-            <version>1.10.19</version>
+            <version>${mockito.all.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
-       
-      
     </dependencies>
 </project>

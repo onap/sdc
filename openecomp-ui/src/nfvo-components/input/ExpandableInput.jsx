@@ -1,77 +1,115 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
-import FontAwesome from 'react-fontawesome';
-import classnames from 'classnames';
-import Input from 'react-bootstrap/lib/Input';
+import ReactDOM from 'react-dom';
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
+const ExpandableInputClosed = ({iconType, onClick}) => (
+	<SVGIcon className='expandable-input-wrapper closed' name={iconType} onClick={onClick} />
+);
 
-class ExpandableInput extends React.Component {
-	constructor(props){
-		super(props);
-		this.state = {showInput: false, value: ''};
-		this.toggleInput = this.toggleInput.bind(this);
-		this.handleFocus = this.handleFocus.bind(this);
-		this.handleInput = this.handleInput.bind(this);
-		this.handleClose = this.handleClose.bind(this);
+class ExpandableInputOpened extends React.Component {
+	componentDidMount(){
+		this.rawDomNode = ReactDOM.findDOMNode(this.searchInputNode.inputWrapper);
+		this.rawDomNode.focus();
 	}
 
-	toggleInput(){
-		if (!this.state.showInput){
-			this.searchInputNode.refs.input.focus();
-		} else {
+	componentWillReceiveProps(newProps){
+		if (!newProps.value){
+			if (!(document.activeElement === this.rawDomNode)){
+				this.props.handleBlur();
+			}
+		}
+	}
+
+	handleClose(){
+		this.props.onChange('');
+		this.rawDomNode.focus();
+	}
+
+	handleKeyDown(e){
+		if (e.key === 'Escape'){
+			e.preventDefault();
+			if (this.props.value) {
+				this.handleClose();
+			} else {
+				this.rawDomNode.blur();
+			}
+		};
+	}
+
+	render() {
+		let {iconType, value, onChange, handleBlur} = this.props;
+		return (
+				<div className='expandable-input-wrapper opened' key='expandable'>
+					<Input
+						type='text'
+						value={value}
+						ref={(input) => this.searchInputNode = input}
+						className='expandable-active'
+						groupClassName='expandable-input-control'
+						onChange={e => onChange(e)}
+						onKeyDown={e => this.handleKeyDown(e)}
+						onBlur={handleBlur}/>
+					{value && <SVGIcon onClick={() => this.handleClose()} name='close' />}
+					{!value && <SVGIcon name={iconType} onClick={handleBlur}/>}
+				</div>
+		);
+	}
+}
+
+class ExpandableInput extends React.Component {
+
+	static propTypes = {
+		iconType: React.PropTypes.string,
+		onChange: React.PropTypes.func,
+		value: React.PropTypes.string
+	};
+
+	state = {showInput: false};
+
+	closeInput(){
+		if (!this.props.value) {
 			this.setState({showInput: false});
 		}
 	}
 
-	handleInput(e){
-		let {onChange} = this.props;
-
-		this.setState({value: e.target.value});
-		onChange(e);
-	}
-
-	handleClose(){
-		this.handleInput({target: {value: ''}});
-		this.searchInputNode.refs.input.focus();
-	}
-
-	handleFocus(){
-		if (!this.state.showInput){
-			this.setState({showInput: true});
-		}
-	}
-
 	getValue(){
-		return this.state.value;
+		return this.props.value;
 	}
 
 	render(){
-		let {iconType} = this.props;
-
-		let inputClasses = classnames({
-			'expandable-active': this.state.showInput,
-			'expandable-not-active': !this.state.showInput
-		});
-
-		let iconClasses = classnames(
-			'expandable-icon',
-			{'expandable-icon-active': this.state.showInput}
-		);
-
+		let {iconType, value, onChange = false} = this.props;
 		return (
-			<div className='expandable-input-wrapper'>
-				<Input
-					type='text'
-					value={this.state.value}
-					ref={(input) => this.searchInputNode = input}
-					className={inputClasses}
-					groupClassName='expandable-input-control'
-					onChange={e => this.handleInput(e)}
-					onFocus={this.handleFocus}/>
-				{this.state.showInput && this.state.value && <FontAwesome onClick={this.handleClose} name='close' className='expandable-close-button'/>}
-				{!this.state.value && <FontAwesome onClick={this.toggleInput} name={iconType} className={iconClasses}/>}
+			<div className='expandable-input-top'>
+				{this.state.showInput &&
+					<ExpandableInputOpened
+						key='open'
+						iconType={iconType}
+						onChange={onChange}
+						value={value}
+						handleKeyDown={(e) => this.handleKeyDown(e)}
+						handleBlur={() => this.closeInput()}/>
+				}
+				{!this.state.showInput && <ExpandableInputClosed key='closed' iconType={iconType} onClick={() => this.setState({showInput: true})} />}
 			</div>
-		);
+				);
 	}
 }
+
 
 export default ExpandableInput;

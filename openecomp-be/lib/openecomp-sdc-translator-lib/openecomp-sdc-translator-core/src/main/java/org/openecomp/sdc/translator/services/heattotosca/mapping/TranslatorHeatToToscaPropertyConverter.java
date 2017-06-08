@@ -21,9 +21,12 @@
 package org.openecomp.sdc.translator.services.heattotosca.mapping;
 
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.Template;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
-import org.openecomp.sdc.translator.services.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,16 +48,18 @@ public class TranslatorHeatToToscaPropertyConverter {
    * @return the tosca properties simple conversion
    */
   //Convert property assuming the property type in heat is same as the property type in tosca
-  public static Map<String, Object> getToscaPropertiesSimpleConversion(
-      Map<String, Object> heatProperties, Map<String, Object> toscaProperties, String heatFileName,
-      HeatOrchestrationTemplate heatOrchestrationTemplate, String resourceType, Template template,
-      TranslationContext context) {
+  public static Map<String, Object> getToscaPropertiesSimpleConversion(ServiceTemplate
+                                                                           serviceTemplate,
+      String resourceId,Map<String, Object> heatProperties, Map<String, Object> toscaProperties,
+      String heatFileName, HeatOrchestrationTemplate heatOrchestrationTemplate, String
+      resourceType, Template template, TranslationContext context) {
 
     toscaProperties = toscaProperties != null ? toscaProperties : new HashMap<>();
 
     for (String heatPropertyName : context.getElementSet(resourceType, Constants.PROP)) {
 
-      setSimpleProperty(heatProperties, heatFileName, resourceType, heatOrchestrationTemplate,
+      setSimpleProperty(serviceTemplate, resourceId, heatProperties, heatFileName, resourceType,
+          heatOrchestrationTemplate,
           context, toscaProperties, heatPropertyName, null, template);
     }
     return toscaProperties;
@@ -73,7 +78,9 @@ public class TranslatorHeatToToscaPropertyConverter {
    * @param toscaPropertyName         the tosca property name
    * @param template                  the template
    */
-  public static void setSimpleProperty(Map<String, Object> heatProperties, String heatFileName,
+  public static void setSimpleProperty(ServiceTemplate serviceTemplate,String resourceId,
+                                       Map<String, Object> heatProperties,
+                                       String heatFileName,
                                        String resourceType,
                                        HeatOrchestrationTemplate heatOrchestrationTemplate,
                                        TranslationContext context,
@@ -90,10 +97,14 @@ public class TranslatorHeatToToscaPropertyConverter {
     if (toscaPropertyName == null) {
       toscaPropertyName = resourceType == null ? heatPropertyName
           : context.getElementMapping(resourceType, Constants.PROP, heatPropertyName);
+      if (toscaPropertyName == null) {
+        return;
+      }
     }
     toscaProperties.put(toscaPropertyName,
-        getToscaPropertyValue(heatPropertyName, propertyValue, resourceType, heatFileName,
-            heatOrchestrationTemplate, template, context));
+        getToscaPropertyValue(serviceTemplate, resourceId,heatPropertyName, propertyValue,
+            resourceType,
+            heatFileName, heatOrchestrationTemplate, template, context));
   }
 
 
@@ -109,26 +120,30 @@ public class TranslatorHeatToToscaPropertyConverter {
    * @param context                   the context
    * @return the tosca property value
    */
-  public static Object getToscaPropertyValue(String propertyName, Object propertyValue,
-                                             String resourceType, String heatFileName,
+  public static Object getToscaPropertyValue(ServiceTemplate serviceTemplate, String resourceId,
+                                             String propertyName, Object propertyValue,
+                                             String  resourceType, String heatFileName,
                                              HeatOrchestrationTemplate heatOrchestrationTemplate,
                                              Template template, TranslationContext context) {
     if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
       Map.Entry<String, Object> functionMapEntry =
           (Map.Entry<String, Object>) ((Map) propertyValue).entrySet().iterator().next();
-      if (TranslatorHeatToToscaFunctionConverter.functionNameSet
-          .contains(functionMapEntry.getKey())) {
-        return TranslatorHeatToToscaFunctionConverter
-            .getToscaFunction(functionMapEntry.getKey(), functionMapEntry.getValue(), heatFileName,
-                heatOrchestrationTemplate, template, context);
+      if (FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).isPresent()) {
+        return FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).get()
+            .translateFunction(serviceTemplate, resourceId, propertyName ,functionMapEntry
+                .getKey(), functionMapEntry
+                .getValue(),  heatFileName, heatOrchestrationTemplate, template, context);
       }
       Map<String, Object> propertyValueMap = new HashMap<>();
       for (Map.Entry<String, Object> entry : ((Map<String, Object>) propertyValue).entrySet()) {
         String toscaPropertyName = resourceType == null ? null : context
-            .getElementMapping(resourceType, Constants.PROP, propertyName + "." + entry.getKey());
+            .getElementMapping(resourceType, Constants.PROP, propertyName
+                + ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR + entry.getKey());
         toscaPropertyName = toscaPropertyName != null ? toscaPropertyName : entry.getKey();
         propertyValueMap.put(toscaPropertyName,
-            getToscaPropertyValue(propertyName, entry.getValue(), resourceType, heatFileName,
+            getToscaPropertyValue(serviceTemplate, resourceId,
+                propertyName + ConfigConstants.TRANS_MAPPING_DELIMITER_CHAR
+                    + entry.getKey(), entry.getValue(), resourceType, heatFileName,
                 heatOrchestrationTemplate, template, context));
       }
       return propertyValueMap;
@@ -136,8 +151,9 @@ public class TranslatorHeatToToscaPropertyConverter {
       List propertyValueArray = new ArrayList<>();
       for (int i = 0; i < ((List) propertyValue).size(); i++) {
         propertyValueArray.add(
-            getToscaPropertyValue(propertyName, ((List) propertyValue).get(i), resourceType,
-                heatFileName, heatOrchestrationTemplate, template, context));
+            getToscaPropertyValue(serviceTemplate, resourceId, propertyName, ((List)
+                propertyValue).get(i),
+                resourceType, heatFileName, heatOrchestrationTemplate, template, context));
       }
       return propertyValueArray;
     }

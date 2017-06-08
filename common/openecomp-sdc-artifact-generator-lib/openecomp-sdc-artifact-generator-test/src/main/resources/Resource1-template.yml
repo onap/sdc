@@ -1,0 +1,24 @@
+ # _______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           								 	  |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							  |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: af39c951-3a61-4324-9a1f-892a26f713fb
+  UUID: 438eecb8-bdf0-4356-b8f4-80dfcaafecbf
+  name: resource_1
+  description: description
+  type: VF
+  category: Generic
+  subcategory: Infrastructure
+  resourceVendor: vendor name
+  resourceVendorRelease: vendor release
+topology_template:
+  substitution_mapping:
+    node_type: org.openecomp.resource.vf.Resource1
+ # _______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           								 	  |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							  |
+ #|_______________________________________________________________________________________________________________________________________|

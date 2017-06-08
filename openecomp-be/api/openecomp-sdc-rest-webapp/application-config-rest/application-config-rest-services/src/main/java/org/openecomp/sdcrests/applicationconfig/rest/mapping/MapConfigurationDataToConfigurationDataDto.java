@@ -24,6 +24,9 @@ import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import org.openecomp.sdcrests.applicationconfiguration.types.ConfigurationDataDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
+/**
+ * Created by Talio on 8/9/2016.
+ */
 public class MapConfigurationDataToConfigurationDataDto
     extends MappingBase<ConfigurationData, ConfigurationDataDto> {
   @Override

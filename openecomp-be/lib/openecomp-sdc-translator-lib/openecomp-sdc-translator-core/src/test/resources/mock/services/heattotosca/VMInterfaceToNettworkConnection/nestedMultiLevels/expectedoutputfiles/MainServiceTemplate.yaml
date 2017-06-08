@@ -1,0 +1,156 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.jsa:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    contrail_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+    jsa_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: network name of jsa log network
+  node_templates:
+    test_nested1Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: test_net
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+        p2:
+          get_attribute:
+          - test_contrailV2_net
+          - fq_name
+      requirements:
+      - link_template_VMInt_OAM_lb_1:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_2:
+          capability: tosca.capabilities.network.Linkable
+          node: test_contrailV2_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_5_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_7_test_nested4Level_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_8_test_nested4Level_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_6_test_nested3Level_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_3_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_4_test_nested2Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_contrailV2_net
+          relationship: tosca.relationships.network.LinksTo
+    test_resourceGroup:
+      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      directives:
+      - substitutable
+      properties:
+        p1:
+          list_join:
+          - ':'
+          - get_attribute:
+            - test_contrailV2_net
+            - fq_name
+        service_template_filter:
+          substitute_service_template: nested3ServiceTemplate.yaml
+          count: 9
+          mandatory: true
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_template_VMInt_OAM_lb_8_test_nested4Level:
+          capability: tosca.capabilities.network.Linkable
+          node: test_contrailV2_net
+          relationship: tosca.relationships.network.LinksTo
+      - link_template_VMInt_OAM_lb_6:
+          capability: tosca.capabilities.network.Linkable
+          node: test_contrailV2_net
+          relationship: tosca.relationships.network.LinksTo
+    test_contrailV2_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_name:
+          get_input: contrail_net_name
+    test_nestedInvalidConnectionToNetwork2:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: test_contrail_net
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+    test_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    test_nestedInvalidConnectionToNetwork1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested1
+      directives:
+      - substitutable
+      properties:
+        p1: test_nova
+        service_template_filter:
+          substitute_service_template: nested1ServiceTemplate.yaml
+    test_contrail_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: contrail_net_name
+    test_nova:
+      type: org.openecomp.resource.vfc.nodes.heat.jsa
+      properties:
+        image: image
+        name:
+          get_input: jsa_name
+  groups:
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested1Level
+      - test_resourceGroup
+      - test_contrailV2_net
+      - test_nestedInvalidConnectionToNetwork2
+      - test_net
+      - test_nestedInvalidConnectionToNetwork1
+      - test_contrail_net
+      - test_nova

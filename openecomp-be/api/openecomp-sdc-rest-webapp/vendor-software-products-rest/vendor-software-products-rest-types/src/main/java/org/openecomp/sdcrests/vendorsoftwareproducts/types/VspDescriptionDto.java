@@ -21,9 +21,13 @@
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
+import org.openecomp.sdcrests.common.types.VersionDto;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Created by TALIO on 4/20/2016.
+ */
 public class VspDescriptionDto {
   @NotNull
   private String name;
@@ -38,7 +42,7 @@ public class VspDescriptionDto {
   private String vendorName;
   @NotNull
   private String vendorId;            // this will be populated with vlm id
-  private String licensingVersion;    // this will be populated with vlm version
+  private VersionDto licensingVersion;    // this will be populated with vlm version
   private LicensingData licensingData;
 
   public String getName() {
@@ -97,11 +101,11 @@ public class VspDescriptionDto {
     this.vendorId = vendorId;
   }
 
-  public String getLicensingVersion() {
+  public VersionDto getLicensingVersion() {
     return licensingVersion;
   }
 
-  public void setLicensingVersion(String licensingVersion) {
+  public void setLicensingVersion(VersionDto licensingVersion) {
     this.licensingVersion = licensingVersion;
   }
 

@@ -38,7 +38,7 @@ public abstract class MixinFeatureGroupModel {
   @JacksonXmlElementWrapper(localName = "license-key-group-list")
   abstract Set<LicenseKeyGroupEntity> getLicenseKeyGroups();
 
-  @JacksonXmlProperty(isAttribute = false, localName = "internal-part-number")
+  @JacksonXmlProperty(isAttribute = false, localName = "part-number")
   abstract String getEntityPartNumber();
 
   @JacksonXmlProperty(isAttribute = false, localName = "feature-group-uuid")

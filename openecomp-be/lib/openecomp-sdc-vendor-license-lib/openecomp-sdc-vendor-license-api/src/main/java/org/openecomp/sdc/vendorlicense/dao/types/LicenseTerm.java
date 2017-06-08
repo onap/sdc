@@ -24,5 +24,5 @@ public enum LicenseTerm {
   Fixed_Term,
   Perpetual,
   Unlimited,
-  Other
+  Other;
 }

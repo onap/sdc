@@ -1,0 +1,68 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  jsa_name:
+    type: string
+  security_group_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  jsa_security_group1:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+  jsa_security_group2:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+  test_nova:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: jsa_name}
+      image: image
+
+outputs:
+    p1:
+      value: {get_resource: jsa_security_group1}
+    shared_test_group2:
+      value: {get_resource: jsa_security_group2}
+    shared_test_nova:
+      value: {get_resource: test_nova}
+

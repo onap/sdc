@@ -24,11 +24,12 @@ import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.action.dao.types.ActionArtifactEntity;
 import org.openecomp.sdc.action.types.ActionArtifact;
 
+
 public interface ActionArtifactDao extends BaseDao<ActionArtifactEntity> {
 
-  void uploadArtifact(ActionArtifact data);
+  public void uploadArtifact(ActionArtifact data);
 
-  ActionArtifact downloadArtifact(int effectiveVersion, String artifactUuId);
+  public ActionArtifact downloadArtifact(int effectiveVersion, String artifactUuId);
 
-  void updateArtifact(ActionArtifact data);
+  public void updateArtifact(ActionArtifact data);
 }

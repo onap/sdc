@@ -21,15 +21,15 @@ import Common from '../../../../../../common/Common';
 import Logger from '../../../../../../common/Logger';
 
 import Icon from '../../../../../icons/Icon';
-import iconSettings from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/settings.svg';
-import iconExpanded from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/expanded.svg';
-import iconCollapsed from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/collapsed.svg';
-import iconOccurrenceDefault from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/occurrence-default.svg';
-import iconOccurrenceStart from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/occurrence-start.svg';
-import iconOccurrenceStop from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/occurrence-stop.svg';
-import iconFragmentDefault from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/fragment-default.svg';
-import iconFragmentStart from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/fragment-start.svg';
-import iconFragmentStop from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/fragment-stop.svg';
+import iconSettings from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/settings.svg';
+import iconExpanded from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/expanded.svg';
+import iconCollapsed from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/collapsed.svg';
+import iconOccurrenceDefault from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/occurrence-default.svg';
+import iconOccurrenceStart from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/occurrence-start.svg';
+import iconOccurrenceStop from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/occurrence-stop.svg';
+import iconFragmentDefault from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/fragment-default.svg';
+import iconFragmentStart from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/fragment-start.svg';
+import iconFragmentStop from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/fragment-stop.svg';
 
 /**
  * Action menu view.

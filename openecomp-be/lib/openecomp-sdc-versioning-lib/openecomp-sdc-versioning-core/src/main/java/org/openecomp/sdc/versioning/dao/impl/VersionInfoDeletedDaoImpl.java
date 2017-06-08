@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.versioning.dao.impl;
 
+
 import com.datastax.driver.mapping.Mapper;
 import com.datastax.driver.mapping.Result;
 import com.datastax.driver.mapping.annotations.Accessor;

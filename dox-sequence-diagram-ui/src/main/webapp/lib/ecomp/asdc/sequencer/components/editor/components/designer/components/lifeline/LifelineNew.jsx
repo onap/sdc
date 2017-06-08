@@ -18,8 +18,8 @@ import React from 'react';
 import { DragSource } from 'react-dnd';
 
 import Icon from '../../../../../icons/Icon';
-import iconPlus from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/plus.svg';
-import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/handle.svg';
+import iconPlus from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/plus.svg';
+import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/handle.svg';
 
 /**
  * LHS lifeline row view.

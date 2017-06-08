@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.applicationconfiguration.types;
 
+/**
+ * Created by Talio on 8/9/2016.
+ */
 public class ConfigurationDataDto {
   private String value;
   private long timeStamp;

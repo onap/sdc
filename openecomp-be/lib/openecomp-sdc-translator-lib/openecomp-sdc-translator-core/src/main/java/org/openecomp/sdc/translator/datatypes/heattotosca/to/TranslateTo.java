@@ -24,7 +24,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.to;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.translator.services.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 
 public class TranslateTo {
   private String heatFileName;

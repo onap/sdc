@@ -1,7 +1,27 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.translator.impl.heattotosca.outputs;
 
-import org.openecomp.sdc.translator.services.heattotosca.impl.BaseResourceTranslationTest;
 import org.junit.Test;
+import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.BaseResourceTranslationTest;
 
 public class HeatOutputConversionTest extends BaseResourceTranslationTest {
 
@@ -14,37 +34,6 @@ public class HeatOutputConversionTest extends BaseResourceTranslationTest {
   public void testTranslate() throws Exception {
     testTranslation();
   }
-
-
-  //private static final String MANIFEST_NAME = "MANIFEST.json";
-
-   /* @Test
-    public void testTranslate_outputs() throws IOException {
-
-        HeatToToscaTranslator heatToToscaTranslator = HeatToToscaTranslatorFactory.getInstance().createInterface();
-        URL url = this.getClass().getResource("/mock/heat/outputs");
-        File manifestFile = new File(url.getPath());
-        File[] files = manifestFile.listFiles();
-        FileInputStream fis;
-        byte[] fileContent;
-        for (File file : files) {
-            fis = new FileInputStream(file);
-            fileContent = FileUtils.toByteArray(fis);
-            if (file.getName().equals(MANIFEST_NAME)) {
-                heatToToscaTranslator.addManifest(MANIFEST_NAME, new String(fileContent));
-            } else {
-                heatToToscaTranslator.addFile(file.getName(), fileContent);
-            }
-        }
-
-        TranslatorOutput translatorOutput = heatToToscaTranslator.translate();
-        Assert.assertNotNull(translatorOutput);
-        File file = new File("Outputs.zip");
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(translatorOutput.getTranslationContent());
-        fos.close();
-
-    }*/
 
 
 }

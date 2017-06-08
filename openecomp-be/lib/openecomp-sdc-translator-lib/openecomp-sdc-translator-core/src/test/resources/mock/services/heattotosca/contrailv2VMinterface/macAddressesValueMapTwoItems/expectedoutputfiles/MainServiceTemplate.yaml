@@ -1,0 +1,72 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+topology_template:
+  inputs:
+    vlc1_Internal2_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1_Internal2
+    internal_net_id_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal2_net
+    internal_net_id_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: UUID of Internal1_net
+    security_group_int2_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+    security_group_int1_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security Group UUID for output
+    vlc1_Internal1_mac:
+      hidden: false
+      immutable: false
+      type: string
+      description: static mac address assigned to vlc1_Internal1
+    vlc_st_interface_type_int1:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+    vlc_st_interface_type_int2:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for the ServiceTemplate
+  node_templates:
+    template_VMInt_INT1_VLC_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: security_group_int1_id
+        virtual_network_refs:
+        - get_input: internal_net_id_0
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: vlc_st_interface_type_int1
+        virtual_machine_interface_mac_addresses:
+        - get_input: vlc1_Internal1_mac
+        - get_input: vlc1_Internal2_mac
+        - abc
+  groups:
+    vmme_vlc_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/vmme_vlc.yml
+        description: |
+          Module HOT template to create vmme 2 vlc
+      members:
+      - template_VMInt_INT1_VLC_1

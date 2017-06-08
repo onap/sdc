@@ -1,5 +1,28 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.tosca.datatypes;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.tosca.datatypes.model.ArtifactType;
 import org.openecomp.sdc.tosca.datatypes.model.AttributeDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.CapabilityAssignment;
@@ -7,7 +30,6 @@ import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.Constraint;
 import org.openecomp.sdc.tosca.datatypes.model.Directive;
 import org.openecomp.sdc.tosca.datatypes.model.Import;
-import org.openecomp.sdc.tosca.datatypes.model.Metadata;
 import org.openecomp.sdc.tosca.datatypes.model.NodeFilter;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
@@ -23,10 +45,6 @@ import org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt
 import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
-import org.openecomp.core.utilities.yaml.YamlUtil;
-import org.junit.Assert;
-import org.junit.Test;
-
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,21 +59,24 @@ public class ToscaModelTest {
   public void testServiceTemplateJavaToYaml() {
 
     ServiceTemplate serviceTemplate = new ServiceTemplate();
-    Metadata metadata = new Metadata();
-    metadata.setTemplate_author("OPENECOMP");
-    metadata.setTemplate_name("Test");
-    metadata.setTemplate_version("1.0.0");
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put("Template_author", "OPENECOMP");
+    metadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, "Test");
+    metadata.put("Template_version", "1.0.0");
     serviceTemplate.setTosca_definitions_version("tosca_simple_yaml_1_0_0");
     serviceTemplate.setDescription("testing desc tosca service template");
-    serviceTemplate.setMetadata(metadata);
 
     Import fileImport1 = new Import();
     fileImport1.setFile("path1/path2/file1.yaml");
     Import fileImport2 = new Import();
     fileImport2.setFile("path1/path2/file2.yaml");
-    Map<String, Import> imports = new HashMap<>();
-    imports.put("myfile1", fileImport1);
-    imports.put("myfile2", fileImport2);
+    List<Map<String, Import>> imports = new ArrayList<>();
+    Map<String, Import> importsMap = new HashMap<>();
+    importsMap.put("myfile1", fileImport1);
+    imports.add(importsMap);
+    importsMap = new HashMap<>();
+    importsMap.put("myfile2", fileImport2);
+    imports.add(importsMap);
     serviceTemplate.setImports(imports);
 
     ArtifactType artifact = new ArtifactType();

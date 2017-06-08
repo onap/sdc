@@ -73,6 +73,11 @@ public class Artifact implements Comparable<Artifact> {
     this.errors.add(error);
   }
 
+  @Override
+  public int hashCode() {
+    int result = fileName.hashCode();
+    return result;
+  }
 
   @Override
   public boolean equals(Object obj) {
@@ -90,12 +95,6 @@ public class Artifact implements Comparable<Artifact> {
     }
     return true;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = fileName.hashCode();
-    return result;
   }
 
   @Override

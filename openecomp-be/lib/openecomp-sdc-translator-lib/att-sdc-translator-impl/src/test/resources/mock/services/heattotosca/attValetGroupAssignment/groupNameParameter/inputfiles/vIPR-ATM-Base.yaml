@@ -1,0 +1,318 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create the vIPR-ATM firwall service template and instance.
+  This template creates the following
+  - Two service virtual networks for each side (left and right) of the vIPR-ATM firewalls
+  - Two virtual networks for high availability between the vIPR-ATM firewalls
+  - A Contrail Service Template for the vIPR-ATM service
+  - A Contrail Service Instance for the vIPR-ATM service
+
+  The firewall virtual machines connected to these created networks and managed by the
+  vIPR-ATM service instance will be created by the vIPR-ATM-Instance.yaml HOT template.
+
+  Network Policy that includes the vIPR-ATM service instance will be created by client
+  specific HOT templates or Contrail APIs. 
+
+parameters:
+  vipr_atm_service_left_ip_prefix:
+    type: string
+    constraints:
+      - allowed_pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+        description: A valid IPv4 dot quad IP address.
+    description: Left vIPR-ATM service network IP address prefix
+  vipr_atm_service_left_ip_prefix_len:
+    type: number
+    constraints:
+      - range: { min: 0, max: 32 }
+        description: a valid IPv4 prefix value from 0 to 32.
+    description: Left vIPR-ATM service network IP address prefix length
+
+  vipr_atm_service_right_ip_prefix:
+    type: string
+    constraints:
+      - allowed_pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+        description: A valid IPv4 dot quad IP address.
+    description: Right vIPR-ATM service network IP address prefix
+  vipr_atm_service_right_ip_prefix_len:
+    type: number
+    constraints:
+      - range: { min: 0, max: 32 }
+        description: a valid IPv4 prefix value from 0 to 32.
+    description: Right vIPR-ATM service network IP address prefix length
+
+  vipr_atm_ha_one_cidr:
+    type: string
+    constraints:
+      - allowed_pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(?:3[0-2]|[12]?[0-9])$
+        description: A valid IPv4 CIDR (dot quad IP address / previx value 0 to 32).
+    description: vIPR-ATM private High Availability Network One IP address CIDR
+
+  vipr_atm_ha_two_cidr:
+    type: string
+    constraints:
+      - allowed_pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(?:3[0-2]|[12]?[0-9])$
+        description: A valid IPv4 CIDR (dot quad IP address / previx value 0 to 32).
+    description: vIPR-ATM private High Availability Network Two IP address CIDR
+
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance
+  vf_module_id:
+    type: string
+    description: Unique ID for the VF Module instance
+
+resources:
+  vIPR_ATM_Service_Left:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_SERVICE_LEFT_NETWORK
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      network_ipam_refs: ["default-domain:default-project:default-network-ipam"]
+      network_ipam_refs_data:
+        [{
+        network_ipam_refs_data_ipam_subnets:
+          [{
+          network_ipam_refs_data_ipam_subnets_subnet:
+            {
+            network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+              {
+              get_param: vipr_atm_service_left_ip_prefix
+              },
+            network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+              {
+              get_param: vipr_atm_service_left_ip_prefix_len
+              },
+            },
+          }]
+        }]
+
+  vIPR_ATM_Service_Right:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_SERVICE_RIGHT_NETWORK
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      network_ipam_refs: ["default-domain:default-project:default-network-ipam"]
+      network_ipam_refs_data:
+        [{
+        network_ipam_refs_data_ipam_subnets:
+          [{
+          network_ipam_refs_data_ipam_subnets_subnet:
+            {
+            network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+              {
+              get_param: vipr_atm_service_right_ip_prefix
+              },
+            network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+              {
+              get_param: vipr_atm_service_right_ip_prefix_len
+              },
+            },
+          }]
+        }]
+
+  vIPR_ATM_Ha_One:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_HA_ONE_NETWORK
+          params:
+            VNF_NAME: { get_param: vnf_name }
+
+  vIPR_ATM_Ha_One_Subnet:
+    type: OS::Neutron::Subnet
+    depends_on: 
+      - vIPR_ATM_Ha_One
+    properties:
+      name:
+        str_replace:
+          template: NET_NAME_SUBNET
+          params:
+            NET_NAME: { get_attr: [ vIPR_ATM_Ha_One, name ] }
+      network: { get_resource: vIPR_ATM_Ha_One }
+      cidr: { get_param: vipr_atm_ha_one_cidr }
+      enable_dhcp: False
+      gateway_ip: null
+
+  vIPR_ATM_Ha_Two:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_HA_TWO_NETWORK
+          params:
+            VNF_NAME: { get_param: vnf_name }
+
+  vIPR_ATM_Ha_Two_Subnet:
+    type: OS::Neutron::Subnet
+    depends_on: 
+      - vIPR_ATM_Ha_Two
+    properties:
+      name:
+        str_replace:
+          template: NET_NAME_SUBNET
+          params:
+            NET_NAME: { get_attr: [ vIPR_ATM_Ha_Two, name ] }
+      network: { get_resource: vIPR_ATM_Ha_Two }
+      cidr: { get_param: vipr_atm_ha_two_cidr }
+      enable_dhcp: False
+      gateway_ip: null
+
+  vIPR_ATM_Service_Template:
+    type: OS::ContrailV2::ServiceTemplate
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_SERVICE_TEMPLATE
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      service_template_properties:
+        {
+        service_template_properties_version: 2,
+        service_template_properties_service_mode: transparent,
+        service_template_properties_service_type: firewall,
+        service_template_properties_service_virtualization_type: virtual-machine,
+        service_template_properties_interface_type:
+          [
+          {
+          service_template_properties_interface_type_service_interface_type: Left,
+          service_template_properties_interface_type_shared_ip: True,
+          },
+          {
+          service_template_properties_interface_type_service_interface_type: Right,
+          service_template_properties_interface_type_shared_ip: True,
+          }
+          ],
+        }
+      domain: default-domain
+
+  vIPR_ATM_Service_Instance:
+    type: OS::ContrailV2::ServiceInstance
+    depends_on: 
+      - vIPR_ATM_Service_Left
+      - vIPR_ATM_Service_Right
+      - vIPR_ATM_Service_Template
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_SERVICE_INSTANCE
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      service_template_refs: [{ get_resource: vIPR_ATM_Service_Template }]
+      service_instance_properties:
+        {
+        service_instance_properties_ha_mode: active-active,
+        service_instance_properties_left_virtual_network: 
+          {
+          list_join: [':', { get_attr: [ vIPR_ATM_Service_Left, fq_name ] } ]
+          },
+        service_instance_properties_right_virtual_network: 
+          {
+          list_join: [':', { get_attr: [ vIPR_ATM_Service_Right, fq_name ] } ]
+          },
+        }
+  
+  # Management (OAM) Port Security Group to allow ingress SSH 
+  vIPR_ATM_OAM_SG:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: 
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_OAM_SG
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      rules:
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 22
+          port_range_max: 22
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 443
+          port_range_max: 443
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: tcp
+          port_range_min: 3978
+          port_range_max: 3978
+        - remote_ip_prefix: 0.0.0.0/0
+          protocol: icmp
+
+  vIPR_ATM_HA_ONE_SG:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_HA_ONE_SG
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      rules:
+        - remote_mode: remote_group_id
+
+  vIPR_ATM_HA_TWO_SG:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_HA_TWO_SG
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      rules:
+        - remote_mode: remote_group_id
+
+  vIPR_ATM_Server_Group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VIPR_ATM_SERVER_GROUP
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      policies: 
+        - anti-affinity
+
+outputs:
+  vipr_atm_contrail_service_instance_fqdn:
+    description: The FQDN for the Contrail Service Instance that is needed to create tenant OAM network policy to service change through the vIPR-ATM firewall.
+    value: { list_join: [':', { get_attr: [ vIPR_ATM_Service_Instance, fq_name ] } ] }
+
+  vipr_atm_service_left_fqdn:
+    description: The FQDN for the vIPR-ATM Service Left network.
+    value: { list_join: [':', { get_attr: [ vIPR_ATM_Service_Left, fq_name ] } ] }
+
+  vipr_atm_service_right_fqdn:
+    description: The FQDN for the vIPR-ATM Service Right network.
+    value: { list_join: [':', { get_attr: [ vIPR_ATM_Service_Right, fq_name ] } ] }
+
+  vipr_atm_ha_one_id:
+    description: The UUID for the vIPR-ATM HA One network.
+    value: { get_resource: vIPR_ATM_Ha_One }
+
+  vipr_atm_ha_two_id:
+    description: The UUID for the vIPR-ATM HA Two network.
+    value: { get_resource: vIPR_ATM_Ha_Two }
+
+  vipr_atm_oam_net_security_groups:
+    description: The list of OpenStack Security Groups to appliy to the vIPR-ATM-Instance\'s OAM network.
+    value: [ { get_resource: vIPR_ATM_OAM_SG } ]
+
+  vipr_atm_ha_one_security_groups:
+    description: The list of OpenStack Security Groups to appliy to the vIPR-ATM-Instance\'s HA One network.
+    value: [ { get_resource: vIPR_ATM_HA_ONE_SG } ]
+
+  vipr_atm_ha_two_security_groups:
+    description: The list of OpenStack Security Groups to appliy to the vIPR-ATM-Instance\'s HA Two network.
+    value: [ { get_resource: vIPR_ATM_HA_TWO_SG } ]
+
+  vipr_atm_server_group:
+    description: The UUID for the vIPR-ATM OpenStack Server Group
+    value: { get_resource: vIPR_ATM_Server_Group }

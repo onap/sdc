@@ -1,6 +1,10 @@
 .dual-list-box {
   display: flex;
   margin: 25px 0 10px 0;
+	.svg-icon.search {
+		height: 14px;
+		width: 14px;
+	}
 
   .dual-search-multi-select-section {
     $multi-select-box-width: 398px;
@@ -32,6 +36,10 @@
   .dual-list-options-bar {
     margin: 62px 54px 27px 54px;
     padding-top: 23px;
+		.svg-icon {
+			width: 14px;
+			height: 14px;
+		}
     .dual-list-option {
       text-align: center;
       line-height: 10px;
@@ -40,7 +48,7 @@
       height: 15px;
       cursor: pointer;
       margin-top: 20px;
-      color: $blue;
+      fill: $blue;
     }
   }
 }

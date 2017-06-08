@@ -30,6 +30,109 @@ Rest API Documentation
 # APIs
 
 
+## /v1.0/activity-logs/{itemId}/versions/{versionId}
+
+
+### GET
+
+<a id="getActivityLog">List actions log of item</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>itemId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Item Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | Array[<a href="#/definitions/ActivityLogDto">ActivityLogDto</a>]|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## /v1.0/application-configuration
 
 
@@ -356,16 +459,15 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>body</th>
-    <td>body</td>
+    <th>validate</th>
+    <td>formData</td>
     <td>no</td>
     <td></td>
     <td> - </td>
 
-    <td>
     
-    <a href="#/definitions/InputStream">InputStream</a> 
-    </td>
+            <td>file </td>
+    
 
 </tr>
 
@@ -561,7 +663,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}
 
 
 ### GET
@@ -609,10 +711,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -710,6 +812,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -786,6 +901,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -822,7 +950,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/actions
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/actions
 
 
 
@@ -886,6 +1014,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -926,7 +1067,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/entitlement-pools
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools
 
 
 ### GET
@@ -974,10 +1115,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -1078,6 +1219,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -1117,7 +1271,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/entitlement-pools/{entitlementPoolId}
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/entitlement-pools/{entitlementPoolId}
 
 
 ### GET
@@ -1165,10 +1319,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -1279,6 +1433,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>entitlementPoolId</th>
     <td>path</td>
     <td>yes</td>
@@ -1368,6 +1535,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>entitlementPoolId</th>
     <td>path</td>
     <td>yes</td>
@@ -1417,7 +1597,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/feature-groups
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups
 
 
 ### GET
@@ -1465,10 +1645,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -1569,6 +1749,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -1608,7 +1801,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/feature-groups/{featureGroupId}
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/feature-groups/{featureGroupId}
 
 
 ### GET
@@ -1656,10 +1849,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -1770,6 +1963,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>featureGroupId</th>
     <td>path</td>
     <td>yes</td>
@@ -1859,6 +2065,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>featureGroupId</th>
     <td>path</td>
     <td>yes</td>
@@ -1908,7 +2127,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/license-agreements
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements
 
 
 ### GET
@@ -1956,10 +2175,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -2060,6 +2279,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -2099,7 +2331,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/license-agreements/{licenseAgreementId}
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-agreements/{licenseAgreementId}
 
 
 ### GET
@@ -2147,10 +2379,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -2261,6 +2493,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>licenseAgreementId</th>
     <td>path</td>
     <td>yes</td>
@@ -2350,6 +2595,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>licenseAgreementId</th>
     <td>path</td>
     <td>yes</td>
@@ -2399,7 +2657,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/license-key-groups
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups
 
 
 ### GET
@@ -2447,10 +2705,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -2551,6 +2809,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -2590,7 +2861,7 @@ Rest API Documentation
 
 
 
-## /v1.0/vendor-license-models/{vlmId}/license-key-groups/{licenseKeyGroupId}
+## /v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups/{licenseKeyGroupId}
 
 
 ### GET
@@ -2638,10 +2909,10 @@ Rest API Documentation
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
     <td> - </td>
 
     
@@ -2752,6 +3023,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>licenseKeyGroupId</th>
     <td>path</td>
     <td>yes</td>
@@ -2841,6 +3125,19 @@ Rest API Documentation
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor license model version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>licenseKeyGroupId</th>
     <td>path</td>
     <td>yes</td>
@@ -2895,7 +3192,7 @@ Rest API Documentation
 
 ### GET
 
-<a id="getVspList">Get list of vendor software products and their description</a>
+<a id="listVsps">Get list of vendor software products and their description</a>
 
 
 
@@ -2928,7 +3225,7 @@ Rest API Documentation
     <th>versionFilter</th>
     <td>query</td>
     <td>no</td>
-    <td>Currently supported values: &#x27;Final&#x27; - only vendor software products with final version will be return - with their latest final version</td>
+    <td>Currently supported values: &#x27;Final&#x27; - only vendor software products with final  version will be return - with their latest final version</td>
     <td> - </td>
 
     
@@ -2972,7 +3269,7 @@ Rest API Documentation
 ### POST
 
 
-<a id="createNewVsp">Create a new vendor software product</a>
+<a id="createVsp">Create a new vendor software product</a>
 
 
 
@@ -3264,177 +3561,6 @@ Exports translated file to a zip file
 ## /v1.0/vendor-software-products/{vspId}
 
 
-### GET
-
-<a id="getVspDetails">Get details of a vendor software product</a>
-
-
-
-
-
-
-
-
-
-#### Request
-
-
-**Content-Type: ** application/json
-
-##### Parameters
-
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Located in</th>
-        <th>Required</th>
-        <th>Description</th>
-        <th>Default</th>
-        <th>Schema</th>
-    </tr>
-
-
-
-<tr>
-    <th>vspId</th>
-    <td>path</td>
-    <td>yes</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-
-</table>
-
-
-
-#### Response
-
-**Content-Type: ** application/json
-
-
-| Status Code | Reason      | Response Model |
-|-------------|-------------|----------------|
-| default    | successful operation |  - |
-
-
-
-
-### PUT
-
-<a id="updateVsp">Update an existing vendor software product</a>
-
-
-
-
-
-
-
-
-
-#### Request
-
-
-**Content-Type: ** application/json
-
-##### Parameters
-
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Located in</th>
-        <th>Required</th>
-        <th>Description</th>
-        <th>Default</th>
-        <th>Schema</th>
-    </tr>
-
-
-
-<tr>
-    <th>vspId</th>
-    <td>path</td>
-    <td>yes</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>body</th>
-    <td>body</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    <td>
-    
-    <a href="#/definitions/VspDescriptionDto">VspDescriptionDto</a> 
-    </td>
-
-</tr>
-
-<tr>
-    <th>USER_ID</th>
-    <td>header</td>
-    <td>no</td>
-    <td></td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-
-</table>
-
-
-
-#### Response
-
-**Content-Type: ** application/json
-
-
-| Status Code | Reason      | Response Model |
-|-------------|-------------|----------------|
-| default    | successful operation |  - |
 
 
 
@@ -3522,7 +3648,209 @@ Exports translated file to a zip file
 
 
 
-## /v1.0/vendor-software-products/{vspId}/actions
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}
+
+
+### GET
+
+<a id="getVsp">Get details of a vendor software product</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| default    | successful operation |  - |
+
+
+
+
+### PUT
+
+<a id="updateVsp">Update an existing vendor software product</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>body</th>
+    <td>body</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    <td>
+    
+    <a href="#/definitions/VspDescriptionDto">VspDescriptionDto</a> 
+    </td>
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| default    | successful operation |  - |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/actions
 
 
 
@@ -3560,6 +3888,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 <tr>
     <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -3626,7 +3967,211 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/component-dependency-model
+
+
+### GET
+
+<a id="list">Get component dependency Model for vendor software product</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | Array[<a href="#/definitions/ComponentDependencyModelRequestDto">ComponentDependencyModelRequestDto</a>]|
+
+
+
+
+
+
+### POST
+
+
+<a id="create">Create a vendor software product component dependency model</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>body</th>
+    <td>body</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    <td>
+    
+    <a href="#/definitions/ComponentDependencyModelRequestDto">ComponentDependencyModelRequestDto</a> 
+    </td>
+
+</tr>
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| default    | successful operation |  - |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components
 
 
 ### GET
@@ -3674,10 +4219,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -3778,6 +4323,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -3853,6 +4411,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -3889,7 +4460,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}
 
 
 ### GET
@@ -3937,10 +4508,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>componentId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -3950,10 +4521,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>componentId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product component Id</td>
     <td> - </td>
 
     
@@ -4042,6 +4613,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -4140,6 +4724,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -4189,7 +4786,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp
 
 
 ### GET
@@ -4228,6 +4825,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -4285,7 +4895,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 ### DELETE
 
-<a id="deletePollMibFile">Delete vendor software product MIB Poll Definitions file</a>
+<a id="deletePollMibFile">Delete vendor software product MIB SNMP_POLL Definitions file</a>
 
 
 
@@ -4319,6 +4929,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -4377,7 +5000,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp-trap
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp-trap
 
 
 
@@ -4388,7 +5011,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 ### DELETE
 
-<a id="deleteTrapMibFile">Delete vendor software product MIB Trap Definitions file</a>
+<a id="deleteTrapMibFile">Delete vendor software product MIB SNMP_TRAP Definitions file</a>
 
 
 
@@ -4431,10 +5054,23 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Component Id</td>
     <td> - </td>
 
     
@@ -4480,7 +5116,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp-trap/upload
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp-trap/upload
 
 
 
@@ -4490,7 +5126,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 ### POST
 
 
-<a id="uploadTrapMibFile">Upload vendor software product MIB Trap Definitions file</a>
+<a id="uploadTrapMibFile">Upload vendor software product MIB SNMP_TRAP Definitions file</a>
 
 
 
@@ -4547,10 +5183,23 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Component Id</td>
     <td> - </td>
 
     
@@ -4599,7 +5248,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors/snmp/upload
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors/snmp/upload
 
 
 
@@ -4609,7 +5258,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 ### POST
 
 
-<a id="uploadPollMibFile">Upload vendor software product MIB Poll Definitions file</a>
+<a id="uploadPollMibFile">Upload vendor software product MIB SNMP_POLL Definitions file</a>
 
 
 
@@ -4666,6 +5315,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -4718,7 +5380,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/nics
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics
 
 
 ### GET
@@ -4766,10 +5428,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>componentId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -4779,10 +5441,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>componentId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product component Id</td>
     <td> - </td>
 
     
@@ -4883,6 +5545,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -4935,7 +5610,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/nics/{nicId}
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics/{nicId}
 
 
 ### GET
@@ -4983,6 +5658,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5000,19 +5688,6 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product NIC Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -5101,6 +5776,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -5212,6 +5900,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5274,7 +5975,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/nics/{nicId}/questionnaire
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/nics/{nicId}/questionnaire
 
 
 ### GET
@@ -5322,6 +6023,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5339,19 +6053,6 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product NIC Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -5449,6 +6150,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5515,7 +6229,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/processes
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes
 
 
 ### GET
@@ -5563,10 +6277,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>componentId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -5576,10 +6290,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>componentId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product component Id</td>
     <td> - </td>
 
     
@@ -5680,6 +6394,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5768,6 +6495,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5817,7 +6557,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/processes/{processId}
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes/{processId}
 
 
 ### GET
@@ -5865,6 +6605,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -5882,19 +6635,6 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product process Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -5983,6 +6723,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -6094,6 +6847,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -6156,7 +6922,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/processes/{processId}/upload
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/processes/{processId}/upload
 
 
 ### GET
@@ -6204,6 +6970,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -6221,19 +7000,6 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product process Id</td>
-    <td> - </td>
-
-    
-            <td>string </td>
-    
-
-</tr>
-
-<tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
     <td> - </td>
 
     
@@ -6325,6 +7091,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -6435,6 +7214,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -6497,7 +7289,7 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/components/{componentId}/questionnaire
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/questionnaire
 
 
 ### GET
@@ -6545,10 +7337,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>componentId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product component Id</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -6558,10 +7350,10 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>componentId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product component Id</td>
     <td> - </td>
 
     
@@ -6659,6 +7451,19 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>componentId</th>
     <td>path</td>
     <td>yes</td>
@@ -6712,14 +7517,16 @@ Performs one of the following actions on a vendor software product: |Checkout: L
 
 
 
-## /v1.0/vendor-software-products/{vspId}/downloadHeat
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/heal
 
 
-### GET
 
-<a id="getLatestHeatPackage">Get uploaded HEAT file</a>
 
-Downloads the latest HEAT package
+### PUT
+
+<a id="heal">Checkout and heal vendor software product questionnaire</a>
+
+
 
 
 
@@ -6760,6 +7567,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -6779,12 +7599,12 @@ Downloads the latest HEAT package
 
 #### Response
 
-**Content-Type: ** application/octet-stream
+**Content-Type: ** application/json
 
 
 | Status Code | Reason      | Response Model |
 |-------------|-------------|----------------|
-| 200    | successful operation | <a href="#/definitions/File">File</a>|
+| 200    | successful operation | <a href="#/definitions/QuestionnaireResponseDto">QuestionnaireResponseDto</a>|
 
 
 
@@ -6800,9 +7620,7 @@ Downloads the latest HEAT package
 
 
 
-
-
-## /v1.0/vendor-software-products/{vspId}/networks
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/networks
 
 
 ### GET
@@ -6850,10 +7668,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -6954,6 +7772,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -6993,7 +7824,7 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/networks/{networkId}
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/networks/{networkId}
 
 
 ### GET
@@ -7041,10 +7872,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>networkId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product network Id</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -7054,10 +7885,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>networkId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product network Id</td>
     <td> - </td>
 
     
@@ -7146,6 +7977,19 @@ Downloads the latest HEAT package
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
     <td> - </td>
 
     
@@ -7244,6 +8088,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>networkId</th>
     <td>path</td>
     <td>yes</td>
@@ -7293,7 +8150,618 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/processes
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template
+
+
+### GET
+
+<a id="getOrchestrationTemplate">Get Orchestration Template (HEAT) file</a>
+
+Downloads the latest HEAT package
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/octet-stream
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | <a href="#/definitions/File">File</a>|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate
+
+
+### GET
+
+<a id="get">Get uploaded candidate HEAT file</a>
+
+Downloads in process candidate HEAT file
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/octet-stream
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | <a href="#/definitions/File">File</a>|
+
+
+
+
+
+
+### POST
+
+
+<a id="uploadOrchestrationTemplateCandidate">Uploads a HEAT package to translate</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** multipart/form-data
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>upload</th>
+    <td>formData</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>file </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | <a href="#/definitions/UploadFileResponseDto">UploadFileResponseDto</a>|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate/manifest
+
+
+### GET
+
+<a id="getFilesDataStructure">Get uploaded HEAT file files data structure</a>
+
+Downloads the latest HEAT package
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | <a href="#/definitions/FileDataStructureDto">FileDataStructureDto</a>|
+
+
+
+
+### PUT
+
+<a id="updateFilesDataStructure">Update an existing vendor software product</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>body</th>
+    <td>body</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    <td>
+    
+    <a href="#/definitions/FileDataStructureDto">FileDataStructureDto</a> 
+    </td>
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| default    | successful operation |  - |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/orchestration-template-candidate/process
+
+
+
+
+### PUT
+
+<a id="process">process Orchestration Template Candidate</a>
+
+
+
+
+
+
+
+
+
+#### Request
+
+
+**Content-Type: ** application/json
+
+##### Parameters
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Located in</th>
+        <th>Required</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Schema</th>
+    </tr>
+
+
+
+<tr>
+    <th>vspId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>USER_ID</th>
+    <td>header</td>
+    <td>no</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+
+</table>
+
+
+
+#### Response
+
+**Content-Type: ** application/json
+
+
+| Status Code | Reason      | Response Model |
+|-------------|-------------|----------------|
+| 200    | successful operation | <a href="#/definitions/UploadFileResponseDto">UploadFileResponseDto</a>|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes
 
 
 ### GET
@@ -7341,10 +8809,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -7445,6 +8913,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -7520,6 +9001,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -7556,7 +9050,7 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/processes/{processId}
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes/{processId}
 
 
 ### GET
@@ -7604,10 +9098,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>processId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product process Id</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -7617,10 +9111,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>processId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product process Id</td>
     <td> - </td>
 
     
@@ -7709,6 +9203,19 @@ Downloads the latest HEAT package
     <td>path</td>
     <td>yes</td>
     <td>Vendor software product Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -7807,6 +9314,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>processId</th>
     <td>path</td>
     <td>yes</td>
@@ -7856,7 +9376,7 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/processes/{processId}/upload
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes/{processId}/upload
 
 
 ### GET
@@ -7904,10 +9424,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>processId</th>
+    <th>versionId</th>
     <td>path</td>
     <td>yes</td>
-    <td>Vendor software product process Id</td>
+    <td>Vendor software product version Id</td>
     <td> - </td>
 
     
@@ -7917,10 +9437,10 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
-    <td></td>
+    <th>processId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product process Id</td>
     <td> - </td>
 
     
@@ -8021,6 +9541,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>processId</th>
     <td>path</td>
     <td>yes</td>
@@ -8109,6 +9642,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td>Vendor software product version Id</td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>processId</th>
     <td>path</td>
     <td>yes</td>
@@ -8158,7 +9704,7 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/questionnaire
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/questionnaire
 
 
 ### GET
@@ -8206,9 +9752,9 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>version</th>
-    <td>query</td>
-    <td>no</td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
     <td></td>
     <td> - </td>
 
@@ -8307,6 +9853,19 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
+    <td></td>
+    <td> - </td>
+
+    
+            <td>string </td>
+    
+
+</tr>
+
+<tr>
     <th>USER_ID</th>
     <td>header</td>
     <td>no</td>
@@ -8347,17 +9906,12 @@ Downloads the latest HEAT package
 
 
 
-## /v1.0/vendor-software-products/{vspId}/upload
+## /v1.0/vendor-software-products/{vspId}/versions/{versionId}/vspInformationArtifact
 
 
+### GET
 
-
-
-
-### POST
-
-
-<a id="uploadFile">Uploads a HEAT package to translate</a>
+<a id="getVspInformationArtifact">Get vendor software product information artifact for specified version</a>
 
 
 
@@ -8370,7 +9924,7 @@ Downloads the latest HEAT package
 #### Request
 
 
-**Content-Type: ** multipart/form-data
+**Content-Type: ** application/json
 
 ##### Parameters
 
@@ -8400,16 +9954,15 @@ Downloads the latest HEAT package
 </tr>
 
 <tr>
-    <th>body</th>
-    <td>body</td>
-    <td>no</td>
+    <th>versionId</th>
+    <td>path</td>
+    <td>yes</td>
     <td></td>
     <td> - </td>
 
-    <td>
     
-    <a href="#/definitions/InputStream">InputStream</a> 
-    </td>
+            <td>string </td>
+    
 
 </tr>
 
@@ -8433,12 +9986,15 @@ Downloads the latest HEAT package
 
 #### Response
 
-**Content-Type: ** application/json
+**Content-Type: ** text/plain
 
 
 | Status Code | Reason      | Response Model |
 |-------------|-------------|----------------|
-| 200    | successful operation | <a href="#/definitions/UploadFileResponseDto">UploadFileResponseDto</a>|
+| 200    | successful operation | <a href="#/definitions/File">File</a>|
+
+
+
 
 
 
@@ -8649,7 +10205,7 @@ Get list of actions based on a filter criteria | If no filter is sent all action
 
 ### GET
 
-<a id="getEcompComponents">List ECOMP Components supported by Action Library</a>
+<a id="getOpenEcompComponents">List OPENECOMP Components supported by Action Library</a>
 
 
 
@@ -8696,12 +10252,12 @@ Get list of actions based on a filter criteria | If no filter is sent all action
 
 
 
-## /workflow/v1.0/actions/{actionInvariantUUID}
+## /workflow/v1.0/actions/{actionInvariantUuId}
 
 
 ### GET
 
-<a id="getActionsByActionInvariantUuId">List Actions For Given Action Invariant UUID</a>
+<a id="getActionsByActionInvariantUuId">List Actions For Given Action Invariant UuId</a>
 
 
 
@@ -8731,7 +10287,7 @@ Get list of actions based on a filter criteria | If no filter is sent all action
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -8805,7 +10361,7 @@ Get list of actions based on a filter criteria | If no filter is sent all action
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -8881,7 +10437,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -8957,7 +10513,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -8993,7 +10549,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 
-## /workflow/v1.0/actions/{actionInvariantUUID}/artifacts
+## /workflow/v1.0/actions/{actionInvariantUuId}/artifacts
 
 
 
@@ -9033,7 +10589,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9129,16 +10685,15 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 </tr>
 
 <tr>
-    <th>body</th>
-    <td>body</td>
+    <th>uploadArtifact</th>
+    <td>formData</td>
     <td>no</td>
     <td></td>
     <td> - </td>
 
-    <td>
     
-    <a href="#/definitions/Attachment">Attachment</a> 
-    </td>
+            <td>file </td>
+    
 
 </tr>
 
@@ -9169,7 +10724,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 
-## /workflow/v1.0/actions/{actionInvariantUUID}/artifacts/{artifactUUID}
+## /workflow/v1.0/actions/{actionInvariantUuId}/artifacts/{artifactUuId}
 
 
 
@@ -9206,7 +10761,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9219,7 +10774,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 </tr>
 
 <tr>
-    <th>artifactUUID</th>
+    <th>artifactUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9315,16 +10870,15 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 </tr>
 
 <tr>
-    <th>body</th>
-    <td>body</td>
+    <th>updateArtifact</th>
+    <td>formData</td>
     <td>no</td>
     <td></td>
     <td> - </td>
 
-    <td>
     
-    <a href="#/definitions/Attachment">Attachment</a> 
-    </td>
+            <td>file </td>
+    
 
 </tr>
 
@@ -9379,7 +10933,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionInvariantUUID</th>
+    <th>actionInvariantUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9392,7 +10946,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 </tr>
 
 <tr>
-    <th>artifactUUID</th>
+    <th>artifactUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9428,7 +10982,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 
-## /workflow/v1.0/actions/{actionUUID}/artifacts/{artifactUUID}
+## /workflow/v1.0/actions/{actionUuId}/artifacts/{artifactUuId}
 
 
 ### GET
@@ -9463,7 +11017,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 <tr>
-    <th>actionUUID</th>
+    <th>actionUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9476,7 +11030,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 </tr>
 
 <tr>
-    <th>artifactUUID</th>
+    <th>artifactUuId</th>
     <td>path</td>
     <td>yes</td>
     <td></td>
@@ -9520,6 +11074,136 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
 
 
 # Definitions
+
+## <a name="/definitions/ActivityLogDto">ActivityLogDto</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>id</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>timestamp</td>
+            <td>
+                
+                    
+                    string (date-time)
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>type</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>comment</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>user</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>status</td>
+            <td>
+                
+                    <a href="#/definitions/ActivityStatus">ActivityStatus</a>
+                    
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
+## <a name="/definitions/ActivityStatus">ActivityStatus</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>success</td>
+            <td>
+                
+                    
+                    boolean
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>message</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
 
 ## <a name="/definitions/Attachment">Attachment</a>
 
@@ -9572,10 +11256,10 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>contentDisposition</td>
+            <td>dataHandler</td>
             <td>
                 
-                    <a href="#/definitions/ContentDisposition">ContentDisposition</a>
+                    <a href="#/definitions/DataHandler">DataHandler</a>
                     
                 
             </td>
@@ -9585,10 +11269,10 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>dataHandler</td>
+            <td>contentDisposition</td>
             <td>
                 
-                    <a href="#/definitions/DataHandler">DataHandler</a>
+                    <a href="#/definitions/ContentDisposition">ContentDisposition</a>
                     
                 
             </td>
@@ -9857,6 +11541,99 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td></td>
         </tr>
     
+        <tr>
+            <td>vfcCode</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
+## <a name="/definitions/ComponentDependencyModel">ComponentDependencyModel</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>sourceId</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>targetId</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>relationType</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
+## <a name="/definitions/ComponentDependencyModelRequestDto">ComponentDependencyModelRequestDto</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>componentDependencyModels</td>
+            <td>
+                
+                
+                    array[<a href="#/definitions/ComponentDependencyModel">ComponentDependencyModel</a>]
+                
+                
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
 </table>
 
 ## <a name="/definitions/ComponentDto">ComponentDto</a>
@@ -9885,6 +11662,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
     
         <tr>
             <td>displayName</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>vfcCode</td>
             <td>
                 
                     
@@ -9950,6 +11740,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
     
         <tr>
             <td>displayName</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>vfcCode</td>
             <td>
                 
                     
@@ -10093,6 +11896,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
     
         <tr>
             <td>humanPresentableName</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>subType</td>
             <td>
                 
                     
@@ -10273,19 +12089,6 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td></td>
         </tr>
     
-        <tr>
-            <td>subType</td>
-            <td>
-                
-                    
-                    string
-                
-            </td>
-            <td>optional</td>
-            <td>-</td>
-            <td></td>
-        </tr>
-    
 </table>
 
 ## <a name="/definitions/DataHandler">DataHandler</a>
@@ -10352,11 +12155,11 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>contentType</td>
+            <td>outputStream</td>
             <td>
                 
+                    <a href="#/definitions/OutputStream">OutputStream</a>
                     
-                    string
                 
             </td>
             <td>optional</td>
@@ -10365,11 +12168,11 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>outputStream</td>
+            <td>contentType</td>
             <td>
                 
-                    <a href="#/definitions/OutputStream">OutputStream</a>
                     
+                    string
                 
             </td>
             <td>optional</td>
@@ -10462,11 +12265,11 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>contentType</td>
+            <td>outputStream</td>
             <td>
                 
+                    <a href="#/definitions/OutputStream">OutputStream</a>
                     
-                    string
                 
             </td>
             <td>optional</td>
@@ -10475,11 +12278,11 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>outputStream</td>
+            <td>contentType</td>
             <td>
                 
-                    <a href="#/definitions/OutputStream">OutputStream</a>
                     
+                    string
                 
             </td>
             <td>optional</td>
@@ -11442,6 +13245,73 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
     
 </table>
 
+## <a name="/definitions/FileDataStructureDto">FileDataStructureDto</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>modules</td>
+            <td>
+                
+                
+                    array[<a href="#/definitions/Module">Module</a>]
+                
+                
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>unassigned</td>
+            <td>
+                
+                
+                array[string]
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>artifacts</td>
+            <td>
+                
+                
+                array[string]
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>nested</td>
+            <td>
+                
+                
+                array[string]
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
 ## <a name="/definitions/InputStream">InputStream</a>
 
 <table border="1">
@@ -12054,7 +13924,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>wildcardType</td>
+            <td>wildcardSubtype</td>
             <td>
                 
                     
@@ -12067,7 +13937,7 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
-            <td>wildcardSubtype</td>
+            <td>wildcardType</td>
             <td>
                 
                     
@@ -12107,6 +13977,97 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
     
         <tr>
             <td>snmpPoll</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
+## <a name="/definitions/Module">Module</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>name</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>isBase</td>
+            <td>
+                
+                    
+                    boolean
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>yaml</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>env</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>vol</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>volEnv</td>
             <td>
                 
                     
@@ -12587,6 +14548,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         </tr>
     
         <tr>
+            <td>type</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
             <td>id</td>
             <td>
                 
@@ -12651,6 +14625,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td></td>
         </tr>
     
+        <tr>
+            <td>type</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
 </table>
 
 ## <a name="/definitions/QuestionnaireResponseDto">QuestionnaireResponseDto</a>
@@ -12690,6 +14677,19 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td></td>
         </tr>
     
+        <tr>
+            <td>errorMessage</td>
+            <td>
+                
+                    <a href="#/definitions/ErrorMessage">ErrorMessage</a>
+                    
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
 </table>
 
 ## <a name="/definitions/UploadFileResponseDto">UploadFileResponseDto</a>
@@ -12702,19 +14702,6 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
         <th>description</th>
         <th>example</th>
     </tr>
-    
-        <tr>
-            <td>fileNames</td>
-            <td>
-                
-                
-                array[string]
-                
-            </td>
-            <td>optional</td>
-            <td>-</td>
-            <td></td>
-        </tr>
     
         <tr>
             <td>errors</td>
@@ -12837,8 +14824,8 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td>version</td>
             <td>
                 
+                    <a href="#/definitions/VersionDto">VersionDto</a>
                     
-                    string
                 
             </td>
             <td>optional</td>
@@ -12877,7 +14864,9 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td>
                 
                 
-                array[string]
+                    array[<a href="#/definitions/VersionDto">VersionDto</a>]
+                
+                
                 
             </td>
             <td>optional</td>
@@ -12890,7 +14879,9 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td>
                 
                 
-                array[string]
+                    array[<a href="#/definitions/VersionDto">VersionDto</a>]
+                
+                
                 
             </td>
             <td>optional</td>
@@ -12946,6 +14937,45 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
                 
             </td>
             <td>required</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+</table>
+
+## <a name="/definitions/VersionDto">VersionDto</a>
+
+<table border="1">
+    <tr>
+        <th>name</th>
+        <th>type</th>
+        <th>required</th>
+        <th>description</th>
+        <th>example</th>
+    </tr>
+    
+        <tr>
+            <td>id</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
+            <td>-</td>
+            <td></td>
+        </tr>
+    
+        <tr>
+            <td>label</td>
+            <td>
+                
+                    
+                    string
+                
+            </td>
+            <td>optional</td>
             <td>-</td>
             <td></td>
         </tr>
@@ -13110,8 +15140,8 @@ Performs one of the following actions on a action: |Checkout: Locks it for edits
             <td>licensingVersion</td>
             <td>
                 
+                    <a href="#/definitions/VersionDto">VersionDto</a>
                     
-                    string
                 
             </td>
             <td>optional</td>

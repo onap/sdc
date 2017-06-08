@@ -7,36 +7,15 @@ parameters:
   jsa_net_name:
     type: string
     description: network name of jsa log network
-  contrail_net_name:
-    type: string
-  jsa_name:
-    type: string
 
 resources:
-  test_nova:
-    type: OS::Nova::Server
-    properties:
-      name: {get_param: jsa_name}
-      image: image
-
   test_net:
     type: OS::Neutron::Net
     properties:
       name: {get_param: jsa_net_name}
       shared: True
 
-  test_contrailV2_net:
-    type: OS::ContrailV2::VirtualNetwork
-    properties:
-      name: { get_param: contrail_net_name }
-
   test_nested:
     type: nested.yml
     properties:
       p1: { get_resource: test_net}
-      p2: { get_attr: [ test_contrailV2_net, fq_name ] }
-
-  test_nestedInvalidConnectionToNetwork:
-    type: nested.yml
-    properties:
-      p1: { get_resource: test_nova}

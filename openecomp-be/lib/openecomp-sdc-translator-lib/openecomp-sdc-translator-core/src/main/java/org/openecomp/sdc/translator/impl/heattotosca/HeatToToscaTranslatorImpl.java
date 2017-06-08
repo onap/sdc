@@ -21,22 +21,30 @@
 package org.openecomp.sdc.translator.impl.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.validation.api.ValidationManager;
-import org.openecomp.core.validation.errors.Messages;
 import org.openecomp.core.validation.factory.ValidationManagerFactory;
-import org.openecomp.core.validation.types.MessageContainerUtil;
-import org.openecomp.sdc.common.utils.AsdcCommon;
+import org.openecomp.core.validation.util.MessageContainerUtil;
+import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.utils.SdcCommon;
+import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
-import org.openecomp.sdc.translator.services.heattotosca.TranslationContext;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
+import org.openecomp.sdc.translator.services.heattotosca.ConsolidationService;
 import org.openecomp.sdc.translator.services.heattotosca.TranslationService;
+import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionManager;
+import org.openecomp.sdc.translator.services.heattotosca.UnifiedCompositionService;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -59,7 +67,7 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
     manifest.setContent(manifestData);
     translationContext.setManifest(manifest);
     translationContext.addFile(name, content);
-    validationManager.addFile(AsdcCommon.MANIFEST_NAME, content);
+    validationManager.addFile(SdcCommon.MANIFEST_NAME, content);
     addFilesFromManifestToTranslationContextManifestFilesMap(manifestData.getData());
     isValid = false;
   }
@@ -82,7 +90,7 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
 
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
     if (translationContext.getManifest() == null) {
-      ErrorMessage.ErrorMessageUtil.addMessage(AsdcCommon.MANIFEST_NAME, errors)
+      ErrorMessage.ErrorMessageUtil.addMessage(SdcCommon.MANIFEST_NAME, errors)
           .add(new ErrorMessage(ErrorLevel.ERROR, Messages.MANIFEST_NOT_EXIST.getErrorMessage()));
       return errors;
     }
@@ -90,7 +98,7 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
     if (MapUtils.isEmpty(errors)) {
       errors = validationManager.validate();
     }
-    if (MapUtils.isEmpty(errors)) {
+    if (MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, errors))) {
       isValid = true;
     }
     return errors;
@@ -100,6 +108,8 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
   public TranslatorOutput translate() {
     TranslationService translationService = new TranslationService();
     TranslatorOutput translatorOutput = new TranslatorOutput();
+    UnifiedCompositionManager unifiedCompositionManager = new UnifiedCompositionManager(new
+        ConsolidationService(new UnifiedCompositionService()));
     if (!isValid) {
       Map<String, List<ErrorMessage>> errors = validate();
 
@@ -110,6 +120,9 @@ public class HeatToToscaTranslatorImpl implements HeatToToscaTranslator {
     }
 
     translatorOutput = translationService.translateHeatFiles(translationContext);
+    ToscaServiceModel unifiedToscaServiceModel = unifiedCompositionManager
+        .createUnifiedComposition(translatorOutput.getToscaServiceModel(), translationContext);
+    translatorOutput.setToscaServiceModel(unifiedToscaServiceModel);
     return translatorOutput;
   }
 

@@ -1,0 +1,692 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+topology_template:
+  inputs:
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+    nems_traffic_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    security_group_name:
+      hidden: false
+      immutable: false
+      description: not impotrtant
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    vlan_ids:
+      hidden: false
+      immutable: false
+      type: string
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+    lb_st_vlan_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+    network_ipam_refs_data_ipam_subnets_addr_from_start_true:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+    subinterface_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+  node_templates:
+    jsa_net3:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_name: aaa
+    jsa_net2:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_name:
+          get_attribute:
+          - template_VMInt_OAM_lb_2
+          - virtual_machine_interface_properties
+          - virtual_machine_interface_properties_service_interface_type
+    jsa_net4:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: nems_traffic_name
+    template_Vlan_9:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - jsa_net1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - jsa_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork
+      properties:
+        network_ipam_refs_data:
+        - network_ipam_refs_data_ipam_subnets:
+          - network_ipam_refs_data_ipam_subnets_subnet:
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len_2
+              network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+                get_input: network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_2
+            network_ipam_refs_data_ipam_subnets_addr_from_start:
+              get_input: network_ipam_refs_data_ipam_subnets_addr_from_start_true
+        network_name:
+          get_attribute:
+          - template_Vlan_1
+          - virtual_machine_interface_allowed_address_pairs
+          - allowed_address_pair
+          - 1
+          - ip
+          - ip_prefix
+    template_Vlan_8:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - template_Vlan_1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - jsa_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    template_Vlan_7:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+    cmaui_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network: jsa_net1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    template_VMInt_OAM_lb_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          get_attribute:
+          - template_Vlan_1
+          - virtual_machine_interface_properties
+          - sub_interface_vlan_tag
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - jsa_net1
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    template_VMInt_OAM_lb_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - jsa_net2
+            - fq_name
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net2
+          relationship: tosca.relationships.network.LinksTo
+    template_VMInt_OAM_lb_3:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - get_attribute:
+          - jsa_net3
+          - fq_name
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net3
+          relationship: tosca.relationships.network.LinksTo
+    template_VMInt_OAM_lb_4:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        security_group_refs:
+        - get_input: oam_sec_group_name
+        virtual_network_refs:
+        - get_attribute:
+          - jsa_net4
+          - fq_name
+        virtual_machine_interface_properties:
+          virtual_machine_interface_properties_service_interface_type:
+            get_input: lb_st_interface_type_oam
+        port_tuple_refs:
+        - get_input: template_PortTuple_LB1
+    template_Vlan_6:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs: [
+          ]
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs: [
+          ]
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+    template_Vlan_5:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs: template_VMInt_OAM_lb_1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs: jsa_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+    template_Vlan_4:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_attribute:
+          - template_VMInt_OAM_lb_3
+          - fq_name
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_attribute:
+          - jsa_net4
+          - fq_name
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_3
+          relationship: tosca.relationships.network.BindsTo
+    template_Vlan_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_attribute:
+          - template_VMInt_OAM_lb_3
+          - fq_name
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_attribute:
+          - jsa_net3
+          - fq_name
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net3
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_3
+          relationship: tosca.relationships.network.BindsTo
+    template_Vlan_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - template_VMInt_OAM_lb_2
+            - fq_name
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - list_join:
+          - ':'
+          - get_attribute:
+            - jsa_net2
+            - fq_name
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net2
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: template_VMInt_OAM_lb_2
+          relationship: tosca.relationships.network.BindsTo
+    template_Vlan_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - cmaui_port_1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - jsa_net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_port_1
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    hot_template_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot_template.yml
+        description: cmaui server template for vMMSC
+      members:
+      - jsa_net3
+      - jsa_net2
+      - jsa_net4
+      - template_Vlan_9
+      - jsa_net1
+      - template_Vlan_8
+      - template_Vlan_7
+      - cmaui_port_1
+      - template_VMInt_OAM_lb_1
+      - template_VMInt_OAM_lb_2
+      - template_VMInt_OAM_lb_3
+      - template_VMInt_OAM_lb_4
+      - template_Vlan_6
+      - template_Vlan_5
+      - template_Vlan_4
+      - template_Vlan_3
+      - template_Vlan_2
+      - template_Vlan_1

@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
 import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.LicenseAgreementDaoZusammenImpl;
 
 public class LicenseAgreementDaoFactoryImpl extends LicenseAgreementDaoFactory {
-  private static LicenseAgreementDao INSTANCE = new LicenseAgreementCassandraDaoImpl();
+  private static LicenseAgreementDao INSTANCE = new LicenseAgreementDaoZusammenImpl(
+      ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public LicenseAgreementDao createInterface() {

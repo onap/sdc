@@ -1,0 +1,131 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.pd_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    oam_flavor_name:
+      label: OAM flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of OAM instance
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+    packet_mirror_network_name:
+      label: packet mirror network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      entry_schema:
+        type: string
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+  node_templates:
+    pd01_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pd_01
+          relationship: tosca.relationships.network.BindsTo
+    resources_with_dependOn:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: server_pd_01
+          relationship: tosca.relationships.DependsOn
+    pd02_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
+        network:
+          get_input: oam_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_pd_01
+          relationship: tosca.relationships.network.BindsTo
+    server_pd_01:
+      type: org.openecomp.resource.vfc.nodes.heat.pd_server
+      properties:
+        flavor:
+          get_input: pd_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: pd_image_name
+        user_data_format: RAW
+        name:
+          get_input:
+          - pd_server_names
+          - 0
+  groups:
+    input_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/input.yaml
+        description: heat template that creates MOG stack
+      members:
+      - pd01_port_0
+      - resources_with_dependOn
+      - pd02_port_0
+      - server_pd_01

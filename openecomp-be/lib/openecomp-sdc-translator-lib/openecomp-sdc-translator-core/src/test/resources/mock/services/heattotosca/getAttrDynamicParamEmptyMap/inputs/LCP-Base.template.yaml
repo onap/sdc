@@ -1,0 +1,382 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Base resources needed for all LCP based vNFs.
+
+parameters:
+
+  default_prefix:
+    type: json
+    description: |
+      Default prefix for resources. The first key is the override
+      value from the ENV file. If it is empty the result will be
+      the default value. Otherwise the result will be empty.
+
+  ext_net_info:
+    type: json
+    description: |
+      Maps the network strings used in this HOT file
+       to network info for the target cloud.
+
+  ext_net_list:
+    type: comma_delimited_list
+    description: List of applicable subnet tags.
+
+  int_net_count:
+    type: number
+    description: Number of internal networks.
+    constraints:
+      - allowed_values: [1, 2]
+
+  # The value of this parameter should not be overridden.
+  int_net1_label:
+    type: json
+    description: |
+      Map the number of internal networks to an internal net1 label
+      or the empty string.
+    default:
+      {"1": "", "2": "INTERNALnet1"}
+
+  # This parameter should always be defaulted.
+  int_net2key:
+    type: json
+    description: |
+      Maps the empty string to "default" and any other string to "".
+    default: {"": "default"}
+
+  # This parameter should always be defaulted.
+  int_net2count:
+    type: json
+    description: |
+      Used to determine whether to create an internal network resource.
+      Key'd first by the number of internal networks.
+      Then by the internal network in question (0 or 1).
+      Then by int_net2key(the provided resource UUID value).
+    default: {
+      "0": {},
+      "1": {
+        "0": {"": 0, "default": 1},
+        "1": {"": 0, "default": 0}
+      },
+      "2": {
+        "0": {"": 0, "default": 1},
+        "1": {"": 0, "default": 1}
+      }
+    }
+
+  # This parameter should always be defaulted.
+  sec_chk:
+    type: json
+    description: Used to determine how many security groups to create (0 or 1).
+    default: {
+      "step1": {"": "EMPTY"},
+      "step2": {"EMPTY": 1, "": 0}
+    }
+
+  security_group:
+    type: string
+    description: |
+      (optional) security group to use instead of generating one.
+      Because this is optional we can't use a constraint check to
+      verify that it is a security group ID ("" would fail that test).
+    default: ""
+
+  total_vm_pairs:
+    type: string
+    description: |
+      This string will evaluate to the number of PairGroups in the VNF.
+
+resources:
+
+  NOKIA-LCP-OpenSec:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [sec_chk, "step2", {get_param: [sec_chk, "step1", {get_param: security_group}]}]}
+      resource_def:
+        type: OS::Neutron::SecurityGroup
+        properties:
+          description: |
+            Open security settings.
+            This assumes that security is handled internal to the guest.
+          name:
+            str_replace:
+              template: $prefixOpenSecGroup
+              params:
+                $prefix: {get_param: [default_prefix, ""]}
+          rules:
+            - {direction: ingress, ethertype: IPv4}
+            - {direction: egress, ethertype: IPv4}
+            - {direction: ingress, ethertype: IPv6}
+            - {direction: egress, ethertype: IPv6}
+
+  NOKIA-LCP-Keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: $prefixInternalKey
+          params:
+            $prefix: {get_param: [default_prefix, ""]}
+      save_private_key: True
+
+  NOKIA-LCP-InternalNet0:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [int_net2count, {str_replace: {template: "$str", params: {$str: {get_param: int_net_count}}}}, "0", {get_param: [int_net2key, {get_param: [ext_net_info, "INTERNALnet0", "id"]}]}]}
+      resource_def:
+        type: OS::Neutron::Net
+        properties:
+          name:
+            str_replace:
+              template: $prefixIntNet0
+              params:
+                $prefix: {get_param: [default_prefix, ""]}
+          admin_state_up: True
+          shared: False
+
+  NOKIA-LCP-InternalNet1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [int_net2count, {str_replace: {template: "$str", params: {$str: {get_param: int_net_count}}}}, "0", {get_param: [int_net2key, {get_param: [ext_net_info, "INTERNALnet1", "id"]}]}]}
+      resource_def:
+        type: OS::Neutron::Net
+        properties:
+          name:
+            str_replace:
+              template: $prefixIntNet1
+              params:
+                $prefix: {get_param: [default_prefix, ""]}
+          admin_state_up: True
+          shared: False
+
+  # The CIDR usage is really 169.254.0.0/16 but
+  # we don't want the cloud to choose any IP addresses
+  # that might also be assigned by the algorithms
+  # used by the vNF to determine internal IP addresses.
+  NOKIA-LCP-InternalSubNet0:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [int_net2count, {str_replace: {template: "$str", params: {$str: {get_param: int_net_count}}}}, "0", {get_param: [int_net2key, {get_param: [ext_net_info, "INTERNALnet0", "subnet_id"]}]}]}
+      resource_def:
+        type: OS::Neutron::Subnet
+        properties:
+          network:
+            str_replace:
+              template: $gen$prov
+              params:
+                $gen: {get_attr: [NOKIA-LCP-InternalNet0, refs, 0]}
+                $prov: {get_param: [ext_net_info, "INTERNALnet0", "id"]}
+          cidr: "169.254.5.0/24"
+          enable_dhcp: False
+
+  NOKIA-LCP-InternalSubNet1:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [int_net2count, {str_replace: {template: "$str", params: {$str: {get_param: int_net_count}}}}, "0", {get_param: [int_net2key, {get_param: [ext_net_info, "INTERNALnet1", "subnet_id"]}]}]}
+      resource_def:
+        type: OS::Neutron::Subnet
+        properties:
+          network:
+            str_replace:
+              template: $gen$prov
+              params:
+                $gen: {get_attr: [NOKIA-LCP-InternalNet1, refs, 0]}
+                $prov: {get_param: [ext_net_info, "INTERNALnet1", "id"]}
+          cidr: "169.254.9.0/24"
+          enable_dhcp: False
+
+outputs:
+
+  # Note that the generated and given security groups are mutually exclusive.
+  OpenSec:
+    description: Open security group.
+    value:
+      str_replace:
+        template: $gen$given
+        params:
+          $gen: {get_attr: [NOKIA-LCP-OpenSec, refs, 0]}
+          $given: {get_param: security_group}
+
+  PrivateKey:
+    description: Private SSH key for pre-install intra-VM communication.
+    value: {get_attr: [NOKIA-LCP-Keypair, private_key]}
+
+  PublicKey:
+    description: Public SSH key for pre-install intra-VM communication.
+    value: {get_attr: [NOKIA-LCP-Keypair, public_key]}
+
+  TotalPairCount:
+    description: |
+      This string will evaluate to the number of PairGroups in the VNF.
+    value: {get_param: total_vm_pairs}
+
+  IntNetInfo:
+    description: Internal network attributes.
+    value: {
+      "INTERNALnet0": {
+        "id": {
+          str_replace: {
+            template: "$gen$prov",
+            params: {
+              $gen: {get_attr: [NOKIA-LCP-InternalNet0, refs, 0]},
+              $prov: {get_param: [ext_net_info, "INTERNALnet0", "id"]}
+            }
+          }
+        },
+        "subnet_id": {
+          str_replace: {
+            template: "$gen$prov",
+            params: {
+              $gen: {get_attr: [NOKIA-LCP-InternalSubNet0, refs, 0]},
+              $prov: {get_param: [ext_net_info, "INTERNALnet0", "subnet_id"]}
+            }
+          }
+        },
+        "cidr": "169.254.0.0/16",
+        "default_gateway": ""
+      },
+      "INTERNALnet1": {
+        "id": {
+          str_replace: {
+            template: "$gen$prov",
+            params: {
+              $gen: {get_attr: [NOKIA-LCP-InternalNet1, refs, 0]},
+              $prov: {get_param: [ext_net_info, "INTERNALnet1", "id"]}
+            }
+          }
+        },
+        "subnet_id": {
+          str_replace: {
+            template: "$gen$prov",
+            params: {
+              $gen: {get_attr: [NOKIA-LCP-InternalSubNet1, refs, 0]},
+              $prov: {get_param: [ext_net_info, "INTERNALnet1", "subnet_id"]}
+            }
+          }
+        },
+        "cidr": "169.254.0.0/16",
+        "default_gateway": ""
+      }
+    }
+
+  NetInfoStr:
+    description: Per-subnet information in string format.
+    value:
+      str_replace:
+        template: |
+          {
+            "subnet_list": "INTERNALnet0 $intnet1 $tag00 $tag01 $tag02 $tag03 $tag04 $tag05 $tag06 $tag07 $tag08 $tag09 $tag10 $tag11",
+            "INTERNALnet0": {
+              "id": "$gennet0$provnet0",
+              "subnet_id": "$gensubnet0$provsubnet0",
+              "cidr": "169.254.0.0/16",
+              "default_gateway": ""
+            },
+            "INTERNALnet1": {
+              "id": "$gennet1$provnet1",
+              "subnet_id": "$gensubnet1$provsubnet1",
+              "cidr": "169.254.0.0/16",
+              "default_gateway": ""
+            },
+            "$tag00": {
+              "cidr": "$cidr00",
+              "default_gateway": "$gw00"
+            },
+            "$tag01": {
+              "cidr": "$cidr01",
+              "default_gateway": "$gw01"
+            },
+            "$tag02": {
+              "cidr": "$cidr02",
+              "default_gateway": "$gw02"
+            },
+            "$tag03": {
+              "cidr": "$cidr03",
+              "default_gateway": "$gw03"
+            },
+            "$tag04": {
+              "cidr": "$cidr04",
+              "default_gateway": "$gw04"
+            },
+            "$tag05": {
+              "cidr": "$cidr05",
+              "default_gateway": "$gw05"
+            },
+            "$tag06": {
+              "cidr": "$cidr06",
+              "default_gateway": "$gw06"
+            },
+            "$tag07": {
+              "cidr": "$cidr07",
+              "default_gateway": "$gw07"
+            },
+            "$tag08": {
+              "cidr": "$cidr08",
+              "default_gateway": "$gw08"
+            },
+            "$tag09": {
+              "cidr": "$cidr09",
+              "default_gateway": "$gw09"
+            },
+            "$tag10": {
+              "cidr": "$cidr10",
+              "default_gateway": "$gw10"
+            },
+            "$tag11": {
+              "cidr": "$cidr11",
+              "default_gateway": "$gw11"
+            }
+          }
+        params:
+          $intnet1: {get_param: [int_net1_label, {str_replace: {template: "$val", params: {$val: {get_param: int_net_count}}}}]}
+          $gennet0: {get_attr: [NOKIA-LCP-InternalNet0, refs, 0]}
+          $provnet0: {get_param: [ext_net_info, "INTERNALnet0", "id"]}
+          $gensubnet0: {get_attr: [NOKIA-LCP-InternalSubNet0, refs, 0]}
+          $provsubnet0: {get_param: [ext_net_info, "INTERNALnet0", "subnet_id"]}
+          $gennet1: {get_attr: [NOKIA-LCP-InternalNet1, refs, 0]}
+          $provnet1: {get_param: [ext_net_info, "INTERNALnet1", "id"]}
+          $gensubnet1: {get_attr: [NOKIA-LCP-InternalSubNet1, refs, 0]}
+          $provsubnet1: {get_param: [ext_net_info, "INTERNALnet1", "subnet_id"]}
+          $tag00: {get_param: [ext_net_list, 0]}
+          $cidr00: {get_param: [ext_net_info, {get_param: [ext_net_list, 0]}, cidr]}
+          $gw00: {get_param: [ext_net_info, {get_param: [ext_net_list, 0]}, default_gateway]}
+          $tag01: {get_param: [ext_net_list, 1]}
+          $cidr01: {get_param: [ext_net_info, {get_param: [ext_net_list, 1]}, cidr]}
+          $gw01: {get_param: [ext_net_info, {get_param: [ext_net_list, 1]}, default_gateway]}
+          $tag02: {get_param: [ext_net_list, 2]}
+          $cidr02: {get_param: [ext_net_info, {get_param: [ext_net_list, 2]}, cidr]}
+          $gw02: {get_param: [ext_net_info, {get_param: [ext_net_list, 2]}, default_gateway]}
+          $tag03: {get_param: [ext_net_list, 3]}
+          $cidr03: {get_param: [ext_net_info, {get_param: [ext_net_list, 3]}, cidr]}
+          $gw03: {get_param: [ext_net_info, {get_param: [ext_net_list, 3]}, default_gateway]}
+          $tag04: {get_param: [ext_net_list, 4]}
+          $cidr04: {get_param: [ext_net_info, {get_param: [ext_net_list, 4]}, cidr]}
+          $gw04: {get_param: [ext_net_info, {get_param: [ext_net_list, 4]}, default_gateway]}
+          $tag05: {get_param: [ext_net_list, 5]}
+          $cidr05: {get_param: [ext_net_info, {get_param: [ext_net_list, 5]}, cidr]}
+          $gw05: {get_param: [ext_net_info, {get_param: [ext_net_list, 5]}, default_gateway]}
+          $tag06: {get_param: [ext_net_list, 6]}
+          $cidr06: {get_param: [ext_net_info, {get_param: [ext_net_list, 6]}, cidr]}
+          $gw06: {get_param: [ext_net_info, {get_param: [ext_net_list, 6]}, default_gateway]}
+          $tag07: {get_param: [ext_net_list, 7]}
+          $cidr07: {get_param: [ext_net_info, {get_param: [ext_net_list, 7]}, cidr]}
+          $gw07: {get_param: [ext_net_info, {get_param: [ext_net_list, 7]}, default_gateway]}
+          $tag08: {get_param: [ext_net_list, 8]}
+          $cidr08: {get_param: [ext_net_info, {get_param: [ext_net_list, 8]}, cidr]}
+          $gw08: {get_param: [ext_net_info, {get_param: [ext_net_list, 8]}, default_gateway]}
+          $tag09: {get_param: [ext_net_list, 9]}
+          $cidr09: {get_param: [ext_net_info, {get_param: [ext_net_list, 9]}, cidr]}
+          $gw09: {get_param: [ext_net_info, {get_param: [ext_net_list, 9]}, default_gateway]}
+          $tag10: {get_param: [ext_net_list, 10]}
+          $cidr10: {get_param: [ext_net_info, {get_param: [ext_net_list, 10]}, cidr]}
+          $gw10: {get_param: [ext_net_info, {get_param: [ext_net_list, 10]}, default_gateway]}
+          $tag11: {get_param: [ext_net_list, 11]}
+          $cidr11: {get_param: [ext_net_info, {get_param: [ext_net_list, 11]}, cidr]}
+          $gw11: {get_param: [ext_net_info, {get_param: [ext_net_list, 11]}, default_gateway]}
+
+  Version:
+    description: |
+      Template file version number. This should be updated
+      each time a non-comment change is made to this file.
+    value: K1
+

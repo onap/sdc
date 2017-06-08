@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: eca_oam
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.eca:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -244,6 +220,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -251,6 +233,10 @@ topology_template:
             get_input:
             - arb_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -262,6 +248,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -269,6 +261,10 @@ topology_template:
             get_input:
             - eca_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -340,6 +336,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -347,6 +349,10 @@ topology_template:
             get_input:
             - eca_eca_mgmt_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -358,6 +364,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -365,6 +377,10 @@ topology_template:
             get_input:
             - eca_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -376,6 +392,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -383,6 +405,10 @@ topology_template:
             get_input:
             - arb_eca_mgmt_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -394,6 +420,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -401,6 +433,10 @@ topology_template:
             get_input:
             - eca_eca_mgmt_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -431,22 +467,22 @@ topology_template:
           relationship: oam2_volume_attachment
   relationship_templates:
     oam2_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: oam2_volume
         instance_uuid: oam2_instance
     oam1_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: oam1_volume
         instance_uuid: oam1_instance
     arb_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: arb_volume
         instance_uuid: arb_instance
   groups:
-    eca_oam:
+    eca_oam_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/eca_oam.yaml
@@ -467,103 +503,652 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.eca_oam
     capabilities:
-      attachment_oam2_volume:
-      - oam2_volume
-      - attachment
-      binding_oam2_instance:
-      - oam2_instance
-      - binding
-      attachment_oam2_int_port:
-      - oam2_int_port
-      - attachment
-      attachment_oam1_volume:
-      - oam1_volume
-      - attachment
-      os_oam1_instance:
+      disk.usage_arb_instance:
+      - arb_instance
+      - disk.usage
+      disk.capacity_arb_instance:
+      - arb_instance
+      - disk.capacity
+      disk.write.bytes.rate_oam1_instance:
       - oam1_instance
-      - os
-      scalable_oam2_instance:
-      - oam2_instance
-      - scalable
-      scalable_arb_instance:
-      - arb_instance
-      - scalable
-      endpoint_oam1_instance:
-      - oam1_instance
-      - endpoint
-      binding_arb_instance:
-      - arb_instance
-      - binding
-      host_arb_instance:
-      - arb_instance
-      - host
-      endpoint_arb_instance:
-      - arb_instance
-      - endpoint
-      attachment_oam1_int_port:
+      - disk.write.bytes.rate
+      network.incoming.bytes_oam1_int_port:
       - oam1_int_port
-      - attachment
-      attachment_arb_volume:
-      - arb_volume
-      - attachment
-      host_oam1_instance:
-      - oam1_instance
-      - host
-      os_oam2_instance:
-      - oam2_instance
-      - os
+      - network.incoming.bytes
       endpoint_oam2_instance:
       - oam2_instance
       - endpoint
-      scalable_oam1_instance:
-      - oam1_instance
-      - scalable
-      host_oam2_instance:
+      network.incoming.packets_oam1_int_port:
+      - oam1_int_port
+      - network.incoming.packets
+      disk.allocation_oam2_instance:
       - oam2_instance
-      - host
-      os_arb_instance:
-      - arb_instance
-      - os
-      attachment_oam1_mgmt_port:
-      - oam1_mgmt_port
-      - attachment
-      attachment_arb_int_port:
-      - arb_int_port
-      - attachment
+      - disk.allocation
       attachment_arb_mgmt_port:
       - arb_mgmt_port
       - attachment
+      feature_oam2_volume:
+      - oam2_volume
+      - feature
+      memory.resident_arb_instance:
+      - arb_instance
+      - memory.resident
+      disk.device.usage_oam1_instance:
+      - oam1_instance
+      - disk.device.usage
+      disk.device.allocation_oam2_instance:
+      - oam2_instance
+      - disk.device.allocation
+      network.incoming.bytes.rate_oam1_int_port:
+      - oam1_int_port
+      - network.incoming.bytes.rate
+      network.incoming.packets.rate_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.incoming.packets.rate
+      feature_oam1_int_port:
+      - oam1_int_port
+      - feature
+      network.incoming.packets_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.incoming.packets
+      disk.read.bytes_oam1_instance:
+      - oam1_instance
+      - disk.read.bytes
+      disk.device.read.requests_arb_instance:
+      - arb_instance
+      - disk.device.read.requests
+      attachment_oam1_volume:
+      - oam1_volume
+      - attachment
+      network.incoming.packets.rate_oam2_int_port:
+      - oam2_int_port
+      - network.incoming.packets.rate
+      network.outgoing.bytes.rate_arb_int_port:
+      - arb_int_port
+      - network.outgoing.bytes.rate
+      memory.usage_arb_instance:
+      - arb_instance
+      - memory.usage
+      disk.device.write.requests_oam2_instance:
+      - oam2_instance
+      - disk.device.write.requests
+      feature_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - feature
+      disk.read.bytes.rate_arb_instance:
+      - arb_instance
+      - disk.read.bytes.rate
+      network.outgoing.packets.rate_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.outgoing.packets.rate
+      binding_arb_mgmt_port:
+      - arb_mgmt_port
+      - binding
+      network.outpoing.packets_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.outpoing.packets
+      network.incoming.packets_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.incoming.packets
+      attachment_arb_int_port:
+      - arb_int_port
+      - attachment
+      disk.device.write.bytes_oam2_instance:
+      - oam2_instance
+      - disk.device.write.bytes
+      network.outgoing.packets.rate_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.outgoing.packets.rate
+      binding_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - binding
+      scalable_arb_instance:
+      - arb_instance
+      - scalable
+      cpu.delta_arb_instance:
+      - arb_instance
+      - cpu.delta
+      disk.usage_oam1_instance:
+      - oam1_instance
+      - disk.usage
+      disk.device.write.requests_arb_instance:
+      - arb_instance
+      - disk.device.write.requests
+      network.outgoing.bytes.rate_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets_arb_int_port:
+      - arb_int_port
+      - network.incoming.packets
+      disk.device.read.bytes_oam1_instance:
+      - oam1_instance
+      - disk.device.read.bytes
+      disk.device.iops_arb_instance:
+      - arb_instance
+      - disk.device.iops
+      memory_oam2_instance:
+      - oam2_instance
+      - memory
+      os_oam2_instance:
+      - oam2_instance
+      - os
+      disk.device.read.bytes.rate_oam1_instance:
+      - oam1_instance
+      - disk.device.read.bytes.rate
+      network.incoming.bytes_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.incoming.bytes
+      binding_oam2_instance:
+      - oam2_instance
+      - binding
+      network.outpoing.packets_oam1_int_port:
+      - oam1_int_port
+      - network.outpoing.packets
+      network.incoming.bytes.rate_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.incoming.bytes.rate
+      cpu_oam1_instance:
+      - oam1_instance
+      - cpu
+      disk.device.capacity_oam2_instance:
+      - oam2_instance
+      - disk.device.capacity
+      disk.root.size_oam1_instance:
+      - oam1_instance
+      - disk.root.size
+      attachment_oam1_int_port:
+      - oam1_int_port
+      - attachment
+      disk.iops_arb_instance:
+      - arb_instance
+      - disk.iops
+      memory.resident_oam1_instance:
+      - oam1_instance
+      - memory.resident
+      host_oam1_instance:
+      - oam1_instance
+      - host
+      network.incoming.bytes_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.incoming.bytes
+      network.outgoing.bytes_arb_int_port:
+      - arb_int_port
+      - network.outgoing.bytes
+      disk.device.write.bytes_arb_instance:
+      - arb_instance
+      - disk.device.write.bytes
+      instance_arb_instance:
+      - arb_instance
+      - instance
+      disk.device.latency_oam1_instance:
+      - oam1_instance
+      - disk.device.latency
+      network.incoming.bytes.rate_oam2_int_port:
+      - oam2_int_port
+      - network.incoming.bytes.rate
+      memory_oam1_instance:
+      - oam1_instance
+      - memory
+      binding_arb_instance:
+      - arb_instance
+      - binding
+      feature_arb_volume:
+      - arb_volume
+      - feature
+      disk.write.bytes_arb_instance:
+      - arb_instance
+      - disk.write.bytes
+      network.outgoing.packets.rate_oam1_int_port:
+      - oam1_int_port
+      - network.outgoing.packets.rate
+      binding_oam1_int_port:
+      - oam1_int_port
+      - binding
+      disk.iops_oam1_instance:
+      - oam1_instance
+      - disk.iops
+      disk.write.requests.rate_arb_instance:
+      - arb_instance
+      - disk.write.requests.rate
+      scalable_oam1_instance:
+      - oam1_instance
+      - scalable
+      disk.root.size_arb_instance:
+      - arb_instance
+      - disk.root.size
+      network.outpoing.packets_oam2_int_port:
+      - oam2_int_port
+      - network.outpoing.packets
+      disk.device.read.requests.rate_arb_instance:
+      - arb_instance
+      - disk.device.read.requests.rate
+      instance_oam1_instance:
+      - oam1_instance
+      - instance
+      os_oam1_instance:
+      - oam1_instance
+      - os
+      network.incoming.packets.rate_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.incoming.packets.rate
+      memory.usage_oam2_instance:
+      - oam2_instance
+      - memory.usage
+      disk.device.read.bytes.rate_oam2_instance:
+      - oam2_instance
+      - disk.device.read.bytes.rate
+      network.outgoing.packets.rate_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.outgoing.packets.rate
+      binding_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - binding
+      network.outgoing.bytes.rate_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.outgoing.bytes.rate
+      disk.read.requests_arb_instance:
+      - arb_instance
+      - disk.read.requests
+      disk.device.iops_oam2_instance:
+      - oam2_instance
+      - disk.device.iops
+      network.outgoing.bytes_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.outgoing.bytes
+      disk.write.requests_oam2_instance:
+      - oam2_instance
+      - disk.write.requests
+      disk.device.write.bytes_oam1_instance:
+      - oam1_instance
+      - disk.device.write.bytes
+      disk.root.size_oam2_instance:
+      - oam2_instance
+      - disk.root.size
+      disk.device.write.bytes.rate_oam2_instance:
+      - oam2_instance
+      - disk.device.write.bytes.rate
+      network.incoming.bytes_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.incoming.bytes
+      disk.write.bytes_oam2_instance:
+      - oam2_instance
+      - disk.write.bytes
+      cpu_arb_instance:
+      - arb_instance
+      - cpu
+      disk.read.requests_oam1_instance:
+      - oam1_instance
+      - disk.read.requests
+      network.outgoing.packets.rate_arb_int_port:
+      - arb_int_port
+      - network.outgoing.packets.rate
+      disk.allocation_arb_instance:
+      - arb_instance
+      - disk.allocation
+      cpu.delta_oam2_instance:
+      - oam2_instance
+      - cpu.delta
+      cpu_util_oam2_instance:
+      - oam2_instance
+      - cpu_util
+      disk.device.read.bytes.rate_arb_instance:
+      - arb_instance
+      - disk.device.read.bytes.rate
+      network.incoming.packets_oam2_int_port:
+      - oam2_int_port
+      - network.incoming.packets
+      network.outgoing.bytes_oam1_int_port:
+      - oam1_int_port
+      - network.outgoing.bytes
+      disk.device.read.requests.rate_oam2_instance:
+      - oam2_instance
+      - disk.device.read.requests.rate
+      disk.allocation_oam1_instance:
+      - oam1_instance
+      - disk.allocation
+      disk.capacity_oam1_instance:
+      - oam1_instance
+      - disk.capacity
+      feature_oam2_int_port:
+      - oam2_int_port
+      - feature
+      disk.device.allocation_oam1_instance:
+      - oam1_instance
+      - disk.device.allocation
+      vcpus_arb_instance:
+      - arb_instance
+      - vcpus
+      network.incoming.packets.rate_arb_int_port:
+      - arb_int_port
+      - network.incoming.packets.rate
+      disk.read.bytes.rate_oam2_instance:
+      - oam2_instance
+      - disk.read.bytes.rate
+      network.outgoing.bytes.rate_oam2_int_port:
+      - oam2_int_port
+      - network.outgoing.bytes.rate
+      network.incoming.bytes.rate_arb_int_port:
+      - arb_int_port
+      - network.incoming.bytes.rate
+      os_arb_instance:
+      - arb_instance
+      - os
+      network.incoming.packets.rate_oam1_int_port:
+      - oam1_int_port
+      - network.incoming.packets.rate
+      feature_oam1_volume:
+      - oam1_volume
+      - feature
+      disk.write.bytes.rate_arb_instance:
+      - arb_instance
+      - disk.write.bytes.rate
+      disk.device.capacity_arb_instance:
+      - arb_instance
+      - disk.device.capacity
+      network.incoming.bytes_arb_int_port:
+      - arb_int_port
+      - network.incoming.bytes
+      disk.device.usage_oam2_instance:
+      - oam2_instance
+      - disk.device.usage
+      attachment_oam2_volume:
+      - oam2_volume
+      - attachment
+      disk.write.bytes.rate_oam2_instance:
+      - oam2_instance
+      - disk.write.bytes.rate
+      endpoint_oam1_instance:
+      - oam1_instance
+      - endpoint
+      disk.iops_oam2_instance:
+      - oam2_instance
+      - disk.iops
+      network.outgoing.bytes.rate_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.outgoing.bytes.rate
+      host_arb_instance:
+      - arb_instance
+      - host
+      disk.device.write.requests.rate_oam2_instance:
+      - oam2_instance
+      - disk.device.write.requests.rate
+      cpu_util_oam1_instance:
+      - oam1_instance
+      - cpu_util
+      disk.ephemeral.size_oam1_instance:
+      - oam1_instance
+      - disk.ephemeral.size
+      binding_arb_int_port:
+      - arb_int_port
+      - binding
+      network.outgoing.bytes_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.outgoing.bytes
+      disk.capacity_oam2_instance:
+      - oam2_instance
+      - disk.capacity
+      vcpus_oam1_instance:
+      - oam1_instance
+      - vcpus
+      feature_arb_instance:
+      - arb_instance
+      - feature
+      disk.device.read.requests.rate_oam1_instance:
+      - oam1_instance
+      - disk.device.read.requests.rate
+      memory.resident_oam2_instance:
+      - oam2_instance
+      - memory.resident
+      network.outgoing.bytes_oam2_int_port:
+      - oam2_int_port
+      - network.outgoing.bytes
+      disk.device.write.bytes.rate_arb_instance:
+      - arb_instance
+      - disk.device.write.bytes.rate
+      disk.write.requests_oam1_instance:
+      - oam1_instance
+      - disk.write.requests
+      disk.device.usage_arb_instance:
+      - arb_instance
+      - disk.device.usage
+      disk.device.latency_arb_instance:
+      - arb_instance
+      - disk.device.latency
+      feature_arb_int_port:
+      - arb_int_port
+      - feature
+      network.outgoing.bytes_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.outgoing.bytes
+      disk.read.bytes_arb_instance:
+      - arb_instance
+      - disk.read.bytes
+      disk.write.requests.rate_oam1_instance:
+      - oam1_instance
+      - disk.write.requests.rate
+      cpu.delta_oam1_instance:
+      - oam1_instance
+      - cpu.delta
+      network.incoming.bytes.rate_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - network.incoming.bytes.rate
+      disk.device.write.bytes.rate_oam1_instance:
+      - oam1_instance
+      - disk.device.write.bytes.rate
+      disk.device.iops_oam1_instance:
+      - oam1_instance
+      - disk.device.iops
       attachment_oam2_mgmt_port:
       - oam2_mgmt_port
+      - attachment
+      memory.usage_oam1_instance:
+      - oam1_instance
+      - memory.usage
+      disk.ephemeral.size_arb_instance:
+      - arb_instance
+      - disk.ephemeral.size
+      feature_oam1_instance:
+      - oam1_instance
+      - feature
+      disk.write.requests_arb_instance:
+      - arb_instance
+      - disk.write.requests
+      disk.device.read.bytes_oam2_instance:
+      - oam2_instance
+      - disk.device.read.bytes
+      disk.latency_oam2_instance:
+      - oam2_instance
+      - disk.latency
+      attachment_arb_volume:
+      - arb_volume
+      - attachment
+      network.outpoing.packets_arb_int_port:
+      - arb_int_port
+      - network.outpoing.packets
+      disk.usage_oam2_instance:
+      - oam2_instance
+      - disk.usage
+      disk.write.bytes_oam1_instance:
+      - oam1_instance
+      - disk.write.bytes
+      disk.device.write.requests.rate_oam1_instance:
+      - oam1_instance
+      - disk.device.write.requests.rate
+      disk.read.bytes_oam2_instance:
+      - oam2_instance
+      - disk.read.bytes
+      disk.device.allocation_arb_instance:
+      - arb_instance
+      - disk.device.allocation
+      cpu_util_arb_instance:
+      - arb_instance
+      - cpu_util
+      network.incoming.packets_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.incoming.packets
+      instance_oam2_instance:
+      - oam2_instance
+      - instance
+      feature_oam2_instance:
+      - oam2_instance
+      - feature
+      cpu_oam2_instance:
+      - oam2_instance
+      - cpu
+      disk.device.read.requests_oam1_instance:
+      - oam1_instance
+      - disk.device.read.requests
+      network.incoming.packets.rate_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.incoming.packets.rate
+      disk.device.read.requests_oam2_instance:
+      - oam2_instance
+      - disk.device.read.requests
+      disk.read.requests_oam2_instance:
+      - oam2_instance
+      - disk.read.requests
+      disk.device.read.bytes_arb_instance:
+      - arb_instance
+      - disk.device.read.bytes
+      host_oam2_instance:
+      - oam2_instance
+      - host
+      disk.device.write.requests.rate_arb_instance:
+      - arb_instance
+      - disk.device.write.requests.rate
+      vcpus_oam2_instance:
+      - oam2_instance
+      - vcpus
+      scalable_oam2_instance:
+      - oam2_instance
+      - scalable
+      network.outgoing.bytes.rate_oam1_int_port:
+      - oam1_int_port
+      - network.outgoing.bytes.rate
+      endpoint_arb_instance:
+      - arb_instance
+      - endpoint
+      disk.device.capacity_oam1_instance:
+      - oam1_instance
+      - disk.device.capacity
+      disk.latency_arb_instance:
+      - arb_instance
+      - disk.latency
+      network.incoming.bytes.rate_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.incoming.bytes.rate
+      disk.read.bytes.rate_oam1_instance:
+      - oam1_instance
+      - disk.read.bytes.rate
+      memory_arb_instance:
+      - arb_instance
+      - memory
+      disk.latency_oam1_instance:
+      - oam1_instance
+      - disk.latency
+      feature_arb_mgmt_port:
+      - arb_mgmt_port
+      - feature
+      feature_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - feature
+      attachment_oam1_mgmt_port:
+      - oam1_mgmt_port
       - attachment
       binding_oam1_instance:
       - oam1_instance
       - binding
+      attachment_oam2_int_port:
+      - oam2_int_port
+      - attachment
+      disk.device.latency_oam2_instance:
+      - oam2_instance
+      - disk.device.latency
+      network.outgoing.packets.rate_oam2_int_port:
+      - oam2_int_port
+      - network.outgoing.packets.rate
+      binding_oam2_int_port:
+      - oam2_int_port
+      - binding
+      disk.write.requests.rate_oam2_instance:
+      - oam2_instance
+      - disk.write.requests.rate
+      network.incoming.bytes_oam2_int_port:
+      - oam2_int_port
+      - network.incoming.bytes
+      network.outpoing.packets_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - network.outpoing.packets
+      disk.ephemeral.size_oam2_instance:
+      - oam2_instance
+      - disk.ephemeral.size
+      network.outpoing.packets_arb_mgmt_port:
+      - arb_mgmt_port
+      - network.outpoing.packets
+      disk.device.write.requests_oam1_instance:
+      - oam1_instance
+      - disk.device.write.requests
     requirements:
       link_oam2_mgmt_port:
       - oam2_mgmt_port
       - link
-      link_oam1_int_port:
-      - oam1_int_port
-      - link
+      dependency_oam2_volume:
+      - oam2_volume
+      - dependency
+      dependency_oam1_volume:
+      - oam1_volume
+      - dependency
       link_oam1_mgmt_port:
       - oam1_mgmt_port
       - link
-      local_storage_arb_instance:
-      - arb_instance
-      - local_storage
-      link_arb_mgmt_port:
-      - arb_mgmt_port
-      - link
+      dependency_oam2_instance:
+      - oam2_instance
+      - dependency
       local_storage_oam2_instance:
       - oam2_instance
       - local_storage
       link_arb_int_port:
       - arb_int_port
       - link
+      dependency_oam1_instance:
+      - oam1_instance
+      - dependency
+      dependency_arb_instance:
+      - arb_instance
+      - dependency
+      link_oam1_int_port:
+      - oam1_int_port
+      - link
+      dependency_oam1_mgmt_port:
+      - oam1_mgmt_port
+      - dependency
+      dependency_oam1_int_port:
+      - oam1_int_port
+      - dependency
+      local_storage_arb_instance:
+      - arb_instance
+      - local_storage
+      dependency_arb_mgmt_port:
+      - arb_mgmt_port
+      - dependency
+      dependency_oam2_mgmt_port:
+      - oam2_mgmt_port
+      - dependency
+      link_arb_mgmt_port:
+      - arb_mgmt_port
+      - link
+      dependency_arb_volume:
+      - arb_volume
+      - dependency
+      dependency_oam2_int_port:
+      - oam2_int_port
+      - dependency
       link_oam2_int_port:
       - oam2_int_port
       - link
       local_storage_oam1_instance:
       - oam1_instance
       - local_storage
+      dependency_arb_int_port:
+      - arb_int_port
+      - dependency

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.heat.services.manifest;
 
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
@@ -31,9 +32,6 @@ import java.util.Map;
 import java.util.Set;
 
 
-/**
- * The type Manifest util.
- */
 public class ManifestUtil {
 
 
@@ -59,6 +57,7 @@ public class ManifestUtil {
    */
   public static void scanFileEnvMap(FileData fileData, List<FileData> fileDataList,
                                     Map<String, FileData> fileEnvMap) {
+
     if (CollectionUtils.isEmpty(fileDataList)) {
       return;
     }
@@ -165,6 +164,7 @@ public class ManifestUtil {
         baseFiles.add(fileData.getFile());
       }
     }
+
     if (data == null) {
       return;
     }

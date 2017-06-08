@@ -28,7 +28,6 @@ $tlv-gray: #f8f8f8;
 $tlv-light-gray: #eaeaea;
 $tlv-hover: #e6f6fb;
 
-
 $scroll-bar-color: $dark-gray;
 
 //responsive @media params
@@ -36,9 +35,3 @@ $tablet-max-width: 1024px;
 $laptop-min-width: 1224px;
 $desktop-min-width: 1824px;
 
-/* Textures */
-$images-folder-name: "../images";
-$plus-circle-icon: $images-folder-name + "/plus-circle-icon.svg";
-$interface-icon: $images-folder-name + "/interface.svg";
-$sdc-logo: $images-folder-name + "/logo.svg";
-$warning-icon: $images-folder-name + "/warning.svg";

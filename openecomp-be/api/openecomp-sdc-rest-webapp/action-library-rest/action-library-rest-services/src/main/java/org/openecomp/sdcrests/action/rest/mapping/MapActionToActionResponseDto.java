@@ -24,7 +24,6 @@ import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdcrests.action.types.ActionResponseDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 
-
 /**
  * Maps Source Action Object To Action Response DTO.
  */

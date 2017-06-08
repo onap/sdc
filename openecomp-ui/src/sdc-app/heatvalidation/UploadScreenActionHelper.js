@@ -1,60 +1,204 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
-import NotificationConstants from 'nfvo-components/notifications/NotificationConstants.js';
-import {actionTypes} from './UploadScreenConstants.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import isEqual from 'lodash/isEqual.js';
+import cloneDeep from 'lodash/cloneDeep.js';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
 import {actionTypes as softwareProductsActionTypes} from '../onboarding/softwareProduct/SoftwareProductConstants.js';
+import {actionTypes as HeatSetupActions} from '../onboarding/softwareProduct/attachments/setup/HeatSetupConstants.js';
+
+
+
+const options = {
+	headers: {
+		HTTP_CSP_ATTUID: 'validationOnlyVspUser'
+	}
+};
+
+
+function getTimestampString() {
+	let date = new Date();
+	let z = n => n < 10 ? '0' + n : n;
+	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
+}
+
+function fetchVspId() {
+
+	let vspId = sessionStorage.getItem('validationAppVspId');
+	if (vspId) {
+		return  Promise.resolve({value: vspId});
+	}else {
+		return RestAPIUtil.fetch('/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/validation-vsp', options)
+			.then(response => {
+				sessionStorage.setItem('validationAppVspId', response.value);
+				return Promise.resolve(response);
+			});
+	}
+
+}
+
+
+function showFileSaveDialog({blob, xhr, defaultFilename, addTimestamp}) {
+	let filename;
+	let contentDisposition = xhr.getResponseHeader('content-disposition');
+	let match = contentDisposition ? contentDisposition.match(/filename=(.*?)(;|$)/) : false;
+	if (match) {
+		filename = match[1];
+	} else {
+		filename = defaultFilename;
+	}
+
+	if (addTimestamp) {
+		filename = filename.replace(/(^.*?)\.([^.]+$)/, `$1_${getTimestampString()}.$2`);
+	}
+
+	let link = document.createElement('a');
+	let url = URL.createObjectURL(blob);
+	link.href = url;
+	link.download = filename;
+	link.style.display = 'none';
+	document.body.appendChild(link);
+	link.click();
+	setTimeout(function(){
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	}, 0);
+}
+
 
 function uploadFile(formData) {
-	return RestAPIUtil.create('/sdc1/feProxy/onboarding-api/v1.0/validation/HEAT/validate', formData);
+	return fetchVspId()
+		.then(response => {
+			return RestAPIUtil.post(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate`, formData, options);
+		});
+}
+
+function loadSoftwareProductHeatCandidate(dispatch){
+	return fetchVspId()
+		.then(response => {
+			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/manifest`, options)
+				.then(response => dispatch({
+					type: HeatSetupActions.MANIFEST_LOADED,
+					response
+				}));
+		});
+}
+
+function updateHeatCandidate(dispatch, heatCandidate) {
+	return fetchVspId()
+		.then(response => {
+			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/manifest`,
+				heatCandidate.heatData, options)
+				.then(null, error => {
+					dispatch({
+						type: modalActionTypes.GLOBAL_MODAL_ERROR,
+						data: {
+							title: i18n('Save Failed'), 
+							modalComponentName: modalContentMapper.SUMBIT_ERROR_RESPONSE,							
+							modalComponentProps: {
+								validationResponse: error.responseJSON
+							},					
+							cancelButtonText: i18n('Ok')
+						}
+					});
+					return Promise.reject(error);
+				});
+		});
+}
+
+function fetchSoftwareProduct() {
+	return fetchVspId()
+		.then(response => {
+			return RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1`, options);
+		});
+}
+
+function downloadHeatFile() {
+	return fetchVspId()
+		.then(response => {
+			RestAPIUtil.fetch(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate`, {
+				...options,
+				dataType: 'binary'
+			})
+				.done((blob, statusText, xhr) => showFileSaveDialog({
+					blob,
+					xhr,
+					defaultFilename: 'HEAT_file.zip',
+					addTimestamp: true
+				}));
+		});
+}
+
+function processAndValidateHeatCandidate(dispatch) {
+	return fetchVspId()
+		.then(response => {
+			return RestAPIUtil.put(`/sdc1/feProxy/onboarding-api/v1.0/vendor-software-products/${response.value}/versions/0.1/orchestration-template-candidate/process`, {}, options)
+				.then(response => {
+					if (response.status === 'Success') {
+						fetchSoftwareProduct().then(response => {
+							dispatch({
+								type: softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
+								response
+							});
+						});
+					}
+				});
+		});
 }
 
 const UploadScreenActionHelper = {
 	uploadFile(dispatch, formData) {
 
-
-		Promise.resolve()
+		return Promise.resolve()
 			.then(() => uploadFile(formData))
 			.then(response => {
 				dispatch({
 					type: softwareProductsActionTypes.SOFTWARE_PRODUCT_LOADED,
 					response
 				});
-
 				dispatch({
-					type: actionTypes.OPEN_UPLOAD_SCREEN
+					type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
+					payload:{}
 				});
+				loadSoftwareProductHeatCandidate(dispatch);
 			})
 			.catch(error => {
-				dispatch({
-					type: NotificationConstants.NOTIFY_ERROR,
-					data: {title: 'File Upload Failed', msg: error.responseJSON.message}
+				dispatch({					
+					type: modalActionTypes.GLOBAL_MODAL_ERROR,
+					data: {
+						title: i18n('File Upload Failed'), 													
+						msg: error.responseJSON.message,					
+						cancelButtonText: i18n('Ok')
+					}
 				});
 			});
 	},
-	openMainScreen(dispatch) {
-		dispatch({
-			type: actionTypes.OPEN_MAIN_SCREEN
-		});
-	}
+
+	processAndValidateHeat(dispatch, heatData, heatDataCache){
+		return isEqual(heatData, heatDataCache) ? Promise.resolve() :
+			updateHeatCandidate(dispatch, heatData)
+				.then(() => processAndValidateHeatCandidate(dispatch))
+				.then(() => dispatch({type: HeatSetupActions.FILL_HEAT_SETUP_CACHE, payload: cloneDeep(heatData)}));
+	},
+
+	downloadHeatFile(){
+		return downloadHeatFile();
+	},
 };
 
 export default UploadScreenActionHelper;

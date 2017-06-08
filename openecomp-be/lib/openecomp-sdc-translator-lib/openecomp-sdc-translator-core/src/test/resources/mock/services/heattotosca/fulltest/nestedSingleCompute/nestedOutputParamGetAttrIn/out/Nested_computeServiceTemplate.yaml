@@ -1,0 +1,194 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_compute
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.compute:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vm_image_name:
+      type: string
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_compute_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_compute_config_drive:
+      type: list
+      required: true
+      entry_schema:
+        type: boolean
+  node_templates:
+    compute:
+      type: org.openecomp.resource.vfc.nodes.heat.compute
+      properties:
+        flavor:
+          get_input: vm_flavor_name
+        config_drive:
+          get_input:
+          - compute_compute_config_drive
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_compute_name
+          - index_value
+  outputs:
+    compute_instance_name:
+      type: list
+      value:
+        get_attribute:
+        - compute
+        - instance_name
+      entry_schema:
+        type: string
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.compute
+    capabilities:
+      disk.device.usage_compute:
+      - compute
+      - disk.device.usage
+      disk.write.requests_compute:
+      - compute
+      - disk.write.requests
+      instance_compute:
+      - compute
+      - instance
+      disk.ephemeral.size_compute:
+      - compute
+      - disk.ephemeral.size
+      disk.device.read.bytes.rate_compute:
+      - compute
+      - disk.device.read.bytes.rate
+      disk.latency_compute:
+      - compute
+      - disk.latency
+      memory.resident_compute:
+      - compute
+      - memory.resident
+      memory_compute:
+      - compute
+      - memory
+      disk.iops_compute:
+      - compute
+      - disk.iops
+      disk.root.size_compute:
+      - compute
+      - disk.root.size
+      disk.write.requests.rate_compute:
+      - compute
+      - disk.write.requests.rate
+      disk.read.requests_compute:
+      - compute
+      - disk.read.requests
+      disk.device.read.requests.rate_compute:
+      - compute
+      - disk.device.read.requests.rate
+      disk.read.bytes_compute:
+      - compute
+      - disk.read.bytes
+      disk.device.read.bytes_compute:
+      - compute
+      - disk.device.read.bytes
+      disk.write.bytes_compute:
+      - compute
+      - disk.write.bytes
+      disk.usage_compute:
+      - compute
+      - disk.usage
+      os_compute:
+      - compute
+      - os
+      disk.write.bytes.rate_compute:
+      - compute
+      - disk.write.bytes.rate
+      vcpus_compute:
+      - compute
+      - vcpus
+      disk.capacity_compute:
+      - compute
+      - disk.capacity
+      cpu_util_compute:
+      - compute
+      - cpu_util
+      disk.read.bytes.rate_compute:
+      - compute
+      - disk.read.bytes.rate
+      disk.device.latency_compute:
+      - compute
+      - disk.device.latency
+      disk.device.write.requests_compute:
+      - compute
+      - disk.device.write.requests
+      disk.device.iops_compute:
+      - compute
+      - disk.device.iops
+      disk.device.write.requests.rate_compute:
+      - compute
+      - disk.device.write.requests.rate
+      endpoint_compute:
+      - compute
+      - endpoint
+      memory.usage_compute:
+      - compute
+      - memory.usage
+      host_compute:
+      - compute
+      - host
+      feature_compute:
+      - compute
+      - feature
+      disk.device.write.bytes_compute:
+      - compute
+      - disk.device.write.bytes
+      cpu_compute:
+      - compute
+      - cpu
+      disk.device.write.bytes.rate_compute:
+      - compute
+      - disk.device.write.bytes.rate
+      scalable_compute:
+      - compute
+      - scalable
+      disk.device.read.requests_compute:
+      - compute
+      - disk.device.read.requests
+      disk.allocation_compute:
+      - compute
+      - disk.allocation
+      disk.device.capacity_compute:
+      - compute
+      - disk.device.capacity
+      disk.device.allocation_compute:
+      - compute
+      - disk.device.allocation
+      cpu.delta_compute:
+      - compute
+      - cpu.delta
+      binding_compute:
+      - compute
+      - binding
+    requirements:
+      local_storage_compute:
+      - compute
+      - local_storage
+      dependency_compute:
+      - compute
+      - dependency

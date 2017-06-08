@@ -1,0 +1,686 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots ListEditor regular 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    />
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ListEditor two columns 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    />
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list two-columns"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ListEditor with add 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    >
+      <div
+        className="list-editor-view-add-title"
+        data-test-id="add-button"
+        onClick={[Function]}
+      >
+        <span>
+          + Add
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list two-columns"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ListEditor with delete 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    >
+      <div
+        className="list-editor-view-add-title"
+        data-test-id="add-button"
+        onClick={[Function]}
+      >
+        <span>
+          + Add
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list two-columns"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon trash-o "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon trash-o "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ListEditor with edit 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    >
+      <div
+        className="list-editor-view-add-title"
+        data-test-id="add-button"
+        onClick={[Function]}
+      >
+        <span>
+          + Add
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list two-columns"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon sliders "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon sliders "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots ListEditor with edit and delete 1`] = `
+<div
+  className="list-editor-view"
+>
+  <div
+    className="list-editor-view-header"
+  >
+    <div
+      className="list-editor-view-title"
+    >
+      List Editor
+    </div>
+    <div
+      className="list-editor-view-add-controller"
+    >
+      <div
+        className="list-editor-view-add-title"
+        data-test-id="add-button"
+        onClick={[Function]}
+      >
+        <span>
+          + Add
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    className="list-editor-view-list-scroller"
+  >
+    <div
+      className="list-editor-view-list two-columns"
+    >
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon sliders "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon trash-o "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+      <div
+        className="list-editor-item-view"
+        data-test-id="list-editor-item"
+      >
+        <div
+          className="list-editor-item-view-content"
+          onClick={undefined}
+        >
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+          <div
+            className="list-editor-item-view-field"
+          >
+            <div>
+              Lorum Ipsum
+            </div>
+          </div>
+        </div>
+        <div
+          className="list-editor-item-view-controller"
+        >
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon sliders "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+          <div
+            className="svg-icon-wrapper  clickable bottom"
+            onClick={[Function]}
+          >
+            <svg
+              className="svg-icon trash-o "
+            >
+              <use
+                xlinkHref="test-file-stub"
+              />
+            </svg>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots SVGIcon icon 1`] = `
+<div
+  className="svg-icon-wrapper   bottom"
+  onClick={undefined}
+  style={
+    Object {
+      "fill": "",
+    }
+  }
+>
+  <svg
+    className="svg-icon locked "
+  >
+    <use
+      xlinkHref="test-file-stub"
+    />
+  </svg>
+  
+</div>
+`;
+
+exports[`Storyshots SVGIcon icon with label 1`] = `
+<div
+  className="svg-icon-wrapper   bottom"
+  onClick={undefined}
+  style={
+    Object {
+      "fill": "",
+    }
+  }
+>
+  <svg
+    className="svg-icon locked "
+  >
+    <use
+      xlinkHref="test-file-stub"
+    />
+  </svg>
+  <span
+    className="svg-icon-label "
+  >
+    locked
+  </span>
+</div>
+`;
+
+exports[`Storyshots SVGIcon locked clickable 1`] = `
+<div
+  className="svg-icon-wrapper  clickable bottom"
+  onClick={[Function]}
+  style={
+    Object {
+      "fill": "",
+    }
+  }
+>
+  <svg
+    className="svg-icon locked "
+  >
+    <use
+      xlinkHref="test-file-stub"
+    />
+  </svg>
+  
+</div>
+`;

@@ -23,8 +23,9 @@ package org.openecomp.sdc.action.dao.impl;
 import org.openecomp.sdc.action.dao.ActionDao;
 import org.openecomp.sdc.action.dao.ActionDaoFactory;
 
+
 public class ActionDaoFactoryImpl extends ActionDaoFactory {
-  private static final ActionDao INSTANCE = new ActionDaoImpl();
+  private static ActionDao INSTANCE = new ActionDaoImpl();
 
   @Override
   public ActionDao createInterface() {

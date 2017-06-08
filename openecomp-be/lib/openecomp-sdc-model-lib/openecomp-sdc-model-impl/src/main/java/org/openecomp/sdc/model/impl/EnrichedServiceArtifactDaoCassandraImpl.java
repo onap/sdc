@@ -44,17 +44,18 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
 
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static final Mapper<EnrichedServiceArtifactEntity> mapper =
-      noSqlDb.getMappingManager().mapper(EnrichedServiceArtifactEntity.class);
+      noSqlDb.getMappingManager().mapper(
+          EnrichedServiceArtifactEntity.class);
   private static final VspServiceArtifactAccessor accessor =
-      noSqlDb.getMappingManager().createAccessor(VspServiceArtifactAccessor.class);
+      noSqlDb.getMappingManager().createAccessor(
+          VspServiceArtifactAccessor.class);
   private static final UDTMapper<Version> versionMapper =
       noSqlDb.getMappingManager().udtMapper(Version.class);
 
   @Override
   public void registerVersioning(String versionableEntityType) {
-    VersioningManagerFactory.getInstance().createInterface()
-        .register(versionableEntityType, new VersionableEntityMetadata(
-            mapper.getTableMetadata().getName(),
+    VersioningManagerFactory.getInstance().createInterface().register(versionableEntityType,
+        new VersionableEntityMetadata(mapper.getTableMetadata().getName(),
             mapper.getTableMetadata().getPartitionKey().get(0).getName(),
             mapper.getTableMetadata().getPartitionKey().get(1).getName()));
   }
@@ -103,8 +104,8 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
 
   @Override
   public ServiceArtifact getArtifactInfo(String vspId, Version version, String name) {
-    EnrichedServiceArtifactEntity enrichedServiceArtifactEntity =
-        accessor.getArtifactInfo(vspId, versionMapper.toUDT(version), name).one();
+    EnrichedServiceArtifactEntity enrichedServiceArtifactEntity = accessor.getArtifactInfo(vspId,
+        versionMapper.toUDT(version), name).one();
     if (enrichedServiceArtifactEntity == null) {
       return null;
     }
@@ -112,6 +113,10 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
     return enrichedServiceArtifactEntity.getServiceArtifact();
   }
 
+  @Override
+  public void deleteAll(String vspId, Version version) {
+    accessor.deleteAll(vspId, versionMapper.toUDT(version));
+  }
 
   @Accessor
   interface VspServiceArtifactAccessor {
@@ -120,18 +125,21 @@ public class EnrichedServiceArtifactDaoCassandraImpl implements EnrichedServiceA
     Result<EnrichedServiceArtifactEntity> listAll();
 
     @Query(
-        "SELECT vsp_id, version, name ,content_data FROM vsp_enriched_service_artifact "
-            + "where vsp_id=? and version=? ")
+        "SELECT vsp_id, version, name ,content_data FROM "
+            + "vsp_enriched_service_artifact where vsp_id=? and version=? ")
     Result<EnrichedServiceArtifactEntity> list(String vspId, UDTValue version);
 
-
     @Query(
-        "SELECT vsp_id,version,name,content_data FROM vsp_enriched_service_artifact "
-            + "where vsp_id=? and version=? and name=?")
+        "SELECT vsp_id,version,name,content_data FROM "
+            + "vsp_enriched_service_artifact where vsp_id=? and version=? and name=?")
     Result<EnrichedServiceArtifactEntity> getArtifactInfo(String vspId, UDTValue version,
                                                           String name);
 
     @Query("DELETE from vsp_enriched_service_artifact where vsp_id=? and version=?")
     ResultSet delete(String vspId, UDTValue version);
+
+    @Query("DELETE FROM vsp_enriched_service_artifact where vsp_id=? and version=?")
+    ResultSet deleteAll(String vspId, UDTValue version);
   }
+
 }

@@ -37,4 +37,12 @@ public class RequestedVersionInvalidErrorBuilder extends BaseErrorBuilder {
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(REQUESTED_VERSION_INVALID_MSG);
   }
+
+/*    private static List<String> toStringList(Set<Version> versions) {
+        List<String> versionStrings = new ArrayList<>(versions.size());
+        for (Version version : versions) {
+            versionStrings.add(version.toString());
+        }
+        return versionStrings;
+    }*/
 }

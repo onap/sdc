@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as featureGroupsActionConstants} from './FeatureGroupsConstants.js';
@@ -25,22 +20,22 @@ import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseMod
 import EntitlementPoolsActionHelper from 'sdc-app/onboarding/licenseModel/entitlementPools/EntitlementPoolsActionHelper.js';
 import LicenseKeyGroupsActionHelper from 'sdc-app/onboarding/licenseModel/licenseKeyGroups/LicenseKeyGroupsActionHelper.js';
 
-function baseUrl(licenseModelId) {
+function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/feature-groups`;
+	const {id: versionId} = version;
+	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/versions/${versionId}/feature-groups`;
 }
 
 function fetchFeatureGroupsList(licenseModelId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl(licenseModelId)}${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}`);
 }
 
-function deleteFeatureGroup(licenseModelId, featureGroupId) {
-	return RestAPIUtil.destroy(`${baseUrl(licenseModelId)}/${featureGroupId}`);
+function deleteFeatureGroup(licenseModelId, featureGroupId, version) {
+	return RestAPIUtil.destroy(`${baseUrl(licenseModelId, version)}/${featureGroupId}`);
 }
 
-function addFeatureGroup(licenseModelId, featureGroup) {
-	return RestAPIUtil.create(baseUrl(licenseModelId), {
+function addFeatureGroup(licenseModelId, featureGroup, version) {
+	return RestAPIUtil.post(baseUrl(licenseModelId, version), {
 		name: featureGroup.name,
 		description: featureGroup.description,
 		partNumber: featureGroup.partNumber,
@@ -49,13 +44,13 @@ function addFeatureGroup(licenseModelId, featureGroup) {
 	});
 }
 
-function updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup) {
+function updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup, version) {
 
 	const {licenseKeyGroupsIds = []} = featureGroup;
 	const {licenseKeyGroupsIds: prevLicenseKeyGroupsIds = []} = previousFeatureGroup;
 	const {entitlementPoolsIds = []} = featureGroup;
 	const {entitlementPoolsIds: prevEntitlementPoolsIds = []} = previousFeatureGroup;
-	return RestAPIUtil.save(`${baseUrl(licenseModelId)}/${featureGroup.id}`, {
+	return RestAPIUtil.put(`${baseUrl(licenseModelId, version)}/${featureGroup.id}`, {
 		name: featureGroup.name,
 		description: featureGroup.description,
 		partNumber: featureGroup.partNumber,
@@ -75,28 +70,37 @@ export default {
 		}));
 	},
 
-	deleteFeatureGroup(dispatch, {licenseModelId, featureGroupId}) {
-		return deleteFeatureGroup(licenseModelId, featureGroupId).then(() => dispatch({
+	deleteFeatureGroup(dispatch, {licenseModelId, featureGroupId, version}) {
+		return deleteFeatureGroup(licenseModelId, featureGroupId, version).then(() => dispatch({
 			type: featureGroupsActionConstants.DELETE_FEATURE_GROUPS,
 			featureGroupId
 		}));
 	},
 
-	saveFeatureGroup(dispatch, {licenseModelId, previousFeatureGroup, featureGroup}) {
+	saveFeatureGroup(dispatch, {licenseModelId, previousFeatureGroup, featureGroup, version}) {
 		if (previousFeatureGroup) {
-			return updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup).then(() => dispatch({
-				type: featureGroupsActionConstants.EDIT_FEATURE_GROUPS,
-				featureGroup
-			}));
+			return updateFeatureGroup(licenseModelId, previousFeatureGroup, featureGroup, version).then(() =>{
+				dispatch({
+					type: featureGroupsActionConstants.EDIT_FEATURE_GROUPS,
+					featureGroup
+				});
+				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
+				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
+			});
 		}
 		else {
-			return addFeatureGroup(licenseModelId, featureGroup).then(response => dispatch({
-				type: featureGroupsActionConstants.ADD_FEATURE_GROUPS,
-				featureGroup: {
-					...featureGroup,
-					id: response.value
-				}
-			}));
+			return addFeatureGroup(licenseModelId, featureGroup, version).then(response => {
+				dispatch({
+					type: featureGroupsActionConstants.ADD_FEATURE_GROUPS,
+					featureGroup: {
+						...featureGroup,
+						id: response.value,
+						referencingLicenseAgreements: []
+					}
+				});
+				EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
+				LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
+			});
 		}
 	},
 
@@ -107,23 +111,9 @@ export default {
 		});
 	},
 
-	selectFeatureGroupsEditorEntitlementPoolsButtonTab(dispatch, {buttonTab}) {
-		dispatch({
-			type: featureGroupsActionConstants.featureGroupsEditor.SELECTED_ENTITLEMENT_POOLS_BUTTONTAB,
-			buttonTab
-		});
-	},
-
-	selectFeatureGroupsEditorLicenseKeyGroupsButtonTab(dispatch, {buttonTab}) {
-		dispatch({
-			type: featureGroupsActionConstants.featureGroupsEditor.SELECTED_LICENSE_KEY_GROUPS_BUTTONTAB,
-			buttonTab
-		});
-	},
-
-	openFeatureGroupsEditor(dispatch, {featureGroup, licenseModelId}) {
-		EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId});
-		LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId});
+	openFeatureGroupsEditor(dispatch, {featureGroup, licenseModelId, version}) {
+		EntitlementPoolsActionHelper.fetchEntitlementPoolsList(dispatch, {licenseModelId, version});
+		LicenseKeyGroupsActionHelper.fetchLicenseKeyGroupsList(dispatch, {licenseModelId, version});
 		dispatch({
 			type: featureGroupsActionConstants.featureGroupsEditor.OPEN,
 			featureGroup
@@ -136,26 +126,6 @@ export default {
 		});
 	},
 
-	featureGroupsEditorDataChanged(dispatch, {deltaData}) {
-		dispatch({
-			type: featureGroupsActionConstants.featureGroupsEditor.DATA_CHANGED,
-			deltaData
-		});
-	},
-
-	hideDeleteConfirm(dispatch) {
-		dispatch({
-			type: featureGroupsActionConstants.FEATURE_GROUPS_DELETE_CONFIRM,
-			featureGroupToDelete: false
-		});
-	},
-
-	openDeleteFeatureGroupConfirm(dispatch, {featureGroup}) {
-		dispatch({
-			type: featureGroupsActionConstants.FEATURE_GROUPS_DELETE_CONFIRM,
-			featureGroupToDelete: featureGroup
-		});
-	},
 
 	switchVersion(dispatch, {licenseModelId, version}) {
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {

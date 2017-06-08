@@ -1,87 +1,93 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
-import expect from 'expect';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import {mapStateToProps} from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetails.js';
 import SoftwareProductDetailsView from 'sdc-app/onboarding/softwareProduct/details/SoftwareProductDetailsView.jsx';
-import {vspQschema as vspQuestionnaireSchema} from './vspQschema.js';
+import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
+import {CategoryWithSubFactory}  from 'test-utils/factories/softwareProduct/VSPCategoriesFactory.js';
+import {LicenseAgreementStoreFactory}  from 'test-utils/factories/licenseModel/LicenseAgreementFactories.js';
+import {FeatureGroupStoreFactory}  from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
+import {SchemaGenericFieldInfoFactory}  from 'test-utils/factories/softwareProduct/SoftwareProductQSchemaFactory.js';
+import {default as VspQdataFactory, VspDataMapFactory}  from 'test-utils/factories/softwareProduct/VspQdataFactory.js';
+import {FinalizedLicenseModelFactory} from 'test-utils/factories/licenseModel/LicenseModelFactories.js';
 
 describe('Software Product Details: ', function () {
 
-	let currentSoftwareProduct = {}, categories = [], finalizedLicenseModelList, licenseAgreementList, featureGroupsList, vspQschema;
+	let currentSoftwareProduct = {}, currentSoftwareProductWithLicensingData = {}, softwareProductCategories = [],
+		finalizedLicenseModelList, licenseAgreementList, featureGroupsList, qdata = {}, dataMap = {}, genericFieldInfo = {}, qGenericFieldInfo = {};
 	let dummyFunc = () => {};
 
-	before(function() {
-		currentSoftwareProduct = {
-			id: 'D4774719D085414E9D5642D1ACD59D20',
-			name: 'VSP',
-			description: 'dfdf',
-			category: 'category1',
-			subCategory: 'category1.subCategory',
-			vendorId: 'VLM_ID1',
-			vendorName: 'VLM1',
-			licensingVersion: '1.0',
-			licensingData: {}
+	beforeAll(function() {
+		finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(2);
+		currentSoftwareProduct = VSPEditorFactory.build({
+			id: 'RTRTG454545',
+			vendorId: finalizedLicenseModelList[0].id,
+			vendorName: finalizedLicenseModelList[0].vendorName
+		});
+		softwareProductCategories = CategoryWithSubFactory.buildList(2, {}, {quantity: 1});
+		licenseAgreementList = LicenseAgreementStoreFactory.buildList(2);
+		featureGroupsList = FeatureGroupStoreFactory.buildList(2, {referencingLicenseAgreements: [licenseAgreementList[0].id]});
+		qdata = VspQdataFactory.build();
+		dataMap = VspDataMapFactory.build();
+		currentSoftwareProductWithLicensingData = {
+			...currentSoftwareProduct,
+			licensingData: {
+				licenseAgreement: licenseAgreementList[0].id,
+				featureGroups: [featureGroupsList[0].id]
+			}
 		};
-		categories = [{
-			uniqueId: 'category1',
-			subcategories: [{
-				uniqueId: 'subCategory'
-			}]
-		}, {
-			uniqueId: 'category2',
-			subcategories: [{
-				uniqueId: 'subCategory2'
-			}]
-		}];
-		finalizedLicenseModelList = [{
-			id: 'VLM_ID1',
-			name: 'VLM1'
-		}];
-		licenseAgreementList = [{id: 'LA_ID1'}, {id: 'LA_ID2'}];
-		featureGroupsList = [
-			{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-			{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-		];
-		vspQschema = vspQuestionnaireSchema;
+		genericFieldInfo = {
+			'name': {
+				isValid: true,
+				errorText: '',
+				validations: [{type: 'validateName', data: true}, {type: 'maxLength', data: 120}, {
+					type: 'required',
+					data: true
+				}]
+			},
+			'description': {
+				isValid: true,
+				errorText: '',
+				validations: [{type: 'required', data: true}]
+			}
+		};
+		qGenericFieldInfo = SchemaGenericFieldInfoFactory.build();
 	});
 
 	it('should mapper exist', () => {
-		expect(mapStateToProps).toExist();
+		expect(mapStateToProps).toBeTruthy();
 	});
 
 	it('should mapper return vsp basic data', () => {
+
 		var obj = {
 			softwareProduct: {
 				softwareProductEditor: {
-					data: currentSoftwareProduct
+					data: currentSoftwareProduct,
+					genericFieldInfo
 				},
-				softwareProductCategories: categories,
+				softwareProductCategories,
 				softwareProductQuestionnaire: {
-					qdata: {},
-					qschema: vspQschema
+					qdata,
+					genericFieldInfo: qGenericFieldInfo,
+					dataMap
 				}
 			},
-			finalizedLicenseModelList: finalizedLicenseModelList,
+			finalizedLicenseModelList,
 			licenseModel: {
 				licenseAgreement: {
 					licenseAgreementList: []
@@ -96,35 +102,32 @@ describe('Software Product Details: ', function () {
 		expect(result.currentSoftwareProduct).toEqual(currentSoftwareProduct);
 		expect(result.finalizedLicenseModelList).toEqual(finalizedLicenseModelList);
 		expect(result.finalizedLicenseModelList.length).toBeGreaterThan(0);
-		expect(finalizedLicenseModelList).toInclude({
+		expect(finalizedLicenseModelList[0]).toMatchObject({
 			id: result.currentSoftwareProduct.vendorId,
-			name: result.currentSoftwareProduct.vendorName
+			vendorName: result.currentSoftwareProduct.vendorName
 		});
-		expect(result.softwareProductCategories).toEqual(categories);
+		expect(result.softwareProductCategories).toEqual(softwareProductCategories);
 		expect(result.licenseAgreementList).toEqual([]);
 		expect(result.featureGroupsList).toEqual([]);
-		expect(result.qdata).toEqual({});
-		expect(result.qschema).toEqual(vspQschema);
+		expect(result.qdata).toEqual(qdata);
+		expect(result.dataMap).toEqual(dataMap);
+		expect(result.isFormValid).toEqual(true);
 		expect(result.isReadOnlyMode).toEqual(true);
 	});
 
 	it('should mapper return vsp data with selected licenseAgreement and featureGroup', () => {
-		let vspWithLicensingData = {
-			...currentSoftwareProduct,
-			licensingData: {
-				licenseAgreement: 'LA_ID1',
-				featureGroups: [{enum: 'FG_ID1', title: 'FG1'}]
-			}
-		};
+
 		var obj = {
 			softwareProduct: {
 				softwareProductEditor: {
-					data: vspWithLicensingData
+					data: currentSoftwareProductWithLicensingData,
+					genericFieldInfo
 				},
-				softwareProductCategories: categories,
+				softwareProductCategories,
 				softwareProductQuestionnaire: {
-					qdata: {},
-					qschema: vspQschema
+					qdata,
+					genericFieldInfo: qGenericFieldInfo,
+					dataMap
 				}
 			},
 			finalizedLicenseModelList: finalizedLicenseModelList,
@@ -139,51 +142,36 @@ describe('Software Product Details: ', function () {
 		};
 
 		var result = mapStateToProps(obj);
-		expect(result.currentSoftwareProduct).toEqual(vspWithLicensingData);
+		expect(result.currentSoftwareProduct).toEqual(currentSoftwareProductWithLicensingData);
 		expect(result.finalizedLicenseModelList).toEqual(finalizedLicenseModelList);
 		expect(result.finalizedLicenseModelList.length).toBeGreaterThan(0);
-		expect(result.finalizedLicenseModelList).toInclude({
+		expect(result.finalizedLicenseModelList[0]).toMatchObject({
 			id: result.currentSoftwareProduct.vendorId,
-			name: result.currentSoftwareProduct.vendorName
+			vendorName: result.currentSoftwareProduct.vendorName
 		});
-		expect(result.softwareProductCategories).toEqual(categories);
+		expect(result.softwareProductCategories).toEqual(softwareProductCategories);
 		expect(result.licenseAgreementList).toEqual(licenseAgreementList);
-		expect(result.licenseAgreementList).toInclude({id: result.currentSoftwareProduct.licensingData.licenseAgreement});
+		expect(result.licenseAgreementList[0]).toMatchObject({...licenseAgreementList[0], id: result.currentSoftwareProduct.licensingData.licenseAgreement});
 		result.currentSoftwareProduct.licensingData.featureGroups.forEach(fg => {
-			expect(featureGroupsList).toInclude({
-				id: fg.enum,
-				name: fg.title,
-				referencingLicenseAgreements: [result.currentSoftwareProduct.licensingData.licenseAgreement]
-			});
-			expect(result.featureGroupsList).toInclude(fg);
+			expect(featureGroupsList[0]).toMatchObject({...featureGroupsList[0], id: fg});
 		});
-		expect(result.qdata).toEqual({});
-		expect(result.qschema).toEqual(vspQschema);
+		expect(result.qdata).toEqual(qdata);
 		expect(result.isReadOnlyMode).toEqual(true);
 	});
 
 	it('VSP Details view test', () => {
+
 		let params = {
-			currentSoftwareProduct: currentSoftwareProduct,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			currentSoftwareProduct,
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList,
+			genericFieldInfo,
+			qGenericFieldInfo,
 		};
 		var renderer = TestUtils.createRenderer();
 		renderer.render(
@@ -196,42 +184,26 @@ describe('Software Product Details: ', function () {
 				onVendorParamChanged = {dummyFunc}/>
 		);
 		let renderedOutput = renderer.getRenderOutput();
-		expect(renderedOutput).toExist();
+		expect(renderedOutput).toBeTruthy();
 	});
 
 	it('in view: should change vendorId and update vsp licensing-version', done => {
-		let vspWithLicensingData = {
-			...currentSoftwareProduct,
-			licensingData: {
-				licenseAgreement: 'LA_ID1',
-				featureGroups: [{enum: 'FG_ID1', title: 'FG1'}]
-			}
-		};
+
 		let params = {
-			currentSoftwareProduct: vspWithLicensingData,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			currentSoftwareProduct: currentSoftwareProductWithLicensingData,
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			genericFieldInfo,
+			qGenericFieldInfo,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList
 		};
 		const onVendorChangedListener = (deltaData) => {
-			expect(deltaData.vendorId).toEqual('VLM_ID2');
-			expect(deltaData.vendorName).toEqual('VLM2');
+			expect(deltaData.vendorId).toEqual(finalizedLicenseModelList[1].id);
+			expect(deltaData.vendorName).toEqual(finalizedLicenseModelList[1].vendorName);
 			expect(deltaData.licensingVersion).toEqual('');
 			expect(deltaData.licensingData).toEqual({});
 			done();
@@ -241,7 +213,10 @@ describe('Software Product Details: ', function () {
 			currentSoftwareProduct = {params.currentSoftwareProduct}
 			softwareProductCategories = {params.softwareProductCategories}
 			qdata = {params.qdata}
-			qschema = {params.qschema}
+			qGenericFieldInfo = {params.qGenericFieldInfo}
+			genericFieldInfo = {params.genericFieldInfo}
+			isFormValid={params.isFormValid}
+			dataMap={params.dataMap}
 			finalizedLicenseModelList = {params.finalizedLicenseModelList}
 			licenseAgreementList = {params.licenseAgreementList}
 			featureGroupsList = {params.featureGroupsList}
@@ -250,37 +225,27 @@ describe('Software Product Details: ', function () {
 			onValidityChanged = {dummyFunc}
 			onQDataChanged = {dummyFunc}
 			onVendorParamChanged = {(deltaData) => onVendorChangedListener(deltaData)}/>);
-		expect(vspDetailsView).toExist();
-		vspDetailsView.onVendorParamChanged({vendorId: 'VLM_ID2'});
+		expect(vspDetailsView).toBeTruthy();
+		vspDetailsView.onVendorParamChanged({vendorId: finalizedLicenseModelList[1].id});
 	});
 
 	it('in view: should change licensing-version and update licensing data', done => {
 		let params = {
 			currentSoftwareProduct: currentSoftwareProduct,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			genericFieldInfo,
+			qGenericFieldInfo,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList
 		};
 		const onVendorChangedListener = (deltaData) => {
-			expect(deltaData.vendorId).toEqual('VLM_ID2');
-			expect(deltaData.vendorName).toEqual('VLM2');
-			expect(deltaData.licensingVersion).toEqual('2.0');
+			expect(deltaData.vendorId).toEqual(finalizedLicenseModelList[1].id);
+			expect(deltaData.vendorName).toEqual(finalizedLicenseModelList[1].vendorName);
+			expect(deltaData.licensingVersion).toEqual(finalizedLicenseModelList[1].viewableVersion[0]);
 			expect(deltaData.licensingData).toEqual({});
 			done();
 		};
@@ -292,36 +257,26 @@ describe('Software Product Details: ', function () {
 			onValidityChanged = {dummyFunc}
 			onQDataChanged = {dummyFunc}
 			onVendorParamChanged = {(deltaData) => onVendorChangedListener(deltaData)}/>);
-		expect(vspDetailsView).toExist();
-		vspDetailsView.onVendorParamChanged({vendorId: 'VLM_ID2', licensingVersion: '2.0'});
+		expect(vspDetailsView).toBeTruthy();
+		vspDetailsView.onVendorParamChanged({vendorId: finalizedLicenseModelList[1].id, licensingVersion: finalizedLicenseModelList[1].viewableVersion[0]});
 	});
 
 	it('in view: should change subcategory', done => {
 		let params = {
 			currentSoftwareProduct: currentSoftwareProduct,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			genericFieldInfo,
+			qGenericFieldInfo,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList
 		};
 		const onDataChangedListener = ({category, subCategory}) => {
-			expect(category).toEqual('category2');
-			expect(subCategory).toEqual('subCategory2');
+			expect(category).toEqual(softwareProductCategories[1].uniqueId);
+			expect(subCategory).toEqual(softwareProductCategories[1].subcategories[0].uniqueId);
 			done();
 		};
 
@@ -332,45 +287,29 @@ describe('Software Product Details: ', function () {
 			onValidityChanged = {dummyFunc}
 			onQDataChanged = {dummyFunc}
 			onVendorParamChanged = {dummyFunc}/>);
-		expect(vspDetailsView).toExist();
-		vspDetailsView.onSelectSubCategory('subCategory2');
+		expect(vspDetailsView).toBeTruthy();
+		vspDetailsView.onSelectSubCategory(softwareProductCategories[1].subcategories[0].uniqueId);
 	});
 
 	it('in view: should change feature groups', done => {
-		let vspWithLicensingData = {
-			...currentSoftwareProduct,
-			licensingData: {
-				licenseAgreement: 'LA_ID1',
-				featureGroups: [{enum: 'FG_ID1', title: 'FG1'}]
-			}
-		};
+
 		let params = {
-			currentSoftwareProduct: vspWithLicensingData,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			currentSoftwareProduct: currentSoftwareProductWithLicensingData,
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			genericFieldInfo,
+			qGenericFieldInfo,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList
 		};
 		const onDataChangedListener = ({licensingData}) => {
-			expect(licensingData.licenseAgreement).toEqual('LA_ID1');
+			expect(licensingData.licenseAgreement).toEqual(licenseAgreementList[0].id);
 			expect(licensingData.featureGroups).toEqual([
-				{enum: 'FG_ID1', title: 'FG1'},
-				{enum: 'FG_ID2', title: 'FG2'}
+				{enum: featureGroupsList[0].id, title: featureGroupsList[0].name},
+				{enum: featureGroupsList[1].id, title: featureGroupsList[1].name}
 			]);
 			done();
 		};
@@ -382,45 +321,29 @@ describe('Software Product Details: ', function () {
 			onValidityChanged = {dummyFunc}
 			onQDataChanged = {dummyFunc}
 			onVendorParamChanged = {dummyFunc}/>);
-		expect(vspDetailsView).toExist();
+		expect(vspDetailsView).toBeTruthy();
 		vspDetailsView.onFeatureGroupsChanged({featureGroups: [
-			{enum: 'FG_ID1', title: 'FG1'},
-			{enum: 'FG_ID2', title: 'FG2'}
+			{enum: featureGroupsList[0].id, title: featureGroupsList[0].name},
+			{enum: featureGroupsList[1].id, title: featureGroupsList[1].name}
 		]});
 	});
 
 	it('in view: should change license agreement', done => {
-		let vspWithLicensingData = {
-			...currentSoftwareProduct,
-			licensingData: {
-				licenseAgreement: 'LA_ID1',
-				featureGroups: [{enum: 'FG_ID1', title: 'FG1'}]
-			}
-		};
+
 		let params = {
-			currentSoftwareProduct: vspWithLicensingData,
-			softwareProductCategories: categories,
-			qdata: {},
-			qschema: vspQschema,
-			finalizedLicenseModelList: [{
-				id: 'VLM_ID1',
-				vendorName: 'VLM1',
-				version: '2.0',
-				viewableVersions: ['1.0', '2.0']
-			}, {
-				id: 'VLM_ID2',
-				vendorName: 'VLM2',
-				version: '3.0',
-				viewableVersions: ['1.0', '2.0', '3.0']
-			}],
-			licenseAgreementList: [{id: 'LA_ID1'}, {id: 'LA_ID2'}],
-			featureGroupsList: [
-				{id: 'FG_ID1', name: 'FG1', referencingLicenseAgreements: ['LA_ID1']},
-				{id: 'FG_ID2', name: 'FG2', referencingLicenseAgreements: ['LA_ID1']}
-			]
+			currentSoftwareProduct: currentSoftwareProductWithLicensingData,
+			softwareProductCategories,
+			qdata,
+			dataMap,
+			isFormValid: true,
+			genericFieldInfo,
+			qGenericFieldInfo,
+			finalizedLicenseModelList,
+			licenseAgreementList,
+			featureGroupsList
 		};
 		const onDataChangedListener = ({licensingData}) => {
-			expect(licensingData.licenseAgreement).toEqual('LA_ID2');
+			expect(licensingData.licenseAgreement).toEqual(licenseAgreementList[1].id);
 			expect(licensingData.featureGroups).toEqual([]);
 			done();
 		};
@@ -432,7 +355,7 @@ describe('Software Product Details: ', function () {
 			onValidityChanged = {dummyFunc}
 			onQDataChanged = {dummyFunc}
 			onVendorParamChanged = {dummyFunc}/>);
-		expect(vspDetailsView).toExist();
-		vspDetailsView.onLicensingDataChanged({licenseAgreement: 'LA_ID2', featureGroups: []});
+		expect(vspDetailsView).toBeTruthy();
+		vspDetailsView.onLicensingDataChanged({licenseAgreement: licenseAgreementList[1].id, featureGroups: []});
 	});
 });
