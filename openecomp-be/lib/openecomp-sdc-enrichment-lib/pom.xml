@@ -1,19 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>openecomp-sdc-enrichment-lib</name>
+    <artifactId>openecomp-sdc-enrichment-lib</artifactId>
 
-
+    <packaging>pom</packaging>
     <parent>
         <artifactId>openecomp-sdc-lib</artifactId>
         <groupId>org.openecomp.sdc</groupId>
         <version>1.1.0-SNAPSHOT</version>
+	<relativePath>..</relativePath>
     </parent>
-
-    <artifactId>openecomp-sdc-enrichment-lib</artifactId>
-    <name>openecomp-sdc-enrichment-lib</name>
-    <packaging>pom</packaging>
-
 
     <modules>
         <module>openecomp-sdc-enrichment-api</module>
@@ -30,6 +29,11 @@
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
             <artifactId>openecomp-sdc-enrichment-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-vendor-software-product-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!--dependency>

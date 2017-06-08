@@ -20,25 +20,24 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-public enum ToscaRelationshipType {
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-  ROOT("tosca.relationships.Root"),
-  NATIVE_ATTACHES_TO("tosca.relationships.AttachesTo"),
-  DEPENDS_ON("tosca.relationships.DependsOn"),
-  NETWORK_LINK_TO("tosca.relationships.network.LinksTo"),
-  NETWORK_BINDS_TO("tosca.relationships.network.BindsTo"),
-  CINDER_VOLUME_ATTACHES_TO("org.openecomp.relationships.heat.cinder.VolumeAttachesTo"),
-  ATTACHES_TO("org.openecomp.relationships.AttachesTo"),;
+public class ToscaRelationshipType {
 
-  private String displayName;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  ToscaRelationshipType(String displayName) {
-    this.displayName = displayName;
-  }
+  public static String RELATIONSHIP_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_RELATIONSHIP_TYPE);
 
-  public String getDisplayName() {
-    return displayName;
-  }
-
+  public static String NATIVE_ROOT = "tosca.relationships.Root";
+  public static String NATIVE_ATTACHES_TO = "tosca.relationships.AttachesTo";
+  public static String NATIVE_DEPENDS_ON = "tosca.relationships.DependsOn";
+  public static String NATIVE_NETWORK_LINK_TO = "tosca.relationships.network.LinksTo";
+  public static String NATIVE_NETWORK_BINDS_TO = "tosca.relationships.network.BindsTo";
+  public static String CINDER_VOLUME_ATTACHES_TO =
+      RELATIONSHIP_TYPE_PREFIX + "VolumeAttachesTo";
+  public static String ATTACHES_TO = RELATIONSHIP_TYPE_PREFIX + "AttachesTo";
 
 }

@@ -21,19 +21,17 @@
 package org.openecomp.sdc.tosca.datatypes;
 
 
-public enum ToscaArtifactType {
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-  DEPLOYMENT("tosca.artifacts.Deployment"),;
+public class ToscaArtifactType {
 
-  private String displayName;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  ToscaArtifactType(String displayName) {
-    this.displayName = displayName;
-  }
+  public static String ARTIFACT_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_ARTIFACT_TYPE);
 
-  public String getDisplayName() {
-    return displayName;
-  }
-
+  public static String NATIVE_DEPLOYMENT = "tosca.artifacts.Deployment";
 
 }

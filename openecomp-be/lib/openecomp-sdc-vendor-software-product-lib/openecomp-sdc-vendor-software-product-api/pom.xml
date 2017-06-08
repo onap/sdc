@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,26 +12,21 @@
 
     <artifactId>openecomp-sdc-vendor-software-product-api</artifactId>
 
+
     <dependencies>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.3.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-core-lib</artifactId>
             <type>pom</type>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-nosqldb-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -55,9 +50,17 @@
             <artifactId>openecomp-sdc-model-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.core</groupId>
+            <artifactId>openecomp-config-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 
-
-    
 </project>

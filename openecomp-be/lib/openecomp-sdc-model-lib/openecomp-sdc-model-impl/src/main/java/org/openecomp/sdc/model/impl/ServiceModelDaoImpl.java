@@ -25,14 +25,18 @@ import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.dao.ServiceTemplateDaoFactory;
 import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class ServiceModelDaoImpl extends AbstractServiceModelDao
     implements ServiceModelDao<ToscaServiceModel, ServiceElement> {
-
 
   public ServiceModelDaoImpl() {
     templateDao = ServiceTemplateDaoFactory.getInstance().createInterface();
     artifactDao = ServiceArtifactDaoFactory.getInstance().createInterface();
   }
 
+  @Override
+  public void deleteAll(String vspId, Version version) {
+
+  }
 }

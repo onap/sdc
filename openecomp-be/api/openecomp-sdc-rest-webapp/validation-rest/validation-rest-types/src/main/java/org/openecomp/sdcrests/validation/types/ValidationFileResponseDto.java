@@ -22,8 +22,13 @@ package org.openecomp.sdcrests.validation.types;
 
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class ValidationFileResponseDto {
-
+  //private List<String> fileNames;
+  //private Map<String, List<ErrorMessage>> errors;
+  //private ValidationFileStatus status;
   private ValidationStructureList validationData;
 
   public ValidationStructureList getValidationData() {

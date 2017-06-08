@@ -1,0 +1,1089 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.OCS-fw3:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      service_policy_name:
+        type: string
+        description: Policy Name
+        required: true
+        status: SUPPORTED
+      st_static_routes_list:
+        type: string
+        description: List of static routes enabled-disabled
+        required: true
+        status: SUPPORTED
+      st_type:
+        type: string
+        description: service type
+        required: true
+        status: SUPPORTED
+      st_service_interface_type_list:
+        type: string
+        description: List of interface types
+        required: true
+        status: SUPPORTED
+      st_mode:
+        type: string
+        description: service mode
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_protected_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      oam_mgmt_net_0_id:
+        type: string
+        description: Name of OAM network
+        required: true
+        status: SUPPORTED
+      start_dst_ports:
+        type: float
+        description: Start of dst port
+        required: true
+        status: SUPPORTED
+      st_flavor:
+        type: string
+        description: Flavor
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: availability zone
+        required: true
+        status: SUPPORTED
+      service_instance_name:
+        type: string
+        description: Service instance name
+        required: true
+        status: SUPPORTED
+      st_scaling:
+        type: string
+        description: Indicates whether service scaling is enabled
+        required: true
+        status: SUPPORTED
+      max_num_fw_instances:
+        type: float
+        description: maximum number of firewall instances for scaling
+        required: true
+        status: SUPPORTED
+      start_src_ports:
+        type: float
+        description: Start of src port
+        required: true
+        status: SUPPORTED
+      network_param2:
+        type: string
+        required: true
+        status: SUPPORTED
+      service_policy_direction:
+        type: string
+        description: Direction of Policy
+        required: true
+        status: SUPPORTED
+      network_param1:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_name:
+        type: string
+        description: Name of service template
+        required: true
+        status: SUPPORTED
+      hsl_direct_net3:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net4:
+        type: string
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_gateway:
+        type: string
+        description: HSL (Logging) network gateway address
+        required: true
+        status: SUPPORTED
+      hsl_direct_net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_shared_ip_list:
+        type: string
+        description: List of shared ip enabled-disabled
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_direct_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      end_src_ports:
+        type: float
+        description: End of src port
+        required: true
+        status: SUPPORTED
+      end_dst_ports:
+        type: float
+        description: End of dst port
+        required: true
+        status: SUPPORTED
+      st_image_name:
+        type: string
+        description: Name of the image
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_id:
+        type: string
+        description: Name of HSL (Logging) network
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_cidr:
+        type: string
+        description: HSL (Logging) network address (CIDR notation)
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_service_instance4:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance4:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance4:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance4:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_hsl_direct_net:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_policy:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      link_hsl_direct_net:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance4:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_hsl_direct_net:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.OCS-fw2:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      service_policy_name:
+        type: string
+        description: Policy Name
+        required: true
+        status: SUPPORTED
+      st_static_routes_list:
+        type: string
+        description: List of static routes enabled-disabled
+        required: true
+        status: SUPPORTED
+      st_type:
+        type: string
+        description: service type
+        required: true
+        status: SUPPORTED
+      st_service_interface_type_list:
+        type: string
+        description: List of interface types
+        required: true
+        status: SUPPORTED
+      st_mode:
+        type: string
+        description: service mode
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_protected_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      oam_mgmt_net_0_id:
+        type: string
+        description: Name of OAM network
+        required: true
+        status: SUPPORTED
+      start_dst_ports:
+        type: float
+        description: Start of dst port
+        required: true
+        status: SUPPORTED
+      st_flavor:
+        type: string
+        description: Flavor
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: availability zone
+        required: true
+        status: SUPPORTED
+      service_instance_name:
+        type: string
+        description: Service instance name
+        required: true
+        status: SUPPORTED
+      st_scaling:
+        type: string
+        description: Indicates whether service scaling is enabled
+        required: true
+        status: SUPPORTED
+      max_num_fw_instances:
+        type: float
+        description: maximum number of firewall instances for scaling
+        required: true
+        status: SUPPORTED
+      start_src_ports:
+        type: float
+        description: Start of src port
+        required: true
+        status: SUPPORTED
+      network_param2:
+        type: string
+        required: true
+        status: SUPPORTED
+      service_policy_direction:
+        type: string
+        description: Direction of Policy
+        required: true
+        status: SUPPORTED
+      network_param1:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_name:
+        type: string
+        description: Name of service template
+        required: true
+        status: SUPPORTED
+      hsl_direct_net3:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net4:
+        type: string
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_gateway:
+        type: string
+        description: HSL (Logging) network gateway address
+        required: true
+        status: SUPPORTED
+      hsl_direct_net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_shared_ip_list:
+        type: string
+        description: List of shared ip enabled-disabled
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_direct_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      end_src_ports:
+        type: float
+        description: End of src port
+        required: true
+        status: SUPPORTED
+      end_dst_ports:
+        type: float
+        description: End of dst port
+        required: true
+        status: SUPPORTED
+      st_image_name:
+        type: string
+        description: Name of the image
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_id:
+        type: string
+        description: Name of HSL (Logging) network
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_cidr:
+        type: string
+        description: HSL (Logging) network address (CIDR notation)
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_service_instance1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_test_nested3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_instance4_test_nested3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance4_test_nested3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance4_test_nested3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance4_test_nested3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_hsl_direct_net_test_nested3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_policy_test_nested3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy_test_nested3:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_hsl_direct_net:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_instance3:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_service_policy:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      feature_service_policy_test_nested3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance4_test_nested3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_hsl_direct_net:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_hsl_direct_net_test_nested3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_hsl_direct_net_test_nested3:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_test_nested3:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_test_nested3:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_hsl_direct_net:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net_test_nested3:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.OCS-fw:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      service_policy_name:
+        type: string
+        description: Policy Name
+        required: true
+        status: SUPPORTED
+      st_static_routes_list:
+        type: string
+        description: List of static routes enabled-disabled
+        required: true
+        status: SUPPORTED
+      st_type:
+        type: string
+        description: service type
+        required: true
+        status: SUPPORTED
+      st_service_interface_type_list:
+        type: string
+        description: List of interface types
+        required: true
+        status: SUPPORTED
+      st_mode:
+        type: string
+        description: service mode
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_protected_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      oam_mgmt_net_0_id:
+        type: string
+        description: Name of OAM network
+        required: true
+        status: SUPPORTED
+      start_dst_ports:
+        type: float
+        description: Start of dst port
+        required: true
+        status: SUPPORTED
+      st_flavor:
+        type: string
+        description: Flavor
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: availability zone
+        required: true
+        status: SUPPORTED
+      service_instance_name:
+        type: string
+        description: Service instance name
+        required: true
+        status: SUPPORTED
+      st_scaling:
+        type: string
+        description: Indicates whether service scaling is enabled
+        required: true
+        status: SUPPORTED
+      max_num_fw_instances:
+        type: float
+        description: maximum number of firewall instances for scaling
+        required: true
+        status: SUPPORTED
+      start_src_ports:
+        type: float
+        description: Start of src port
+        required: true
+        status: SUPPORTED
+      network_param2:
+        type: string
+        required: true
+        status: SUPPORTED
+      service_policy_direction:
+        type: string
+        description: Direction of Policy
+        required: true
+        status: SUPPORTED
+      network_param1:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_name:
+        type: string
+        description: Name of service template
+        required: true
+        status: SUPPORTED
+      hsl_direct_net3:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net4:
+        type: string
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_gateway:
+        type: string
+        description: HSL (Logging) network gateway address
+        required: true
+        status: SUPPORTED
+      hsl_direct_net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      hsl_direct_net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      st_shared_ip_list:
+        type: string
+        description: List of shared ip enabled-disabled
+        required: true
+        status: SUPPORTED
+      Cricket_OCS_direct_net_id:
+        type: string
+        description: Name of Cricket OCS network
+        required: true
+        status: SUPPORTED
+      end_src_ports:
+        type: float
+        description: End of src port
+        required: true
+        status: SUPPORTED
+      end_dst_ports:
+        type: float
+        description: End of dst port
+        required: true
+        status: SUPPORTED
+      st_image_name:
+        type: string
+        description: Name of the image
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_id:
+        type: string
+        description: Name of HSL (Logging) network
+        required: true
+        status: SUPPORTED
+      HSL_direct_net_cidr:
+        type: string
+        description: HSL (Logging) network address (CIDR notation)
+        required: true
+        status: SUPPORTED
+    requirements:
+    - dependency_service_instance2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_service_instance1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_instance1_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance1_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance1_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance1_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_test_nested3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_instance4_test_nested3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance4_test_nested3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance4_test_nested3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance4_test_nested3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_hsl_direct_net_test_nested3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_policy_test_nested3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy_test_nested3_test_nested2:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_hsl_direct_net_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_instance3_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_port_0_service_instance3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1_service_instance3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2_service_instance3_test_nested2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - dependency_service_policy_test_nested2:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy_test_nested2:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_hsl_direct_net:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - dependency_service_policy:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - network_service_policy:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.network.Network
+        relationship: org.openecomp.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      feature_hsl_direct_net_test_nested3_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance1:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_test_nested3_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance4_test_nested3_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance3_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_hsl_direct_net_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net_test_nested3_test_nested2:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_hsl_direct_net:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_hsl_direct_net_test_nested2:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_test_nested3_test_nested2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_hsl_direct_net_test_nested2:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_instance1_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      link_hsl_direct_net_test_nested3_test_nested2:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_hsl_direct_net:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_service_policy_test_nested3_test_nested2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      end_point_hsl_direct_net_test_nested2:
+        type: tosca.capabilities.Endpoint
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.service_template:
+    derived_from: org.openecomp.resource.abstract.nodes.contrail.AbstractSubstitute
+    requirements:
+    - link_port_0:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_port_2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.vfc.nodes.heat.st:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.contrail.Compute

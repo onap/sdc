@@ -20,8 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl;
 
+import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
+
 
 public class VendorSoftwareProductDaoFactoryImpl extends VendorSoftwareProductDaoFactory {
   private static final VendorSoftwareProductDao INSTANCE = new VendorSoftwareProductDaoImpl();

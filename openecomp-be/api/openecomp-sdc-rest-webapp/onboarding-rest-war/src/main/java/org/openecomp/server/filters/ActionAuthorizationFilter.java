@@ -21,7 +21,6 @@
 package org.openecomp.server.filters;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -37,6 +36,8 @@ public class ActionAuthorizationFilter implements Filter {
 
   @Override
   public void destroy() {
+    // TODO Auto-generated method stub
+
   }
 
   @Override
@@ -62,10 +63,7 @@ public class ActionAuthorizationFilter implements Filter {
 
   @Override
   public void init(FilterConfig arg0) throws ServletException {
-    /*runningOnLocal = System.getProperty("file.separator").equals("\\");
-    if (!runningOnLocal){
-    // call to super init of cadi filter as we are not running on windows
-    }*/
+
   }
 
 }

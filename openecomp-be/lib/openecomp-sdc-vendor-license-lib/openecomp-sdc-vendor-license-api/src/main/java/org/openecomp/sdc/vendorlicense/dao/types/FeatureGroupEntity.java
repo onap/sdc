@@ -28,7 +28,6 @@ import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -83,12 +82,14 @@ public class FeatureGroupEntity implements VersionableEntity {
     return getVendorLicenseModelId();
   }
 
-  public String getVendorLicenseModelId() {
-    return vendorLicenseModelId;
+  @Override
+  public String getId() {
+    return id;
   }
 
-  public void setVendorLicenseModelId(String vendorLicenseModelId) {
-    this.vendorLicenseModelId = vendorLicenseModelId;
+  @Override
+  public void setId(String id) {
+    this.id = id;
   }
 
   @Override
@@ -101,14 +102,12 @@ public class FeatureGroupEntity implements VersionableEntity {
     this.version = version;
   }
 
-  @Override
-  public String getId() {
-    return id;
+  public String getVendorLicenseModelId() {
+    return vendorLicenseModelId;
   }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
+  public void setVendorLicenseModelId(String vendorLicenseModelId) {
+    this.vendorLicenseModelId = vendorLicenseModelId;
   }
 
   public String getName() {
@@ -160,18 +159,10 @@ public class FeatureGroupEntity implements VersionableEntity {
   }
 
   @Override
-  public String toString() {
-    return "FeatureGroupEntity{"
-        + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
-        + ", version=" + version
-        + ", id='" + id + '\''
-        + ", name='" + name + '\''
-        + ", description='" + description + '\''
-        + ", partNumber='" + partNumber + '\''
-        + ", licenseKeyGroupIds=" + licenseKeyGroupIds
-        + ", entitlementPoolIds=" + entitlementPoolIds
-        + ", referencingLicenseAgreements=" + referencingLicenseAgreements
-        + '}';
+  public int hashCode() {
+    return Objects
+        .hash(vendorLicenseModelId, version, id, name, description, partNumber, licenseKeyGroupIds,
+            entitlementPoolIds, referencingLicenseAgreements);
   }
 
   @Override
@@ -195,9 +186,17 @@ public class FeatureGroupEntity implements VersionableEntity {
   }
 
   @Override
-  public int hashCode() {
-    return Objects
-        .hash(vendorLicenseModelId, version, id, name, description, partNumber, licenseKeyGroupIds,
-            entitlementPoolIds, referencingLicenseAgreements);
+  public String toString() {
+    return "FeatureGroupEntity{"
+        + "vendorLicenseModelId='" + vendorLicenseModelId + '\''
+        + ", version=" + version
+        + ", id='" + id + '\''
+        + ", name='" + name + '\''
+        + ", description='" + description + '\''
+        + ", partNumber='" + partNumber + '\''
+        + ", licenseKeyGroupIds=" + licenseKeyGroupIds
+        + ", entitlementPoolIds=" + entitlementPoolIds
+        + ", referencingLicenseAgreements=" + referencingLicenseAgreements
+        + '}';
   }
 }

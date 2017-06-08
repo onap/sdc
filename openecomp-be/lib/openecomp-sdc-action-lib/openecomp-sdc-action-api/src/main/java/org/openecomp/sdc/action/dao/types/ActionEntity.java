@@ -28,19 +28,19 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.action.types.Action;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Table(keyspace = "dox", name = "Action")
 public class ActionEntity {
 
-  @Column(name = "actionUUID")
+  @Column(name = "actionUuId")
   private String actionUuId;
   @PartitionKey(value = 0)
-  @Column(name = "actionInvariantUUID")
+  @Column(name = "actionInvariantUuId")
   private String actionInvariantUuId;
   @PartitionKey(value = 1)
   @Frozen
@@ -124,7 +124,7 @@ public class ActionEntity {
    */
   public void setVendorList(List<String> vendorList) {
     if (vendorList != null && !vendorList.isEmpty()) {
-      List<String> lowerCaseVendorList = new ArrayList<>();
+      List<String> lowerCaseVendorList = new ArrayList<String>();
       lowerCaseVendorList
           .addAll(vendorList.stream().map(String::toLowerCase).collect(Collectors.toList()));
       this.vendorList = lowerCaseVendorList;
@@ -144,7 +144,7 @@ public class ActionEntity {
    */
   public void setCategoryList(List<String> categoryList) {
     if (categoryList != null && !categoryList.isEmpty()) {
-      List<String> lowerCaseCategoryList = new ArrayList<>();
+      List<String> lowerCaseCategoryList = new ArrayList<String>();
       lowerCaseCategoryList
           .addAll(categoryList.stream().map(String::toLowerCase).collect(Collectors.toList()));
       this.categoryList = lowerCaseCategoryList;
@@ -209,16 +209,4 @@ public class ActionEntity {
     return destination;
   }
 
-  /*private List<HashMap<String,String>> createMapFromList(List<String> list, String idName){
-        List<HashMap<String,String>> keyValueList = new ArrayList<>();
-        if(list != null && !list.isEmpty()){
-            for(String attributeId : list){
-                HashMap<String,String> attributeIdMap = new HashMap<>();
-                attributeIdMap.put(idName,attributeId);
-                keyValueList.add(attributeIdMap);
-            }
-            return keyValueList;
-        }
-        return null;
-  }*/
 }

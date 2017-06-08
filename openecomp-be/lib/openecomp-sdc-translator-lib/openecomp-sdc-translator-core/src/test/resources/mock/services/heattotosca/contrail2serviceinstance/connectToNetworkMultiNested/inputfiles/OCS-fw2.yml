@@ -1,0 +1,198 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Based on the following reference for the HOT-DMZ-FW template:
+  Version 3.5 8-10-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-DMZ-FW template that creates two DMZ networks (direct and protected) with a scaled out firewall service between the two.
+
+parameters:
+  hsl_direct_net1:
+    type: string
+  hsl_direct_net2:
+    type: string
+  hsl_direct_net3:
+    type: string
+  hsl_direct_net4:
+    type: string
+  HSL_direct_net_id:
+    type: string
+    description: Name of HSL (Logging) network
+  HSL_direct_net_cidr:
+    type: string
+    description: HSL (Logging) network address (CIDR notation)
+  HSL_direct_net_gateway:
+    type: string
+    description: HSL (Logging) network gateway address
+  oam_mgmt_net_0_id:
+    type: string
+    description: Name of OAM network
+  Cricket_OCS_direct_net_id:
+    type: string
+    description: Name of Cricket OCS network
+  Cricket_OCS_protected_net_id:
+    type: string
+    description: Name of Cricket OCS network
+  service_instance_name:
+    type: string
+    description: Service instance name
+  service_policy_name:
+    type: string
+    description: Policy Name
+  service_policy_direction:
+    type: string
+    description: Direction of Policy
+  start_src_ports:
+    type: number
+    description: Start of src port
+  end_src_ports:
+    type: number
+    description: End of src port
+  start_dst_ports:
+    type: number
+    description: Start of dst port
+  end_dst_ports:
+    type: number
+    description: End of dst port
+  st_name:
+    type: string
+    description: Name of service template
+  st_mode:
+    type: string
+    description: service mode
+  st_type:
+    type: string
+    description: service type
+  st_image_name:
+    type: string
+    description: Name of the image
+  st_flavor:
+    type: string
+    description: Flavor
+  st_service_interface_type_list:
+    type: string
+    description: List of interface types
+  st_shared_ip_list:
+    type: string
+    description: List of shared ip enabled-disabled
+  st_static_routes_list:
+    type: string
+    description: List of static routes enabled-disabled
+  st_scaling:
+    type: string
+    description: Indicates whether service scaling is enabled
+  max_num_fw_instances:
+    type: number
+    description: maximum number of firewall instances for scaling
+  availability_zone_1:
+    type: string
+    description: availability zone
+  network_param1:
+    type: string
+  network_param2:
+    type: string
+
+resources:
+
+  hsl_direct_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: HSL_direct_net_id }
+
+  hsl_ip_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: hsl_direct_net }
+      cidr: { get_param: HSL_direct_net_cidr }
+      gateway_ip: { get_param: HSL_direct_net_gateway }
+
+  service_template:
+    type: OS::Contrail::ServiceTemplate
+    properties:
+      name: { get_param: st_name }
+      service_mode: { get_param: st_mode }
+      service_type: { get_param: st_type }
+      image_name: { get_param: st_image_name }
+      flavor: { get_param: st_flavor }
+      service_interface_type_list: { "Fn::Split" : [ ",", Ref: st_service_interface_type_list ] }
+      shared_ip_list: { "Fn::Split" : [ ",", Ref: st_shared_ip_list ] }
+      static_routes_list: { "Fn::Split" : [ ",", Ref: st_static_routes_list ] }
+      service_scaling: { get_param: st_scaling }
+
+  service_instance3:
+    type: OS::Contrail::ServiceInstance
+    depends_on: [ hsl_ip_subnet]
+    properties:
+      name: { get_param: service_instance_name }
+      availability_zone: { get_param: availability_zone_1 }
+      service_template: { get_resource: service_template }
+      scale_out:
+        max_instances: {get_param: max_num_fw_instances}
+      interface_list: [
+          {
+              virtual_network: { get_param: network_param1 }
+          },
+          {
+              virtual_network: { get_param: network_param1 }
+          },
+          {
+              virtual_network: { get_param: network_param2 }
+          }
+          ]
+
+  service_instance1:
+    type: OS::Contrail::ServiceInstance
+    depends_on: [ hsl_ip_subnet]
+    properties:
+      name: { get_param: service_instance_name }
+      availability_zone: { get_param: availability_zone_1 }
+      service_template: { get_resource: service_template }
+      scale_out:
+        max_instances: {get_param: max_num_fw_instances}
+      interface_list: [
+          {
+              virtual_network: { get_param: network_param2 }
+          },
+          {
+              virtual_network: { get_param: network_param1 }
+          },
+          {
+              virtual_network: { get_param: network_param2 }
+          }
+          ]
+
+  service_policy:
+    type: OS::Contrail::NetworkPolicy
+    depends_on: [ service_instance3 ]
+    properties:
+      name: { get_param: service_policy_name }
+      entries:
+        policy_rule: [
+          {
+            "direction": { get_param: service_policy_direction },
+            "protocol": "any",
+            "src_ports": [{"start_port": {get_param: start_src_ports}, "end_port": {get_param: end_src_ports}}],
+            "dst_ports": [{"start_port": {get_param: start_dst_ports}, "end_port": {get_param: end_dst_ports}}],
+            "dst_addresses": [{ "virtual_network": { get_param: Cricket_OCS_direct_net_id }}],
+            "action_list": { "apply_service": [{ get_resource: service_instance3 }]},
+            "src_addresses": [{ "virtual_network": { get_param: Cricket_OCS_protected_net_id }}],
+          },
+          ]
+
+  service_policy_attach_direct_net:
+    type: OS::Contrail::AttachPolicy
+    depends_on: [ service_policy ]
+    properties:
+      network: { get_param: Cricket_OCS_direct_net_id }
+      policy: { get_attr: [service_policy, fq_name] }
+
+  service_policy_attach_protected_net:
+    type: OS::Contrail::AttachPolicy
+    depends_on: [ service_policy ]
+    properties:
+      network: { get_param: Cricket_OCS_protected_net_id }
+      policy: { get_attr: [service_policy, fq_name] }
+
+  test_nested3:
+    type: OCS-fw3.yml
+    properties:
+      network_param1: { get_param: network_param1}
+      network_param2: { get_param: network_param1}

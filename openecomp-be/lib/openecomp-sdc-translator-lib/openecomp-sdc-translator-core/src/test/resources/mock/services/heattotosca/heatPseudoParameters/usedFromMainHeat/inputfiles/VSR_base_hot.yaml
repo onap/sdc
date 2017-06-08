@@ -1,0 +1,213 @@
+heat_template_version: 2013-05-23
+
+parameters:
+  availability_zone_0:
+    type: string
+    description: Availability zone where this component should be instantiated
+  cpm_name_0:
+    type: string
+    description: VM name for CPM A
+  cpm_name_1:
+    type: string
+    description: VM name for CPM B
+  iom_name_0:
+    type: string
+    description: VM name for IOM 1
+  cpm_image_name:
+    type: string
+    description: Image to be used for the CPM instance
+  iom_image_name:
+    type: string
+    description: Image to be used for the IOM instance
+  cpm_flavor_name:
+    type: string
+    description: Flavor of the CPM VNF to be used
+  iom_flavor_name:
+    type: string
+    description: Flavor of the IOM VNF to be used
+  mgt_net_id:
+    type: string
+    description: Network used by the Management interface
+  mgt_subnet_id:
+    type: string
+    description: Subnet used by the Management interface
+  ctrl_fabric_net_id:
+    type: string
+    description: Network used by the control fabric interface
+  ctrl_fabric_subnet_id:
+    type: string
+    description: Subnet used by the control fabric interface
+  data0_net_id: 
+    type: string
+    description: Network used by the Data interface
+  data0_subnet_id: 
+    type: string
+    description: Subnet used by the Data interface
+  data1_net_id: 
+    type: string
+    description: Network used by the second Data interface
+  data1_subnet_id: 
+    type: string
+    description: Subnet used by the second Data interface
+  data2_net_id: 
+    type: string
+    description: Network used by the third Data interface
+  data2_subnet_id: 
+    type: string
+    description: Subnet used by the third Data interface
+  data3_net_id: 
+    type: string
+    description: Network used by the fourth Data interface
+  data3_subnet_id: 
+    type: string
+    description: Subnet used by the fourth Data interface
+  cpmaSlot:
+    type: string
+    description: The slot value assigned to CPMA
+  cpmbSlot:
+    type: string
+    description: The slot value assigned to CPMB
+  iom1Slot:
+    type: string
+    description: The slot value assigned to IOM1
+  cpm_mgt_gw_ip:
+    type: string
+    description: Default Gateway for the Management Interface, set during boot time
+  cpm_mgt_ip_0:
+    type: string
+    description: Fixed IP that will be used by the Management Interface on CPMA
+  cpm_mgt_ip_1:
+    type: string
+    description: Fixed IP that will be used by the Management Interface on CPMB
+  cpm_mgt_cidr:
+    type: string
+    description: Management network to be used by CPM
+  stack_name:
+    type: string
+    description: Name of the HEAT stack
+  cpm_smbios:
+    type: string
+    description: Parameters to be passed to the CPM at boot up as key-value pairs
+  iom_smbios:
+    type: string
+    description: Parameters to be passed to the IOM at boot up as key-value pairs
+  ctrl_fabric_cidr:
+    type: string
+    description: CIDR of Control Fabric Network
+  cpm_mtu:
+    type: string
+    description: MTU size in bytes
+  iom_mtu:
+    type: string
+    description: MTU size in bytes    
+  vnf_id:
+    type: string
+    description: VNF ID
+  vf_module_id:
+    type: string
+    description: VF Module ID
+
+
+resources:
+  sec_group:
+    type: "OS::Neutron::SecurityGroup"
+    properties:
+      description: Security group for vSR
+      name: vsr_security_group
+      rules:
+      - remote_ip_prefix: 0.0.0.0/0
+        protocol: tcp
+        port_range_min: 22
+        port_range_max: 22
+      - remote_ip_prefix: 0.0.0.0/0
+        protocol: icmp
+        direction: ingress
+
+  CPMA:
+    type: VSR_CPM_base_template_nested.yaml
+    properties:
+      stack_name: { get_param: "OS::stack_name" }
+      stack_id: { get_param: 'OS::stack_id' }
+      vnf_id: { get_param: "vnf_id" }
+      vm_name: { get_param: "cpm_name_0" }
+      vf_module_id: { get_param: "vf_module_id" }
+      cpm_image_name: { get_param: cpm_image_name }
+      cpm_flavor_name: { get_param: cpm_flavor_name }
+      mgt_net_id:  { get_param: mgt_net_id }
+      mgt_subnet_id:  { get_param: mgt_subnet_id }
+      ctrl_fabric_net_id: { get_param: ctrl_fabric_net_id }
+      ctrl_fabric_subnet_id: { get_param: ctrl_fabric_subnet_id }
+      cpm_mgt_ip: { get_param: cpm_mgt_ip_0 }
+      cpm_mgt_cidr: { get_param: cpm_mgt_cidr }
+      cpm_smbios:
+        str_replace:
+          template: { get_param: cpm_smbios }
+          params:
+            $slt: { get_param: cpmaSlot }
+            $adrp: { get_param: cpm_mgt_ip_0 }
+            $adrs: { get_param: cpm_mgt_ip_1 }
+            $oamGw: { get_param: cpm_mgt_gw_ip }
+      availability_zone_0: { get_param: availability_zone_0 }
+      security_group: { get_resource: sec_group }
+      cpm_slot: { get_param: cpmaSlot }
+      cpm_mtu: { get_param: cpm_mtu }
+  CPMB:
+    type: VSR_CPM_base_template_nested.yaml
+    properties:
+      stack_name: { get_param: "OS::stack_name" }
+      vnf_id: { get_param: "vnf_id" }
+      vm_name: { get_param: "cpm_name_1" }
+      vf_module_id: { get_param: "vf_module_id" }
+      cpm_image_name: { get_param: cpm_image_name }
+      cpm_flavor_name: { get_param: cpm_flavor_name }
+      mgt_net_id:  { get_param: mgt_net_id }
+      mgt_subnet_id:  { get_param: mgt_subnet_id }
+      ctrl_fabric_net_id: { get_param: ctrl_fabric_net_id }
+      ctrl_fabric_subnet_id: { get_param: ctrl_fabric_subnet_id }
+      cpm_mgt_ip: { get_param: cpm_mgt_ip_1 }
+      cpm_mgt_cidr: { get_param: cpm_mgt_cidr }
+      cpm_smbios:
+        str_replace:
+          template: { get_param: cpm_smbios }
+          params:
+            $slt: { get_param: cpmbSlot }
+            $adrp: { get_param: cpm_mgt_ip_0 }
+            $adrs: { get_param: cpm_mgt_ip_1 }
+            $oamGw: { get_param: cpm_mgt_gw_ip }
+      availability_zone_0: { get_param: availability_zone_0 }
+      security_group: { get_resource: sec_group }
+      cpm_slot: { get_param: cpmbSlot }
+      cpm_mtu: { get_param: cpm_mtu }
+  IOM1:
+    type: VSR_IOM_template_nested.yaml
+    properties:
+      stack_name: { get_param: "OS::stack_name" }
+      vnf_id: { get_param: "vnf_id" }
+      vm_name: { get_param: "iom_name_0" }
+      vf_module_id: { get_param: "vf_module_id" }
+      iom_image_name: { get_param: iom_image_name }
+      iom_flavor_name: { get_param: iom_flavor_name }
+      mgt_net_id:  { get_param: mgt_net_id }
+      mgt_subnet_id:  { get_param: mgt_subnet_id }
+      ctrl_fabric_net_id: { get_param: ctrl_fabric_net_id }
+      ctrl_fabric_subnet_id: { get_param: ctrl_fabric_subnet_id }
+      data0_net_id: { get_param: data0_net_id }
+      data0_subnet_id:  { get_param: data0_subnet_id }
+      data1_net_id: { get_param: data1_net_id }
+      data1_subnet_id:  { get_param: data1_subnet_id }
+      data2_net_id: { get_param: data2_net_id }
+      data2_subnet_id:  { get_param: data2_subnet_id }
+      data3_net_id: { get_param: data3_net_id }
+      data3_subnet_id:  { get_param: data3_subnet_id }
+      iom_smbios:
+        str_replace:
+          template: { get_param: iom_smbios }
+          params:
+            $slt: { get_param: iom1Slot }
+      availability_zone_0: { get_param: availability_zone_0 }
+      security_group: { get_resource: sec_group }
+      iom_slot: { get_param: iom1Slot }
+      iom_mtu: { get_param: iom_mtu }
+outputs:
+    out1:
+         value: {get_param: "OS::project_id" }

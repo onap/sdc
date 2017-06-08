@@ -20,11 +20,14 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.impl.zusammen.FeatureGroupDaoZusammenImpl;
+
 
 public class FeatureGroupDaoFactoryImpl extends FeatureGroupDaoFactory {
-  private static FeatureGroupDao INSTANCE = new FeatureGroupCassandraDaoImpl();
+    private static FeatureGroupDao INSTANCE = new FeatureGroupDaoZusammenImpl(ZusammenAdaptorFactory.getInstance().createInterface());
 
   @Override
   public FeatureGroupDao createInterface() {

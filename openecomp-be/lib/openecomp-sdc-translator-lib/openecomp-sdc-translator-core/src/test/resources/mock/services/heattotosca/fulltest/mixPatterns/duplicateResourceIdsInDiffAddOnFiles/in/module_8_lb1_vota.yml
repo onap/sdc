@@ -1,0 +1,336 @@
+heat_template_version: 2015-04-30
+
+parameters:
+####
+  int_oam_int_net_id:
+    type: string
+    description: Name of management network to be created
+  lb1_gwaf_int_net_id:
+    type: string
+    description: Name of mirror network to be created
+  oam_protected_net:
+    type: string
+    description: Name of mirror network to be created
+####
+  lb_key_name:
+    type: string
+  LB1_name_0:
+    type: string
+    description: Name of the SVM
+  LB1_name_1:
+    type: string
+    description: Name of the SVM
+  LB1_flavor_name:
+    type: string
+    description: Flavor of the end VMs
+  LB1_image_name:
+    type: string
+    description: Name of the end VM LB_image_name
+# aap_core
+  aap_core_ip_prefix:
+    type: string
+    description: ip_prefix for the ServiceInstance
+  aap_core_ip_prefix_len:
+    type: number
+    description: ip_prefix_len for the ServiceInstance
+  aap_core_ha_mode:
+    type: string
+    description: address_mode for the ServiceInstance
+  aap_core_mac:
+    type: string
+    description: mac for the VirtualMachineInterface
+  lb_oam_int_ip_0:
+    type: string
+    description: lb ip
+  lb_lb1_gwaf_int_ip_0:
+    type: string
+    description: lb ip
+  lb_oam_protected_ip_0:
+    type: string
+    description: lb ip
+  lb_oam_int_ip_1:
+    type: string
+    description: lb ip
+  lb_lb1_gwaf_int_ip_1:
+    type: string
+    description: lb ip
+  lb_oam_protected_ip_1:
+    type: string
+    description: lb ip
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance   
+  vnf_id:
+    type: string
+    description: Name of vOTA instance for ECOMP
+  availability_zone_0:
+    type: string
+    description: lb availability zone
+  availability_zone_1:
+    type: string
+    description: lb availability zone
+  int_oam_int_sec_group_id: 
+    type: string
+    description: int oam sec group
+  lb1_gwaf_int_sec_group_id: 
+    type: string
+    description: lb1 gwaf sec group id
+  oam_protected_sec_group_id:
+    type: string
+    description: oam protected sec group
+  shc_enabled:
+    type: string
+    description: health check 
+  shc_monitor_type:
+    type: string
+    description:  health check 
+  shc_delay:
+    type: string
+    description:   health check
+  shc_timeout:
+    type: string
+    description:   health check
+  shc_max_retries:
+    type: string
+    description:  health check
+  shc_url_path:
+    type: string
+    description:  health check
+  ecmp_hashing_include_fields_hashing_configured:
+    type: string
+    description:  health check
+  ecmp_hashing_include_fields_source_ip:
+    type: string
+    description: ecmp hash
+  ecmp_hashing_include_fields_destination_port:
+    type: string
+    description:  ecmp hash 
+  ecmp_hashing_include_fields_source_port:
+    type: string
+    description:  ecmp hash
+  ecmp_hashing_include_fields_destination_ip:
+    type: string
+    description:  ecmp hash
+  ecmp_hashing_include_fields_ip_protocol:
+    type: string
+    description:  ecmp hash
+  oam_gw:
+    type: string
+    description: oam gw
+resources:
+
+
+
+  lb_0_int_oam_int_0_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: int_oam_int_net_id },
+        }
+      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
+      security_group_refs: [{ get_param: int_oam_int_sec_group_id}]
+
+  lb_0_lb1_gwaf_int_1_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb1_gwaf_int_net_id },
+        }
+      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
+      security_group_refs: [{ get_param: lb1_gwaf_int_sec_group_id }]
+
+  lb_0_oam_protected_2_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs: [{ get_param: oam_protected_net }]
+      service_health_check_refs: 
+        - get_resource: lb_oam_protected_hc
+      ecmp_hashing_include_fields:
+        ecmp_hashing_include_fields_hashing_configured: { get_param: ecmp_hashing_include_fields_hashing_configured }
+        ecmp_hashing_include_fields_source_ip: { get_param: ecmp_hashing_include_fields_source_ip }
+        ecmp_hashing_include_fields_destination_port: { get_param: ecmp_hashing_include_fields_destination_port }
+        ecmp_hashing_include_fields_destination_ip: { get_param: ecmp_hashing_include_fields_destination_ip }
+        ecmp_hashing_include_fields_source_port: { get_param: ecmp_hashing_include_fields_source_port }
+        ecmp_hashing_include_fields_ip_protocol: { get_param: ecmp_hashing_include_fields_ip_protocol }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+            [{
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+                {
+                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_core_ip_prefix },
+                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_core_ip_prefix_len },
+                },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: aap_core_mac },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_core_ha_mode },
+            }],
+        }
+      security_group_refs: [{ get_param: oam_protected_sec_group_id }]
+
+  lb_1_int_oam_int_0_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: int_oam_int_net_id },
+        }
+      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
+      security_group_refs: [{ get_param: int_oam_int_sec_group_id}]
+
+  lb_1_lb1_gwaf_int_1_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb1_gwaf_int_net_id },
+        }
+      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
+      security_group_refs: [{ get_param: lb1_gwaf_int_sec_group_id }]
+
+  lb_1_oam_protected_2_port:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_network_refs: [{ get_param: oam_protected_net }]
+      service_health_check_refs: 
+        - get_resource: lb_oam_protected_hc
+      ecmp_hashing_include_fields:
+        ecmp_hashing_include_fields_hashing_configured: { get_param: ecmp_hashing_include_fields_hashing_configured }
+        ecmp_hashing_include_fields_source_ip: { get_param: ecmp_hashing_include_fields_source_ip }
+        ecmp_hashing_include_fields_destination_port: { get_param: ecmp_hashing_include_fields_destination_port }
+        ecmp_hashing_include_fields_destination_ip: { get_param: ecmp_hashing_include_fields_destination_ip }
+        ecmp_hashing_include_fields_source_port: { get_param: ecmp_hashing_include_fields_source_port }
+        ecmp_hashing_include_fields_ip_protocol: { get_param: ecmp_hashing_include_fields_ip_protocol }
+      virtual_machine_interface_allowed_address_pairs:
+        {
+          virtual_machine_interface_allowed_address_pairs_allowed_address_pair:
+            [{
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip:
+                {
+                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix: { get_param: aap_core_ip_prefix },
+                  virtual_machine_interface_allowed_address_pairs_allowed_address_pair_ip_ip_prefix_len: { get_param: aap_core_ip_prefix_len },
+                },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_mac: { get_param: aap_core_mac },
+              virtual_machine_interface_allowed_address_pairs_allowed_address_pair_address_mode: { get_param: aap_core_ha_mode },
+            }],
+        }
+      security_group_refs: [{ get_param: oam_protected_sec_group_id }]
+
+  lb_0_int_oam_int_0_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_0_int_oam_int_0_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_0_int_oam_int_0_port }]
+      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
+      instance_ip_address: { get_param:  lb_oam_int_ip_0 }
+
+
+  lb_0_lb1_gwaf_int_1_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_0_lb1_gwaf_int_1_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_0_lb1_gwaf_int_1_port }]
+      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
+      instance_ip_address: { get_param:  lb_lb1_gwaf_int_ip_0 }
+
+
+  lb_0_oam_protected_2_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_0_oam_protected_2_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_0_oam_protected_2_port }]
+      virtual_network_refs: [{ get_param: oam_protected_net }]
+      instance_ip_address: { get_param:  lb_oam_protected_ip_0 }
+
+
+  lb_1_int_oam_int_0_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_1_int_oam_int_0_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_1_int_oam_int_0_port }]
+      virtual_network_refs: [{ get_param: int_oam_int_net_id }]
+      instance_ip_address: { get_param:  lb_oam_int_ip_1 }
+
+
+  lb_1_lb1_gwaf_int_1_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_1_lb1_gwaf_int_1_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_1_lb1_gwaf_int_1_port }]
+      virtual_network_refs: [{ get_param: lb1_gwaf_int_net_id }]
+      instance_ip_address: { get_param:  lb_lb1_gwaf_int_ip_1 }
+
+
+  lb_1_oam_protected_2_ip:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ lb_1_oam_protected_2_port ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: lb_1_oam_protected_2_port }]
+      virtual_network_refs: [{ get_param: oam_protected_net }]
+      instance_ip_address: { get_param:  lb_oam_protected_ip_1 }
+
+
+  lb_oam_protected_hc:
+    type: OS::ContrailV2::ServiceHealthCheck
+    properties:
+      name: oam_protected_hc_PING
+      service_health_check_properties:
+        service_health_check_properties_enabled: { get_param: shc_enabled }
+        service_health_check_properties_monitor_type: { get_param: shc_monitor_type }
+        service_health_check_properties_delay: { get_param: shc_delay }
+        service_health_check_properties_timeout: { get_param: shc_timeout }
+        service_health_check_properties_max_retries: { get_param: shc_max_retries }
+        service_health_check_properties_url_path: { get_param: shc_url_path }
+
+
+
+  LB1_0:
+    type: OS::Nova::Server
+    depends_on: [ lb_0_int_oam_int_0_ip, lb_0_lb1_gwaf_int_1_ip, lb_0_oam_protected_2_ip ]
+    properties:
+      name: {get_param: LB1_name_0 }
+      image: { get_param:  LB1_image_name }
+      flavor: { get_param: LB1_flavor_name }
+      key_name: { get_param: lb_key_name }
+      availability_zone: { get_param: availability_zone_0 }
+      networks:
+        - port: { get_resource: lb_0_int_oam_int_0_port }
+        - port: { get_resource: lb_0_lb1_gwaf_int_1_port }
+        - port: { get_resource: lb_0_oam_protected_2_port }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id:  { get_param: vf_module_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sudo ip route del default
+            sudo route add -net 0.0.0.0 netmask 0.0.0.0 gw $oam_gw   
+          params:
+            $oam_gw: { get_param: oam_gw  }
+
+  LB1_1:
+    type: OS::Nova::Server
+    depends_on: [ lb_1_int_oam_int_0_ip, lb_1_lb1_gwaf_int_1_ip, lb_1_oam_protected_2_ip ]
+    properties:
+      name: {get_param: LB1_name_1 }
+      image: { get_param:  LB1_image_name }
+      flavor: { get_param: LB1_flavor_name }
+      availability_zone: { get_param: availability_zone_1 }
+      key_name: { get_param: lb_key_name }
+      networks:
+        - port: { get_resource: lb_1_int_oam_int_0_port }
+        - port: { get_resource: lb_1_lb1_gwaf_int_1_port }
+        - port: { get_resource: lb_1_oam_protected_2_port }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id:  { get_param: vf_module_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            sudo ip route del default
+            sudo route add -net 0.0.0.0 netmask 0.0.0.0 gw $oam_gw   
+          params:
+            $oam_gw: { get_param: oam_gw  }

@@ -1,38 +1,44 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
-import {expect} from 'chai';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import {cloneAndSet} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import SoftwareProductProcessesActionHelper from 'sdc-app/onboarding/softwareProduct/processes/SoftwareProductProcessesActionHelper.js';
+import {
+	VSPProcessPostFactory,
+	VSPProcessStoreFactory,
+	VSPProcessPostFactoryWithType,
+	VSPProcessStoreFactoryWithType,
+	VSPProcessStoreWithFormDataFactory,
+	VSPProcessPostWithFormDataFactory,
+	VSPProcessStoreWithArtifactNameFactory } from 'test-utils/factories/softwareProduct/SoftwareProductProcessFactories.js';
+import {buildFromExistingObject} from 'test-utils/Util.js';
+import {VSPEditorFactory} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
+import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 const softwareProductId = '123';
+const version = VSPEditorFactory.build().version;
 
 describe('Software Product Processes Module Tests', function () {
 
 	let restPrefix = '';
 
-	before(function() {
+	beforeAll(function() {
 		restPrefix = Configuration.get('restPrefix');
 		deepFreeze(restPrefix);
 	});
@@ -45,27 +51,18 @@ describe('Software Product Processes Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const softwareProductPostRequest = {
-			name: 'Pr1',
-			description: 'string'
-		};
-		const softwareProductProcessToAdd = {
-			name: 'Pr1',
-			description: 'string'
-		};
 		const softwareProductProcessFromResponse = 'ADDED_ID';
-		const softwareProductProcessAfterAdd = {
-			...softwareProductProcessToAdd,
-			id: softwareProductProcessFromResponse
-		};
+
+		const softwareProductProcessAfterAdd = VSPProcessStoreFactory.build({id: softwareProductProcessFromResponse});
+		const softwareProductPostRequest = buildFromExistingObject(VSPProcessPostFactory, softwareProductProcessAfterAdd);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', [softwareProductProcessAfterAdd]);
 
-		mockRest.addHandler('create', ({data, options, baseUrl}) => {
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
 
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes`);
-			expect(data).to.deep.equal(softwareProductPostRequest);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes`);
+			expect(data).toEqual(softwareProductPostRequest);
+			expect(options).toEqual(undefined);
 			return {
 				returnCode: 'OK',
 				value: softwareProductProcessFromResponse
@@ -74,12 +71,48 @@ describe('Software Product Processes Module Tests', function () {
 
 		return SoftwareProductProcessesActionHelper.saveProcess(store.dispatch,
 			{
-				softwareProductId: softwareProductId,
+				softwareProductId,
+				version,
 				previousProcess: null,
-				process: softwareProductProcessToAdd
+				process: softwareProductPostRequest
 			}
 		).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
+	it('Add Software Products Processes with type', () => {
+
+		const store = storeCreator();
+		deepFreeze(store.getState());
+
+		const softwareProductProcessFromResponse = 'ADDED_ID';
+
+		const softwareProductProcessAfterAdd = VSPProcessStoreFactoryWithType.build({id: softwareProductProcessFromResponse});
+		const softwareProductPostRequest = buildFromExistingObject(VSPProcessPostFactoryWithType, softwareProductProcessAfterAdd);
+
+		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', [softwareProductProcessAfterAdd]);
+
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
+
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes`);
+			expect(data).toEqual(softwareProductPostRequest);
+			expect(options).toEqual(undefined);
+			return {
+				returnCode: 'OK',
+				value: softwareProductProcessFromResponse
+			};
+		});
+
+		return SoftwareProductProcessesActionHelper.saveProcess(store.dispatch,
+			{
+				softwareProductId,
+				version,
+				previousProcess: null,
+				process: softwareProductPostRequest
+			}
+		).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -88,50 +121,38 @@ describe('Software Product Processes Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const softwareProductPostRequest = {
-			name: 'Pr1',
-			description: 'string'
-		};
-		const softwareProductProcessToAdd = {
-			name: 'Pr1',
-			description: 'string',
-			formData: {
-				name: 'new artifact name'
-			}
-		};
-		const softwareProductProcessFromResponse = 'ADDED_ID';
-		const softwareProductProcessAfterAdd = {
-			...softwareProductProcessToAdd,
-			id: softwareProductProcessFromResponse
-		};
+		const softwareProductPostRequest = VSPProcessPostFactoryWithType.build();
+		const softwareProductProcessToAdd = VSPProcessPostWithFormDataFactory.build(softwareProductPostRequest);
+		const softwareProductProcessAfterAdd = VSPProcessStoreWithFormDataFactory.build();
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', [softwareProductProcessAfterAdd]);
 
-		mockRest.addHandler('create', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes`);
-			expect(data).to.deep.equal(softwareProductPostRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes`);
+			expect(data).toEqual(softwareProductPostRequest);
+			expect(options).toEqual(undefined);
 			return {
 				returnCode: 'OK',
-				value: softwareProductProcessFromResponse
+				value: softwareProductProcessAfterAdd.id
 			};
 		});
 
-		mockRest.addHandler('create', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes/${softwareProductProcessAfterAdd.id}/upload`);
-			expect(data).to.deep.equal(softwareProductProcessToAdd.formData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes/${softwareProductProcessAfterAdd.id}/upload`);
+			expect(data).toEqual(softwareProductProcessToAdd.formData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductProcessesActionHelper.saveProcess(store.dispatch,
 			{
-				softwareProductId: softwareProductId,
+				softwareProductId,
+				version,
 				previousProcess: null,
 				process: softwareProductProcessToAdd
 			}
 		).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -139,14 +160,7 @@ describe('Software Product Processes Module Tests', function () {
 	//** UPDATE
 	//**
 	it('Update Software Products Processes', () => {
-		const softwareProductProcessesList = [
-			{
-				name: 'Pr1',
-				description: 'string',
-				id: 'EBADF561B7FA4A788075E1840D0B5971',
-				artifactName: 'artifact'
-			}
-		];
+		const softwareProductProcessesList = VSPProcessStoreWithArtifactNameFactory.buildList(1);
 		deepFreeze(softwareProductProcessesList);
 
 		const store = storeCreator({
@@ -160,47 +174,47 @@ describe('Software Product Processes Module Tests', function () {
 
 		const toBeUpdatedProcessId = softwareProductProcessesList[0].id;
 		const previousProcessData = softwareProductProcessesList[0];
-		const processUpdateData = {
-			...softwareProductProcessesList[0],
-			name: 'Pr1_UPDATED',
-			description: 'string_UPDATED'
-		};
+		const processUpdateData = VSPProcessStoreWithArtifactNameFactory.build(
+			{...previousProcessData,
+				name: 'Pr1_UPDATED',
+				description: 'string_UPDATED',
+				type: 'Other'
+			}
+		);
+
 		deepFreeze(processUpdateData);
 
-		const processPutRequest = {
+		const processPutRequest = VSPProcessPostFactory.build({
 			name: 'Pr1_UPDATED',
-			description: 'string_UPDATED'
-		};
+			description: 'string_UPDATED',
+			type: 'Other'
+		});
 		deepFreeze(processPutRequest);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', [processUpdateData]);
 
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes/${toBeUpdatedProcessId}`);
-			expect(data).to.deep.equal(processPutRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes/${toBeUpdatedProcessId}`);
+			expect(data).toEqual(processPutRequest);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductProcessesActionHelper.saveProcess(store.dispatch,
 			{
-				softwareProductId: softwareProductId,
+				softwareProductId,
+				version,
 				previousProcess: previousProcessData,
 				process: processUpdateData
 			}
 		).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
 	it('Update Software Products Processes and uploaded file', () => {
-		const previousProcessData = {
-			id: 'EBADF561B7FA4A788075E1840D0B5971',
-			name: 'p1',
-			description: 'string',
-			artifactName: 'artifact'
-		};
+		const previousProcessData = VSPProcessStoreWithArtifactNameFactory.build();
 		deepFreeze(previousProcessData);
 
 		const store = storeCreator({
@@ -212,45 +226,47 @@ describe('Software Product Processes Module Tests', function () {
 		});
 		deepFreeze(store.getState());
 
-		const newProcessToUpdate = {
+		const newProcessToUpdate = VSPProcessStoreWithFormDataFactory.build({
 			...previousProcessData,
 			name: 'new name',
 			formData: {
 				name: 'new artifact name'
 			}
-		};
+		});
 		deepFreeze(newProcessToUpdate);
 
-		const newProcessToPutRequest = {
+		const newProcessToPutRequest = VSPProcessPostFactory.build({
 			name: newProcessToUpdate.name,
-			description: previousProcessData.description
-		};
+			description: previousProcessData.description,
+			type: previousProcessData.type
+		});
 		deepFreeze(newProcessToPutRequest);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', [newProcessToUpdate]);
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes/${previousProcessData.id}`);
-			expect(data).to.deep.equal(newProcessToPutRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes/${newProcessToUpdate.id}`);
+			expect(data).toEqual(newProcessToPutRequest);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
-		mockRest.addHandler('create', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes/${previousProcessData.id}/upload`);
-			expect(data).to.deep.equal(newProcessToUpdate.formData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('post', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes/${newProcessToUpdate.id}/upload`);
+			expect(data).toEqual(newProcessToUpdate.formData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductProcessesActionHelper.saveProcess(store.dispatch,
 			{
-				softwareProductId: softwareProductId,
+				softwareProductId,
+				version,
 				previousProcess: previousProcessData,
 				process: newProcessToUpdate
 			}
 		).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -261,20 +277,7 @@ describe('Software Product Processes Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const softwareProductProcessesList = [
-			{
-				name: 'Pr1',
-				description: 'hjhj',
-				id: 'EBADF561B7FA4A788075E1840D0B5971',
-				artifactName: 'artifact'
-			},
-			{
-				name: 'Pr1',
-				description: 'hjhj',
-				id: '2F47447D22DB4C53B020CA1E66201EF2',
-				artifactName: 'artifact'
-			}
-		];
+		const softwareProductProcessesList = VSPProcessStoreFactory.buildList(2);
 
 		deepFreeze(softwareProductProcessesList);
 
@@ -283,14 +286,14 @@ describe('Software Product Processes Module Tests', function () {
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', softwareProductProcessesList);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes`);
-			expect(data).to.deep.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/processes`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return {results: softwareProductProcessesList};
 		});
 
-		return SoftwareProductProcessesActionHelper.fetchProcessesList(store.dispatch, {softwareProductId}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+		return SoftwareProductProcessesActionHelper.fetchProcessesList(store.dispatch, {softwareProductId, version}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -298,33 +301,32 @@ describe('Software Product Processes Module Tests', function () {
 	//** DELETE
 	//**
 	it('Delete Software Products Processes', () => {
-		const softwareProductProcessesList = [
-			{
-				name: 'Pr1',
-				description: 'hjhj',
-				id: 'EBADF561B7FA4A788075E1840D0B5971',
-				artifactName: 'artifact'
-			}
-		];
+		const softwareProductProcessesList = VSPProcessStoreWithArtifactNameFactory.buildList(1);
+		const currentSoftwareProduct = VSPEditorFactory.build();
 
 		deepFreeze(softwareProductProcessesList);
 		const store = storeCreator({
 			softwareProduct: {
 				softwareProductProcesses: {
 					processesList: softwareProductProcessesList
+				},
+				softwareProductEditor: {
+					data: currentSoftwareProduct
 				}
 			}
 		});
 
-		const processId = 'EBADF561B7FA4A788075E1840D0B5971';
+		const processId = softwareProductProcessesList[0].id;
+		const version = store.getState().softwareProduct.softwareProductEditor.data.version;
+		const versionId = version.id;
 		deepFreeze(store.getState());
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesList', []);
 
 		mockRest.addHandler('destroy', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/processes/${processId}`);
-			expect(data).to.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`${restPrefix}/v1.0/vendor-software-products/${softwareProductId}/versions/${versionId}/processes/${processId}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return {
 				results: {
 					returnCode: 'OK'
@@ -334,9 +336,10 @@ describe('Software Product Processes Module Tests', function () {
 
 		return SoftwareProductProcessesActionHelper.deleteProcess(store.dispatch, {
 			process: softwareProductProcessesList[0],
-			softwareProductId
+			softwareProductId,
+			version
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -344,10 +347,7 @@ describe('Software Product Processes Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		let process = {
-			id: 'p_id',
-			name: 'p_name'
-		};
+		let process = VSPProcessStoreFactory.build();
 		deepFreeze(process);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processToDelete', process);
@@ -355,7 +355,7 @@ describe('Software Product Processes Module Tests', function () {
 		SoftwareProductProcessesActionHelper.openDeleteProcessesConfirm(store.dispatch, {process});
 
 		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 			done();
 		}, 100);
 	});
@@ -369,7 +369,7 @@ describe('Software Product Processes Module Tests', function () {
 		SoftwareProductProcessesActionHelper.hideDeleteConfirm(store.dispatch);
 
 		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 			done();
 		}, 100);
 	});
@@ -377,7 +377,7 @@ describe('Software Product Processes Module Tests', function () {
 	//**
 	//** CREATE/EDIT
 	//**
-	it('Validating open Software Products Processes for create', done => {
+	it('Validating open Software Products Processes for create', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
@@ -387,28 +387,20 @@ describe('Software Product Processes Module Tests', function () {
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesEditor.data', process);
 
 		SoftwareProductProcessesActionHelper.openEditor(store.dispatch);
-
-		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState().softwareProduct.softwareProductProcesses.processesEditor.data).toEqual(expectedStore.softwareProduct.softwareProductProcesses.processesEditor.data);
 	});
 
-	it('Validating close Software Products Processes from editing mode', done => {
+	it('Validating close Software Products Processes from editing mode', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesEditor', {});
 
 		SoftwareProductProcessesActionHelper.closeEditor(store.dispatch);
-
-		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
-			done();
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
-	it('Validating open Software Products Processes for editing', done => {
+	it('Validating open Software Products Processes for editing', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
@@ -418,42 +410,8 @@ describe('Software Product Processes Module Tests', function () {
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesEditor.data', process);
 
 		SoftwareProductProcessesActionHelper.openEditor(store.dispatch, process);
+		expect(store.getState().softwareProduct.softwareProductProcesses.processesEditor.data).toEqual(expectedStore.softwareProduct.softwareProductProcesses.processesEditor.data);
 
-		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
-			done();
-		}, 100);
 	});
 
-	it('Validating Software Products Processes dataChanged event', done => {
-		let process = {name: 'aa', description: 'xx'};
-		deepFreeze(process);
-
-		const store = storeCreator({
-			softwareProduct: {
-				softwareProductProcesses: {
-					processesEditor: {
-						data: process
-					}
-				}
-			}
-		});
-		deepFreeze(store.getState());
-
-		let deltaData = {name: 'bb'};
-		deepFreeze(deltaData);
-
-		let expectedProcess = {name: 'bb', description: 'xx'};
-		deepFreeze(expectedProcess);
-
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductProcesses.processesEditor.data', expectedProcess);
-
-		SoftwareProductProcessesActionHelper.processEditorDataChanged(store.dispatch, {deltaData});
-
-		setTimeout(function(){
-			expect(store.getState()).to.deep.equal(expectedStore);
-			done();
-		}, 100);
-	});
 });
-

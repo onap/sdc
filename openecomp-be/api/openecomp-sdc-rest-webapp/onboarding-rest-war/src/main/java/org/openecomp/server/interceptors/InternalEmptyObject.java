@@ -25,8 +25,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import java.io.Serializable;
 
 /**
- * This class is for Internal use only.
- * Please don't use this class.
+ * This class is for Internal use only. Please don't use this class.
  */
 @JsonAutoDetect
 public class InternalEmptyObject implements Serializable {

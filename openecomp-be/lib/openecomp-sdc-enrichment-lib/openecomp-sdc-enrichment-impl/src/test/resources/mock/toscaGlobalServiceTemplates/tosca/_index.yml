@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  filename: tosca/_index.yml
+  version: '1.0'
+imports:
+- capabilities:
+    file: capabilities.yml
+- nodes:
+    file: nodes.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- data:
+    file: data.yml
+- interfaces:
+    file: interfaces.yml
+- artifacts:
+    file: artifacts.yml
+- policies:
+    file: policies.yml

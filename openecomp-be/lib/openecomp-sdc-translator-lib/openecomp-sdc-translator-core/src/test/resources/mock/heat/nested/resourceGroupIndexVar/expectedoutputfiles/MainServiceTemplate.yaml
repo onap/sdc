@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.compute:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -556,7 +532,7 @@ topology_template:
           - 1
         name: compute_name
   groups:
-    mvs.vfmodule.heat:
+    mvs.vfmodule.heat_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/mvs.vfmodule.heat.yaml

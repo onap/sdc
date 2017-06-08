@@ -21,12 +21,16 @@
 package org.openecomp.sdc.versioning.impl;
 
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.VersionInfoDao;
-import org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory;
 import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDao;
-import org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory;
-import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory;
 import org.openecomp.sdc.versioning.dao.types.UserCandidateVersion;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -51,6 +55,7 @@ import org.openecomp.sdc.versioning.errors.UndoCheckoutOnUnlockedEntityErrorBuil
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
+import org.slf4j.MDC;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -63,14 +68,17 @@ import java.util.stream.Collectors;
 public class VersioningManagerImpl implements VersioningManager {
 
   private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-  private static VersionInfoDao versionInfoDao =
-      VersionInfoDaoFactory.getInstance().createInterface();
-  private static VersionInfoDeletedDao versionInfoDeletedDao =
-      VersionInfoDeletedDaoFactory.getInstance().createInterface();
-  private static VersionableEntityDao versionableEntityDao =
-      VersionableEntityDaoFactory.getInstance().createInterface();
-
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   private static Map<String, Set<VersionableEntityMetadata>> versionableEntities = new HashMap<>();
+
+  private VersionInfoDao versionInfoDao;
+  private VersionInfoDeletedDao versionInfoDeletedDao;
+
+  public VersioningManagerImpl(VersionInfoDao versionInfoDao,
+                               VersionInfoDeletedDao versionInfoDeletedDao) {
+    this.versionInfoDao = versionInfoDao;
+    this.versionInfoDeletedDao = versionInfoDeletedDao;
+  }
 
   private static VersionInfo getVersionInfo(VersionInfoEntity versionInfoEntity, String user,
                                             VersionableEntityAction action) {
@@ -103,6 +111,10 @@ public class VersioningManagerImpl implements VersioningManager {
                                             Version latestFinalVersion,
                                             Set<Version> viewableVersions,
                                             VersionableEntityAction action, String user) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("entity Id", entityId);
+
     Version activeVersion;
 
     if (action == VersionableEntityAction.Write) {
@@ -110,11 +122,17 @@ public class VersioningManagerImpl implements VersioningManager {
         if (user.equals(candidate.getUser())) {
           activeVersion = candidate.getVersion();
         } else {
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't get entity version info");
           throw new CoreException(
               new EditOnEntityLockedByOtherErrorBuilder(entityType, entityId, candidate.getUser())
                   .build());
         }
       } else {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't get entity version info");
         throw new CoreException(new EditOnUnlockedEntityErrorBuilder(entityType, entityId).build());
       }
     } else {
@@ -126,17 +144,23 @@ public class VersioningManagerImpl implements VersioningManager {
     }
 
     VersionInfo versionInfo = new VersionInfo();
+    versionInfo.setStatus(status);
+    activeVersion.setStatus(status);
+    if(latestFinalVersion!= null) latestFinalVersion.setStatus(status);
+    if(viewableVersions != null) viewableVersions.forEach(version->version.setStatus(status));
     versionInfo.setActiveVersion(activeVersion);
     versionInfo.setLatestFinalVersion(latestFinalVersion);
     versionInfo.setViewableVersions(toSortedList(viewableVersions));
     versionInfo.setFinalVersions(getFinalVersions(viewableVersions));
-    versionInfo.setStatus(status);
     if (candidate != null) {
+      candidate.getVersion().setStatus(status);
       versionInfo.setLockingUser(candidate.getUser());
       if (user.equals(candidate.getUser())) {
         versionInfo.getViewableVersions().add(candidate.getVersion());
       }
     }
+
+    mdcDataDebugMessage.debugExitMessage("entity Id", entityId);
     return versionInfo;
   }
 
@@ -150,24 +174,24 @@ public class VersioningManagerImpl implements VersioningManager {
   }
 
   private static List<Version> getFinalVersions(Set<Version> versions) {
-    return versions.stream().filter(version -> version.isFinal()).collect(Collectors.toList());
+    return versions.stream().filter(Version::isFinal).collect(Collectors.toList());
   }
 
   @Override
   public void register(String entityType, VersionableEntityMetadata entityMetadata) {
-    Set<VersionableEntityMetadata> entitiesMetadata = versionableEntities.get(entityType);
-    if (entitiesMetadata == null) {
-      entitiesMetadata = new HashSet<>();
-      versionableEntities.put(entityType, entitiesMetadata);
-    }
+    Set<VersionableEntityMetadata> entitiesMetadata =
+        versionableEntities.computeIfAbsent(entityType, k -> new HashSet<>());
     entitiesMetadata.add(entityMetadata);
   }
 
   @Override
   public Version create(String entityType, String entityId, String user) {
-    VersionInfoEntity versionInfoEntity =
-        versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
+    VersionInfoEntity
+        versionInfoEntity = versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity != null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CREATE_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't create versionable entity");
       throw new CoreException(new EntityAlreadyExistErrorBuilder(entityType, entityId).build());
     }
 
@@ -180,16 +204,63 @@ public class VersioningManagerImpl implements VersioningManager {
   }
 
   @Override
-  public Version checkout(String entityType, String entityId, String user) {
+  public void delete(String entityType, String entityId, String user) {
     VersionInfoEntity versionInfoEntity =
         versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.DELETE_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't delete versionable entity");
+      throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
+    }
+
+    switch (versionInfoEntity.getStatus()) {
+      case Locked:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.DELETE_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't delete versionable entity");
+        throw new CoreException(new DeleteOnLockedEntityErrorBuilder(entityType, entityId,
+            versionInfoEntity.getCandidate().getUser()).build());
+      default:
+        //do nothing
+        break;
+    }
+
+    doDelete(versionInfoEntity);
+  }
+
+  @Override
+  public void undoDelete(String entityType, String entityId, String user) {
+    VersionInfoDeletedEntity versionInfoDeletedEntity =
+        versionInfoDeletedDao.get(new VersionInfoDeletedEntity(entityType, entityId));
+    if (versionInfoDeletedEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.UNDO_DELETE_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't undo delete for versionable entity");
+      throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
+    }
+
+    doUndoDelete(versionInfoDeletedEntity);
+  }
+
+  @Override
+  public Version checkout(String entityType, String entityId, String user) {
+    VersionInfoEntity versionInfoEntity =
+        versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
+    MDC.put(LoggerConstants.TARGET_SERVICE_NAME, LoggerTragetServiceName.CHECKOUT_ENTITY);
+    if (versionInfoEntity == null) {
+      MDC.put(LoggerConstants.ERROR_CATEGORY, ErrorLevel.ERROR.name());
+      MDC.put(LoggerConstants.TARGET_ENTITY, LoggerConstants.TARGET_ENTITY_DB);
+      MDC.put(LoggerConstants.ERROR_DESCRIPTION, LoggerErrorDescription.CHECKOUT_ENTITY);
       throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
     }
 
     Version checkoutVersion = null;
     switch (versionInfoEntity.getStatus()) {
       case Locked:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CHECKOUT_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't checkout versionable entity");
         throw new CoreException(new CheckoutOnLockedEntityErrorBuilder(entityType, entityId,
             versionInfoEntity.getCandidate().getUser()).build());
       case Final:
@@ -197,7 +268,10 @@ public class VersioningManagerImpl implements VersioningManager {
         checkoutVersion = doCheckout(versionInfoEntity, user);
         break;
       default:
+        //do nothing
+        break;
     }
+
     return checkoutVersion;
   }
 
@@ -206,6 +280,9 @@ public class VersioningManagerImpl implements VersioningManager {
     VersionInfoEntity versionInfoEntity =
         versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.UNDO_CHECKOUT_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't undo checkout for versionable entity");
       throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
     }
 
@@ -213,6 +290,10 @@ public class VersioningManagerImpl implements VersioningManager {
     switch (versionInfoEntity.getStatus()) {
       case Locked:
         if (!user.equals(versionInfoEntity.getCandidate().getUser())) {
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.UNDO_CHECKOUT_ENTITY, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+              "Can't undo checkout for versionable entity");
           throw new CoreException(
               new UndoCheckoutOnEntityLockedByOtherErrorBuilder(entityType, entityId,
                   versionInfoEntity.getCandidate().getUser()).build());
@@ -221,16 +302,23 @@ public class VersioningManagerImpl implements VersioningManager {
         break;
       case Final:
       case Available:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.UNDO_CHECKOUT_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(),
+            "Can't undo checkout for versionable entity");
         throw new CoreException(
             new UndoCheckoutOnUnlockedEntityErrorBuilder(entityType, entityId).build());
       default:
+        //do nothing
+        break;
     }
+
     return activeVersion;
   }
 
   private Version undoCheckout(VersionInfoEntity versionInfoEntity) {
     deleteVersionFromEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
-        versionInfoEntity.getCandidate().getVersion());
+        versionInfoEntity.getCandidate().getVersion(), versionInfoEntity.getActiveVersion());
 
     versionInfoEntity.setStatus(versionInfoEntity.getActiveVersion().isFinal() ? VersionStatus.Final
         : VersionStatus.Available);
@@ -245,6 +333,9 @@ public class VersioningManagerImpl implements VersioningManager {
     VersionInfoEntity versionInfoEntity =
         versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CHECKIN_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't checkin versionable entity");
       throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
     }
 
@@ -252,17 +343,26 @@ public class VersioningManagerImpl implements VersioningManager {
     switch (versionInfoEntity.getStatus()) {
       case Available:
       case Final:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CHECKIN_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't checkin versionable entity");
         throw new CoreException(
             new CheckinOnUnlockedEntityErrorBuilder(entityType, entityId).build());
       case Locked:
         if (!user.equals(versionInfoEntity.getCandidate().getUser())) {
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.CHECKIN_ENTITY, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't checkin versionable entity");
           throw new CoreException(new CheckinOnEntityLockedByOtherErrorBuilder(entityType, entityId,
               versionInfoEntity.getCandidate().getUser()).build());
         }
         checkedInVersion = doCheckin(versionInfoEntity, checkinDescription);
         break;
       default:
+        //do nothing
+        break;
     }
+
     return checkedInVersion;
   }
 
@@ -271,22 +371,34 @@ public class VersioningManagerImpl implements VersioningManager {
     VersionInfoEntity versionInfoEntity =
         versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't submit versionable entity");
       throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
     }
 
     Version submitVersion = null;
     switch (versionInfoEntity.getStatus()) {
       case Final:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't submit versionable entity");
         throw new CoreException(
             new EntityAlreadyFinalizedErrorBuilder(entityType, entityId).build());
       case Locked:
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.SUBMIT_ENTITY, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.PERMISSION_ERROR.getErrorCode(), "Can't submit versionable entity");
         throw new CoreException(new SubmitLockedEntityNotAllowedErrorBuilder(entityType, entityId,
             versionInfoEntity.getCandidate().getUser()).build());
       case Available:
         submitVersion = doSubmit(versionInfoEntity, user, submitDescription);
         break;
       default:
+        //do nothing
+        break;
     }
+
     return submitVersion;
   }
 
@@ -296,6 +408,9 @@ public class VersioningManagerImpl implements VersioningManager {
     VersionInfoEntity versionInfoEntity =
         versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
     if (versionInfoEntity == null) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.GET_VERSION_INFO, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), "Can't get entity version info");
       throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
     }
     return getVersionInfo(versionInfoEntity, user, action);
@@ -329,35 +444,6 @@ public class VersioningManagerImpl implements VersioningManager {
     return activeVersions;
   }
 
-  @Override
-  public void delete(String entityType, String entityId, String user) {
-    VersionInfoEntity versionInfoEntity =
-        versionInfoDao.get(new VersionInfoEntity(entityType, entityId));
-    if (versionInfoEntity == null) {
-      throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
-    }
-
-    switch (versionInfoEntity.getStatus()) {
-      case Locked:
-        throw new CoreException(new DeleteOnLockedEntityErrorBuilder(entityType, entityId,
-            versionInfoEntity.getCandidate().getUser()).build());
-      default:
-    }
-
-    doDelete(versionInfoEntity, user);
-  }
-
-  @Override
-  public void undoDelete(String entityType, String entityId, String user) {
-    VersionInfoDeletedEntity versionInfoDeletedEntity =
-        versionInfoDeletedDao.get(new VersionInfoDeletedEntity(entityType, entityId));
-    if (versionInfoDeletedEntity == null) {
-      throw new CoreException(new EntityNotExistErrorBuilder(entityType, entityId).build());
-    }
-
-    doUndoDelete(versionInfoDeletedEntity, user);
-  }
-
   private void markAsCheckedOut(VersionInfoEntity versionInfoEntity, String checkingOutUser) {
     versionInfoEntity.setStatus(VersionStatus.Locked);
     versionInfoEntity.setCandidate(new UserCandidateVersion(checkingOutUser,
@@ -374,8 +460,7 @@ public class VersioningManagerImpl implements VersioningManager {
     return versionInfoEntity.getCandidate().getVersion();
   }
 
-  private void doDelete(VersionInfoEntity versionInfoEntity, String user) {
-
+  private void doDelete(VersionInfoEntity versionInfoEntity) {
     VersionInfoDeletedEntity versionInfoDeletedEntity = new VersionInfoDeletedEntity();
     versionInfoDeletedEntity.setStatus(versionInfoEntity.getStatus());
     versionInfoDeletedEntity.setViewableVersions(versionInfoEntity.getViewableVersions());
@@ -386,11 +471,9 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoDeletedEntity.setLatestFinalVersion(versionInfoEntity.getLatestFinalVersion());
     versionInfoDeletedDao.create(versionInfoDeletedEntity);
     versionInfoDao.delete(versionInfoEntity);
-
   }
 
-  private void doUndoDelete(VersionInfoDeletedEntity versionInfoDeletedEntity, String user) {
-
+  private void doUndoDelete(VersionInfoDeletedEntity versionInfoDeletedEntity) {
     VersionInfoEntity versionInfoEntity = new VersionInfoEntity();
     versionInfoEntity.setStatus(versionInfoDeletedEntity.getStatus());
     versionInfoEntity.setViewableVersions(versionInfoDeletedEntity.getViewableVersions());
@@ -401,7 +484,6 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoEntity.setLatestFinalVersion(versionInfoDeletedEntity.getLatestFinalVersion());
     versionInfoDao.create(versionInfoEntity);
     versionInfoDeletedDao.delete(versionInfoDeletedEntity);
-
   }
 
   private Version doCheckin(VersionInfoEntity versionInfoEntity, String checkinDescription) {
@@ -412,6 +494,9 @@ public class VersioningManagerImpl implements VersioningManager {
     versionInfoEntity.setStatus(VersionStatus.Available);
     versionInfoDao.update(versionInfoEntity);
 
+    closeVersionOnEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
+        versionInfoEntity.getActiveVersion());
+
     return versionInfoEntity.getActiveVersion();
   }
 
@@ -420,6 +505,8 @@ public class VersioningManagerImpl implements VersioningManager {
     Version finalVersion = versionInfoEntity.getActiveVersion().calculateNextFinal();
     initVersionOnEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
         versionInfoEntity.getActiveVersion(), finalVersion);
+    closeVersionOnEntity(versionInfoEntity.getEntityType(), versionInfoEntity.getEntityId(),
+        finalVersion);
 
     Set<Version> viewableVersions = new HashSet<>();
     for (Version version : versionInfoEntity.getViewableVersions()) {
@@ -444,6 +531,7 @@ public class VersioningManagerImpl implements VersioningManager {
     versionHistory.setUser(user);
     versionHistory.setDescription(description);
     versionHistory.setType(type);
+    //versionHistoryDao.create(versionHistory);
   }
 
   private void initVersionOnEntity(String entityType, String entityId, Version baseVersion,
@@ -451,17 +539,29 @@ public class VersioningManagerImpl implements VersioningManager {
     Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
     if (entityMetadatas != null) {
       for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
-        versionableEntityDao.initVersion(entityMetadata, entityId, baseVersion, newVersion);
+        VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())
+            .initVersion(entityMetadata, entityId, baseVersion, newVersion);
       }
     }
   }
 
   private void deleteVersionFromEntity(String entityType, String entityId,
-                                       Version versionToDelete) {
+                                       Version versionToDelete, Version backToVersion) {
     Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
     if (entityMetadatas != null) {
       for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
-        versionableEntityDao.deleteVersion(entityMetadata, entityId, versionToDelete);
+        VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())
+            .deleteVersion(entityMetadata, entityId, versionToDelete, backToVersion);
+      }
+    }
+  }
+
+  private void closeVersionOnEntity(String entityType, String entityId, Version versionToClose) {
+    Set<VersionableEntityMetadata> entityMetadatas = versionableEntities.get(entityType);
+    if (entityMetadatas != null) {
+      for (VersionableEntityMetadata entityMetadata : entityMetadatas) {
+        VersionableEntityDaoFactory.getInstance().createInterface(entityMetadata.getStoreType())
+            .closeVersion(entityMetadata, entityId, versionToClose);
       }
     }
   }

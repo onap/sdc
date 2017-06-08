@@ -2,34 +2,15 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 topology_template:
   inputs:
+    interface_param:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
     template_PortTuple_LB1:
       hidden: false
       immutable: false
@@ -110,7 +91,7 @@ topology_template:
         virtual_network_refs:
         - jsa_net1
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -131,7 +112,7 @@ topology_template:
             - jsa_net2
             - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -163,7 +144,7 @@ topology_template:
           - jsa_net3
           - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -182,12 +163,12 @@ topology_template:
           - jsa_net4
           - fq_name
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
   groups:
-    hot_template:
+    hot_template_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot_template.yml

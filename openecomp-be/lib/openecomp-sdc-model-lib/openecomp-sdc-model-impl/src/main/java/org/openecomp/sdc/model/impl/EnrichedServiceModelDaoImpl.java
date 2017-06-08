@@ -37,8 +37,15 @@ public class EnrichedServiceModelDaoImpl extends AbstractServiceModelDao
     artifactDao = EnrichedServiceArtifactDaoFactory.getInstance().createInterface();
   }
 
-  @Override
+  /*@Override
   public List<ServiceArtifact> getExternalArtifacts(String vspId, Version version) {
     return (List<ServiceArtifact>) artifactDao.list(vspId, version);
+  }
+*/
+
+  @Override
+  public void deleteAll(String vspId, Version version) {
+    templateDao.deleteAll(vspId, version);
+    artifactDao.deleteAll(vspId, version);
   }
 }

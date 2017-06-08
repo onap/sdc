@@ -25,5 +25,4 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
 public interface VendorLicenseModelDao extends VersionableDao, BaseDao<VendorLicenseModelEntity> {
-//    void updateLastModificationTime(VendorLicenseModelEntity vendorLicenseModel);
 }

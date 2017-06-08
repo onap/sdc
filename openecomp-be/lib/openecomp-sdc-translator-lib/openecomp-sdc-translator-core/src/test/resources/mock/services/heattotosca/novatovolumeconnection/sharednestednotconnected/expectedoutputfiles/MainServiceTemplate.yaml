@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -126,6 +102,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -133,6 +115,9 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network:
           get_input: p1
       requirements:
@@ -157,15 +142,7 @@ topology_template:
           node: test_vol2
           relationship: tosca.relationships.AttachesTo
   groups:
-    addOn:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/addOn.yml
-        description: |
-          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
-      members:
-      - test_nested
-    main:
+    main_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/main.yml
@@ -176,6 +153,14 @@ topology_template:
       - test_vol2
       - server_cmaui
       - cmaui_port_0
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nested
   outputs:
     out1_not_shared:
       value: test_nested

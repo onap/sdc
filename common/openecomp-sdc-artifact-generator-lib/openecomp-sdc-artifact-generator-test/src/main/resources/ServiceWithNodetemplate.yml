@@ -1,0 +1,51 @@
+ # _______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           								 	  |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							  |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: ba65d050-f98a-4950-ab2f-3b6557d9476f
+  UUID: b79f52b8-57ab-43a0-a6d8-9db685f08073
+  name: service_0
+  description: desc
+  type: Service
+  category: Mobility
+  serviceEcompNaming: false
+  serviceHoming: false
+imports:
+  resource_0:
+    file: Resource0-template.yml
+  resource_1:
+    file: Resource1-template.yml
+topology_template:
+  node_templates:
+    resource_1 2:
+      type: org.openecomp.resource.vf.Resource1
+      metadata:
+        invariantUUID: af39c951-3a61-4324-9a1f-892a26f713fb
+        UUID: 438eecb8-bdf0-4356-b8f4-80dfcaafecbf
+        version: 1.0
+        name: resource_1
+        description: description
+        type: VF
+        category: Generic
+        subcategory: Infrastructure
+    resource_0 1:
+      type: org.openecomp.resource.vf.Resource0
+      metadata:
+        invariantUUID: 461a4839-2572-4dc1-b3be-dcb4c1908764
+        UUID: bca09900-d37a-48db-8cd2-de014b2fdbba
+        version: 1.0
+        name: resource_0
+        description: description
+        type: VF
+        category: Generic
+        subcategory: Infrastructure
+  substitution_mapping:
+    node_type: org.openecomp.service.Service0
+ # _______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           								 	  |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							  |
+ #|_______________________________________________________________________________________________________________________________________|

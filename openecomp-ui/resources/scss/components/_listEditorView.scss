@@ -2,48 +2,41 @@
   @extend .flex-column;
   background-color: $content-background-color;
 
-  .list-editor-view-title {
-    @extend .section-title;
+  .expandble-search-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
   }
 
-  .list-editor-view-title-inline {
-    @extend .list-editor-view-title;
-    position: relative;
-    top: 9px;
-    &:first-child {
-      padding: 0;
-    }
-  }
-
-  .list-editor-view-add-section {
-    display: inline-block;
-    padding: 0 10px 0 10px;
-  }
-
-  .list-editor-view-actions {
+  .list-editor-view-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     border-bottom: 1px solid $light-gray;
-    padding-bottom: 18px;
+    padding-bottom: 5px;
+    .list-editor-view-title {
+      @extend .heading-3-medium;
+    }
     .list-editor-view-add-controller {
-      @extend .body-1-medium;
+      @extend .heading-4-medium;
       color: $blue;
       display: table;
       cursor: pointer;
       position: relative;
-      top: 9px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      margin-left: auto;
+      .list-editor-view-add-title {
+        display: flex;
+      }
       span {
         display: table-cell;
         vertical-align: middle;
+        margin-top:4px;
         &:nth-child(2) {
           padding-left: 10px;
         }
       }
-    }
-
-    .search-wrapper {
-      width: 265px;
     }
   }
 
@@ -56,21 +49,17 @@
   .list-editor-view-list {
     @extend .flex-column;
 
-
     .list-editor-item-view {
       margin: 8px 0;
       border: 1px solid $light-gray;
       background-color: $white;
-      cursor: pointer;
       display: flex;
-      height: 100px;
       min-height: 100px;
       overflow: hidden;
       .list-editor-item-view-content {
         padding: 10px 28px;
         display: flex;
-        flex-basis: 95%;
-        width: 95%;
+        flex: 1 1 auto;
         .list-editor-item-view-field {
           flex: 1 1;
           color: $black;
@@ -91,6 +80,12 @@
           .text {
             @extend .body-1;
           }
+          .textEllipses {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            padding-right: 5px;
+          }
         }
       }
       .list-editor-item-view-controller {
@@ -99,59 +94,79 @@
         align-self: center;
         justify-content: center;
         flex-direction: column;
-        .fa {
-          transition: color .3s;
-          font-size: 22px;
-          color: $white;
-          &:first-child{
+        .svg-icon-wrapper {
+          &:first-child {
             margin-bottom: 10px;
           }
         }
+        .svg-icon {
+          transition: fill .3s;
+          height: 18px;
+          width: 18px;
+          fill: $white;
+        }
       }
-      &:hover {
+      &.selectable:hover{
         @extend .box-hover;
+        cursor: pointer;
         .list-editor-item-view-controller {
-          .fa {
-            color: $gray;
+          .svg-icon {
+            fill: $dark-gray;
+            &:hover {
+              fill: $black;
+            }
           }
         }
       }
     }
-  }
+    &.two-columns {
 
-  &.thinner-list {
-    background-color: $white;
-    padding: 0;
-    margin-top: 35px;
+      flex-direction: row;
+      flex-wrap: wrap;
 
-    .list-editor-view-list {
-      border-top: 0;
-      padding-top: 0;
-      margin-top: 23px;
       .list-editor-item-view {
-        &:hover {
-          border-color: $light-gray;
-        }
-        margin: 5px 0 0 0;
-        height: 30px;
-        border-top: 0;
-        border-left: 0;
-        border-right: 0;
         .list-editor-item-view-content {
-          padding: 4px;
-          .name {
-            @extend .body-2-medium;
-            flex-basis: 36%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          padding: 10px 18px 10px 0;
+          .list-editor-item-view-field {
+            flex: 0.3 1;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+            border-right : 1px solid $light-gray;
+            margin-left: 18px;
+            &:last-child{
+              border: none;
+              flex: 1;
+            }
+            .details{
+              display: flex;
+              flex-direction: row;
+              .title {
+                padding: 0;
+                margin-right: 5px;
+              }
+            }
+
+            .description {
+              @extend .body-1;
+              @include multiline-ellipsis(1.3em, 3);
+            }
           }
         }
-        .list-editor-item-view-controller {
-          .fa-trash-o {
-            font-size: 20px;
-          }
+
+        &:nth-child(odd){
+          flex: 0 0 48.5%;
+          margin-right: 50px;
+        }
+        &:nth-child(even) {
+          flex: 1;
+          margin-right: 0;
         }
       }
     }
   }
 }
-
-

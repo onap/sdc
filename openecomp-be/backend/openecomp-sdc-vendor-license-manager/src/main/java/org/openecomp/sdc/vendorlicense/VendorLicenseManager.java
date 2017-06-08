@@ -21,6 +21,7 @@
 package org.openecomp.sdc.vendorlicense;
 
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupModel;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementModel;
@@ -68,25 +69,21 @@ public interface VendorLicenseManager {
   LicenseAgreementModel getLicenseAgreementModel(String vlmId, Version version,
                                                  String licenseAgreementId, String user);
 
-  void deleteLicenseAgreement(String vlmId, String licenseAgreementId, String user);
+  void deleteLicenseAgreement(String vlmId, Version version, String licenseAgreementId, String user);
 
 
-  Collection<org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity> listFeatureGroups(
-      String vlmId, Version version, String user);
+  Collection<FeatureGroupEntity> listFeatureGroups(String vlmId, Version version, String user);
 
-  org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity createFeatureGroup(
-      org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity fg, String user);
+  FeatureGroupEntity createFeatureGroup(FeatureGroupEntity fg, String user);
 
-  void updateFeatureGroup(org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity featureGroup,
+  void updateFeatureGroup(FeatureGroupEntity featureGroup,
                           Set<String> addedLicenseKeyGroups, Set<String> removedLicenseKeyGroups,
                           Set<String> addedEntitlementPools, Set<String> removedEntitlementPools,
                           String user);
 
-  FeatureGroupModel getFeatureGroupModel(
-      org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity featureGroup, String user);
+  FeatureGroupModel getFeatureGroupModel(FeatureGroupEntity featureGroup, String user);
 
-  void deleteFeatureGroup(org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity featureGroup,
-                          String user);
+  void deleteFeatureGroup(FeatureGroupEntity featureGroup, String user);
 
 
   Collection<EntitlementPoolEntity> listEntitlementPools(String vlmId, Version version,

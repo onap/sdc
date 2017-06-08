@@ -60,9 +60,9 @@ public class NicDaoCassandraImpl extends CassandraBaseDao<NicEntity> implements 
         mapper.getTableMetadata().getPartitionKey().get(1).getName());
 
 
-    metadata.setUniqueValuesMetadata(Collections
-        .singletonList(new UniqueValueMetadata(VendorSoftwareProductConstants.UniqueValues.NIC_NAME,
-            Arrays.asList("vsp_id", "version", "component_id", "name"))));
+    metadata.setUniqueValuesMetadata(Collections.singletonList(new UniqueValueMetadata(
+        VendorSoftwareProductConstants.UniqueValues.NIC_NAME,
+        Arrays.asList("vsp_id", "version", "component_id", "name"))));
 
     VersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
@@ -91,6 +91,12 @@ public class NicDaoCassandraImpl extends CassandraBaseDao<NicEntity> implements 
   }
 
   @Override
+  public NicEntity getQuestionnaireData(String vspId, Version version, String componentId,
+                                        String nicId) {
+    return null; // TODO: 3/20/2017  
+  }
+
+  @Override
   public void updateQuestionnaireData(String vspId, Version version, String id, String componentId,
                                       String questionnaireData) {
     accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version), id,
@@ -102,12 +108,6 @@ public class NicDaoCassandraImpl extends CassandraBaseDao<NicEntity> implements 
     return accessor.listByVspId(vspId, versionMapper.toUDT(version)).all();
   }
 
-  @Override
-  public Collection<NicEntity> list(NicEntity entity) {
-    return accessor.listByComponentId(entity.getVspId(), versionMapper.toUDT(entity.getVersion()),
-        entity.getComponentId()).all();
-  }
-
   public void deleteByComponentId(String vspId, Version version, String componentId) {
     accessor.deleteByComponentId(vspId, version, componentId);
   }
@@ -116,26 +116,32 @@ public class NicDaoCassandraImpl extends CassandraBaseDao<NicEntity> implements 
     accessor.deleteByVspId(vspId, versionMapper.toUDT(version));
   }
 
+  @Override
+  public Collection<NicEntity> list(NicEntity entity) {
+    return accessor.listByComponentId(entity.getVspId(), versionMapper.toUDT(entity.getVersion()),
+        entity.getComponentId()).all();
+  }
+
   @Accessor
   interface NicAccessor {
 
     @Query(
-        "select vsp_id, version, component_id, nic_id, composition_data "
-            + "from vsp_component_nic where vsp_id=? and version=? and component_id=?")
+        "select vsp_id, version, component_id, nic_id, composition_data"
+            + " from vsp_component_nic where vsp_id=? and version=? and component_id=?")
     Result<NicEntity> listByComponentId(String vspId, UDTValue version, String componentId);
 
     @Query("select * from vsp_component_nic where vsp_id=? and version=?")
     Result<NicEntity> listByVspId(String vspId, UDTValue version);
 
     @Query(
-        "insert into vsp_component_nic (vsp_id, version, component_id, nic_id, composition_data) "
-            + "values (?,?,?,?,?)")
+        "insert into vsp_component_nic (vsp_id, version, component_id, nic_id, composition_data)"
+            + " values (?,?,?,?,?)")
     ResultSet updateCompositionData(String vspId, UDTValue version, String componentId, String id,
                                     String compositionData);
 
     @Query(
-        "update vsp_component_nic set questionnaire_data=? where vsp_id=? and version=? "
-            + "and component_id=? and nic_id=?")
+        "update vsp_component_nic set questionnaire_data=? where vsp_id=? and version=?"
+            + " and component_id=? and nic_id=?")
     ResultSet updateQuestionnaireData(String questionnaireData, String vspId, UDTValue version,
                                       String componentId, String id);
 

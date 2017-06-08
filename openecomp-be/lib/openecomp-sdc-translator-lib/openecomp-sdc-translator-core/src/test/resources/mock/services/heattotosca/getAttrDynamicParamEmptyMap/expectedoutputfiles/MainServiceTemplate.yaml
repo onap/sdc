@@ -1,0 +1,854 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    access_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR associated with tag "access".
+      default: 37.9.0.32/27
+      constraints: [
+        ]
+    oam_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default gateway IP address  associated with tag "oam".
+      default: 127.0.0.1
+    int_vlan_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Optional VLAN associated with the (0th) internal network.
+      default: ''
+      constraints:
+      - pattern: '[0-9]*'
+    v4_ntp_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV4 NTP server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: 127.0.0.1
+    access_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the subnet associated with tag "access".
+      default: 050ad34a-47a3-48a9-9761-12eff354fd4f
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF instance.
+      default: MYvnf_name
+    access_default_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: Default gateway IP address  associated with tag "access".
+      default: 37.9.0.62
+    ims_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: CDL of IMS flavor values.
+      default: LCP-1-4-15x2-4
+      constraints: [
+        ]
+    oam_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: CIDR associated with tag "oam".
+      default: 127.0.0.1/27
+      constraints: [
+        ]
+    vm_counts:
+      hidden: false
+      immutable: false
+      type: json
+      description: |
+        Maps VM type tags to the number of pairs of that type.
+      default:
+        oam: '1'
+        ims: '1'
+    oam_oam_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of IP addresses for this VMtype_NETtype combination.
+      default:
+      - 127.0.0.1
+      - 127.0.0.1
+      - 127.0.0.1
+      - 127.0.0.1
+      entry_schema:
+        type: string
+    v6_dns_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV6 DNS server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    v6_ntp_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV6 NTP server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance.
+      default: MYvnf_id
+    lcm_keypair:
+      hidden: false
+      immutable: false
+      type: string
+      description: Keypair used for lifecycle management access.
+      default: ''
+      constraints: [
+        ]
+    oam_management_v6_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index to the V6 management IP address.
+      default: 0
+    oam_management_v4_index:
+      hidden: false
+      immutable: false
+      type: float
+      description: Index to the V4 management IP address.
+      default: 1
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone name.
+      default: zone2
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone name.
+      default: zone1
+    OS::stack_name:
+      type: string
+      required: false
+    oam_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the subnet associated with tag "oam".
+      default: 37d36cb0-54b7-4fbf-bc45-4879da03a0db
+    oam_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for this VMtype.
+      default: drew34.20
+    net_types:
+      hidden: false
+      immutable: false
+      type: list
+      description: CDL of subnet tags.
+      default:
+      - oam
+      - access
+      entry_schema:
+        type: string
+    ssh_access_key:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Optional SSH public key value for lifecycle management
+        administrative access.
+      default: ''
+    ims_access_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: List of IP addresses for this VMtype_NETtype combination.
+      default:
+      - 37.9.0.36
+      - 37.9.0.61
+      entry_schema:
+        type: string
+    v4_enum_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV4 ENUM server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    oam_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: CDL of OAM flavor values.
+      default: LCP-2-4-25x2-4
+      constraints: [
+        ]
+    vnf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF Module instance.
+      default: MYvnf_module_id
+    access_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the network associated with tag "access".
+      default: 870909b5-d933-4a95-9aff-df38523c37ed
+      constraints: [
+        ]
+    backup_file:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        <cURL path>/<backup file>
+        This is only used for restore (aka "disaster recovery").
+        The value only needs to go to the OAM pair.
+        Note that there is a 255 character limit on this value.
+      default: ''
+    v6_enum_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV6 ENUM server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: ''
+    ims_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CDL of IMS VM names.
+      default:
+      - ims0
+      - ims1
+      entry_schema:
+        type: string
+    default_action:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Default action for all VMs. This may be overridden for
+        specific VM groups, pairs or VMs via the ENV file.
+      default: install
+      constraints:
+      - valid_values:
+        - install
+        - recreate
+        - scale-in
+        - scale-out
+        - heal
+        - update
+    v4_dns_server:
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        (optional) IPV4 DNS server list.
+        It is passed as a string instead of a CDL because
+        of how it is handled internally.
+      default: 127.0.0.1/.,127.0.0.1/.
+    oam_management_v6_source:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the OAM IP parameter to use.
+      default: ''
+    oam_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the network associated with tag "oam".
+      default: 7410cc1d-c421-41b3-adef-d46cf79cb8d9
+      constraints: [
+        ]
+    oam_management_v4_source:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the OAM IP parameter to use.
+      default: oam_oam_ips
+    ims_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for this VMtype.
+      default: drew34.20
+    install_config:
+      hidden: false
+      immutable: false
+      type: string
+      description: JSON formatted string of install config values.
+      default: ' "application_name": "5450_isc", "license_reference": "test_license",
+        "default_remote_dns_domain": "./default", "default_remote_enum_domain": "e164.arpa/default",
+        "local_dns_domain": "drew2.lucentlab.com", "local_enum_domain": "", "naming_delimiter":
+        "-", "naming_parsing": "flexible", "naming_type": "flexible3", "other_remote_dns_domain":
+        "", "other_remote_enum_domain": "", "remote_query_only": "", "snmp_community":
+        "public", "subnet_info": { "INTERNALnet0": { "interface_label": "int0", "redundancy_mode":
+        "iipm", "vlan_tag": "" }, "INTERNALnet1": { "interface_label": "int1", "redundancy_mode":
+        "iipm", "vlan_tag": "" }, "oam": { "interface_label": "oam2", "redundancy_mode":
+        "eipm_arpndp", "vlan_tag": "", "connectivity_address": "", "detect_multiplier":
+        "3", "desired_minimum_tx_interval": "300", "required_minimum_rx_interval":
+        "300" }, "access": { "interface_label": "acc4", "redundancy_mode": "eipm_arpndp",
+        "vlan_tag": "", "connectivity_address": "", "detect_multiplier": "3", "desired_minimum_tx_interval":
+        "300", "required_minimum_rx_interval": "300" } }, "system_name": "isc01",
+        "system_prefix": "isc01", "time_zone": "UTC", "use_sbpr": "yes" '
+    cloud_name_delimiter:
+      hidden: false
+      immutable: false
+      type: string
+      description: Separator for cloud resource naming.
+      default: '-'
+    oam_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CDL of OAM VM names.
+      default:
+      - oam0
+      - oam1
+      entry_schema:
+        type: string
+    vnf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VNF module instance.
+      default: base_module
+    vm_info:
+      hidden: false
+      immutable: false
+      type: json
+      description: Provides keys into type-specific parameters and vnic info.
+      default: {
+        }
+  node_templates:
+    OAM_RRG:
+      type: org.openecomp.resource.abstract.nodes.heat.LCP-PairGroup.template
+      directives:
+      - substitutable
+      properties:
+        stack:
+          get_input: OS::stack_name
+        role: oam
+        ext_net_info:
+          get_attribute:
+          - FORMATXLATE
+          - ext_net_info
+        sec_group:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - OpenSec
+        usage_info:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+        group_index: '0'
+        config_info:
+          '0':
+            vnic_info:
+              '0':
+              - binding_type: direct
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: direct
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '3'
+                subnet_count: '1'
+                allowed_subnets:
+                - oam
+              - subnet: oam
+                label: servicetype=cnfg-0;float;nitype=default;subnet=oam
+              - subnet: oam
+                label: servicetype=mi-0;float;nitype=default;subnet=oam
+              - subnet: oam
+                label: servicetype=mi-0;fixed;nitype=default;subnet=oam
+          v6_static_routes: '{}'
+          '1':
+            vnic_info:
+              '0':
+              - binding_type: direct
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: direct
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '1'
+                subnet_count: '1'
+                allowed_subnets:
+                - oam
+              - subnet: oam
+                label: servicetype=mi-0;fixed;nitype=default;subnet=oam
+          v6_default_gateway: ''
+          vnic_count: 3
+          v4_static_routes: '{}'
+          v4_default_gateway: oam
+          poolinfo: '["mi-0", "cnfg-0", "sns-0"]'
+        ssh_private_key:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - PrivateKey
+        service_template_filter:
+          substitute_service_template: LCP-PairGroup.templateServiceTemplate.yaml
+        default_name_base:
+          str_replace:
+            template: |
+              {"": "oam$delimiter0$delimiter"}
+            params:
+              $delimiter:
+                get_attribute:
+                - FORMATXLATE
+                - usage_info
+                - cloud_name_delimiter
+        int_net_count: 2
+        lcm_keypair:
+          get_attribute:
+          - FORMATXLATE
+          - lcm_keypair
+        current_group_count:
+          get_attribute:
+          - FORMATXLATE
+          - vm_counts
+          - oam
+        net_info_str:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - NetInfoStr
+        total_pair_count:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - TotalPairCount
+        ssh_access_key:
+          get_attribute:
+          - FORMATXLATE
+          - ssh_access_key
+        int_net_info:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - IntNetInfo
+        backup_file:
+          get_attribute:
+          - FORMATXLATE
+          - backup_file
+        default_action:
+          get_attribute:
+          - FORMATXLATE
+          - default_action
+        ssh_public_key:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - PublicKey
+        name_delimiter:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+          - cloud_name_delimiter
+        group_id: '0'
+        install_config:
+          get_attribute:
+          - FORMATXLATE
+          - install_config
+        storage_size: 68
+        group_tag: oam
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: NOKIA-LCP-Base
+          relationship: tosca.relationships.DependsOn
+    FORMATXLATE:
+      type: org.openecomp.resource.abstract.nodes.heat.LCP-OPENECOMP.template
+      directives:
+      - substitutable
+      properties:
+        net_ids:
+          ? ''
+          : null
+          access:
+            get_input: access_net_id
+          oam:
+            get_input: oam_net_id
+        flavors:
+          ? ''
+          : ''
+          oam:
+            get_input: oam_flavor_name
+          ims:
+            get_input: ims_flavor_name
+        v4_ntp_server:
+          get_input: v4_ntp_server
+        vnf_name:
+          get_input: vnf_name
+        vmtype_list:
+        - oam
+        - ims
+        name_lists:
+          ? ''
+          : [
+            ]
+          oam:
+            get_input: oam_names
+          ims:
+            get_input: ims_names
+        service_template_filter:
+          substitute_service_template: LCP-OPENECOMP.templateServiceTemplate.yaml
+        vm_counts:
+          get_input: vm_counts
+        v6_dns_server:
+          get_input: v6_dns_server
+        v6_ntp_server:
+          get_input: v6_ntp_server
+        vnf_id:
+          get_input: vnf_id
+        lcm_keypair:
+          get_input: lcm_keypair
+        subnet_ids:
+          ? ''
+          : null
+          access:
+            get_input: access_subnet_id
+          oam:
+            get_input: oam_subnet_id
+        cidrs:
+          ? ''
+          : null
+          access:
+            get_input: access_cidr
+          oam:
+            get_input: oam_cidr
+        default_gateways:
+          ? ''
+          : null
+          access:
+            get_input: access_default_gateway
+          oam:
+            get_input: oam_default_gateway
+        net_types:
+          get_input: net_types
+        ssh_access_key:
+          get_input: ssh_access_key
+        images:
+          ? ''
+          : ''
+          oam:
+            get_input: oam_image_name
+          ims:
+            get_input: ims_image_name
+        v4_enum_server:
+          get_input: v4_enum_server
+        availability_zones:
+        - get_input: availability_zone_0
+        - get_input: availability_zone_1
+        ip_lists:
+          ? ''
+          : [
+            ]
+          ims_access_ips:
+            get_input: ims_access_ips
+          oam_oam_ips:
+            get_input: oam_oam_ips
+        vnf_module_id:
+          get_input: vnf_module_id
+        backup_file:
+          get_input: backup_file
+        v6_enum_server:
+          get_input: v6_enum_server
+        default_action:
+          get_input: default_action
+        v4_dns_server:
+          get_input: v4_dns_server
+        install_config:
+          get_input: install_config
+        cloud_name_delimiter:
+          get_input: cloud_name_delimiter
+        vnf_module_name:
+          get_input: vnf_module_name
+        vm_info:
+          get_input: vm_info
+        vmtype_count: 2
+    NOKIA-LCP-Base:
+      type: org.openecomp.resource.abstract.nodes.heat.LCP-Base.template
+      directives:
+      - substitutable
+      properties:
+        default_prefix:
+          str_replace:
+            template: |
+              {"": "$stk$delimiter"}
+            params:
+              $stk:
+                get_input: OS::stack_name
+              $delimiter:
+                get_attribute:
+                - FORMATXLATE
+                - usage_info
+                - cloud_name_delimiter
+        total_vm_pairs:
+          get_attribute:
+          - FORMATXLATE
+          - total_vm_pairs
+        service_template_filter:
+          substitute_service_template: LCP-Base.templateServiceTemplate.yaml
+        ext_net_list:
+        - oam
+        - access
+        int_net_count: 2
+        ext_net_info:
+          get_attribute:
+          - FORMATXLATE
+          - ext_net_info
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: FORMATXLATE
+          relationship: tosca.relationships.DependsOn
+    IMS_RRG:
+      type: org.openecomp.resource.abstract.nodes.heat.LCP-PairGroup.template
+      directives:
+      - substitutable
+      properties:
+        total_pair_count:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - TotalPairCount
+        ssh_access_key:
+          get_attribute:
+          - FORMATXLATE
+          - ssh_access_key
+        stack:
+          get_input: OS::stack_name
+        int_net_info:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - IntNetInfo
+        ext_net_info:
+          get_attribute:
+          - FORMATXLATE
+          - ext_net_info
+        sec_group:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - OpenSec
+        usage_info:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+        group_index:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        config_info:
+          '0':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '1'
+                subnet_count: '1'
+                allowed_subnets:
+                - access
+              - subnet: access
+                label: servicetype=ims-0;float;nitype=published;subnet=access
+          v6_static_routes: '{}'
+          '1':
+            vnic_info:
+              '0':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet0
+              - subnet: INTERNALnet0
+                label: connectivity_ip;subnet=INTERNALnet0
+              '1':
+              - binding_type: normal
+                count: '0'
+                subnet_count: '1'
+                allowed_subnets:
+                - INTERNALnet1
+              - subnet: INTERNALnet1
+                label: connectivity_ip;subnet=INTERNALnet1
+              '2':
+              - binding_type: normal
+                count: '1'
+                subnet_count: '1'
+                allowed_subnets:
+                - access
+              - subnet: access
+                label: servicetype=ims-1;float;nitype=published;subnet=access
+          v6_default_gateway: ''
+          vnic_count: 3
+          v4_static_routes: '{ "ims-0": {"subnet": "access", "dest_subnet": "2.2.2.0",
+            "mask": "255.255.255.0"}, "ims-1": {"subnet": "access", "dest_subnet":
+            "2.2.2.0", "mask": "255.255.255.0"} }'
+          v4_default_gateway: access
+          poolinfo: '["ims-0", "ims-1", "gos-0"]'
+        ssh_private_key:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - PrivateKey
+        default_action:
+          get_attribute:
+          - FORMATXLATE
+          - default_action
+        ssh_public_key:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - PublicKey
+        name_delimiter:
+          get_attribute:
+          - FORMATXLATE
+          - usage_info
+          - cloud_name_delimiter
+        service_template_filter:
+          substitute_service_template: LCP-PairGroup.templateServiceTemplate.yaml
+          count:
+            get_attribute:
+            - FORMATXLATE
+            - vm_counts
+            - ims
+          mandatory: false
+        default_name_base:
+          str_replace:
+            template:
+              concat:
+              - '{"": "ims$delimiter'
+              - get_property:
+                - SELF
+                - service_template_filter
+                - index_value
+              - |
+                $delimiter"}
+            params:
+              $delimiter:
+                get_attribute:
+                - FORMATXLATE
+                - usage_info
+                - cloud_name_delimiter
+        int_net_count: 2
+        group_id: '1'
+        install_config:
+          get_attribute:
+          - FORMATXLATE
+          - install_config
+        lcm_keypair:
+          get_attribute:
+          - FORMATXLATE
+          - lcm_keypair
+        current_group_count:
+          get_attribute:
+          - FORMATXLATE
+          - vm_counts
+          - ims
+        storage_size: 4
+        group_tag: ims
+        net_info_str:
+          get_attribute:
+          - NOKIA-LCP-Base
+          - NetInfoStr
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: NOKIA-LCP-Base
+          relationship: tosca.relationships.DependsOn
+  groups:
+    base_mso_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_mso.yml
+        description: |
+          Example HOT file illustrating elasticity groups.
+      members:
+      - OAM_RRG
+      - FORMATXLATE
+      - NOKIA-LCP-Base
+      - IMS_RRG
+  outputs:
+    oam_management_v4_address:
+      description: IPV4 of the active MI service.
+      value:
+        get_input:
+        - get_input: oam_management_v4_source
+        - get_input: oam_management_v4_index
+    internal_net_info:
+      description: |
+        Internal network IDs, CIDR etc. for use by modular additions to
+        this stack.
+      value:
+        get_attribute:
+        - NOKIA-LCP-Base
+        - IntNetInfo
+    oam_management_v6_address:
+      description: IPV6 of the active MI service.
+      value:
+        get_input:
+        - get_input: oam_management_v6_source
+        - get_input: oam_management_v6_index

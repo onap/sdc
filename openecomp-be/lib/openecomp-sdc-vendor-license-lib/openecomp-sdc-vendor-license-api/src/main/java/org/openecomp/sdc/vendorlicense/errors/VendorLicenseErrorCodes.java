@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorlicense.errors;
 
+
 public class VendorLicenseErrorCodes {
 
   public static final String VENDOR_LICENSE_MODEL_NOT_FOUND = "VENDOR_LICENSE_MODEL_NOT_FOUND";

@@ -20,6 +20,7 @@
 
 package org.openecomp.core.utilities.applicationconfig.type;
 
+
 public class ConfigurationData {
 
   private String value;

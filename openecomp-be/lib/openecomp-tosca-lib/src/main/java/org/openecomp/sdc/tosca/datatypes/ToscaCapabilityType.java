@@ -21,32 +21,34 @@
 package org.openecomp.sdc.tosca.datatypes;
 
 
-public enum ToscaCapabilityType {
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-  ROOT("tosca.capabilities.Root"),
-  NODE("tosca.capabilities.Node"),
-  CONTAINER("tosca.capabilities.Container"),
-  NETWORK_BINDABLE("tosca.capabilities.network.Bindable"),
-  SCALABLE("tosca.capabilities.Scalable"),
-  OPERATING_SYSTEM("tosca.capabilities.OperatingSystem"),
-  ENDPOINT_ADMIN("tosca.capabilities.Endpoint.Admin"),
-  ATTACHMENT("tosca.capabilities.Attachment"),
-  NETWORK_LINKABLE("tosca.capabilities.network.Linkable"),
-  METRIC("org.openecomp.capabilities.Metric"),
-  NFV_METRIC("tosca.capabilities.nfv.Metric"),
-  METRIC_CEILOMETER("org.openecomp.capabilities.metric.Ceilometer"),
-  METRIC_SNMP_TRAP("org.openecomp.capabilities.metric.SnmpTrap"),
-  METRIC_SNMP_POLLING("org.openecomp.capabilities.metric.SnmpPolling"),;
+public class ToscaCapabilityType {
 
-  private String displayName;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  ToscaCapabilityType(String displayName) {
-    this.displayName = displayName;
-  }
+  public static String CAPABILITY_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_CAPABILITY_TYPE);
 
-  public String getDisplayName() {
-    return displayName;
-  }
+  //TOSCA native types
+  public static String NATIVE_ROOT = "tosca.capabilities.Root";
+  public static String NATIVE_NODE = "tosca.capabilities.Node";
+  public static String NATIVE_CONTAINER = "tosca.capabilities.Container";
+  public static String NATIVE_COMPUTE = "tosca.capabilities.Compute";
+  public static String NATIVE_NETWORK_BINDABLE = "tosca.capabilities.network.Bindable";
+  public static String NATIVE_SCALABLE = "tosca.capabilities.Scalable";
+  public static String NATIVE_OPERATING_SYSTEM = "tosca.capabilities.OperatingSystem";
+  public static String NATIVE_ENDPOINT_ADMIN = "tosca.capabilities.Endpoint.Admin";
+  public static String NATIVE_ATTACHMENT = "tosca.capabilities.Attachment";
+  public static String NATIVE_NETWORK_LINKABLE = "tosca.capabilities.network.Linkable";
+  public static String NATIVE_NFV_METRIC = "tosca.capabilities.nfv.Metric";
 
+  //Additional types
+  public static String METRIC = CAPABILITY_PREFIX + "Metric";
+  public static String METRIC_CEILOMETER = CAPABILITY_PREFIX + "metric.Ceilometer";
+  public static String METRIC_SNMP_TRAP = CAPABILITY_PREFIX + "metric.SnmpTrap";
+  public static String METRIC_SNMP_POLLING = CAPABILITY_PREFIX + "metric.SnmpPolling";
 
 }

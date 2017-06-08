@@ -46,6 +46,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class LicenseAgreementCassandraDaoImpl extends CassandraBaseDao<LicenseAgreementEntity>
     implements LicenseAgreementDao {
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();

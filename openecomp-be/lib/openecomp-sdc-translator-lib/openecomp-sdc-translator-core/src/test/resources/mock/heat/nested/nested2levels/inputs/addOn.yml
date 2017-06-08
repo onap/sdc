@@ -24,3 +24,11 @@ resources:
     properties:
       shared_security_group_id1: { get_param: shared_security_group_id1}
       p2: { get_param: shared_security_group_id2}
+
+  packet_mirror_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - test_nested
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: { get_attr: [test_nested]}

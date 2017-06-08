@@ -26,8 +26,8 @@ import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionDataEntityDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 
-public class MapCompositionEntityResponseToDto<S extends CompositionDataEntity,
-    T extends CompositionDataEntityDto, M extends MappingBase<S, T>>
+public class MapCompositionEntityResponseToDto<S extends CompositionDataEntity, T extends
+    CompositionDataEntityDto, M extends MappingBase<S, T>>
     extends MappingBase<CompositionEntityResponse<S>, CompositionEntityResponseDto<T>> {
   private M dataMapper;
   private Class<T> targetDataClass;

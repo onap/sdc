@@ -1,0 +1,85 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp-inventory/capabilities.yml
+  version: '1.0'
+
+imports:
+- inventory_index:
+    file: _index.yml
+
+capability_types:
+
+  org.openecomp.capabilities.inventory.Multiuse:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Bindable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Composite:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Belonging:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Attachment:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Applicable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Existable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Locates:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Linkable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Node:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Container:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Composeable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Allot:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Origin:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.
+
+  org.openecomp.capabilities.inventory.Bridgeable:
+    derived_from: tosca.capabilities.Node
+    description: Auto-generated from OXM.

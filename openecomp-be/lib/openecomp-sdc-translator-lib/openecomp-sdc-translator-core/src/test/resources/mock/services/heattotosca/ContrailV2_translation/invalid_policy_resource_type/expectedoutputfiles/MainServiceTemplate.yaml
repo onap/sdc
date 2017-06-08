@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 topology_template:
   inputs:
     left_vn_fqdn:
@@ -183,7 +159,7 @@ topology_template:
           node: template_NetworkPolicy
           relationship: tosca.relationships.DependsOn
   groups:
-    main:
+    main_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/main.yml

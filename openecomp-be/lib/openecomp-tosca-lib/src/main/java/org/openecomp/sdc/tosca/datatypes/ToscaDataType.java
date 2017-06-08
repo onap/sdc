@@ -21,64 +21,83 @@
 package org.openecomp.sdc.tosca.datatypes;
 
 
-public enum ToscaDataType {
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-  ROOT("tosca.datatypes.Root"),
-  NETWORK_NETWORK_INFO("tosca.datatypes.network.NetworkInfo"),
-  NETWORK_PORT_INFO("tosca.datatypes.network.PortInfo"),
-  NOVA_SERVER_PORT_EXTRA_PROPERTIES(
-      "org.openecomp.datatypes.heat.novaServer.network.PortExtraProperties"),
-  NETWORK_ADDRESS_PAIR("org.openecomp.datatypes.heat.network.AddressPair"),
-  NEUTRON_PORT_FIXED_IPS("org.openecomp.datatypes.heat.neutron.port.FixedIps"),
-  CONTRAIL_NETWORK_RULE("org.openecomp.datatypes.heat.contrail.network.rule.Rule"),
-  CONTRAIL_NETWORK_RULE_LIST("org.openecomp.datatypes.heat.contrail.network.rule.RuleList"),
-  CONTRAIL_NETWORK_RULE_PORT_PAIRS("org.openecomp.datatypes.heat.contrail.network.rule.PortPairs"),
-  CONTRAIL_NETWORK_RULE_VIRTUAL_NETWORK(
-      "org.openecomp.datatypes.heat.contrail.network.rule.VirtualNetwork"),
-  CONTRAILV2_NETWORK_RULE("org.openecomp.datatypes.heat.contrailV2.network.rule.Rule"),
-  CONTRAILV2_NETWORK_RULE_LIST("org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList"),
-  CONTRAILV2_NETWORK_RULE_SRC_PORT_PAIRS(
-      "org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs"),
-  CONTRAILV2_NETWORK_RULE_DST_PORT_PAIRS(
-      "org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs"),
-  CONTRAILV2_NETWORK_RULE_DST_VIRTUAL_NETWORK(
-      "org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork"),
-  CONTRAILV2_NETWORK_RULE_SRC_VIRTUAL_NETWORK(
-      "org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork"),
-  CONTRAILV2_VIRTUAL_MACHINE_INTERFACE_PROPERTIES(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties"),
-  CONTRAILV2_NETWORK_RULE_ACTION_LIST(
-      "org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList"),
-  CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData"),
-  CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA_IPAM_SUBNET_LIST(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList"),
-  CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA_IPAM_SUBNET(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet"),
-  CONTRAILV2_VIRTUAL_NETWORK_POLICY_REF_DATA(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData"),
-  CONTRAILV2_VIRTUAL_NETWORK_POLICY_REF_DATA_SEQUENCE(
-      "org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence"),
-  NOVA_SERVER_NETWORK_ADDRESS_INFO("org.openecomp.datatypes.heat.novaServer.network.AddressInfo"),
-  NEUTRON_SUBNET("org.openecomp.datatypes.heat.network.neutron.Subnet"),
-  NETWORK_ALLOCATION_POOL("org.openecomp.datatypes.heat.network.AllocationPool"),
-  NETWORK_HOST_ROUTE("org.openecomp.datatypes.heat.network.subnet.HostRoute"),
-  SUBSTITUTION_FILTER("org.openecomp.datatypes.heat.substitution.SubstitutionFilter"),
-  SUBSTITUTION_FILTERING("org.openecomp.datatypes.heat.substitution.SubstitutionFiltering"),
-  NEUTRON_SECURITY_RULES_RULE("org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule"),
-  CONTRAIL_STATIC_ROUTE("org.openecomp.datatypes.heat.network.contrail.port.StaticRoute"),
-  CONTRAIL_ADDRESS_PAIR("org.openecomp.datatypes.heat.network.contrail.AddressPair"),
-  CONTRAIL_INTERFACE_DATA("org.openecomp.datatypes.heat.network.contrail.InterfaceData");
+public class ToscaDataType {
 
-  private String displayName;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  ToscaDataType(String displayName) {
-    this.displayName = displayName;
-  }
+  public static String DATA_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_DATA_TYPE);
 
-  public String getDisplayName() {
-    return displayName;
-  }
+  //TOSCA native types
+  public static String NATIVE_ROOT = "tosca.datatypes.Root";
+  public static String NATIVE_NETWORK_NETWORK_INFO = "tosca.datatypes.network.NetworkInfo";
+  public static String NATIVE_NETWORK_PORT_INFO = "tosca.datatypes.network.PortInfo";
 
-
+  //Additional types
+  public static String NOVA_SERVER_PORT_EXTRA_PROPERTIES =
+      DATA_TYPE_PREFIX + "heat.novaServer.network.PortExtraProperties";
+  public static String NETWORK_ADDRESS_PAIR = DATA_TYPE_PREFIX + "heat.network.AddressPair";
+  public static String NEUTRON_PORT_FIXED_IPS = DATA_TYPE_PREFIX + "heat.neutron.port.FixedIps";
+  public static String CONTRAIL_NETWORK_RULE = DATA_TYPE_PREFIX + "heat.contrail.network.rule.Rule";
+  public static String CONTRAIL_NETWORK_RULE_LIST =
+      DATA_TYPE_PREFIX + "heat.contrail.network.rule.RuleList";
+  public static String CONTRAIL_NETWORK_RULE_PORT_PAIRS =
+      DATA_TYPE_PREFIX + "heat.contrail.network.rule.PortPairs";
+  public static String CONTRAIL_NETWORK_RULE_VIRTUAL_NETWORK =
+      DATA_TYPE_PREFIX + "heat.contrail.network.rule.VirtualNetwork";
+  public static String CONTRAILV2_NETWORK_RULE =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.Rule";
+  public static String CONTRAILV2_NETWORK_RULE_LIST =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.RuleList";
+  public static String CONTRAILV2_NETWORK_RULE_SRC_PORT_PAIRS =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.SrcPortPairs";
+  public static String CONTRAILV2_NETWORK_RULE_DST_PORT_PAIRS =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.DstPortPairs";
+  public static String CONTRAILV2_NETWORK_RULE_DST_VIRTUAL_NETWORK =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.DstVirtualNetwork";
+  public static String CONTRAILV2_NETWORK_RULE_SRC_VIRTUAL_NETWORK =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.SrcVirtualNetwork";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_INTERFACE_PROPERTIES =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.interface.Properties";
+  public static String CONTRAILV2_NETWORK_RULE_ACTION_LIST =
+      DATA_TYPE_PREFIX + "heat.contrailV2.network.rule.ActionList";
+  public static String CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.network.rule.IpamRefData";
+  public static String CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA_IPAM_SUBNET_LIST =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList";
+  public static String CONTRAILV2_VIRTUAL_NETWORK_IPAM_REF_DATA_IPAM_SUBNET =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet";
+  public static String CONTRAILV2_VIRTUAL_NETWORK_POLICY_REF_DATA =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.network.rule.RefData";
+  public static String CONTRAILV2_VIRTUAL_NETWORK_POLICY_REF_DATA_SEQUENCE =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.network.rule.RefDataSequence";
+  public static String NOVA_SERVER_NETWORK_ADDRESS_INFO =
+      DATA_TYPE_PREFIX + "heat.novaServer.network.AddressInfo";
+  public static String NEUTRON_SUBNET = DATA_TYPE_PREFIX + "heat.network.neutron.Subnet";
+  public static String NETWORK_ALLOCATION_POOL = DATA_TYPE_PREFIX + "heat.network.AllocationPool";
+  public static String NETWORK_HOST_ROUTE = DATA_TYPE_PREFIX + "heat.network.subnet.HostRoute";
+  public static String SUBSTITUTION_FILTERING =
+      DATA_TYPE_PREFIX + "heat.substitution.SubstitutionFiltering";
+  public static String NEUTRON_SECURITY_RULES_RULE =
+      DATA_TYPE_PREFIX + "heat.network.neutron.SecurityRules.Rule";
+  public static String CONTRAIL_STATIC_ROUTE =
+      DATA_TYPE_PREFIX + "heat.network.contrail.port.StaticRoute";
+  public static String CONTRAIL_ADDRESS_PAIR =
+      DATA_TYPE_PREFIX + "heat.network.contrail.AddressPair";
+  public static String CONTRAIL_INTERFACE_DATA =
+      DATA_TYPE_PREFIX + "heat.network.contrail.InterfaceData";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_SUB_INTERFACE_PROPERTIES =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.subInterface.Properties";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_SUB_INTERFACE_MAC_ADDRESS =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.subInterface.MacAddress";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_SUB_INTERFACE_ADDRESS_PAIRS =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.subInterface.AddressPairs";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_SUB_INTERFACE_ADDRESS_PAIR =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.subInterface.AddressPair";
+  public static String CONTRAILV2_VIRTUAL_MACHINE_SUB_INTERFACE_ADDRESS_PAIR_IP =
+      DATA_TYPE_PREFIX + "heat.contrailV2.virtual.machine.subInterface.AddressPairIp";
 }

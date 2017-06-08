@@ -1,0 +1,62 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  dummy_net_name_1:
+    type: string
+    label: dummy net name
+    description: dummy net name
+
+resources:
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+      user_data_format:  {get_attr: [network_policy_server, name]}
+  server_pd_02:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [pd_server_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_1}
+      metadata: {get_attr: [network_policy_server, name]}
+      user_data_format:  RAW_SERVER_PD_2
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-0
+      replacement_policy: AUTO_PORT_0
+  pd01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-1
+      replacement_policy: {get_attr: [network_policy_server, name]}
+  network_policy_server:
+    type: OS::Contrail::NetworkPolicy
+    properties:
+      name: {get_param: dummy_net_name_1}

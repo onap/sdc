@@ -21,16 +21,16 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.versioning.types.VersionInfo;
 
 public class VersionedVendorSoftwareProductInfo {
   private VspDetails vspDetails;
-  private org.openecomp.sdc.versioning.types.VersionInfo versionInfo;
+  private VersionInfo versionInfo;
 
   public VersionedVendorSoftwareProductInfo() {
   }
 
-  public VersionedVendorSoftwareProductInfo(VspDetails vspDetails,
-                                   org.openecomp.sdc.versioning.types.VersionInfo versionInfo) {
+  public VersionedVendorSoftwareProductInfo(VspDetails vspDetails, VersionInfo versionInfo) {
     this.vspDetails = vspDetails;
     this.versionInfo = versionInfo;
   }
@@ -43,11 +43,11 @@ public class VersionedVendorSoftwareProductInfo {
     this.vspDetails = vspDetails;
   }
 
-  public org.openecomp.sdc.versioning.types.VersionInfo getVersionInfo() {
+  public VersionInfo getVersionInfo() {
     return versionInfo;
   }
 
-  public void setVersionInfo(org.openecomp.sdc.versioning.types.VersionInfo versionInfo) {
+  public void setVersionInfo(VersionInfo versionInfo) {
     this.versionInfo = versionInfo;
   }
 }

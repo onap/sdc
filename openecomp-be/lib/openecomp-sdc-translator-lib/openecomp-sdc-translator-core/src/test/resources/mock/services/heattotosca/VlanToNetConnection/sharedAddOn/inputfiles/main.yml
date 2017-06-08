@@ -1,0 +1,28 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_net:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
+  test_net1:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
+outputs:
+    shared_network_id:
+      value: {get_resource: test_net}
+    shared_network_id1:
+      value: {get_resource: test_net1}

@@ -1,0 +1,30 @@
+{
+  "artifact": {
+    "name": {
+      "maxlength": "14",
+      "allowedChar": "a-zA-Z",
+      "allowedchar": "a-zA-Z"
+    },
+    "extension": [
+      "pdf",
+      "zip,xml"
+
+    ],
+    "supportedEncryption": [
+      "Base64",
+      "MD5"
+    ],
+    "status": [
+      "deleted",
+      "Deleted"
+    ],
+    "persistLocation": "/opt/spool,${sys:user.home}/asdc",
+    "jsonSchema": "@GeneratorList.json",
+    "xmlSchema": "@${env:path}/myschema.json",
+    "consumerAPPC": "${artifact.consumer}"
+
+  },
+  "_config": {
+    "namespace": "JSONConfig"
+  }
+}

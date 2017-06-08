@@ -22,17 +22,19 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.VendorSoftwareProductUtils;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Validation response.
- */
 public class ValidationResponse {
+  protected static Logger logger = (Logger) LoggerFactory.getLogger(ValidationResponse.class);
   private boolean valid = true;
   private Collection<ErrorCode> vspErrors;
   private Collection<ErrorCode> licensingDataErrors;
@@ -40,20 +42,10 @@ public class ValidationResponse {
   private Map<String, List<ErrorMessage>> compilationErrors;
   private QuestionnaireValidationResult questionnaireValidationResult;
 
-  /**
-   * Is valid boolean.
-   *
-   * @return the boolean
-   */
   public boolean isValid() {
     return valid;
   }
 
-  /**
-   * Gets vsp errors.
-   *
-   * @return the vsp errors
-   */
   public Collection<ErrorCode> getVspErrors() {
     return vspErrors;
   }
@@ -61,20 +53,20 @@ public class ValidationResponse {
   /**
    * Sets vsp errors.
    *
-   * @param vspErrors the vsp errors
+   * @param vspErrors         the vsp errors
+   * @param serviceName       the service name
+   * @param targetServiceName the target service name
    */
-  public void setVspErrors(Collection<ErrorCode> vspErrors) {
+  public void setVspErrors(Collection<ErrorCode> vspErrors, LoggerServiceName serviceName,
+                           String targetServiceName) {
     this.vspErrors = vspErrors;
     if (CollectionUtils.isNotEmpty(vspErrors)) {
       valid = false;
     }
+
+    VendorSoftwareProductUtils.setErrorsIntoLogger(vspErrors, serviceName, targetServiceName);
   }
 
-  /**
-   * Gets licensing data errors.
-   *
-   * @return the licensing data errors
-   */
   public Collection<ErrorCode> getLicensingDataErrors() {
     return licensingDataErrors;
   }
@@ -91,11 +83,6 @@ public class ValidationResponse {
     }
   }
 
-  /**
-   * Gets upload data errors.
-   *
-   * @return the upload data errors
-   */
   public Map<String, List<ErrorMessage>> getUploadDataErrors() {
     return uploadDataErrors;
   }
@@ -103,20 +90,21 @@ public class ValidationResponse {
   /**
    * Sets upload data errors.
    *
-   * @param uploadDataErrors the upload data errors
+   * @param uploadDataErrors  the upload data errors
+   * @param serviceName       the service name
+   * @param targetServiceName the target service name
    */
-  public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors) {
+  public void setUploadDataErrors(Map<String, List<ErrorMessage>> uploadDataErrors,
+                                  LoggerServiceName serviceName, String targetServiceName) {
     this.uploadDataErrors = uploadDataErrors;
     if (MapUtils.isNotEmpty(uploadDataErrors)) {
       valid = false;
     }
+
+    VendorSoftwareProductUtils
+        .setErrorsIntoLogger(uploadDataErrors, serviceName, targetServiceName);
   }
 
-  /**
-   * Gets compilation errors.
-   *
-   * @return the compilation errors
-   */
   public Map<String, List<ErrorMessage>> getCompilationErrors() {
     return compilationErrors;
   }
@@ -125,19 +113,20 @@ public class ValidationResponse {
    * Sets compilation errors.
    *
    * @param compilationErrors the compilation errors
+   * @param serviceName       the service name
+   * @param targetServiceName the target service name
    */
-  public void setCompilationErrors(Map<String, List<ErrorMessage>> compilationErrors) {
+  public void setCompilationErrors(Map<String, List<ErrorMessage>> compilationErrors,
+                                   LoggerServiceName serviceName, String targetServiceName) {
     this.compilationErrors = compilationErrors;
     if (MapUtils.isNotEmpty(compilationErrors)) {
       valid = false;
     }
+
+    VendorSoftwareProductUtils
+        .setErrorsIntoLogger(uploadDataErrors, serviceName, targetServiceName);
   }
 
-  /**
-   * Gets questionnaire validation result.
-   *
-   * @return the questionnaire validation result
-   */
   public QuestionnaireValidationResult getQuestionnaireValidationResult() {
     return questionnaireValidationResult;
   }
@@ -154,4 +143,6 @@ public class ValidationResponse {
       valid = false;
     }
   }
+
+
 }

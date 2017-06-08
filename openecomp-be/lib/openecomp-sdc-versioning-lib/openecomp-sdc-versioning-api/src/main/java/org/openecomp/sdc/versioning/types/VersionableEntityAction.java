@@ -22,5 +22,5 @@ package org.openecomp.sdc.versioning.types;
 
 public enum VersionableEntityAction {
   Read,
-  Write
+  Write;
 }

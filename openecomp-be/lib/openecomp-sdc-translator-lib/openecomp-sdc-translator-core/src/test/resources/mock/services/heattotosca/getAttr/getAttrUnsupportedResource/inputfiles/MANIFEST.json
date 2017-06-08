@@ -1,0 +1,38 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "nested_app_server.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "nested_db_server.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "base_pronghorn.yaml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "base_pronghorn.env", 
+                    "type": "HEAT_ENV"
+                }, 
+                {
+                    "file": "base_pronghorn_volume.yaml", 
+                    "type": "HEAT_VOL", 
+                    "isBase": "false", 
+                    "data": [
+                        {
+                            "file": "base_pronghorn_volume.env", 
+                            "type": "HEAT_ENV"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

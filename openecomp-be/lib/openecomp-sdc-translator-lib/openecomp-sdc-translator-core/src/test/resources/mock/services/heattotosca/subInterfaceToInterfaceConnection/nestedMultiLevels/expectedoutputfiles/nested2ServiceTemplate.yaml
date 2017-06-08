@@ -1,0 +1,287 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested2
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+    net2:
+      hidden: false
+      immutable: false
+      type: string
+    net1:
+      hidden: false
+      immutable: false
+      type: string
+    indx:
+      hidden: false
+      immutable: false
+      type: float
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    port1:
+      hidden: false
+      immutable: false
+      type: string
+    port2:
+      hidden: false
+      immutable: false
+      type: string
+    vlan_ids:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    lb_st_vlan_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+    subinterface_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    test_nested3Level:
+      type: org.openecomp.resource.abstract.nodes.heat.nested3
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nested3ServiceTemplate.yaml
+          count: 3
+          mandatory: true
+        net2:
+          get_input: net1
+        net1:
+          get_input: net1
+        indx:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+        port1:
+          get_input: port1
+        port2:
+          get_input: port1
+    template_Vlan_4:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: port1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_input: net2
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+    template_Vlan_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: port1
+        - get_input: port2
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_input: net2
+        - get_input: net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+  groups:
+    nested2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested2.yml
+        description: nested2
+      members:
+      - test_nested3Level
+      - template_Vlan_4
+      - template_Vlan_3
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested2
+    requirements:
+      binding_template_Vlan_8_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - binding_template_Vlan_8_test_nested4Level
+      link_template_Vlan_7_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - link_template_Vlan_7_test_nested4Level
+      link_template_Vlan_5_test_nested3Level:
+      - test_nested3Level
+      - link_template_Vlan_5
+      link_template_Vlan_6_test_nested3Level:
+      - test_nested3Level
+      - link_template_Vlan_6
+      link_template_Vlan_3:
+      - template_Vlan_3
+      - link
+      link_template_Vlan_4:
+      - template_Vlan_4
+      - link
+      link_template_Vlan_8_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - link_template_Vlan_8_test_nested4Level
+      binding_template_Vlan_6_test_nested3Level:
+      - test_nested3Level
+      - binding_template_Vlan_6
+      binding_template_Vlan_4:
+      - template_Vlan_4
+      - binding
+      binding_template_Vlan_7_test_nested4Level_test_nested3Level:
+      - test_nested3Level
+      - binding_template_Vlan_7_test_nested4Level
+      binding_template_Vlan_3:
+      - template_Vlan_3
+      - binding
+      binding_template_Vlan_5_test_nested3Level:
+      - test_nested3Level
+      - binding_template_Vlan_5

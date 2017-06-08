@@ -1,0 +1,174 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  cmaui_volume_param1:
+    type: string
+    description: nova server id
+  cmaui_volume_param2:
+    type: string
+    description: nova server id
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+    default: This_is_ths_MMSC-CMAUI_id
+  cmaui_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  cmaui_cinder_volume_size:
+     type: number
+     label: CMAUI Cinder volume size
+     description: the size of the CMAUI Cinder volume
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    description: UID of OAM network
+  oam_network_netmask:
+    type: string
+    label: oam network netmask
+    description: oam network gateway
+  oam_network_gateway:
+    type: string
+    label: oam network gateway
+    description: oam network gateway
+  external_dns:
+    type: string
+    label: dns server
+    description: dns server
+  external_ntp:
+    type: string
+    label: ntp server
+    description: ntp server
+  security_group_name:
+    type: string
+    label: security group name
+    description: the name of security group
+  timezone:
+    type: string
+    label: timezone
+    description: timezone
+  cmaui_oam_ips:
+    type: comma_delimited_list
+    label: CMAUI oam_net IP addresses
+    description: CMAUI oam_net IP addresses
+  CMAUI_volume_type:
+    type: string
+    label: CMAUI vm volume type
+    description: the name of the target volume backend
+  cmaui_volume:
+    type: string
+    label: CMAUI vm volume type
+    description: the name of the target volume backend
+
+resources:
+
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+  cmaui_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: oam_net_name }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: security_group_name}]
+      replacement_policy: AUTO
+
+  cmaui_volume_attachment1:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: cmaui_volume_param1}
+      instance_uuid: {get_resource: server_cmaui1}
+
+  cmaui_volume_attachment2:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: cmaui_volume_param2}
+      instance_uuid: {get_resource: server_cmaui1}
+
+  cmaui_volume_attachment3:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: cmaui_volume_param2}
+      instance_uuid: {get_resource: server_cmaui2}
+
+  cmaui_volume_attachment4:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      volume_id: {get_param: [cmaui_volume_param1,0]}
+      instance_uuid: {get_resource: server_cmaui2}
+
+  server_cmaui1:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            cmaui.mgmt.ip=${cmaui.mgmt.ip}
+            cmaui.mgmt.netmask=${cmaui.mgmt.netmask}
+            cmaui.mgmt.gateway=${cmaui.mgmt.gateway}
+            cmaui.external.dns=${cmaui.external.dns}
+            cmaui.external.ntp=${cmaui.external.ntp}
+            cmaui.node=${cmaui.node}
+            cmaui.timezone=${cmaui.timezone}
+          params:
+            ${cmaui.mgmt.ip}: {get_param: [cmaui_oam_ips, 0]}
+            ${cmaui.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${cmaui.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${cmaui.external.dns}: {get_param: external_dns}
+            ${cmaui.external.ntp}: {get_param: external_ntp}
+            ${cmaui.node}: {get_param: [cmaui_names, 0]}
+            ${cmaui.timezone}: {get_param: timezone}
+      user_data_format: RAW
+
+  server_cmaui2:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_2 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            cmaui.mgmt.ip=${cmaui.mgmt.ip}
+            cmaui.mgmt.netmask=${cmaui.mgmt.netmask}
+            cmaui.mgmt.gateway=${cmaui.mgmt.gateway}
+            cmaui.external.dns=${cmaui.external.dns}
+            cmaui.external.ntp=${cmaui.external.ntp}
+            cmaui.node=${cmaui.node}
+            cmaui.timezone=${cmaui.timezone}
+          params:
+            ${cmaui.mgmt.ip}: {get_param: [cmaui_oam_ips, 0]}
+            ${cmaui.mgmt.netmask}: {get_param: oam_network_netmask}
+            ${cmaui.mgmt.gateway}: {get_param: oam_network_gateway}
+            ${cmaui.external.dns}: {get_param: external_dns}
+            ${cmaui.external.ntp}: {get_param: external_ntp}
+            ${cmaui.node}: {get_param: [cmaui_names, 0]}
+            ${cmaui.timezone}: {get_param: timezone}
+      user_data_format: RAW

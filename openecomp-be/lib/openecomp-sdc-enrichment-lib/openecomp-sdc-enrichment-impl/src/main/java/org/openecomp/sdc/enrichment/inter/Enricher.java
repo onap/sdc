@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.enrichment.inter;
 
+
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.datatypes.model.AsdcModel;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
@@ -30,16 +31,16 @@ import java.util.Map;
 public abstract class Enricher {
 
 
-  protected EnrichmentInfo input;
-  protected AsdcModel model;
+    protected EnrichmentInfo data;
+    protected AsdcModel model;
 
-  public void setInput(EnrichmentInfo input) {
-    this.input = input;
-  }
+    public void setData(EnrichmentInfo data) {
+        this.data = data;
+    }
 
-  public void setModel(AsdcModel model) {
-    this.model = model;
-  }
+    public void setModel(AsdcModel model) {
+        this.model = model;
+    }
 
-  public abstract Map<String, List<ErrorMessage>> enrich();
+    public abstract Map<String, List<ErrorMessage>> enrich();
 }

@@ -26,7 +26,7 @@ import java.util.List;
 public class Constraint {
   private Object[] length;
   private Integer[] range;
-  private List<Object> valid_values;
+  private List<Object> validValues;
   private String pattern;
 
   public Constraint() {
@@ -40,12 +40,12 @@ public class Constraint {
     this.range = new Integer[]{inRange[0], inRange[1]};
   }
 
-  public List<Object> getValid_values() {
-    return valid_values;
+  public List<Object> getValidValues() {
+    return validValues;
   }
 
-  public void setValid_values(List<Object> validValues) {
-    this.valid_values = validValues;
+  public void setValidValues(List<Object> validValues) {
+    this.validValues = validValues;
   }
 
   /**
@@ -54,10 +54,10 @@ public class Constraint {
    * @param validValue the valid value
    */
   public void addValidValue(Object validValue) {
-    if (this.valid_values == null) {
-      this.valid_values = new ArrayList<>();
+    if (this.validValues == null) {
+      this.validValues = new ArrayList<>();
     }
-    valid_values.add(validValue);
+    validValues.add(validValue);
   }
 
   public Object[] getLength() {

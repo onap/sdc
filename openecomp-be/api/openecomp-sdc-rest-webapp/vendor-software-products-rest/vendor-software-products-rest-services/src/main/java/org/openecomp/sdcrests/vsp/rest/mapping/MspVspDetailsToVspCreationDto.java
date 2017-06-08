@@ -24,6 +24,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
 
+/**
+ * Created by TALIO on 5/15/2016.
+ */
 public class MspVspDetailsToVspCreationDto extends MappingBase<VspDetails, VspCreationDto> {
   @Override
   public void doMapping(VspDetails source, VspCreationDto target) {

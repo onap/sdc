@@ -59,6 +59,9 @@ public abstract class MixinEntitlementPoolEntityForVnfArtifact {
   abstract String getVersion();
 
   @JsonIgnore
+  abstract String getVersionForArtifact();
+
+  @JsonIgnore
   abstract String getVendorLicenseModelId();
 
   @JsonIgnore

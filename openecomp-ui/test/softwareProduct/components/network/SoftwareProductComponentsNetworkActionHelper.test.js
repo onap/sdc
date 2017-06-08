@@ -1,33 +1,33 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
-import {expect} from 'chai';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
 import {cloneAndSet} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 import SoftwareProductComponentsNetworkActionHelper from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkActionHelper.js';
 
+import {VSPComponentsNicFactory, VSPComponentsNetworkFactory, VSPComponentsNetworkQDataFactory, VSPComponentsNetworkDataMapFactory, VSPComponentsNicFactoryGenericFieldInfo} from 'test-utils/factories/softwareProduct/SoftwareProductComponentsNetworkFactories.js';
+import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+import VSPQSchemaFactory from 'test-utils/factories/softwareProduct/SoftwareProductQSchemaFactory.js';
+import {forms} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+
 const softwareProductId = '123';
 const componentId = '321';
 const nicId = '111';
+const version = VersionControllerUtilsFactory.build().version;
 
 describe('Software Product Components Network Action Helper Tests', function () {
 
@@ -35,23 +35,7 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const NICList = [
-			{
-				name:'oam01_port_0',
-				description:'bbbbbbb',
-				networkId:'A0E578751B284D518ED764D5378EA97C',
-				id:'96D3648338F94DAA9889E9FBB8E59895',
-				networkName:'csb_net'
-			},
-			{
-				name:'oam01_port_1',
-				description:'bbbbbbb',
-				networkId:'378EA97CA0E578751B284D518ED764D5',
-				id:'8E5989596D3648338F94DAA9889E9FBB',
-				networkName:'csb_net_2'
-			}
-
-		];
+		const NICList = VSPComponentsNicFactory.buildList(2);
 
 		deepFreeze(NICList);
 
@@ -60,14 +44,14 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network.nicList', NICList);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/components/${componentId}/nics`);
-			expect(data).to.deep.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return {results: NICList};
 		});
 
-		return SoftwareProductComponentsNetworkActionHelper.fetchNICsList(store.dispatch, {softwareProductId, componentId}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+		return SoftwareProductComponentsNetworkActionHelper.fetchNICsList(store.dispatch, {softwareProductId, version, componentId}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 
 	});
@@ -76,12 +60,8 @@ describe('Software Product Components Network Action Helper Tests', function () 
 
 		const store = storeCreator();
 		deepFreeze(store.getState());
-		const data = {
-			name: 'oam01_port_0',
-			description: 'bbbbbbb',
-			networkId: 'A0E578751B284D518ED764D5378EA97C',
-			networkName: 'csb_net'
-		};
+		const data = VSPComponentsNicFactory.build();
+		const genericFieldInfo = VSPComponentsNicFactoryGenericFieldInfo.build();
 
 		const nic = {id: '444'};
 		deepFreeze(data);
@@ -91,20 +71,19 @@ describe('Software Product Components Network Action Helper Tests', function () 
 
 		deepFreeze(expectedData);
 
-		const network = {
+		const network = VSPComponentsNetworkFactory.build({
 			nicEditor: {
-				data: expectedData
-			},
-			nicList: []
-		};
+				data: expectedData,
+				formName: forms.NIC_EDIT_FORM,
+				genericFieldInfo
+			}
+		});
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
 
 		SoftwareProductComponentsNetworkActionHelper.openNICEditor(store.dispatch, {nic, data});
 
-		return setTimeout(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
 	it('close NICE editor', () => {
@@ -112,41 +91,31 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const network = {
-			nicEditor: {},
-			nicList: []
-		};
+		const network = VSPComponentsNetworkFactory.build();
 		deepFreeze(network);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
 
 		SoftwareProductComponentsNetworkActionHelper.closeNICEditor(store.dispatch);
 
-		return setTimeout(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
-		}, 100);
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
 	it('Load NIC data', () => {
 
-		const expectedData = {
-			description: 'bbbbbbb',
-			name: 'oam01_port_0',
-			networkId: 'A0E578751B284D518ED764D5378EA97C',
-			networkName: 'csb_net'
-		};
+		const expectedData = VSPComponentsNicFactory.build();
 
 		deepFreeze(expectedData);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/components/${componentId}/nics/${nicId}`);
-			expect(data).to.deep.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return (expectedData);
 		});
 
-		return SoftwareProductComponentsNetworkActionHelper.loadNICData({softwareProductId, componentId, nicId}).then((data) => {
-			expect(data).to.deep.equal(expectedData);
+		return SoftwareProductComponentsNetworkActionHelper.loadNICData({softwareProductId, version, componentId, nicId}).then((data) => {
+			expect(data).toEqual(expectedData);
 		});
 	});
 
@@ -156,104 +125,38 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const qdata = {
-			protocols: {
-				protocolWithHighestTrafficProfile: 'UDP',
-				protocols: ['UDP']
-			},
-			ipConfiguration: {
-				ipv4Required: true
-			}
-		};
-
-		const qschema = {
-			$schema: 'http://json-schema.org/draft-04/schema#',
-			type: 'object',
-			properties: {
-				'protocols': {
-					type: 'object',
-					properties: {}
-				}
-			}
-		};
+		const qdata = VSPComponentsNetworkQDataFactory.build();
+		const dataMap = VSPComponentsNetworkDataMapFactory.build();
+		const qgenericFieldInfo = {};
+		const qschema = VSPQSchemaFactory.build();
 
 		deepFreeze(qdata);
+		deepFreeze(dataMap);
 		deepFreeze(qschema);
 
 
-		const network = {
+		const network = VSPComponentsNetworkFactory.build({
 			nicEditor: {
 				qdata,
-				qschema
-			},
-			nicList: []
-		};
+				dataMap,
+				qgenericFieldInfo
+			}
+		});
 		deepFreeze(network);
 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/components/${componentId}/nics/${nicId}/questionnaire`);
-			expect(data).to.deep.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}/questionnaire`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return ({data: JSON.stringify(qdata), schema: JSON.stringify(qschema)});
 		});
 
-		return SoftwareProductComponentsNetworkActionHelper.loadNICQuestionnaire(store.dispatch, {softwareProductId, componentId, nicId}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+		return SoftwareProductComponentsNetworkActionHelper.loadNICQuestionnaire(store.dispatch, {softwareProductId, version, componentId, nicId}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
-	});
-
-	it('update NIC Data', () => {
-		const store = storeCreator();
-		deepFreeze(store.getState());
-
-		const data = {test: '123'};
-		deepFreeze(data);
-
-		const network = {
-			nicEditor: {
-				data
-			},
-			nicList: []
-		};
-
-		deepFreeze(network);
-
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
-
-		SoftwareProductComponentsNetworkActionHelper.updateNICData(store.dispatch, {deltaData:data});
-
-		return setTimeout(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
-		}, 100);
-
-	});
-
-	it('update NIC Questionnaire', () => {
-		const store = storeCreator();
-		deepFreeze(store.getState());
-
-		const qdata = {
-			test: '123'
-		};
-		const network = {
-			nicEditor: {
-				qdata,
-				qschema: undefined
-			},
-			nicList: []
-		};
-		deepFreeze(network);
-
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
-
-		SoftwareProductComponentsNetworkActionHelper.updateNICQuestionnaire(store.dispatch, {data:qdata});
-
-		return setTimeout(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
-		}, 100);
-
 	});
 
 	it('save NIC Data And Questionnaire', () => {
@@ -261,14 +164,8 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const qdata = {
-			qtest: '111'
-		};
-		const data = {
-			name: '2222',
-			description: 'blabla',
-			networkId: '123445'
-		};
+		const qdata = VSPComponentsNetworkQDataFactory.build();
+		const data = VSPComponentsNicFactory.build();
 
 		const expectedData = {...data, id: nicId};
 
@@ -282,22 +179,22 @@ describe('Software Product Components Network Action Helper Tests', function () 
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductComponents.network', network);
 		deepFreeze(expectedStore);
 
-		mockRest.addHandler('save', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/components/${componentId}/nics/${nicId}/questionnaire`);
-			expect(data).to.deep.equal(qdata);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}/questionnaire`);
+			expect(data).toEqual(qdata);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
-		mockRest.addHandler('save', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/components/${componentId}/nics/${nicId}`);
-			expect(data).to.deep.equal(data);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${softwareProductId}/versions/${version.id}/components/${componentId}/nics/${nicId}`);
+			expect(data).toEqual(data);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
-		return SoftwareProductComponentsNetworkActionHelper.saveNICDataAndQuestionnaire(store.dispatch, {softwareProductId, componentId, qdata, data: expectedData}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+		return SoftwareProductComponentsNetworkActionHelper.saveNICDataAndQuestionnaire(store.dispatch, {softwareProductId, version, componentId, qdata, data: expectedData}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 

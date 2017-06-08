@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.MASTER:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -138,8 +114,18 @@ topology_template:
     MASTER_mgmt_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - jsa_security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -157,7 +143,7 @@ topology_template:
         name:
           get_input: MASTER_names
   groups:
-    hot_template:
+    hot_template_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/hot_template.yml

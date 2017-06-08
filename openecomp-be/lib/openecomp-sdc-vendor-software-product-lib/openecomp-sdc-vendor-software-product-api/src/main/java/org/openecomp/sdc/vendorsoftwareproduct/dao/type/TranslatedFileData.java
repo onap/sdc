@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
+
 public class TranslatedFileData {
 
   private String displayName;

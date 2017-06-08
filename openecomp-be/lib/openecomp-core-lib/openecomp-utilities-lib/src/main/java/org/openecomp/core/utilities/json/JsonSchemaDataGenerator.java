@@ -22,22 +22,17 @@ package org.openecomp.core.utilities.json;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The type Json schema data generator.
- */
 public class JsonSchemaDataGenerator {
 
   private static final String ROOT = "root";
-  private static final Logger logger = LoggerFactory.getLogger(JsonSchemaDataGenerator.class);
-  /**
-   * The Include defaults.
-   */
+  private static final Logger logger =
+      (Logger) LoggerFactory.getLogger(JsonSchemaDataGenerator.class);
   boolean includeDefaults = true;
   private JSONObject root;
   private Map<String, Object> referencesData;
@@ -54,11 +49,6 @@ public class JsonSchemaDataGenerator {
     root = new JSONObject(jsonSchema);
   }
 
-  /**
-   * Sets include defaults.
-   *
-   * @param includeDefaults the include defaults
-   */
   public void setIncludeDefaults(boolean includeDefaults) {
     this.includeDefaults = includeDefaults;
   }
@@ -66,15 +56,16 @@ public class JsonSchemaDataGenerator {
   /**
    * Generates json data that conform to the schema according to turned on flags.
    *
-   * @return json that conform to the schema.
+   * @return json that conform to the schema
    */
   public String generateData() {
     referencesData = new HashMap<>();
     JSONObject data = new JSONObject();
 
     generateData(ROOT, root,
-        data); // "root" is dummy name to represent the top level object (which, as apposed to
-    // inner objects, doesn't have a name in the schema)
+        data);
+    // "root" is dummy name to represent the top level object
+    // (which, as apposed to inner objects, doesn't have a name in the schema)
     return data.has(ROOT) ? data.get(ROOT).toString() : data.toString();
   }
 
@@ -161,12 +152,12 @@ public class JsonSchemaDataGenerator {
         default:
           break;
       }
-    } catch (JSONException e0) {
+    } catch (JSONException exception) {
       Object defaultValue = property.get(JsonSchemaKeyword.DEFAULT);
       logger.error(String.format(
           "Invalid schema: '%s' property type is '%s' but it has a default value which is not: %s.",
-          propertyName, propertyType, defaultValue), e0);
-      throw e0;
+          propertyName, propertyType, defaultValue), exception);
+      throw exception;
     }
   }
 

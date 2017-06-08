@@ -27,17 +27,20 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.List;
 import java.util.Map;
 
-public interface EnrichmentManager<T> {
+
+public interface
+
+EnrichmentManager<T> {
 
 
   Map<String, List<ErrorMessage>> enrich();
 
-  void addEntityInput(String type, EntityInfo info);
+  void addEntityInfo(String entityKey, EntityInfo entityInfo);
 
-  void initInput(String key, Version version);
-
-  void addModel(T model);
+  void init(String key, Version version);
 
   T getModel();
+
+  void setModel(T model);
 
 }

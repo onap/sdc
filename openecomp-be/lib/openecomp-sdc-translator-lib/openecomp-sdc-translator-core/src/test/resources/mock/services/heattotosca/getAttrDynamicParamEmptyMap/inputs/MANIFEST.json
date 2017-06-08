@@ -1,0 +1,52 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "LCP-Xlate.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "LCP-XlateL2J.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "base_mso.yml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "base_mso.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }, 
+        {
+            "file": "LCP-OPENECOMP.template.yaml",
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "LCP-Base.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "LCP-PairGroup.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "LCP-Port.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "LCP-ATTGRP.template.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }
+    ]
+}

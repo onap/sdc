@@ -23,7 +23,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca;
 public class AttachedResourceId {
   private Object translatedId;
   private Object entityId;
-  private ResourceReferenceType resourceReferenceType;
+  private ReferenceType resourceReferenceType;
 
   /**
    * Instantiates a new Attached resource id.
@@ -33,7 +33,7 @@ public class AttachedResourceId {
    * @param resourceReferenceType the resource reference type
    */
   public AttachedResourceId(Object translatedId, Object entityId,
-                            ResourceReferenceType resourceReferenceType) {
+                            ReferenceType resourceReferenceType) {
     this.translatedId = translatedId;
     this.resourceReferenceType = resourceReferenceType;
     this.entityId = entityId;
@@ -47,19 +47,19 @@ public class AttachedResourceId {
     return translatedId;
   }
 
-  public ResourceReferenceType getResourceReferenceType() {
+  public ReferenceType getResourceReferenceType() {
     return resourceReferenceType;
   }
 
   public boolean isGetResource() {
-    return resourceReferenceType == ResourceReferenceType.GET_RESOURCE;
+    return resourceReferenceType == ReferenceType.GET_RESOURCE;
   }
 
   public boolean isGetParam() {
-    return resourceReferenceType == ResourceReferenceType.GET_PARAM;
+    return resourceReferenceType == ReferenceType.GET_PARAM;
   }
 
   public boolean isGetAttr() {
-    return resourceReferenceType == ResourceReferenceType.GET_ATTR;
+    return resourceReferenceType == ReferenceType.GET_ATTR;
   }
 }

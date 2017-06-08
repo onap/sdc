@@ -1,0 +1,77 @@
+{
+  "resourceTranslationImpl": {
+    "OS::Contrail::VirtualNetwork": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailVirtualNetworkImpl"
+    },
+    "OS::ContrailV2::VirtualNetwork": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailV2VirtualNetworkImpl"
+    },
+    "OS::ContrailV2::VirtualMachineInterface": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailV2VmInterfaceImpl"
+    },
+    "OS::Cinder::Volume": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationCinderVolumeImpl"
+    },
+    "OS::Cinder::VolumeAttachment": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationCinderVolumeAttachmentImpl"
+    },
+    "OS::Neutron::Net": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNeutronNetImpl"
+    },
+    "OS::Neutron::Subnet": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNeutronSubnetImpl"
+    },
+    "OS::Nova::Server": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNovaServerImpl"
+    },
+    "OS::Neutron::Port": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNeutronPortImpl"
+    },
+    "OS::Contrail::ServiceTemplate": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailServiceTemplateImpl"
+    },
+    "OS::Contrail::ServiceInstance": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationContrailServiceInstanceImpl"
+    },
+    "OS::Heat::ResourceGroup": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationResourceGroupImpl"
+    },
+    "NestedResource": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationNestedImpl"
+    },
+    "DefaultResource": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationDefaultImpl"
+    }
+  },
+  "functionTranslationImpl": {
+    "get_param": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslationGetParamImpl"
+    },
+    "get_attr": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslationGetAttrImpl"
+    },
+    "get_resource": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslationGetResourceImpl"
+    },
+    "get_file": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslationGetFileImpl"
+    }
+  },
+  "_config": {
+    "namespace": "mandatoryHeatToToscaTranslator"
+  }
+}

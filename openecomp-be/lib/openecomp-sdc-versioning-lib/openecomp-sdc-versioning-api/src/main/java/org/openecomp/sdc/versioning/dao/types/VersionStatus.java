@@ -24,5 +24,4 @@ public enum VersionStatus {
   Available,
   Locked,
   Final
-
 }

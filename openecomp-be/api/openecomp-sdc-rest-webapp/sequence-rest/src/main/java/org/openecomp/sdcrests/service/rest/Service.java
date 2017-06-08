@@ -20,5 +20,8 @@
 
 package org.openecomp.sdcrests.service.rest;
 
+/**
+ * Created by zivl on 6/30/16.
+ */
 public interface Service {
 }

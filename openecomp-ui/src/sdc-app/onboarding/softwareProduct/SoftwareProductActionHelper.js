@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -26,10 +21,17 @@ import LicenseAgreementActionHelper from 'sdc-app/onboarding/licenseModel/licens
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
 
 import {actionTypes} from './SoftwareProductConstants.js';
-import NotificationConstants from 'nfvo-components/notifications/NotificationConstants.js';
 import OnboardingActionHelper from 'sdc-app/onboarding/OnboardingActionHelper.js';
 import SoftwareProductComponentsActionHelper from './components/SoftwareProductComponentsActionHelper.js';
 import {actionsEnum as VersionControllerActionsEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
+import {actionTypes as HeatSetupActions} from 'sdc-app/onboarding/softwareProduct/attachments/setup/HeatSetupConstants.js';
+import {actionTypes as featureGroupsActionConstants} from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsConstants.js';
+import {actionTypes as licenseAgreementActionTypes} from 'sdc-app/onboarding/licenseModel/licenseAgreement/LicenseAgreementConstants.js';
+import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+import {PRODUCT_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import {modalContentMapper} from 'sdc-app/common/modal/ModalContentMapper.js';
+import {statusEnum} from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 
 function baseUrl() {
 	const restPrefix = Configuration.get('restPrefix');
@@ -40,46 +42,58 @@ function softwareProductCategoriesUrl() {
 	return `${restATTPrefix}/v1/categories/resources/`;
 }
 
-function uploadFile(vspId, formData) {
-
-	return RestAPIUtil.create(`${baseUrl()}${vspId}/upload`, formData);
+function uploadFile(vspId, formData, version) {
+	return RestAPIUtil.post(`${baseUrl()}${vspId}/versions/${version.id}/orchestration-template-candidate`, formData);
 
 }
 
-function putSoftwareProduct(softwareData) {
-	return RestAPIUtil.save(`${baseUrl()}${softwareData.id}`, {
-		name: softwareData.name,
-		description: softwareData.description,
-		category: softwareData.category,
-		subCategory: softwareData.subCategory,
-		vendorId: softwareData.vendorId,
-		vendorName: softwareData.vendorName,
-		licensingVersion: softwareData.licensingVersion,
-		icon: softwareData.icon,
-		licensingData: softwareData.licensingData
+function putSoftwareProduct(softwareProduct) {
+	return RestAPIUtil.put(`${baseUrl()}${softwareProduct.id}/versions/${softwareProduct.version.id}`, {
+		name: softwareProduct.name,
+		description: softwareProduct.description,
+		category: softwareProduct.category,
+		subCategory: softwareProduct.subCategory,
+		vendorId: softwareProduct.vendorId,
+		vendorName: softwareProduct.vendorName,
+		licensingVersion: softwareProduct.licensingVersion && softwareProduct.licensingVersion.id ? softwareProduct.licensingVersion : {} ,
+		icon: softwareProduct.icon,
+		licensingData: softwareProduct.licensingData
 	});
 }
 
-function putSoftwareProductQuestionnaire(vspId, qdata) {
-	return RestAPIUtil.save(`${baseUrl()}${vspId}/questionnaire`, qdata);
+function putSoftwareProductQuestionnaire(vspId, qdata, version) {
+	return RestAPIUtil.put(`${baseUrl()}${vspId}/versions/${version.id}/questionnaire`, qdata);
 }
 
-function putSoftwareProductAction(id, action) {
-	return RestAPIUtil.save(`${baseUrl()}${id}/actions`, {action: action});
+function putSoftwareProductAction(id, action, version) {
+	return RestAPIUtil.put(`${baseUrl()}${id}/versions/${version.id}/actions`, {action: action});
 }
 
 function fetchSoftwareProductList() {
 	return RestAPIUtil.fetch(baseUrl());
 }
 
+function fetchFinalizedSoftwareProductList() {
+	return RestAPIUtil.fetch(`${baseUrl()}?versionFilter=Final`);
+}
+
 function fetchSoftwareProduct(vspId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl()}${vspId}${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl()}${vspId}/versions/${version.id}`);
 }
 
 function fetchSoftwareProductQuestionnaire(vspId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl()}${vspId}/questionnaire${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl()}${vspId}/versions/${version.id}/questionnaire`);
+}
+
+function updateSoftwareProductHeatCandidate(softwareProductId, heatCandidate, version) {
+	return RestAPIUtil.put(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate/manifest`, heatCandidate);
+}
+function validateHeatCandidate(softwareProductId, version) {
+	return RestAPIUtil.put(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate/process`);
+}
+
+function fetchOrchestrationTemplateCandidate(softwareProductId, version, ) {
+	return RestAPIUtil.fetch(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate`, {dataType: 'binary'});
 }
 
 function objToString(obj) {
@@ -88,7 +102,8 @@ function objToString(obj) {
 		obj.forEach((item) => {
 			str += objToString(item) + '\n';
 		});
-	} else {
+	}
+	else {
 		for (let p in obj) {
 			if (obj.hasOwnProperty(p)) {
 				str += obj[p] + '\n';
@@ -115,24 +130,27 @@ function fetchSoftwareProductCategories(dispatch) {
 	});
 	return RestAPIUtil.fetch(softwareProductCategoriesUrl())
 		.then(handleResponse)
-		.fail(() => handleResponse(null));
+		.catch(() => handleResponse(null));
 }
 
 function loadLicensingData(dispatch, {licenseModelId, licensingVersion}) {
-	LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version: licensingVersion});
-	FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version: licensingVersion});
+	return Promise.all([
+		LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId, version: licensingVersion}),
+		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version: licensingVersion})
+	]);
 }
 
 function getExpandedItemsId(items, itemIdToToggle) {
-	for(let i = 0; i < items.length; i++) {
-		if(items[i].id === itemIdToToggle) {
+	for (let i = 0; i < items.length; i++) {
+		if (items[i].id === itemIdToToggle) {
 			if (items[i].expanded) {
 				return {};
-			} else {
+			}
+			else {
 				return {[itemIdToToggle]: true};
 			}
 		}
-		else if(items[i].items && items[i].items.length > 0) {
+		else if (items[i].items && items[i].items.length > 0) {
 			let mapOfExpandedIds = getExpandedItemsId(items[i].items, itemIdToToggle);
 			if (mapOfExpandedIds !== false) {
 				mapOfExpandedIds[items[i].id] = true;
@@ -143,7 +161,62 @@ function getExpandedItemsId(items, itemIdToToggle) {
 	return false;
 }
 
+function getTimestampString() {
+	let date = new Date();
+	let z = n => n < 10 ? '0' + n : n;
+	return `${date.getFullYear()}-${z(date.getMonth())}-${z(date.getDate())}_${z(date.getHours())}-${z(date.getMinutes())}`;
+}
+
+function showFileSaveDialog({blob, xhr, defaultFilename, addTimestamp}) {
+	let filename;
+	let contentDisposition = xhr.getResponseHeader('content-disposition') ? xhr.getResponseHeader('content-disposition') : '';
+	let match = contentDisposition.match(/filename=(.*?)(;|$)/);
+	if (match) {
+		filename = match[1];
+	}
+	else {
+		filename = defaultFilename;
+	}
+
+	if (addTimestamp) {
+		filename = filename.replace(/(^.*?)\.([^.]+$)/, `$1_${getTimestampString()}.$2`);
+	}
+
+	let link = document.createElement('a');
+	let url = URL.createObjectURL(blob);
+	link.href = url;
+	link.download = filename;
+	link.style.display = 'none';
+	document.body.appendChild(link);
+	link.click();
+	setTimeout(function(){
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	}, 0);
+}
+
+function migrateSoftwareProduct(vspId, version) {
+	return RestAPIUtil.put(`${baseUrl()}${vspId}/versions/${version.id}/heal`);
+}
+
+function adjustMinorVersion(version, value) {
+	let ar = version.split('.');
+	return ar[0] + '.' + (parseInt(ar[1]) + value);
+}
+
+function adjustMajorVersion(version, value) {
+	let ar = version.split('.');
+	return (parseInt(ar[0]) + value) + '.0';
+}
+
 const SoftwareProductActionHelper = {
+
+	fetchFinalizedSoftwareProductList(dispatch) {
+		return fetchFinalizedSoftwareProductList().then(response => dispatch({
+			type: actionTypes.FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED,
+			response
+		}));
+	},
 
 	loadSoftwareProductAssociatedData(dispatch) {
 		fetchSoftwareProductCategories(dispatch);
@@ -152,7 +225,7 @@ const SoftwareProductActionHelper = {
 
 	loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion}) {
 		SoftwareProductActionHelper.loadSoftwareProductAssociatedData(dispatch);
-		loadLicensingData(dispatch, {licenseModelId, licensingVersion});
+		return loadLicensingData(dispatch, {licenseModelId, licensingVersion});
 	},
 
 	fetchSoftwareProductList(dispatch) {
@@ -162,37 +235,61 @@ const SoftwareProductActionHelper = {
 		}));
 	},
 
-	uploadFile(dispatch, {softwareProductId, formData, failedNotificationTitle}) {
+	loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version}){
+		return RestAPIUtil.fetch(`${baseUrl()}${softwareProductId}/versions/${version.id}/orchestration-template-candidate/manifest`).then(response => dispatch({
+			type: HeatSetupActions.MANIFEST_LOADED,
+			response
+		}));
+	},
+
+	updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version}){
+		return updateSoftwareProductHeatCandidate(softwareProductId, heatCandidate, version);
+	},
+
+	processAndValidateHeatCandidate(dispatch, {softwareProductId, version}){
+		return validateHeatCandidate(softwareProductId, version).then(response => {
+			if (response.status === 'Success') {
+				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
+				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId, version});
+			}
+		});
+	},
+
+	uploadFile(dispatch, {softwareProductId, formData, failedNotificationTitle, version}) {
+		dispatch({
+			type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
+			payload: {}
+		});
+
 		Promise.resolve()
-			.then(() => uploadFile(softwareProductId, formData))
+			.then(() => uploadFile(softwareProductId, formData, version))
 			.then(response => {
-				if (response.status !== 'Success') {
+				if (response.status === 'Success') {
+					OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId, version});
+				}
+				else {
 					throw new Error(parseUploadErrorMsg(response.errors));
 				}
 			})
-			.then(() => {
-				SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId});
-				OnboardingActionHelper.navigateToSoftwareProductAttachments(dispatch, {softwareProductId});
-				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch, {softwareProductId});
-			})
 			.catch(error => {
 				dispatch({
-					type: NotificationConstants.NOTIFY_ERROR,
-					data: {title: failedNotificationTitle, msg: error.message}
+					type: modalActionTypes.GLOBAL_MODAL_ERROR,
+					data: {
+						title: failedNotificationTitle,
+						msg: error.message
+					}
 				});
 			});
 	},
 
-	uploadConfirmation(dispatch, {softwareProductId, formData, failedNotificationTitle}) {
-		dispatch({
-			type: actionTypes.softwareProductEditor.UPLOAD_CONFIRMATION,
-			uploadData: {
-				softwareProductId,
-				formData,
-				failedNotificationTitle
-			}
-		});
+	downloadHeatFile(dispatch, {softwareProductId, heatCandidate, isReadOnlyMode, version}){
+		let p = isReadOnlyMode ? Promise.resolve() : SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version});
+		p.then(() => {
+			fetchOrchestrationTemplateCandidate(softwareProductId, version)
+				.then((blob, statusText, xhr) => showFileSaveDialog({blob, xhr, defaultFilename: 'HEAT_file.zip', addTimestamp: true}));
+		}, null/* do not download if data was not saved correctly*/);
 	},
+
 	hideUploadConfirm (dispatch) {
 		dispatch({
 			type: actionTypes.softwareProductEditor.UPLOAD_CONFIRMATION
@@ -208,7 +305,8 @@ const SoftwareProductActionHelper = {
 			),
 			SoftwareProductActionHelper.updateSoftwareProductQuestionnaire(dispatch, {
 				softwareProductId: softwareProduct.id,
-				qdata
+				qdata,
+				version: softwareProduct.version
 			})
 		]);
 	},
@@ -217,8 +315,8 @@ const SoftwareProductActionHelper = {
 		return putSoftwareProduct(softwareProduct);
 	},
 
-	updateSoftwareProductQuestionnaire(dispatch, {softwareProductId, qdata}) {
-		return putSoftwareProductQuestionnaire(softwareProductId, qdata);
+	updateSoftwareProductQuestionnaire(dispatch, {softwareProductId, qdata, version}) {
+		return putSoftwareProductQuestionnaire(softwareProductId, qdata, version);
 	},
 
 	softwareProductEditorDataChanged(dispatch, {deltaData}) {
@@ -235,10 +333,34 @@ const SoftwareProductActionHelper = {
 		});
 	},
 
-	softwareProductEditorVendorChanged(dispatch, {deltaData}) {
-		LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {licenseModelId: deltaData.vendorId, version: deltaData.licensingVersion});
-		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId: deltaData.vendorId, version: deltaData.licensingVersion});
-		SoftwareProductActionHelper.softwareProductEditorDataChanged(dispatch, {deltaData});
+	softwareProductEditorVendorChanged(dispatch, {deltaData, formName}) {
+		if (deltaData.licensingVersion.id){
+			let p = Promise.all([
+				LicenseAgreementActionHelper.fetchLicenseAgreementList(dispatch, {
+					licenseModelId: deltaData.vendorId,
+					version: {id: deltaData.licensingVersion.id}
+				}),
+				FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {
+					licenseModelId: deltaData.vendorId,
+					version: {id: deltaData.licensingVersion.id}
+				})
+			]);
+			ValidationHelper.dataChanged(dispatch, {deltaData, formName});
+			return p;
+		} else {
+			ValidationHelper.dataChanged(dispatch, {deltaData, formName});
+
+			dispatch({
+				type: licenseAgreementActionTypes.LICENSE_AGREEMENT_LIST_LOADED,
+				response: {results: []}
+			});
+
+			dispatch({
+				type: featureGroupsActionConstants.FEATURE_GROUPS_LIST_LOADED,
+				response: {results: []}
+			});
+		}
+
 	},
 
 	setIsValidityData(dispatch, {isValidityData}) {
@@ -265,55 +387,67 @@ const SoftwareProductActionHelper = {
 				return response;
 			}),
 			fetchSoftwareProductQuestionnaire(softwareProductId, version).then(response => {
-				dispatch({
-					type: actionTypes.SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE,
-					payload: {
-						qdata: response.data ? JSON.parse(response.data) : {},
-						qschema: JSON.parse(response.schema)
-					}
-				});
+				ValidationHelper.qDataLoaded(dispatch, {response: {qdata: response.data ? JSON.parse(response.data) : {},
+					qschema: JSON.parse(response.schema)}, qName: PRODUCT_QUESTIONNAIRE});
 			})
 		]);
 	},
 
-	performVCAction(dispatch, {softwareProductId, action}) {
+	performVCAction(dispatch, {softwareProductId, action, version}) {
 		if (action === VersionControllerActionsEnum.SUBMIT) {
-			return putSoftwareProductAction(softwareProductId, action).then(() => {
-				return putSoftwareProductAction(softwareProductId, VersionControllerActionsEnum.CREATE_PACKAGE).then(() => {
+			return putSoftwareProductAction(softwareProductId, action, version).then(() => {
+				return putSoftwareProductAction(softwareProductId, VersionControllerActionsEnum.CREATE_PACKAGE, version).then(() => {
 					dispatch({
-						type: NotificationConstants.NOTIFY_SUCCESS,
+						type: modalActionTypes.GLOBAL_MODAL_SUCCESS,
 						data: {
 							title: i18n('Submit Succeeded'),
 							msg: i18n('This software product successfully submitted'),
+							cancelButtonText: i18n('OK'),
 							timeout: 2000
 						}
 					});
-					fetchSoftwareProduct(softwareProductId).then(response => {
-						dispatch({
-							type: actionTypes.SOFTWARE_PRODUCT_LOADED,
-							response
-						});
-					});
+					const newVersionId = adjustMajorVersion(version.label, 1);
+					SoftwareProductActionHelper.fetchSoftwareProduct(dispatch,{softwareProductId, version: {id: newVersionId}});
+					return Promise.resolve({newVersion: {id: newVersionId}});
 				});
 			}, error => dispatch({
-				type: NotificationConstants.NOTIFY_ERROR,
-				data: {title: i18n('Submit Failed'), validationResponse: error.responseJSON}
+				type: modalActionTypes.GLOBAL_MODAL_ERROR,
+				data: {
+					modalComponentName: modalContentMapper.SUMBIT_ERROR_RESPONSE,
+					title: i18n('Submit Failed'),
+					modalComponentProps: {
+						validationResponse: error.responseJSON
+					},
+					cancelButtonText: i18n('Ok')
+				}
 			}));
 		}
 		else {
-			return putSoftwareProductAction(softwareProductId, action).then(() => {
-				fetchSoftwareProduct(softwareProductId).then(response => {
-					dispatch({
-						type: actionTypes.SOFTWARE_PRODUCT_LOADED,
-						response
-					});
-				});
+			return putSoftwareProductAction(softwareProductId, action, version).then(() => {
+				let newVersionId = version.id;
+				/*
+				  TODO Temorary switch to change version label
+				*/
+				switch(action) {
+					case VersionControllerActionsEnum.CHECK_OUT:
+						newVersionId = adjustMinorVersion(version.label, 1);
+						break;
+					case VersionControllerActionsEnum.UNDO_CHECK_OUT:
+						newVersionId = adjustMinorVersion(version.label, -1);
+						break;
+				}
+				SoftwareProductActionHelper.fetchSoftwareProduct(dispatch,{softwareProductId, version:{id: newVersionId}});
+				return Promise.resolve({newVersion: {id: newVersionId}});
 			});
 		}
 	},
 
 	switchVersion(dispatch, {softwareProductId, licenseModelId, version}) {
-		OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, licenseModelId, version});
+		OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {
+			softwareProductId,
+			licenseModelId,
+			version
+		});
 	},
 
 	toggleNavigationItems(dispatch, {items, itemIdToExpand}) {
@@ -327,7 +461,17 @@ const SoftwareProductActionHelper = {
 	/** for the next verision */
 	addComponent(dispatch) {
 		return dispatch;
+	},
+
+	migrateSoftwareProduct(dispatch, {softwareProduct}) {
+		let {licenseModelId, licensingVersion, id: softwareProductId, version, status} = softwareProduct;
+		const  newVer = status === statusEnum.CHECK_IN_STATUS || status === statusEnum.SUBMIT_STATUS ?
+			adjustMinorVersion(version.id, 1) : version.id;
+		migrateSoftwareProduct(softwareProductId, version)
+			.then(() =>OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch,
+				{softwareProductId, version: {id: newVer, label: newVer}, licenseModelId, licensingVersion}));
 	}
+
 };
 
 export default SoftwareProductActionHelper;

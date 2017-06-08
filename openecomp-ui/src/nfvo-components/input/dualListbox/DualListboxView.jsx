@@ -1,6 +1,21 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
-import FontAwesome from 'react-fontawesome';
-import Input from 'react-bootstrap/lib/Input.js';
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import Input from 'nfvo-components/input/validation/InputWrapper.jsx';
 
 class DualListboxView extends React.Component {
 
@@ -30,37 +45,32 @@ class DualListboxView extends React.Component {
 
 	state = {
 		availableListFilter: '',
-		selectedValuesListFilter: ''
-	};
-
-	static contextTypes = {
-		isReadOnlyMode: React.PropTypes.bool
+		selectedValuesListFilter: '',
+		selectedValues: []
 	};
 
 	render() {
-		let {availableList, selectedValuesList, filterTitle} = this.props;
+		let {availableList, selectedValuesList, filterTitle, isReadOnlyMode} = this.props;
 		let {availableListFilter, selectedValuesListFilter} = this.state;
-		let isReadOnlyMode = this.context.isReadOnlyMode;
 
 		let unselectedList = availableList.filter(availableItem => !selectedValuesList.find(value => value === availableItem.id));
 		let selectedList = availableList.filter(availableItem => selectedValuesList.find(value => value === availableItem.id));
 		selectedList = selectedList.sort((a, b) => selectedValuesList.indexOf(a.id) - selectedValuesList.indexOf(b.id));
-
 		return (
 			<div className='dual-list-box'>
 				{this.renderListbox(filterTitle.left, unselectedList, {
 					value: availableListFilter,
 					ref: 'availableListFilter',
 					disabled: isReadOnlyMode,
-					onChange: () => this.setState({availableListFilter: this.refs.availableListFilter.getValue()})
-				}, {ref: 'availableValues', disabled: isReadOnlyMode})}
+					onChange: (value) => this.setState({availableListFilter: value})
+				}, {ref: 'availableValues', disabled: isReadOnlyMode, testId: 'available',})}
 				{this.renderOperationsBar(isReadOnlyMode)}
 				{this.renderListbox(filterTitle.right, selectedList, {
 					value: selectedValuesListFilter,
 					ref: 'selectedValuesListFilter',
 					disabled: isReadOnlyMode,
-					onChange: () => this.setState({selectedValuesListFilter: this.refs.selectedValuesListFilter.getValue()})
-				}, {ref: 'selectedValues', disabled: isReadOnlyMode})}
+					onChange: (value) => this.setState({selectedValuesListFilter: value})
+				}, {ref: 'selectedValues', disabled: isReadOnlyMode, testId: 'selected'})}
 			</div>
 		);
 	}
@@ -69,27 +79,36 @@ class DualListboxView extends React.Component {
 		let regExFilter = new RegExp(escape(filterProps.value), 'i');
 		let matchedItems = list.filter(item => item.name.match(regExFilter));
 		let unMatchedItems = list.filter(item => !item.name.match(regExFilter));
-
-
 		return (
 			<div className='dual-search-multi-select-section'>
 				<p>{filterTitle}</p>
 				<div className='dual-text-box-search search-wrapper'>
-					<Input name='search-input-control' type='text' groupClassName='search-input-control' {...filterProps}/>
-					<FontAwesome name='search' className='search-icon'/>
+					<Input data-test-id={`${props.testId}-search-input`}
+						   name='search-input-control' type='text'
+						   groupClassName='search-input-control'
+						   {...filterProps}/>
+					<SVGIcon name='search' className='search-icon'/>
 				</div>
 				<Input
 					multiple
+					onChange={(event) => this.onSelectItems(event.target.selectedOptions)}
 					groupClassName='dual-list-box-multi-select'
 					type='select'
 					name='dual-list-box-multi-select'
-					{...props}>
+					data-test-id={`${props.testId}-select-input`}
+					disabled={props.disabled}
+					ref={props.ref}>
 					{matchedItems.map(item => this.renderOption(item.id, item.name))}
 					{matchedItems.length && unMatchedItems.length && <option style={{pointerEvents: 'none'}}>--------------------</option>}
 					{unMatchedItems.map(item => this.renderOption(item.id, item.name))}
 				</Input>
 			</div>
 		);
+	}
+
+	onSelectItems(selectedOptions) {
+		let selectedValues = Object.keys(selectedOptions).map((k) => selectedOptions[k].value);
+		this.setState({selectedValues});
 	}
 
 	renderOption(value, name) {
@@ -107,17 +126,19 @@ class DualListboxView extends React.Component {
 		);
 	}
 
-	renderOperationBarButton(onClick, fontAwesomeIconName){
-		return (<div className='dual-list-option' onClick={onClick}><FontAwesome name={fontAwesomeIconName}/></div>);
+	renderOperationBarButton(onClick, iconName){
+		return (<div className='dual-list-option' data-test-id={`operation-icon-${iconName}`} onClick={onClick}><SVGIcon name={iconName}/></div>);
 	}
 
 	addToSelectedList() {
-		this.props.onChange(this.props.selectedValuesList.concat(this.refs.availableValues.getValue()));
+		this.props.onChange(this.props.selectedValuesList.concat(this.state.selectedValues));
+		this.setState({selectedValues: []});
 	}
 
 	removeFromSelectedList() {
-		const selectedValues = this.refs.selectedValues.getValue();
+		const selectedValues = this.state.selectedValues;
 		this.props.onChange(this.props.selectedValuesList.filter(value => !selectedValues.find(selectedValue => selectedValue === value)));
+		this.setState({selectedValues: []});
 	}
 
 	addAllToSelectedList() {

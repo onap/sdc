@@ -1,0 +1,16 @@
+{
+
+  "artifact": {
+    "name": { "maxlength": "28" },
+    "maxsize": "1048576",
+    "extension": "gz,tgz",
+    "supportedencryption": "Base64",
+    "status": "deleted",
+    "mandatory": { "name": "true" }
+  },
+  "_config": {
+    "namespace": "JSONConfig",
+    "mergeStrategy": "merge"
+  }
+
+}

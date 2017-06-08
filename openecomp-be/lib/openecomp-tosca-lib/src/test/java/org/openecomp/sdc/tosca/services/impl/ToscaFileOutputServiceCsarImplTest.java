@@ -1,12 +1,32 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.tosca.services.impl;
 
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.Metadata;
-import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
-import org.openecomp.core.utilities.file.FileContentHandler;
 import org.junit.Assert;
 import org.junit.Test;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.sdc.tosca.services.ToscaConstants;
+import org.openecomp.sdc.tosca.services.ToscaUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +41,12 @@ import java.util.zip.ZipFile;
 
 public class ToscaFileOutputServiceCsarImplTest {
 
-  private ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCsarImpl =
+  private ToscaFileOutputServiceCsarImpl toscaFileOutputServiceCSARImpl =
       new ToscaFileOutputServiceCsarImpl();
 
   @Test
   public void testCreationMetaFile() {
-    String createdMeta = toscaFileOutputServiceCsarImpl.createMetaFile("entryFile.yaml");
+    String createdMeta = toscaFileOutputServiceCSARImpl.createMetaFile("entryFile.yaml");
     String expectedMeta =
         "TOSCA-Meta-File-Version: 1.0\n" +
             "CSAR-Version: 1.1\n" +
@@ -38,19 +58,19 @@ public class ToscaFileOutputServiceCsarImplTest {
   @Test
   public void testCSARFileCreationWithExternalArtifacts() throws IOException {
     ServiceTemplate mainServiceTemplate = new ServiceTemplate();
-    Metadata metadata1 = new Metadata();
-    metadata1.setTemplate_author("OPENECOMP");
-    metadata1.setTemplate_name("ST1");
-    metadata1.setTemplate_version("1.0.0");
+    Map<String, String> metadata1 = new HashMap<>();
+    metadata1.put("Template_author", "OPENECOMP");
+    metadata1.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME,"ST1");
+    metadata1.put("Template_version", "1.0.0");
+    mainServiceTemplate.setMetadata(metadata1);
     mainServiceTemplate.setTosca_definitions_version("tosca_simple_yaml_1_0_0");
     mainServiceTemplate.setDescription("testing desc tosca service template");
-    mainServiceTemplate.setMetadata(metadata1);
 
     ServiceTemplate additionalServiceTemplate = new ServiceTemplate();
-    Metadata metadata2 = new Metadata();
-    metadata2.setTemplate_author("OPENECOMP");
-    metadata2.setTemplate_name("ST2");
-    metadata2.setTemplate_version("1.0.0");
+    Map<String, String> metadata2 = new HashMap<>();
+    metadata2.put("Template_author", "OPENECOMP");
+    metadata2.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, "ST2");
+    metadata2.put("Template_version", "1.0.0");
     additionalServiceTemplate.setTosca_definitions_version("tosca_simple_yaml_1_0_0");
     additionalServiceTemplate.setDescription("testing desc tosca service template");
     additionalServiceTemplate.setMetadata(metadata2);
@@ -86,7 +106,7 @@ public class ToscaFileOutputServiceCsarImplTest {
 
     licenseArtifactsFiles.putAll(licenseArtifacts);
 
-    byte[] csarFile = toscaFileOutputServiceCsarImpl.createOutputFile(
+    byte[] csarFile = toscaFileOutputServiceCSARImpl.createOutputFile(
         new ToscaServiceModel(heatFiles, definitionsInput,
             ToscaUtil.getServiceTemplateFileName(mainServiceTemplate)), licenseArtifactsFiles);
 
@@ -113,17 +133,17 @@ public class ToscaFileOutputServiceCsarImplTest {
   @Test
   public void testCSARFileCreation_noArtifacts() throws IOException {
     ServiceTemplate serviceTemplate = new ServiceTemplate();
-    Metadata metadata = new Metadata();
-    metadata.setTemplate_author("OPENECOMP");
-    metadata.setTemplate_name("Test");
-    metadata.setTemplate_version("1.0.0");
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put("Template_author", "OPENECOMP");
+    metadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, "Test");
+    metadata.put("Template_version", "1.0.0");
     serviceTemplate.setTosca_definitions_version("tosca_simple_yaml_1_0_0");
     serviceTemplate.setDescription("testing desc tosca service template");
     serviceTemplate.setMetadata(metadata);
     Map<String, ServiceTemplate> definitionsInput = new HashMap<>();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
     definitionsInput.put(serviceTemplateFileName, serviceTemplate);
-    byte[] csarFile = toscaFileOutputServiceCsarImpl
+    byte[] csarFile = toscaFileOutputServiceCSARImpl
         .createOutputFile(new ToscaServiceModel(null, definitionsInput, serviceTemplateFileName),
             null);
 

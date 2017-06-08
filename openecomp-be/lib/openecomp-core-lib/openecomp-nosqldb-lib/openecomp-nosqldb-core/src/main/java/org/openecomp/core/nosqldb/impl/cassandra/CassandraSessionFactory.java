@@ -25,7 +25,6 @@ import com.google.common.base.Optional;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.SSLOptions;
 import com.datastax.driver.core.Session;
-
 import org.openecomp.core.nosqldb.util.CassandraUtils;
 
 import java.io.FileInputStream;
@@ -56,6 +55,8 @@ public class CassandraSessionFactory {
     for (String address : addresses) {
       builder.addContactPoint(address);
     }
+
+    //Check if ssl
     Boolean isSsl = CassandraUtils.isSsl();
     if (isSsl) {
       builder.withSSL(getSslOptions().get());
@@ -69,7 +70,6 @@ public class CassandraSessionFactory {
     if (isAuthenticate) {
       builder.withCredentials(CassandraUtils.getUser(), CassandraUtils.getPassword());
     }
-
     Cluster cluster = builder.build();
     String keyStore = CassandraUtils.getKeySpace();
     return cluster.connect(keyStore);
@@ -84,8 +84,9 @@ public class CassandraSessionFactory {
       try {
         context = getSslContext(truststorePath.get(), truststorePassword.get());
       } catch (UnrecoverableKeyException | KeyManagementException
-          | NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e0) {
-        throw new RuntimeException(e0);
+          | NoSuchAlgorithmException | KeyStoreException | CertificateException
+          | IOException exception) {
+        throw new RuntimeException(exception);
       }
       String[] css = new String[]{"TLS_RSA_WITH_AES_128_CBC_SHA"};
       return Optional.of(new SSLOptions(context, css));
@@ -109,8 +110,8 @@ public class CassandraSessionFactory {
       tmf.init(ts);
 
       ctx.init(null, tmf.getTrustManagers(), new SecureRandom());
-    } catch (Exception e0) {
-      e0.printStackTrace();
+    } catch (Exception exception) {
+      exception.printStackTrace();
     } finally {
       tsf.close();
 
@@ -121,4 +122,6 @@ public class CassandraSessionFactory {
   private static class ReferenceHolder {
     private static final Session CASSANDRA = newCassandraSession();
   }
+
+
 }

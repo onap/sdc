@@ -22,20 +22,21 @@ package org.openecomp.sdcrests.mapping;
 
 /**
  * Base class for all mapping classes. Mapping classes will perform data mapping from source object
- * to target object Base class provides following<br>
- * <ol>
- * <li>provides life cycle of mapping class , first mapSimpleProperties is called and then
- * mapComplexProperties is called.</li>
- * <li>methods mapSimpleProperties and mapComplexProperties with default implementation,
- * these should be overridden by concrete mapping classes for writing mapping logic.</li>
- * </ol>
+ *  to target object Base class provides following<br>  <ol>  <li>provides life cycle of
+ * mapping class , first mapSimpleProperties is called and then  mapComplexProperties is
+ * called.</li>  <li>methods mapSimpleProperties and mapComplexProperties with default
+ * implementation, these should  be overridden by concrete mapping classes for writing mapping
+ * logic.</li>  </ol>
+ *
+ *
  */
 
 public abstract class MappingBase<S, T> {
 
   /**
    * Method is called for starting mapping from source object to target object method sets context
-   * in the thread locale and than calls mapSimpleProperties and mapComplexProperties respectively.
+   *  in the thread locale and than calls mapSimpleProperties and mapComplexProperties
+   * respectively.
    *
    * @param source : source object for mapping
    * @param clazz  : target <code>Class</code> for mapping
@@ -64,10 +65,9 @@ public abstract class MappingBase<S, T> {
   }
 
   /**
-   * The actual method that does the mapping between the <code>source</code>
-   * to <code>target</code> objects.
-   * This method is being called automatically as part of the mapper class.
-   * This method must be override (it is abstract) by the mapper class.
+   * The actual method that does the mapping between the <code>source</code> to <code>target</code>
+   * objects.  This method is being called automatically as part of the mapper class.  This
+   * method must be override (it is abstract) by the mapper class.
    *
    * @param source - the source object.
    * @param target - the target object.
@@ -93,8 +93,8 @@ public abstract class MappingBase<S, T> {
     try {
       object = clazz.newInstance();
 
-    } catch (InstantiationException | IllegalAccessException e0) {
-      //Do nothing
+    } catch (InstantiationException | IllegalAccessException exception) {
+      //TODO: what what?
     }
     return object;
 

@@ -24,29 +24,40 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
-import org.openecomp.core.validation.errors.Messages;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.Output;
+import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.model.ResourceReferenceFunctions;
 import org.openecomp.sdc.heat.services.HeatStructureUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.validation.impl.validators.HeatValidator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+
 
 public class HeatValidationService {
 
-  private static final Logger logger = LoggerFactory.getLogger(HeatValidator.class);
+  private static final Logger logger = (Logger) LoggerFactory.getLogger(HeatValidator.class);
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   /**
    * Check artifacts existence.
@@ -57,17 +68,22 @@ public class HeatValidationService {
    */
   public static void checkArtifactsExistence(String fileName, Set<String> artifactsNames,
                                              GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", fileName);
     artifactsNames
         .stream()
         .filter(artifactName -> !globalContext.getFileContextMap().containsKey(artifactName))
         .forEach(artifactName -> {
-          globalContext
-              .addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+          globalContext.addMessage(fileName,
+              ErrorLevel.ERROR, ErrorMessagesFormatBuilder
                   .getErrorWithParameters(Messages.MISSING_ARTIFACT.getErrorMessage(),
-                      artifactName));
+                      artifactName), LoggerTragetServiceName.VALIDATE_ARTIFACTS_EXISTENCE,
+              LoggerErrorDescription.MISSING_FILE);
         });
-  }
 
+    mdcDataDebugMessage.debugExitMessage("file", fileName);
+  }
 
   /**
    * Check resource existence from resources map.
@@ -81,11 +97,14 @@ public class HeatValidationService {
                                                             Set<String> resourcesNames,
                                                             Collection<?> valuesToSearchIn,
                                                             GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+
     if (CollectionUtils.isNotEmpty(valuesToSearchIn)) {
       for (Object value : valuesToSearchIn) {
         if (value instanceof Resource) {
           Resource resource = (Resource) value;
-          //checkResourceDependsOn(fileName,resource,resourcesNames,globalContext);
 
           Collection<Object> resourcePropertiesValues =
               resource.getProperties() == null ? null : resource.getProperties().values();
@@ -101,35 +120,49 @@ public class HeatValidationService {
         }
       }
     }
-  }
 
+    mdcDataDebugMessage.debugExitMessage("file", fileName);
+  }
 
   private static void handleReferencedResources(String fileName, Object valueToSearchReferencesIn,
                                                 Set<String> resourcesNames,
                                                 GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+
     Set<String> referencedResourcesNames = HeatStructureUtil
         .getReferencedValuesByFunctionName(fileName,
             ResourceReferenceFunctions.GET_RESOURCE.getFunction(), valueToSearchReferencesIn,
             globalContext);
     if (CollectionUtils.isNotEmpty(referencedResourcesNames)) {
-      HeatValidationService
-          .checkIfResourceReferenceExist(fileName, resourcesNames, referencedResourcesNames,
-              globalContext);
+      checkIfResourceReferenceExist(fileName, resourcesNames, referencedResourcesNames,
+          globalContext);
     }
-  }
 
+    mdcDataDebugMessage.debugExitMessage("file", fileName);
+  }
 
   private static void checkIfResourceReferenceExist(String fileName,
                                                     Set<String> referencedResourcesNames,
                                                     Set<String> referencedResources,
                                                     GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+
     referencedResources.stream()
         .filter(referencedResource -> !referencedResourcesNames.contains(referencedResource))
         .forEach(referencedResource -> {
-          globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-              .getErrorWithParameters(Messages.REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(),
-                  referencedResource));
+          globalContext.addMessage(fileName,
+              ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                  .getErrorWithParameters(Messages.REFERENCED_RESOURCE_NOT_FOUND.getErrorMessage(),
+                      referencedResource),
+              LoggerTragetServiceName.VALIDATE_RESOURCE_REFERENCE_EXISTENCE,
+              LoggerErrorDescription.RESOURCE_NOT_FOUND);
         });
+
+    mdcDataDebugMessage.debugExitMessage("file", fileName);
   }
 
   /**
@@ -162,36 +195,152 @@ public class HeatValidationService {
   /**
    * Check nested parameters.
    *
-   * @param callingNestedFileName  the calling nested file name
+   * @param parentFileName         the calling nested file name
    * @param nestedFileName         the nested file name
    * @param resourceName           the resource name
    * @param globalContext          the global context
    * @param resourceFileProperties the resource file properties
    */
-  public static void checkNestedParameters(String callingNestedFileName, String nestedFileName,
-                                           String resourceName,
-                                           GlobalValidationContext globalContext,
-                                           Set<String> resourceFileProperties) {
-    HeatOrchestrationTemplate heatOrchestrationTemplate;
+  public static void checkNestedParameters(String parentFileName, String nestedFileName,
+                                           String resourceName, Resource resource,
+                                           Set<String> resourceFileProperties,
+                                           Optional<String> indexVarValue,
+                                           GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", parentFileName);
+
+    HeatOrchestrationTemplate parentHeatOrchestrationTemplate;
+    HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
     try {
-      heatOrchestrationTemplate = new YamlUtil()
-          .yamlToObject(globalContext.getFileContent(nestedFileName),
-              HeatOrchestrationTemplate.class);
-    } catch (Exception e0) {
+      Optional<InputStream> fileContent = globalContext.getFileContent(nestedFileName);
+      if (fileContent.isPresent()) {
+        nestedHeatOrchestrationTemplate =
+            new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
+      } else {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+            LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
+            ErrorLevel.ERROR.name(), LoggerErrorCode.DATA_ERROR.getErrorCode(),
+            LoggerErrorDescription.EMPTY_FILE);
+        throw new Exception("The file '" + nestedFileName + "' has no content");
+      }
+    } catch (Exception exception) {
+      mdcDataDebugMessage.debugExitMessage("file", parentFileName);
       return;
     }
-    Set<String> nestedParametersNames = heatOrchestrationTemplate.getParameters() == null ? null
-        : heatOrchestrationTemplate.getParameters().keySet();
+
+    try {
+      Optional<InputStream> fileContent = globalContext.getFileContent(parentFileName);
+      if (fileContent.isPresent()) {
+        parentHeatOrchestrationTemplate =
+            new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
+      } else {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+            LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
+            ErrorLevel.ERROR.name(), LoggerErrorCode.DATA_ERROR.getErrorCode(),
+            LoggerErrorDescription.EMPTY_FILE);
+        throw new Exception("The file '" + parentFileName + "' has no content");
+      }
+    } catch (Exception exception) {
+      mdcDataDebugMessage.debugExitMessage("file", parentFileName);
+      return;
+    }
+    Map<String, Parameter> parentParameters = parentHeatOrchestrationTemplate.getParameters();
+    Map<String, Parameter> nestedParameters = nestedHeatOrchestrationTemplate.getParameters();
+    Set<String> nestedParametersNames =
+        nestedParameters == null ? null : nestedHeatOrchestrationTemplate.getParameters().keySet();
+
+    checkNoMissingParameterInNested(parentFileName, nestedFileName, resourceName,
+        resourceFileProperties, nestedParametersNames, globalContext);
+    checkNestedInputValuesAlignWithType(parentFileName, nestedFileName, parentParameters,
+        nestedParameters, resourceName, resource, indexVarValue, globalContext);
+
+    mdcDataDebugMessage.debugExitMessage("file", parentFileName);
+
+  }
+
+  private static void checkNoMissingParameterInNested(String parentFileName, String nestedFileName,
+                                                      String resourceName,
+                                                      Set<String> resourceFileProperties,
+                                                      Set<String> nestedParametersNames,
+                                                      GlobalValidationContext globalContext) {
+
+    mdcDataDebugMessage.debugEntryMessage("nested file", nestedFileName);
 
     if (CollectionUtils.isNotEmpty(nestedParametersNames)) {
       resourceFileProperties
           .stream()
           .filter(propertyName -> !nestedParametersNames.contains(propertyName))
           .forEach(propertyName -> globalContext
-              .addMessage(callingNestedFileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.MISSING_PARAMETER_IN_NESTED.getErrorMessage(),
-                      nestedFileName, resourceName, propertyName)));
+              .addMessage(parentFileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+                      .getErrorWithParameters(Messages
+                              .MISSING_PARAMETER_IN_NESTED.getErrorMessage(),
+                          nestedFileName, resourceName, propertyName),
+                  LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
+                  LoggerErrorDescription.MISSING_PARAMETER_IN_NESTED));
     }
+
+    mdcDataDebugMessage.debugExitMessage("nested file", nestedFileName);
+  }
+
+
+  private static void checkNestedInputValuesAlignWithType(String parentFileName,
+                                                          String nestedFileName,
+                                                          Map<String, Parameter> parentParameters,
+                                                          Map<String, Parameter> nestedParameters,
+                                                          String resourceName, Resource resource,
+                                                          Optional<String> indexVarValue,
+                                                          GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("nested file", nestedFileName);
+
+    Map<String, Object> properties = resource.getProperties();
+    for (Map.Entry<String, Object> propertyEntry : properties.entrySet()) {
+      String parameterName = propertyEntry.getKey();
+      Object parameterInputValue = propertyEntry.getValue();
+
+      if (Objects.nonNull(parameterInputValue)) {
+        if (parameterInputValue instanceof String) {
+          if (indexVarValue.isPresent() && indexVarValue.get().equals(parameterInputValue)) {
+            parameterInputValue = 3; //indexVarValue is actually number value in runtime
+          }
+          validateStaticValueForNestedInputParameter(parentFileName, nestedFileName, resourceName,
+              parameterName, parameterInputValue, nestedParameters.get(parameterName),
+              globalContext);
+        }
+      }
+    }
+
+    mdcDataDebugMessage.debugExitMessage("nested file", nestedFileName);
+  }
+
+  private static void validateStaticValueForNestedInputParameter(String parentFileName,
+                                                                 String nestedFileName,
+                                                                 String resourceName,
+                                                                 String parameterName,
+                                                                 Object staticValue,
+                                                                 Parameter parameterInNested,
+                                                                 GlobalValidationContext
+                                                                     globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("nested file", nestedFileName);
+
+    if (parameterInNested == null) {
+      return;
+    }
+    if (!DefinedHeatParameterTypes
+        .isValueIsFromGivenType(staticValue, parameterInNested.getType())) {
+      globalContext.addMessage(parentFileName, ErrorLevel.WARNING, ErrorMessagesFormatBuilder
+              .getErrorWithParameters(Messages
+                      .WRONG_VALUE_TYPE_ASSIGNED_NESTED_INPUT.getErrorMessage(),
+                  resourceName, parameterName, nestedFileName),
+          LoggerTragetServiceName.VALIDATE_PROPERTIES_MATCH_NESTED_PARAMETERS,
+          LoggerErrorDescription.WRONG_VALUE_ASSIGNED_NESTED_PARAMETER);
+    }
+
+    mdcDataDebugMessage.debugExitMessage("nested file", nestedFileName);
   }
 
 
@@ -207,14 +356,28 @@ public class HeatValidationService {
   public static boolean isNestedLoopExistInFile(String callingFileName, String nestedFileName,
                                                 List<String> filesInLoop,
                                                 GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", callingFileName);
+
     HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
     try {
-      nestedHeatOrchestrationTemplate = new YamlUtil()
-          .yamlToObject(globalContext.getFileContent(nestedFileName),
-              HeatOrchestrationTemplate.class);
-    } catch (Exception e0) {
+      Optional<InputStream> fileContent = globalContext.getFileContent(nestedFileName);
+      if (fileContent.isPresent()) {
+        nestedHeatOrchestrationTemplate =
+            new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
+      } else {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+            LoggerTragetServiceName.VALIDATE_NESTING_LOOPS, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.EMPTY_FILE);
+        throw new Exception("The file '" + nestedFileName + "' has no content");
+      }
+
+    } catch (Exception exception) {
       logger.warn("HEAT Validator will not be executed on file " + nestedFileName
           + " due to illegal HEAT format");
+
+      mdcDataDebugMessage.debugExitMessage("file", callingFileName);
       return false;
     }
     filesInLoop.add(nestedFileName);
@@ -226,11 +389,14 @@ public class HeatValidationService {
         String resourceType = resource.getType();
 
         if (Objects.nonNull(resourceType) && isNestedResource(resourceType)) {
+          mdcDataDebugMessage.debugExitMessage("file", callingFileName);
           return resourceType.equals(callingFileName) || !filesInLoop.contains(resourceType)
               && isNestedLoopExistInFile(callingFileName, resourceType, filesInLoop, globalContext);
         }
       }
     }
+
+    mdcDataDebugMessage.debugExitMessage("file", callingFileName);
     return false;
   }
 
@@ -245,9 +411,11 @@ public class HeatValidationService {
    */
   @SuppressWarnings("unchecked")
   public static void loopOverOutputMapAndValidateGetAttrFromNested(String fileName,
-                                       Map<String, Output> outputMap,
-                                       HeatOrchestrationTemplate heatOrchestrationTemplate,
-                                       GlobalValidationContext globalContext) {
+                                                                   Map<String, Output> outputMap,
+                                                                   HeatOrchestrationTemplate
+                                                                       heatOrchestrationTemplate,
+                                                                   GlobalValidationContext
+                                                                       globalContext) {
     for (Output output : outputMap.values()) {
       Object outputValue = output.getValue();
       if (outputValue != null && outputValue instanceof Map) {
@@ -256,42 +424,64 @@ public class HeatValidationService {
             (List<String>) outputValueMap.get(ResourceReferenceFunctions.GET_ATTR.getFunction());
         if (!CollectionUtils.isEmpty(getAttrValue)) {
           String resourceName = getAttrValue.get(0);
-          String propertyName = getAttrValue.get(1);
+          Object attNameObject = getAttrValue.get(1);
+          if (!(attNameObject instanceof String)) {
+            return;
+          }
+          String attName = getAttrValue.get(1);
           String resourceType =
               getResourceTypeFromResourcesMap(resourceName, heatOrchestrationTemplate);
 
           if (Objects.nonNull(resourceType)
-              && HeatValidationService.isNestedResource(resourceType)) {
-            Map<String, Output> nestedOutputMap;
-            HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
-            try {
-              nestedHeatOrchestrationTemplate = new YamlUtil()
-                  .yamlToObject(globalContext.getFileContent(resourceType),
-                      HeatOrchestrationTemplate.class);
-            } catch (Exception e0) {
-              return;
-            }
-            nestedOutputMap = nestedHeatOrchestrationTemplate.getOutputs();
-
-            if (MapUtils.isEmpty(nestedOutputMap) || !nestedOutputMap.containsKey(propertyName)) {
-              globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-                  .getErrorWithParameters(Messages.GET_ATTR_NOT_FOUND.getErrorMessage(),
-                      propertyName, resourceName));
+              && isNestedResource(resourceType)) {
+            handleGetAttrNestedResource(fileName, globalContext, resourceName, attName,
+                resourceType);
             }
           }
         }
       }
     }
-  }
 
+  private static void handleGetAttrNestedResource(String fileName,
+                                                     GlobalValidationContext globalContext,
+                                                     String resourceName, String attName,
+                                                     String resourceType) {
+    Map<String, Output> nestedOutputMap;
+    HeatOrchestrationTemplate nestedHeatOrchestrationTemplate;
+    try {
+      Optional<InputStream> fileContent = globalContext.getFileContent(resourceType);
+      if (fileContent.isPresent()) {
+        nestedHeatOrchestrationTemplate =
+            new YamlUtil().yamlToObject(fileContent.get(), HeatOrchestrationTemplate.class);
+      } else {
+        MdcDataErrorMessage
+            .createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+                LoggerTragetServiceName.VALIDATE_GET_ATTR_FROM_NESTED,
+                ErrorLevel.ERROR.name(), LoggerErrorCode.DATA_ERROR.getErrorCode(),
+                LoggerErrorDescription.EMPTY_FILE);
+        throw new Exception("The file '" + resourceType + "' has no content");
+      }
+    } catch (Exception exception) {
+      return;
+    }
+    nestedOutputMap = nestedHeatOrchestrationTemplate.getOutputs();
+
+    if (MapUtils.isEmpty(nestedOutputMap) || !nestedOutputMap.containsKey(attName)) {
+      globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
+              .getErrorWithParameters(Messages.GET_ATTR_NOT_FOUND.getErrorMessage(),
+                  attName, resourceName),
+          LoggerTragetServiceName.VALIDATE_GET_ATTR_FROM_NESTED,
+          LoggerErrorDescription.GET_ATTR_NOT_FOUND);
+    }
+  }
 
   public static boolean isNestedResource(String resourceType) {
     return resourceType.contains(".yaml") || resourceType.contains(".yml");
   }
 
-
   private static String getResourceTypeFromResourcesMap(String resourceName,
-                                    HeatOrchestrationTemplate heatOrchestrationTemplate) {
+                                                        HeatOrchestrationTemplate
+                                                            heatOrchestrationTemplate) {
     return heatOrchestrationTemplate.getResources().get(resourceName).getType();
   }
 
@@ -305,11 +495,23 @@ public class HeatValidationService {
    */
   public static Environment validateEnvContent(String fileName, String envFileName,
                                                GlobalValidationContext globalContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("env file", envFileName);
+
     Environment envContent = null;
     try {
-      envContent =
-          new YamlUtil().yamlToObject(globalContext.getFileContent(envFileName), Environment.class);
-    } catch (Exception e0) {
+      Optional<InputStream> fileContent = globalContext.getFileContent(envFileName);
+      if (fileContent.isPresent()) {
+        envContent = new YamlUtil().yamlToObject(fileContent.get(), Environment.class);
+      } else {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_API,
+            LoggerTragetServiceName.VALIDATE_ENV_FILE, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.EMPTY_FILE);
+        throw new Exception("The file '" + envFileName + "' has no content");
+      }
+    } catch (Exception exception) {
+      mdcDataDebugMessage.debugExitMessage("env file", envFileName);
       return null;
     }
     return envContent;

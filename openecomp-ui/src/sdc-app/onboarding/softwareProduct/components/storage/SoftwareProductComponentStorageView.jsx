@@ -1,8 +1,156 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import ValidationForm from 'nfvo-components/input/validation/ValidationForm.jsx';
-import ValidationInput from'nfvo-components/input/validation/ValidationInput.jsx';
+import Input from 'nfvo-components/input/validation/Input.jsx';
+import Form from 'nfvo-components/input/validation/Form.jsx';
+import GridSection from 'nfvo-components/grid/GridSection.jsx';
+import GridItem from 'nfvo-components/grid/GridItem.jsx';
+import classnames from 'classnames';
 
+const BackupSection = ({isReadOnlyMode,dataMap, onQDataChanged, qgenericFieldInfo}) => (
+	<GridSection title={i18n('Backup')}>
+		<GridItem>
+			<div className='vertical-flex'>
+				<label key='label' className={classnames('control-label',{'disabled': isReadOnlyMode})}>{i18n('Backup Type')}</label>
+				<div className='radio-options-content-row'>
+					{qgenericFieldInfo['storage/backup/backupType'].enum.map(onSite => (
+						<Input
+							data-test-id='backupType'
+							type='radio'
+							key={onSite.enum}
+							name={'compute/guestOS/bitSize'}
+							className='radio-field'
+							value={onSite.enum}
+							label={onSite.title}
+							onChange={(site) => onQDataChanged({'storage/backup/backupType' :  site})}
+							isValid={qgenericFieldInfo['storage/backup/backupType'].isValid}
+							errorText={qgenericFieldInfo['storage/backup/backupType'].errorText}
+							checked={dataMap['storage/backup/backupType'] === onSite.enum} /> )) }
+				</div>
+			</div>
+		</GridItem>
+		<GridItem>
+			<Input
+				className='section-field'
+				data-test-id='backupSolution'
+				onChange={(backupSolution) => onQDataChanged({'storage/backup/backupSolution' : backupSolution})}
+				label={i18n('Backup Solution')}
+				type='text'
+				isValid={qgenericFieldInfo['storage/backup/backupSolution'].isValid}
+				errorText={qgenericFieldInfo['storage/backup/backupSolution'].errorText}
+				value={dataMap['storage/backup/backupSolution']}/>
+		</GridItem>
+		<GridItem>
+			<Input
+				className='section-field'
+				data-test-id='backupStorageSize'
+				onChange={(backupStorageSize) => onQDataChanged({'storage/backup/backupStorageSize' : backupStorageSize})}
+				label={i18n('Backup Storage Size (GB)')}
+				type='number'
+				isValid={qgenericFieldInfo['storage/backup/backupStorageSize'].isValid}
+				errorText={qgenericFieldInfo['storage/backup/backupStorageSize'].errorText}
+				value={dataMap['storage/backup/backupStorageSize']}/>
+		</GridItem>
+		<GridItem>
+			<Input
+				data-test-id='backupNIC'
+				label={i18n('Backup NIC')}
+				type='select'
+				className='input-options-select section-field'
+				groupClassName='bootstrap-input-options'
+				isValid={qgenericFieldInfo['storage/backup/backupNIC'].isValid}
+				errorText={qgenericFieldInfo['storage/backup/backupNIC'].errorText}
+				value={dataMap['storage/backup/backupNIC']}
+				onChange={(e) => {
+					const selectedIndex = e.target.selectedIndex;
+					const val = e.target.options[selectedIndex].value;
+					onQDataChanged({'storage/backup/backupNIC' : val});}
+				}>
+				<option key='placeholder' value=''>{i18n('Select...')}</option>
+				{qgenericFieldInfo['storage/backup/backupNIC'].enum.map(hv => <option value={hv.enum} key={hv.enum}>{hv.title}</option>)}
+			</Input>
+		</GridItem>
+	</GridSection>
+);
+
+const SnapshotBackupSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
+	<GridSection title={i18n('Snapshot Backup')}>
+		<GridItem>
+			<Input
+				className='section-field'
+				data-test-id='snapshotFrequency'
+				onChange={(snapshotFrequency) => onQDataChanged({'storage/snapshotBackup/snapshotFrequency' : snapshotFrequency})}
+				label={i18n('Backup Storage Size (GB)')}
+				type='number'
+				isValid={qgenericFieldInfo['storage/snapshotBackup/snapshotFrequency'].isValid}
+				errorText={qgenericFieldInfo['storage/snapshotBackup/snapshotFrequency'].errorText}
+				value={dataMap['storage/snapshotBackup/snapshotFrequency']}/>
+		</GridItem>
+	</GridSection>
+);
+
+const LogBackupSection = ({dataMap, onQDataChanged, qgenericFieldInfo}) => (
+	<GridSection title={i18n('Log Backup')}>
+		<GridItem>
+			<Input
+				className='section-field'
+				data-test-id='sizeOfLogFiles'
+				onChange={(sizeOfLogFiles) => onQDataChanged({'storage/logBackup/sizeOfLogFiles' : sizeOfLogFiles})}
+				label={i18n('Backup Storage Size (GB)')}
+				type='number'
+				isValid={qgenericFieldInfo['storage/logBackup/sizeOfLogFiles'].isValid}
+				errorText={qgenericFieldInfo['storage/logBackup/sizeOfLogFiles'].errorText}
+				value={dataMap['storage/logBackup/sizeOfLogFiles']}/>
+		</GridItem>
+		<GridItem>
+			<Input
+				className='section-field'
+				label={i18n('Log Retention Period (days)')}
+				data-test-id='logRetentionPeriod'
+				onChange={(logRetentionPeriod) => onQDataChanged({'storage/logBackup/logRetentionPeriod' : logRetentionPeriod})}
+				type='number'
+				isValid={qgenericFieldInfo['storage/logBackup/logRetentionPeriod'].isValid}
+				errorText={qgenericFieldInfo['storage/logBackup/logRetentionPeriod'].errorText}
+				value={dataMap['storage/logBackup/logRetentionPeriod']}/>
+		</GridItem>
+		<GridItem>
+			<Input
+				className='section-field'
+				label={i18n('Log Backup Frequency (days)')}
+				data-test-id='logBackupFrequency'
+				onChange={(logBackupFrequency) => onQDataChanged({'storage/logBackup/logBackupFrequency' : logBackupFrequency})}
+				type='number'
+				isValid={qgenericFieldInfo['storage/logBackup/logBackupFrequency'].isValid}
+				errorText={qgenericFieldInfo['storage/logBackup/logBackupFrequency'].errorText}
+				value={dataMap['storage/logBackup/logBackupFrequency']}/>
+		</GridItem>
+		<GridItem>
+			<Input
+				className='section-field'
+				label={i18n('Log File Location')}
+				data-test-id='logFileLocation'
+				onChange={(logFileLocation) => onQDataChanged({'storage/logBackup/logFileLocation' : logFileLocation})}
+				type='text'
+				isValid={qgenericFieldInfo['storage/logBackup/logFileLocation'].isValid}
+				errorText={qgenericFieldInfo['storage/logBackup/logFileLocation'].errorText}
+				value={dataMap['storage/logBackup/logFileLocation']}/>
+		</GridItem>
+	</GridSection>
+);
 
 class SoftwareProductComponentStorageView extends React.Component {
 
@@ -14,110 +162,28 @@ class SoftwareProductComponentStorageView extends React.Component {
 	};
 
 	render() {
-		let {qdata, qschema, onQDataChanged, onSubmit, isReadOnlyMode} = this.props;
+		let {onQDataChanged, dataMap, qGenericFieldInfo, isReadOnlyMode, onSubmit, qdata} =  this.props;
 
 		return(
 			<div className='vsp-component-questionnaire-view'>
-				<ValidationForm
-					ref='storageValidationForm'
-					hasButtons={false}
+				{qGenericFieldInfo && <Form
+					ref={form => this.form = form }
+					isValid={true}
+					formReady={null}
 					onSubmit={() => onSubmit({qdata})}
 					className='component-questionnaire-validation-form'
 					isReadOnlyMode={isReadOnlyMode}
-					onDataChanged={onQDataChanged}
-					data={qdata}
-					schema={qschema}>
-
-					<div className='section-title'>{i18n('Backup')}</div>
-					<div className='rows-section'>
-						<div className='row-flex-components input-row'>
-							<div className='single-col'>
-								<div className='vertical-flex'>
-									<label key='label' className='control-label'>{i18n('Backup Type')}</label>
-									<div className='radio-options-content-row'>
-										<ValidationInput
-											label={i18n('On Site')}
-											type='radiogroup'
-											pointer={'/storage/backup/backupType'}
-											className='radio-field'/>
-									</div>
-								</div>
-							</div>
-							<div className='single-col'>
-								<ValidationInput
-									type='text'
-									label={i18n('Backup Solution')}
-									pointer={'/storage/backup/backupSolution'}
-									className='section-field'/>
-							</div>
-							<div className='single-col'>
-								<ValidationInput
-									type='text'
-									label={i18n('Backup Storage Size (GB)')}
-									pointer={'/storage/backup/backupStorageSize'}
-									className='section-field'/>
-							</div>
-							<ValidationInput
-								type='select'
-								label={i18n('Backup NIC')}
-								pointer={'/storage/backup/backupNIC'}
-								className='section-field'/>
-						</div>
-					</div>
-
-					<div className='section-title'>{i18n('Snapshot Backup')}</div>
-					<div className='rows-section'>
-						<div className='row-flex-components input-row'>
-							<div className='single-col'>
-								<ValidationInput
-									type='text'
-									label={i18n('Snapshot Frequency (hours)')}
-									pointer={'/storage/snapshotBackup/snapshotFrequency'}
-									className='section-field'/>
-							</div>
-							<div className='empty-two-col' />
-							<div className='empty-col' />
-						</div>
-					</div>
-
-					<div className='section-title'>{i18n('Log Backup')}</div>
-					<div className='rows-section'>
-						<div className='row-flex-components input-row'>
-							<div className='single-col'>
-								<ValidationInput
-									type='text'
-									label={i18n('Size of Log Files (GB)')}
-									pointer={'/storage/logBackup/sizeOfLogFiles'}
-									className='section-field'/>
-								</div>
-							<div className='single-col'>
-							<ValidationInput
-								type='text'
-								label={i18n('Log Retention Period (days)')}
-								pointer={'/storage/logBackup/logRetentionPeriod'}
-								className='section-field'/>
-								</div>
-							<div className='single-col'>
-							<ValidationInput
-								type='text'
-								label={i18n('Log Backup Frequency (days)')}
-								pointer={'/storage/logBackup/logBackupFrequency'}
-								className='section-field'/>
-							</div>
-							<ValidationInput
-								type='text'
-								label={i18n('Log File Location')}
-								pointer={'/storage/logBackup/logFileLocation'}
-								className='section-field'/>
-						</div>
-					</div>
-				</ValidationForm>
+					hasButtons={false}>
+					<BackupSection isReadOnlyMode={isReadOnlyMode} onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
+					<SnapshotBackupSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
+					<LogBackupSection  onQDataChanged={onQDataChanged} dataMap={dataMap} qgenericFieldInfo={qGenericFieldInfo}/>
+				</Form> }
 			</div>
 		);
 	}
 
 	save(){
-		return this.refs.storageValidationForm.handleFormSubmit(new Event('dummy'));
+		return this.form.handleFormSubmit(new Event('dummy'));
 	}
 }
 

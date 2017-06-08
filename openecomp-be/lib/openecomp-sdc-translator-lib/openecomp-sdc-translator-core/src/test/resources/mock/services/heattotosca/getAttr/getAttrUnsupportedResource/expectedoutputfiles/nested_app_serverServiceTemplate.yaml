@@ -1,0 +1,265 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_app_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.app:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      label: VF Module ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    app_flavor_name:
+      label: Flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to be used for the server
+    security_group_ids:
+      label: Security Group IDs
+      hidden: false
+      immutable: false
+      type: list
+      description: IDs of the security groups for the server
+      entry_schema:
+        type: string
+    vm_role:
+      label: App VM Role
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Role for the application vms
+    app_name:
+      label: Application Hostnames
+      hidden: false
+      immutable: false
+      type: string
+      description: Hostnames of the application servers
+    vnf_id:
+      label: VNF ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    app_oam_ip_0:
+      label: OAM IP Addresses
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM IP Addresses of the application servers
+    server_group_id:
+      label: Server Group ID
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the server group
+    availability_zone_0:
+      label: Availability Zone
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for this server
+    app_image_name:
+      label: Image
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the server
+    keypair_id:
+      label: Key Name
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the security key for the server
+    deploy_timeout:
+      label: Deployment Timeout
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout before declaring the stack deployment as failed.
+      constraints:
+      - in_range:
+        - 60
+        - 3600
+    oam_net_name:
+      label: OAM Network Name
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the oam network
+  node_templates:
+    app_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.app
+      properties:
+        flavor:
+          get_input: app_flavor_name
+        key_name:
+          get_input: keypair_id
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: app_image_name
+        security_groups:
+          get_input: security_group_ids
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vm_role:
+            get_input: vm_role
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+        - UNSUPPORTED_RESOURCE_wait_condition
+        scheduler_hints:
+          group:
+            get_input: server_group_id
+  groups:
+    nested_app_server_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_app_server.yaml
+        description: Pronghorn Openstack Heat Template for the Application Server
+      members:
+      - app_server_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested_app_server
+    capabilities:
+      endpoint_app_server_0:
+      - app_server_0
+      - endpoint
+      host_app_server_0:
+      - app_server_0
+      - host
+      disk.device.read.bytes_app_server_0:
+      - app_server_0
+      - disk.device.read.bytes
+      disk.allocation_app_server_0:
+      - app_server_0
+      - disk.allocation
+      disk.root.size_app_server_0:
+      - app_server_0
+      - disk.root.size
+      disk.read.bytes.rate_app_server_0:
+      - app_server_0
+      - disk.read.bytes.rate
+      disk.iops_app_server_0:
+      - app_server_0
+      - disk.iops
+      disk.usage_app_server_0:
+      - app_server_0
+      - disk.usage
+      cpu.delta_app_server_0:
+      - app_server_0
+      - cpu.delta
+      disk.device.write.requests.rate_app_server_0:
+      - app_server_0
+      - disk.device.write.requests.rate
+      disk.device.capacity_app_server_0:
+      - app_server_0
+      - disk.device.capacity
+      disk.ephemeral.size_app_server_0:
+      - app_server_0
+      - disk.ephemeral.size
+      disk.latency_app_server_0:
+      - app_server_0
+      - disk.latency
+      disk.read.requests_app_server_0:
+      - app_server_0
+      - disk.read.requests
+      disk.capacity_app_server_0:
+      - app_server_0
+      - disk.capacity
+      disk.device.write.bytes.rate_app_server_0:
+      - app_server_0
+      - disk.device.write.bytes.rate
+      disk.write.requests_app_server_0:
+      - app_server_0
+      - disk.write.requests
+      scalable_app_server_0:
+      - app_server_0
+      - scalable
+      disk.write.requests.rate_app_server_0:
+      - app_server_0
+      - disk.write.requests.rate
+      cpu_util_app_server_0:
+      - app_server_0
+      - cpu_util
+      disk.device.read.bytes.rate_app_server_0:
+      - app_server_0
+      - disk.device.read.bytes.rate
+      binding_app_server_0:
+      - app_server_0
+      - binding
+      disk.device.latency_app_server_0:
+      - app_server_0
+      - disk.device.latency
+      memory.resident_app_server_0:
+      - app_server_0
+      - memory.resident
+      disk.read.bytes_app_server_0:
+      - app_server_0
+      - disk.read.bytes
+      disk.device.usage_app_server_0:
+      - app_server_0
+      - disk.device.usage
+      disk.device.write.requests_app_server_0:
+      - app_server_0
+      - disk.device.write.requests
+      vcpus_app_server_0:
+      - app_server_0
+      - vcpus
+      feature_app_server_0:
+      - app_server_0
+      - feature
+      os_app_server_0:
+      - app_server_0
+      - os
+      cpu_app_server_0:
+      - app_server_0
+      - cpu
+      disk.device.iops_app_server_0:
+      - app_server_0
+      - disk.device.iops
+      disk.write.bytes_app_server_0:
+      - app_server_0
+      - disk.write.bytes
+      disk.device.write.bytes_app_server_0:
+      - app_server_0
+      - disk.device.write.bytes
+      disk.device.read.requests.rate_app_server_0:
+      - app_server_0
+      - disk.device.read.requests.rate
+      disk.device.read.requests_app_server_0:
+      - app_server_0
+      - disk.device.read.requests
+      instance_app_server_0:
+      - app_server_0
+      - instance
+      disk.write.bytes.rate_app_server_0:
+      - app_server_0
+      - disk.write.bytes.rate
+      memory.usage_app_server_0:
+      - app_server_0
+      - memory.usage
+      memory_app_server_0:
+      - app_server_0
+      - memory
+      disk.device.allocation_app_server_0:
+      - app_server_0
+      - disk.device.allocation
+    requirements:
+      dependency_app_server_0:
+      - app_server_0
+      - dependency
+      local_storage_app_server_0:
+      - app_server_0
+      - local_storage

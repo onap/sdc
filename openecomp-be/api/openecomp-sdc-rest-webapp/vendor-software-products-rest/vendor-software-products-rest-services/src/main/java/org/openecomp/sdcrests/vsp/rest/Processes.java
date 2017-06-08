@@ -20,9 +20,6 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,26 +28,19 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessEntityDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessRequestDto;
-
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/v1.0/vendor-software-products/{vspId}/processes")
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
+@Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/processes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Vendor Software Product Processes")
@@ -62,10 +52,8 @@ public interface Processes {
       response = ProcessEntityDto.class,
       responseContainer = "List")
   Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                @Pattern(regexp = Version.VERSION_REGEX,
-                    message = Version.VERSION_STRING_VIOLATION_MSG) @QueryParam("version")
-                    String version,
-                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 
   @DELETE
@@ -74,14 +62,16 @@ public interface Processes {
       responseContainer = "List")
   Response deleteList(
       @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
   @ApiOperation(value = "Create a vendor software product process")
   Response create(@Valid ProcessRequestDto request,
                   @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
@@ -89,21 +79,20 @@ public interface Processes {
   @ApiOperation(value = "Get vendor software product process",
       response = ProcessEntityDto.class)
   Response get(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+               @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
                    String processId,
-               @Pattern(regexp = Version.VERSION_REGEX,
-                   message = Version.VERSION_STRING_VIOLATION_MSG) @QueryParam("version")
-                   String version,
-               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+               @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                    String user);
 
   @DELETE
   @Path("/{processId}")
   @ApiOperation(value = "Delete vendor software product process")
   Response delete(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                   @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
                       String processId,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @PUT
@@ -111,9 +100,10 @@ public interface Processes {
   @ApiOperation(value = "Update vendor software product process")
   Response update(@Valid ProcessRequestDto request,
                   @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+                  @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                   @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
                       String processId,
-                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                  @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                       String user);
 
   @GET
@@ -122,30 +112,30 @@ public interface Processes {
   @ApiOperation(value = "Get vendor software product process uploaded file")
   Response getUploadedFile(
       @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
       @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
           String processId,
-      @Pattern(regexp = Version.VERSION_REGEX, message = Version.VERSION_STRING_VIOLATION_MSG)
-      @QueryParam("version") String version,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{processId}/upload")
   @ApiOperation(value = "Delete vendor software product process uploaded file")
   Response deleteUploadedFile(
       @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
       @ApiParam(value = "Vendor software product process Id") @PathParam("processId")
           String processId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/{processId}/upload")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @ApiOperation(value = "Update vendor software product process upload")
   Response uploadFile(@Multipart("upload") Attachment attachment,
-                      @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
-                          String vspId,
+                      @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+                      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                       @ApiParam(value = "Vendor software product process Id")
                       @PathParam("processId") String processId,
-                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                           String user);
 }

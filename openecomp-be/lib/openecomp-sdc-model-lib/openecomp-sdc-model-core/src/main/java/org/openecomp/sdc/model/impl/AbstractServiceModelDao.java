@@ -28,12 +28,17 @@ import org.openecomp.core.model.types.ServiceTemplate;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.datatypes.model.Import;
+import org.openecomp.sdc.tosca.datatypes.model.Old1610ServiceTemplate;
 import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import sun.misc.IOUtils;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,7 +54,6 @@ public class AbstractServiceModelDao implements VersionableDao {
     artifactDao.registerVersioning(versionableEntityType);
   }
 
-
   /**
    * Gets service model.
    *
@@ -59,22 +63,20 @@ public class AbstractServiceModelDao implements VersionableDao {
    */
   public ToscaServiceModel getServiceModel(String vspId, Version version) {
     if (vspId == null || version == null) {
-      //throw new CoreException()
       throw new RuntimeException("missing service model key");
     }
 
-
     FileContentHandler artifactFiles = getArtifacts(vspId, version);
+
     Map<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate> serviceTemplates =
-        getTemplates(vspId, version);
+        getTemplates(vspId,
+            version);
     String entryDefinitionServiceTemplate = getServiceBase(vspId, version);
     return new ToscaServiceModel(artifactFiles, serviceTemplates, entryDefinitionServiceTemplate);
   }
 
-
   public void storeExternalArtifact(ServiceArtifact serviceArtifact) {
     artifactDao.create(serviceArtifact);
-    //TODO: update last modification time
   }
 
 
@@ -103,8 +105,7 @@ public class AbstractServiceModelDao implements VersionableDao {
     ServiceTemplate entityTmp;
     String yaml;
     for (Map.Entry<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate>
-            entryTemplate : toscaServiceModel
-        .getServiceTemplates().entrySet()) {
+        entryTemplate : toscaServiceModel.getServiceTemplates().entrySet()) {
       entityTmp = new ServiceTemplate();
 
       yaml = new ToscaExtensionYamlUtil().objectToYaml(entryTemplate.getValue());
@@ -116,8 +117,6 @@ public class AbstractServiceModelDao implements VersionableDao {
 
       templateDao.create(entityTmp);
     }
-
-    //TODO: update last modification time
   }
 
 
@@ -142,25 +141,18 @@ public class AbstractServiceModelDao implements VersionableDao {
     return null;
   }
 
-
-  /**
-   * Gets service model content names.
-   *
-   * @return the service model content names
-   */
   public List<String> getServiceModelContentNames() {
-
 
     return null;
   }
-
 
   private String getServiceBase(String vspId, Version version) {
     return templateDao.getBase(vspId, version);
   }
 
   private Map<String, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate> getTemplates(
-      String vspId, Version version) {
+      String vspId,
+      Version version) {
 
     Collection<ServiceTemplate> templates = templateDao.list(vspId, version);
     if (templates == null) {
@@ -172,8 +164,47 @@ public class AbstractServiceModelDao implements VersionableDao {
 
   private org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate getServiceTemplate(
       InputStream content) {
-    return new ToscaExtensionYamlUtil()
-        .yamlToObject(content, org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate.class);
+    String serviceTemplateContent = new String(FileUtils.toByteArray(content));
+
+    try{
+      return new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
+          org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate.class);
+    }catch (Exception e){
+      System.out.println("Found vsp with old-versioned tosca service template");
+      Old1610ServiceTemplate old1610ServiceTemplate =
+          new ToscaExtensionYamlUtil().yamlToObject(serviceTemplateContent,
+              Old1610ServiceTemplate.class);
+
+      return mapOldSTToCurrentST(old1610ServiceTemplate);
+    }
+  }
+
+  private static org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate mapOldSTToCurrentST(Old1610ServiceTemplate oldServiceTemplate){
+    org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate
+        serviceTemplate = new org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate();
+
+    serviceTemplate.setArtifact_types(oldServiceTemplate.getArtifact_types());
+    serviceTemplate.setCapability_types(oldServiceTemplate.getCapability_types());
+    serviceTemplate.setData_types(oldServiceTemplate.getData_types());
+    serviceTemplate.setDescription(oldServiceTemplate.getDescription());
+    serviceTemplate.setGroup_types(oldServiceTemplate.getGroup_types());
+    serviceTemplate.setInterface_types(oldServiceTemplate.getInterface_types());
+    serviceTemplate.setMetadata(oldServiceTemplate.getMetadata());
+    serviceTemplate.setNode_types(oldServiceTemplate.getNode_types());
+    serviceTemplate.setPolicy_types(oldServiceTemplate.getPolicy_types());
+    serviceTemplate.setRelationship_types(oldServiceTemplate.getRelationship_types());
+    serviceTemplate.setTopology_template(oldServiceTemplate.getTopology_template());
+
+    List<Map<String, Import>> imports = new ArrayList<>();
+    for(Map.Entry<String, Import> importEntry : oldServiceTemplate.getImports().entrySet()){
+      Map<String, Import> importMap = new HashMap<>();
+      importMap.put(importEntry.getKey(), importEntry.getValue());
+      imports.add(importMap);
+    }
+    serviceTemplate.setImports(imports);
+
+    return serviceTemplate;
+
   }
 
   private FileContentHandler getArtifacts(String vspId, Version version) {
@@ -183,8 +214,9 @@ public class AbstractServiceModelDao implements VersionableDao {
     }
 
     FileContentHandler fileContentHandler = new FileContentHandler();
-    templates.stream().forEach(serviceArtifact -> fileContentHandler
-        .addFile(serviceArtifact.getName(), serviceArtifact.getContent()));
+    templates.stream().forEach(
+        serviceArtifact -> fileContentHandler
+            .addFile(serviceArtifact.getName(), serviceArtifact.getContent()));
 
     return fileContentHandler;
   }

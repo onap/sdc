@@ -1,0 +1,88 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: AbstractSubstituteGlobalTypes
+  template_version: 1.0.0
+description: Abstract Substitute Global Types
+imports:
+- common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+data_types:
+  org.openecomp.datatypes.heat.substitution.SubstitutionFilter:
+    derived_from: tosca.datatypes.Root
+    description: Substitution Filter
+    properties:
+      substitute_service_template:
+        type: string
+        description: Substitute Service Template
+        required: true
+        status: SUPPORTED
+      index_variable:
+        type: string
+        description: Index variable
+        required: false
+        default: '%index%'
+        status: SUPPORTED
+        constraints:
+        - min_length: 3
+      count:
+        type: string
+        description: Count
+        required: false
+        default: 1
+        status: SUPPORTED
+      scaling_enabled:
+        type: boolean
+        description: Indicates whether service scaling is enabled
+        required: false
+        default: true
+        status: SUPPORTED
+      mandatory:
+        type: boolean
+        description: Mandatory
+        required: false
+        default: true
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
+    derived_from: tosca.datatypes.Root
+    description: Substitution Filter
+    properties:
+      substitute_service_template:
+        type: string
+        description: Substitute Service Template
+        required: true
+        status: SUPPORTED
+      index_value:
+        type: integer
+        description: Index value of the substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      count:
+        type: string
+        description: Count
+        required: false
+        default: 1
+        status: SUPPORTED
+      scaling_enabled:
+        type: boolean
+        description: Indicates whether service scaling is enabled
+        required: false
+        default: true
+        status: SUPPORTED
+      mandatory:
+        type: boolean
+        description: Mandatory
+        required: false
+        default: true
+        status: SUPPORTED
+node_types:
+  org.openecomp.resource.abstract.nodes.AbstractSubstitute:
+    derived_from: tosca.nodes.Root
+    properties:
+      service_template_filter:
+        type: org.openecomp.datatypes.heat.substitution.SubstitutionFiltering
+        description: Substitution Filter
+        required: true
+        status: SUPPORTED

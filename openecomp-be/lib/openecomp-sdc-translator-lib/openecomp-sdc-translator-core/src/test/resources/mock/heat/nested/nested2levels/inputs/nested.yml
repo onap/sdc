@@ -57,9 +57,14 @@ resources:
       networks:
       - port: { get_resource: cmaui_port_1 }
       - port: { get_resource: cmaui_port_2 }
+      metadata: { get_attr: [test_nested2 , availability_zone_0] }
 
   test_nested2:
     type: nested2level.yml
     properties:
       shared_security_group_id1: { get_param: shared_security_group_id1}
       p2: { get_param: p2}
+
+outputs:
+    output_attr_1:
+      value: {get_attr: [test_nested2 , availability_zone_0] }

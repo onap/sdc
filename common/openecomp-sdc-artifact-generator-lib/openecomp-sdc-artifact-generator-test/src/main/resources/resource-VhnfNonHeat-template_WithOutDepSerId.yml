@@ -1,0 +1,24 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: f61adc31-6004-4377-a661-090f59e6b32a
+  UUID: 2118e830-5e0d-409a-9d7a-63b6a72d6f5f
+  name: vHNF non Heat
+  description: vHNF non Heat
+  type: VF
+  category: Generic
+  subcategory: Network Elements
+  resourceVendor: '1'
+  resourceVendorRelease: '1'
+topology_template:
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.VhnfNonHeat
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

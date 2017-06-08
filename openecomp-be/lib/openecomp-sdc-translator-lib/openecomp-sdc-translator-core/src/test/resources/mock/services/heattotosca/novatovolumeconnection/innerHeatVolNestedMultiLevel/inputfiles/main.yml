@@ -1,0 +1,39 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  cmaui_cinder_volume_size:
+    type: string
+  CMAUI_volume_type:
+    type: string
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  contrail_net_name:
+    type: string
+    description: network name of jsa log network
+  exposed_vol1:
+    type: string
+  p2:
+    type: string
+    description: shared_vol2
+
+resources:
+
+  test_nested1Level:
+    type: nested1.yml
+    properties:
+      p1: { get_param: exposed_vol1 }
+      p2: { get_param: p2 }
+
+  test_resourceGroup:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 9
+      resource_def:
+        type: nested3.yml
+        properties:
+          p1: { get_param: exposed_vol1 }
+          indx: "%index%"

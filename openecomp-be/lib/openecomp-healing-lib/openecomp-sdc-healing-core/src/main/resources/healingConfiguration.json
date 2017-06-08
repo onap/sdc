@@ -1,0 +1,7 @@
+{
+  "FILE_DATA_STRUCTURE_HEALER" : "org.openecomp.sdc.healing.healers.FileDataStructureHealer",
+  "QUESTIONNAIRE_HEALER" : "org.openecomp.sdc.healing.healers.VspQuestionnaireHealer",
+  "COMPOSITION_DATA_HEALER" : "org.openecomp.sdc.healing.healers.CompositionDataHealer",
+  "SUB_ENTITIES_HEALER" : "org.openecomp.sdc.healing.healers.SubEntitiesQuestionnaireHealer",
+  "HEAT_TOSCA_TRANSLATION_HEALER" : "org.openecomp.sdc.healing.healers.HeatToToscaTranslationHealer"
+}

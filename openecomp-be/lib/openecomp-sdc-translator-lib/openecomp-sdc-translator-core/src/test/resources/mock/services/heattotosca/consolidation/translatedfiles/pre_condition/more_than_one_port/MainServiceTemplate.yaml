@@ -1,0 +1,193 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.ps_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    repl_net_ips:
+      label: repl network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ips of repl network
+      default:
+      - 107.239.33.57
+      - 107.239.33.58
+      entry_schema:
+        type: string
+    oam_net_name:
+      label: oam network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the oam network
+      default: oam_protected_net_0
+    oam_net_ips:
+      label: internet network ips
+      hidden: false
+      immutable: false
+      type: list
+      description: ip of the OAM network
+      default:
+      - 107.250.172.213
+      - 107.250.172.214
+      - 107.250.172.215
+      - 107.250.172.216
+      - 107.250.172.217
+      entry_schema:
+        type: string
+      default: 169.254.1.4
+    ps_server_names:
+      label: PS server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PS instance
+      default:
+      - ZRDM1MOGX01MPS001
+      - ZRDM1MOGX01MPS002
+      - ZRDM1MOGX01MPS003
+      - ZRDM1MOGX01MPS004
+      entry_schema:
+        type: string
+    csb_net_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: mog_csb_net IP addresses
+      default:
+      - 172.26.0.10
+      - 172.26.0.11
+      - 172.26.0.12
+      - 172.26.0.13
+      - 172.26.0.14
+      - 172.26.0.15
+      - 172.26.0.16
+      - 172.26.0.17
+      - 172.26.0.18
+      - 172.26.0.19
+      - 172.26.0.20
+      entry_schema:
+        type: string
+    ps_flavor_name:
+      label: PS flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PS instance
+      default: m3.xlarge
+    ps_image_name:
+      label: PS image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PS image name
+      default: MOG_BASE_8.0
+    repl_net_name:
+      label: Replication network name
+      hidden: false
+      immutable: false
+      type: string
+      description: name of the replication network
+      default: cor_direct_net_0
+  node_templates:
+    sm01_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - mog_security_group
+        network: csb_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: csb_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_sm02
+          relationship: tosca.relationships.network.BindsTo
+    sm01_port_2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+        - mog_security_group
+        network: csb_net
+      requirements:
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: csb_net
+          relationship: tosca.relationships.network.LinksTo
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_sm02
+          relationship: tosca.relationships.network.BindsTo
+    server_ps01:
+      type: org.openecomp.resource.vfc.nodes.heat.ps_server
+      properties:
+        flavor:
+          get_input: ps_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: ps_image_name
+        user_data_format: RAW
+        name:
+          get_input:
+          - ps_server_names
+          - 3
+    server_ps02:
+      type: org.openecomp.resource.vfc.nodes.heat.ps_server
+      properties:
+        flavor:
+          get_input: ps_flavor_name
+        availability_zone:
+          get_input: availabilityzone_name
+        image:
+          get_input: ps_image_name
+        user_data_format: RAW
+        name:
+          get_input:
+          - ps_server_names
+          - 3

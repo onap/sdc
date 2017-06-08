@@ -24,3 +24,8 @@ resources:
     properties:
       shared_security_group_id1: { get_param: shared_security_group_id1}
       p2: { get_param: shared_security_group_id2}
+
+  test_nestedArrayParam:
+    type: nested.yml
+    properties:
+      p2: { get_param: [shared_security_group_id2,0]}

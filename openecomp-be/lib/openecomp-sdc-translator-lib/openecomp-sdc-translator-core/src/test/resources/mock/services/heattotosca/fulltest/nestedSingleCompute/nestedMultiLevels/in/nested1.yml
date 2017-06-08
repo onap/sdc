@@ -1,0 +1,65 @@
+heat_template_version: 2013-05-23
+
+description: nested1
+
+parameters:
+  p1:
+    type: string
+    description: UID of OAM network
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  cmaui_oam_ips:
+      type: string
+  net:
+    type: string
+resources:
+
+  cmaui_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: p1}, {get_param: p2}]
+      replacement_policy: AUTO
+
+  cmaui_port_2:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net }
+      fixed_ips: [{"ip_address": {get_param: [cmaui_oam_ips, 0]}}]
+      security_groups: [{get_param: p2}]
+      replacement_policy: AUTO
+
+  server_cmaui:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: cmaui_port_1 }
+      - port: { get_resource: cmaui_port_2 }
+
+  test_nested2Level:
+    type: nested2.yml
+    properties:
+      p1: { get_param: p1}
+      p2: { get_param: p2}

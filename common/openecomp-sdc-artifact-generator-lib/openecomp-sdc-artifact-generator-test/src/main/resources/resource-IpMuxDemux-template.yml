@@ -1,0 +1,83 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: ec95fbf0-5d05-4fea-a11e-27869c0032e2
+  UUID: 41e4949f-85b3-4bc5-b7a2-2c166bf87270
+  name: IP_Mux_Demux
+  description: nbvnbb
+  type: VF
+  category: Allotted Resource
+  subcategory: IP Mux Demux
+  resourceVendor: stella
+  resourceVendorRelease: '1.0'
+imports:
+- newAllotted:
+    file: resource-Newallotted-template.yml
+topology_template:
+  inputs:
+    role:
+      type: string
+    ecomp_naming:
+      type: string
+    max_instances:
+      type: string
+    min_instances:
+      type: string
+    ecomp_homing:
+      type: string
+  node_templates:
+    allotedresource1:
+      type: org.openecomp.resource.vfc.AllottedResource
+      metadata:
+        invariantUUID: cce8d00f-1a7a-439d-b186-207599f8bbf2
+        UUID: 468a08a2-10a7-4ee7-86eb-dcf2e74a028f
+        customizationUUID: e7a3e375-9bec-4552-88d2-26cb5dcf580d
+        version: '1.0'
+        name: newAllotted
+        description: vcxvcx
+        type: VFC
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+      properties:
+        ecomp_naming:
+          naming_policy:
+            get input: ecomp_naming
+        providing_service_invariant_uuid: 2bec5c69-b64e-4ffe-b74a-62f14d255d46
+        min_instances: 1
+        max_instances: 1
+        providing_service_uuid: 8ca1e477-77ec-47ed-a498-303fd0de9080
+        providing_service_name: ServiceAllMichael1801
+  groups: {
+    }
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.IpMuxDemux
+    capabilities:
+      Alloted resource 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Alloted resource 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Alloted resource 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

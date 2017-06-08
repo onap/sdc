@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested-pps_v1.0
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pcrf_pps_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -93,11 +69,21 @@ topology_template:
     pcrf_pps_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_cps_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_cps
         network:
           get_input: pcrf_cps_net_name
       requirements:
@@ -114,15 +100,15 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcrf_pps_image_name
-        config_drive: 'True'
         metadata:
           vnf_id:
             get_input: pcrf_vnf_id
+        config_drive: true
         user_data_format: RAW
         name:
           get_input: pcrf_pps_server_name
   groups:
-    nested-pps_v1.0:
+    nested-pps_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested-pps_v1.0.yaml
@@ -133,28 +119,172 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-pps_v1.0
     capabilities:
-      binding_pcrf_server_pps:
+      disk.latency_pcrf_server_pps:
       - pcrf_server_pps
-      - binding
+      - disk.latency
+      disk.device.read.bytes_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.read.bytes
+      disk.device.read.bytes.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.read.bytes.rate
+      disk.root.size_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.root.size
+      network.incoming.bytes_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.incoming.bytes
+      disk.write.bytes.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.write.bytes.rate
+      disk.device.iops_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.iops
+      host_pcrf_server_pps:
+      - pcrf_server_pps
+      - host
+      disk.read.bytes_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.read.bytes
+      memory.resident_pcrf_server_pps:
+      - pcrf_server_pps
+      - memory.resident
+      network.incoming.packets.rate_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.incoming.packets.rate
+      memory.usage_pcrf_server_pps:
+      - pcrf_server_pps
+      - memory.usage
+      cpu.delta_pcrf_server_pps:
+      - pcrf_server_pps
+      - cpu.delta
+      network.outgoing.bytes.rate_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.outgoing.bytes.rate
+      disk.write.requests_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.write.requests
+      disk.device.usage_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.usage
+      cpu_util_pcrf_server_pps:
+      - pcrf_server_pps
+      - cpu_util
       attachment_pcrf_pps_port_0:
       - pcrf_pps_port_0
       - attachment
       scalable_pcrf_server_pps:
       - pcrf_server_pps
       - scalable
+      disk.device.latency_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.latency
+      disk.device.read.requests.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.read.requests.rate
+      disk.write.requests.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.write.requests.rate
+      disk.read.bytes.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.read.bytes.rate
+      disk.device.allocation_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.allocation
+      disk.device.write.requests.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.write.requests.rate
+      feature_pcrf_server_pps:
+      - pcrf_server_pps
+      - feature
+      network.incoming.packets_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.incoming.packets
+      disk.usage_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.usage
+      instance_pcrf_server_pps:
+      - pcrf_server_pps
+      - instance
+      disk.write.bytes_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.write.bytes
+      disk.allocation_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.allocation
+      disk.iops_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.iops
+      network.incoming.bytes.rate_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.incoming.bytes.rate
+      disk.capacity_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.capacity
+      binding_pcrf_server_pps:
+      - pcrf_server_pps
+      - binding
+      cpu_pcrf_server_pps:
+      - pcrf_server_pps
+      - cpu
       os_pcrf_server_pps:
       - pcrf_server_pps
       - os
+      disk.read.requests_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.read.requests
+      vcpus_pcrf_server_pps:
+      - pcrf_server_pps
+      - vcpus
+      disk.device.write.bytes_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.write.bytes
+      disk.device.write.bytes.rate_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.write.bytes.rate
+      feature_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - feature
+      network.outgoing.packets.rate_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.outgoing.packets.rate
+      disk.ephemeral.size_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.ephemeral.size
+      binding_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - binding
+      disk.device.capacity_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.capacity
+      network.outgoing.bytes_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.outgoing.bytes
+      memory_pcrf_server_pps:
+      - pcrf_server_pps
+      - memory
+      network.outpoing.packets_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - network.outpoing.packets
+      disk.device.read.requests_pcrf_server_pps:
+      - pcrf_server_pps
+      - disk.device.read.requests
       endpoint_pcrf_server_pps:
       - pcrf_server_pps
       - endpoint
-      host_pcrf_server_pps:
+      disk.device.write.requests_pcrf_server_pps:
       - pcrf_server_pps
-      - host
+      - disk.device.write.requests
     requirements:
       link_pcrf_pps_port_0:
       - pcrf_pps_port_0
       - link
+      dependency_pcrf_pps_port_0:
+      - pcrf_pps_port_0
+      - dependency
+      dependency_pcrf_server_pps:
+      - pcrf_server_pps
+      - dependency
       local_storage_pcrf_server_pps:
       - pcrf_server_pps
       - local_storage

@@ -20,11 +20,22 @@
 
 package org.openecomp.sdc.vendorlicense.dao;
 
+
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.EntitlementPoolEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
+import java.util.Collection;
+
 public interface EntitlementPoolDao extends VersionableDao, BaseDao<EntitlementPoolEntity> {
+
+    void create(EntitlementPoolEntity entitlementPool);
+
+    void delete(EntitlementPoolEntity entitlementPool);
+
+    EntitlementPoolEntity get(EntitlementPoolEntity entitlementPool);
+
+    Collection<EntitlementPoolEntity> list(EntitlementPoolEntity entitlementPool);
 
   long count(EntitlementPoolEntity entitlementPool);
 

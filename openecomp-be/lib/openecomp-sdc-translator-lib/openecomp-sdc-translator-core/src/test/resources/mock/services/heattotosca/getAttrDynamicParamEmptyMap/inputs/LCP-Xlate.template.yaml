@@ -1,0 +1,15 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Translate a string in JSON format keyed by a resource group
+  member index into a map of lists such that the Nth entry
+  has a list of the first N entries from the input.
+
+  In effect this lets the user get a list of variable length
+  based on the number of provided entries.
+
+parameters:
+
+  info:
+    type: json
+    description: Information map.

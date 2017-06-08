@@ -1,25 +1,23 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import store from 'sdc-app/AppStore.js';
-import NotificationConstants from 'nfvo-components/notifications/NotificationConstants.js';
+import React from 'react';
+import {actionTypes as modalActionTypes} from 'nfvo-components/modal/GlobalModalConstants.js';
+import i18n from 'nfvo-utils/i18n/i18n.js';
+import SubmitErrorResponse from 'nfvo-components/SubmitErrorResponse.jsx';
 
 function showVariablesInMessage(variables, msg) {
 	let regex;
@@ -45,6 +43,10 @@ function parseATTExceptionObject(responseJSON) {
 			msg = showVariablesInMessage(variables, msg);
 		}
 	}
+	else if (responseJSON.uploadDataErrors) {
+		title = i18n('Error: Upload Data Error');
+		msg = (<SubmitErrorResponse validationResponse={{uploadDataErrors: responseJSON.uploadDataErrors}} />);
+	}
 	else {
 		title = responseJSON.status;
 		msg = responseJSON.message;
@@ -60,12 +62,14 @@ var errorResponseHandler = (xhr/*, textStatus, errorThrown*/) => {
 	else {
 		errorData = {
 			title: xhr.statusText,
-			msg: xhr.responseText
+			msg: xhr.responseText,			
 		};
 	}
 	store.dispatch({
-		type: NotificationConstants.NOTIFY_ERROR,
-		data: {...errorData}
+		type: modalActionTypes.GLOBAL_MODAL_ERROR,
+		data: {
+			...errorData			
+		}
 	});
 };
 

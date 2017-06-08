@@ -88,10 +88,11 @@ input[type=radio]:checked:before {
 
 input[type=checkbox]:checked:before {
   font-family: $icon-font-family;
-  content: "\f00c";
+  content: "\2714";
   font-size: $icon-font-size;
   color: $blue;
   text-align: center;
+	line-height: 13px;
 }
 
 .radio,

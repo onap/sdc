@@ -23,11 +23,12 @@ package org.openecomp.sdc.translator.services.heattotosca.errors;
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
+
 public class IncorrectResourceReferenceErrorBuilder extends BaseErrorBuilder {
 
   private static final String INCORRECT_RESOURCE_REFERENCE_MSG =
       "resource id '%s' with type '%s' has reference to resource '%s' with"
-              + " type '%s' in property '%s'. Invalid type, resource type should be type of '%s'.";
+          + " type '%s' in property '%s'. Invalid type, resource type should be type of '%s'.";
 
   /**
    * Instantiates a new Incorrect resource reference error builder.

@@ -1,0 +1,233 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 3d8b7a76-7c47-4974-b5b9-e24c54b817a2
+  UUID: eb31504f-9f60-4936-a2f2-8ac592b611a6
+  name: SD-WAN
+  description: SD-WAN
+  type: Service
+  category: Network L4+
+  serviceEcompNaming: false
+  serviceHoming: false
+imports:
+- service_admin:
+    file: resource-ServiceAdmin-template.yml
+- Tunnel_XConn:
+    file: resource-TunnelXconn-template.yml
+- vHNF non Heat:
+    file: resource-VhnfNonHeat-template.yml
+- IP_Mux_Demux:
+    file: resource-IpMuxDemux-template.yml
+topology_template:
+  node_templates:
+    Sec_IP_Mux_Demux:
+      type: org.openecomp.resource.vf.IpMuxDemux
+      metadata:
+        invariantUUID: 707b2850-e830-4b00-9902-879f44ac05a4
+        UUID: 495b483b-282a-45df-bbfe-63d1d1d80813
+        customizationUUID: f4b764bb-6721-4219-8c69-7ce61969f755
+        version: '0.1'
+        name: IP_Mux_Demux
+        description: IP_Mux_Demux
+        type: VF
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+    Pri_Tunnel_XConn:
+      type: org.openecomp.resource.vf.TunnelXconn
+      metadata:
+        invariantUUID: 63b95d9a-9c89-40d3-a646-36a1418c5246
+        UUID: ae79ba1b-5d12-4813-b01c-755fa6c800bb
+        customizationUUID: 96d0bbf6-d9f7-441d-8f00-67d79dbf30de
+        version: '0.1'
+        name: Tunnel_XConn
+        description: Tunnel_XConn
+        type: VF
+        category: Allotted Resource
+        subcategory: Tunnel XConnect
+    Pri_service_admin:
+      type: org.openecomp.resource.vf.ServiceAdmin
+      metadata:
+        invariantUUID: 0df08d3e-9701-4f5a-b3ed-82a0b504b366
+        UUID: a9c6246c-0807-4a43-a64c-442a170c2088
+        customizationUUID: 6b4a2a55-3b82-4799-8329-4fc2939fd5b5
+        version: '0.1'
+        name: service_admin
+        description: service_admin
+        type: VF
+        category: Allotted Resource
+        subcategory: Service admin
+    Pri_IP_Mux_Demux:
+      type: org.openecomp.resource.vf.IpMuxDemux
+      metadata:
+        invariantUUID: 707b2850-e830-4b00-9902-879f44ac05a4
+        UUID: 495b483b-282a-45df-bbfe-63d1d1d80813
+        customizationUUID: d8f656d9-179d-4f02-9a46-8af7421eb2a0
+        version: '0.1'
+        name: IP_Mux_Demux
+        description: IP_Mux_Demux
+        type: VF
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+    Sec_Tunnel_XConn:
+      type: org.openecomp.resource.vf.TunnelXconn
+      metadata:
+        invariantUUID: 63b95d9a-9c89-40d3-a646-36a1418c5246
+        UUID: ae79ba1b-5d12-4813-b01c-755fa6c800bb
+        customizationUUID: b432136d-0a2a-460b-a3da-f921e1e0dcfa
+        version: '0.1'
+        name: Tunnel_XConn
+        description: Tunnel_XConn
+        type: VF
+        category: Allotted Resource
+        subcategory: Tunnel XConnect
+    vHNF non Heat 22:
+      type: org.openecomp.resource.vf.VhnfNonHeat
+      metadata:
+        invariantUUID: f61adc31-6004-4377-a661-090f59e6b32a
+        UUID: 2118e830-5e0d-409a-9d7a-63b6a72d6f5f
+        customizationUUID: 9c7a5f7f-6b17-4066-a6f1-094ea925495b
+        version: '0.1'
+        name: vHNF non Heat
+        description: vHNF non Heat
+        type: VF
+        category: Generic
+        subcategory: Network Elements
+    Sec_service_admin:
+      type: org.openecomp.resource.vf.ServiceAdmin
+      metadata:
+        invariantUUID: 0df08d3e-9701-4f5a-b3ed-82a0b504b366
+        UUID: a9c6246c-0807-4a43-a64c-442a170c2088
+        customizationUUID: 5a8ef05b-451f-40f4-9531-3ee00bd3c5c4
+        version: '0.1'
+        name: service_admin
+        description: service_admin
+        type: VF
+        category: Allotted Resource
+        subcategory: Service admin
+  substitution_mappings:
+    node_type: org.openecomp.service.SdWan
+    capabilities:
+      Sec_service_admin.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Sec_IP_Mux_Demux.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Pri_service_admin.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Pri_IP_Mux_Demux.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Pri_Tunnel_XConn.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Sec_Tunnel_XConn.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Pri_service_admin.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_Tunnel_XConn.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_service_admin.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Pri_IP_Mux_Demux.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Pri_Tunnel_XConn.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_service_admin.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Pri_service_admin.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_IP_Mux_Demux.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_IP_Mux_Demux.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Pri_Tunnel_XConn.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Sec_Tunnel_XConn.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Pri_IP_Mux_Demux.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

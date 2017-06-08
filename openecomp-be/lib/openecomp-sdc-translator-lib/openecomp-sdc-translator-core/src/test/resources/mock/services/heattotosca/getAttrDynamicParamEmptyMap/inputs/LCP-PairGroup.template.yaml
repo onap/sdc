@@ -1,0 +1,687 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Template for a member of an elastic collection of VMgroups.
+  That is, this template creates the resources needed for one
+  VMgroup...one unit of elasticity of the specified type.
+
+parameters:
+
+  backup_file:
+    type: string
+    description: |
+      <cURL path>/<backup file>
+      This is only used for restore (aka "disaster recovery") and
+      only referenced on OAM-A.
+    default: ""
+
+  default_action:
+    type: string
+    description: |
+      Default action for all VMs. This can be overridden on a
+      per-VM group, pair or VM basis via the ENV file.
+    constraints:
+      - allowed_values:
+        - "install"
+        - "recreate"
+        - "scale-in"
+        - "scale-out"
+        - "scale-up"
+        - "scale-down"
+        - "heal"
+        - "update"
+    default: "install"
+
+  # This parameter should always be defaulted.
+  chk4override:
+    type: json
+    description: |
+      Used to set a string value to either a default from a json
+      map (keyed by "default") or to a VM member_index keyed override
+      value in the same map.
+    default: {"": "defaults"}
+
+  config_info:
+    type: json
+    description: Service configuration and network layout.
+    default: {}
+
+  # This parameter should always be defaulted.
+  default_names:
+    type: json
+    description: |
+      Default names for resources. The first key is the override
+      value from the ENV file. If it is empty the result will be
+      the default value map. Otherwise the result will be empty.
+    default: {
+      "": {
+        "storage": {
+          "0": "STORAGE_VOL0",
+          "1": "STORAGE_VOL1"
+        },
+        "drdb": {
+          "0": "DRBD_VOL0",
+          "1": "DRBD_VOL1",
+        },
+        "vmname": {
+          "0": "VM0",
+          "1": "VM1"
+        }
+      }
+    }
+
+  default_name_base:
+    type: json
+    description: |
+      Default name base for resources. The first key is the override
+      value from the ENV file. If it is empty the result will be
+      the default value. Otherwise the result will be empty.
+
+  ext_net_info:
+    type: json
+    description: External network info. Keyed by subnet tag.
+
+  group_id:
+    type: string
+    description: ID number of the elastic group this pair is a member of.
+
+  group_index:
+    type: string
+    description: Index of the VM pair within the elastic group.
+
+  group_tag:
+    type: string
+    description: Key into "usage_info" for members of this elastic group.
+
+  install_config:
+    type: string
+    description: JSON formatted string of install config values.
+
+  int_net_count:
+    type: string
+    description: Number of internal networks.
+
+  # This parameter should always be defaulted.
+  int_net_map:
+    type: json
+    description: |
+      Maps the number of internal networks to the resource string
+      used to get the first external vnic IP addresses.
+    default: {
+      "1": "resource.1",
+      "2": "resource.2"
+    }
+
+  int_net_info:
+    type: json
+    description: Internal network info. Keyed by INTERNALnet[0|1].
+
+  lcm_keypair:
+    type: string
+    description: Lifecycle management access key pair.
+    constraints:
+      - custom_constraint: nova.keypair
+    default: ""
+
+  current_group_count:
+    type: string
+    description: |
+      Current VM pair count within the elastic group.
+
+  certificate:
+    type: string
+    description: |
+      Certificate to use when accessing data from from secure URLs.
+    default: ""
+
+  name_delimiter:
+    type: string
+    description: Flexname name prefix/suffix delimiter.
+    default: "-"
+
+  net_info_str:
+    type: string
+    description: |
+      JSON formatted string with all network info.
+      This is redundant with int_net_info and ext_net_info except
+      in Kilo there is no way to convert json to string for
+      output as a personality file.
+
+  role:
+    type: string
+    description: VM role during LCM activities.
+    constraints:
+      - allowed_values: ["oam", "other"]
+    default: "other"
+
+  sec_group:
+    type: string
+    description: All-open security group UUID.
+
+  ssh_public_key:
+    type: string
+    description: Public SSH key for VM to VM communication in this system.
+
+  ssh_private_key:
+    type: string
+    description: Private SSH key for VM to VM communication in this system.
+    hidden: True
+
+  ssh_access_key:
+    type: string
+    description: Public SSH key for external access.
+    default: ""
+
+  stack:
+    type: string
+    description: Stack name.
+    constraints:
+      - allowed_pattern: "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+
+  storage_size:
+    type: number
+    description: Size of /storage in GB.
+    default: 4
+
+  total_pair_count:
+    type: string
+    description: |
+      This string will evaluate to the number of PairGroups in the VNF.
+
+  usage_info:
+    type: json
+    description: |
+      Per-VM/vNIC data for members of this elastic group.
+
+  # This parameter should always be defaulted.
+  validation_info:
+    type: json
+    description: |
+      Dummy data to work around Oopenstack template validation issue
+      https://bugs.launchpad.net/heat/+bug/1559807
+      The two layers of "defaults" keys supports use of
+      chk4override at two levels.
+    default: {
+      "defaults": {
+        "defaults": {
+          "image": "dummyImage",
+        }
+      }
+    }
+
+resources:
+
+  NOKIA-LCP-RandomA:
+    type: OS::Heat::RandomString
+    properties:
+      length: 512
+
+  NOKIA-LCP-Block-StorageA:
+    type: OS::Cinder::Volume
+    properties:
+      description: Used for VM /storage partition.
+      name:
+        str_replace:
+          template: $stk$delim$base$override$default
+          params:
+            $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "storage_name"]}]}
+            $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "storage_name"]}, "storage", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "storage_name"]}
+            $delim: {get_param: name_delimiter}
+            $stk: {get_param: stack}
+      size: {get_param: storage_size}
+      availability_zone:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "storage_zone"]}]}, "storage_zone", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "storage_zone"]}
+
+  NOKIA-LCP-BlockAttachA:
+    type: OS::Cinder::VolumeAttachment
+    depends_on:
+      - NOKIA-LCP-VMA
+      - NOKIA-LCP-Block-StorageA
+    properties:
+      instance_uuid: {get_resource: NOKIA-LCP-VMA}
+      volume_id: {get_resource: NOKIA-LCP-Block-StorageA}
+
+  NOKIA-LCP-VMportGroupA:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [config_info, vnic_count]}
+      resource_def:
+        type: LCP-Port.template.yaml
+        properties:
+          default_name_base:
+            str_replace:
+              template: |
+                {"": "$base$vm"}
+              params:
+                $base: {get_param: [default_name_base, ""]}
+                $vm: {get_param: [default_names, "", "vmname", "0"]}
+          group_index: {get_param: group_index}
+          vm_index: "0"
+          vnic_index: '%index%' 
+          config_info: {get_param: config_info}
+          ext_net_info: {get_param: ext_net_info}
+          int_net_info: {get_param: int_net_info}
+          group_tag: {get_param: group_tag}
+          group_id: {get_param: group_id}
+          name_delimiter: {get_param: name_delimiter}
+          open_sec_group: {get_param: sec_group}
+          stack: {get_param: stack}
+          usage_info: {get_param: usage_info}
+
+  NOKIA-LCP-VMA:
+    type: OS::Nova::Server
+    depends_on:
+      - NOKIA-LCP-Block-StorageA
+      - NOKIA-LCP-RandomA
+      - NOKIA-LCP-VMportGroupA
+    properties:
+      name:
+        str_replace:
+          template: $stk$delim$base$override$default
+          params:
+            $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "name"]}]}
+            $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "name"]}, "vmname", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "name"]}
+            $delim: {get_param: name_delimiter}
+            $stk: {get_param: stack}
+      availability_zone:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "availability_zone"]}]}, "availability_zone", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "availability_zone"]}
+      image:
+        str_replace:
+          template: $override$default$validate
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "0"]}]}, "image", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "0"]}
+            $validate: {get_param: [validation_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "0"]}]}, {get_param: [chk4override, {get_param: [usage_info, "defaults", "image", "0"]}]}, "image"]}
+      image_update_policy: REBUILD
+      flavor:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "flavor"]}]}, "flavor", "0"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "flavor"]}
+      networks: [{get_attr: [NOKIA-LCP-VMportGroupA, PortEntry]}]
+      key_name: {get_param: lcm_keypair}
+      # Note that the flavor default and override values are included
+      # in CLDsetup.json to force a VM rebuild (instead of replace or resize)
+      # if the VM flavor is changed.
+      personality: {
+        /storage/cloud/.ssh/SSHpubkey: {get_param: ssh_public_key},
+        /storage/cloud/.ssh/SSHprivkey: {get_param: ssh_private_key},
+        /storage/cloud/CLDsetup_data.json: {
+          str_replace: {
+            template: "{\n
+            \t\"drbd_uuid\": \"\",\n
+            \t\"flavor_default\": \"$flavor_default\",\n
+            \t\"flavor_override\": \"$flavor_override\",\n
+            \t\"int_vlan_id\": \"$int_vlan_id\",\n
+            \t\"random\": \"$random\",\n
+            \t\"SSHpubkeyFile\": \"/storage/cloud/.ssh/SSHpubkey\",\n
+            \t\"SSHprivkeyFile\": \"/storage/cloud/.ssh/SSHprivkey\",\n
+            \t\"SSHaccessKey\": \"$acckey\",\n
+            \t\"stk\": \"$stk\",\n
+            \t\"uuid_storage\": \"$uuid_storage\"\n
+            }",
+            params: {
+              $acckey: {get_param: ssh_access_key},
+              $flavor_default: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "flavor"]}]}, "flavor", "0"]},
+              $flavor_override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "flavor"]},
+              $int_vlan_id: {get_param: [usage_info, int_vlan_id]},
+              $random: {get_resource: NOKIA-LCP-RandomA},
+              $stk: {get_param: stack},
+              $uuid_storage: {get_resource: NOKIA-LCP-Block-StorageA}
+            }
+          }
+        },
+        /storage/cloud/discover/GlobalConfig.json: {
+          str_replace: {
+            template: "
+              {
+                \"v4_dns_server\": \"$v4dns\",
+                \"v6_dns_server\": \"$v6dns\",
+                \"v4_enum_server\": \"$v4enum\",
+                \"v6_enum_server\": \"$v6enum\",
+                \"v4_ntp_server\": \"$v4ntp\",
+                \"v6_ntp_server\": \"$v6ntp\",
+                $cfg
+              }
+            ",
+            params: {
+              $v4dns: {get_param: [usage_info, v4_dns_server]},
+              $v6dns: {get_param: [usage_info, v6_dns_server]},
+              $v4enum: {get_param: [usage_info, v4_enum_server]},
+              $v6enum: {get_param: [usage_info, v6_enum_serve]},
+              $v4ntp: {get_param: [usage_info, v4_ntp_server]},
+              $v6ntp: {get_param: [usage_info, v6_ntp_server]},
+              $cfg: {get_param: install_config}
+            }
+          }
+        },
+        /storage/cloud/discover/VMinfo.json: {
+          str_replace: {
+            template: "
+              {\n
+                \"vm_suffix\": \"$base$override$default\",\n
+                \"service_config\": $servcfg,\n
+                \"v4_default_gateway\": \"$v4gateway\",\n
+                \"v6_default_gateway\": \"$v6gateway\",\n
+                \"v4_static_routes\": $v4static_routes,\n
+                \"v6_static_routes\": $v6static_routes,\n
+                \"IPinfo\": [\n$ipinfo\n],\n
+                \"Netinfo\": $netinfo\n
+              }\n
+            ",
+            params: {
+              $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", name]}]},
+              $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", name]}, "vmname", "0"]},
+              $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", name]},
+              $servcfg: {get_param: [config_info, poolinfo]},
+              $v4gateway: {get_param: [config_info, v4_default_gateway]},
+              $v6gateway: {get_param: [config_info, v6_default_gateway]},
+              $v4static_routes: {get_param: [config_info, v4_static_routes]},
+              $v6static_routes: {get_param: [config_info, v6_static_routes]},
+              $ipinfo: {list_join: [',', {get_attr: [NOKIA-LCP-VMportGroupA, PortIpInfo]}]},
+              $netinfo: {get_param: net_info_str}
+            }
+          }
+        },
+      }
+      config_drive: "true"
+      metadata: {
+        action: {
+          str_replace: {
+            template: "$pairside$vm",
+            params: {
+              $pairside: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", "action"]}]}, "action", "0"]},
+              $vm: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "0", action]}
+            }
+          }
+        },
+        backup_file: {get_param: backup_file},
+        default_action: {get_param: default_action},
+        group_type: "pair",
+        group_index: {get_param: group_index},
+        current_group_count: {get_param: current_group_count},
+        certificate: {get_param: certificate},
+        member_index: "0",
+        side_action: {get_param: [usage_info, defaults, action, "0"]},
+        total_pair_count: {get_param: total_pair_count},
+        vnf_id: {get_param: [usage_info, vnf_id]},
+        vnf_name: {get_param: [usage_info, vnf_name]},
+        vnf_module_id: {get_param: [usage_info, vnf_module_id]},
+        vnf_module_name: {get_param: [usage_info, vnf_module_name]},
+        vnf_role: {get_param: group_tag}
+      }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+
+            tmp=$(/opt/LSS/sbin/CLDbase "pair" "$tag" "$grp_id" "$grp_index" "0" "$role")
+            ret=$?
+
+            if (( ret != 0 )); then
+              echo "CLDbase failed, ret=${ret}: ${tmp}"
+              exit 1
+            fi
+            exit 0
+          params:
+            $grp_id: {get_param: group_id}
+            $grp_index: {get_param: group_index}
+            $role: {get_param: role}
+            $tag: {get_param: group_tag}
+
+  NOKIA-LCP-RandomB:
+    type: OS::Heat::RandomString
+    properties:
+      length: 512
+
+  NOKIA-LCP-Block-StorageB:
+    type: OS::Cinder::Volume
+    properties:
+      description: Used for VM /storage partition.
+      name:
+        str_replace:
+          template: $stk$delim$base$override$default
+          params:
+            $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "storage_name"]}]}
+            $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "storage_name"]}, "storage", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "storage_name"]}
+            $delim: {get_param: name_delimiter}
+            $stk: {get_param: stack}
+      size: {get_param: storage_size}
+      availability_zone:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "storage_zone"]}]}, "storage_zone", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "storage_zone"]}
+
+  NOKIA-LCP-BlockAttachB:
+    type: OS::Cinder::VolumeAttachment
+    depends_on:
+      - NOKIA-LCP-VMB
+      - NOKIA-LCP-Block-StorageB
+    properties:
+      instance_uuid: {get_resource: NOKIA-LCP-VMB}
+      volume_id: {get_resource: NOKIA-LCP-Block-StorageB}
+
+  NOKIA-LCP-VMportGroupB:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: [config_info, vnic_count]}
+      resource_def:
+        type: LCP-Port.template.yaml
+        properties:
+          default_name_base:
+            str_replace:
+              template: |
+                {"": "$base$vm"}
+              params:
+                $base: {get_param: [default_name_base, ""]}
+                $vm: {get_param: [default_names, "", "vmname", "1"]}
+          group_index: {get_param: group_index}
+          vm_index: "1"
+          vnic_index: '%index%' 
+          config_info: {get_param: config_info}
+          ext_net_info: {get_param: ext_net_info}
+          int_net_info: {get_param: int_net_info}
+          group_tag: {get_param: group_tag}
+          group_id: {get_param: group_id}
+          name_delimiter: {get_param: name_delimiter}
+          open_sec_group: {get_param: sec_group}
+          stack: {get_param: stack}
+          usage_info: {get_param: usage_info}
+
+  NOKIA-LCP-VMB:
+    type: OS::Nova::Server
+    depends_on:
+      - NOKIA-LCP-Block-StorageB
+      - NOKIA-LCP-RandomB
+      - NOKIA-LCP-VMportGroupB
+    properties:
+      name:
+        str_replace:
+          template: $stk$delim$base$override$default
+          params:
+            $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "name"]}]}
+            $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "name"]}, "vmname", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "name"]}
+            $delim: {get_param: name_delimiter}
+            $stk: {get_param: stack}
+      availability_zone:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "availability_zone"]}]}, "availability_zone", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "availability_zone"]}
+      image:
+        str_replace:
+          template: $override$default$validate
+          params:
+            $default: {get_param: [usage_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "1"]}]}, "image", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "1"]}
+            $validate: {get_param: [validation_info, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, "overrides", "image", "1"]}]}, {get_param: [chk4override, {get_param: [usage_info, "defaults", "image", "1"]}]}, "image"]}
+      image_update_policy: REBUILD
+      flavor:
+        str_replace:
+          template: $override$default
+          params:
+            $default: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "flavor"]}]}, "flavor", "1"]}
+            $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "flavor"]}
+      key_name: {get_param: lcm_keypair}
+      networks: [{get_attr: [NOKIA-LCP-VMportGroupB, PortEntry]}]
+      # Note that the flavor default and override values are included
+      # in CLDsetup.json to force a VM rebuild (instead of replace or resize)
+      # if the VM flavor is changed.
+      personality: {
+        /storage/cloud/.ssh/SSHpubkey: {get_param: ssh_public_key},
+        /storage/cloud/.ssh/SSHprivkey: {get_param: ssh_private_key},
+        /storage/cloud/CLDsetup_data.json: {
+          str_replace: {
+            template: "{\n
+            \t\"drbd_uuid\": \"\",\n
+            \t\"flavor_default\": \"$flavor_default\",\n
+            \t\"flavor_override\": \"$flavor_override\",\n
+            \t\"int_vlan_id\": \"$int_vlan_id\",\n
+            \t\"random\": \"$random\",\n
+            \t\"SSHpubkeyFile\": \"/storage/cloud/.ssh/SSHpubkey\",\n
+            \t\"SSHprivkeyFile\": \"/storage/cloud/.ssh/SSHprivkey\",\n
+            \t\"SSHaccessKey\": \"$acckey\",\n
+            \t\"stk\": \"$stk\",\n
+            \t\"uuid_storage\": \"$uuid_storage\"\n
+            }",
+            params: {
+              $acckey: {get_param: ssh_access_key},
+              $flavor_default: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "flavor"]}]}, "flavor", "1"]},
+              $flavor_override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "flavor"]},
+              $int_vlan_id: {get_param: [usage_info, int_vlan_id]},
+              $random: {get_resource: NOKIA-LCP-RandomB},
+              $stk: {get_param: stack},
+              $uuid_storage: {get_resource: NOKIA-LCP-Block-StorageB}
+            }
+          }
+        },
+        /storage/cloud/discover/GlobalConfig.json: {
+          str_replace: {
+            template: "
+              {
+                \"v4_dns_server\": \"$v4dns\",
+                \"v6_dns_server\": \"$v6dns\",
+                \"v4_enum_server\": \"$v4enum\",
+                \"v6_enum_server\": \"$v6enum\",
+                \"v4_ntp_server\": \"$v4ntp\",
+                \"v6_ntp_server\": \"$v6ntp\",
+                $cfg
+              }
+            ",
+            params: {
+              $v4dns: {get_param: [usage_info, v4_dns_server]},
+              $v6dns: {get_param: [usage_info, v6_dns_server]},
+              $v4enum: {get_param: [usage_info, v4_enum_server]},
+              $v6enum: {get_param: [usage_info, v6_enum_serve]},
+              $v4ntp: {get_param: [usage_info, v4_ntp_server]},
+              $v6ntp: {get_param: [usage_info, v6_ntp_server]},
+              $cfg: {get_param: install_config}
+            }
+          }
+        },
+        /storage/cloud/discover/VMinfo.json: {
+          str_replace: {
+            template: "
+              {\n
+                \"vm_suffix\": \"$base$override$default\",
+                \"service_config\": $servcfg,\n
+                \"v4_default_gateway\": \"$v4gateway\",\n
+                \"v6_default_gateway\": \"$v6gateway\",\n
+                \"v4_static_routes\": $v4static_routes,\n
+                \"v6_static_routes\": $v6static_routes,\n
+                \"IPinfo\": [\n$ipinfo\n],\n
+                \"Netinfo\": $netinfo\n
+              }\n
+            ",
+            params: {
+              $base: {get_param: [default_name_base, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", name]}]},
+              $default: {get_param: [default_names, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", name]}, "vmname", "1"]},
+              $override: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", name]},
+              $servcfg: {get_param: [config_info, poolinfo]},
+              $v4gateway: {get_param: [config_info, v4_default_gateway]},
+              $v6gateway: {get_param: [config_info, v6_default_gateway]},
+              $v4static_routes: {get_param: [config_info, v4_static_routes]},
+              $v6static_routes: {get_param: [config_info, v6_static_routes]},
+              $ipinfo: {list_join: [',', {get_attr: [NOKIA-LCP-VMportGroupB, PortIpInfo]}]},
+              $netinfo: {get_param: net_info_str}
+            }
+          }
+        },
+      }
+      config_drive: "true"
+      metadata: {
+        action: {
+          str_replace: {
+            template: "$pairside$vm",
+            params: {
+              $pairside: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: [chk4override, {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", "action"]}]}, "action", "1"]},
+              $vm: {get_param: [usage_info, "group_info", {get_param: group_id}, {get_param: group_index}, "1", action]}
+            }
+          }
+        },
+        backup_file: {get_param: backup_file},
+        default_action: {get_param: default_action},
+        group_type: "pair",
+        group_index: {get_param: group_index},
+        current_group_count: {get_param: current_group_count},
+        certificate: {get_param: certificate},
+        member_index: "1",
+        side_action: {get_param: [usage_info, defaults, action, "1"]},
+        total_pair_count: {get_param: total_pair_count},
+        vnf_id: {get_param: [usage_info, vnf_id]},
+        vnf_name: {get_param: [usage_info, vnf_name]},
+        vnf_module_id: {get_param: [usage_info, vnf_module_id]},
+        vnf_module_name: {get_param: [usage_info, vnf_module_name]},
+        vnf_role: {get_param: group_tag}
+      }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+
+            tmp=$(/opt/LSS/sbin/CLDbase "pair" "$tag" "$grp_id" "$grp_index" "1" "$role")
+            ret=$?
+
+            if (( ret != 0 )); then
+              echo "CLDbase failed, ret=${ret}: ${tmp}"
+              exit 1
+            fi
+            exit 0
+          params:
+            $grp_id: {get_param: group_id}
+            $grp_index: {get_param: group_index}
+            $role: {get_param: role}
+            $tag: {get_param: group_tag}
+
+outputs:
+
+  Version:
+    description: |
+      Template file version number. This should be updated
+      each time a non-comment change is made to this file.
+    value: K1
+
+  VMA-EXT_IPS:
+    description: IP addresses assigned to the first external network.
+    value: {get_attr: [NOKIA-LCP-VMportGroupA, {get_param: [int_net_map, {get_param: int_net_count}]}, ASSIGNED_IPS]}
+
+  VMB-EXT_IPS:
+    description: IP addresses assigned to the first external network.
+    value: {get_attr: [NOKIA-LCP-VMportGroupB, {get_param: [int_net_map, {get_param: int_net_count}]}, ASSIGNED_IPS]}
+

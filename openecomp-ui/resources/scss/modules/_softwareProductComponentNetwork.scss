@@ -1,10 +1,5 @@
 .vsp-components-network {
   .network-data {
-    .network-data-title {
-      @extend .body-2-medium;
-      padding-bottom: 20px;
-      padding-left: 15px;
-    }
     .single-col {
       .validation-input-wrapper {
         label {
@@ -27,7 +22,14 @@
       padding-right: 50px;
       padding-top: 20px;
       height: 500px;
-      overflow-y: auto;
+      .grid-section {
+        padding-bottom: 15px;
+        .section-title {
+          @extend .heading-5;
+          padding-bottom: 10px;
+          padding-left: 0px;
+        }
+      }
       .part-title {
         @extend .heading-5;
         padding-bottom: 10px;
@@ -36,10 +38,43 @@
       .part-title-small {
         @extend .heading-3;
         padding-bottom: 10px;
-        padding-left: 14px;
+        padding-left: 0px;
       }
       .network-radio label {
         font-size: 15px;
+      }
+
+      .packets-bytes-gen {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        .top-row {
+          display: flex;
+          .part-title-small {
+            padding-left: 0px;
+            &.packets {
+              flex: 0 0 52%;
+            }
+            &.bytes {
+              flex: 0 0 48%;
+            }
+          }
+        }
+        .bottom-row {
+          display: flex;
+          justify-content: space-between;
+          flex-direction: row;
+          flex: 1;
+          .inputs-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            flex: 1;
+            .validation-input-wrapper {
+              flex: 0 0 22%;
+            }
+          }
+        }
       }
     }
   }

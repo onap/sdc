@@ -20,14 +20,13 @@
 
 package org.openecomp.core.utilities.json;
 
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
@@ -82,17 +81,17 @@ public class JsonUtil {
    * @return the t
    */
   public static <T> T json2Object(String json, Class<T> classOfT) {
-    T type;
+    T typ;
     try {
       try (Reader br = new StringReader(json)) {
-        type = new Gson().fromJson(br, classOfT);
-      } catch (IOException e0) {
-        throw e0;
+        typ = new Gson().fromJson(br, classOfT);
+      } catch (IOException exception) {
+        throw exception;
       }
-    } catch (JsonIOException | JsonSyntaxException | IOException e0) {
-      throw new RuntimeException(e0);
+    } catch (JsonIOException | JsonSyntaxException | IOException exception) {
+      throw new RuntimeException(exception);
     }
-    return type;
+    return typ;
   }
 
   /**
@@ -109,8 +108,8 @@ public class JsonUtil {
       try (Reader br = new BufferedReader(new InputStreamReader(is))) {
         type = new Gson().fromJson(br, classOfT);
       }
-    } catch (JsonIOException | JsonSyntaxException | IOException e0) {
-      throw new RuntimeException(e0);
+    } catch (JsonIOException | JsonSyntaxException | IOException exception) {
+      throw new RuntimeException(exception);
     } finally {
       if (is != null) {
         try {
@@ -153,16 +152,16 @@ public class JsonUtil {
             .collect(Collectors.toList());
   }
 
-  private static String mapValidationExceptionToMessage(ValidationException e0) {
-    if (e0.getViolatedSchema() instanceof EnumSchema) {
-      return mapEnumViolationToMessage(e0);
+  private static String mapValidationExceptionToMessage(ValidationException exception) {
+    if (exception.getViolatedSchema() instanceof EnumSchema) {
+      return mapEnumViolationToMessage(exception);
     }
-    return e0.getMessage();
+    return exception.getMessage();
   }
 
-  private static String mapEnumViolationToMessage(ValidationException e1) {
-    Set<Object> possibleValues = ((EnumSchema) e1.getViolatedSchema()).getPossibleValues();
-    return e1.getMessage().replaceFirst("enum value", possibleValues.size() == 1
+  private static String mapEnumViolationToMessage(ValidationException exception) {
+    Set<Object> possibleValues = ((EnumSchema) exception.getViolatedSchema()).getPossibleValues();
+    return exception.getMessage().replaceFirst("enum value", possibleValues.size() == 1
         ? String.format("value. %s is the only possible value for this field",
             possibleValues.iterator().next())
         : String.format("value. Possible values: %s", CommonMethods

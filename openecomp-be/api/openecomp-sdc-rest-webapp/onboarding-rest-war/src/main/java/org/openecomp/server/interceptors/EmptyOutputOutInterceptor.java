@@ -29,6 +29,10 @@ import org.apache.cxf.phase.Phase;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
+
+/**
+ * The type Empty output out interceptor.
+ */
 @Named
 public class EmptyOutputOutInterceptor extends AbstractOutDatabindingInterceptor {
 

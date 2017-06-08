@@ -1,0 +1,284 @@
+heat_template_version: 2015-04-30
+
+description: Pronghorn Openstack Heat Template
+
+parameters:
+  oam_net_name:
+    label: Database OAM Network
+    description: Name of the OAM network for the database servers
+    type: string
+  common_ports:
+    label: Common Ports
+    description: List of ports to apply to the security group for all VMs
+    type: comma_delimited_list
+  common_protocols:
+    label: Common Protocols
+    description: List of protocols associated with the common_ports
+    type: comma_delimited_list
+  db_ports:
+    label: Database Ports
+    description: List of ports to apply to the security group for the database VMs
+    type: comma_delimited_list
+  db_protocols:
+    label: Database Protocols
+    description: List of protocols associated with the db_ports
+    type: comma_delimited_list
+  app_ports:
+    label: Application Ports
+    description: List of ports to apply to the security group for the application VMs
+    type: comma_delimited_list
+  app_protocols:
+    label: Application Protocols
+    description: List of protocols associated with the app_ports
+    type: comma_delimited_list
+  ###
+  # vnf info
+  ###
+  vnf_id:
+    label: VNF ID
+    description: Unique ID for this VF instance
+    type: string
+  vf_module_id:
+    label: VF Module ID
+    description: Unique ID for this VF Module instance
+    type: string
+  db_vm_role:
+    label: DB VM Role
+    description: Role for the DB VM
+    type: string
+  app_vm_role:
+    label: App VM Role
+    description: Role for the App VM
+    type: string
+
+  ###
+  # availability zones
+  ###
+  availability_zone_0:
+    label: First Availability Zone
+    description: Name of the first availability zone
+    type: string
+  
+  ###
+  # database server networks, ips and hostnames
+  ###
+  db_name:
+    label: Database Hostname
+    description: Hostname of the database server
+    type: string
+  db_oam_ip_0:
+    label: Database OAM IP Addresse
+    description: OAM IP Address of the database server
+    type: string
+  ###
+  # database common server info (flavor, image, keypair)
+  ###
+  db_flavor_name:
+    label: Database Flavor
+    description: Flavor of the database server
+    type: string
+  db_image_name:
+    label: Database Image
+    description: Image of the database server
+    type: string
+  db_public_key:
+    label: Database Public Key
+    description: Public ssh key for the database servers
+    type: string
+  db_deploy_timeout:
+    label: Database Deployment Timeout
+    description: Timeout in seconds before declaring the database stack as failed
+    type: number
+    constraints:
+      - range: { min: 60, max: 3600 }
+
+  ###
+  # database volume ids
+  ###
+  db_volume_id_0:
+    label: Data Volume IDs for disk 0
+    description: IDs to be used for the database volumes
+    type: string
+  db_volume_id_1:
+    label: Data Volume IDs for disk 1
+    description: IDs to be used for the database volumes
+    type: string
+  db_volume_id_2:
+    label: Data Volume IDs for disk 2
+    description: IDs to be used for the database volumes
+    type: string
+  db_volume_id_3:
+    label: Data Volume IDs for disk 3
+    description: IDs to be used for the database volumes
+    type: string
+
+
+  ###
+  # application server networks, ips and hostnames
+  ###
+  app_name:
+    label: Application Hostname
+    description: Hostname of the application server
+    type: string
+  app_oam_ip_0:
+    label: Application OAM IP Address
+    description: OAM IP Address of the application server
+    type: string
+  ###
+  # application common server info (flavor, image, keypair)
+  ###
+  app_flavor_name:
+    label: App Flavor
+    description: Flavor to be used for the application server
+    type: string
+  app_image_name:
+    label: App Image
+    description: Image to be used for the application server
+    type: string
+  app_public_key:
+    label: Application Public Key
+    description: Public ssh key for the application servers
+    type: string
+
+  app_deploy_timeout:
+    label: Application Deployment Timeout
+    description: Timeout in seconds before declaring the application stack as failed
+    type: number
+    constraints:
+      - range: { min: 60, max: 3600 }
+
+resources:
+  ###
+  # define unique keypairs for each role
+  ###
+  db_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name: pronghorn database key
+      public_key: { get_param: db_public_key }
+      save_private_key: false
+  app_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name: pronghorn application key
+      public_key: { get_param: app_public_key }
+      save_private_key: false
+
+  ###
+  # define security groups for each role
+  ###
+  ###
+  # NOTE:  I would like to use the repeat/for_each function to iterate over these lists
+  #        My local Mirantis 7 testing environment contains the following bug:
+  #
+  # ERROR: The values of the "for_each" argument to "repeat" must be lists
+  ###
+  common_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: common security group
+      rules:
+        - protocol: { get_param: [ common_protocols, 0 ] }
+          port_range_min: { get_param: [ common_ports, 0 ] }
+          port_range_max: { get_param: [ common_ports, 0 ] }
+        - protocol: { get_param: [ common_protocols, 1 ] }
+          port_range_min: { get_param: [ common_ports, 1 ] }
+          port_range_max: { get_param: [ common_ports, 1 ] }
+        - protocol: { get_param: [ common_protocols, 2 ] }
+          port_range_min: { get_param: [ common_ports, 2 ] }
+          port_range_max: { get_param: [ common_ports, 2 ] }
+        - protocol: { get_param: [ common_protocols, 3 ] }
+          port_range_min: { get_param: [ common_ports, 3 ] }
+          port_range_max: { get_param: [ common_ports, 3 ] }
+  db_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: data security group
+      rules:
+        - protocol: { get_param: [ db_protocols, 0 ] }
+          port_range_min: { get_param: [ db_ports, 0 ] }
+          port_range_max: { get_param: [ db_ports, 0 ] }
+  app_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: app security group
+      rules:
+        - protocol: { get_param: [ app_protocols, 0 ] }
+          port_range_min: { get_param: [ app_ports, 0 ] }
+          port_range_max: { get_param: [ app_ports, 0 ] }
+
+  ###
+  # create the database servers
+  ###
+  db_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name: data server group
+      policies:
+        - anti-affinity
+  
+  db_servers:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: nested_db_server.yaml
+        properties:
+          server_group_id: { get_resource: db_server_group }
+          vnf_id: { get_param: vnf_id }
+          vf_module_id: { get_param: vf_module_id }
+          vm_role: { get_param: db_vm_role }
+          availability_zone_0: { get_param: availability_zone_0 }
+          oam_net_name: { get_param: oam_net_name }
+          db_name: { get_param: db_name }
+          db_oam_ip_0: { get_param: db_oam_ip_0 }
+          security_group_ids: 
+            - { get_resource: common_security_group }
+            - { get_resource: db_security_group }
+          keypair_id: { get_resource: db_keypair }
+          db_flavor_name: { get_param: db_flavor_name }
+          db_image_name: { get_param: db_image_name }
+          db_volume_id_0: { get_param: db_volume_id_0 }
+          db_volume_id_1: { get_param: db_volume_id_1 }
+          db_volume_id_2: { get_param: db_volume_id_2 }
+          db_volume_id_3: { get_param: db_volume_id_3 }
+          deploy_timeout: { get_param: db_deploy_timeout }
+
+
+  ###
+  # create the application servers
+  ###
+  app_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name: app server group
+      policies:
+        - anti-affinity
+
+  app_servers:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 1
+      resource_def:
+        type: nested_app_server.yaml
+        properties:
+          server_group_id: { get_resource: app_server_group }
+          vnf_id: { get_param: vnf_id }
+          vf_module_id: { get_param: vf_module_id }
+          vm_role: { get_param: app_vm_role }
+          availability_zone_0: { get_param: availability_zone_0 }
+          oam_net_name: { get_param: oam_net_name }
+          app_name: { get_param: app_name }
+          app_oam_ip_0: { get_param: app_oam_ip_0 }
+          security_group_ids: 
+            - { get_resource: common_security_group }
+            - { get_resource: app_security_group }
+          keypair_id: { get_resource: app_keypair }
+          app_flavor_name: { get_param: app_flavor_name }
+          app_image_name: { get_param: app_image_name }
+          deploy_timeout: { get_param: app_deploy_timeout }
+
+outputs:
+  ###
+  # No outputs as the base_pronghorn is the only VNF component
+  ###
