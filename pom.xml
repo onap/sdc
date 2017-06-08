@@ -179,7 +179,7 @@
 		<sonar.inclusions>app/**/*.js,server-mock/**/*.js,src/**/*.js,src/main/**/*.java</sonar.inclusions>
 
 		<!--nexus-->
-		<nexus.proxy>https://nexus.openecomp.org</nexus.proxy>
+		<nexus.proxy>https://nexus.onap.org</nexus.proxy>
 		<staging.profile.id>176c31dfe190a</staging.profile.id>
 		<!--maven-->
 		<maven.build.timestamp.format>yyyyMMdd'T'HHmm</maven.build.timestamp.format>
