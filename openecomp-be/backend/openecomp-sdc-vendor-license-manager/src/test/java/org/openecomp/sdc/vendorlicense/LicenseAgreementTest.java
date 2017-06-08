@@ -1,12 +1,39 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
+/*
 package org.openecomp.sdc.vendorlicense;
 
+import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao;
 import org.openecomp.sdc.vendorlicense.dao.FeatureGroupDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao;
+import org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory;
+import org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther;
+import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
+import org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
 import org.openecomp.sdc.vendorlicense.impl.VendorLicenseManagerImpl;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.utilities.CommonMethods;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -21,21 +48,20 @@ public class LicenseAgreementTest {
   private static final String LA1_NAME = "LA1 Name";
 
   private static VendorLicenseManager vendorLicenseManager = new VendorLicenseManagerImpl();
-  private static org.openecomp.sdc.vendorlicense.dao.FeatureGroupDao featureGroupDao;
-  private static org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDao licenseAgreementDao;
+  private static FeatureGroupDao featureGroupDao;
+  private static LicenseAgreementDao licenseAgreementDao;
 
   private static String vlm1Id;
   private static String vlm2Id;
   private static String la1Id;
   private static String la2Id;
 
-  public static org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity createLicenseAgreement(String vlmId, Version version,
-                                                                                                        String id, String name, String desc,
-                                                                                                        String requirementsAndConstrains,
-                                                                                                        org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<LicenseTerm> term,
-                                                                                                        String... fgIds) {
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity
-        la = new org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity();
+  public static LicenseAgreementEntity createLicenseAgreement(String vlmId, Version version,
+                                                              String id, String name, String desc,
+                                                              String requirementsAndConstrains,
+                                                              ChoiceOrOther<LicenseTerm> term,
+                                                              String... fgIds) {
+    LicenseAgreementEntity la = new LicenseAgreementEntity();
     la.setVendorLicenseModelId(vlmId);
     la.setVersion(version);
     la.setId(id);
@@ -49,12 +75,11 @@ public class LicenseAgreementTest {
     return la;
   }
 
-  public static org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity createFeatureGroup(String vendorId, Version version, String id,
-                                                                                                String name, String description,
-                                                                                                Set<String> entitlementPoolIds,
-                                                                                                Set<String> licenseKeyGroupIds) {
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity
-        featureGroup = new org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity();
+  public static FeatureGroupEntity createFeatureGroup(String vendorId, Version version, String id,
+                                                      String name, String description,
+                                                      Set<String> entitlementPoolIds,
+                                                      Set<String> licenseKeyGroupIds) {
+    FeatureGroupEntity featureGroup = new FeatureGroupEntity();
     featureGroup.setVendorLicenseModelId(vendorId);
     featureGroup.setVersion(version);
     featureGroup.setId(id);
@@ -67,7 +92,7 @@ public class LicenseAgreementTest {
 
   @BeforeClass
   private void init() {
-    licenseAgreementDao = org.openecomp.sdc.vendorlicense.dao.LicenseAgreementDaoFactory.getInstance().createInterface();
+    licenseAgreementDao = LicenseAgreementDaoFactory.getInstance().createInterface();
     featureGroupDao = FeatureGroupDaoFactory.getInstance().createInterface();
     vlm1Id = vendorLicenseManager.createVendorLicenseModel(VendorLicenseModelTest
             .createVendorLicenseModel("vendor1 name " + CommonMethods.nextUuId(), "vlm1 dec", "icon1"),
@@ -83,18 +108,17 @@ public class LicenseAgreementTest {
   }
 
   private String testCreate(String vlmId, String name) {
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity fg1 =
-        createFeatureGroup(vlmId, VERSION01, "fg11", "FG1", "FG1 desc", null, null);
+    FeatureGroupEntity
+        fg1 = createFeatureGroup(vlmId, VERSION01, "fg11", "FG1", "FG1 desc", null, null);
     featureGroupDao.create(fg1);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity
-        la1 = createLicenseAgreement(vlmId, VERSION01, null, name, "LA1 desc",
-        "RequirementsAndConstrains1", new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(
-            org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm.Unlimited, null), "fg11");
+    LicenseAgreementEntity la1 = createLicenseAgreement(vlmId, VERSION01, null, name, "LA1 desc",
+        "RequirementsAndConstrains1", new ChoiceOrOther<>(
+            LicenseTerm.Unlimited, null), "fg11");
     la1 = vendorLicenseManager.createLicenseAgreement(la1, USER1);
     String la1Id = la1.getId();
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity loadedLa1 = licenseAgreementDao.get(la1);
+    LicenseAgreementEntity loadedLa1 = licenseAgreementDao.get(la1);
     Assert.assertTrue(loadedLa1.equals(la1));
     return la1Id;
   }
@@ -102,15 +126,14 @@ public class LicenseAgreementTest {
   @Test(dependsOnMethods = {"createLicenseAgreementTest"})
   public void testCreateWithExistingName_negative() {
     try {
-      org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity la1 =
+      LicenseAgreementEntity la1 =
           createLicenseAgreement(vlm1Id, VERSION01, null, LA1_NAME, "LA1 desc",
-              "RequirementsAndConstrains1", new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(
-                  org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm.Unlimited, null),
+              "RequirementsAndConstrains1", new ChoiceOrOther<>(LicenseTerm.Unlimited, null),
               "fg11");
       vendorLicenseManager.createLicenseAgreement(la1, USER1);
       Assert.fail();
-    } catch (CoreException e) {
-      Assert.assertEquals(e.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.code().id(), UniqueValueUtil.UNIQUE_VALUE_VIOLATION);
     }
   }
 
@@ -121,19 +144,18 @@ public class LicenseAgreementTest {
 
   @Test(dependsOnMethods = {"testCreateWithExistingName_negative"})
   public void updateLicenseAgreementTest() {
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity fg2 =
+    FeatureGroupEntity fg2 =
         createFeatureGroup(vlm1Id, VERSION01, "fg2", "FG2", "FG2 desc", null, null);
     featureGroupDao.create(fg2);
 
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity fg3 =
+    FeatureGroupEntity fg3 =
         createFeatureGroup(vlm1Id, VERSION01, "fg3", "FG3", "FG3 desc", null, null);
     featureGroupDao.create(fg3);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity la1 =
-        licenseAgreementDao.get(new org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
+    LicenseAgreementEntity la1 =
+        licenseAgreementDao.get(new LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
     la1.setDescription("LA1 desc updated");
-    la1.setLicenseTerm(new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(
-        org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm.Other, "bla bla term"));
+    la1.setLicenseTerm(new ChoiceOrOther<>(LicenseTerm.Other, "bla bla term"));
     la1.getFeatureGroupIds().add("fg2");
     la1.getFeatureGroupIds().add("fg3");
     la1.getFeatureGroupIds().remove("fg11");
@@ -148,26 +170,24 @@ public class LicenseAgreementTest {
     vendorLicenseManager
         .updateLicenseAgreement(la1, addedFeatureGroupIds, removedFeatureGroupIds, USER1);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity loadedLa1 =
-        licenseAgreementDao.get(new org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
+    LicenseAgreementEntity loadedLa1 =
+        licenseAgreementDao.get(new LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
     Assert.assertTrue(loadedLa1.equals(la1));
 
   }
 
   @Test(dependsOnMethods = {"updateLicenseAgreementTest"})
   public void listLicenseAgreementsTest() {
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity
-        la2 = createLicenseAgreement(vlm1Id, VERSION01, null, "LA2", "LA2 desc",
-        "RequirementsAndConstrains2", new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(
-            org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm.Unlimited, null), "fg2");
+    LicenseAgreementEntity la2 = createLicenseAgreement(vlm1Id, VERSION01, null, "LA2", "LA2 desc",
+        "RequirementsAndConstrains2", new ChoiceOrOther<>(LicenseTerm.Unlimited, null), "fg2");
     la2 = vendorLicenseManager.createLicenseAgreement(la2, USER1);
     la2Id = la2.getId();
 
-    Collection<org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity> loadedLas =
+    Collection<LicenseAgreementEntity> loadedLas =
         vendorLicenseManager.listLicenseAgreements(vlm1Id, null, USER1);
     Assert.assertEquals(loadedLas.size(), 2);
     boolean la2Exists = false;
-    for (org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity loadedLa : loadedLas) {
+    for (LicenseAgreementEntity loadedLa : loadedLas) {
       if (la2Id.equals(loadedLa.getId())) {
         Assert.assertTrue(loadedLa.equals(la2));
         la2Exists = true;
@@ -179,33 +199,32 @@ public class LicenseAgreementTest {
 
   @Test(dependsOnMethods = {"listLicenseAgreementsTest"})
   public void featureGroupDeletedLicenseAgreementUpdated() {
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity licenseAgreement =
+    LicenseAgreementEntity licenseAgreement =
         createLicenseAgreement(vlm1Id, VERSION01, "laId", "LA2", "LA2 desc",
-            "RequirementsAndConstrains2", new org.openecomp.sdc.vendorlicense.dao.types.ChoiceOrOther<>(
-                org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm.Unlimited, null), "fg2");
+            "RequirementsAndConstrains2", new ChoiceOrOther<>(LicenseTerm.Unlimited, null), "fg2");
     licenseAgreementDao.create(licenseAgreement);
     String featureGroupId = "FeatureGroupId";
-    org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity created =
+    FeatureGroupEntity created =
         createFeatureGroup(vlm1Id, VERSION01, "fg11", "FG1", "FG1 desc", null, null);
     featureGroupDao.create(created);
     featureGroupDao.addReferencingLicenseAgreement(created, licenseAgreement.getId());
 
     vendorLicenseManager.deleteFeatureGroup(created, USER1);
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity afterDeletingFG = licenseAgreementDao.get(licenseAgreement);
+    LicenseAgreementEntity afterDeletingFG = licenseAgreementDao.get(licenseAgreement);
     Assert.assertEquals(afterDeletingFG.getFeatureGroupIds().size(), 1);
     Assert.assertTrue(afterDeletingFG.getFeatureGroupIds().contains("fg2"));
   }
 
   @Test(dependsOnMethods = {"listLicenseAgreementsTest"})
   public void deleteLicenseAgreementsTest() {
-    vendorLicenseManager.deleteLicenseAgreement(vlm1Id, la1Id, USER1);
+    vendorLicenseManager.deleteLicenseAgreement(vlm1Id, null, la1Id, USER1);
 
-    org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity loadedLa1 =
-        licenseAgreementDao.get(new org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
+    LicenseAgreementEntity loadedLa1 =
+        licenseAgreementDao.get(new LicenseAgreementEntity(vlm1Id, VERSION01, la1Id));
     Assert.assertEquals(loadedLa1, null);
 
-    Collection<org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity> loadedLas =
-        licenseAgreementDao.list(new org.openecomp.sdc.vendorlicense.dao.types.LicenseAgreementEntity(vlm1Id, VERSION01, null));
+    Collection<LicenseAgreementEntity> loadedLas =
+        licenseAgreementDao.list(new LicenseAgreementEntity(vlm1Id, VERSION01, null));
     Assert.assertEquals(loadedLas.size(), 1);
     Assert.assertEquals(loadedLas.iterator().next().getId(), la2Id);
   }
@@ -216,3 +235,4 @@ public class LicenseAgreementTest {
   }
 }
 
+*/

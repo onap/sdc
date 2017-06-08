@@ -35,29 +35,13 @@
     .tab-content {
       padding: 50px;
     }
-    .entitlement-pools-form-row {
-
-      display: flex;
-      justify-content: space-between;
-      & > * {
-        flex: 0 1 47%;
-      }
-      .validation-input-wrapper {
-        .form-group {
-          textarea {
-            height: 184px;
-          }
-          .entitlement-pools-form-row-threshold-value {
-            margin-top: 23px;
-            margin-left: 10px;
-            width: 189px;
-          }
-          .dropdown-multi-select .Select {
-            z-index: 1080;
-          }
-        }
-      }
-    }
+		.threshold-section {
+			display: flex;
+			justify-content: space-between;
+			.validation-input-wrapper {
+				flex: 0 0 46%;
+			}
+		}
   }
   .validation-buttons {
     padding: 20px 50px;

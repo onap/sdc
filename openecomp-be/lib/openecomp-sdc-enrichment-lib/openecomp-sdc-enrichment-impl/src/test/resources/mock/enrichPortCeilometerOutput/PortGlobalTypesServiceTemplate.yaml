@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: PortGlobalTypes
+  template_version: 1.0.0
+description: Port TOSCA Global Types
+imports:
+- common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.cp.nodes.network.Port:
+    derived_from: tosca.nodes.network.Port
+    capabilities:
+      network.incoming.bytes:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: network.incoming.bytes
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of incoming bytes
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: network
+            status: SUPPORTED

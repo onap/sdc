@@ -1,0 +1,48 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  jsa_name:
+    type: string
+  contrail_net_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_net:
+    type: OS::Neutron::Net
+    properties:
+      name: {get_param: jsa_net_name}
+      shared: True
+
+  test_contrailV2_net:
+    type: OS::ContrailV2::VirtualNetwork
+    properties:
+      name: { get_param: contrail_net_name }
+
+  test_contrail_net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: contrail_net_name }
+
+  test_nova:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: jsa_name}
+      image: image
+
+outputs:
+    shared_test_net:
+      value: {get_resource: test_net}
+    shared_test_contrailV2_net:
+      value: { list_join: [':', { get_attr: [ test_contrailV2_net, fq_name ] } ] }
+    shared_test_contrail_net:
+      value: { get_attr: [ test_contrail_net, fq_name ] }
+    shared_test_nova:
+      value: {get_resource: test_nova}
+

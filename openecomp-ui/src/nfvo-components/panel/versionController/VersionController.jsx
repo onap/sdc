@@ -1,17 +1,31 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
-import classnames from 'classnames';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-import Navbar from 'react-bootstrap/lib/Navbar.js';
-import Nav from 'react-bootstrap/lib/Nav.js';
-import ValidationInput from 'nfvo-components/input/validation/ValidationInput.jsx';
-import {actionsEnum, statusEnum} from './VersionControllerConstants.js';
+import {actionsEnum, statusEnum, statusBarTextMap } from './VersionControllerConstants.js';
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import Tooltip from 'react-bootstrap/lib/Tooltip.js';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger.js';
 
 
 class VersionController extends React.Component {
 
 	static propTypes = {
-		version: React.PropTypes.string,
+		version: React.PropTypes.object,
 		viewableVersions: React.PropTypes.array,
 		onVersionSwitching: React.PropTypes.func,
 		isCheckedOut: React.PropTypes.bool.isRequired,
@@ -23,143 +37,146 @@ class VersionController extends React.Component {
 	};
 
 	render() {
-		let {status, isCheckedOut, version = '', viewableVersions = [], onVersionSwitching, callVCAction, onSave, isFormDataValid, onClose} = this.props;
+		let {status, isCheckedOut, version = {},  viewableVersions = [], onVersionSwitching, callVCAction, onSave, isFormDataValid, onClose} = this.props;
 		let isCheckedIn = Boolean(status === statusEnum.CHECK_IN_STATUS);
-		let isLatestVersion = Boolean(version === viewableVersions[viewableVersions.length - 1]);
+		let isLatestVersion = Boolean(version.id === viewableVersions[viewableVersions.length - 1].id);
 		if (!isLatestVersion) {
 			status = statusEnum.PREVIOUS_VERSION;
 		}
-
 		return (
 			<div className='version-controller-bar'>
-				<Navbar inverse className='navbar'>
-					<Navbar.Collapse>
-						<Nav className='items-in-left'>
-							<div className='version-section'>
-								<ValidationInput
-									type='select'
-									selectedEnum={version}
-									onEnumChange={value => onVersionSwitching && onVersionSwitching(value)}>
-									{viewableVersions && viewableVersions.map(viewVersion => {
-										return (
-											<option key={viewVersion} value={viewVersion}>{`V ${viewVersion}`}</option>
-										);
-									})
-									}
-									{!viewableVersions.includes(version) &&
-									<option key={version} value={version}>{`V ${version}`}</option>}
-								</ValidationInput>
-							</div>
-							<div className='vc-status'>
-								<div className='onboarding-status-icon'></div>
-								<div className='status-text'> {i18n('ONBOARDING')}
-									<div className='status-text-dash'> -</div>
-								</div>
-								{this.renderStatus(status)}
-							</div>
-						</Nav>
-						<Nav pullRight>
-							<div className='items-in-right'>
-								<div className='action-buttons'>
-									{callVCAction &&
-									<div className='version-control-buttons'>
-										<div
-											className={classnames('vc-nav-item-button button-submit', {'disabled': !isCheckedIn || !isLatestVersion})}
-											onClick={() => this.submit(callVCAction)}>
-											{i18n('Submit')}
-										</div>
-										<div
-											className={classnames('vc-nav-item-button button-checkin-checkout', {'disabled': status === statusEnum.LOCK_STATUS || !isLatestVersion})}
-											onClick={() => this.checkinCheckoutVersion(callVCAction)}>
-											{`${isCheckedOut ? i18n('Check In') : i18n('Check Out')}`}
-										</div>
-										<div
-											className={classnames('sprite-new revert-btn ng-scope ng-isolate-scope', {'disabled': !isCheckedOut || version === '0.1' || !isLatestVersion})}
-											onClick={() => this.revertCheckout(callVCAction)}>
-										</div>
-									</div>
-									}
-									{onSave &&
-									<div
-										className={classnames('sprite-new save-btn ng-scope ng-isolate-scope', {'disabled': !isCheckedOut || !isFormDataValid || !isLatestVersion})}
-										onClick={() => onSave()}>
-									</div>
-									}
-								</div>
-								<div className='vc-nav-item-close' onClick={() => onClose && onClose()}> X</div>
-							</div>
-						</Nav>
-					</Navbar.Collapse>
-				</Navbar>
+				<div className='vc-container'>
+					<div className='version-status-container'>
+						<VersionSelector viewableVersions={viewableVersions} version={version} onVersionSwitching={onVersionSwitching} />
+						<StatusBarUpdates status={status}/>
+					</div>
+					<div className='save-submit-cancel-container'>
+						<ActionButtons onSubmit={callVCAction ? () => this.submit(callVCAction, version) : undefined}
+							onRevert={callVCAction ? () => this.revertCheckout(callVCAction, version) : undefined}
+							status={status}
+							onCheckinCheckout={callVCAction ? () => this.checkinCheckoutVersion(callVCAction, version) : undefined}
+							onSave={onSave ? () => onSave() : undefined}
+							isLatestVersion={isLatestVersion}
+							isCheckedOut={isCheckedOut}
+							isCheckedIn={isCheckedIn} isFormDataValid={isFormDataValid} version={version}/>
+						{onClose && <div className='vc-nav-item-close' onClick={() => onClose()} data-test-id='vc-cancel-btn'> X</div>}
+					</div>
+				</div>
 			</div>
 		);
 	}
 
-	renderStatus(status) {
-		switch (status) {
-			case statusEnum.CHECK_OUT_STATUS:
-				return (
-					<div className='checkout-status-icon'>
-						<div className='catalog-tile-check-in-status sprite-new checkout-editable-status-icon'></div>
-						<div className='status-text'> {i18n('CHECKED OUT')} </div>
-					</div>
-				);
-			case statusEnum.LOCK_STATUS:
-				return (
-					<div className='status-text'> {i18n('LOCKED')} </div>
-				);
-			case statusEnum.CHECK_IN_STATUS:
-				return (
-					<div className='status-text'> {i18n('CHECKED IN')} </div>
-				);
-			case statusEnum.SUBMIT_STATUS:
-				return (
-					<div className='status-text'> {i18n('SUBMITTED')} </div>
-				);
-			default:
-				return (
-					<div className='status-text'> {i18n(status)} </div>
-				);
-		}
+	submit(callVCAction, version) {
+		const action = actionsEnum.SUBMIT;
+		callVCAction(action, version);
 	}
 
-	checkinCheckoutVersion(callVCAction) {
+	revertCheckout(callVCAction, version) {
+		const action = actionsEnum.UNDO_CHECK_OUT;
+		callVCAction(action, version);
+	}
+
+	checkinCheckoutVersion(callVCAction, version) {
 		if (this.props.isCheckedOut) {
-			this.checkin(callVCAction);
+			this.checkin(callVCAction, version);
 		}
 		else {
-			this.checkout(callVCAction);
+			this.checkout(callVCAction, version);
 		}
 	}
-
-	checkin(callVCAction) {
-
+	checkin(callVCAction, version) {
 		const action = actionsEnum.CHECK_IN;
-
 		if (this.props.onSave) {
 			this.props.onSave().then(()=>{
-				 callVCAction(action);
-			 });
+				callVCAction(action, version);
+			});
 		}else{
-			callVCAction(action);
+			callVCAction(action, version);
 		}
 
 	}
-
-	checkout(callVCAction) {
+	checkout(callVCAction, version) {
 		const action = actionsEnum.CHECK_OUT;
-		callVCAction(action);
+		callVCAction(action, version);
 	}
+}
 
-	submit(callVCAction) {
-		const action = actionsEnum.SUBMIT;
-		callVCAction(action);
+class ActionButtons extends React.Component {
+	static propTypes = {
+		version: React.PropTypes.object,
+		onSubmit: React.PropTypes.func,
+		onRevert: React.PropTypes.func,
+		onSave: React.PropTypes.func,
+		isLatestVersion: React.PropTypes.bool,
+		isCheckedIn: React.PropTypes.bool,
+		isCheckedOut: React.PropTypes.bool,
+		isFormDataValid: React.PropTypes.bool
+	};
+	render() {
+		const {onSubmit, onRevert, onSave, isLatestVersion, isCheckedIn, isCheckedOut, isFormDataValid, version, status, onCheckinCheckout} = this.props;
+		const [checkinBtnIconSvg, checkinCheckoutBtnTitle] = status === statusEnum.CHECK_OUT_STATUS ?
+			['version-controller-lock-open', i18n('Check In')] :
+			['version-controller-lock-closed', i18n('Check Out')];
+		const disabled = (isLatestVersion && onCheckinCheckout && status !== statusEnum.LOCK_STATUS) ? false : true;
+		return (
+			<div className='action-buttons'>
+				<VCButton dataTestId='vc-checkout-btn' onClick={onCheckinCheckout} isDisabled={disabled}
+					name={checkinBtnIconSvg} tooltipText={checkinCheckoutBtnTitle}/>
+				{onSubmit && onRevert &&
+					<div className='version-control-buttons'>
+						<VCButton dataTestId='vc-submit-btn' onClick={onSubmit}  isDisabled={!isCheckedIn || !isLatestVersion}
+							name='version-controller-submit' tooltipText={i18n('Submit')}/>
+						<VCButton dataTestId='vc-revert-btn' onClick={onRevert} isDisabled={!isCheckedOut || version.label === '0.1' || !isLatestVersion}
+							name='version-controller-revert' tooltipText={i18n('Revert')}/>
+					</div>
+				}
+				{onSave &&
+					<VCButton dataTestId='vc-save-btn' onClick={() => onSave()} isDisabled={!isCheckedOut || !isFormDataValid || !isLatestVersion}
+						name='version-controller-save'  tooltipText={i18n('Save')}/>
+				}
+			</div>
+		);
 	}
+}
 
-	revertCheckout(callVCAction) {
-		const action = actionsEnum.UNDO_CHECK_OUT;
-		callVCAction(action);
-	}
+function StatusBarUpdates({status}) {
+	return (
+		<div className='vc-status'>
+			<span className='status-text'>{i18n(statusBarTextMap[status])}</span>
+		</div>
+	);
+}
+
+function VCButton({name, tooltipText, isDisabled, onClick, dataTestId}) {
+	let onClickAction = isDisabled ? ()=>{} : onClick;
+	let disabled = isDisabled ? 'disabled' : '';
+
+	return (
+		<OverlayTrigger placement='top' overlay={<Tooltip id='vc-tooltip'>{tooltipText}</Tooltip>}>
+			<div disabled={disabled} className='action-buttons-svg'>
+				<SVGIcon data-test-id={dataTestId} iconClassName={disabled} onClick={onClickAction ? onClickAction : undefined} name={name}/>
+			</div>
+		</OverlayTrigger>
+	);
+}
+
+function VersionSelector(props) {
+	let {version = {}, viewableVersions = [], onVersionSwitching} = props;
+	const includedVersions = viewableVersions.filter(ver => {return ver.id === version.id;});
+	return (<div className='version-section-wrapper'>
+		<select className='version-selector'
+			onChange={ev => onVersionSwitching && onVersionSwitching({id: ev.target.value, label: ev.target.value})}
+			value={version.label}>
+				{viewableVersions && viewableVersions.map(viewVersion => {
+					return (
+						<option key={viewVersion.id} value={viewVersion.id} data-test-id='vc-version-option'>{`V ${viewVersion.label}`}</option>
+					);
+				})
+				}
+				{!includedVersions.length &&
+				<option key={version.id} value={version.id}>{`V ${version.label}`}</option>}
+		</select>
+	</div>);
 }
 
 export default VersionController;

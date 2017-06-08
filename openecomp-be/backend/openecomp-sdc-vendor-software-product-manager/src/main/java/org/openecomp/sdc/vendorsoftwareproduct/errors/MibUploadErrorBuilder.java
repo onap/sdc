@@ -22,10 +22,10 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
-/**
- * The type Mib upload error builder.
- */
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.MIB_UPLOAD_INVALID;
+
 public class MibUploadErrorBuilder extends BaseErrorBuilder {
   private static final String UPLOAD_INVALID_DETAILED_MSG =
       "MIB uploaded for vendor software product with Id %s and version %s is invalid: %s";
@@ -38,12 +38,11 @@ public class MibUploadErrorBuilder extends BaseErrorBuilder {
    * @param version                 the version
    * @param error                   the error
    */
-  public MibUploadErrorBuilder(String vendorSoftwareProductId, org.openecomp.sdc.versioning.dao
-      .types.Version version, String error) {
-    getErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.MIB_UPLOAD_INVALID);
+  public MibUploadErrorBuilder(String vendorSoftwareProductId, Version version, String error) {
+    getErrorCodeBuilder().withId(MIB_UPLOAD_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
-    getErrorCodeBuilder().withMessage(String
-        .format(UPLOAD_INVALID_DETAILED_MSG, vendorSoftwareProductId, version.toString(), error));
+    getErrorCodeBuilder().withMessage(String.format(UPLOAD_INVALID_DETAILED_MSG,
+        vendorSoftwareProductId, version == null ? null : version.toString(), error));
   }
 
   /**
@@ -52,7 +51,7 @@ public class MibUploadErrorBuilder extends BaseErrorBuilder {
    * @param errorMessage the error message
    */
   public MibUploadErrorBuilder(String errorMessage) {
-    getErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.MIB_UPLOAD_INVALID);
+    getErrorCodeBuilder().withId(MIB_UPLOAD_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(errorMessage);
   }

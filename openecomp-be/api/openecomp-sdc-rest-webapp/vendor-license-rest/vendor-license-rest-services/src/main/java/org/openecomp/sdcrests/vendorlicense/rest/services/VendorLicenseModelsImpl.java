@@ -20,6 +20,13 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.messages.AuditMessages;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
@@ -32,16 +39,15 @@ import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelRequestDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
-
+import java.util.Collection;
 
 @Named
 @Service("vendorLicenseModels")
@@ -49,27 +55,42 @@ import javax.ws.rs.core.Response;
 @Validated
 public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
   @Autowired
   private VendorLicenseManager vendorLicenseManager;
+  private static final Logger logger =
+          LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
 
-  @Override
-  public Response listLicenseModels(String versionFilter, String user) {
-    Collection<VersionedVendorLicenseModel> versionedVendorLicenseModels =
-        vendorLicenseManager.listVendorLicenseModels(versionFilter, user);
+    @Override
+    public Response listLicenseModels(String versionFilter, String user) {
 
-    GenericCollectionWrapper<VendorLicenseModelEntityDto> results =
-        new GenericCollectionWrapper<>();
-    MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto outputMapper =
-        new MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto();
-    for (VersionedVendorLicenseModel versionedVlm : versionedVendorLicenseModels) {
-      results.add(outputMapper.applyMapping(versionedVlm, VendorLicenseModelEntityDto.class));
+        mdcDataDebugMessage.debugEntryMessage(null, null);
+        MdcUtil.initMdc(LoggerServiceName.List_VLM.toString());
+        Collection<VersionedVendorLicenseModel> versionedVendorLicenseModels =
+                vendorLicenseManager.listVendorLicenseModels(versionFilter, user);
+
+        GenericCollectionWrapper<VendorLicenseModelEntityDto> results =
+                new GenericCollectionWrapper<>();
+        MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto outputMapper =
+                new MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto();
+        for (VersionedVendorLicenseModel versionedVlm : versionedVendorLicenseModels) {
+            results.add(outputMapper.applyMapping(versionedVlm, VendorLicenseModelEntityDto.class));
+        }
+
+        mdcDataDebugMessage.debugExitMessage(null, null);
+
+        return Response.ok(results).build();
     }
 
-    return Response.ok(results).build();
-  }
+    @Override
+    public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
 
-  @Override
-  public Response createLicenseModel(VendorLicenseModelRequestDto request, String user) {
+        mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VLM
+            + request.getVendorName());
+
+    MdcUtil.initMdc(LoggerServiceName.Create_VLM.toString());
     VendorLicenseModelEntity vendorLicenseModelEntity =
         new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
             .applyMapping(request, VendorLicenseModelEntity.class);
@@ -78,58 +99,95 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     StringWrapperResponse result = createdVendorLicenseModel != null ? new StringWrapperResponse(
         createdVendorLicenseModel.getId()) : null;
 
-    return Response.ok(result).build();
-  }
+        mdcDataDebugMessage.debugExitMessage(null, null);
 
-  @Override
-  public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId,
-                                     String user) {
-    VendorLicenseModelEntity vendorLicenseModelEntity =
-        new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
-            .applyMapping(request, VendorLicenseModelEntity.class);
-    vendorLicenseModelEntity.setId(vlmId);
+        return Response.ok(result).build();
+    }
 
-    vendorLicenseManager.updateVendorLicenseModel(vendorLicenseModelEntity, user);
-    return Response.ok().build();
-  }
+    @Override
+    public Response updateLicenseModel(VendorLicenseModelRequestDto request, String vlmId,
+                                       String versionId, String user) {
 
-  @Override
-  public Response getLicenseModel(String vlmId, String version, String user) {
-    VersionedVendorLicenseModel versionedVlm =
-        vendorLicenseManager.getVendorLicenseModel(vlmId, Version.valueOf(version), user);
+        mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
 
-    VendorLicenseModelEntityDto vlmDto = versionedVlm == null ? null :
-        new MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto()
-            .applyMapping(versionedVlm, VendorLicenseModelEntityDto.class);
-    return Response.ok(vlmDto).build();
-  }
+        MdcUtil.initMdc(LoggerServiceName.Update_VLM.toString());
+        VendorLicenseModelEntity vendorLicenseModelEntity =
+                new MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity()
+                        .applyMapping(request, VendorLicenseModelEntity.class);
+        vendorLicenseModelEntity.setId(vlmId);
 
-  @Override
-  public Response deleteLicenseModel(String vlmId, String user) {
-    vendorLicenseManager.deleteVendorLicenseModel(vlmId, user);
-    return Response.ok().build();
-  }
+        vendorLicenseManager.updateVendorLicenseModel(vendorLicenseModelEntity, user);
 
-  @Override
-  public Response actOnLicenseModel(VendorLicenseModelActionRequestDto request, String vlmId,
-                                    String user) {
+        mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response getLicenseModel(String vlmId, String versionId, String user) {
+
+        mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
+
+        MdcUtil.initMdc(LoggerServiceName.Get_VLM.toString());
+        VersionedVendorLicenseModel versionedVlm =
+                vendorLicenseManager.getVendorLicenseModel(vlmId, Version.valueOf(versionId), user);
+
+        VendorLicenseModelEntityDto vlmDto = versionedVlm == null ? null :
+                new MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto()
+                        .applyMapping(versionedVlm, VendorLicenseModelEntityDto.class);
+
+        mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+
+        return Response.ok(vlmDto).build();
+    }
+
+    @Override
+    public Response deleteLicenseModel(String vlmId, String versionId, String user) {
+
+        mdcDataDebugMessage.debugEntryMessage("VLM id", vlmId);
+
+        MdcUtil.initMdc(LoggerServiceName.Delete_VLM.toString());
+        vendorLicenseManager.deleteVendorLicenseModel(vlmId, user);
+
+        mdcDataDebugMessage.debugExitMessage("VLM id", vlmId);
+
+        return Response.ok().build();
+    }
+
+    @Override
+    public Response actOnLicenseModel(VendorLicenseModelActionRequestDto request, String vlmId,
+                                      String versionId, String user) {
 
     switch (request.getAction()) {
       case Checkout:
+        MDC.put(LoggerConstants.SERVICE_NAME,
+            LoggerServiceName.Checkout_VLM.toString());
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_OUT_VLM
+                + vlmId);
         vendorLicenseManager.checkout(vlmId, user);
         break;
       case Undo_Checkout:
+        MDC.put(LoggerConstants.SERVICE_NAME,
+            LoggerServiceName.Undo_Checkout_VLM.toString());
         vendorLicenseManager.undoCheckout(vlmId, user);
         break;
       case Checkin:
+        MDC.put(LoggerConstants.SERVICE_NAME,
+            LoggerServiceName.Checkin_VLM.toString());
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CHECK_IN_VLM
+                + vlmId);
         vendorLicenseManager.checkin(vlmId, user);
         break;
       case Submit:
+        MDC.put(LoggerConstants.SERVICE_NAME,
+            LoggerServiceName.Submit_VLM.toString());
+        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.SUBMIT_VLM
+                + vlmId);
         vendorLicenseManager.submit(vlmId, user);
         break;
       default:
     }
 
-    return Response.ok().build();
-  }
+        return Response.ok().build();
+    }
 }

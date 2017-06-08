@@ -1,0 +1,20 @@
+{
+  "create": {
+    "item": "CREATE TABLE IF NOT EXISTS item (item_id text primary key, item_info text, creation_time timestamp, modification_time timestamp)",
+    "version": "CREATE TABLE IF NOT EXISTS version (space text, item_id text, version_id text,base_version_id text,info text,relations text,creation_time timestamp,modification_time timestamp,PRIMARY KEY (( space, item_id ), version_id))",
+    "version_elements": "CREATE TABLE IF NOT EXISTS version_elements (space text,item_id text,version_id text,element_ids set<text>,PRIMARY KEY (( space, item_id, version_id )))",
+    "element_namespace": "CREATE TABLE IF NOT EXISTS element_namespace (space text, item_id text, element_id text, namespace text, PRIMARY KEY ((space, item_id, element_id)))",
+    "element": "CREATE TABLE IF NOT EXISTS element (space text,item_id text,version_id text,element_id text,parent_id text,namespace text,info text,relations text,data blob,searchable_data blob,visualization blob,sub_element_ids set<text>,PRIMARY KEY (( space, item_id, version_id, element_id )))"
+  },
+  "drop": {
+    "item": "DROP TABLE IF EXISTS item",
+    "version": "DROP TABLE IF EXISTS version",
+    "version_elements": "DROP TABLE IF EXISTS version_elements",
+    "element_namespace": "DROP TABLE IF EXISTS element_namespace",
+    "element": "DROP TABLE IF EXISTS element"
+  },
+  "alter": {
+  },
+  "actions": {
+  }
+}

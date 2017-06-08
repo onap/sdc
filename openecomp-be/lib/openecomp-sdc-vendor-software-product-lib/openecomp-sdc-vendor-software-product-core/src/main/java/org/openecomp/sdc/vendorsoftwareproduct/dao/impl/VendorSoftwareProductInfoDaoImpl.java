@@ -30,6 +30,7 @@ import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
@@ -71,13 +72,39 @@ public class VendorSoftwareProductInfoDaoImpl extends CassandraBaseDao<VspDetail
     return accessor.listAll().all();
   }
 
+  @Override
+  public void updateOldVersionIndication(VspDetails vspDetails) {
+
+  }
+
+  @Override
+  public void updateQuestionnaireData(String vspId, Version version,
+                                      String questionnaireData) {
+
+  }
+
+  @Override
+  public String getQuestionnaireData(String vspId, Version version) {
+    return null;
+  }
+
+  @Override
+  public VspQuestionnaireEntity getQuestionnaire(String vspId, Version version) {
+    return null;
+  }
+
+  @Override
+  public void deleteAll(String vspId, Version version) {
+
+  }
+
+
   @Accessor
   interface VendorSoftwareProductInfoAccessor {
 
     @Query(
-        "SELECT vsp_id,version,name,description,icon,category,sub_category,vendor_id,"
-            + "vlm_version,license_agreement,feature_groups FROM vsp_information")
+        "SELECT vsp_id,version,name,description,icon,category,sub_category,vendor_id,vlm_version,"
+            + "license_agreement,feature_groups, is_old_version FROM vsp_information")
     Result<VspDetails> listAll();
-
   }
 }

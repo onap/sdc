@@ -44,9 +44,9 @@ Usage -
 
 	Exmample for a valid output:
 
-		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: ABC, locked by: None, status not started
 		Service VSP-OK was tested and does not need a migration
-		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: OPENECOMP, locked by: cs0008, status not started
+		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: ABC, locked by: cs0008, status not started
 		Server Error
 		Service VSP02-Checkout was tested and it needs a migration
 		Service VSP02 - Migration start
@@ -59,9 +59,9 @@ Usage -
 		done upload
 		Doing new checkin
 		Service VSP-EMPTY - Migration end
-		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: ABC, locked by: None, status not started
 		Service VSP-EMPTY was tested and does not need a migration
-		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: ABC, locked by: None, status not started
 		Server Error
 		Service VSP01 was tested and it needs a migration
 		Service VSP-EMPTY - Migration start
@@ -76,13 +76,13 @@ Usage -
 
 	Example for a case with no migration needed:
 
-		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP-OK, Id: 9DB0E1563B22481D911ECD33989E1FDD, Vendor: ABC, locked by: None, status not started
 		Service VSP-OK was tested and does not need a migration
-		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP02-Checkout, Id: 8DF8D65535414AAAA23682E2532675E6, Vendor: ABC, locked by: None, status not started
 		Service VSP02-Checkout was tested and does not need a migration
-		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP-EMPTY, Id: D26892D2839746E18075EF49C4586320, Vendor: ABC, locked by: None, status not started
 		Service VSP-EMPTY was tested and does not need a migration
-		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: OPENECOMP, locked by: None, status not started
+		Name: VSP01, Id: 98F5DDFD4F684086801E86A88A0D77AB, Vendor: ABC, locked by: None, status not started
 		Service VSP01 was tested and does not need a migration
 
 

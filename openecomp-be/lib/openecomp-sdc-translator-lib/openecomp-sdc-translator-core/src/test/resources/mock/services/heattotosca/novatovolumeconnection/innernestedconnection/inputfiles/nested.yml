@@ -71,6 +71,10 @@ parameters:
     type: string
     label: CMAUI vm volume type
     description: the name of the target volume backend
+  inner_cmaui_volume_b3:
+    type: comma_delimited_list
+
+
 
 resources:
 
@@ -106,6 +110,12 @@ resources:
      properties:
        volume_id: {get_param: inner_cmaui_volume_b2}
        instance_uuid: {get_resource: server_cmaui2}
+
+  cmaui_volume_attachment4:
+     type: OS::Cinder::VolumeAttachment
+     properties:
+       volume_id: {get_param: inner_cmaui_volume_b3}
+       instance_uuid: {get_resource: server_cmaui1}
 
   server_cmaui1:
     type: OS::Nova::Server

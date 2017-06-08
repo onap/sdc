@@ -86,12 +86,14 @@ public class LicenseAgreementEntity implements VersionableEntity {
     return getVendorLicenseModelId();
   }
 
-  public String getVendorLicenseModelId() {
-    return vendorLicenseModelId;
+  @Override
+  public String getId() {
+    return id;
   }
 
-  public void setVendorLicenseModelId(String vendorLicenseModelId) {
-    this.vendorLicenseModelId = vendorLicenseModelId;
+  @Override
+  public void setId(String id) {
+    this.id = id;
   }
 
   @Override
@@ -104,14 +106,12 @@ public class LicenseAgreementEntity implements VersionableEntity {
     this.version = version;
   }
 
-  @Override
-  public String getId() {
-    return id;
+  public String getVendorLicenseModelId() {
+    return vendorLicenseModelId;
   }
 
-  @Override
-  public void setId(String id) {
-    this.id = id;
+  public void setVendorLicenseModelId(String vendorLicenseModelId) {
+    this.vendorLicenseModelId = vendorLicenseModelId;
   }
 
   public String getName() {
@@ -156,6 +156,12 @@ public class LicenseAgreementEntity implements VersionableEntity {
   }
 
   @Override
+  public int hashCode() {
+    return Objects.hash(vendorLicenseModelId, version, id, name, description, licenseTerm,
+        requirementsAndConstrains, featureGroupIds);
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -172,11 +178,5 @@ public class LicenseAgreementEntity implements VersionableEntity {
         && Objects.equals(licenseTerm, that.licenseTerm)
         && Objects.equals(requirementsAndConstrains, that.requirementsAndConstrains)
         && Objects.equals(featureGroupIds, that.featureGroupIds);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(vendorLicenseModelId, version, id, name, description, licenseTerm,
-        requirementsAndConstrains, featureGroupIds);
   }
 }

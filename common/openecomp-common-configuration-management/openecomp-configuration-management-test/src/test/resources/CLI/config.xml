@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+        <name>
+            <maxlength>28</maxlength>
+        </name>
+        <extension>gz,tgz</extension>
+        <supportedencryption>Base64</supportedencryption>
+        <status>deleted</status>
+        <mandatory>
+            <name>true</name>
+        </mandatory>
+        <_config>
+            <namespace>OPENECOMP:CLI</namespace>
+            <mergeStrategy>merge</mergeStrategy>
+        </_config>
+    </artifact>
+</configuration>

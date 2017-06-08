@@ -2,23 +2,25 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  NeutronPortGlobalTypes:
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- NeutronPortGlobalTypes:
     file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
+- NeutronNetGlobalTypes:
     file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
+- CommonGlobalTypes:
     file: CommonGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
+- CinderVolumeGlobalTypes:
     file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
+- ContrailNetworkRuleGlobalType:
     file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
+- NeutronSecurityRulesGlobalTypes:
     file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
+- NovaServerGlobalTypes:
     file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
+- ContrailVirtualNetworkGlobalType:
     file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
+- AbstractSubstituteGlobalTypes:
     file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui_image:
@@ -288,19 +290,19 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   relationship_templates:
     cmaui_volume_attachment2:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id:
           get_input: cmaui_volume_param2
         instance_uuid: server_cmaui1
     cmaui_volume_attachment3:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id:
           get_input: cmaui_volume_param2
         instance_uuid: server_cmaui2
     cmaui_volume_attachment1:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id:
           get_input: cmaui_volume_param1

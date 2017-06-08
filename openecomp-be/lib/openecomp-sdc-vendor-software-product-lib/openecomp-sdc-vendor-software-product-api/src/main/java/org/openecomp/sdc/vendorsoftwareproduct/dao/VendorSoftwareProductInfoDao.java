@@ -22,9 +22,19 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao;
 
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
+import org.openecomp.sdc.versioning.dao.types.Version;
 
 public interface VendorSoftwareProductInfoDao extends VersionableDao, BaseDao<VspDetails> {
 
-//    void updateLastModificationTime(VspDetails entity);
+  void updateOldVersionIndication(VspDetails vspDetails);
+
+  void updateQuestionnaireData(String vspId, Version version, String questionnaireData);
+
+  String getQuestionnaireData(String vspId, Version version);
+
+  VspQuestionnaireEntity getQuestionnaire(String vspId, Version version);
+
+  void deleteAll(String vspId, Version version);
 }

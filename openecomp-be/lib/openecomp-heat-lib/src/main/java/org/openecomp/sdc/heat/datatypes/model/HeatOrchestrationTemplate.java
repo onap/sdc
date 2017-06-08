@@ -36,8 +36,8 @@ public class HeatOrchestrationTemplate {
     return heat_template_version;
   }
 
-  public void setHeat_template_version(String heatTemplateVersion) {
-    this.heat_template_version = heatTemplateVersion;
+  public void setHeat_template_version(String heat_template_version) {
+    this.heat_template_version = heat_template_version;
   }
 
   public String getDescription() {
@@ -52,8 +52,8 @@ public class HeatOrchestrationTemplate {
     return parameter_groups;
   }
 
-  public void setParameter_groups(List<ParameterGroup> parameterGroups) {
-    this.parameter_groups = parameterGroups;
+  public void setParameter_groups(List<ParameterGroup> parameter_groups) {
+    this.parameter_groups = parameter_groups;
   }
 
   public Map<String, Parameter> getParameters() {

@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.NCB1:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -646,9 +622,19 @@ topology_template:
     VLC2_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc2-oam-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_id
       requirements:
@@ -677,6 +663,15 @@ topology_template:
     NCB1_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: ncb1-Internal1-mac
         network: Internal1-net
@@ -692,6 +687,15 @@ topology_template:
     VLC2_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: vlc2-Internal2-mac
         network: Internal2-net
@@ -707,6 +711,15 @@ topology_template:
     NCB1_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: ncb1-Internal2-mac
         network: Internal2-net
@@ -722,6 +735,15 @@ topology_template:
     VLC2_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: vlc2-Internal1-mac
         network: Internal1-net
@@ -737,9 +759,18 @@ topology_template:
     VLC2_GTP:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc2-gtp-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-gtp-net
       requirements:
       - link:
@@ -788,9 +819,19 @@ topology_template:
     FSB1_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: fsb1-oam-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_id
       requirements:
@@ -842,6 +883,15 @@ topology_template:
     GPB2_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: gpb2-Internal1-mac
         network: Internal1-net
@@ -857,6 +907,15 @@ topology_template:
     GPB2_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: gpb2-Internal2-mac
         network: Internal2-net
@@ -883,6 +942,15 @@ topology_template:
     NCB2_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: ncb2-Internal2-mac
         network: Internal2-net
@@ -898,6 +966,15 @@ topology_template:
     NCB2_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: ncb2-Internal1-mac
         network: Internal1-net
@@ -952,6 +1029,15 @@ topology_template:
     VLC1_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: vlc1-Internal1-mac
         network: Internal1-net
@@ -985,6 +1071,15 @@ topology_template:
     VLC1_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: vlc1-Internal2-mac
         network: Internal2-net
@@ -1000,9 +1095,18 @@ topology_template:
     VLC1_SCTP_B:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc1-sctp-b-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-sctp-b-net
       requirements:
       - link:
@@ -1016,9 +1120,18 @@ topology_template:
     VLC2_SCTP_B:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc2-sctp-b-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-sctp-b-net
       requirements:
       - link:
@@ -1032,9 +1145,18 @@ topology_template:
     VLC1_SCTP_A:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc1-sctp-a-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-sctp-a-net
       requirements:
       - link:
@@ -1048,9 +1170,18 @@ topology_template:
     VLC2_SCTP_A:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc2-sctp-a-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-sctp-a-net
       requirements:
       - link:
@@ -1075,6 +1206,15 @@ topology_template:
     FSB1_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: fsb1-Internal2-mac
         network: Internal2-net
@@ -1101,6 +1241,15 @@ topology_template:
     FSB1_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: fsb1-Internal1-mac
         network: Internal1-net
@@ -1116,6 +1265,15 @@ topology_template:
     FSB2_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: fsb2-Internal2-mac
         network: Internal2-net
@@ -1131,6 +1289,15 @@ topology_template:
     FSB2_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: fsb2-Internal1-mac
         network: Internal1-net
@@ -1146,9 +1313,19 @@ topology_template:
     VLC1_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc1-oam-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_id
       requirements:
@@ -1199,9 +1376,18 @@ topology_template:
     VLC1_GTP:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: vlc1-gtp-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: epc-gtp-net
       requirements:
       - link:
@@ -1215,9 +1401,19 @@ topology_template:
     FSB2_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         fixed_ips:
         - ip_address:
             get_input: fsb2-oam-ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_id
       requirements:
@@ -1228,6 +1424,15 @@ topology_template:
     GPB1_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: gpb1-Internal2-mac
         network: Internal2-net
@@ -1243,6 +1448,15 @@ topology_template:
     GPB1_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: true
         mac_address:
           get_input: gpb1-Internal1-mac
         network: Internal1-net
@@ -1256,7 +1470,7 @@ topology_template:
           node: GPB1
           relationship: tosca.relationships.network.BindsTo
   groups:
-    vmme_small:
+    vmme_small_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/vmme_small.yml

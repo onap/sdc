@@ -20,17 +20,16 @@
 
 package org.openecomp.core.model.types;
 
+
 public class ServiceTemplate extends ServiceElement {
   private String baseName;
 
   public ServiceTemplate() {
   }
 
-
   public String getBaseName() {
     return baseName;
   }
-
 
   public void setBaseName(String baseName) {
     this.baseName = baseName;

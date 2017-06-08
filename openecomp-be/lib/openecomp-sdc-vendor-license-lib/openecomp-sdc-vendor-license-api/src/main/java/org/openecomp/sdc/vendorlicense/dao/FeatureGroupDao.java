@@ -24,9 +24,19 @@ import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.FeatureGroupEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
+import java.util.Collection;
 import java.util.Set;
 
+
 public interface FeatureGroupDao extends VersionableDao, BaseDao<FeatureGroupEntity> {
+
+    void delete(FeatureGroupEntity featureGroup);
+
+    void create(FeatureGroupEntity featureGroup);
+
+    FeatureGroupEntity get(FeatureGroupEntity entity);
+
+    Collection<FeatureGroupEntity> list(FeatureGroupEntity entity);
 
   long count(FeatureGroupEntity featureGroup);
 

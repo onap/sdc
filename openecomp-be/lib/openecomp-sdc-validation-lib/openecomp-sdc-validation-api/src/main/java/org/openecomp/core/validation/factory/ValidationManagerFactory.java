@@ -24,6 +24,7 @@ import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.core.validation.api.ValidationManager;
 
+
 public abstract class ValidationManagerFactory extends AbstractComponentFactory<ValidationManager> {
 
   public static ValidationManagerFactory getInstance() {

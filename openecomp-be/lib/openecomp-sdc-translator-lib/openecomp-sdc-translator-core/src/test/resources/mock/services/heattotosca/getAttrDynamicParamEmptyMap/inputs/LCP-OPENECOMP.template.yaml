@@ -1,0 +1,364 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Template to take OPENECOMP input parameters and produce outputs
+  in the desired format for the underlying LCP HOT template files.
+
+parameters:
+
+  backup_file:
+    type: string
+    description: |
+      <cURL path>/<backup file>
+      This is only used for restore (aka "disaster recovery").
+      The value only needs to go to the OAM pair.
+      Note that there is a 255 character limit on this value.
+
+  default_action:
+    type: string
+    description: |
+      Default action for all VMs. This may be overridden for
+      specific VM groups, pairs or VMs via the ENV file.
+
+  cloud_name_delimiter:
+    type: string
+    description: |
+      Separator used between parts of a cloud resource name
+      (e.g. between the stack ID and the rest of the name).
+
+  install_config:
+    type: string
+    description: JSON formatted string of install config values.
+
+  int_vlan_id:
+    type: string
+    description: Optional VLAN ID associated with the internal network.
+    default: ""
+
+  lcm_keypair:
+    type: string
+    description: Keypair used for lifecycle management access.
+    constraints:
+      - custom_constraint: nova.keypair
+
+  ssh_access_key:
+    type: string
+    description: |
+      Optional SSH public key value for lifecycle management
+      administrative access.
+
+  v4_dns_server:
+    type: string
+    description: (optional) IPV4 DNS server.
+    default: ""
+
+  v6_dns_server:
+    type: string
+    description: (optional) IPV6 DNS server.
+    default: ""
+
+  v4_enum_server:
+    type: string
+    description: (optional) IPV4 ENUM server.
+    default: ""
+
+  v6_enum_server:
+    type: string
+    description: (optional) IPV6 ENUM server.
+    default: ""
+
+  v4_ntp_server:
+    type: string
+    description: (optional) IPV4 NTP server.
+    default: ""
+
+  v6_ntp_server:
+    type: string
+    description: (optional) IPV6 NTP server.
+    default: ""
+
+  net_types:
+    type: comma_delimited_list
+    description: CDL of subnet tags.
+    default: []
+
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance.
+    default: ""
+
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance.
+    default: ""
+
+  vnf_module_id:
+    type: string
+    description: Unique ID for this VNF Module instance.
+    default: ""
+
+  vnf_module_name:
+    type: string
+    description: Unique name for this VNF module instance.
+    default: ""
+
+  net_ids:
+    type: json
+    description: Map NET types to the list of NET IDs.
+
+  subnet_ids:
+    type: json
+    description: Map NET types to the list of subnet IDs.
+
+  cidrs:
+    type: json
+    description: Map NET types to the list of CIDR values.
+
+  default_gateways:
+    type: json
+    description: Map NET types to the list of default gateways.
+
+  vmtype_count:
+    type: number
+    description: Number of supported VM types.
+    default: 1
+
+  vmtype_list:
+    type: comma_delimited_list
+    description: List of VM type tags.
+    default: []
+
+  vm_counts:
+    type: json
+    description: |
+      Maps VM type tags to the number of pairs of that type.
+    default: {}
+
+  vm_info:
+    type: json
+    description: Provides keys into type-specific parameters and vnic info.
+    default: {}
+
+  availability_zones:
+    type: comma_delimited_list
+    description: CDL of availability zones.
+
+  images:
+    type: json
+    description: Maps VM type tags to the image ID for that type.
+    default: {}
+
+  flavors:
+    type: json
+    description: Maps VM type tags to the flavor ID for that type.
+    default: {}
+
+  ip_lists:
+    type: json
+    description: Maps IP list parameter names to the list.
+
+  name_lists:
+    type: json
+    description: Maps VM type tags to the list of VM names for that type.
+
+  # This parameter should always be defaulted.
+  count_str_list:
+    type: comma_delimited_list
+    description: List of 2 digit list indexes.
+    default: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"]
+
+  # This parameter should always be defaulted.
+  null2zero:
+    type: json
+    default: {"": "0"}
+
+resources:
+
+  GROUPINFO:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: vmtype_count}
+      resource_def:
+        type: LCP-ATTGRP.template.yaml
+        properties:
+          vmtype_index: '%index%'
+          vmtype_list: {get_param: vmtype_list}
+          vm_info: {get_param: vm_info}
+          availability_zones: {get_param: availability_zones}
+          flavors: {get_param: flavors}
+          name_lists: {get_param: name_lists}
+
+  GROUPXLATE:
+    depends_on:
+      - GROUPINFO
+    type: LCP-XlateL2J.template.yaml
+    properties:
+      info: {get_attr: [GROUPINFO, vmtype_info]}
+
+outputs:
+
+  backup_file:
+    description: |
+      <cURL path>/<backup file>
+      This is only used for restore (aka "disaster recovery").
+      The value only needs to go to the OAM pair.
+      Note that there is a 255 character limit on this value.
+    value: {get_param: backup_file}
+
+  default_action:
+    description: |
+      Default action for all VMs. This may be overridden for
+      specific VM groups, pairs or VMs via the ENV file.
+    value: {get_param: default_action}
+
+  install_config:
+    description: JSON formatted string of install config values.
+    value: {get_param: install_config}
+
+  lcm_keypair:
+    description: Keypair used for lifecycle management access.
+    value: {get_param: lcm_keypair}
+
+  ssh_access_key:
+    description: |
+      Optional SSH public key value for lifecycle management
+      administrative access.
+    value: {get_param: ssh_access_key}
+
+  ext_net_info:
+    description: External network info.
+    value:
+      str_replace:
+        template: {str_replace: { template: "{ $val }", params: {
+          $val: {list_join: [',', {repeat: {template: "\"$tag<%idx%>\": { \"id\": \"$net<%idx%>\", \"subnet_id\": \"$subnet<%idx%>\", \"cidr\": \"$cidr<%idx%>\", \"default_gateway\": \"$defgw<%idx%>\" }", for_each: {<%idx%>: {get_param: count_str_list}}}}]} }}}
+        params:
+          $tag00: {get_param: [net_types, 0]}
+          $net00: {get_param: [net_ids, {get_param: [net_types, 0]}]}
+          $subnet00: {get_param: [subnet_ids, {get_param: [net_types, 0]}]}
+          $cidr00: {get_param: [cidrs, {get_param: [net_types, 0]}]}
+          $defgw00: {get_param: [default_gateways, {get_param: [net_types, 0]}]}
+          $tag01: {get_param: [net_types, 1]}
+          $net01: {get_param: [net_ids, {get_param: [net_types, 1]}]}
+          $subnet01: {get_param: [subnet_ids, {get_param: [net_types, 1]}]}
+          $cidr01: {get_param: [cidrs, {get_param: [net_types, 1]}]}
+          $defgw01: {get_param: [default_gateways, {get_param: [net_types, 1]}]}
+          $tag02: {get_param: [net_types, 2]}
+          $net02: {get_param: [net_ids, {get_param: [net_types, 2]}]}
+          $subnet02: {get_param: [subnet_ids, {get_param: [net_types, 2]}]}
+          $cidr02: {get_param: [cidrs, {get_param: [net_types, 2]}]}
+          $defgw02: {get_param: [default_gateways, {get_param: [net_types, 2]}]}
+          $tag03: {get_param: [net_types, 3]}
+          $net03: {get_param: [net_ids, {get_param: [net_types, 3]}]}
+          $subnet03: {get_param: [subnet_ids, {get_param: [net_types, 3]}]}
+          $cidr03: {get_param: [cidrs, {get_param: [net_types, 3]}]}
+          $defgw03: {get_param: [default_gateways, {get_param: [net_types, 3]}]}
+          $tag04: {get_param: [net_types, 4]}
+          $net04: {get_param: [net_ids, {get_param: [net_types, 4]}]}
+          $subnet04: {get_param: [subnet_ids, {get_param: [net_types, 4]}]}
+          $cidr04: {get_param: [cidrs, {get_param: [net_types, 4]}]}
+          $defgw04: {get_param: [default_gateways, {get_param: [net_types, 4]}]}
+          $tag05: {get_param: [net_types, 5]}
+          $net05: {get_param: [net_ids, {get_param: [net_types, 5]}]}
+          $subnet05: {get_param: [subnet_ids, {get_param: [net_types, 5]}]}
+          $cidr05: {get_param: [cidrs, {get_param: [net_types, 5]}]}
+          $defgw05: {get_param: [default_gateways, {get_param: [net_types, 5]}]}
+
+  total_vm_pairs:
+    description: |
+      String that will evaluate to the total number of VM pairs.
+    value:
+      str_replace:
+        template: {list_join: ['+', {repeat: {template: "$v<%vidx%>$z<%vidx%>",
+for_each: {<%vidx%>: {get_param: count_str_list}}}}]}
+        params:
+          $v00: {get_param: [vm_counts, {get_param: [vmtype_list, 0]}]}
+          $z00: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 0]}]}]}
+          $v01: {get_param: [vm_counts, {get_param: [vmtype_list, 1]}]}
+          $z01: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 1]}]}]}
+          $v02: {get_param: [vm_counts, {get_param: [vmtype_list, 2]}]}
+          $z02: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 2]}]}]}
+          $v03: {get_param: [vm_counts, {get_param: [vmtype_list, 3]}]}
+          $z03: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 3]}]}]}
+          $v04: {get_param: [vm_counts, {get_param: [vmtype_list, 4]}]}
+          $z04: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 4]}]}]}
+          $v05: {get_param: [vm_counts, {get_param: [vmtype_list, 5]}]}
+          $z05: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 5]}]}]}
+          $v06: {get_param: [vm_counts, {get_param: [vmtype_list, 6]}]}
+          $z06: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 6]}]}]}
+          $v07: {get_param: [vm_counts, {get_param: [vmtype_list, 7]}]}
+          $z07: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 7]}]}]}
+          $v08: {get_param: [vm_counts, {get_param: [vmtype_list, 8]}]}
+          $z08: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 8]}]}]}
+          $v09: {get_param: [vm_counts, {get_param: [vmtype_list, 9]}]}
+          $z09: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 9]}]}]}
+          $v10: {get_param: [vm_counts, {get_param: [vmtype_list, 10]}]}
+          $z10: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 10]}]}]}
+          $v11: {get_param: [vm_counts, {get_param: [vmtype_list, 11]}]}
+          $z11: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 11]}]}]}
+          $v12: {get_param: [vm_counts, {get_param: [vmtype_list, 12]}]}
+          $z12: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 12]}]}]}
+          $v13: {get_param: [vm_counts, {get_param: [vmtype_list, 13]}]}
+          $z13: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 13]}]}]}
+          $v14: {get_param: [vm_counts, {get_param: [vmtype_list, 14]}]}
+          $z14: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 14]}]}]}
+          $v15: {get_param: [vm_counts, {get_param: [vmtype_list, 15]}]}
+          $z15: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 15]}]}]}
+          $v16: {get_param: [vm_counts, {get_param: [vmtype_list, 16]}]}
+          $z16: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 16]}]}]}
+          $v17: {get_param: [vm_counts, {get_param: [vmtype_list, 17]}]}
+          $z17: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 17]}]}]}
+          $v18: {get_param: [vm_counts, {get_param: [vmtype_list, 18]}]}
+          $z18: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 18]}]}]}
+          $v19: {get_param: [vm_counts, {get_param: [vmtype_list, 19]}]}
+          $z19: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 19]}]}]}
+          $v20: {get_param: [vm_counts, {get_param: [vmtype_list, 20]}]}
+          $z20: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 20]}]}]}
+          $v21: {get_param: [vm_counts, {get_param: [vmtype_list, 21]}]}
+          $z21: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 21]}]}]}
+          $v22: {get_param: [vm_counts, {get_param: [vmtype_list, 22]}]}
+          $z22: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 22]}]}]}
+          $v23: {get_param: [vm_counts, {get_param: [vmtype_list, 23]}]}
+          $z23: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 23]}]}]}
+          $v24: {get_param: [vm_counts, {get_param: [vmtype_list, 24]}]}
+          $z24: {get_param: [null2zero, {get_param: [vm_counts, {get_param: [vmtype_list, 24]}]}]}
+
+  vm_counts:
+    description: |
+      Maps VM type tags to the number of pairs of that type.
+    value: {get_param: vm_counts}
+
+  usage_info:
+    description: Usage info JSON map.
+    value: {
+      "int_vlan_id": {get_param: int_vlan_id},
+      "cloud_name_delimiter": {get_param: cloud_name_delimiter},
+      "defaults": {
+        "image": {
+          "0": {get_param: [images, {get_param: [vmtype_list, 0]}]},
+          "1": {get_param: [images, {get_param: [vmtype_list, 0]}]}
+        },
+        availability_zone: {
+          "0": {get_param: [availability_zones, 0]},
+          "1": {get_param: [availability_zones, 1]}
+        },
+        storage_zone: {
+          "0": "nova",
+          "1": "nova"
+        },
+        "binding_type": "normal"
+      },
+      "v4_dns_server": {get_param: v4_dns_server},
+      "v6_dns_server": {get_param: v6_dns_server},
+      "v4_enum_server": {get_param: v4_enum_server},
+      "v6_enum_server": {get_param: v6_enum_server},
+      "v4_ntp_server": {get_param: v4_ntp_server},
+      "v6_ntp_server": {get_param: v6_ntp_server},
+      "vnf_id": {get_param: vnf_id},
+      "vnf_name": {get_param: vnf_name},
+      "vnf_module_id": {get_param: vnf_module_id},
+      "vnf_module_name": {get_param: vnf_module_name},
+      "ATT_ip_lists": {get_param: ip_lists},
+      "ATT_vm_info": {get_param: vm_info},
+      "group_info": {get_attr: [GROUPXLATE, jout]}
+    }
+

@@ -28,7 +28,7 @@ public class NotInSyncNumberOfInterfacesErrorBuilder extends BaseErrorBuilder {
 
   private static final String NOT_IN_SYNC_NUMBER_OF_INTERFACES_MSG =
       "More than one ServiceInstance pointing to the same "
-              + "ServiceTemplate '%s', with different number of interfaces.";
+          + "ServiceTemplate '%s', with different number of interfaces.";
 
   /**
    * Instantiates a new Not in sync number of interfaces error builder.

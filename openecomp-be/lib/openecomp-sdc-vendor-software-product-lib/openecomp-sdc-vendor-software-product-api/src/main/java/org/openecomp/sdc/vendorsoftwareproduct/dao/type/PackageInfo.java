@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
@@ -28,6 +27,7 @@ import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.nio.ByteBuffer;
+
 
 @Table(keyspace = "dox", name = "package_details")
 public class PackageInfo {

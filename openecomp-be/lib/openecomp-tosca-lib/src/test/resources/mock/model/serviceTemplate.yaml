@@ -5,9 +5,9 @@ metadata:
   template_version: 1.0.0
 description: testing desc tosca service template
 imports:
-  myfile1:
+- myfile1:
     file: path1/path2/file1.yaml
-  myfile2:
+- myfile2:
     file: path1/path2/file2.yaml
 artifact_types:
   one_artifact:

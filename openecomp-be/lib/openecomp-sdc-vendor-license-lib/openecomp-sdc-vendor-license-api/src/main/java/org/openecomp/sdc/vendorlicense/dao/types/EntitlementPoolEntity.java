@@ -55,7 +55,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
   private String name;
   private String description;
 
-
   @Column(name = "threshold")
   private int thresholdValue;
 
@@ -114,14 +113,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
     return getVendorLicenseModelId();
   }
 
-  public String getVendorLicenseModelId() {
-    return vendorLicenseModelId;
-  }
-
-  public void setVendorLicenseModelId(String vendorLicenseModelId) {
-    this.vendorLicenseModelId = vendorLicenseModelId;
-  }
-
   @Override
   public String getId() {
     return id;
@@ -140,6 +131,24 @@ public class EntitlementPoolEntity implements VersionableEntity {
   @Override
   public void setVersion(Version version) {
     this.version = version;
+  }
+
+  @Override
+  public String getVersionUuId() {
+    return versionUuId;
+  }
+
+  @Override
+  public void setVersionUuId(String uuId) {
+    versionUuId = uuId;
+  }
+
+  public String getVendorLicenseModelId() {
+    return vendorLicenseModelId;
+  }
+
+  public void setVendorLicenseModelId(String vendorLicenseModelId) {
+    this.vendorLicenseModelId = vendorLicenseModelId;
   }
 
   public Set<String> getReferencingFeatureGroups() {
@@ -234,18 +243,24 @@ public class EntitlementPoolEntity implements VersionableEntity {
     this.manufacturerReferenceNumber = manufacturerReferenceNumber;
   }
 
-
   /**
    * Gets threshold for artifact.
    *
    * @return the threshold for artifact
    */
-  //util methods for XML
   public ThresholdForXml getThresholdForArtifact() {
     ThresholdForXml threshold = new ThresholdForXml();
     threshold.setUnit(getThresholdUnit() == null ? null : getThresholdUnit().name());
     threshold.setValue(getThresholdValue());
     return threshold;
+  }
+
+  /**
+   *  Gets version for artifact.
+   * @return version in format suitable for artifact
+   */
+  public String getVersionForArtifact() {
+    return version.toString();
   }
 
   /**
@@ -277,6 +292,37 @@ public class EntitlementPoolEntity implements VersionableEntity {
     return timeForXml;
   }
 
+  @Override
+  public int hashCode() {
+    return Objects
+        .hash(vendorLicenseModelId, version, id, name, description, thresholdValue, thresholdUnit,
+            entitlementMetric, increments, aggregationFunction, operationalScope, time,
+            manufacturerReferenceNumber, referencingFeatureGroups);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    EntitlementPoolEntity that = (EntitlementPoolEntity) obj;
+    return Float.compare(that.thresholdValue, thresholdValue) == 0
+        && Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
+        && Objects.equals(id, that.id)
+        && Objects.equals(name, that.name)
+        && Objects.equals(description, that.description)
+        && Objects.equals(thresholdUnit, that.thresholdUnit)
+        && Objects.equals(entitlementMetric, that.entitlementMetric)
+        && Objects.equals(increments, that.increments)
+        && Objects.equals(aggregationFunction, that.aggregationFunction)
+        && Objects.equals(operationalScope, that.operationalScope)
+        && Objects.equals(time, that.time)
+        && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber)
+        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups);
+  }
 
   @Override
   public String toString() {
@@ -297,39 +343,6 @@ public class EntitlementPoolEntity implements VersionableEntity {
         + ", referencingFeatureGroups=" + referencingFeatureGroups
         + ", version_uuid=" + versionUuId
         + '}';
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null || getClass() != obj.getClass()) {
-      return false;
-    }
-    EntitlementPoolEntity that = (EntitlementPoolEntity) obj;
-    return Float.compare(that.thresholdValue, thresholdValue) == 0
-        && Objects.equals(vendorLicenseModelId, that.vendorLicenseModelId)
-        && Objects.equals(version, that.version)
-        && Objects.equals(id, that.id)
-        && Objects.equals(name, that.name)
-        && Objects.equals(description, that.description)
-        && Objects.equals(thresholdUnit, that.thresholdUnit)
-        && Objects.equals(entitlementMetric, that.entitlementMetric)
-        && Objects.equals(increments, that.increments)
-        && Objects.equals(aggregationFunction, that.aggregationFunction)
-        && Objects.equals(operationalScope, that.operationalScope)
-        && Objects.equals(time, that.time)
-        && Objects.equals(manufacturerReferenceNumber, that.manufacturerReferenceNumber)
-        && Objects.equals(referencingFeatureGroups, that.referencingFeatureGroups);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects
-        .hash(vendorLicenseModelId, version, id, name, description, thresholdValue, thresholdUnit,
-            entitlementMetric, increments, aggregationFunction, operationalScope, time,
-            manufacturerReferenceNumber, referencingFeatureGroups);
   }
 
   /**
@@ -358,13 +371,5 @@ public class EntitlementPoolEntity implements VersionableEntity {
     } else {
       return null;
     }
-  }
-
-  public String getVersionUuId() {
-    return versionUuId;
-  }
-
-  public void setVersionUuId(String uuId) {
-    versionUuId = uuId;
   }
 }

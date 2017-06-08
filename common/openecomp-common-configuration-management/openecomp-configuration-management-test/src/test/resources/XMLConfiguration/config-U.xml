@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+        <name>
+            <minlength>6</minlength>
+        </name>
+        <maxsize>1048</maxsize>
+        <extension>pdf,tgz,xls</extension>
+    </artifact>
+    <_config>
+        <namespace>XMLConfig</namespace>
+        <mergeStrategy>union</mergeStrategy>
+    </_config>
+</configuration>

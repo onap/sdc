@@ -26,6 +26,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import java.util.List;
 import java.util.Map;
 
+
 public class TranslatorOutput {
   private Map<String, List<ErrorMessage>> errorMessages;
   private ToscaServiceModel toscaServiceModel;

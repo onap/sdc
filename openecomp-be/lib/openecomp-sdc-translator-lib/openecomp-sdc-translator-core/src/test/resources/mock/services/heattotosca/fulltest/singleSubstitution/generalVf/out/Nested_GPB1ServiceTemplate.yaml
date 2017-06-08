@@ -1,0 +1,351 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_GPB1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.GPB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_GPB1_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_GPB1_Internal1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_GPB1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    port_GPB1_Internal2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_GPB1_Internal1_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_GPB1_Internal2_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_GPB1_Internal1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_GPB1_Internal1_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_GPB1_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_GPB1_Internal2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    GPB1:
+      type: org.openecomp.resource.vfc.nodes.heat.GPB1
+      properties:
+        availability_zone:
+          get_input:
+          - compute_GPB1_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_GPB1_name
+          - index_value
+    GPB1_GPB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_GPB1_Internal1_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_GPB1_Internal1_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_GPB1_Internal1_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_GPB1_Internal1_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB1
+          relationship: tosca.relationships.network.BindsTo
+    GPB1_GPB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_GPB1_Internal2_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_GPB1_Internal2_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_GPB1_Internal2_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_GPB1_Internal2_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: GPB1
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.GPB1
+    capabilities:
+      network.outgoing.packets.rate_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.outgoing.packets.rate
+      endpoint_GPB1:
+      - GPB1
+      - endpoint
+      network.outgoing.packets.rate_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.outgoing.packets.rate
+      disk.read.requests_GPB1:
+      - GPB1
+      - disk.read.requests
+      attachment_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - attachment
+      attachment_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - attachment
+      disk.device.read.requests_GPB1:
+      - GPB1
+      - disk.device.read.requests
+      cpu_util_GPB1:
+      - GPB1
+      - cpu_util
+      feature_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - feature
+      disk.device.write.bytes_GPB1:
+      - GPB1
+      - disk.device.write.bytes
+      disk.device.iops_GPB1:
+      - GPB1
+      - disk.device.iops
+      memory.usage_GPB1:
+      - GPB1
+      - memory.usage
+      network.outpoing.packets_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.outpoing.packets
+      feature_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - feature
+      network.outgoing.bytes.rate_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.outgoing.bytes.rate
+      network.incoming.bytes_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.incoming.bytes
+      network.incoming.bytes_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.incoming.bytes
+      disk.ephemeral.size_GPB1:
+      - GPB1
+      - disk.ephemeral.size
+      network.outpoing.packets_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.outpoing.packets
+      network.incoming.packets.rate_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.incoming.packets.rate
+      host_GPB1:
+      - GPB1
+      - host
+      scalable_GPB1:
+      - GPB1
+      - scalable
+      disk.device.write.requests.rate_GPB1:
+      - GPB1
+      - disk.device.write.requests.rate
+      memory_GPB1:
+      - GPB1
+      - memory
+      disk.device.read.requests.rate_GPB1:
+      - GPB1
+      - disk.device.read.requests.rate
+      disk.read.bytes_GPB1:
+      - GPB1
+      - disk.read.bytes
+      vcpus_GPB1:
+      - GPB1
+      - vcpus
+      disk.root.size_GPB1:
+      - GPB1
+      - disk.root.size
+      memory.resident_GPB1:
+      - GPB1
+      - memory.resident
+      disk.write.requests_GPB1:
+      - GPB1
+      - disk.write.requests
+      disk.capacity_GPB1:
+      - GPB1
+      - disk.capacity
+      disk.read.bytes.rate_GPB1:
+      - GPB1
+      - disk.read.bytes.rate
+      os_GPB1:
+      - GPB1
+      - os
+      cpu.delta_GPB1:
+      - GPB1
+      - cpu.delta
+      disk.device.read.bytes.rate_GPB1:
+      - GPB1
+      - disk.device.read.bytes.rate
+      binding_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - binding
+      binding_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - binding
+      instance_GPB1:
+      - GPB1
+      - instance
+      network.incoming.bytes.rate_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.incoming.bytes.rate
+      binding_GPB1:
+      - GPB1
+      - binding
+      disk.write.bytes_GPB1:
+      - GPB1
+      - disk.write.bytes
+      disk.device.usage_GPB1:
+      - GPB1
+      - disk.device.usage
+      disk.latency_GPB1:
+      - GPB1
+      - disk.latency
+      disk.device.read.bytes_GPB1:
+      - GPB1
+      - disk.device.read.bytes
+      network.incoming.packets_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.incoming.packets
+      network.incoming.packets_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.incoming.packets
+      cpu_GPB1:
+      - GPB1
+      - cpu
+      disk.write.requests.rate_GPB1:
+      - GPB1
+      - disk.write.requests.rate
+      disk.iops_GPB1:
+      - GPB1
+      - disk.iops
+      disk.write.bytes.rate_GPB1:
+      - GPB1
+      - disk.write.bytes.rate
+      disk.device.capacity_GPB1:
+      - GPB1
+      - disk.device.capacity
+      disk.device.write.requests_GPB1:
+      - GPB1
+      - disk.device.write.requests
+      disk.allocation_GPB1:
+      - GPB1
+      - disk.allocation
+      disk.device.latency_GPB1:
+      - GPB1
+      - disk.device.latency
+      network.outgoing.bytes_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - network.outgoing.bytes
+      network.outgoing.bytes_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - network.outgoing.bytes
+      disk.device.write.bytes.rate_GPB1:
+      - GPB1
+      - disk.device.write.bytes.rate
+      disk.usage_GPB1:
+      - GPB1
+      - disk.usage
+      feature_GPB1:
+      - GPB1
+      - feature
+      disk.device.allocation_GPB1:
+      - GPB1
+      - disk.device.allocation
+    requirements:
+      link_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - link
+      dependency_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - dependency
+      dependency_GPB1_GPB1_Internal2:
+      - GPB1_GPB1_Internal2
+      - dependency
+      dependency_GPB1:
+      - GPB1
+      - dependency
+      local_storage_GPB1:
+      - GPB1
+      - local_storage
+      link_GPB1_GPB1_Internal1:
+      - GPB1_GPB1_Internal1
+      - link

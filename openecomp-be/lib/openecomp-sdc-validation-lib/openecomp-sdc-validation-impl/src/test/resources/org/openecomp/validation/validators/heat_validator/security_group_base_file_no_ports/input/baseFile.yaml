@@ -1,0 +1,40 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  security_group_name:
+      type: string
+      label: security group name
+      description: the name of security group
+
+resources:
+  jsa_security_group1:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+
+
+  jsa_security_group2:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+
+  jsa_security_group3:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+
+outputs:
+    shared_security_group_id1:
+      value: {get_resource: jsa_security_group1}
+
+    shared_security_group_id2:
+          value: {get_resource: jsa_security_group2}

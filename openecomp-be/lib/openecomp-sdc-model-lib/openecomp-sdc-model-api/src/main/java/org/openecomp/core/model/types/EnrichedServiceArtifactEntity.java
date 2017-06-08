@@ -27,6 +27,13 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.Frozen;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
+
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.io.IOException;
@@ -70,7 +77,11 @@ public class EnrichedServiceArtifactEntity implements ServiceElementEntity {
 
     try {
       this.contentData = ByteBuffer.wrap(ByteStreams.toByteArray(entity.getContent()));
-    } catch (IOException ioException) {
+    } catch (IOException ioException) { //todo fix typo in Traget
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CREATE_SERVICE_ENRICH_ARTIFACT, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(),
+          LoggerErrorDescription.CREATE_ENRICH_SERVICE_ARTIFACT);
       throw new RuntimeException(ioException);
     }
 

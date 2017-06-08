@@ -1,0 +1,495 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create network stack
+
+parameters:
+####
+
+ int_oam_int_net_cidr:
+    type: string
+    description: int oam network
+ int_oam_int_net_gateway:
+    type: string
+    description: gateway for int oam
+ int_oam_int_net_dhcp:
+    type: string
+    description: int oam dhcp
+
+#####
+
+ apps_db_int_net_cidr:
+    type: string
+    description: apps db int cidr
+ apps_db_int_net_gateway:
+    type: string
+    description: apps db int gateway
+ apps_db_int_net_dhcp:
+    type: string
+    description: apps db int dhcp
+###
+ lb3_kms_int_net_cidr:
+    type: string
+    description: lb3 network
+ lb3_kms_int_net_gateway:
+    type: string
+    description: lb3 gateway
+ lb3_kms_int_net_dhcp:
+    type: string
+    description: lb3 kms dhcp
+###
+
+ app1_kms_int_net_cidr:
+    type: string
+    description: app1_kms network
+ app1_kms_int_net_gateway:
+    type: string
+    description: app1_kms gateway
+ app1_kms_int_net_dhcp:
+    type: string
+    description: app1_kms dhcp
+####
+
+ apps_int_net_cidr:
+    type: string
+    description: apps int net
+ apps_int_net_gateway:
+    type: string
+    description: apps int gateway
+ apps_int_net_dhcp:
+    type: string
+    description: apps int dhcp
+####
+
+ lb1_gwaf_int_net_cidr:
+    type: string
+    description: lb1 gwaf
+ lb1_gwaf_int_net_gateway: 
+    type: string
+    description: lb1 gwaf gateway
+ lb_gwaf_int_net_dhcp: 
+    type: string
+    description: lb1 gwaf description
+####
+ gwaf_lb2_int_net_cird:
+    type: string
+    description: epc_sctp_a subnet
+ gwaf_lb2_int_net_gateway:
+    type: string
+    description: GWAF_LB2 network gateway
+ gwaf_lb2_int_net_pool_start:
+    type: string
+    description: GWAF_LB2 network ip pool start IP address
+ gwaf_lb2_int_net_pool_end:
+    type: string
+    description: GWAF_LB2 network ip pool end IP address
+
+####
+ vnf_name: 
+    type: string
+    description: vnf name 
+
+resources:
+
+  apps_db_int_net:
+    type: OS::Neutron::Net
+    properties:
+      name: 
+        str_replace:
+            template: VF_NAME_apps_db_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+  apps_db_int_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: apps_db_int_net }
+      cidr: { get_param: apps_db_int_net_cidr }
+      gateway_ip: { get_param: apps_db_int_net_gateway}
+      enable_dhcp: { get_param: apps_db_int_net_dhcp }
+
+
+  app1_kms_int_net:
+    type: OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_app1_kms_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  app1_kms_int_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: app1_kms_int_net }
+      cidr: { get_param: app1_kms_int_net_cidr }
+      gateway_ip: { get_param: app1_kms_int_net_gateway}
+      enable_dhcp: { get_param: app1_kms_int_net_dhcp }
+
+
+
+  apps_int_net:
+    type: OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_apps_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  apps_int_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource:  apps_int_net }
+      cidr: { get_param: apps_int_net_cidr }
+      gateway_ip: { get_param: apps_int_net_gateway }
+      enable_dhcp: { get_param: apps_int_net_dhcp }
+
+  lb1_gwaf_int_net:
+    type: OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_lb1_gwaf_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  lb1_gwaf_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: lb1_gwaf_int_net } 
+      cidr: { get_param: lb1_gwaf_int_net_cidr }
+      gateway_ip: { get_param: lb1_gwaf_int_net_gateway }
+      enable_dhcp: { get_param: lb_gwaf_int_net_dhcp }
+
+
+  gwaf_lb2_int_net:
+    type:  OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_gwaf_lb2_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  gwaf_lb2_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: gwaf_lb2_int_net }
+      cidr: { get_param: gwaf_lb2_int_net_cird }
+      gateway_ip: { get_param: gwaf_lb2_int_net_gateway }
+      allocation_pools:
+        - start: { get_param: gwaf_lb2_int_net_pool_start }
+          end: { get_param: gwaf_lb2_int_net_pool_end }
+
+
+  lb3_kms_int_net:
+    type: OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_lb3_kms_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  LB3_KMS_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: lb3_kms_int_net } 
+      cidr: { get_param: lb3_kms_int_net_cidr }
+      enable_dhcp: { get_param: lb3_kms_int_net_dhcp }
+      gateway_ip: { get_param: lb3_kms_int_net_gateway }
+
+  int_oam_int_net:
+    type: OS::Neutron::Net
+    properties:
+     name: 
+        str_replace:
+            template: VF_NAME_int_oam_int_net
+            params:
+                VF_NAME:    {get_param: vnf_name}
+
+
+  int_oam_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: int_oam_int_net } 
+      cidr: { get_param: int_oam_int_net_cidr }
+      enable_dhcp: { get_param: int_oam_int_net_dhcp }
+      gateway_ip: { get_param: int_oam_int_net_gateway }
+
+
+
+  oam_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: oam security group
+      name: 
+        str_replace:
+            template: VF_NAME-oam_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  int_oam_int_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: oam security group
+      name: 
+        str_replace:
+            template: VF_NAME-int_oam_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+
+  db_core_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: db core security group
+      name: 
+        str_replace:
+            template: VF_NAME-db_core_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  otacs_core_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: otacs core security group
+      name: 
+        str_replace:
+            template: VF_NAME-otacs_core_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+
+  apps_int_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: apps security group
+      name: 
+        str_replace:
+            template: VF_NAME-apps_int_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  apps_db_int_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: apps db security group
+      name: 
+        str_replace:
+            template: VF_NAME-apps_db_int_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+
+  lb1_gwaf_int_sec_group: 
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: fromexternal gwaf  security group
+      name: 
+        str_replace:
+            template: VF_NAME-lb1_gwaf_int_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+ 
+
+  gwaf_lb2_sec_group: 
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: gwaf1_app1 security group
+      name: 
+        str_replace:
+            template: VF_NAME-gwaf_lb2_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  app1_kms_int_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: app1 kms security group
+      name: 
+        str_replace:
+            template: VF_NAME-app1_kms_int_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+
+  lb1_oam_sec_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: LB1 all security group
+      name: 
+        str_replace:
+            template: VF_NAME-lb1_oam_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+  lb3_kms_int_sec_group: 
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: lb3_kms_int_sec_group
+      name: 
+        str_replace:
+            template: VF_NAME-lb3_kms_int_sec_group
+            params:
+                VF_NAME:    {get_param: vnf_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0}
+              ]
+
+
+outputs:
+
+  apps_db_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   apps_db_int_net }
+
+  app1_kms_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   app1_kms_int_net }
+
+  apps_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   apps_int_net }
+
+  lb1_gwaf_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   lb1_gwaf_int_net }
+
+  gwaf_lb2_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   gwaf_lb2_int_net }
+
+  lb3_kms_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   lb3_kms_int_net }
+
+  int_oam_int_net_id:
+    description:  uuid of the network
+    value: {get_resource:   int_oam_int_net }
+
+  oam_protected_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   oam_sec_group }
+
+  int_oam_int_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   int_oam_int_sec_group }
+
+  db_core_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   db_core_sec_group }
+
+  otacs_core_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   otacs_core_sec_group }
+
+  apps_int_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   apps_int_sec_group }
+
+  apps_db_int_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   apps_db_int_sec_group }
+
+  lb1_gwaf_int_sec_group_id: 
+    description:  uuid of the security group
+    value: {get_resource:   lb1_gwaf_int_sec_group } 
+
+  gwaf_lb2_int_sec_group_id: 
+    description:  uuid of the security group
+    value: {get_resource:   gwaf_lb2_sec_group }
+
+  app1_kms_int_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   app1_kms_int_sec_group }
+
+  lb1_oam_protected_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   lb1_oam_sec_group }
+
+  lb3_kms_int_sec_group_id:
+    description:  uuid of the security group
+    value: {get_resource:   lb3_kms_int_sec_group }
+
+

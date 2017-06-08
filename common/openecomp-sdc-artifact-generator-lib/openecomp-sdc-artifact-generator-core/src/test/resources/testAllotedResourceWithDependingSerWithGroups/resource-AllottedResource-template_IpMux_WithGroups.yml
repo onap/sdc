@@ -1,0 +1,283 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: a54a5235-b69d-4f8a-838b-d011e6783fa5
+  UUID: f32afdc3-6308-4f0c-a476-0d39c8a1fb4d
+  name: Allotted Resource
+  description: This is a VF - Allotted resource
+  type: VF
+  category: Allotted Resource
+  subcategory: IP Mux Demux
+  resourceVendor: '1'
+  resourceVendorRelease: '1'
+imports:
+- Alloted resource:
+    file: resource-AllotedResource-template.yml
+topology_template:
+  groups:
+    vfmoduleVmmeModule-1:
+      members:
+        - FSB1
+        - FSB2
+        - NCB1
+        - NCB2
+        - VLC1
+        - VLC2
+        - GPB1
+        - GPB2
+        - Internal1_net
+        - Internal2_net
+        - fsb1_oam
+        - fsb1_internal1
+        - fsb1_internal2
+        - fsb2_oam
+        - fsb2_internal2
+        - ncb1_internal1
+        - ncb1_internal2
+        - ncb2_internal1
+        - ncb2_internal2
+        - gpb1_internal1
+        - gpb1_internal2
+        - gpb2_internal1
+        - gpb2_internal2
+        - vlc1_oam
+        - vlc1_internal1
+        - vlc1_internal2
+        - vlc1_sctp_a
+        - vlc1_sctp_b
+        - vlc1_gtp
+        - vlc2_oam
+        - vlc2_internal1
+        - vlc2_internal2
+        - vlc2_sctp_a
+        - vlc2_sctp_b
+        - vlc1_gtp
+      metadata:
+        vfModuleModelInvariantUUID: adf1a10a-f788-492f-9ea7-7ff91dd55f8c
+        vfModuleModelName: "vMME::module-1"
+        vfModuleModelUUID: x020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+        vfModuleModelVersion: 1
+      properties:
+        artifacts:
+          - /Artifacts/vmme_small_create_fsb.yml
+          - /Artifacts/vmme_small.yml
+        availability_zone_count: 2
+        contrail_service_instance: true
+        vf_module_description: "vMME expansion VF Module"
+        vf_module_label: "vMME Expansion VF Module"
+        vf_module_type: Expansion
+        volume_group: false
+      type: org.openecomp.groups.VfModule
+  node_templates:
+    allotedresource1:
+      type: org.openecomp.resource.vfc.AllottedResource
+      metadata:
+        invariantUUID: 666b409b-5614-41a8-945e-a53d68f5d439
+        UUID: df0c1c4d-1756-4b2a-998e-73f9f4d77afa
+        customizationUUID: 1c217567-5093-41f5-86e6-22c97ef24e75
+        version: '1.0'
+        name: Alloted resource
+        description: This is a VFC- Allotted resource
+        type: VFC
+        category: Allotted Resource
+        subcategory: Allotted Resource
+      properties:
+        role: name
+        ecomp_naming:
+          naming_policy: test
+          ecomp_generated_naming: false
+          supplemental_data:
+            Key1: key1
+        providing_service_invariant_uuid: 34a4d119-06bc-4ab4-8c5a-a498d638297c
+        min_instances: 1
+        max_instances: 1
+        providing_service_uuid: e14a509f-b611-4b30-b38c-bc7f11b679aa
+        providing_service_name: vVIGaaS
+        ecomp_homing:
+          instance_node_target: Test
+          homing_policy: Test
+          supplemental_data:
+            Key: key
+          ecomp_selected_instance_node_target: false
+    FSB1:
+      capabilities:
+        monitoring_capabilty:
+          properties:
+            name: high_cpu
+        nfv_compute:
+          properties:
+            vfc_flavor:
+              get_input: fsb1_vfc_flavor
+        scaling_capability:
+          properties:
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata:
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties:
+        vfc_description: FSB1
+        vfc_ecomp_name: false
+        vfc_image_name:
+          get_input: fsb1_vfc_image_name
+        vfc_instance_name:
+          get_input: fsb1_vfc_instance_name
+        vfc_type_tag:
+          get_input: fsb1_vfc_type_tag
+      requirements:
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_oam
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    FSB2:
+      capabilities:
+        monitoring_capability:
+          properties:
+            name: cpu_load
+        nfv_compute:
+          properties:
+            vfc_flavor:
+              get_input: fsb2_vfc_flavor
+        scaling_capability:
+          properties:
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata:
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties:
+        vfc_description: FSB2
+        vfc_ecomp_name: false
+        vfc_image_name:
+          get_input: fsb2_vfc_image_name
+        vfc_instance_name:
+          get_input: fsb2_vfc_instance_name
+        vfc_type_tag:
+          get_input: fsb2_vfc_type_tag
+      requirements:
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_oam
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_internal1
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    NCB1:
+      capabilities:
+        monitoring_capability:
+          properties:
+            name: cpu_load
+        nfv_compute:
+          properties:
+            vfc_flavor:
+              get_input: ncb1_vfc_flavor
+        scaling_capability:
+          properties:
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata:
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties:
+        vfc_description: NCB1
+        vfc_ecomp_name: false
+        vfc_image_name:
+          get_input: ncb1_vfc_image_name
+        vfc_instance_name:
+          get_input: ncb1_vfc_instance_name
+        vfc_type_tag:
+          get_input: ncb1_vfc_type_tag
+      requirements:
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_oam
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        -
+          binding:
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.AllottedResource
+    capabilities:
+      Alloted resource 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Alloted resource 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Alloted resource 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

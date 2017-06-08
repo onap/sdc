@@ -23,6 +23,7 @@ package org.openecomp.sdc.translator.datatypes.heattotosca.to;
 
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 
+
 public class ResourceFileDataAndIDs {
   private String resourceId;
   private String translatedResourceId;

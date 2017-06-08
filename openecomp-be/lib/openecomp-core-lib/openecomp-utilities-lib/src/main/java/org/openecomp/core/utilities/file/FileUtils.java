@@ -20,14 +20,14 @@
 
 package org.openecomp.core.utilities.file;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.slf4j.MDC;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -48,6 +48,23 @@ public class FileUtils {
    */
   public static InputStream getFileInputStream(String fileName) {
     URL urlFile = FileUtils.class.getClassLoader().getResource(fileName);
+    InputStream is;
+    try {
+      assert urlFile != null;
+      is = urlFile.openStream();
+    } catch (IOException exception) {
+      throw new RuntimeException(exception);
+    }
+    return is;
+  }
+
+  /**
+   * Gets file input stream.
+   *
+   * @param urlFile the url file
+   * @return the file input stream
+   */
+  public static InputStream getFileInputStream(URL urlFile) {
     InputStream is;
     try {
       assert urlFile != null;
@@ -134,9 +151,9 @@ public class FileUtils {
    * @return the input stream
    */
   public static InputStream loadFileToInputStream(String fileName) {
-    URL urlFile = FileUtils.class.getClassLoader().getResource(fileName);
+    URL urlFile = Thread.currentThread().getContextClassLoader().getResource(fileName);
     try {
-      Enumeration<URL> en = FileUtils.class.getClassLoader().getResources(fileName);
+      Enumeration<URL> en = Thread.currentThread().getContextClassLoader().getResources(fileName);
       while (en.hasMoreElements()) {
         urlFile = en.nextElement();
       }
@@ -247,6 +264,7 @@ public class FileUtils {
     }
     return mapFileContent;
   }
+
 
   /**
    * The enum File extension.

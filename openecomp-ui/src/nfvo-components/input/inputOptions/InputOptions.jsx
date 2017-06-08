@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import classNames from 'classnames';
@@ -13,15 +28,21 @@ class InputOptions extends React.Component {
 			title: React.PropTypes.string
 		})),
 		isEnabledOther: React.PropTypes.bool,
-		title: React.PropTypes.string,
+		label: React.PropTypes.string,
 		selectedValue: React.PropTypes.string,
-		multiSelectedEnum: React.PropTypes.array,
+		multiSelectedEnum: React.PropTypes.oneOfType([
+			React.PropTypes.string,
+			React.PropTypes.array
+		]),
 		selectedEnum: React.PropTypes.string,
 		otherValue: React.PropTypes.string,
 		onEnumChange: React.PropTypes.func,
 		onOtherChange: React.PropTypes.func,
+		onBlur: React.PropTypes.func,
 		isRequired: React.PropTypes.bool,
-		isMultiSelect: React.PropTypes.bool
+		isMultiSelect: React.PropTypes.bool,
+		hasError: React.PropTypes.bool,
+		disabled: React.PropTypes.bool
 	};
 
 
@@ -41,7 +62,7 @@ class InputOptions extends React.Component {
 
 	render() {
 		let {label, isRequired, values, otherValue, onOtherChange, isMultiSelect, onBlur, multiSelectedEnum, selectedEnum, hasError, validations, children} = this.props;
-
+		const dataTestId = this.props['data-test-id'] ? {'data-test-id': this.props['data-test-id']} : {};
 		let currentMultiSelectedEnum = [];
 		let currentSelectedEnum = '';
 		let {otherInputDisabled} = this.state;
@@ -54,14 +75,18 @@ class InputOptions extends React.Component {
 		else if(selectedEnum){
 			currentSelectedEnum = selectedEnum;
 		}
+		if (!onBlur) {
+			onBlur = () => {};
+		}
 
 		let isReadOnlyMode = this.context.isReadOnlyMode;
 
 		return(
-			<div className={classNames('form-group', {'required' : validations.required , 'has-error' : hasError})}>
+			<div className={classNames('form-group', {'required' : (validations && validations.required) || isRequired, 'has-error' : hasError})}>
 				{label && <label className='control-label'>{label}</label>}
 				{isMultiSelect && otherInputDisabled ?
 					<Select
+						{...dataTestId}
 						ref='_myInput'
 						value={currentMultiSelectedEnum}
 						className='options-input'
@@ -74,18 +99,18 @@ class InputOptions extends React.Component {
 						multi/> :
 					<div className={classNames('input-options',{'has-error' : hasError})}>
 						<select
+							{...dataTestId}
 							ref={'_myInput'}
 							label={label}
 							className='form-control input-options-select'
 							value={currentSelectedEnum}
-							style={{'width' : otherInputDisabled ? '100%' : '95px'}}
+							style={{'width' : otherInputDisabled ? '100%' : '100px'}}
 							onBlur={() => onBlur()}
 							disabled={isReadOnlyMode || Boolean(this.props.disabled)}
 							onChange={ value => this.enumChanged(value)}
 							type='select'>
-							{values && values.length && values.map(val => this.renderOptions(val))}
+							{children || (values && values.length && values.map((val, index) => this.renderOptions(val, index)))}
 							{onOtherChange && <option key='other' value={other.OTHER}>{i18n(other.OTHER)}</option>}
-							{children}
 						</select>
 
 						{!otherInputDisabled && <div className='input-options-separator'/>}
@@ -104,9 +129,9 @@ class InputOptions extends React.Component {
 		);
 	}
 
-	renderOptions(val){
-		return(
-			<option key={val.enum} value={val.enum}>{val.title}</option>
+	renderOptions(val, index){
+		return (
+			<option key={index} value={val.enum}>{val.title}</option>
 		);
 	}
 
@@ -154,9 +179,9 @@ class InputOptions extends React.Component {
 
 	enumChanged() {
 		let enumValue = this.refs._myInput.value;
-		let {onEnumChange, isMultiSelect, onChange} = this.props;
+		let {onEnumChange, onOtherChange, isMultiSelect, onChange} = this.props;
 		this.setState({
-			otherInputDisabled: enumValue !== other.OTHER
+			otherInputDisabled: !Boolean(onOtherChange) || enumValue !== other.OTHER
 		});
 
 		let value = isMultiSelect ? [enumValue] : enumValue;
@@ -169,7 +194,7 @@ class InputOptions extends React.Component {
 	}
 
 	multiSelectEnumChanged(enumValue) {
-		let {onEnumChange} = this.props;
+		let {onEnumChange, onOtherChange} = this.props;
 		let selectedValues = enumValue.map(enumVal => {
 			return enumVal.value;
 		});
@@ -182,7 +207,7 @@ class InputOptions extends React.Component {
 		}
 
 		this.setState({
-			otherInputDisabled: !selectedValues.includes(i18n(other.OTHER))
+			otherInputDisabled: !Boolean(onOtherChange) || !selectedValues.includes(i18n(other.OTHER))
 		});
 		onEnumChange(selectedValues);
 	}

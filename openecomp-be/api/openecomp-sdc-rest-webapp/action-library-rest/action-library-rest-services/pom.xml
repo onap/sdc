@@ -4,14 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>action-library-rest-services</artifactId>
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>action-library-rest</artifactId>
         <version>1.1.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>action-library-rest-services</artifactId>
-
 
 
     <properties>
@@ -58,7 +56,6 @@
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -77,12 +74,12 @@
         </dependency>
 
         <!-- Other Stuff-->
-        <dependency>
+        <!--dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>${cglib.nodep.version}</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency-->
 
         <!-- Java Stuff -->
         <dependency>
@@ -102,12 +99,22 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.sdc_common</groupId>
-            <artifactId>openecomp-logging-api</artifactId>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>${jersey.multipart.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
-
 
     <build>
         <plugins>
@@ -121,6 +128,11 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!-- Error codes generator plugin -->
+            <!--plugin>
+                <groupId>org.openecomp.nfv.tools</groupId>
+                <artifactId>error-codes-maven-plugin</artifactId>
+            </plugin-->
         </plugins>
     </build>
 

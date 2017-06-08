@@ -26,17 +26,11 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 import java.util.List;
 
-public interface EnrichedServiceModelDao<M, E> extends VersionableDao {
-
-  M getServiceModel(String vspId, Version version);
-
-  void storeServiceModel(String vspId, Version version, M serviceModel);
+public interface EnrichedServiceModelDao<M, E> extends VersionableDao,ServiceModelDao<M, E>{
 
   void storeExternalArtifact(ServiceArtifact serviceArtifact);
 
-  List<ServiceArtifact> getExternalArtifacts(String vspId, Version version);
+  //List<ServiceArtifact> getExternalArtifacts(String vspId, Version version);
 
-  E getServiceModelInfo(String vspId, Version version, String name);
-
-  List<String> getServiceModelContentNames();
+  //List<String> getServiceModelContentNames();
 }

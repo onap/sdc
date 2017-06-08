@@ -51,12 +51,15 @@
             opacity: 0.5;
           }
         }
+        .grid-section {
+          .section-title {
+            padding-bottom: 0px;
+          }
+        }
       }
       .validation-input-wrapper {
-        .form-group {
-          .vsp-process-description {
-            height: 200px;
-          }
+        .form-group.vsp-process-description > textarea {
+            height: 113px;
         }
       }
     }

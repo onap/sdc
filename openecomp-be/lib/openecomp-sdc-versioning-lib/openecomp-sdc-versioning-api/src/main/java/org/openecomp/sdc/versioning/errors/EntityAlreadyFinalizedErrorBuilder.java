@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.versioning.errors;
 
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes
-    .SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
@@ -41,7 +38,7 @@ public class EntityAlreadyFinalizedErrorBuilder extends BaseErrorBuilder {
    * @param entityId   the entity id
    */
   public EntityAlreadyFinalizedErrorBuilder(String entityType, String entityId) {
-    getErrorCodeBuilder().withId(SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED);
+    getErrorCodeBuilder().withId(VersioningErrorCodes.SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder()
         .withMessage(String.format(SUBMIT_FINALIZED_ENTITY_NOT_ALLOWED_MSG, entityType, entityId));

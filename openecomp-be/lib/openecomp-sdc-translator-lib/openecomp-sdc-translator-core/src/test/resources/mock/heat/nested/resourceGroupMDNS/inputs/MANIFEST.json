@@ -1,37 +1,37 @@
 {
-    "name": "", 
-    "description": "", 
-    "data": [
+  "name": "",
+  "description": "",
+  "data": [
+    {
+      "file": "dns_nested_01.yaml",
+      "type": "HEAT",
+      "isBase": "false"
+    },
+    {
+      "file": "base_dns.yaml",
+      "type": "HEAT",
+      "isBase": "true",
+      "data": [
         {
-            "file": "dns_nested_01.yaml", 
-            "type": "HEAT", 
-            "isBase": "false"
-        }, 
-        {
-            "file": "base_dns.yaml", 
-            "type": "HEAT", 
-            "isBase": "true", 
-            "data": [
-                {
-                    "file": "base_dns.env", 
-                    "type": "HEAT_ENV"
-                }
-            ]
-        }, 
-        {
-            "file": "dns_az_01.yaml", 
-            "type": "HEAT", 
-            "isBase": "false", 
-            "data": [
-                {
-                    "file": "dns_az_01.env", 
-                    "type": "HEAT_ENV"
-                }
-            ]
-        }, 
-                {
-            "file": "nimbus-willows-2.pem", 
-            "type": "OTHER"
+          "file": "base_dns.env",
+          "type": "HEAT_ENV"
         }
-    ]
+      ]
+    },
+    {
+      "file": "dns_az_01.yaml",
+      "type": "HEAT",
+      "isBase": "false",
+      "data": [
+        {
+          "file": "dns_az_01.env",
+          "type": "HEAT_ENV"
+        }
+      ]
+    },
+    {
+      "file": "nimbus-willows-2.pem",
+      "type": "OTHER"
+    }
+  ]
 }

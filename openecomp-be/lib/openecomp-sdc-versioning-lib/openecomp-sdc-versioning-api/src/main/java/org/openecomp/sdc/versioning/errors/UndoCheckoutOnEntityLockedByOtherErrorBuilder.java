@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.versioning.errors;
 
-import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes
-    .UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
@@ -32,8 +29,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 public class UndoCheckoutOnEntityLockedByOtherErrorBuilder extends BaseErrorBuilder {
 
   private static final String UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
-      "Can not undo checkout on versionable entity %s with id %s since it is checked out by "
-          + "other user: %s.";
+      "Can not undo checkout on versionable entity %s with id %s since it is checked "
+          +  "out by other user: %s.";
 
   /**
    * Instantiates a new Undo checkout on entity locked by other error builder.
@@ -44,7 +41,8 @@ public class UndoCheckoutOnEntityLockedByOtherErrorBuilder extends BaseErrorBuil
    */
   public UndoCheckoutOnEntityLockedByOtherErrorBuilder(String entityType, String entityId,
                                                        String lockingUser) {
-    getErrorCodeBuilder().withId(UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER);
+    getErrorCodeBuilder().withId(
+        VersioningErrorCodes.UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(String
         .format(UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG, entityType, entityId,

@@ -25,12 +25,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class MapUploadFileResponseToUploadFileResponseDto
     extends MappingBase<UploadFileResponse, UploadFileResponseDto> {
   @Override
   public void doMapping(UploadFileResponse source, UploadFileResponseDto target) {
     target.setStatus(source.getStatus());
     target.setErrors(source.getErrors());
-    target.setFileNames(source.getFileNames());
   }
 }

@@ -23,6 +23,7 @@ package org.openecomp.sdc.versioning;
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 import org.openecomp.sdc.versioning.errors.RequestedVersionInvalidErrorBuilder;
 import org.openecomp.sdc.versioning.errors.VersionableSubEntityNotFoundErrorBuilder;
@@ -47,9 +48,13 @@ public class VersioningUtil {
    * @param firstClassCitizenType the first class citizen type
    */
   public static <T extends VersionableEntity> void validateEntityExistence(Object retrievedEntity,
-                                                                 T inputEntity,
-                                                                 String firstClassCitizenType) {
+                                                                           T inputEntity,
+                                                                           String firstClassCitizenType) {
     if (retrievedEntity == null) {
+      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
+      // .getServiceName(LoggerServiceName.Submit_Entity),
+      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
+      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
       throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
           inputEntity.getEntityType(),
           inputEntity.getId(),
@@ -84,6 +89,10 @@ public class VersioningUtil {
     }
 
     if (nonExistingIds.size() > 0) {
+      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC
+      // (LoggerServiceName.getServiceName(LoggerServiceName.Submit_Entity),
+      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
+      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
       if (nonExistingIds.size() == 1) {
         throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
             entity.getEntityType(),
@@ -123,6 +132,10 @@ public class VersioningUtil {
 
     if (nonExistingIds.size() > 0) {
       if (nonExistingIds.size() == 1) {
+        //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
+        // .getServiceName(LoggerServiceName.Submit_Entity), LoggerConstants.TARGET_ENTITY_DB,
+        // LoggerTragetServiceName.ENTIT, ErrorLevel.ERROR.name(),
+        // null, LoggerErrorDescription.SUBMIT_ENTITY);
         throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
             containedEntityType,
             nonExistingIds.get(0),
@@ -130,6 +143,10 @@ public class VersioningUtil {
             containingEntity.getId(),
             containingEntity.getVersion()).build());
       }
+      //MdcDataErrorMessage.createErrorMessageAndUpdateMDC(LoggerServiceName
+      // .getServiceName(LoggerServiceName.Submit_Entity),
+      // LoggerConstants.TARGET_ENTITY_DB, LoggerTragetServiceName.SUBMIT_ENTITY,
+      // ErrorLevel.ERROR.name(), null, LoggerErrorDescription.SUBMIT_ENTITY);
       throw new CoreException(new VersionableSubEntityNotFoundErrorBuilder(
           containedEntityType,
           nonExistingIds,
@@ -168,19 +185,23 @@ public class VersioningUtil {
   }
 
   /**
-   * Resolve version version.
+   * Resolve version.
    *
    * @param requestedVersion the requested version
    * @param versionInfo      the version info
    * @return the version
    */
-  public static Version resolveVersion(Version requestedVersion, VersionInfo versionInfo) {
+  public static Version resolveVersion(Version requestedVersion, VersionInfo versionInfo,
+                                       String user) {
     if (requestedVersion == null) {
       requestedVersion = versionInfo.getActiveVersion();
-    } else {
-      if (!versionInfo.getViewableVersions().contains(requestedVersion)) {
-        throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
-      }
+    }
+    if (versionInfo.getActiveVersion().equals(requestedVersion)
+        && user.equals(versionInfo.getLockingUser())) {
+      requestedVersion.setStatus(VersionStatus.Locked);
+    }
+    if (!versionInfo.getViewableVersions().contains(requestedVersion)) {
+      throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
     }
     return requestedVersion;
   }

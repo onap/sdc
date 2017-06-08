@@ -31,8 +31,8 @@
 ###
 ###
 ### Author: Avi Ziv
-### Version 1.4 for OPENECOMP 1.0
-### Date: 13 July 2016 (c) OPENECOMP
+### Version 1.4 for ASDC/AT&T 1.0
+### Date: 13 July 2016
 ###
 ##############################################################################
 

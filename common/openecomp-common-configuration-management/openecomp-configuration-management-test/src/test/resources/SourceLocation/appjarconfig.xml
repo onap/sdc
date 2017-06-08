@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+       <name>
+            <maxlength>28</maxlength>
+       </name>
+        <maxsize>1048576</maxsize>
+        <extension>gz,tgz</extension>
+        <supportedencryption>Base64</supportedencryption>
+        <status>deleted</status>
+        <mandatory>
+            <name>true</name>
+        </mandatory>
+    </artifact>
+	<_config>
+        <namespace>SourceLocation</namespace>
+        <mergeStrategy>merge</mergeStrategy>
+    </_config>
+</configuration>

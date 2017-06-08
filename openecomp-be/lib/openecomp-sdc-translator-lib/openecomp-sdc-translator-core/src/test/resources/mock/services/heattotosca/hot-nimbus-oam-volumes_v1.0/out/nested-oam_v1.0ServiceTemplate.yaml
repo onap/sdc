@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested-oam_v1.0
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pcrf_oam_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -135,21 +111,31 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcrf_oam_image_name
-        config_drive: 'True'
         metadata:
           vnf_id:
             get_input: pcrf_vnf_id
+        config_drive: true
         user_data_format: RAW
         name:
           get_input: pcrf_oam_server_name
     pcrf_oam_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_oam_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_oam
         network:
           get_input: pcrf_oam_net_name
       requirements:
@@ -160,14 +146,24 @@ topology_template:
     pcrf_oam_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_cps_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: pcrf_arbiter_vip
+        network_role_tag: pcrf_cps
         network:
           get_input: pcrf_cps_net_name
       requirements:
@@ -176,7 +172,7 @@ topology_template:
           node: pcrf_server_oam
           relationship: tosca.relationships.network.BindsTo
   groups:
-    nested-oam_v1.0:
+    nested-oam_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested-oam_v1.0.yaml
@@ -192,28 +188,199 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-oam_v1.0
     capabilities:
-      endpoint_pcrf_server_oam:
+      disk.device.latency_pcrf_server_oam:
       - pcrf_server_oam
-      - endpoint
+      - disk.device.latency
+      disk.device.write.requests_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.write.requests
+      vcpus_pcrf_server_oam:
+      - pcrf_server_oam
+      - vcpus
+      scalable_pcrf_server_oam:
+      - pcrf_server_oam
+      - scalable
+      disk.device.write.bytes_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.write.bytes
+      disk.device.write.requests.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.write.requests.rate
+      disk.device.read.requests_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.read.requests
       host_pcrf_server_oam:
       - pcrf_server_oam
       - host
+      disk.usage_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.usage
+      disk.device.capacity_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.capacity
+      disk.latency_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.latency
+      disk.device.allocation_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.allocation
+      memory_pcrf_server_oam:
+      - pcrf_server_oam
+      - memory
+      disk.device.write.bytes.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.write.bytes.rate
+      disk.write.bytes.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.write.bytes.rate
+      network.incoming.packets.rate_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.incoming.packets.rate
+      network.incoming.packets_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.incoming.packets
+      network.incoming.packets_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.incoming.packets
+      disk.read.bytes.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.read.bytes.rate
+      disk.write.requests.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.write.requests.rate
+      memory.resident_pcrf_server_oam:
+      - pcrf_server_oam
+      - memory.resident
+      disk.write.requests_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.write.requests
       binding_pcrf_server_oam:
       - pcrf_server_oam
       - binding
+      disk.device.read.bytes_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.read.bytes
+      network.outgoing.bytes.rate_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.outgoing.bytes.rate
+      disk.capacity_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.capacity
+      cpu_pcrf_server_oam:
+      - pcrf_server_oam
+      - cpu
+      network.incoming.bytes_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.incoming.bytes
+      disk.read.requests_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.read.requests
+      network.incoming.bytes_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.incoming.bytes
+      endpoint_pcrf_server_oam:
+      - pcrf_server_oam
+      - endpoint
+      feature_pcrf_server_oam:
+      - pcrf_server_oam
+      - feature
+      disk.device.read.requests.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.read.requests.rate
+      disk.ephemeral.size_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.ephemeral.size
       attachment_pcrf_oam_port_1:
       - pcrf_oam_port_1
       - attachment
       attachment_pcrf_oam_port_0:
       - pcrf_oam_port_0
       - attachment
-      scalable_pcrf_server_oam:
+      disk.device.usage_pcrf_server_oam:
       - pcrf_server_oam
-      - scalable
+      - disk.device.usage
+      cpu_util_pcrf_server_oam:
+      - pcrf_server_oam
+      - cpu_util
+      disk.write.bytes_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.write.bytes
+      network.incoming.bytes.rate_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.incoming.bytes.rate
+      disk.allocation_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.allocation
+      disk.device.iops_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.iops
+      disk.read.bytes_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.read.bytes
+      network.outgoing.packets.rate_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.outgoing.packets.rate
+      instance_pcrf_server_oam:
+      - pcrf_server_oam
+      - instance
+      disk.device.read.bytes.rate_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.device.read.bytes.rate
+      binding_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - binding
+      binding_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - binding
+      disk.root.size_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.root.size
+      feature_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - feature
+      feature_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - feature
+      disk.iops_pcrf_server_oam:
+      - pcrf_server_oam
+      - disk.iops
+      memory.usage_pcrf_server_oam:
+      - pcrf_server_oam
+      - memory.usage
+      network.outgoing.bytes_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.outgoing.bytes
+      network.outpoing.packets_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - network.outpoing.packets
+      network.outgoing.bytes_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.outgoing.bytes
+      cpu.delta_pcrf_server_oam:
+      - pcrf_server_oam
+      - cpu.delta
       os_pcrf_server_oam:
       - pcrf_server_oam
       - os
+      network.outpoing.packets_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - network.outpoing.packets
     requirements:
+      dependency_pcrf_server_oam:
+      - pcrf_server_oam
+      - dependency
       local_storage_pcrf_server_oam:
       - pcrf_server_oam
       - local_storage
@@ -223,3 +390,9 @@ topology_template:
       link_pcrf_oam_port_0:
       - pcrf_oam_port_0
       - link
+      dependency_pcrf_oam_port_1:
+      - pcrf_oam_port_1
+      - dependency
+      dependency_pcrf_oam_port_0:
+      - pcrf_oam_port_0
+      - dependency

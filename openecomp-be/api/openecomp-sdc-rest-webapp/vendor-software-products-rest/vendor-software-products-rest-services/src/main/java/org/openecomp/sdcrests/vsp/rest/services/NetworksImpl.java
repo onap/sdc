@@ -21,12 +21,15 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.NetworkManager;
+import org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NetworkEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityValidationData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Network;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NetworkDto;
@@ -39,26 +42,27 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapNetworkRequestDtoToNetworkEnti
 import org.openecomp.sdcrests.vsp.rest.mapping.MapNetworkToNetworkDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
+import java.util.Collection;
 
 @Named
 @Service("networks")
 @Scope(value = "prototype")
 public class NetworksImpl implements Networks {
-  @Autowired
-  private VendorSoftwareProductManager vendorSoftwareProductManager;
+
+  private NetworkManager networkManager =
+      NetworkManagerFactory.getInstance().createInterface();
 
   @Override
-  public Response list(String vspId, String version, String user) {
+  public Response list(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_Network.toString());
     Collection<NetworkEntity> networks =
-        vendorSoftwareProductManager.listNetworks(vspId, Version.valueOf(version), user);
+        networkManager.listNetworks(vspId,
+            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
 
     MapNetworkEntityToNetworkDto mapper = new MapNetworkEntityToNetworkDto();
     GenericCollectionWrapper<NetworkDto> results = new GenericCollectionWrapper<>();
@@ -70,20 +74,25 @@ public class NetworksImpl implements Networks {
   }
 
   @Override
-  public Response create(NetworkRequestDto request, String vspId, String user) {
+  public Response create(NetworkRequestDto request, String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_Network.toString());
     NetworkEntity network =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     network.setVspId(vspId);
-    NetworkEntity createdNetwork = vendorSoftwareProductManager.createNetwork(network, user);
+    network.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+    NetworkEntity createdNetwork = networkManager.createNetwork(network, user);
     return Response
         .ok(createdNetwork != null ? new StringWrapperResponse(createdNetwork.getId()) : null)
         .build();
   }
 
   @Override
-  public Response get(String vspId, String networkId, String version, String user) {
+  public Response get(String vspId, String versionId, String networkId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Network.toString());
     CompositionEntityResponse<Network> response =
-        vendorSoftwareProductManager.getNetwork(vspId, Version.valueOf(version), networkId, user);
+        networkManager.getNetwork(vspId,
+            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), networkId,
+            user);
 
     CompositionEntityResponseDto<NetworkDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapNetworkToNetworkDto(), NetworkDto.class)
@@ -92,24 +101,29 @@ public class NetworksImpl implements Networks {
   }
 
   @Override
-  public Response delete(String vspId, String networkId, String user) {
-    vendorSoftwareProductManager.deleteNetwork(vspId, networkId, user);
+  public Response delete(String vspId, String versionId, String networkId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_Network.toString());
+    networkManager
+        .deleteNetwork(vspId, resolveVspVersion(vspId, null, user, VersionableEntityAction.Write),
+            networkId, user);
     return Response.ok().build();
   }
 
   @Override
-  public Response update(NetworkRequestDto request, String vspId, String networkId, String user) {
+  public Response update(NetworkRequestDto request, String vspId, String versionId, String networkId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Update_Network.toString());
     NetworkEntity networkEntity =
         new MapNetworkRequestDtoToNetworkEntity().applyMapping(request, NetworkEntity.class);
     networkEntity.setVspId(vspId);
+    networkEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
     networkEntity.setId(networkId);
 
     CompositionEntityValidationData validationData =
-        vendorSoftwareProductManager.updateNetwork(networkEntity, user);
+        networkManager.updateNetwork(networkEntity, user);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
-            new MapCompositionEntityValidationDataToDto()
-                .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
+        new MapCompositionEntityValidationDataToDto()
+            .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
         Response.ok().build();
   }
 }

@@ -25,6 +25,9 @@ import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 
 import java.util.Collection;
 
+/**
+ * Created by Talio on 8/8/2016.
+ */
 public interface ApplicationConfigManager {
 
   void insertIntoTable(String namespace, String key, String value);

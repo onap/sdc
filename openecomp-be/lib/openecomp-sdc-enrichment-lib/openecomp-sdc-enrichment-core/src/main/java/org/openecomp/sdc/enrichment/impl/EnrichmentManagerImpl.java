@@ -22,62 +22,62 @@ package org.openecomp.sdc.enrichment.impl;
 
 import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.types.EntityInfo;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
 import org.openecomp.sdc.enrichment.factory.EnricherHandlerFactory;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EnrichmentManagerImpl implements EnrichmentManager<ToscaServiceModel> {
 
-  private static Logger logger = LoggerFactory.getLogger(EnrichmentManagerImpl.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(EnrichmentManagerImpl.class);
 
-  private EnrichmentInfo input = null;
+  private EnrichmentInfo data = null;
   private ToscaServiceModel model;
 
 
   @Override
   public Map<String, List<ErrorMessage>> enrich() {
+    Map<String, List<ErrorMessage>> enrichErrors = new HashMap<>();
     List<Enricher> enricherList =
         EnricherHandlerFactory.getInstance().createInterface().getEnrichers();
     for (Enricher enricher : enricherList) {
-      enricher.setInput(input);
+      enricher.setData(data);
       enricher.setModel(model);
-      enricher.enrich();
+      enrichErrors.putAll(enricher.enrich());
     }
 
-    return null;
+    return enrichErrors;
   }
 
   @Override
-  public void addEntityInput(String type, EntityInfo info) {
-    this.input.addEntityInfo(type, info);
+  public void addEntityInfo(String entityKey, EntityInfo entityInfo) {
+    this.data.addEntityInfo(entityKey, entityInfo);
   }
 
 
   @Override
-  public void initInput(String key, Version version) {
-    input = new EnrichmentInfo();
-    input.setKey(key);
-    input.setVersion(version);
+  public void init(String key, Version version) {
+    data = new EnrichmentInfo();
+    data.setKey(key);
+    data.setVersion(version);
   }
-
-  @Override
-  public void addModel(ToscaServiceModel model) {
-
-    this.model = model;
-  }
-
 
   @Override
   public ToscaServiceModel getModel() {
     return this.model;
+  }
+
+  @Override
+  public void setModel(ToscaServiceModel model) {
+    this.model = model;
   }
 
 

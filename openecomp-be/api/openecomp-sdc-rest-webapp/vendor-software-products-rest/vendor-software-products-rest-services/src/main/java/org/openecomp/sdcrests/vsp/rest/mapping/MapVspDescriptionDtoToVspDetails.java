@@ -23,10 +23,9 @@ package org.openecomp.sdcrests.vsp.rest.mapping;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdcrests.common.types.VersionDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
-
-import java.util.regex.Pattern;
 
 public class MapVspDescriptionDtoToVspDetails extends MappingBase<VspDescriptionDto, VspDetails> {
 
@@ -40,11 +39,13 @@ public class MapVspDescriptionDtoToVspDetails extends MappingBase<VspDescription
     target.setVendorName(source.getVendorName());
     target.setVendorId(source.getVendorId());
 
-    String vlmVersion = source.getLicensingVersion();
+    VersionDto vlmVersion = source.getLicensingVersion();
     if (vlmVersion != null) {
-      target.setVlmVersion(
-          Pattern.compile(Version.VERSION_REGEX).matcher(vlmVersion).find() ? Version
-              .valueOf(vlmVersion) : null);
+      Version version = Version.valueOf(vlmVersion.getId());
+      target.setVlmVersion(version);
+//      target.setVlmVersion(
+//          Pattern.compile(Version.VERSION_REGEX).matcher(vlmVersion.getId()).find() ? Version
+//              .valueOf(vlmVersion.getId()) : null);
     }
 
     LicensingData licensingData = source.getLicensingData();

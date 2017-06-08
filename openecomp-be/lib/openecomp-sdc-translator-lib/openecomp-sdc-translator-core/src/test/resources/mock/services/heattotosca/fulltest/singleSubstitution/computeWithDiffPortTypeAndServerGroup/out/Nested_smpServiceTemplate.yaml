@@ -1,0 +1,295 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_smp
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.smp:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_image_name:
+      type: string
+      required: true
+    port_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_smp_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_smp_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_smp_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_smp_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_port_replacement_policy:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_smp_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    smp_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy:
+          get_input:
+          - port_port_replacement_policy
+          - index_value
+        ip_requirements:
+          get_input:
+          - port_port_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_port_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: smp
+          relationship: tosca.relationships.network.BindsTo
+    smp:
+      type: org.openecomp.resource.vfc.nodes.heat.smp
+      properties:
+        availability_zone:
+          get_input:
+          - compute_smp_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_smp_metadata
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_smp_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_smp_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_smp_user_data_format
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.smp
+    capabilities:
+      scalable_smp:
+      - smp
+      - scalable
+      feature_smp:
+      - smp
+      - feature
+      memory.resident_smp:
+      - smp
+      - memory.resident
+      disk.usage_smp:
+      - smp
+      - disk.usage
+      disk.device.write.bytes_smp:
+      - smp
+      - disk.device.write.bytes
+      network.outpoing.packets_smp_port:
+      - smp_port
+      - network.outpoing.packets
+      attachment_smp_port:
+      - smp_port
+      - attachment
+      os_smp:
+      - smp
+      - os
+      network.incoming.bytes_smp_port:
+      - smp_port
+      - network.incoming.bytes
+      binding_smp:
+      - smp
+      - binding
+      disk.allocation_smp:
+      - smp
+      - disk.allocation
+      instance_smp:
+      - smp
+      - instance
+      host_smp:
+      - smp
+      - host
+      disk.device.usage_smp:
+      - smp
+      - disk.device.usage
+      network.outgoing.packets.rate_smp_port:
+      - smp_port
+      - network.outgoing.packets.rate
+      disk.read.bytes_smp:
+      - smp
+      - disk.read.bytes
+      disk.ephemeral.size_smp:
+      - smp
+      - disk.ephemeral.size
+      disk.write.bytes.rate_smp:
+      - smp
+      - disk.write.bytes.rate
+      network.incoming.packets_smp_port:
+      - smp_port
+      - network.incoming.packets
+      disk.device.write.bytes.rate_smp:
+      - smp
+      - disk.device.write.bytes.rate
+      disk.capacity_smp:
+      - smp
+      - disk.capacity
+      disk.device.read.bytes.rate_smp:
+      - smp
+      - disk.device.read.bytes.rate
+      disk.device.latency_smp:
+      - smp
+      - disk.device.latency
+      disk.device.write.requests.rate_smp:
+      - smp
+      - disk.device.write.requests.rate
+      feature_smp_port:
+      - smp_port
+      - feature
+      disk.root.size_smp:
+      - smp
+      - disk.root.size
+      disk.write.requests_smp:
+      - smp
+      - disk.write.requests
+      cpu.delta_smp:
+      - smp
+      - cpu.delta
+      disk.device.write.requests_smp:
+      - smp
+      - disk.device.write.requests
+      memory_smp:
+      - smp
+      - memory
+      disk.device.iops_smp:
+      - smp
+      - disk.device.iops
+      network.outgoing.bytes_smp_port:
+      - smp_port
+      - network.outgoing.bytes
+      disk.device.allocation_smp:
+      - smp
+      - disk.device.allocation
+      disk.device.read.requests.rate_smp:
+      - smp
+      - disk.device.read.requests.rate
+      disk.device.read.bytes_smp:
+      - smp
+      - disk.device.read.bytes
+      vcpus_smp:
+      - smp
+      - vcpus
+      disk.write.requests.rate_smp:
+      - smp
+      - disk.write.requests.rate
+      disk.latency_smp:
+      - smp
+      - disk.latency
+      network.incoming.packets.rate_smp_port:
+      - smp_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_smp_port:
+      - smp_port
+      - network.incoming.bytes.rate
+      binding_smp_port:
+      - smp_port
+      - binding
+      disk.iops_smp:
+      - smp
+      - disk.iops
+      disk.read.bytes.rate_smp:
+      - smp
+      - disk.read.bytes.rate
+      network.outgoing.bytes.rate_smp_port:
+      - smp_port
+      - network.outgoing.bytes.rate
+      cpu_util_smp:
+      - smp
+      - cpu_util
+      disk.write.bytes_smp:
+      - smp
+      - disk.write.bytes
+      memory.usage_smp:
+      - smp
+      - memory.usage
+      disk.read.requests_smp:
+      - smp
+      - disk.read.requests
+      disk.device.capacity_smp:
+      - smp
+      - disk.device.capacity
+      cpu_smp:
+      - smp
+      - cpu
+      endpoint_smp:
+      - smp
+      - endpoint
+      disk.device.read.requests_smp:
+      - smp
+      - disk.device.read.requests
+    requirements:
+      link_smp_port:
+      - smp_port
+      - link
+      dependency_smp:
+      - smp
+      - dependency
+      dependency_smp_port:
+      - smp_port
+      - dependency
+      local_storage_smp:
+      - smp
+      - local_storage

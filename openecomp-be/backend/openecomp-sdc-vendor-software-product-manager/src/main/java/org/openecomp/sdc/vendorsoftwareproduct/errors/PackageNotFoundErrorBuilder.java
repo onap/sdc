@@ -20,15 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND;
-
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-/**
- * The type Package not found error builder.
- */
 public class PackageNotFoundErrorBuilder {
   private static final String PACKAGE_VERSION_NOT_FOUND_MSG =
       "Package for vendor software product with Id %s and version %s does not exist.";
@@ -43,10 +38,10 @@ public class PackageNotFoundErrorBuilder {
    * @param version                 the version
    */
   public PackageNotFoundErrorBuilder(String vendorSoftwareProductId, Version version) {
-    builder.withId(PACKAGE_NOT_FOUND);
+    builder.withId(VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND);
     builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(
-        String.format(PACKAGE_VERSION_NOT_FOUND_MSG, vendorSoftwareProductId, version.toString()));
+    builder.withMessage(String.format(PACKAGE_VERSION_NOT_FOUND_MSG,
+        vendorSoftwareProductId, version == null ? null : version.toString()));
   }
 
   /**
@@ -55,16 +50,11 @@ public class PackageNotFoundErrorBuilder {
    * @param vendorSoftwareProductId the vendor software product id
    */
   public PackageNotFoundErrorBuilder(String vendorSoftwareProductId) {
-    builder.withId(PACKAGE_NOT_FOUND);
+    builder.withId(VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String.format(PACKAGE_NOT_FOUND_MSG, vendorSoftwareProductId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

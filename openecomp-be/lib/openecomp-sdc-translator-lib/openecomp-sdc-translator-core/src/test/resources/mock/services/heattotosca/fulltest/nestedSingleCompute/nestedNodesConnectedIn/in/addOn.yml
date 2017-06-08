@@ -1,0 +1,19 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  shared_security_group_id1:
+      type: string
+      description: network name of jsa log network
+  shared_security_group_id2:
+      type: string
+      description: network name of jsa log network
+
+resources:
+  test_shared_node_connected_in_nested:
+    type: nested-oam_v0.1.yaml
+    properties:
+      shared_security_group_id1: { get_param: shared_security_group_id1}
+      p2: { get_param: shared_security_group_id2}

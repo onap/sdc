@@ -1,0 +1,349 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    Internal2_name:
+      label: Internal2_name
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_name
+    FSB1_volume_name:
+      label: FSB1_volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_volume_1
+    jsa_cidr:
+      label: jsa_cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_cidr
+    availabilityzone_name:
+      label: availabilityzone_name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone_name
+    Internal2_external:
+      label: Internal2_external
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_external
+    vipr_atm_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    Internal2_forwarding_mode:
+      label: Internal2_forwarding_mode
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_forwarding_mode
+    pcrf_vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    FSB_1_image:
+      label: MME_FSB1
+      hidden: false
+      immutable: false
+      type: string
+      description: MME_FSB1_15B-CP04-r5a01
+    fsb1-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    pcm_server_name:
+      label: pcm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_server_name
+    oam_net_name:
+      label: oam_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_name
+    fsb1-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    fsb_zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    oam_net_gw:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    VMME_FSB1_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+    network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    pcrf_psm_server_name:
+      label: pcrf_psm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_server_name
+    pcm_flavor_name:
+      label: pcm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_flavor_name
+    pcrf_cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb2-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    pcrf_cps_net_name:
+      label: pcrf_cps_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_cps_net_name
+    pcm_vol:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    Internal1_external:
+      label: Internal1_external
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_external
+    Internal1_shared:
+      label: Internal1_shared
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_shared
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    pcm_image_name:
+      label: pcm_image_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_image_name
+    pcrf_psm_flavor_name:
+      label: pcrf_psm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_flavor_name
+    pcrf_psm_image_name:
+      label: pcrf_psm_image_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_image_name
+    snapshot01:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: my volume size 320GB
+    snapshot02:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    Internal2_shared:
+      label: Internal2_shared
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_shared
+    cps_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    Internal1_net_name:
+      label: Internal1_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_net_name
+    fsb1-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    pcm_vol_01:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type Gold
+    fsb1-zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    jsa_net_name:
+      label: jsa_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_net_name
+    port_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    oam_net_id:
+      label: oam_net_id
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_id
+    Internal1_forwarding_mode:
+      label: Internal1_forwarding_mode
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_forwarding_mode
+    cps_net_name:
+      label: cps_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: cps_net_name
+    oam_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    oam_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    pcrf_security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+  node_templates:
+    VMI1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_3
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        virtual_network_refs:
+        - get_input: network_name
+        virtual_machine_interface_properties:
+          service_interface_type: left
+        port_tuple_refs:
+        - get_input: port_name
+    FSB1:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB1
+      properties:
+        flavor:
+          get_input: fsb1-flavor
+        availability_zone:
+          get_input: fsb_zone
+        name:
+          get_attribute:
+          - VMI1
+          - fq_name
+          - ip
+          - show
+          - sub_interface_vlan_tag
+          - mac
+          - port_tuple_refs
+          - virtual_machine_intefrace_mac_addresses
+          - ip_prefix
+          - address_mode
+          - mac_address
+          - ip_prefix_len
+          - name
+          - virtual_machine_interface_properties_service_interface_type
+          - allowed_address_pair
+          - virtual_network_refs
+          - virtual_machine_interface_properties
+          - virtual_machine_interface_allowed_address_pairs
+  groups:
+    ep-jsa_net_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: Paul Phillips, pp2854 PROD)
+      members:
+      - VMI1
+      - FSB1

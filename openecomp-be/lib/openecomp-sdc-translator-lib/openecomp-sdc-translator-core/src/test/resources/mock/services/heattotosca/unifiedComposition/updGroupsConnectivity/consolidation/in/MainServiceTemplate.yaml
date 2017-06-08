@@ -1,0 +1,260 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+
+topology_template:
+  inputs:
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    fsb2-name:
+      label: FSB2_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB2_name
+    cmaui_cinder_volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: my volume size 320GB
+    fsb-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    fsb-image:
+      label: FSB1_image
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_image
+    fsb1-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    fsb1-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    fsb1-zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    fsb2_zone:
+      label: FSB2_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB2_zone
+    network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb2-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    fsb2-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    jsa_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    packet_mirror_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+  node_templates:
+    FSB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb2-Internal2-mac
+        network: Internal2-net-fsb2-Internal2
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net
+          relationship: tosca.relationships.network.LinksTo
+    FSB2_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb2-Internal1-mac
+        network: Internal2-net-fsb2-Internal1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net
+          relationship: tosca.relationships.network.LinksTo
+    FSB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb1-Internal2-mac
+        network: Internal1-net-fsb1-Internal2
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB2_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    FSB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb1-Internal1-mac
+        network: Internal1-net-fsb1-Internal1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    jsa_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_input: jsa_net_name
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+         get_attribute:
+          - FSB1_Internal1
+          - network_id
+        dhcp_agent_ids:
+         get_attribute:
+          - FSB1_template
+          - addresses
+        tenant_id:
+         get_attribute:
+          - FSB2_Internal2
+          - network_id
+        qos_policy:
+         get_attribute:
+          - FSB2_Internal2
+          - network_id
+    FSB1_template:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB
+      properties:
+        flavor:
+          get_input: fsb-flavor
+        image:
+          get_input: fsb-image
+        user_data: STATIC-DATA-FSB1
+        admin_pass: OPTIONAL-DATA-FSB1
+        availability_zone:
+          get_input: fsb1_zone
+        metadata:
+          write_files:
+          - path: /path1/etc/sysconfig/network-scripts/ifcfg-eth0
+          - path: /path2/etc/sysconfig/network-scripts/ifcfg-eth1
+        name:
+          get_input: fsb1-name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+    FSB2_template:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB
+      properties:
+        flavor:
+          get_input: fsb-flavor
+        image:
+          get_input: fsb-image
+        user_data: STATIC-DATA-FSB2
+        availability_zone:
+          get_input: fsb2_zone
+        metadata:
+          write_files:
+          - path: /path3/etc/sysconfig/network-scripts/ifcfg-eth0
+          - path: /path4/etc/sysconfig/network-scripts/ifcfg-eth1
+        name:
+          get_input: fsb2-name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        network_name:
+          get_input: packet_mirror_network_name
+  groups:
+    FE_SMP_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - FSB2_template
+      - FSB1_template
+    BE_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - FSB2_template
+      - FSB1_template
+    ep-jsa_net_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - FSB1_Internal1
+      - FSB1_Internal2
+      - FSB2_Internal1
+      - FSB2_Internal2
+      - FSB1_template
+      - FSB2_template
+      - jsa_net
+      - jsa_net1
+      - packet_mirror_network_name

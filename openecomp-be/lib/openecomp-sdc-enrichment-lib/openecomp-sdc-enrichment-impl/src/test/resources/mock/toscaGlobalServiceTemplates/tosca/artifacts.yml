@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  filename: tosca/artifacts.yml
+  version: '1.0'
+imports:
+- tosca_index:
+    file: _index.yml
+artifact_types:
+  tosca.artifacts.Root:
+    description: This is the default (root) TOSCA Artifact Type definition that all other TOSCA base Artifact Types derive from.
+  tosca.artifacts.Deployment.Image:
+    derived_from: tosca.artifacts.Deployment
+    description: This artifact type represents a parent type for any "image" which is an opaque packaging of a TOSCA Node's deployment (whether real or virtual) whose contents are typically already installed and pre-configured (i.e., "stateful") and prepared to be run on a known target container.
+  tosca.artifacts.Implementation.Bash:
+    derived_from: tosca.artifacts.Implementation
+    description: This artifact type represents a Bash script type that contains Bash commands that can be executed on the Unix Bash shell.
+  tosca.artifacts.Deployment.Image.VM:
+    derived_from: tosca.artifacts.Deployment
+    description: This artifact represents the parent type for all Virtual Machine (VM) image and container formatted deployment artifacts. These images contain a stateful capture of a machine (e.g., server) including operating system and installed software along with any configurations and can be run on another machine using a hypervisor which virtualizes typical server (i.e., hardware) resources.
+  tosca.artifacts.Implementation.Python:
+    derived_from: tosca.artifacts.Implementation
+    description: This artifact type represents a Python file that contains Python language constructs that can be executed within a Python interpreter.
+  tosca.artifacts.Deployment:
+    derived_from: tosca.artifacts.Root
+    description: This artifact type represents the parent type for all deployment artifacts in TOSCA. This class of artifacts typically represents a binary packaging of an application or service that is used to install/create or deploy it as part of a node's lifecycle.
+  tosca.artifacts.File:
+    derived_from: tosca.artifacts.Root
+    description: This artifact type is used when an artifact definition needs to have its associated file simply treated as a file and no special handling/handlers are invoked (i.e., it is not treated as either an implementation or deployment artifact type).
+  tosca.artifacts.Implementation:
+    derived_from: tosca.artifacts.Root
+    description: This artifact type represents the parent type for all implementation artifacts in TOSCA. These artifacts are used to implement operations of TOSCA interfaces either directly (e.g., scripts) or indirectly (e.g., config. files).

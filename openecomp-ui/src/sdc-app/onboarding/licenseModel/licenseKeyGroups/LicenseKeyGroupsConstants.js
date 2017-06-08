@@ -1,25 +1,21 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import keyMirror from 'nfvo-utils/KeyMirror.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
 
 export const actionTypes = keyMirror({
 
@@ -42,6 +38,8 @@ export const defaultState = {
 	}
 };
 
+export const LKG_FORM_NAME = 'LKGFORM';
+
 export const optionsInputValues = {
 	OPERATIONAL_SCOPE: [
 		{enum: '', title: i18n('please select…')},
@@ -61,4 +59,21 @@ export const optionsInputValues = {
 	]
 };
 
+export const extractValue = (item) => {
+	if (item === undefined) {return '';} //TODO fix it later
 
+	return  item ? item === optionInputOther.OTHER ? item : InputOptions.getTitleByName(optionsInputValues, item) : '';
+};
+
+export const getOperationalScopes = (operationalScope) => {
+	if(operationalScope.choices.toString() === i18n(optionInputOther.OTHER) && operationalScope.other !== '') {
+		return operationalScope.other;
+	}
+	else {
+		let allOpScopes = '';
+		for (let opScope of operationalScope.choices) {
+			allOpScopes += allOpScopes === '' ? InputOptions.getTitleByName(optionsInputValues, opScope) : `, ${InputOptions.getTitleByName(optionsInputValues, opScope)}`;
+		}
+		return allOpScopes;
+	}
+};

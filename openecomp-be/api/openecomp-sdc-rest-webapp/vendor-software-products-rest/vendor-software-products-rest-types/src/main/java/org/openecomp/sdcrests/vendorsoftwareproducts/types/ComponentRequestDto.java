@@ -24,6 +24,7 @@ public class ComponentRequestDto {
 
   private String name;
   private String displayName;
+  private String vfcCode;
   private String description;
 
   public String getName() {
@@ -50,4 +51,11 @@ public class ComponentRequestDto {
     this.description = description;
   }
 
+  public String getVfcCode() {
+    return vfcCode;
+  }
+
+  public void setVfcCode(String vfcCode) {
+    this.vfcCode = vfcCode;
+  }
 }

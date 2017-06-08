@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
@@ -6,7 +21,7 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
 import SoftwareProductProcessesEditor from './SoftwareProductProcessesEditor.js';
-import SoftwareProductProcessesConfirmationModal  from './SoftwareProductProcessesConfirmationModal.jsx';
+
 
 
 class SoftwareProductProcessesView extends React.Component {
@@ -20,30 +35,29 @@ class SoftwareProductProcessesView extends React.Component {
 		onEditProcess: React.PropTypes.func.isRequired,
 		onDeleteProcess: React.PropTypes.func.isRequired,
 		isDisplayEditor: React.PropTypes.bool.isRequired,
-		isReadOnlyMode: React.PropTypes.bool.isRequired
+		isReadOnlyMode: React.PropTypes.bool.isRequired,
+		currentSoftwareProduct:React.PropTypes.object
 	};
 
 	render() {
-		let { currentSoftwareProduct} = this.props;
 		return (
 			<div className='software-product-landing-view-right-side vsp-processes-page'>
 				{this.renderEditor()}
 				{this.renderProcessList()}
-				<SoftwareProductProcessesConfirmationModal softwareProductId={currentSoftwareProduct.id}/>
 			</div>
 		);
 	}
 
 	renderEditor() {
-		let {currentSoftwareProduct: {id}, isModalInEditMode, isReadOnlyMode, isDisplayEditor} = this.props;
+		let {currentSoftwareProduct: {id, version}, isModalInEditMode, isReadOnlyMode, isDisplayEditor} = this.props;
 		return (
 
-			<Modal show={isDisplayEditor} bsSize='large' animation={true}>
+			<Modal show={isDisplayEditor} bsSize='large' animation={true} className='onborading-modal'>
 				<Modal.Header>
 					<Modal.Title>{isModalInEditMode ? i18n('Edit Process Details') : i18n('Create New Process Details')}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body className='edit-process-modal'>
-					<SoftwareProductProcessesEditor softwareProductId={id} isReadOnlyMode={isReadOnlyMode}/>
+					<SoftwareProductProcessesEditor softwareProductId={id} version={version} isReadOnlyMode={isReadOnlyMode}/>
 				</Modal.Body>
 			</Modal>
 		);
@@ -60,7 +74,8 @@ class SoftwareProductProcessesView extends React.Component {
 				placeholder={i18n('Filter Process')}
 				onAdd={onAddProcess}
 				isReadOnlyMode={isReadOnlyMode}
-				onFilter={filter => this.setState({localFilter: filter})}>
+				title={i18n('Process Details')}
+				onFilter={value => this.setState({localFilter: value})}>
 				{this.filterList().map(processes => this.renderProcessListItem(processes, isReadOnlyMode))}
 			</ListEditorView>
 		);
@@ -68,14 +83,14 @@ class SoftwareProductProcessesView extends React.Component {
 
 	renderProcessListItem(process, isReadOnlyMode) {
 		let {id, name, description, artifactName = ''} = process;
-		let {onEditProcess, onDeleteProcess} =  this.props;
+		let {currentSoftwareProduct: {version}, onEditProcess, onDeleteProcess} =  this.props;
 		return (
 			<ListEditorItemView
 				key={id}
 				className='list-editor-item-view'
 				isReadOnlyMode={isReadOnlyMode}
 				onSelect={() => onEditProcess(process)}
-				onDelete={() => onDeleteProcess(process)}>
+				onDelete={() => onDeleteProcess(process, version)}>
 
 				<div className='list-editor-item-view-field'>
 					<div className='title'>{i18n('Name')}</div>

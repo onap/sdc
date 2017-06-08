@@ -24,6 +24,9 @@ import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
+
+
+
 public abstract class EnrichmentManagerFactory extends AbstractComponentFactory<EnrichmentManager> {
 
   public static EnrichmentManagerFactory getInstance() {

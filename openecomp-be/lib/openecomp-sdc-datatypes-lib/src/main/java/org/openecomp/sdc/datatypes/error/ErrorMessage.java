@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 public class ErrorMessage {
   private final ErrorLevel level;
   private final String message;
@@ -44,6 +45,13 @@ public class ErrorMessage {
   }
 
   @Override
+  public int hashCode() {
+    int result = level.hashCode();
+    result = 31 * result + message.hashCode();
+    return result;
+  }
+
+  @Override
   public boolean equals(Object object) {
     if (this == object) {
       return true;
@@ -56,13 +64,6 @@ public class ErrorMessage {
 
     return level == that.level && message.equals(that.message);
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = level.hashCode();
-    result = 31 * result + message.hashCode();
-    return result;
   }
 
   public static class ErrorMessageUtil {

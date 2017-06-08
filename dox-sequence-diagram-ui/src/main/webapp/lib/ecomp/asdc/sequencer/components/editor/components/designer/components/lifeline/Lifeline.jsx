@@ -20,8 +20,8 @@ import { DragSource, DropTarget } from 'react-dnd';
 import Common from '../../../../../../common/Common';
 
 import Icon from '../../../../../icons/Icon';
-import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/handle.svg';
-import iconDelete from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/delete.svg';
+import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/handle.svg';
+import iconDelete from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/delete.svg';
 
 /**
  * LHS lifeline row view.

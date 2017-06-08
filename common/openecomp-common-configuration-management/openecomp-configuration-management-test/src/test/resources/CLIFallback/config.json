@@ -1,0 +1,8 @@
+{
+    "artifact": {
+      "name": { "minlength": "6" },
+      "extension": "pdf,tgz,xls"
+    },
+  "_config":{"namespace": "OPENECOMP:CLIFallback", "mergeStrategy": "union"}
+
+}

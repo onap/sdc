@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+/**
+ * Created by TALIO on 4/26/2016.
+ */
 public class VspCreationDto {
   private String vspId;
 

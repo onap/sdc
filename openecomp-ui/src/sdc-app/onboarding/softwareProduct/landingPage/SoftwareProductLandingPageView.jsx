@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import classnames from 'classnames';
 import Dropzone from 'react-dropzone';
@@ -6,15 +21,14 @@ import Dropzone from 'react-dropzone';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
+import ListEditorItemViewField from 'nfvo-components/listEditor/ListEditorItemViewField.jsx';
 
-import FontAwesome from 'react-fontawesome';
-import SoftwareProductLandingPageUploadConfirmationModal from './SoftwareProductLandingPageUploadConfirmationModal.jsx';
-
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
 
 const SoftwareProductPropType = React.PropTypes.shape({
 	name: React.PropTypes.string,
 	description: React.PropTypes.string,
-	version: React.PropTypes.string,
+	version: React.PropTypes.object,
 	id: React.PropTypes.string,
 	categoryId: React.PropTypes.string,
 	vendorId: React.PropTypes.string,
@@ -79,7 +93,6 @@ class SoftwareProductLandingPageView extends React.Component {
 				{
 					componentsList.length > 0 && this.renderComponents()
 				}
-				<SoftwareProductLandingPageUploadConfirmationModal confirmationButtonText={i18n('Continue')}/>
 			</div>
 		);
 	}
@@ -101,29 +114,31 @@ class SoftwareProductLandingPageView extends React.Component {
 					onClick={() => onDetailsSelect(currentSoftwareProduct)}>
 					<div className='details-container'>
 						<div className='single-detail-section title-section'>
-							<div>
-								<div>{name}</div>
+							<div className='single-detail-section title-text'>
+								{name}
 							</div>
 						</div>
-						<div className='multiple-details-section'>
-							<div className='detail-col' >
-								<div className='title'>{i18n('Vendor')}</div>
-								<div className='description'>{vendorName}</div>
-							</div>
-							<div className='detail-col'>
-								<div className='title'>{i18n('Category')}</div>
-								<div className='description'>{fullCategoryDisplayName}</div>
-							</div>
-							<div className='detail-col'>
-								<div className='title extra-large'>{i18n('License Agreement')}</div>
-								<div className='description'>
-									{this.renderLicenseAgreement(licenseAgreementName)}
+						<div className='details-section'>
+							<div className='multiple-details-section'>
+								<div className='detail-col' >
+									<div className='title'>{i18n('Vendor')}</div>
+									<div className='description'>{vendorName}</div>
+								</div>
+								<div className='detail-col'>
+									<div className='title'>{i18n('Category')}</div>
+									<div className='description'>{fullCategoryDisplayName}</div>
+								</div>
+								<div className='detail-col'>
+									<div className='title extra-large'>{i18n('License Agreement')}</div>
+									<div className='description'>
+										{this.renderLicenseAgreement(licenseAgreementName)}
+									</div>
 								</div>
 							</div>
-						</div>
-						<div className='single-detail-section'>
-							<div className='title'>{i18n('Description')}</div>
-							<div className='description'>{description}</div>
+							<div className='single-detail-section'>
+								<div className='title'>{i18n('Description')}</div>
+								<div className='description'>{description}</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -151,19 +166,13 @@ class SoftwareProductLandingPageView extends React.Component {
 							<div className='attachment-details'>{i18n('HEAT Templates')} (<span
 								className='attachment-details-count'>{details.heatTemplates}</span>)
 							</div>
-							<div className='attachment-details'>{i18n('Images')} (<span
-								className='attachment-details-count'>{details.images}</span>)
-							</div>
-							<div className='attachment-details'>{i18n('Other Artifacts')} (<span
-								className='attachment-details-count'>{details.otherArtifacts}</span>)
-							</div>
 						</div>
 					</div>
 					<div
 						className={classnames('software-product-landing-view-top-block-col-upl', {'disabled': isReadOnlyMode})}>
 						<div className='drag-text'>{i18n('Drag & drop for upload')}</div>
 						<div className='or-text'>{i18n('or')}</div>
-						<div className='upload-btn primary-btn' onClick={() => this.refs.fileInput.open()}>
+						<div data-test-id='upload-btn' className='upload-btn primary-btn' onClick={() => this.refs.fileInput.open()}>
 							<span className='primary-btn-text'>{i18n('Select file')}</span>
 						</div>
 					</div>
@@ -180,7 +189,8 @@ class SoftwareProductLandingPageView extends React.Component {
 				title={i18n('Virtual Function Components')}
 				filterValue={localFilter}
 				placeholder={i18n('Filter Components')}
-				onFilter={filter => this.setState({localFilter: filter})}>
+				onFilter={value => this.setState({localFilter: value})}
+				twoColumns>
 				{this.filterList().map(component => this.renderComponentsListItem(component))}
 			</ListEditorView>
 		);
@@ -194,21 +204,19 @@ class SoftwareProductLandingPageView extends React.Component {
 				key={name + Math.floor(Math.random() * (100 - 1) + 1).toString()}
 				className='list-editor-item-view'
 				onSelect={() => onComponentSelect({id, componentId})}>
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Component')}</div>
+				<ListEditorItemViewField>
 					<div className='name'>{displayName}</div>
-				</div>
-				<div className='list-editor-item-view-field'>
-					<div className='title'>{i18n('Description')}</div>
+				</ListEditorItemViewField>
+				<ListEditorItemViewField>
 					<div className='description'>{description}</div>
-				</div>
+				</ListEditorItemViewField>
 			</ListEditorItemView>
 		);
 	}
 
 	renderLicenseAgreement(licenseAgreementName) {
-		if (!licenseAgreementName) {
-			return (<FontAwesome name='exclamation-triangle' className='warning-icon'/>);
+		if (licenseAgreementName !== null && !licenseAgreementName) {
+			return (<div className='missing-license'><SVGIcon name='exclamation-triangle-full'/><div className='warning-text'>{i18n('Missing')}</div></div>);
 		}
 		return (licenseAgreementName);
 	}
@@ -242,6 +250,9 @@ class SoftwareProductLandingPageView extends React.Component {
 			this.startUploading(files);
 		}
 		else {
+			this.setState({
+				dragging: false
+			});
 			this.props.onInvalidFileSizeUpload();
 		}
 

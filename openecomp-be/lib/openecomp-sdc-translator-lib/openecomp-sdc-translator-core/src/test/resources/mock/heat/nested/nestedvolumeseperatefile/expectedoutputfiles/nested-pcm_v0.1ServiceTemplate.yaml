@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested-pcm_v0.1
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.nova:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -60,7 +36,7 @@ topology_template:
         image:
           get_input: nova_image_name
   groups:
-    nested-pcm_v0.1:
+    nested-pcm_v0.1_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested-pcm_v0.1.yaml
@@ -70,22 +46,133 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
     capabilities:
-      scalable_nova_001:
+      disk.iops_nova_001:
       - nova_001
-      - scalable
+      - disk.iops
       host_nova_001:
       - nova_001
       - host
       endpoint_nova_001:
       - nova_001
       - endpoint
-      os_nova_001:
+      disk.device.read.requests_nova_001:
       - nova_001
-      - os
+      - disk.device.read.requests
+      disk.device.write.requests_nova_001:
+      - nova_001
+      - disk.device.write.requests
+      disk.device.write.requests.rate_nova_001:
+      - nova_001
+      - disk.device.write.requests.rate
       binding_nova_001:
       - nova_001
       - binding
+      disk.device.iops_nova_001:
+      - nova_001
+      - disk.device.iops
+      disk.read.bytes_nova_001:
+      - nova_001
+      - disk.read.bytes
+      os_nova_001:
+      - nova_001
+      - os
+      disk.device.read.bytes.rate_nova_001:
+      - nova_001
+      - disk.device.read.bytes.rate
+      disk.usage_nova_001:
+      - nova_001
+      - disk.usage
+      disk.device.allocation_nova_001:
+      - nova_001
+      - disk.device.allocation
+      disk.root.size_nova_001:
+      - nova_001
+      - disk.root.size
+      disk.device.read.requests.rate_nova_001:
+      - nova_001
+      - disk.device.read.requests.rate
+      disk.write.bytes_nova_001:
+      - nova_001
+      - disk.write.bytes
+      memory.usage_nova_001:
+      - nova_001
+      - memory.usage
+      disk.capacity_nova_001:
+      - nova_001
+      - disk.capacity
+      disk.write.requests_nova_001:
+      - nova_001
+      - disk.write.requests
+      vcpus_nova_001:
+      - nova_001
+      - vcpus
+      scalable_nova_001:
+      - nova_001
+      - scalable
+      disk.device.latency_nova_001:
+      - nova_001
+      - disk.device.latency
+      disk.device.write.bytes.rate_nova_001:
+      - nova_001
+      - disk.device.write.bytes.rate
+      disk.device.usage_nova_001:
+      - nova_001
+      - disk.device.usage
+      cpu.delta_nova_001:
+      - nova_001
+      - cpu.delta
+      disk.latency_nova_001:
+      - nova_001
+      - disk.latency
+      instance_nova_001:
+      - nova_001
+      - instance
+      disk.read.bytes.rate_nova_001:
+      - nova_001
+      - disk.read.bytes.rate
+      disk.device.read.bytes_nova_001:
+      - nova_001
+      - disk.device.read.bytes
+      disk.allocation_nova_001:
+      - nova_001
+      - disk.allocation
+      memory.resident_nova_001:
+      - nova_001
+      - memory.resident
+      disk.write.bytes.rate_nova_001:
+      - nova_001
+      - disk.write.bytes.rate
+      disk.device.write.bytes_nova_001:
+      - nova_001
+      - disk.device.write.bytes
+      disk.device.capacity_nova_001:
+      - nova_001
+      - disk.device.capacity
+      feature_nova_001:
+      - nova_001
+      - feature
+      memory_nova_001:
+      - nova_001
+      - memory
+      disk.write.requests.rate_nova_001:
+      - nova_001
+      - disk.write.requests.rate
+      disk.ephemeral.size_nova_001:
+      - nova_001
+      - disk.ephemeral.size
+      cpu_util_nova_001:
+      - nova_001
+      - cpu_util
+      disk.read.requests_nova_001:
+      - nova_001
+      - disk.read.requests
+      cpu_nova_001:
+      - nova_001
+      - cpu
     requirements:
       local_storage_nova_001:
       - nova_001
       - local_storage
+      dependency_nova_001:
+      - nova_001
+      - dependency

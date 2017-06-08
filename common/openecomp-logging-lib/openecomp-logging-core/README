@@ -1,0 +1,29 @@
+The purpose of this module is to make a Web application meet the OPENECOMP logging requirements described in
+OPENECOMP platform application logging guidelines.
+
+The default out-of-the box solution is based on SLF4J.
+
+It introduces three major areas of functionality as follows:
+
+1. Routing of logging messages for the Logback library, so that all logging events are written to separate files
+according to their type.
+
+2. An AOP aspect for measuring execution time and logging it, so that the application code is not contaminated with
+this type of logging.
+
+3. Collecting and populating the context of a Web API request and propagating it to every logging event.
+
+TODO:
+
+1. MetricsAspect
+  - Configurable metrics message
+  - Make sure there are no exceptions but applicative ones
+
+2. EventTypeDiscriminator
+  - Make event types configurable to make the names of log files easily customizable
+
+3. DispatchingAppender
+  - Read appenders from configuration, so that there is no need in EELF loggers
+  - Simpler use of discriminator or an entirely different mechanism
+  - Better appender name pattern, or mapping between a discriminating value and an appender name
+  - Discard the appenders cache on configuration changes

@@ -41,12 +41,12 @@ public class FeatureGroupModel {
     return entitlementPools;
   }
 
-  public Set<LicenseKeyGroupEntity> getLicenseKeyGroups() {
-    return licenseKeyGroups;
-  }
-
   public void setEntitlementPools(Set<EntitlementPoolEntity> entitlementPools) {
     this.entitlementPools = entitlementPools;
+  }
+
+  public Set<LicenseKeyGroupEntity> getLicenseKeyGroups() {
+    return licenseKeyGroups;
   }
 
   public void setLicenseKeyGroups(Set<LicenseKeyGroupEntity> licenseKeyGroups) {
@@ -72,4 +72,3 @@ public class FeatureGroupModel {
 
 
 }
-

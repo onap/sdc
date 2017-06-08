@@ -20,16 +20,10 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_INVALID;
-
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-
-/**
- * The type Vendor software product invalid error builder.
- */
 public class VendorSoftwareProductInvalidErrorBuilder {
   private static final String VSP_INVALID_MSG =
       "Vendor software product with Id %s and version %s is invalid - does not contain "
@@ -43,17 +37,12 @@ public class VendorSoftwareProductInvalidErrorBuilder {
    * @param version                 the version
    */
   public VendorSoftwareProductInvalidErrorBuilder(String vendorSoftwareProductId, Version version) {
-    builder.withId(VSP_INVALID);
+    builder.withId(VendorSoftwareProductErrorCodes.VSP_INVALID);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder
         .withMessage(String.format(VSP_INVALID_MSG, vendorSoftwareProductId, version.toString()));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

@@ -1,23 +1,18 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes, enums} from './FlowsConstants.js';
@@ -59,7 +54,8 @@ function decodeContent(base64Contents) {
 		sequenceDiagramModel = payload.data || payload;
 		sequenceDiagramModel = sequenceDiagramModel.model || sequenceDiagramModel;
 
-	} else if (payload.VERSION.major === 1) {
+	}
+	else if (payload.VERSION.major === 1) {
 		description = payload.description;
 		sequenceDiagramModel = payload.sequenceDiagramModel;
 	}
@@ -80,7 +76,7 @@ function createOrUpdate(flowData) {
 		description: flowData.description
 	};
 
-	return RestAPIUtil.create(
+	return RestAPIUtil.post(
 		baseUrl(flowData.serviceID, flowData.uniqueId),
 		createOrUpdateRequest,
 		{md5: true}
@@ -89,11 +85,13 @@ function createOrUpdate(flowData) {
 
 const FlowsActions = Object.freeze({
 
-	fetchFlowArtifacts(dispatch, {artifacts, diagramType, participants, serviceID}) {
+	fetchFlowArtifacts(dispatch, {artifacts, diagramType, participants, serviceID, readonly}) {
 		let results = [];
 		if (!Object.keys(artifacts).length) {
-			dispatch({type: actionTypes.FLOW_LIST_LOADED, results, participants, serviceID, diagramType});
-			FlowsActions.openFlowDetailsEditor(dispatch);
+			dispatch({type: actionTypes.FLOW_LIST_LOADED, results, participants, serviceID, diagramType, readonly});
+			if (!readonly) {
+				FlowsActions.openFlowDetailsEditor(dispatch);
+			}
 		}
 		else {
 			Object.keys(artifacts).forEach(artifact => results.push({
@@ -102,13 +100,13 @@ const FlowsActions = Object.freeze({
 				serviceID,
 				...artifacts[artifact]
 			}));
-			dispatch({type: actionTypes.FLOW_LIST_LOADED, results, participants, serviceID, diagramType});
+			dispatch({type: actionTypes.FLOW_LIST_LOADED, results, participants, serviceID, diagramType, readonly});
 		}
 	},
 
 	fetchArtifact(dispatch, {flow}){
 		let {serviceID, uniqueId, participants} = flow;
-		RestAPIUtil.fetch(baseUrl(serviceID, uniqueId)).then(response => {
+		return RestAPIUtil.fetch(baseUrl(serviceID, uniqueId)).then(response => {
 
 			let {artifactName, base64Contents} = response;
 			let {sequenceDiagramModel, ...other} = decodeContent(base64Contents);
@@ -146,7 +144,7 @@ const FlowsActions = Object.freeze({
 				name: flow.artifactName
 			});
 		}
-		createOrUpdate(flow).then(response => {
+		return createOrUpdate(flow).then(response => {
 			let {uniqueId, artifactLabel} = response;
 			flow = {...flow, uniqueId, artifactLabel};
 			if (isNew) {
@@ -157,7 +155,7 @@ const FlowsActions = Object.freeze({
 	},
 
 	deleteFlow(dispatch, {flow}) {
-		RestAPIUtil.destroy(baseUrl(flow.serviceID, flow.uniqueId)).then(() => dispatch({
+		return RestAPIUtil.destroy(baseUrl(flow.serviceID, flow.uniqueId)).then(() => dispatch({
 			type: actionTypes.DELETE_FLOW,
 			flow
 		}));
@@ -177,10 +175,6 @@ const FlowsActions = Object.freeze({
 
 	closeFlowDiagramEditor(dispatch) {
 		dispatch({type: actionTypes.CLOSE_FLOW_DIAGRAM_EDITOR});
-	},
-
-	flowDetailsDataChanged(dispatch, {deltaData}) {
-		dispatch({type: actionTypes.CURRENT_FLOW_DATA_CHANGED, deltaData});
 	},
 
 	reset(dispatch) {

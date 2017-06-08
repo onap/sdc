@@ -61,10 +61,10 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
         mapper.getTableMetadata().getPartitionKey().get(1).getName());
 
 
-    metadata.setUniqueValuesMetadata(Collections.singletonList(
-        new UniqueValueMetadata(VendorSoftwareProductConstants.UniqueValues.COMPONENT_NAME,
-            Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
-                mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
+    metadata.setUniqueValuesMetadata(Collections.singletonList(new UniqueValueMetadata(
+        VendorSoftwareProductConstants.UniqueValues.COMPONENT_NAME,
+        Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
+            mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
 
     VersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
@@ -93,14 +93,24 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
   }
 
   @Override
-  public void updateQuestionnaireData(String vspId, Version version, String id,
+  public ComponentEntity getQuestionnaireData(String vspId, Version version, String componentId) {
+    return accessor.getQuestionnaireData(vspId, versionMapper.toUDT(version), componentId);
+  }
+
+  @Override
+  public void updateQuestionnaireData(String vspId, Version version, String componentId,
                                       String questionnaireData) {
-    accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version), id);
+    accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version), componentId);
   }
 
   @Override
   public Collection<ComponentEntity> listQuestionnaires(String vspId, Version version) {
     return accessor.listQuestionnaires(vspId, versionMapper.toUDT(version)).all();
+  }
+
+  @Override
+  public Collection<ComponentEntity> listCompositionAndQuestionnaire(String vspId, Version version){
+    return accessor.listCompositionAndQuestionnaire(vspId, versionMapper.toUDT(version)).all();
   }
 
   @Override
@@ -112,24 +122,34 @@ public class ComponentDaoCassandraImpl extends CassandraBaseDao<ComponentEntity>
   interface ComponentAccessor {
 
     @Query(
-        "select vsp_id, version, component_id, composition_data from vsp_component "
-            + "where vsp_id=? and version=?")
+        "select vsp_id, version, component_id, composition_data from vsp_component"
+            + " where vsp_id=? and version=?")
     Result<ComponentEntity> list(String vspId, UDTValue version);
 
     @Query(
-        "select vsp_id, version, component_id, questionnaire_data from vsp_component "
-            + "where vsp_id=? and version=?")
+        "select vsp_id, version, component_id, composition_data, questionnaire_data from vsp_component"
+            + " where vsp_id=? and version=?")
+    Result<ComponentEntity> listCompositionAndQuestionnaire(String vspId, UDTValue version);
+
+    @Query(
+        "select vsp_id, version, component_id, questionnaire_data from vsp_component"
+            + " where vsp_id=? and version=?")
     Result<ComponentEntity> listQuestionnaires(String vspId, UDTValue version);
 
     @Query(
-        "insert into vsp_component (vsp_id, version, component_id, composition_data) "
-            + "values (?,?,?,?)")
+        "select vsp_id, version, component_id, questionnaire_data from vsp_component"
+            + " where vsp_id=? and version=? and component_id=?")
+    ComponentEntity getQuestionnaireData(String vspId, UDTValue version, String id);
+
+    @Query(
+        "insert into vsp_component (vsp_id, version, component_id, composition_data)"
+            + " values (?,?,?,?)")
     ResultSet updateCompositionData(String vspId, UDTValue version, String id,
                                     String compositionData);
 
     @Query(
-        "update vsp_component set questionnaire_data=? where vsp_id=? and version=? "
-            + "and component_id=?")
+        "update vsp_component set questionnaire_data=? where vsp_id=? and version=?"
+            + " and component_id=?")
     ResultSet updateQuestionnaireData(String questionnaireData, String vspId, UDTValue version,
                                       String id);
 

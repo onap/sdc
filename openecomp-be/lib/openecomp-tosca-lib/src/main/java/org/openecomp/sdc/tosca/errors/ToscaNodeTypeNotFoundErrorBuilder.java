@@ -23,6 +23,9 @@ package org.openecomp.sdc.tosca.errors;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
+/**
+ * The type Tosca node type not found error builder.
+ */
 public class ToscaNodeTypeNotFoundErrorBuilder {
   private static final String ENTRY_NOT_FOUND_MSG =
       "NodeType '%s' or one of its derivedFrom node type hierarchy, "
@@ -40,6 +43,11 @@ public class ToscaNodeTypeNotFoundErrorBuilder {
     builder.withMessage(String.format(ENTRY_NOT_FOUND_MSG, nodeType));
   }
 
+  /**
+   * Build error code.
+   *
+   * @return the error code
+   */
   public ErrorCode build() {
     return builder.build();
   }

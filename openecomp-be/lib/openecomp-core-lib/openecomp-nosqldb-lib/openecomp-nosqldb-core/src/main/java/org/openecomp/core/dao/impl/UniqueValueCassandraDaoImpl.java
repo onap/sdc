@@ -31,8 +31,8 @@ import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 
 import java.util.Collection;
 
-public class UniqueValueCassandraDaoImpl extends CassandraBaseDao<UniqueValueEntity>
-    implements UniqueValueDao {
+public class UniqueValueCassandraDaoImpl extends CassandraBaseDao<UniqueValueEntity> implements
+    UniqueValueDao {
 
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static Mapper<UniqueValueEntity> mapper =

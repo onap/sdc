@@ -20,11 +20,11 @@
 
 package org.openecomp.sdc.enrichment.impl.tosca;
 
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
-import org.openecomp.sdc.tosca.services.ToscaUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,42 +32,28 @@ import java.util.Map;
 
 public class ToscaEnricher extends Enricher {
 
-  Map<String, List<NodeType>> componentTypNodeTypeMap;
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   @Override
   public Map<String, List<ErrorMessage>> enrich() {
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    Map<String, List<ErrorMessage>> enrichResponse;
-    enrichResponse = enrichCilometer();
-    errors.putAll(enrichResponse);
-    enrichResponse = enrichSnmp();
-    errors.putAll(enrichResponse);
-
+    errors.putAll(enrichAbstractSubstitute());
 
     return errors;
   }
 
-  private Map<String, List<ErrorMessage>> enrichCilometer() {
-    Map<String, List<ErrorMessage>> enrichResponse;
+  private Map<String, List<ErrorMessage>> enrichAbstractSubstitute() {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    Map<String, List<ErrorMessage>> enrichErrors;
 
     ToscaServiceModel toscaModel = (ToscaServiceModel) model;
+    AbstractSubstituteToscaEnricher abstractSubstituteToscaEnricher =
+        new AbstractSubstituteToscaEnricher();
+    enrichErrors = abstractSubstituteToscaEnricher.enrich(toscaModel, data.getKey(),
+        data.getVersion());
 
-    componentTypNodeTypeMap =
-        ToscaUtil.normalizeComponentNameNodeType(toscaModel, input.getEntityInfo().keySet());
-
-    enrichResponse = CeilometerEnricher.enrich(toscaModel, componentTypNodeTypeMap, this.input);
-
-    return enrichResponse;
+    mdcDataDebugMessage.debugExitMessage(null, null);
+    return enrichErrors;
   }
-
-
-  private Map<String, List<ErrorMessage>> enrichSnmp() {
-    Map<String, List<ErrorMessage>> enrichResponse;
-
-    enrichResponse = SnmpEnricher.enrich(componentTypNodeTypeMap, this.input);
-
-    return enrichResponse;
-  }
-
-
 }

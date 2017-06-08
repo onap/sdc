@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types.composition;
 
+
 public enum CompositionEntityType {
   vsp,
   network,

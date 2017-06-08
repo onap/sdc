@@ -37,8 +37,8 @@ public abstract class MixinLicenseKeyGroupEntityForVendorLicenseArtifact {
   @JsonIgnore
   abstract Set<String> getReferencingFeatureGroups();
 
-  @JsonIgnore
-  abstract String getVersion();
+  @JsonProperty(value = "version")
+  abstract String getVersionForArtifact();
 
   @JsonIgnore
   abstract String getVendorLicenseModelId();
@@ -50,7 +50,7 @@ public abstract class MixinLicenseKeyGroupEntityForVendorLicenseArtifact {
   @JsonIgnore
   abstract String getFirstClassCitizenId();
 
-  @JsonIgnore
+  @JsonProperty(value = "license-key-group-invariant-uuid")
   abstract String getId();
 
 

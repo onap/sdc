@@ -30,3 +30,5 @@ outputs:
       value: {get_resource: inner_cmaui_volume_a1}
     inner_cmaui_volume_a2:
           value: {get_resource: cmaui_volume2}
+    inner_cmaui_volume_b3:
+      value: {get_resource: inner_cmaui_volume_a1}

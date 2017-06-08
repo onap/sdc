@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+
 public enum ForbiddenHeatResourceTypes {
   HEAT_FLOATING_IP_TYPE("OS::Neutron::FloatingIP");
 

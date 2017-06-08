@@ -60,13 +60,7 @@ public class ToscaMissingSubstitutionMappingForReqCapErrorBuilder {
    */
   public enum MappingExposedEntry {
 
-    /**
-     * Capability mapping exposed entry.
-     */
     CAPABILITY("Capability"),
-    /**
-     * Requirement mapping exposed entry.
-     */
     REQUIREMENT("Requirement"),;
 
     private String displayName;
@@ -75,11 +69,6 @@ public class ToscaMissingSubstitutionMappingForReqCapErrorBuilder {
       this.displayName = displayName;
     }
 
-    /**
-     * Gets display name.
-     *
-     * @return the display name
-     */
     public String getDisplayName() {
       return displayName;
     }

@@ -20,25 +20,17 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityId;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityType;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-@Table(keyspace = "dox", name = "vsp_information")
+
+
 public class VspQuestionnaireEntity implements CompositionEntity {
   private static final String ENTITY_TYPE = "Vendor Software Product";
 
-  @PartitionKey
-  @Column(name = "vsp_id")
   private String id;
-  @PartitionKey(value = 1)
-  @Frozen
   private Version version;
-  @Column(name = "questionnaire_data")
   private String questionnaireData;
 
   public VspQuestionnaireEntity() {
@@ -48,6 +40,16 @@ public class VspQuestionnaireEntity implements CompositionEntity {
   public VspQuestionnaireEntity(String vspId, Version version) {
     this.id = vspId;
     this.version = version;
+  }
+
+  @Override
+  public String getEntityType() {
+    return ENTITY_TYPE;
+  }
+
+  @Override
+  public String getFirstClassCitizenId() {
+    return getId();
   }
 
   @Override
@@ -68,16 +70,6 @@ public class VspQuestionnaireEntity implements CompositionEntity {
   @Override
   public void setVersion(Version version) {
     this.version = version;
-  }
-
-  @Override
-  public String getEntityType() {
-    return ENTITY_TYPE;
-  }
-
-  @Override
-  public String getFirstClassCitizenId() {
-    return getId();
   }
 
   @Override

@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import classnames from 'classnames';
 
@@ -7,10 +22,17 @@ import NavigationSideBar from 'nfvo-components/panel/NavigationSideBar.jsx';
 export default class TabulatedEditor extends React.Component {
 
 	render() {
-		const {versionControllerProps, navigationBarProps, onToggle, onVersionSwitching, onCreate, onSave, onClose, onVersionControllerAction, onNavigate, children} = this.props;
+		const {navigationBarProps, onToggle, onVersionSwitching, onCreate, onSave, onClose, onVersionControllerAction, onNavigate, children, meta} = this.props;
+		let {versionControllerProps} = this.props;
 		const {className = ''} = React.Children.only(children).props;
 		const child = this.prepareChild();
 
+		if(onClose) {
+			versionControllerProps = {
+				...versionControllerProps,
+				onClose: () => onClose(versionControllerProps)
+			};
+		}
 		return (
 			<div className='software-product-view'>
 				<div className='software-product-navigation-side-bar'>
@@ -19,11 +41,10 @@ export default class TabulatedEditor extends React.Component {
 				<div className='software-product-landing-view-right-side flex-column'>
 					<VersionController
 						{...versionControllerProps}
-						onVersionSwitching={version => onVersionSwitching(version)}
-						callVCAction={onVersionControllerAction}
+						onVersionSwitching={version => onVersionSwitching(version, meta)}
+						callVCAction={(action, version) => onVersionControllerAction(action, version, meta)}
 						onCreate={onCreate && this.handleCreate}
-						onSave={onSave && this.handleSave}
-						onClose={() => onClose(versionControllerProps)}/>
+						onSave={onSave && this.handleSave}/>
 					<div className={classnames('content-area', `${className}`)}>
 					{
 						child

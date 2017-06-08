@@ -12,7 +12,7 @@
       "file": "main.yml",
       "type": "HEAT",
       "isBase": "false",
-      "data":[
+      "data": [
         {
           "file": "a_vol.yml",
           "type": "HEAT_VOL",

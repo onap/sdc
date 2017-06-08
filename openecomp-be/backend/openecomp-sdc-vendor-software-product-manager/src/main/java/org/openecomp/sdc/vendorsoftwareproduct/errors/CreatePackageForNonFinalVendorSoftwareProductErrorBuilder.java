@@ -24,14 +24,14 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-/**
- * The type Create package for non final vendor software product error builder.
- */
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.CREATE_PACKAGE_FOR_NON_FINAL_VSP;
+
+
 public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilder {
 
   private static final String CREATE_PACKAGE_FOR_NON_FINAL_VSP_MSG =
-      "Package creation for vendor software product with id %s and version %s is not allowed "
-          + "since it is not final (submitted).";
+      "Package creation for vendor software product with id %s and version %s is not allowed since "
+          + "it is not final (submitted).";
   private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
@@ -42,17 +42,12 @@ public class CreatePackageForNonFinalVendorSoftwareProductErrorBuilder {
    */
   public CreatePackageForNonFinalVendorSoftwareProductErrorBuilder(String vendorSoftwareProductId,
                                                                    Version version) {
-    builder.withId(VendorSoftwareProductErrorCodes.CREATE_PACKAGE_FOR_NON_FINAL_VSP);
+    builder.withId(CREATE_PACKAGE_FOR_NON_FINAL_VSP);
     builder.withCategory(ErrorCategory.APPLICATION);
     builder.withMessage(String
-        .format(CREATE_PACKAGE_FOR_NON_FINAL_VSP_MSG, vendorSoftwareProductId, version.toString()));
+        .format(CREATE_PACKAGE_FOR_NON_FINAL_VSP_MSG, vendorSoftwareProductId, version == null ? null : version.toString()));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

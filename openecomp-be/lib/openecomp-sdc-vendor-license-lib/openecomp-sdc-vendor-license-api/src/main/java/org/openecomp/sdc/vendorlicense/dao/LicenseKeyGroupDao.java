@@ -20,11 +20,25 @@
 
 package org.openecomp.sdc.vendorlicense.dao;
 
+
 import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyGroupEntity;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
+import java.util.Collection;
+
+
 public interface LicenseKeyGroupDao extends VersionableDao, BaseDao<LicenseKeyGroupEntity> {
+
+  void create(LicenseKeyGroupEntity licenseKeyGroup);
+
+  void delete(LicenseKeyGroupEntity licenseKeyGroup);
+
+  LicenseKeyGroupEntity get(LicenseKeyGroupEntity licenseKeyGroup);
+
+  Collection<LicenseKeyGroupEntity> list(LicenseKeyGroupEntity licenseKeyGroup);
+
+  long count(LicenseKeyGroupEntity licenseKeyGroup);
 
   void deleteAll(LicenseKeyGroupEntity licenseKeyGroup);
 

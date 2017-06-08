@@ -24,6 +24,7 @@ import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
 
+
 public abstract class FeatureGroupDaoFactory extends AbstractComponentFactory<FeatureGroupDao> {
   public static FeatureGroupDaoFactory getInstance() {
     return AbstractFactory.getInstance(FeatureGroupDaoFactory.class);

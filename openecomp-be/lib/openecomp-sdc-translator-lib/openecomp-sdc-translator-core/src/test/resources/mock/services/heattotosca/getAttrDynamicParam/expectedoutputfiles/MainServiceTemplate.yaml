@@ -1,0 +1,770 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cgi_fw:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+      default: dummy_vf_module_id
+    nimbus_hsl_interface_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for ServiceInstance
+      default: other
+    cgi_fw_pt_vlan_VM2_name_fqdn:
+      hidden: false
+      immutable: false
+      type: json
+      description: fqdn of the ServiceInstance in PortTuple Resource
+      default: [
+        ]
+    cgi_fw_vmi_ecmp_src_ip:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: source_ip for the VirtualMachineInterface
+      default: true
+    cgi_fw_names:
+      label: Firewall VM Name
+      hidden: false
+      immutable: false
+      type: list
+      description: Comma Delimited List of Names for ServiceInstance VMs
+      default:
+      - zsde1fcgi02fgi001
+      - zsde1fcgi02fgi002
+      entry_schema:
+        type: string
+    cgi_fw_vmi_ecmp_dst_ip:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: destination_ip for the VirtualMachineInterface
+      default: true
+    sgi_direct_interface_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for ServiceInstance
+      default: right
+    vnf_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance
+      default: zrdm3firstnetfcgi02
+    cgi_fw_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor for the ServiceInstance VM
+      default: m1.xlarge
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF Module instance
+      default: zsde1fcgi02
+    cgi_fw_st_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_type for the ServiceTemplate
+      default: firewall
+    sgi_protected_net_dummy_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: fq_name for the VirtualNetwork
+      default: default-domain:ALU-L3:firstnet_dummy_net_1
+    cgi_fw_vmi_ecmp_src_port:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: source_port for the VirtualMachineInterface
+      default: false
+    sgi_protected_net_dummy1:
+      hidden: false
+      immutable: false
+      type: string
+      description: name for the VirtualNetwork
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+      default: dummy_vnf_id
+    sgi_direct_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: fq_name for the VirtualNetwork
+      default: default-domain:ALU-L3:fgi_direct
+    sgi_protected_interface_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for ServiceInstance
+      default: left
+    cgi_fw_vmi_ecmp_dst_port:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: destination_port for the VirtualMachineInterface
+      default: false
+    sgi_direct_family_v6:
+      hidden: false
+      immutable: false
+      type: string
+      description: IP Family Address for InstanceIp
+      default: v6
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability_zone for the ServiceInstance
+      default: nova
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability_zone for the ServiceInstance
+      default: nova
+    nimbus_hsl_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: fq_name for the VirtualNetwork
+      default: default-domain:ALU-L3:alu-firstnet-net
+    sgi_protected_net_dummy:
+      hidden: false
+      immutable: false
+      type: string
+      description: name for the VirtualNetwork
+      default: firstnet_dummy_net_1
+    cgi_fw_pt_vlan_VM1_name_fqdn:
+      hidden: false
+      immutable: false
+      type: json
+      description: fqdn of the ServiceInstance in PortTuple Resource
+      default: [
+        ]
+    cgi_fw_vmi_ecmp_configured:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: hashing_configured for the VirtualMachineInterface
+      default: true
+    cgi_fw_vmi_ecmp_ip_protocol:
+      hidden: false
+      immutable: false
+      type: boolean
+      description: ip_protocol for the VirtualMachineInterface
+      default: false
+    oam_protected_net_fqdn:
+      hidden: false
+      immutable: false
+      type: string
+      description: fq_name for the VirtualNetwork
+      default: default-domain:ALU-L3:alu_l3_mt_net
+    oam_protected_interface_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_interface_type for ServiceInstance
+      default: management
+    cgi_fw_st_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_mode for the ServiceTemplate
+      default: in-network-nat
+    sgi_direct_ipv6_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet UUID for InstanceIp
+      default: 4560666e-f306-4d7b-b0ec-a2d4330e9600
+    contrail_vmi_subinterface:
+      hidden: false
+      immutable: false
+      type: string
+    port_name:
+      hidden: false
+      immutable: false
+      type: string
+    cgi_fw_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: image_name for the ServiceInstance VM
+      default: F5_LB-FW_F5_12_1_HF1_Startup
+    cgi_fw_oam_protected_ips:
+      hidden: false
+      immutable: false
+      type: list
+      description: the ips of the management network for CGI FW
+      default:
+      - 192.168.50.40
+      - 192.168.50.41
+      entry_schema:
+        type: string
+    sgi_direct_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet UUID for InstanceIp
+      default: 63858a9d-696b-4731-b3b3-7c8dfd777b9e
+    domain:
+      hidden: false
+      immutable: false
+      type: string
+      description: domain for the ServiceTemplate
+      default: default-domain
+    cgi_fw_st_version:
+      hidden: false
+      immutable: false
+      type: float
+      description: version for the ServiceTemplate
+      default: 2
+      constraints:
+      - in_range:
+        - 0
+        - 99
+    cgi_fw_st_virtualization_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service_virtualization_type for the ServiceTemplate
+      default: virtual-machine
+    subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    CGI_FW_OAM_PROTECTED_RVMI_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_1
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 1
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: oam_protected_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: oam_protected_interface_type
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_2
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_SGI_DIRECT_RVMI_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_3
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 0
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: sgi_direct_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: sgi_direct_interface_type
+        port_tuple_refs:
+          get_input: cgi_fw_pt_vlan_VM1_name_fqdn
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_1
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_OAM_PROTECTED_RVMI_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_1
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 0
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: oam_protected_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: oam_protected_interface_type
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_1
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_SGI_DIRECT_RVMI_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_3
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 1
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: sgi_direct_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: sgi_direct_interface_type
+        port_tuple_refs:
+          get_input: cgi_fw_pt_vlan_VM2_name_fqdn
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_2
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_NIMBUS_HSL_RVMI_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_4
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 1
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: nimbus_hsl_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: nimbus_hsl_interface_type
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_2
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_NIMBUS_HSL_RVMI_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_4
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 0
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: nimbus_hsl_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type:
+            get_input: nimbus_hsl_interface_type
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_1
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_SERVER_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cgi_fw
+      properties:
+        flavor:
+          get_input: cgi_fw_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cgi_fw_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        contrail_service_instance_ind: true
+        name:
+          get_input:
+          - cgi_fw_names
+          - 0
+        scheduler_hints:
+          group: CGI_FW_RAG_group
+    CGI_FW_RSG_SI_1:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_sg_cgi_fw
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        description: Security Group of CGI FW ServiceInstance
+        rules:
+        - protocol: tcp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: udp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: '132'
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: udp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: '132'
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: egress
+          port_range_min: 0
+        - protocol: '58'
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: egress
+        - protocol: tcp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: udp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: '132'
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: icmp
+          ethertype: IPv4
+          remote_ip_prefix: 0.0.0.0/0
+          direction: ingress
+        - protocol: tcp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: udp
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: '132'
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          port_range_max: 65535
+          direction: ingress
+          port_range_min: 0
+        - protocol: '58'
+          ethertype: IPv6
+          remote_ip_prefix: ::/0
+          direction: ingress
+    CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_dummy
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 1
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: sgi_protected_net_dummy_fqdn
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_2
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_vmi_dummy
+            params:
+              VM_NAME:
+                get_input:
+                - cgi_fw_names
+                - 0
+        security_group_refs:
+        - CGI_FW_RSG_SI_1
+        virtual_network_refs:
+        - get_input: sgi_protected_net_dummy_fqdn
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CGI_FW_SERVER_1
+          relationship: tosca.relationships.network.BindsTo
+    CGI_FW_SERVER_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cgi_fw
+      properties:
+        flavor:
+          get_input: cgi_fw_flavor_name
+        availability_zone:
+          get_attribute:
+          - CGI_FW_SERVER_2
+          - addresses
+          - get_input:
+            - sgi_protected_net_dummy
+            - 0
+          - 0
+          - OS-EXT-IPS-MAC:mac_addr
+        image:
+          get_input: cgi_fw_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        contrail_service_instance_ind: true
+        name:
+          get_input:
+          - cgi_fw_names
+          - 1
+        scheduler_hints:
+          group: CGI_FW_RAG_group
+    contrail_vmi_subinterface:
+      type: org.openecomp.resource.cp.nodes.heat.contrailV2.VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_3
+            params:
+              VM_NAME:
+                get_input: vipr_atm_name_0
+        virtual_network_refs:
+        - get_input: oam_protected_net_fqdn
+        virtual_machine_interface_properties:
+          service_interface_type: left
+        port_tuple_refs:
+        - get_input: port_name
+  groups:
+    CGI_FW_RAG_group:
+      type: tosca.groups.Root
+      members:
+      - CGI_FW_SERVER_1
+      - CGI_FW_SERVER_2
+    base_firstnet_fgi_frwl_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/base_firstnet_fgi_frwl.yml
+        description: |
+          HOT template to create SecurityGroup//ServerGroup//ServiceTemplate:
+      members:
+      - CGI_FW_OAM_PROTECTED_RVMI_2
+      - CGI_FW_SGI_DIRECT_RVMI_1
+      - CGI_FW_OAM_PROTECTED_RVMI_1
+      - CGI_FW_SGI_DIRECT_RVMI_2
+      - CGI_FW_NIMBUS_HSL_RVMI_2
+      - CGI_FW_NIMBUS_HSL_RVMI_1
+      - CGI_FW_SERVER_1
+      - CGI_FW_RSG_SI_1
+      - CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2
+      - CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1
+      - CGI_FW_SERVER_2
+      - contrail_vmi_subinterface
+  outputs:
+    cgi_fw_01_left_mac_10:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - str_split:
+          - ','
+          - get_attribute:
+            - contrail_vmi_subinterface
+            - virtual_machine_interface_allowed_address_pairs
+            - allowed_address_pair
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_st_name_fqdn:
+      description: FQDN of the FW_CGI ServiceTemplate
+      value:
+        list_join:
+        - ':'
+        - get_attr:
+          - CGI_FW_RST_1
+          - fq_name
+    VMA-EXT_IPS:
+      description: IP addresses assigned to the first external network.
+      value:
+      - UNSUPPORTED_ATTRIBUTE_CGI_FW_SERVER_2.{get_param=[vnf_id, {get_param=sgi_protected_interface_type}]}
+    VMA-DynamicResource:
+      description: IP addresses assigned to the first external network.
+      value:
+      - UNSUPPORTED_RESOURCE_{get_param=vnf_id}
+    cgi_fw_01_left_mac_7:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - contrail_vmi_subinterface
+        - virtual_machine_interface_properties
+    cgi_fw_01_left_mac_6:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - str_split:
+          - ','
+          - string,to,split
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_9:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - str_split:
+          - ','
+          - get_input: sgi_protected_net_dummy
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_8:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - contrail_vmi_subinterface
+        - virtual_machine_interface_allowed_address_pairs
+        - allowed_address_pair
+    cgi_fw_01_left_mac_3:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - get_input:
+          - sgi_protected_net_dummy
+          - 0
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_2:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - get_input: sgi_protected_net_dummy
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_5:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - get_attribute:
+          - CGI_FW_SERVER_2
+          - addresses
+          - get_input:
+            - sgi_protected_net_dummy
+            - 0
+          - 0
+          - OS-EXT-IPS-MAC:mac_addr
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_4:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_2
+        - addresses
+        - get_input:
+          - sgi_protected_net_dummy
+          - 0
+          - get_input:
+            - sgi_protected_net_dummy1
+            - 1
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    cgi_fw_01_left_mac_1:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - CGI_FW_SERVER_1
+        - addresses
+        - get_input: sgi_protected_net_dummy
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+  policies:
+    CGI_FW_RAG_policy:
+      type: org.openecomp.policies.placement.Antilocate
+      properties:
+        name:
+          str_replace:
+            template: VNF_NAME_srg_cgi_fw
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+        container_type: host
+      targets:
+      - CGI_FW_RAG_group

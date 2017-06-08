@@ -24,10 +24,12 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
 
+/**
+ * Created by TALIO on 4/25/2016.
+ */
 public class MapPackageInfoToPackageInfoDto extends MappingBase<PackageInfo, PackageInfoDto> {
   @Override
   public void doMapping(PackageInfo source, PackageInfoDto target) {
-    target.setDisplayName(source.getDisplayName());
     target.setVspName(source.getVspName());
     target.setPackageId(source.getVspId());
     target.setDescription(source.getVspDescription());

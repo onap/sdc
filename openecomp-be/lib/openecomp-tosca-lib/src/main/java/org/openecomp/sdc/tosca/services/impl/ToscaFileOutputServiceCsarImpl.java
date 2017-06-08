@@ -23,6 +23,12 @@ package org.openecomp.sdc.tosca.services.impl;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
@@ -38,6 +44,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 
 public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
   static final String EXTERNAL_ARTIFACTS_FOLDER_NAME = "Artifacts";
@@ -57,6 +64,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
   private static final String SPACE = " ";
   private static final String FILE_SEPARATOR = File.separator;
 
+
   @Override
   public byte[] createOutputFile(ToscaServiceModel toscaServiceModel,
                                  FileContentHandler externalArtifacts) {
@@ -68,17 +76,24 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         packArtifacts(zos, artifactFiles);
       }
       if (toscaServiceModel.getEntryDefinitionServiceTemplate() == null) {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.CREATE_CSAR, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.CREATE_CSAR);
         throw new CoreException(new CsarMissingEntryPointErrorBuilder().build());
       }
       createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate());
       if (externalArtifacts != null) {
         packExternalArtifacts(zos, externalArtifacts);
       }
-    } catch (IOException exc) {
-      throw new CoreException(new CsarCreationErrorBuilder().build(), exc);
+    } catch (IOException ex) {
+      MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+          LoggerTragetServiceName.CREATE_CSAR, ErrorLevel.ERROR.name(),
+          LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.CREATE_CSAR);
+      throw new CoreException(new CsarCreationErrorBuilder().build(), ex);
     }
     return baos.toByteArray();
   }
+
 
   @Override
   public String createMetaFile(String entryDefinitionsFileName) {
@@ -87,7 +102,8 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         + CSAR_VERSION + META_FILE_DELIMITER + SPACE + CSAR_VERSION_VALUE + System.lineSeparator()
         + CREATED_BY + META_FILE_DELIMITER + SPACE + CREATED_BY_VALUE + System.lineSeparator()
         + ENTRY_DEFINITIONS + META_FILE_DELIMITER + SPACE + DEFINITIONS_FOLDER_NAME
-        + FILE_SEPARATOR + entryDefinitionsFileName;
+        + FILE_SEPARATOR
+        + entryDefinitionsFileName;
   }
 
   @Override
@@ -120,8 +136,11 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         zos.putNextEntry(new ZipEntry(filenameIncludingPath));
         writeBytesToZip(zos, externalArtifacts.getFileContent(filenameIncludingPath));
 
-      } catch (IOException exc) {
-        throw new RuntimeException(exc);
+      } catch (IOException ex) {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.PACK_ARTIFACTS, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.PACK_ARTIFACTS);
+        throw new RuntimeException(ex);
       } finally {
         try {
           zos.closeEntry();
@@ -140,8 +159,11 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         zos.putNextEntry(new ZipEntry((ARTIFACTS_FOLDER_NAME + FILE_SEPARATOR + fileName)));
         writeBytesToZip(zos, artifacts.getFileContent(fileName));
 
-      } catch (IOException exc) {
-        throw new RuntimeException(exc);
+      } catch (IOException ex) {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.PACK_ARTIFACTS, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.PACK_ARTIFACTS);
+        throw new RuntimeException(ex);
       } finally {
         try {
           zos.closeEntry();
@@ -150,6 +172,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         }
       }
     }
+
   }
 
   private void writeBytesToZip(ZipOutputStream zos, InputStream is) throws IOException {

@@ -1,0 +1,39 @@
+{
+    "name": "", 
+    "description": "", 
+    "data": [
+        {
+            "file": "base_vota.yml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "base_vota.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        },
+        {
+            "file": "module_9_lb2_vota.yml", 
+            "type": "HEAT", 
+            "isBase": "false", 
+            "data": [
+                {
+                    "file": "module_9_lb2_vota.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        },
+        {
+            "file": "module_8_lb1_vota.yml", 
+            "type": "HEAT", 
+            "isBase": "false", 
+            "data": [
+                {
+                    "file": "module_8_lb1_vota.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }
+    ]
+}

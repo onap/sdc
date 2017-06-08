@@ -1,0 +1,1299 @@
+--- 
+description: "VF Template for pseodo vMME"
+imports: 
+  NovaServerGlobalTypes: 
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+metadata: 
+  category: "Application L4+"
+  description: vMME_VF
+  invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+  name: vMME_VF
+  subcategory: Firewall
+  type: VF
+  UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+  resourceVendor: Ericsson
+topology_template: 
+  groups: 
+    vfmoduleVmmeModule-1: 
+      members: 
+        - FSB1
+        - FSB2
+        - NCB1
+        - NCB2
+        - VLC1
+        - VLC2
+        - GPB1
+        - GPB2
+        - Internal1_net
+        - Internal2_net
+        - fsb1_oam
+        - fsb1_internal1
+        - fsb1_internal2
+        - fsb2_oam
+        - fsb2_internal2
+        - ncb1_internal1
+        - ncb1_internal2
+        - ncb2_internal1
+        - ncb2_internal2
+        - gpb1_internal1
+        - gpb1_internal2
+        - gpb2_internal1
+        - gpb2_internal2
+        - vlc1_oam
+        - vlc1_internal1
+        - vlc1_internal2
+        - vlc1_sctp_a
+        - vlc1_sctp_b
+        - vlc1_gtp
+        - vlc2_oam
+        - vlc2_internal1
+        - vlc2_internal2
+        - vlc2_sctp_a
+        - vlc2_sctp_b
+        - vlc1_gtp
+      metadata: 
+        vfModuleModelInvariantUUID: adf1a10a-f788-492f-9ea7-7ff91dd55f8c
+        vfModuleModelName: "vMME::module-1"
+        vfModuleModelUUID:
+        vfModuleModelVersion: 1
+      properties: 
+        artifacts: 
+          - /Artifacts/vmme_small_create_fsb.yml
+          - /Artifacts/vmme_small.yml
+        availability_zone_count: 2
+        contrail_service_instance: true
+        vf_module_description: "vMME expansion VF Module"
+        vf_module_label: "vMME Expansion VF Module"
+        vf_module_type: Expansion
+        volume_group: false
+      type: org.openecomp.groups.VfModule
+    vmme_small: 
+      members: 
+        - FSB1
+        - FSB2
+        - NCB1
+        - NCB2
+        - VLC1
+        - VLC2
+        - GPB1
+        - GPB2
+        - Internal1_net
+        - Internal2_net
+        - fsb1_oam
+        - fsb1_internal1
+        - fsb1_internal2
+        - fsb2_oam
+        - fsb2_internal2
+        - ncb1_internal1
+        - ncb1_internal2
+        - ncb2_internal1
+        - ncb2_internal2
+        - gpb1_internal1
+        - gpb1_internal2
+        - gpb2_internal1
+        - gpb2_internal2
+        - vlc1_oam
+        - vlc1_internal1
+        - vlc1_internal2
+        - vlc1_sctp_a
+        - vlc1_sctp_b
+        - vlc1_gtp
+        - vlc2_oam
+        - vlc2_internal1
+        - vlc2_internal2
+        - vlc2_sctp_a
+        - vlc2_sctp_b
+        - vlc1_gtp
+      properties: 
+        description: "HOT template to create vmme 2 fsb 2 ncb 2 gbp 2 vlc"
+        heat_file: ../Artifacts/vmme_small.yml
+      type: org.openecomp.groups.heat.HeatStack
+    vmme_small_create_fsb: 
+      members: 
+        - FSB1_volume
+        - FSB2_volume
+      properties: 
+        description: "server template for vMME"
+        heat_file: ../Artifacts/vmme_small_create_fsb.yml
+      type: org.openecomp.groups.heat.HeatStack
+  inputs: 
+    Internal1_net_cidr: 
+      default: 169.253.0.0/17
+      hidden: false
+      immutable: false
+      type: string
+    Internal1_net_dhcp: 
+      default: "False"
+      hidden: false
+      immutable: false
+      type: string
+    Internal1_net_gateway_ip: 
+      default: "169.253.0.3"
+      hidden: false
+      immutable: false
+      type: string
+    Internal2_net_cidr: 
+      default: 169.255.0.0/17
+      hidden: false
+      immutable: false
+      type: string
+    Internal2_net_dhcp: 
+      default: "False"
+      hidden: false
+      immutable: false
+      type: string
+    Internal2_net_gateway_ip: 
+      default: "169.255.0.3"
+      hidden: false
+      immutable: false
+      type: string
+    fsb1_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    fsb1_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    fsb1_oam_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    fsb1_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    fsb1_vfc_image_name: 
+      default: MME_FSB1_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    fsb1_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    fsb1_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    fsb2_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    fsb2_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    fsb2_oam_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    fsb2_vfc_flavor: 
+      defualt: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    fsb2_vfc_image_name: 
+      default: MME_FSB2_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    fsb2_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB002
+      description: "VFC instance name"
+      type: string
+    fsb2_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    gpb1_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    gpb1_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    gpb1_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    gpb1_vfc_image_name: 
+      default: MME_GPB1_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    gpb1_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    gpb1_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    gpb2_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    gpb2_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    gpb2_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    gpb2_vfc_image_name: 
+      default: MME_GPB2_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    gpb2_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    gpb2_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    ncb1_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    ncb1_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    ncb1_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    ncb1_vfc_image_name: 
+      default: MME_NCB1_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    ncb1_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    ncb1_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    ncb2_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    ncb2_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    ncb2_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    ncb2_vfc_image_name: 
+      default: MME_NCB2_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    ncb2_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    ncb2_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    network_deployment_node: 
+      description: "The target LCP node for deployment of this Network instance"
+      type: string
+    oam_net_id: 
+      default: 47bf4cca-0961-422f-bcd6-d5a4fbb1a351
+      description: "uuid of oam network"
+      hidden: false
+      immutable: false
+      type: string
+    vlc1_gtp_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc1_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    vlc1_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    vlc1_oam_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc1_sctp_a_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc1_sctp_b_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc1_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    vlc1_vfc_image_name: 
+      default: MME_VLC1_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    vlc1_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    vlc1_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+    vlc2_gtp_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc2_internal1_mac_address: 
+      default: "00:80:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    vlc2_internal2_mac_address: 
+      default: "00:81:37:0E:0B:12"
+      description: "Internal connection point mac_address"
+      type: string
+    vlc2_oam_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc2_sctp_a_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc2_sctp_b_ip_address: 
+      default: "107.250.172.221"
+      description: "OAM ip address"
+      type: string
+    vlc2_vfc_flavor: 
+      default: m4.xlarge4
+      description: "VFC flavor"
+      type: string
+    vlc2_vfc_image_name: 
+      default: MME_VLC2_16ACP03.qcow2
+      description: "VFC image name"
+      type: string
+    vlc2_vfc_instance_name: 
+      default: ZRDM1MMEX36FSB001
+      description: "VFC instance name"
+      type: string
+    vlc2_vfc_type_tag: 
+      description: "VFC type tag"
+      type: string
+  node_templates: 
+    FSB1: 
+      capabilities: 
+        monitoring_capabilty: 
+          properties: 
+            name: high_cpu
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: fsb1_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: FSB1
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: fsb1_vfc_image_name
+        vfc_instance_name: 
+          get_input: fsb1_vfc_instance_name
+        vfc_type_tag: 
+          get_input: fsb1_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    FSB2: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: fsb2_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: FSB2
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: fsb2_vfc_image_name
+        vfc_instance_name: 
+          get_input: fsb2_vfc_instance_name
+        vfc_type_tag: 
+          get_input: fsb2_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: fsb2_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    GPB1: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: gpb1_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: GPB1
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: gpb1_vfc_image_name
+        vfc_instance_name: 
+          get_input: gpb1_vfc_instance_name
+        vfc_type_tag: 
+          get_input: gpb1_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb1_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    GPB2: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: gpb2_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: GPB2
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: gpb2_vfc_image_name
+        vfc_instance_name: 
+          get_input: gpb2_vfc_instance_name
+        vfc_type_tag: 
+          get_input: gpb2_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb2_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb2_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: gpb2_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    Internal1_net: 
+      metadata: 
+        category: Generic
+        description: "Internal Network"
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        name: Network
+        subcategory: Infrastructure
+        type: VL
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        resourceVendor: AT&T
+        version: 1.0
+      properties: 
+        cidr: 
+          get_input: Internal1_net_cidr
+        contrail_virtual_network: 
+          vn_external: false
+          vn_forwarding_mode: l2
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_1
+          vn_shared: false
+        enable_dhcp: 
+          get_input: Internal1_net_enable_dhcp
+        flow_pattern: E-LAN
+        gateway_ip: 
+          get_input: Internal1_net_gateway_ip
+        ip_version: 4
+        layer_protocol: IP
+        network_deployment_node: 
+          get_input: network_deployment_node
+        network_ecomp_name: false
+        network_homing: false
+        network_role: ~
+        network_technology: Contrail
+        network_type: Tenant_Layer_3
+        test_access: none
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+    Internal2_net: 
+      metadata: 
+        category: Generic
+        description: "Internal Network"
+        invariantUUID: 14a25c59-e2c2-4f86-880d-371d4d9dc88c
+        name: Network
+        subcategory: Infrastructure
+        type: VL
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da1234
+        resourceVendor: AT&T
+        version: 1.0
+      properties: 
+        cidr: 
+          get_input: Internal2_net_cidr
+        contrail_virtual_network: 
+          vn_external: false
+          vn_forwarding_mode: l2
+          vn_name: MME-24474-Ericsson-WTC-lab_int_MMEX36_net_2
+          vn_shared: false
+        enable_dhcp: 
+          get_input: Internal2_net_enable_dhcp
+        flow_pattern: E-LAN
+        gateway_ip: 
+          get_input: Internal2_net_gateway_ip
+        ip_version: 4
+        layer_protocol: IP
+        network_deployment_node: 
+          get_input: network_deployment_node
+        network_ecomp_name: false
+        network_homing: false
+        network_role: ~
+        network_technology: Contrail
+        network_type: Tenant_Layer_3
+        test_access: none
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+    NCB1: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: ncb1_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: NCB1
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: ncb1_vfc_image_name
+        vfc_instance_name: 
+          get_input: ncb1_vfc_instance_name
+        vfc_type_tag: 
+          get_input: ncb1_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    NCB2: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: ncb2_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: NCB2
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: ncb2_vfc_image_name
+        vfc_instance_name: 
+          get_input: ncb2_vfc_instance_name
+        vfc_type_tag: 
+          get_input: ncb2_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb2_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb2_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: ncb2_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    VLC1: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: vlc1_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: VLC1
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: vlc1_vfc_image_name
+        vfc_instance_name: 
+          get_input: vlc1_vfc_instance_name
+        vfc_type_tag: 
+          get_input: vlc1_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc1_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc1_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc1_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    VLC2: 
+      capabilities: 
+        monitoring_capability: 
+          properties: 
+            name: cpu_load
+        nfv_compute: 
+          properties: 
+            vfc_flavor: 
+              get_input: vlc2_vfc_flavor
+        scaling_capability: 
+          properties: 
+            init_instances: 1
+            max_instances: 1
+            min_instances: 1
+      metadata: 
+        category: Generic
+        description: "VFC based on OpenStack Nova Server"
+        invariantUUID: a8943d58-d3a3-4f42-770a-571abd9d3da2
+        name: "Nova Server"
+        subcategory: Infrastructure
+        type: VFC
+        UUID: 7788dc12-9716-abcf-13c0-ebd4111c69f0
+        resourceVendor: Ericsson
+        version: 1.0
+      properties: 
+        vfc_description: VLC2
+        vfc_ecomp_name: false
+        vfc_image_name: 
+          get_input: vlc2_vfc_image_name
+        vfc_instance_name: 
+          get_input: vlc2_vfc_instance_name
+        vfc_type_tag: 
+          get_input: vlc2_vfc_type_tag
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc2_oam
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc2_internal1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: vlc2_internal2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vfc.nodes.heat.nova.Server
+    fsb1_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: fsb1_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    fsb1_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: fsb1_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    fsb1_oam: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: fsb1_oam_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: oam_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    fsb2_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: fsb2_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    fsb2_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: fsb2_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    fsb2_oam: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: fsb2_oam_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: FSB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: oam_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    gpb1_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: gpb1_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: GPB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    gpb1_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: gpb1_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: GPB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    gpb2_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: gpb2_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: GPB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    gpb2_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: gpb2_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: GPB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    ncb1_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: ncb1_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: NCB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    ncb1_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: ncb1_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: NCB1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    ncb2_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: ncb2_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: NCB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    ncb2_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: ncb2_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: NCB2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    oam_net: 
+      metadata: 
+        category: VL
+        description: "Mobility OAM Network"
+        invariantUUID: 18643c59-e2c2-4f86-880d-371d4d9dc52a
+        name: "Mobility OAM Network"
+        type: VL
+        UUID: 1a20ed2e-abcd-3f20-ca4e-cc7af4da7fcc
+        resourceVendor: AT&T
+        version: 2.0
+      properties: 
+        flow_pattern: E-LAN
+        layer_protocol: IP
+        network_id: 
+          get_input: oam_net_id
+        network_technology: Contrail
+        network_type: vIPR_ATM_OAM
+        test_access: none
+      type: org.openecomp.resource.vl.OAM
+    vlc1_gtp_net: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc1_gtp_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC1
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc1_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: vlc1_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc1_oam: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc1_oam_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC1
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: oam_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc1_sctp_a: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_sctp_a_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC1
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc1_sctp_b: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_sctp_b_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC1
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_gtp_net: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_gtp_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_internal1: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: vlc2_internal1_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal1_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_internal2: 
+      properties: 
+        address_info: 
+          mac_address: 
+            get_input: vlc2_internal2_mac_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: Internal2_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_oam: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_oam_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          link: 
+            capability: tosca.capabilities.network.Bindable
+            node: oam_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_sctp_a: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_sctp_a_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+    vlc2_sctp_b: 
+      properties: 
+        address_Info: 
+          ip_address: 
+            get_input: vlc2_sctp_b_ip_address
+      requirements: 
+        - 
+          binding: 
+            capability: tosca.capabilities.network.Bindable
+            node: VLC2
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+  policies: 
+    - 
+      mme_autoscale_policy: 
+        properties: 
+          factor: cpu_load
+          increment: 1
+          max_instances: 4
+          min_instances: 1
+          threshold: 80%
+        target: 
+          - vfmoduleVmmeModule-1
+        type: org.openecomp.policy.Autoscaling
+  substitution_mapping: 
+    requirements: 
+      - 
+        vlc1_gtp_net.link: 
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - 
+        vlc2_gtp_net.link: 
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - 
+        vlc1_sctp_a.link: 
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+      - 
+        vlc1_sctp_b.link: 
+          capability: tosca.capabilities.network.Linkable
+          relationship: tosca.relationships.network.LinksTo
+    type: org.openecomp.resource.vf.vmme
+tosca_definitions_version: tosca_simple_profile_for_ecomp_1_0

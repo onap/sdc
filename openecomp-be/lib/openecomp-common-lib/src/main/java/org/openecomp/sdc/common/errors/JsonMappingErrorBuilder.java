@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.common.errors;
 
-/**
- * The type Json mapping error builder.
- */
 public class JsonMappingErrorBuilder {
 
   private static final String JSON_MAPPING_ERROR_ERR_ID = "JSON_MAPPING_ERROR_ERR_ID";
@@ -41,11 +38,6 @@ public class JsonMappingErrorBuilder {
     builder.withMessage(String.format(JSON_MAPPING_ERROR_ERR_ERR_MSG));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

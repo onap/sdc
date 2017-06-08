@@ -1,0 +1,407 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: VSR_CPM_base_template_nested
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF Module ID
+    mgt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Management interface
+    cpm_mgt_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP that will be used by the primary Management Interface
+    cpm_slot:
+      hidden: false
+      immutable: false
+      type: string
+      description: The slot value assigned to the module eg A and B
+    ctrl_fabric_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Control Fabric interface
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security group to be used
+    cpm_mgt_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: Fixed IP that will be used by the secondary Management Interface
+    mgt_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Management interface
+    ctrl_fabric_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Control Fabric interface
+    project_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Id of the HEAT project
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF ID
+    cpm_smbios:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parameters to be passed to the VM at boot up as key-value pairs
+    stack_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Id of the HEAT stack
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone where this component should be instantiated
+    cpm_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the instance
+    cpm_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor of the VNF to be used
+    cpm_mtu:
+      hidden: false
+      immutable: false
+      type: string
+      description: MTU size in bytes
+    stack_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the HEAT stack
+    vm_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the VNF
+  node_templates:
+    CPM:
+      type: org.openecomp.resource.vfc.nodes.heat.vm
+      properties:
+        flavor:
+          get_input: cpm_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cpm_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        config_drive: true
+        user_data_format: RAW
+        name:
+          get_input: vm_name
+    cpm_mgt_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - subnet_id:
+            get_input: mgt_subnet_id
+          ip_address:
+            get_input: cpm_mgt_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        allowed_address_pairs:
+        - ip_address:
+            get_input: cpm_mgt_cidr
+        network_role_tag: mgt
+        network:
+          get_input: mgt_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CPM
+          relationship: tosca.relationships.network.BindsTo
+    cpm_ctrl_fabric_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - subnet_id:
+            get_input: ctrl_fabric_subnet_id
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: cpm_mtu
+        network_role_tag: ctrl_fabric
+        network:
+          get_input: ctrl_fabric_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: CPM
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    VSR_CPM_base_template_nested_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/VSR_CPM_base_template_nested.yaml
+      members:
+      - CPM
+      - cpm_mgt_0_port
+      - cpm_ctrl_fabric_0_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.VSR_CPM_base_template_nested
+    capabilities:
+      disk.device.read.bytes.rate_CPM:
+      - CPM
+      - disk.device.read.bytes.rate
+      network.incoming.packets_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.incoming.packets
+      vcpus_CPM:
+      - CPM
+      - vcpus
+      disk.device.write.bytes.rate_CPM:
+      - CPM
+      - disk.device.write.bytes.rate
+      endpoint_CPM:
+      - CPM
+      - endpoint
+      disk.device.usage_CPM:
+      - CPM
+      - disk.device.usage
+      network.outpoing.packets_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.outpoing.packets
+      disk.iops_CPM:
+      - CPM
+      - disk.iops
+      disk.device.allocation_CPM:
+      - CPM
+      - disk.device.allocation
+      disk.read.bytes.rate_CPM:
+      - CPM
+      - disk.read.bytes.rate
+      memory_CPM:
+      - CPM
+      - memory
+      disk.write.requests_CPM:
+      - CPM
+      - disk.write.requests
+      disk.read.requests_CPM:
+      - CPM
+      - disk.read.requests
+      network.outgoing.bytes_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.outgoing.bytes
+      disk.write.bytes_CPM:
+      - CPM
+      - disk.write.bytes
+      disk.capacity_CPM:
+      - CPM
+      - disk.capacity
+      disk.device.capacity_CPM:
+      - CPM
+      - disk.device.capacity
+      network.outgoing.bytes.rate_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.outgoing.bytes.rate
+      cpu_CPM:
+      - CPM
+      - cpu
+      network.incoming.packets.rate_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.incoming.packets.rate
+      disk.device.latency_CPM:
+      - CPM
+      - disk.device.latency
+      feature_CPM:
+      - CPM
+      - feature
+      disk.device.read.bytes_CPM:
+      - CPM
+      - disk.device.read.bytes
+      disk.device.write.requests.rate_CPM:
+      - CPM
+      - disk.device.write.requests.rate
+      network.outgoing.packets.rate_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.outgoing.packets.rate
+      network.incoming.bytes_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.incoming.bytes
+      binding_CPM:
+      - CPM
+      - binding
+      binding_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - binding
+      cpu_util_CPM:
+      - CPM
+      - cpu_util
+      network.incoming.bytes.rate_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.incoming.bytes.rate
+      disk.device.read.requests_CPM:
+      - CPM
+      - disk.device.read.requests
+      disk.device.write.bytes_CPM:
+      - CPM
+      - disk.device.write.bytes
+      network.outgoing.packets.rate_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.outgoing.packets.rate
+      disk.latency_CPM:
+      - CPM
+      - disk.latency
+      disk.usage_CPM:
+      - CPM
+      - disk.usage
+      os_CPM:
+      - CPM
+      - os
+      memory.usage_CPM:
+      - CPM
+      - memory.usage
+      network.outpoing.packets_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.outpoing.packets
+      network.incoming.packets_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.incoming.packets
+      feature_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - feature
+      instance_CPM:
+      - CPM
+      - instance
+      binding_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - binding
+      network.outgoing.bytes.rate_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.outgoing.bytes.rate
+      disk.device.write.requests_CPM:
+      - CPM
+      - disk.device.write.requests
+      disk.allocation_CPM:
+      - CPM
+      - disk.allocation
+      disk.device.iops_CPM:
+      - CPM
+      - disk.device.iops
+      disk.root.size_CPM:
+      - CPM
+      - disk.root.size
+      disk.ephemeral.size_CPM:
+      - CPM
+      - disk.ephemeral.size
+      memory.resident_CPM:
+      - CPM
+      - memory.resident
+      network.incoming.bytes.rate_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.incoming.bytes.rate
+      attachment_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - attachment
+      attachment_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - attachment
+      disk.write.bytes.rate_CPM:
+      - CPM
+      - disk.write.bytes.rate
+      network.incoming.bytes_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.incoming.bytes
+      host_CPM:
+      - CPM
+      - host
+      feature_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - feature
+      disk.write.requests.rate_CPM:
+      - CPM
+      - disk.write.requests.rate
+      cpu.delta_CPM:
+      - CPM
+      - cpu.delta
+      disk.read.bytes_CPM:
+      - CPM
+      - disk.read.bytes
+      network.incoming.packets.rate_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - network.incoming.packets.rate
+      scalable_CPM:
+      - CPM
+      - scalable
+      network.outgoing.bytes_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - network.outgoing.bytes
+      disk.device.read.requests.rate_CPM:
+      - CPM
+      - disk.device.read.requests.rate
+    requirements:
+      dependency_CPM:
+      - CPM
+      - dependency
+      dependency_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - dependency
+      local_storage_CPM:
+      - CPM
+      - local_storage
+      dependency_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - dependency
+      link_cpm_mgt_0_port:
+      - cpm_mgt_0_port
+      - link
+      link_cpm_ctrl_fabric_0_port:
+      - cpm_ctrl_fabric_0_port
+      - link

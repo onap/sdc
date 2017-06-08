@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_openecomp_1_0
+metadata:
+  filename: openecomp-heat/groups.yml
+  version: '1.0'
+imports:
+- heat_index:
+    file: _index.yml
+group_types:
+  org.openecomp.groups.heat.HeatStack:
+    derived_from: org.openecomp.groups.VfModule
+    description: Grouped all heat resources which are in the same heat stack
+    properties:
+      heat_file:
+        type: string
+        description: Heat file which associate to this group/heat stack
+        required: true
+        status: SUPPORTED
+      description:
+        type: string
+        description: group description
+        required: true
+        status: SUPPORTED

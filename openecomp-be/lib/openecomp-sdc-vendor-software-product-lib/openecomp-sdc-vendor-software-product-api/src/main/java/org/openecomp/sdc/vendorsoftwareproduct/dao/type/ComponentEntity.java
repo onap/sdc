@@ -38,7 +38,7 @@ import java.util.List;
 
 @Table(keyspace = "dox", name = "vsp_component")
 public class ComponentEntity implements CompositionEntity {
-  private static final String ENTITY_TYPE = "Vendor Software Product ComponentData";
+  private static final String ENTITY_TYPE = "Vendor Software Product Component";
 
   @PartitionKey
   @Column(name = "vsp_id")
@@ -83,22 +83,32 @@ public class ComponentEntity implements CompositionEntity {
     return new CompositionEntityId(getId(), new CompositionEntityId(getVspId(), null));
   }
 
+  @Override
+  public String getCompositionData() {
+    return compositionData;
+  }
+
+  @Override
+  public void setCompositionData(String compositionData) {
+    this.compositionData = compositionData;
+  }
+
+  @Override
+  public String getQuestionnaireData() {
+    return questionnaireData;
+  }
+
+  @Override
+  public void setQuestionnaireData(String questionnaireData) {
+    this.questionnaireData = questionnaireData;
+  }
+
   public String getVspId() {
     return vspId;
   }
 
   public void setVspId(String vspId) {
     this.vspId = vspId;
-  }
-
-  @Override
-  public Version getVersion() {
-    return version;
-  }
-
-  @Override
-  public void setVersion(Version version) {
-    this.version = version;
   }
 
   @Override
@@ -122,13 +132,13 @@ public class ComponentEntity implements CompositionEntity {
   }
 
   @Override
-  public String getCompositionData() {
-    return compositionData;
+  public Version getVersion() {
+    return version;
   }
 
   @Override
-  public void setCompositionData(String compositionData) {
-    this.compositionData = compositionData;
+  public void setVersion(Version version) {
+    this.version = version;
   }
 
   public ComponentData getComponentCompositionData() {
@@ -140,16 +150,6 @@ public class ComponentEntity implements CompositionEntity {
     this.compositionData = component == null ? null : JsonUtil.object2Json(component);
   }
 
-  @Override
-  public String getQuestionnaireData() {
-    return questionnaireData;
-  }
-
-  @Override
-  public void setQuestionnaireData(String questionnaireData) {
-    this.questionnaireData = questionnaireData;
-  }
-
   public List<NicEntity> getNics() {
     return nics;
   }
@@ -159,15 +159,25 @@ public class ComponentEntity implements CompositionEntity {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public int hashCode() {
+    int result = vspId != null ? vspId.hashCode() : 0;
+    result = 31 * result + (version != null ? version.hashCode() : 0);
+    result = 31 * result + (id != null ? id.hashCode() : 0);
+    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
+    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    ComponentEntity that = (ComponentEntity) obj;
+    ComponentEntity that = (ComponentEntity) object;
 
     if (vspId != null ? !vspId.equals(that.vspId) : that.vspId != null) {
       return false;
@@ -185,15 +195,5 @@ public class ComponentEntity implements CompositionEntity {
     return questionnaireData != null ? questionnaireData.equals(that.questionnaireData)
         : that.questionnaireData == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = vspId != null ? vspId.hashCode() : 0;
-    result = 31 * result + (version != null ? version.hashCode() : 0);
-    result = 31 * result + (id != null ? id.hashCode() : 0);
-    result = 31 * result + (compositionData != null ? compositionData.hashCode() : 0);
-    result = 31 * result + (questionnaireData != null ? questionnaireData.hashCode() : 0);
-    return result;
   }
 }

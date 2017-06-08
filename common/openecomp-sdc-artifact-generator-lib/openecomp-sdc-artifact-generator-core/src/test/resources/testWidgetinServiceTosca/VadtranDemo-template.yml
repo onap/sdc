@@ -1,0 +1,170 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 886d689d-351d-485a-829c-d86ec2dde4c4
+  UUID: 3d6e1e60-14ac-4665-83de-6e2c729f0222
+  name: vadtran_Demo
+  description: test
+  type: VF
+  category: Generic
+  subcategory: Database
+  resourceVendor: Test
+  resourceVendorRelease: '1.0'
+imports:
+- NeutronPort:
+    file: Neutronport-template.yml
+- VadtranDemo.nodes.heat.vnf:
+    file: VadtrandemoNodesHeatVnf-template.yml
+topology_template:
+  inputs:
+    pmaa_dpu_net_id:
+      type: string
+      default: bd3be094-ddf0-43b3-91e7-d424f09dd2b9
+      description: PMAA DPU network ID
+    pmaa_dpu_fixed_ip:
+      type: string
+      default: 10.0.2.50
+      description: PMAA fixed IP address for DPU network port
+    pmaa_flavor:
+      type: string
+      default: m1.medium
+      description: PMAA instance Flavor (RAM, DISK, vCPUs)
+    pmaa_image:
+      type: string
+      default: adtran_pmaa_ubuntu_multi
+      description: PMAA image for compute instance
+    pmaa_mgt_net_id:
+      type: string
+      default: 991cdd94-18ca-4bf8-a931-922a64500840
+      description: PMAA management network
+    vnf_id:
+      type: string
+      default: pmaa_vnf_id
+      description: PMAA unique ID
+    pmaa_availability_zone:
+      type: string
+      default: nova
+      description: PMAA availability zone ID to deploy the instance
+    vnf_name:
+      type: string
+      default: pmaa
+      description: PMAA vnf name
+    pmaa_dpu_cidr:
+      type: string
+      default: 10.0.2.0/24
+      description: PMAA DPU subnetwork CIDR address block
+    pmaa_dpu_subnet_id:
+      type: string
+      default: e848430b-e956-4b47-9cc8-f7a6ca2c790a
+      description: PMAA DPU subnetwork ID
+    pmaa_dpu_gateway:
+      type: string
+      default: 10.0.2.254
+      description: PMAA DPU subnetwork gateway IP address
+  node_templates:
+    pmaa_mgt_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: cba26d10-4613-4c82-9f9e-af95eaf959a3
+        UUID: 2606755b-d301-45c6-900e-ca676cc9f348
+        resourceCustomizationUUID: 6402d92d-0050-46a9-8202-f7a6ca2c790a
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        network:
+          get_input: pmaa_mgt_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pmaa_server_0
+          relationship: tosca.relationships.network.BindsTo
+    pmaa_dpu_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      metadata:
+        invariantUUID: cba26d10-4613-4c82-9f9e-af95eaf959a3
+        UUID: 2606755b-d301-45c6-900e-ca676cc9f348
+        resourceCustomizationUUID: 6402d92d-4613-4c82-9f9e-f7a6ca2c790a
+        version: '1.0'
+        name: NeutronPort
+        description: Represents a logical entity that associates between Compute and Network normative types.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: pmaa_dpu_fixed_ip
+        network:
+          get_input: pmaa_dpu_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: pmaa_server_0
+          relationship: tosca.relationships.network.BindsTo
+    pmaa_server_0:
+      type: org.openecomp.resource.vfc.VadtranDemo.abstact.nodes.heat.vnf
+      metadata:
+        invariantUUID: 660310f4-8851-46d3-9cb7-9f1188b43aa7
+        UUID: 82150098-aead-4ae0-a3e0-d5273b4ab923
+        resourceCustomizationUUID: 6402d92d-8851-46d3-9cb7-f7a6ca2c790a
+        version: '1.0'
+        name: VadtranDemo.nodes.heat.vnf
+        description: Not reusable inner VFC
+        type: VFC
+        category: Generic
+        subcategory: Abstract
+      properties:
+        flavor:
+          get_input: pmaa_flavor
+        image:
+          get_input: pmaa_image
+        availability_zone:
+          get_input: pmaa_availability_zone
+        metadata:
+          pmaa.sb_nic:
+            address:
+              get_input: pmaa_dpu_fixed_ip
+            cidr:
+              get_input: pmaa_dpu_cidr
+            gateway:
+              get_input: pmaa_dpu_gateway
+        user_data_format:
+        name:
+          get_input: vnf_name
+  groups:
+    vadtran_Demo..base_adtran_pmaa_heat_04..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: vadtran_Demo..base_adtran_pmaa_heat_04..module-0
+        vfModuleModelInvariantUUID: d84f61c9-160a-44b6-a008-6caadbb6c612
+        vfModuleModelUUID: fbf41c77-a7ee-4203-ad6c-eeb8a4ad7178
+        vfModuleModelVersion: '1'
+      properties:
+        vf_module_type: Base
+        vf_module_description:
+        volume_group: false
+    base_adtran_pmaa_heat_04:
+      type: org.openecomp.groups.heat.HeatStack
+      members:
+      - pmaa_mgt_port
+      - pmaa_dpu_port
+      - pmaa_server_0
+      metadata:
+        invariantUUID: d2e21beb-b7e4-44cf-bf6c-f8c8802fe532
+        UUID: c9d6f49a-6785-4693-a921-d980e4d11aa4
+        version: '1'
+        name: base_adtran_pmaa_heat_04
+  
+  #_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

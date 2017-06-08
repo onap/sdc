@@ -1,6 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>openecomp-sdc-versioning-core</name>
+    <artifactId>openecomp-sdc-versioning-core</artifactId>
+
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -9,10 +14,6 @@
         <relativePath>../..</relativePath>
     </parent>
 
-    <name>openecomp-sdc-versioning-core</name>
-    <artifactId>openecomp-sdc-versioning-core</artifactId>
-
-
     <dependencies>
         <dependency>
             <groupId>org.openecomp.sdc</groupId>
@@ -20,23 +21,21 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.3.1</version>
-            <scope>test</scope>
+            <groupId>org.openecomp.core</groupId>
+            <artifactId>openecomp-zusammen-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.14</version>
-            <scope>test</scope>
+            <groupId>org.openecomp.core</groupId>
+            <artifactId>openecomp-zusammen-core</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
-            <version>1.10.19</version>
+            <version>${mockito.all.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -54,7 +53,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>RELEASE</version>
+            <version>4.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

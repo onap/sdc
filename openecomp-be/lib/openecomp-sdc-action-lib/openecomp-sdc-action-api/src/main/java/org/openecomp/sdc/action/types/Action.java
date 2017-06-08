@@ -36,7 +36,6 @@ public class Action implements Comparable {
   private ActionStatus status;
   private String name;
   private String displayName;
-  private String endpointUri;
   private List<String> vendorList;
   private List<String> categoryList;
   private Date timestamp;
@@ -120,14 +119,6 @@ public class Action implements Comparable {
     this.displayName = displayName;
   }
 
-  public String getEndpointUri() {
-    return endpointUri;
-  }
-
-  public void setEndpointUri(String endpointUri) {
-    this.endpointUri = endpointUri;
-  }
-
   public List<String> getVendorList() {
     return vendorList;
   }
@@ -176,6 +167,7 @@ public class Action implements Comparable {
     this.supportedComponents = supportedComponents;
   }
 
+
   public List<ActionArtifact> getArtifacts() {
     return artifacts;
   }
@@ -213,8 +205,8 @@ public class Action implements Comparable {
     if (this.getStatus() != null) {
       destination.setStatus(this.getStatus().name());
     }
-    destination.setSupportedComponents(
-        getIdFromMap(this.getSupportedComponents(), ActionConstants.SUPPORTED_COMPONENTS_ID));
+    destination.setSupportedComponents(getIdFromMap(this.getSupportedComponents(),
+        ActionConstants.SUPPORTED_COMPONENTS_ID));
     destination.setSupportedModels(
         getIdFromMap(this.getSupportedModels(), ActionConstants.SUPPORTED_MODELS_VERSION_ID));
     destination.setData(this.getData());
@@ -224,11 +216,11 @@ public class Action implements Comparable {
   private List<String> getIdFromMap(List<HashMap<String, String>> map, String idName) {
     List<String> list = new ArrayList<>();
     if (map != null && !map.isEmpty()) {
-      map.forEach(entry -> {
+      for (HashMap<String, String> entry : map) {
         if (entry.containsKey(idName)) {
           list.add(entry.get(idName) != null ? entry.get(idName).toLowerCase() : null);
         }
-      });
+      }
       return list;
     }
     return null;
