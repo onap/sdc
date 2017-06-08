@@ -4,7 +4,7 @@
 #
 # action_library_client.py
 #
-# A command-line client for the SDC Action Library.
+# A command-line client for the ASDC Action Library.
 #
 #
 # Usage:
@@ -60,14 +60,14 @@
 #   - ALC_HTTP_INSECURE - allow untrusted SSL (server) connections.
 #   - ALC_TIMEOUT_SECONDS - invocation (e.g. HTTP) timeout in seconds.
 #   - ALC_JSON_DELIMITER - JSON delimiter in ouput.
-#   - ALC_ECOMP_INSTANCE_ID - X-ECOMP-InstanceID header
+#   - ALC_ECOMP_INSTANCE_ID - X-OPENECOMP-InstanceID header
 #
 # Configuration by 0600-mode INI file (section "action_library_client") is preferred.
 #
 # See:
 #    http://10.147.97.199:8080/api-docs/ - REST API Swagger docs
 #    https://www.python.org/dev/peps/pep-0008/ - style guide
-#    ../doc/SDC_Action_Lib_API_AID_1610_13.pdf - REST API dev guide
+#    ../doc/ASDC_Action_Lib_API_AID_1610_13.pdf - REST API dev guide
 #
 # Version history:
 # - 1.0.0 November 28th 2016, LP, initial impl.
@@ -102,7 +102,7 @@ class Constants(object):
     VERSION = "1.1.0"
     APPLICATION = "action_library_client"
     ACTIONS_URI = "onboarding-api/workflow/v1.0/actions"
-    ECOMP_INSTANCE_ID = "sdc_alc"
+    ECOMP_INSTANCE_ID = "asdc_alc"
     TIMEOUT_SECONDS_DEFAULT = 30
     JSON_DELIMITER_DEFAULT = "----------"
     LOG_FORMAT = "%(name)s\t%(levelname)s\t%(asctime)s\t%(message)s"
@@ -428,8 +428,8 @@ class NativeRESTClient(IRESTClient):
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "Authorization": "Basic {0}".format(self.get_basic_credentials()),
-                "X-ECOMP-InstanceID": Constants.ECOMP_INSTANCE_ID,
-                "X-ECOMP-RequestID": IRESTClient.new_uuid()
+                "X-OPENECOMP-InstanceID": Constants.ECOMP_INSTANCE_ID,
+                "X-OPENECOMP-RequestID": IRESTClient.new_uuid()
             }
 
             handler = urllib2.HTTPHandler
@@ -520,8 +520,8 @@ class CURLRESTClient(IRESTClient):
         cmd.extend(["--header", "Accept: application/json"])
         cmd.extend(["--header", "Content-Type: application/json"])
         cmd.extend(["--header", "Authorization: Basic {0}".format(self.get_basic_credentials())])
-        cmd.extend(["--header", "X-ECOMP-InstanceID: {0}".format(Constants.ECOMP_INSTANCE_ID)])
-        cmd.extend(["--header", "X-ECOMP-RequestID: {0}".format(IRESTClient.new_uuid())])
+        cmd.extend(["--header", "X-OPENECOMP-InstanceID: {0}".format(Constants.ECOMP_INSTANCE_ID)])
+        cmd.extend(["--header", "X-OPENECOMP-RequestID: {0}".format(IRESTClient.new_uuid())])
         if extra_args:
             for extra_arg in extra_args:
                 cmd.append(extra_arg)

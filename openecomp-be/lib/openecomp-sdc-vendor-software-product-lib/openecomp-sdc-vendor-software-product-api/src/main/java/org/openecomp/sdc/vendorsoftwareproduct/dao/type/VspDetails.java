@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
 
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.Computed;
-import com.datastax.driver.mapping.annotations.Frozen;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -32,16 +27,12 @@ import org.openecomp.sdc.versioning.dao.types.VersionableEntity;
 
 import java.util.List;
 
-@Table(keyspace = "dox", name = "vsp_information")
+
 public class VspDetails implements VersionableEntity {
   public static final String ENTITY_TYPE = "Vendor Software Product";
 
-  @PartitionKey
-  @Column(name = "vsp_id")
   private String id;
 
-  @PartitionKey(value = 1)
-  @Frozen
   private Version version;
 
   private String name;
@@ -49,37 +40,24 @@ public class VspDetails implements VersionableEntity {
 
   private String category;
 
-  @Column(name = "sub_category")
   private String subCategory;
 
   private String icon;
 
-  @Column(name = "vendor_name")
   private String vendorName;
 
-  @Column(name = "vendor_id")
   private String vendorId;
 
-  @Column(name = "vlm_version")
-  @Frozen
   private Version vlmVersion;
 
-  @Column(name = "license_agreement")
   private String licenseAgreement;
 
-  @Column(name = "feature_groups")
   private List<String> featureGroups;
 
-  @Column(name = "package_name")
-  private String packageName;
-
-  @Column(name = "package_version")
-  private String packageVersion;
-
-  @Column(name = "validation_data")
   private String validationData;
 
-  @Computed("writetime(name)")
+  private String oldVersion;
+
   private Long writetimeMicroSeconds;
 
   public VspDetails() {
@@ -198,22 +176,6 @@ public class VspDetails implements VersionableEntity {
     this.featureGroups = featureGroups;
   }
 
-  public String getPackageName() {
-    return packageName;
-  }
-
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
-  }
-
-  public String getPackageVersion() {
-    return packageVersion;
-  }
-
-  public void setPackageVersion(String packageVersion) {
-    this.packageVersion = packageVersion;
-  }
-
   public String getValidationData() {
     return validationData;
   }
@@ -238,5 +200,24 @@ public class VspDetails implements VersionableEntity {
 
   public void setWritetimeMicroSeconds(Long writetimeMicroSeconds) {
     this.writetimeMicroSeconds = writetimeMicroSeconds;
+  }
+
+  /*public boolean isOldVersion() {
+    return this.oldVersion;
+  }*/
+
+  public String getOldVersion(){
+    return this.oldVersion;
+  }
+
+  public void setOldVersion(String oldVersion) {
+    this.oldVersion = oldVersion;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "Vsp id = '%s', Version = %s', Name = %s', Category = %s', Description = %s', Vendor = %s'",
+        this.id, this.version, this.name, this.category, this.description, this.vendorName);
   }
 }

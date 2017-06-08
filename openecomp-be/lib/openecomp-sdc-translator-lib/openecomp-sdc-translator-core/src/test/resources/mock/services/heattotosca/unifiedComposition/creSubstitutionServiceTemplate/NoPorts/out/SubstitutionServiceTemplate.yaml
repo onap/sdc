@@ -1,0 +1,196 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_FSB1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    compute_FSB1_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_FSB1_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    compute_FSB1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_flavor_name:
+      type: string
+      required: true
+  node_templates:
+    FSB1:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB1
+      properties:
+        availability_zone:
+          get_input:
+          - compute_FSB1_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_FSB1_metadata
+          - index_value
+        name:
+          get_input:
+          - compute_FSB1_name
+          - index_value
+      artifacts:
+        nimbus-ethernet-gw:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/nimbus-ethernet-gw
+        nimbus-ethernet:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/nimbus-ethernet
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.FSB1
+    capabilities:
+      memory_FSB1:
+      - FSB1
+      - memory
+      disk.capacity_FSB1:
+      - FSB1
+      - disk.capacity
+      disk.read.bytes.rate_FSB1:
+      - FSB1
+      - disk.read.bytes.rate
+      disk.device.latency_FSB1:
+      - FSB1
+      - disk.device.latency
+      disk.device.read.bytes_FSB1:
+      - FSB1
+      - disk.device.read.bytes
+      disk.allocation_FSB1:
+      - FSB1
+      - disk.allocation
+      disk.read.bytes_FSB1:
+      - FSB1
+      - disk.read.bytes
+      disk.device.capacity_FSB1:
+      - FSB1
+      - disk.device.capacity
+      disk.device.usage_FSB1:
+      - FSB1
+      - disk.device.usage
+      cpu_util_FSB1:
+      - FSB1
+      - cpu_util
+      disk.device.write.requests.rate_FSB1:
+      - FSB1
+      - disk.device.write.requests.rate
+      disk.write.bytes.rate_FSB1:
+      - FSB1
+      - disk.write.bytes.rate
+      scalable_FSB1:
+      - FSB1
+      - scalable
+      disk.usage_FSB1:
+      - FSB1
+      - disk.usage
+      disk.root.size_FSB1:
+      - FSB1
+      - disk.root.size
+      feature_FSB1:
+      - FSB1
+      - feature
+      host_FSB1:
+      - FSB1
+      - host
+      disk.device.allocation_FSB1:
+      - FSB1
+      - disk.device.allocation
+      os_FSB1:
+      - FSB1
+      - os
+      vcpus_FSB1:
+      - FSB1
+      - vcpus
+      disk.write.requests_FSB1:
+      - FSB1
+      - disk.write.requests
+      memory.resident_FSB1:
+      - FSB1
+      - memory.resident
+      cpu_FSB1:
+      - FSB1
+      - cpu
+      disk.write.requests.rate_FSB1:
+      - FSB1
+      - disk.write.requests.rate
+      disk.device.write.bytes.rate_FSB1:
+      - FSB1
+      - disk.device.write.bytes.rate
+      instance_FSB1:
+      - FSB1
+      - instance
+      endpoint_FSB1:
+      - FSB1
+      - endpoint
+      disk.device.read.bytes.rate_FSB1:
+      - FSB1
+      - disk.device.read.bytes.rate
+      cpu.delta_FSB1:
+      - FSB1
+      - cpu.delta
+      disk.write.bytes_FSB1:
+      - FSB1
+      - disk.write.bytes
+      disk.latency_FSB1:
+      - FSB1
+      - disk.latency
+      disk.device.read.requests.rate_FSB1:
+      - FSB1
+      - disk.device.read.requests.rate
+      memory.usage_FSB1:
+      - FSB1
+      - memory.usage
+      disk.device.read.requests_FSB1:
+      - FSB1
+      - disk.device.read.requests
+      disk.ephemeral.size_FSB1:
+      - FSB1
+      - disk.ephemeral.size
+      binding_FSB1:
+      - FSB1
+      - binding
+      disk.device.write.bytes_FSB1:
+      - FSB1
+      - disk.device.write.bytes
+      disk.read.requests_FSB1:
+      - FSB1
+      - disk.read.requests
+      disk.device.write.requests_FSB1:
+      - FSB1
+      - disk.device.write.requests
+      disk.iops_FSB1:
+      - FSB1
+      - disk.iops
+      disk.device.iops_FSB1:
+      - FSB1
+      - disk.device.iops
+    requirements:
+      dependency_FSB1:
+      - FSB1
+      - dependency
+      local_storage_FSB1:
+      - FSB1
+      - local_storage

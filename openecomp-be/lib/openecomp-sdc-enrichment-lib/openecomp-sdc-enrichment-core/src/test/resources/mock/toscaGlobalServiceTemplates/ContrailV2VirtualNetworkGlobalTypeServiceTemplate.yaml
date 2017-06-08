@@ -1,0 +1,141 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ContrailV2VirtualNetworkGlobalType
+  template_version: 1.0.0
+description: Contrail V2 Virtual Network Global Types
+imports:
+- NetworkGlobalTypes:
+    file: NetworkGlobalTypesServiceTemplate.yaml
+- common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+data_types:
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData:
+    derived_from: tosca.datatypes.Root
+    description: network policy refs data
+    properties:
+      network_policy_refs_data_sequence:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence
+        description: Network Policy ref data sequence
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence:
+    derived_from: tosca.datatypes.Root
+    description: network policy refs data sequence
+    properties:
+      network_policy_refs_data_sequence_major:
+        type: integer
+        description: Network Policy ref data sequence Major
+        required: false
+        status: SUPPORTED
+      network_policy_refs_data_sequence_minor:
+        type: integer
+        description: Network Policy ref data sequence Minor
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data Subnet
+    properties:
+      network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+        type: string
+        description: Network ipam refs data ipam subnets ip prefix len
+        required: false
+        status: SUPPORTED
+      network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+        type: string
+        description: Network ipam refs data ipam subnets ip prefix
+        required: false
+        status: SUPPORTED
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data
+    properties:
+      network_ipam_refs_data_ipam_subnets:
+        type: list
+        description: Network ipam refs data ipam subnets
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data Subnet List
+    properties:
+      network_ipam_refs_data_ipam_subnets_subnet:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet
+        description: Network ipam refs data ipam subnets
+        required: false
+        status: SUPPORTED
+      network_ipam_refs_data_ipam_subnets_addr_from_start:
+        type: string
+        description: Network ipam refs data ipam subnets addr from start
+        required: false
+        status: SUPPORTED
+node_types:
+  org.openecomp.resource.vl.nodes.heat.network.contrailV2.VirtualNetwork:
+    derived_from: org.openecomp.resource.vl.nodes.network.Network
+    properties:
+      network_ipam_refs_data:
+        type: list
+        description: IPAM references Data
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData
+      network_policy_refs_data:
+        type: list
+        description: Policy references data
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData
+      network_ipam_refs:
+        type: list
+        description: IPAM references
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      network_policy_refs:
+        type: list
+        description: Policy references
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        type: map
+        description: Network related subnets
+        required: false
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+    attributes:
+      fq_name:
+        type: string
+        description: fq_name
+        status: SUPPORTED
+      subnets_name:
+        type: list
+        description: Subnets name of this network
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets_show:
+        type: map
+        description: Detailed information about each subnet
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      subnets:
+        type: map
+        description: Network related subnets
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.neutron.Subnet
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED

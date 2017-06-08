@@ -23,11 +23,6 @@ package org.openecomp.sdc.tosca.services;
 
 public class ToscaConstants {
 
-  //TOSCA Node Types prefix
-  public static final String NODES_PREFIX = "org.openecomp.resource.vfc.nodes.heat.";
-  public static final String NODES_SUBSTITUTION_PREFIX
-      = "org.openecomp.resource.abstract.nodes.heat.";
-
   //TOSCA Requirement Ids
   public static final String DEPENDS_ON_REQUIREMENT_ID = "dependency";
   public static final String BINDING_REQUIREMENT_ID = "binding";
@@ -43,6 +38,8 @@ public class ToscaConstants {
   public static final String ENDPOINT_CAPABILITY_ID = "endpoint";
   public static final String OS_CAPABILITY_ID = "os";
   public static final String SCALABLE_CAPABILITY_ID = "scalable";
+  public static final String ATTACHMENT_CAPABILITY_ID = "attachment";
+  public static final String FEATURE_CAPABILITY_ID = "feature";
 
   //General
   public static final String TOSCA_DEFINITIONS_VERSION = "tosca_simple_yaml_1_0_0";
@@ -50,6 +47,8 @@ public class ToscaConstants {
   public static final String NODE_TEMPLATE_DIRECTIVE_SUBSTITUTABLE = "substitutable";
   public static final String NATIVE_TYPES_SERVICE_TEMPLATE_NAME = "NativeTypesServiceTemplate";
   public static final String UNBOUNDED = "UNBOUNDED";
+  public static final String ST_METADATA_FILE_NAME = "filename";
+  public static final String ST_METADATA_TEMPLATE_NAME = "template_name";
 
   //properties
   public static final String SERVICE_TEMPLATE_FILTER_PROPERTY_NAME = "service_template_filter";
@@ -60,6 +59,13 @@ public class ToscaConstants {
   public static final String SCALING_ENABLED_PROPERTY_NAME = "scaling_enabled";
 
   public static final String DHCP_ENABLED_PROPERTY_NAME = "dhcp_enabled";
+
+  public static final String PORT_FIXED_IPS = "fixed_ips";
+  public static final String PORT_ALLOWED_ADDRESS_PAIRS = "allowed_address_pairs";
+  public static final String MAC_ADDRESS = "mac_address";
+
+  public static final String COMPUTE_IMAGE = "image";
+  public static final String COMPUTE_FLAVOR = "flavor";
 
 
 }

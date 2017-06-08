@@ -1,0 +1,72 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp/groups.yml
+  version: '1.0'
+  
+imports:
+- openecomp_index:
+    file: _index.yml
+
+group_types:
+
+  org.openecomp.groups.VfModule:
+    derived_from: tosca.groups.Root
+    description: Grouped all heat resources which are in the same VF Module
+    properties:
+      isBase:
+        description: Whether this module should be deployed before other modules
+        type: boolean
+        status: SUPPORTED
+        default: false
+        required: true
+      vf_module_label:
+        description: |
+          Alternate textual key used to reference this VF-Module model.  Must be unique within the VNF model
+        type: string
+        required: true
+      vf_module_description:
+        description: |
+          Description of the VF-modules contents and purpose   (e.g. "Front-End" or "Database Cluster")
+        type: string
+        required: true
+      min_vf_module_instances:
+        description: The minimum instances of this VF-Module
+        type: integer
+        required: true
+      max_vf_module_instances:
+        description: The maximum instances of this VF-Module
+        type: integer
+        required: false
+      initial_count:
+        description: |
+          The initial count of instances of the VF-Module. The value must be in the  range between min_vfmodule_instances and max_vfmodule_instances. If no value provided the initial count is the min_vfmodule_instances.
+        type: integer
+        required: false
+      vf_module_type:
+        type: string
+        required: true
+        constraints:
+        - valid_values:
+          - Base
+          - Expansion
+      volume_group:
+        description: |
+          "true" indicates that this VF Module model requires attachment to a Volume   Group.  VID operator must select the Volume Group instance to attach to a VF-Module  at deployment time.
+        type: boolean
+        default: false
+        required: true

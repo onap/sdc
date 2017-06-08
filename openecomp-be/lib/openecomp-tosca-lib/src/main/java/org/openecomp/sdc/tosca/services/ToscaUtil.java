@@ -20,18 +20,10 @@
 
 package org.openecomp.sdc.tosca.services;
 
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.CapabilityType;
-import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -52,100 +44,40 @@ public class ToscaUtil {
     if (serviceTemplate.getMetadata() == null) {
       return UUID.randomUUID().toString() + "ServiceTemplate.yaml";
     }
-    return getServiceTemplateFileName(serviceTemplate.getMetadata().getTemplate_name());
+    return getServiceTemplateFileName(serviceTemplate.getMetadata());
   }
 
   /**
    * Gets service template file name.
    *
-   * @param templateName the template name
+   * @param metaData the file name
    * @return the service template file name
    */
-  public static String getServiceTemplateFileName(String templateName) {
-    return (Objects.isNull(templateName) ? UUID.randomUUID().toString() : templateName)
-        + "ServiceTemplate.yaml";
+  public static String getServiceTemplateFileName(Map<String, String> metadata) {
+    if (metadata.get(ToscaConstants.ST_METADATA_FILE_NAME) != null) {
+      return metadata.get(ToscaConstants.ST_METADATA_FILE_NAME);
+    } else if (metadata.get(ToscaConstants.ST_METADATA_TEMPLATE_NAME) != null) {
+      return metadata.get(ToscaConstants.ST_METADATA_TEMPLATE_NAME) + "ServiceTemplate.yaml";
+    }
+    return UUID.randomUUID().toString() + "ServiceTemplate.yaml";
+
   }
+
 
   /**
    * Add service template to map with key file name.
    *
-   * @param serviceTemplates      the service templates
-   * @param commonServiceTemplate the common service template
+   * @param serviceTemplateMap the service template map
+   * @param serviceTemplate    the service template
    */
   public static void addServiceTemplateToMapWithKeyFileName(
-      Map<String, ServiceTemplate> serviceTemplates, ServiceTemplate commonServiceTemplate) {
-    serviceTemplates
-        .put(ToscaUtil.getServiceTemplateFileName(commonServiceTemplate), commonServiceTemplate);
+      Map<String, ServiceTemplate> serviceTemplateMap, ServiceTemplate serviceTemplate) {
+    serviceTemplateMap.put(ToscaUtil.getServiceTemplateFileName(serviceTemplate), serviceTemplate);
   }
 
-  /**
-   * Convert type to definition capability definition.
-   *
-   * @param type           the type
-   * @param capabilityType the capability type
-   * @param properties     the properties
-   * @param description    the description
-   * @return the capability definition
-   */
-  public static CapabilityDefinition convertTypeToDefinition(String type,
-                                                             CapabilityType capabilityType,
-                                                             Map<String, Object> properties,
-                                                             String description) {
-    CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
-    capabilityDefinition.setAttributes(capabilityType.getAttributes());
-    capabilityDefinition.setProperties(capabilityType.getProperties());
-    if (description == null) {
-      capabilityDefinition.setDescription(capabilityType.getDescription());
-    } else {
-      capabilityDefinition.setDescription(description);
-    }
-    capabilityDefinition.setType(type);
-
-    capabilityDefinition.getProperties()
-        .entrySet()
-        .stream()
-        .filter(entry -> properties.containsKey(entry.getKey()))
-        .forEach(entry -> entry.getValue()
-            .set_default(properties.get(entry.getKey())));
-
-
-    return capabilityDefinition;
-
-  }
-
-  /**
-   * Normalize component name node type map.
-   *
-   * @param toscaModel the tosca model
-   * @param components the components
-   * @return the map
-   */
-  public static Map<String, List<NodeType>> normalizeComponentNameNodeType(
-      ToscaServiceModel toscaModel, Set<String> components) {
-
-    Map<String, List<NodeType>> normalizedData = new HashMap<>();
-    toscaModel
-        .getServiceTemplates()
-        .entrySet().stream().filter(entry -> entry
-        .getValue()
-        .getNode_types() != null)
-        .forEach(entry -> entry
-            .getValue()
-            .getNode_types()
-            .entrySet().stream()
-            .filter(nodeTypeEntry -> components
-                .contains(nodeTypeEntry
-                    .getKey()))
-            .forEach(nodeTypeEntry -> addNodeType(nodeTypeEntry.getKey(), nodeTypeEntry.getValue(),
-                normalizedData)));
-    return normalizedData;
-  }
-
-  private static void addNodeType(String key, NodeType value,
-                                  Map<String, List<NodeType>> normalizedData) {
-    if (!normalizedData.containsKey(key)) {
-      normalizedData.put(key, new ArrayList<>());
-    }
-    normalizedData.get(key).add(value);
+  public static String getServiceTemplateFileName(String templateName) {
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, templateName);
+    return getServiceTemplateFileName(metadata);
   }
 }

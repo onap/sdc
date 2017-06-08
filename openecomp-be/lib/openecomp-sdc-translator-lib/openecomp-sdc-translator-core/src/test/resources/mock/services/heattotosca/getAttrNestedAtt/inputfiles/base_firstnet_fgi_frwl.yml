@@ -1,0 +1,526 @@
+heat_template_version: 2015-04-30
+#FIRSTNET - FW -FGI// Contrail 3.0 Version 2 Template
+#AUTHORS: Rajesh Anne (ja702x)
+description: >
+  HOT template to create SecurityGroup//ServerGroup//ServiceTemplate:
+
+#####################
+parameters:
+#####################
+
+## GLOBAL//Basic Parameters
+## OPENECOMP VNF//VM Parameters
+  vnf_name:
+    type: string
+    description: Unique name for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+
+  domain:
+    type: string
+    description: domain for the ServiceTemplate
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vnf_id:
+    type: string
+    description: Unique ID for this VF instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC
+  vf_module_name:
+    type: string
+    description: Unique name for this VF Module instance
+#   For manual spinups, value must be in the ENV file. Must be removed from ENV before uploading to ASDC 
+## GLOBAL//Network Parameters
+  sgi_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  sgi_direct_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+  oam_protected_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  sgi_protected_net_dummy:
+    type: string
+    description: name for the VirtualNetwork
+  sgi_protected_net_dummy1:
+    type: string
+    description: name for the VirtualNetwork
+  sgi_protected_net_dummy_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  sgi_direct_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  nimbus_hsl_net_fqdn:
+    type: string
+    description: fq_name for the VirtualNetwork
+  oam_protected_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+
+  nimbus_hsl_interface_type:
+    type: string
+    description: service_interface_type for ServiceInstance
+## PT//PortTuple Parameters
+  cgi_fw_pt_vlan_VM1_name_fqdn:
+    type: json
+    description: fqdn of the ServiceInstance in PortTuple Resource
+  cgi_fw_pt_vlan_VM2_name_fqdn:
+    type: json
+    description: fqdn of the ServiceInstance in PortTuple Resource
+## ST//ServiceTemplate Parameters
+  cgi_fw_st_version:
+    type: number
+    description: version for the ServiceTemplate
+    constraints:
+      - range: { min: 0, max: 99 }
+        description: Must be a number between 0 and 99
+  cgi_fw_st_mode:
+    type: string
+    description: service_mode for the ServiceTemplate
+  cgi_fw_st_type:
+    type: string
+    description: service_type for the ServiceTemplate
+  cgi_fw_st_virtualization_type:
+    type: string
+    description: service_virtualization_type for the ServiceTemplate
+## VMI//VirtualMachineInterface ECMP Parameters
+  cgi_fw_vmi_ecmp_configured:
+    type: boolean
+    description: hashing_configured for the VirtualMachineInterface
+  cgi_fw_vmi_ecmp_src_ip:
+    type: boolean
+    description: source_ip for the VirtualMachineInterface
+  cgi_fw_vmi_ecmp_dst_ip:
+    type: boolean
+    description: destination_ip for the VirtualMachineInterface
+  cgi_fw_vmi_ecmp_ip_protocol:
+    type: boolean
+    description: ip_protocol for the VirtualMachineInterface
+  cgi_fw_vmi_ecmp_src_port:
+    type: boolean
+    description: source_port for the VirtualMachineInterface
+  cgi_fw_vmi_ecmp_dst_port:
+    type: boolean
+    description: destination_port for the VirtualMachineInterface
+## II//InstanceIp
+  sgi_direct_family_v6:
+    type: string
+    description: IP Family Address for InstanceIp
+  sgi_direct_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+  sgi_direct_ipv6_subnet_id:
+    type: string
+    description: Subnet UUID for InstanceIp
+## VM//NovaServer Parameters
+  cgi_fw_image_name:
+    type: string
+    description: image_name for the ServiceInstance VM
+  cgi_fw_flavor_name:
+    type: string
+    description: flavor for the ServiceInstance VM
+  availability_zone_0:
+    type: string
+    description: availability_zone for the ServiceInstance
+  availability_zone_1:
+    type: string
+    description: availability_zone for the ServiceInstance
+  cgi_fw_names:
+    type: comma_delimited_list
+    label: Firewall VM Name
+    description: Comma Delimited List of Names for ServiceInstance VMs
+  cgi_fw_oam_protected_ips:
+    type: comma_delimited_list
+    description: the ips of the management network for CGI FW
+  contrail_vmi_subinterface:
+    type: string
+  port_name:
+    type: string
+  subinterface_name_prefix:
+    type: string
+#####################
+resources:
+#####################
+
+## RSG//Resource:SecurityGroup
+  CGI_FW_RSG_SI_1:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security Group of CGI FW ServiceInstance
+      name:
+        str_replace:
+          template: VNF_NAME_sg_cgi_fw
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      rules:
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "132", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "132", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "58", "ethertype": "IPv6"}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "132", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "132", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 0}
+        - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "58", "ethertype": "IPv6"}
+
+## RAG//Resource:Anti-Affinity Group
+  CGI_FW_RAG:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_srg_cgi_fw
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      policies:
+        - anti-affinity
+
+## RST//Resource:ServiceTemplate
+  CGI_FW_RST_1:
+    type: OS::ContrailV2::ServiceTemplate
+    properties:
+      domain: { get_param: domain }
+      name:
+        str_replace:
+          template: VNF_NAME_st_cgi_fw
+          params:
+            VNF_NAME: { get_param: vnf_name }
+      service_template_properties:
+        service_template_properties_version: { get_param: cgi_fw_st_version }
+        service_template_properties_service_mode: { get_param: cgi_fw_st_mode }
+        service_template_properties_service_type: { get_param: cgi_fw_st_type }
+        service_template_properties_service_virtualization_type: { get_param: cgi_fw_st_virtualization_type }
+        service_template_properties_interface_type:
+          - service_template_properties_interface_type_service_interface_type: { get_param: sgi_protected_interface_type }
+          - service_template_properties_interface_type_service_interface_type: { get_param: sgi_direct_interface_type }
+
+## RVMI//Resource:VirtualMachineInterface
+#### CGI_FW VirtualMachineInterface for 1st Interface // MGMT // oam_protected_NET_1
+  CGI_FW_OAM_PROTECTED_RVMI_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_1
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,0 ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: oam_protected_interface_type }
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+  CGI_FW_OAM_PROTECTED_RVMI_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_1
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,1 ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: oam_protected_interface_type }
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+
+#### CGI_FW VirtualMachineInterface for 2nd Interface // LEFT // PROTECTED_NET_1 (ServiceChain)
+  CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_dummy
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,0 ] }
+      virtual_network_refs:
+        - get_param: sgi_protected_net_dummy_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+
+  CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_dummy
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,1 ] }
+      virtual_network_refs:
+        - get_param: sgi_protected_net_dummy_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+
+#### CGI_FW VirtualMachineInterface for 3rd Interface // RIGHT // DIRECT_NET_1 (ServiceChain)
+  CGI_FW_SGI_DIRECT_RVMI_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_3
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,0 ] }
+      ecmp_hashing_include_fields:
+        ecmp_hashing_include_fields_hashing_configured:
+          get_param: cgi_fw_vmi_ecmp_configured
+        ecmp_hashing_include_fields_source_ip:
+          get_param: cgi_fw_vmi_ecmp_src_ip
+        ecmp_hashing_include_fields_destination_ip:
+          get_param: cgi_fw_vmi_ecmp_dst_ip
+        ecmp_hashing_include_fields_ip_protocol:
+          get_param: cgi_fw_vmi_ecmp_ip_protocol
+        ecmp_hashing_include_fields_source_port:
+          get_param: cgi_fw_vmi_ecmp_src_port
+        ecmp_hashing_include_fields_destination_port:
+          get_param: cgi_fw_vmi_ecmp_dst_port
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: sgi_direct_interface_type }
+      port_tuple_refs: { get_param: cgi_fw_pt_vlan_VM1_name_fqdn }   
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+  CGI_FW_SGI_DIRECT_RVMI_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_3
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,1 ] }
+      ecmp_hashing_include_fields:
+        ecmp_hashing_include_fields_hashing_configured:
+          get_param: cgi_fw_vmi_ecmp_configured
+        ecmp_hashing_include_fields_source_ip:
+          get_param: cgi_fw_vmi_ecmp_src_ip
+        ecmp_hashing_include_fields_destination_ip:
+          get_param: cgi_fw_vmi_ecmp_dst_ip
+        ecmp_hashing_include_fields_ip_protocol:
+          get_param: cgi_fw_vmi_ecmp_ip_protocol
+        ecmp_hashing_include_fields_source_port:
+          get_param: cgi_fw_vmi_ecmp_src_port
+        ecmp_hashing_include_fields_destination_port:
+          get_param: cgi_fw_vmi_ecmp_dst_port
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: sgi_direct_interface_type }
+      port_tuple_refs: { get_param: cgi_fw_pt_vlan_VM2_name_fqdn }   
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+
+#### CGI_FW VirtualMachineInterface for 4th Interface // OTHER // HSL_NET_1
+  CGI_FW_NIMBUS_HSL_RVMI_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_4
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,0 ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: nimbus_hsl_interface_type }
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+  CGI_FW_NIMBUS_HSL_RVMI_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name:
+        str_replace:
+          template: VM_NAME_vmi_4
+          params:
+            VM_NAME: { get_param: [ cgi_fw_names,1 ] }
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: { get_param: nimbus_hsl_interface_type }
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+      security_group_refs:
+        - get_resource: CGI_FW_RSG_SI_1
+
+## RII//Resource:InstanceIp
+#### CGI_FW InstanceIp for 1st Interface // MGMT // oam_protected_NET_1
+  CGI_FW_OAM_PROTECTED_RII_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_OAM_PROTECTED_RVMI_1
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_OAM_PROTECTED_RVMI_1
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      instance_ip_address: { get_param: [cgi_fw_oam_protected_ips,0 ] }
+  CGI_FW_OAM_PROTECTED_RII_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_OAM_PROTECTED_RVMI_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_OAM_PROTECTED_RVMI_2
+      virtual_network_refs:
+        - get_param: oam_protected_net_fqdn
+      instance_ip_address: { get_param: [cgi_fw_oam_protected_ips,1 ] }
+
+#### CGI_FW InstanceIp for 2nd Interface // DUMMY // PROTECTED_NET_1
+  CGI_FW_SGI_PROTECTED_RII_DUMMY_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1
+      virtual_network_refs:
+        - get_param: sgi_protected_net_dummy_fqdn
+  CGI_FW_SGI_PROTECTED_RII_DUMMY_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2
+      virtual_network_refs:
+        - get_param: sgi_protected_net_dummy_fqdn
+
+#### CGI_FW InstanceIp for 3rd Interface // RIGHT // DIRECT_NET_1
+  CGI_FW_SGI_DIRECT_RII_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_DIRECT_RVMI_1
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_DIRECT_RVMI_1
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      subnet_uuid: { get_param: sgi_direct_subnet_id }
+  CGI_FW_SGI_DIRECT_RII_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_DIRECT_RVMI_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_DIRECT_RVMI_2
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      subnet_uuid: { get_param: sgi_direct_subnet_id }
+
+#### CGI_FW InstanceIp for 3rd Interface v6 // RIGHT // DIRECT_NET_1
+  CGI_FW_SGI_DIRECT_V6_RII_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_DIRECT_RVMI_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_DIRECT_RVMI_1
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      subnet_uuid: { get_param: sgi_direct_ipv6_subnet_id }
+      instance_ip_family: { get_param: sgi_direct_family_v6 }
+  CGI_FW_SGI_DIRECT_V6_RII_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_SGI_DIRECT_RVMI_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_SGI_DIRECT_RVMI_2
+      virtual_network_refs:
+        - get_param: sgi_direct_net_fqdn
+      subnet_uuid: { get_param: sgi_direct_ipv6_subnet_id }
+      instance_ip_family: { get_param: sgi_direct_family_v6 }
+
+#### CGI_FW InstanceIp for 4th Interface // OTHER // HSL_NET_1
+  CGI_FW_NIMBUS_HSL_RII_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_NIMBUS_HSL_RVMI_1
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_NIMBUS_HSL_RVMI_1
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+  CGI_FW_NIMBUS_HSL_RII_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on:
+      - CGI_FW_NIMBUS_HSL_RVMI_2
+    properties:
+      virtual_machine_interface_refs:
+        - get_resource: CGI_FW_NIMBUS_HSL_RVMI_2
+      virtual_network_refs:
+        - get_param: nimbus_hsl_net_fqdn
+
+## RNS//Resource:NovaServer
+#### CGI_FW ServiceInstance OS::Nova::Server VM 1
+  CGI_FW_SERVER_1:
+    type: OS::Nova::Server
+    depends_on:
+      - CGI_FW_OAM_PROTECTED_RII_1
+      - CGI_FW_SGI_PROTECTED_RII_DUMMY_1
+      - CGI_FW_SGI_DIRECT_RII_1
+      - CGI_FW_SGI_DIRECT_V6_RII_1
+      - CGI_FW_NIMBUS_HSL_RII_1
+    properties:
+      name: { get_param: [ cgi_fw_names,0 ] }
+      image: { get_param:  cgi_fw_image_name }
+      flavor: { get_param: cgi_fw_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      scheduler_hints: { group: {get_resource: CGI_FW_RAG } }
+      networks:
+        - port: { get_resource: CGI_FW_OAM_PROTECTED_RVMI_1 }
+        - port: { get_resource: CGI_FW_SGI_PROTECTED_RVMI_DUMMY_1 }
+        - port: { get_resource: CGI_FW_SGI_DIRECT_RVMI_1 }
+        - port: { get_resource: CGI_FW_NIMBUS_HSL_RVMI_1 }
+      metadata:
+        vf_module_name:  { get_param: vf_module_name }
+        vnf_name: { get_param: vnf_name }
+        vnf_id: { get_param: vnf_id }
+        vf_module_id:  { get_param: vf_module_id }
+  CGI_FW_SERVER_2:
+    type: OS::Nova::Server
+    depends_on:
+      - CGI_FW_OAM_PROTECTED_RII_2
+      - CGI_FW_SGI_PROTECTED_RII_DUMMY_2
+      - CGI_FW_SGI_DIRECT_RII_2
+      - CGI_FW_SGI_DIRECT_V6_RII_2
+      - CGI_FW_NIMBUS_HSL_RII_2
+    properties:
+      name: { get_param: [ cgi_fw_names,1 ] }
+      image: { get_param:  cgi_fw_image_name }
+      flavor: { get_param: cgi_fw_flavor_name }
+      availability_zone: { get_attr: [contrail_vmi_subinterface, virtual_machine_interface_allowed_address_pairs, virtual_machine_interface_allowed_address_pairs_allowed_address_pair ] }
+      scheduler_hints: { group: {get_resource: CGI_FW_RAG } }
+      networks:
+        - port: { get_resource: CGI_FW_OAM_PROTECTED_RVMI_2 }
+        - port: { get_resource: CGI_FW_SGI_PROTECTED_RVMI_DUMMY_2 }
+        - port: { get_resource: CGI_FW_SGI_DIRECT_RVMI_2 }
+        - port: { get_resource: CGI_FW_NIMBUS_HSL_RVMI_2 }
+      metadata:
+        vf_module_name:  { get_param: vf_module_name }
+        vnf_name: { get_param: vnf_name }
+        vnf_id: { get_param: vnf_id }
+        vf_module_id:  { get_param: vf_module_id }
+
+  contrail_vmi_subinterface:
+      type: OS::ContrailV2::VirtualMachineInterface
+      properties:
+        name:
+          str_replace:
+            template: VM_NAME_PORT_3
+            params:
+              VM_NAME: { get_param: vipr_atm_name_0 }
+        virtual_machine_interface_properties:
+          {
+          virtual_machine_interface_properties_service_interface_type: 'left'
+          }
+        port_tuple_refs: [{ get_param: port_name }]
+        virtual_network_refs: [{ get_param: oam_protected_net_fqdn }]

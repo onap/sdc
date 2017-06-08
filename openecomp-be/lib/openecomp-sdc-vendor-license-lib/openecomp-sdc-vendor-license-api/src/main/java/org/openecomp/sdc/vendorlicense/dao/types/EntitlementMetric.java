@@ -33,5 +33,5 @@ public enum EntitlementMetric {
   Units_TB,
   Units_MB,
   Units_GB,
-  Other
+  Other;
 }

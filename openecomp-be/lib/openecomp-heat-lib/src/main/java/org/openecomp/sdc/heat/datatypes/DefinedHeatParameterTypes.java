@@ -33,7 +33,6 @@ public enum DefinedHeatParameterTypes {
   COMMA_DELIMITED_LIST("comma_delimited_list"),
   JSON("json"),
   BOOLEAN("boolean");
-  // TODO : ASK SEGEV ABOUT STRING
 
   private static Map<String, DefinedHeatParameterTypes> stringToDefinedType = new HashMap<>();
 
@@ -80,11 +79,8 @@ public enum DefinedHeatParameterTypes {
           return (value instanceof Map) || (value instanceof List);
 
         case STRING:
-          //return value instanceof String;
           return true;
-
         default:
-        // return false;
       }
     }
 

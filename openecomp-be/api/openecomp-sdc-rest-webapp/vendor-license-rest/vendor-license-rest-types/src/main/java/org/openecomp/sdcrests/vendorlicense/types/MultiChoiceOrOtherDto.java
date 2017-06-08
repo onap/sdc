@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 @GroupSequenceProvider(value = MultiChoiceOrOtherSequenceProvider.class)
 public class MultiChoiceOrOtherDto<E extends Enum<E>> {
   @NotNull

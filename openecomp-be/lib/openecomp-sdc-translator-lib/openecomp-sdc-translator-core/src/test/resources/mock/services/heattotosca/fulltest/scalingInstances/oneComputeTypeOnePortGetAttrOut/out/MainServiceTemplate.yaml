@@ -1,0 +1,125 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    pd_flavor_name:
+      label: PD flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: flavor name of PD instance
+      default: m3.xlarge
+    dummy_net_name_1:
+      label: dummy net name
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy net name
+      default: Network-1
+    availabilityzone_name:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+      default: nova
+    pd_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: PD image name
+      default: MOG_BASE_8.0
+    pd_server_names:
+      label: PD server names
+      hidden: false
+      immutable: false
+      type: list
+      description: name of the PD instance
+      default:
+      - ZRDM1MOGX01MPD001
+      - ZRDM1MOGX01MPD002
+      entry_schema:
+        type: string
+  node_templates:
+    abstract_pd_server:
+      type: org.openecomp.resource.abstract.nodes.pd_server
+      directives:
+      - substitutable
+      properties:
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        - mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_network:
+        - Network-1
+        - Network-0
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd01_port_replacement_policy:
+        - get_attribute:
+          - network_policy_server
+          - name
+        - AUTO_PORT_0
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        compute_pd_server_user_data_format:
+        - RAW_SERVER_PD_2
+        - get_attribute:
+          - network_policy_server
+          - name
+        compute_pd_server_metadata:
+        - get_attribute:
+          - network_policy_server
+          - name
+        - null
+        service_template_filter:
+          substitute_service_template: Nested_pd_serverServiceTemplate.yaml
+          count: 2
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    network_policy_server:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        name:
+          get_input: dummy_net_name_1
+  groups:
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: heat template that creates MOG stack
+      members:
+      - network_policy_server
+      - abstract_pd_server

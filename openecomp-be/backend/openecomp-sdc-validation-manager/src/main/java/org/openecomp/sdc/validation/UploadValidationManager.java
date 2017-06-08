@@ -25,6 +25,9 @@ import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Created by TALIO on 4/20/2016.
+ */
 public interface UploadValidationManager {
 
 

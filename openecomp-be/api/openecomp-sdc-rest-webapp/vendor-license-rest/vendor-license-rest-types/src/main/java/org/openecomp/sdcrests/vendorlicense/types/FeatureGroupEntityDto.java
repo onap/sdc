@@ -23,9 +23,7 @@ package org.openecomp.sdcrests.vendorlicense.types;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Set;
-
 import javax.validation.constraints.Size;
-
 
 @ApiModel(value = "FeatureGroupEntity")
 public class FeatureGroupEntityDto extends FeatureGroupDescriptorDto {

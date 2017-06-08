@@ -1,0 +1,27 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  cmaui_cinder_volume_size:
+    type: string
+  CMAUI_volume_type:
+    type: string
+  jsa_name:
+    type: string
+    description: network name of jsa log network
+  contrail_net_name:
+    type: string
+    description: network name of jsa log network
+
+resources:
+  test_vol1:
+     type: OS::Cinder::Volume
+     properties:
+       size: {get_param: cmaui_cinder_volume_size}
+       volume_type: {get_param: CMAUI_volume_type}
+
+outputs:
+    exposed_vol1:
+      value: {get_resource: test_vol1}

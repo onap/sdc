@@ -1,13 +1,30 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 
-
 import i18n from 'nfvo-utils/i18n/i18n.js';
+import Validator from 'nfvo-utils/Validator.js';
 
-import ValidationForm from 'nfvo-components/input/validation/ValidationForm.jsx';
-import ValidationInput from 'nfvo-components/input/validation/ValidationInput.jsx';
-import {optionsInputValues as  EntitlementPoolsOptionsInputValues, thresholdUnitType}  from  './EntitlementPoolsConstants.js';
+import Input from 'nfvo-components/input/validation/Input.jsx';
+import InputOptions from 'nfvo-components/input/validation/InputOptions.jsx';
+import Form from 'nfvo-components/input/validation/Form.jsx';
+import GridSection from 'nfvo-components/grid/GridSection.jsx';
+import GridItem from 'nfvo-components/grid/GridItem.jsx';
+import {optionsInputValues as  EntitlementPoolsOptionsInputValues, thresholdUnitType, SP_ENTITLEMENT_POOL_FORM}  from  './EntitlementPoolsConstants.js';
 import {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
-
 
 const EntitlementPoolPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
@@ -33,11 +50,172 @@ const EntitlementPoolPropType = React.PropTypes.shape({
 	})
 });
 
+const EntitlementPoolsFormContent = ({data, genericFieldInfo, onDataChanged, validateName, validateChoiceWithOther, validateTimeOtherValue, thresholdValueValidation}) => {
+	let {
+		name, description, manufacturerReferenceNumber, operationalScope , aggregationFunction,  thresholdUnits, thresholdValue,
+		increments, time, entitlementMetric} = data;
+
+	return (
+		<GridSection>
+			<GridItem colSpan={2}>
+				<Input
+					onChange={name => onDataChanged({name}, SP_ENTITLEMENT_POOL_FORM, {name: validateName})}
+					isValid={genericFieldInfo.name.isValid}
+					isRequired={true}
+					errorText={genericFieldInfo.name.errorText}
+					label={i18n('Name')}
+					value={name}
+					data-test-id='create-ep-name'
+					type='text'/>
+			</GridItem>
+			<GridItem colSpan={2}>
+				<InputOptions
+					onInputChange={()=>{}}
+					isMultiSelect={true}
+
+					isRequired={true}
+					onEnumChange={operationalScope => onDataChanged({operationalScope:{choices: operationalScope, other: ''}},
+						SP_ENTITLEMENT_POOL_FORM, {operationalScope: validateChoiceWithOther})}
+					onOtherChange={operationalScope => onDataChanged({operationalScope:{choices: [optionInputOther.OTHER],
+						other: operationalScope}}, SP_ENTITLEMENT_POOL_FORM, {operationalScope: validateChoiceWithOther})}
+					label={i18n('Operational Scope')}
+					data-test-id='create-ep-operational-scope'
+					type='select'
+					multiSelectedEnum={operationalScope && operationalScope.choices}
+					otherValue={operationalScope && operationalScope.other}
+					values={EntitlementPoolsOptionsInputValues.OPERATIONAL_SCOPE}
+					isValid={genericFieldInfo.operationalScope.isValid}
+					errorText={genericFieldInfo.operationalScope.errorText} />
+			</GridItem>
+			<GridItem colSpan={2} stretch>
+				<Input
+					onChange={description => onDataChanged({description}, SP_ENTITLEMENT_POOL_FORM)}
+					isValid={genericFieldInfo.description.isValid}
+					errorText={genericFieldInfo.description.errorText}
+					label={i18n('Description')}
+					value={description}
+					isRequired={true}
+					data-test-id='create-ep-description'
+					type='textarea'/>
+			</GridItem>
+			<GridItem colSpan={2}>
+				<div className='threshold-section'>
+					<Input
+						isRequired={true}
+						onChange={e => {
+							// setting the unit to the correct value
+							const selectedIndex = e.target.selectedIndex;
+							const val = e.target.options[selectedIndex].value;
+							onDataChanged({thresholdUnits: val}, SP_ENTITLEMENT_POOL_FORM);
+							// TODO make sure that the value is valid too
+							onDataChanged({thresholdValue: thresholdValue}, SP_ENTITLEMENT_POOL_FORM,{thresholdValue : thresholdValueValidation});}
+
+						}
+						value={thresholdUnits}
+						label={i18n('Threshold Units')}
+						data-test-id='create-ep-threshold-units'
+						isValid={genericFieldInfo.thresholdUnits.isValid}
+						errorText={genericFieldInfo.thresholdUnits.errorText}
+						groupClassName='bootstrap-input-options'
+						className='input-options-select'
+						type='select' >
+						{EntitlementPoolsOptionsInputValues.THRESHOLD_UNITS.map(mtype =>
+							<option key={mtype.enum} value={mtype.enum}>{`${mtype.title}`}</option>)}
+					</Input>
+
+					<Input
+						className='entitlement-pools-form-row-threshold-value'
+						onChange={thresholdValue => onDataChanged({thresholdValue}, SP_ENTITLEMENT_POOL_FORM,
+							{thresholdValue : thresholdValueValidation})}
+						label={i18n('Threshold Value')}
+						isValid={genericFieldInfo.thresholdValue.isValid}
+						errorText={genericFieldInfo.thresholdValue.errorText}
+						data-test-id='create-ep-threshold-value'
+						value={thresholdValue}
+						isRequired={true}
+						type='text'/>
+				</div>
+				<InputOptions
+					onInputChange={()=>{}}
+					isMultiSelect={false}
+					isRequired={true}
+					onEnumChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: entitlementMetric, other: ''}},
+						SP_ENTITLEMENT_POOL_FORM, {entitlementMetric: validateChoiceWithOther})}
+					onOtherChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: optionInputOther.OTHER,
+						other: entitlementMetric}}, SP_ENTITLEMENT_POOL_FORM, {entitlementMetric: validateChoiceWithOther})}
+					label={i18n('Entitlement Metric')}
+					data-test-id='create-ep-entitlement-metric'
+					type='select'
+					required={true}
+					selectedEnum={entitlementMetric && entitlementMetric.choice}
+					otherValue={entitlementMetric && entitlementMetric.other}
+					values={EntitlementPoolsOptionsInputValues.ENTITLEMENT_METRIC}
+					isValid={genericFieldInfo.entitlementMetric.isValid}
+					errorText={genericFieldInfo.entitlementMetric.errorText} />
+				<InputOptions
+					onInputChange={()=>{}}
+					isMultiSelect={false}
+					isRequired={true}
+					onEnumChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: aggregationFunction, other: ''}},
+						SP_ENTITLEMENT_POOL_FORM, {aggregationFunction: validateChoiceWithOther})}
+					onOtherChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: optionInputOther.OTHER,
+						other: aggregationFunction}}, SP_ENTITLEMENT_POOL_FORM, {aggregationFunction: validateChoiceWithOther})}
+					label={i18n('Aggregate Function')}
+					data-test-id='create-ep-aggregate-function'
+					type='select'
+					required={true}
+					selectedEnum={aggregationFunction && aggregationFunction.choice}
+					otherValue={aggregationFunction && aggregationFunction.other}
+					values={EntitlementPoolsOptionsInputValues.AGGREGATE_FUNCTION}
+					isValid={genericFieldInfo.aggregationFunction.isValid}
+					errorText={genericFieldInfo.aggregationFunction.errorText} />
+			</GridItem>
+			<GridItem colSpan={2}>
+				<Input
+					onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber}, SP_ENTITLEMENT_POOL_FORM)}
+					label={i18n('Manufacturer Reference Number')}
+					value={manufacturerReferenceNumber}
+					isRequired={true}
+					data-test-id='create-ep-reference-number'
+					type='text'/>
+			</GridItem>
+			<GridItem colSpan={2}>
+				<InputOptions
+					onInputChange={()=>{}}
+					isMultiSelect={false}
+					isRequired={true}
+					onEnumChange={time => onDataChanged({time:{choice: time, other: ''}},
+						SP_ENTITLEMENT_POOL_FORM, {time: validateChoiceWithOther})}
+					onOtherChange={time => onDataChanged({time:{choice: optionInputOther.OTHER,
+						other: time}}, SP_ENTITLEMENT_POOL_FORM, {time: validateTimeOtherValue})}
+					label={i18n('Time')}
+					data-test-id='create-ep-time'
+					type='select'
+					required={true}
+					selectedEnum={time && time.choice}
+					otherValue={time && time.other}
+					values={EntitlementPoolsOptionsInputValues.TIME}
+					isValid={genericFieldInfo.time.isValid}
+					errorText={genericFieldInfo.time.errorText} />
+			</GridItem>
+			<GridItem colSpan={2}>
+				<Input
+					onChange={increments => onDataChanged({increments}, SP_ENTITLEMENT_POOL_FORM)}
+					label={i18n('Increments')}
+					value={increments}
+					data-test-id='create-ep-increments'
+					type='text'/>
+			</GridItem>
+		</GridSection>
+	);
+};
+
 class EntitlementPoolsEditorView extends React.Component {
 
 	static propTypes = {
 		data: EntitlementPoolPropType,
 		previousData: EntitlementPoolPropType,
+		EPNames: React.PropTypes.object,
 		isReadOnlyMode: React.PropTypes.bool,
 		onDataChanged: React.PropTypes.func.isRequired,
 		onSubmit: React.PropTypes.func.isRequired,
@@ -49,112 +227,34 @@ class EntitlementPoolsEditorView extends React.Component {
 	};
 
 	render() {
-		let {data = {}, onDataChanged, isReadOnlyMode} = this.props;
-		let {
-			name, description, manufacturerReferenceNumber, operationalScope, aggregationFunction, thresholdUnits, thresholdValue,
-			increments, time, entitlementMetric} = data;
-		let thresholdValueValidation = thresholdUnits === thresholdUnitType.PERCENTAGE ? {numeric: true, required: true, maxValue: 100} : {numeric: true, required: true};
-		let timeValidation = time && time.choice === optionInputOther.OTHER ? {numeric: true, required: true} : {required: true};
+		let {data = {}, onDataChanged, isReadOnlyMode, genericFieldInfo} = this.props;
+
 
 		return (
-			<ValidationForm
-				ref='validationForm'
-				hasButtons={true}
-				onSubmit={ () => this.submit() }
-				onReset={ () => this.props.onCancel() }
-				labledButtons={true}
-				isReadOnlyMode={isReadOnlyMode}
-				className='entitlement-pools-form'>
-				<div className='entitlement-pools-form-row'>
-					<ValidationInput
-						onChange={name => onDataChanged({name})}
-						label={i18n('Name')}
-						value={name}
-						validations={{maxLength: 120, required: true}}
-						type='text'/>
-
-					<ValidationInput
-						isMultiSelect={true}
-						onEnumChange={operationalScope => onDataChanged({operationalScope:{choices: operationalScope, other: ''}})}
-						onOtherChange={operationalScope => onDataChanged({operationalScope:{choices: [optionInputOther.OTHER], other: operationalScope}})}
-						multiSelectedEnum={operationalScope && operationalScope.choices}
-						label={i18n('Operational Scope')}
-						otherValue={operationalScope && operationalScope.other}
-						validations={{required: true}}
-						values={EntitlementPoolsOptionsInputValues.OPERATIONAL_SCOPE}/>
-
-				</div>
-				<div className='entitlement-pools-form-row'>
-					<ValidationInput
-						onChange={description => onDataChanged({description})}
-						label={i18n('Description')}
-						value={description}
-						validations={{maxLength: 1000, required: true}}
-						type='textarea'/>
-					<div className='entitlement-pools-form-row-group'>
-						<div className='entitlement-pools-form-row'>
-							<ValidationInput
-								onEnumChange={thresholdUnits => onDataChanged({thresholdUnits})}
-								selectedEnum={thresholdUnits}
-								label={i18n('Threshold Value')}
-								type='select'
-								values={EntitlementPoolsOptionsInputValues.THRESHOLD_UNITS}
-								validations={{required: true}}/>
-							<ValidationInput
-								className='entitlement-pools-form-row-threshold-value'
-								onChange={thresholdValue => onDataChanged({thresholdValue})}
-								value={thresholdValue}
-								validations={thresholdValueValidation}
-								type='text'/>
-						</div>
-
-						<ValidationInput
-							onEnumChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: entitlementMetric, other: ''}})}
-							onOtherChange={entitlementMetric => onDataChanged({entitlementMetric:{choice: optionInputOther.OTHER, other: entitlementMetric}})}
-							selectedEnum={entitlementMetric && entitlementMetric.choice}
-							otherValue={entitlementMetric && entitlementMetric.other}
-							label={i18n('Entitlement Metric')}
-							validations={{required: true}}
-							values={EntitlementPoolsOptionsInputValues.ENTITLEMENT_METRIC}/>
-						<ValidationInput
-							onEnumChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: aggregationFunction, other: ''}})}
-							onOtherChange={aggregationFunction => onDataChanged({aggregationFunction:{choice: optionInputOther.OTHER, other: aggregationFunction}})}
-							selectedEnum={aggregationFunction && aggregationFunction.choice}
-							otherValue={aggregationFunction && aggregationFunction.other}
-							validations={{required: true}}
-							label={i18n('Aggregate Function')}
-							values={EntitlementPoolsOptionsInputValues.AGGREGATE_FUNCTION}/>
-
-					</div>
-				</div>
-				<div className='entitlement-pools-form-row'>
-
-					<ValidationInput
-						onChange={manufacturerReferenceNumber => onDataChanged({manufacturerReferenceNumber})}
-						label={i18n('Manufacturer Reference Number')}
-						value={manufacturerReferenceNumber}
-						validations={{maxLength: 100, required: true}}
-						type='text'/>
-
-					<ValidationInput
-						onEnumChange={time => onDataChanged({time:{choice: time, other: ''}})}
-						onOtherChange={time => onDataChanged({time:{choice: optionInputOther.OTHER, other: time}})}
-						selectedEnum={time && time.choice}
-						otherValue={time && time.other}
-						validations={timeValidation}
-						label={i18n('Time')}
-						values={EntitlementPoolsOptionsInputValues.TIME}/>
-				</div>
-				<div className='entitlement-pools-form-row'>
-					<ValidationInput
-						onChange={increments => onDataChanged({increments})}
-						label={i18n('Increments')}
-						value={increments}
-						validations={{maxLength: 120}}
-						type='text'/>
-
-				</div>
-			</ValidationForm>
+			<div>
+				{
+					genericFieldInfo && <Form
+						ref='validationForm'
+						hasButtons={true}
+						onSubmit={ () => this.submit() }
+						onReset={ () => this.props.onCancel() }
+						labledButtons={true}
+						isReadOnlyMode={isReadOnlyMode}
+						isValid={this.props.isFormValid}
+						formReady={this.props.formReady}
+						onValidateForm={() => this.props.onValidateForm(SP_ENTITLEMENT_POOL_FORM) }
+						className='entitlement-pools-form'>
+						<EntitlementPoolsFormContent
+							data={data}
+							genericFieldInfo={genericFieldInfo}
+							onDataChanged={onDataChanged}
+							validateName={(value)=> this.validateName(value)}
+							validateTimeOtherValue ={(value)=> this.validateTimeOtherValue(value)}
+							validateChoiceWithOther={(value)=> this.validateChoiceWithOther(value)}
+							thresholdValueValidation={(value, state)=> this.thresholdValueValidation(value, state)}/>
+					</Form>
+				}
+			</div>
 		);
 	}
 
@@ -162,6 +262,53 @@ class EntitlementPoolsEditorView extends React.Component {
 		const {data: entitlementPool, previousData: previousEntitlementPool} = this.props;
 		this.props.onSubmit({entitlementPool, previousEntitlementPool});
 	}
+
+	validateName(value) {
+		const {data: {id}, EPNames} = this.props;
+		const isExists = Validator.isItemNameAlreadyExistsInList({itemId: id, itemName: value, list: EPNames});
+
+		return !isExists ?  {isValid: true, errorText: ''} :
+		{isValid: false, errorText: i18n('Entitlement pool by the name \'' + value + '\' already exists. Entitlement pool name must be unique')};
+	}
+
+	validateTimeOtherValue(value) {
+		return Validator.validate('time', value.other, [{type: 'required', data: true}, {type: 'numeric', data: true}]);
+	}
+
+	validateChoiceWithOther(value) {
+		let chosen = value.choice;
+		// if we have an empty multiple select we have a problem since it's required
+		if (value.choices) {
+			if (value.choices.length === 0) {
+				return  Validator.validate('field', '', [{type: 'required', data: true}]);
+			} else {
+				// continuing validation with the first chosen value in case we have the 'Other' field
+				chosen = value.choices[0];
+			}
+		}
+		if (chosen !== optionInputOther.OTHER) {
+			return  Validator.validate('field', chosen, [{type: 'required', data: true}]);
+		} else { // when 'Other' was chosen, validate other value
+			return  Validator.validate('field', value.other, [{type: 'required', data: true}]);
+		}
+	}
+
+	thresholdValueValidation(value, state) {
+
+		let  unit = state.data.thresholdUnits;
+		if (unit === thresholdUnitType.PERCENTAGE) {
+			return Validator.validate('thresholdValue', value, [
+				{type: 'required', data: true},
+				{type: 'numeric', data: true},
+				{type: 'maximum', data: 100},
+				{type: 'minimum', data: 0}]);
+		} else {
+			return Validator.validate('thresholdValue', value, [
+				{type: 'numeric', data: true},
+				{type: 'required', data: true}]);
+		}
+	}
+
 }
 
 export default EntitlementPoolsEditorView;

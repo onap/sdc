@@ -38,27 +38,27 @@ public class CompositionEntityId {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public int hashCode() {
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    CompositionEntityId that = (CompositionEntityId) obj;
+    CompositionEntityId that = (CompositionEntityId) object;
 
     if (id != null ? !id.equals(that.id) : that.id != null) {
       return false;
     }
     return parentId != null ? parentId.equals(that.parentId) : that.parentId == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = id != null ? id.hashCode() : 0;
-    result = 31 * result + (parentId != null ? parentId.hashCode() : 0);
-    return result;
   }
 }

@@ -23,9 +23,6 @@ package org.openecomp.sdc.tosca.exceptions;
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
-/**
- * The type Csar creation error builder.
- */
 public class CsarCreationErrorBuilder extends BaseErrorBuilder {
 
   private static final String MANDATORY_PROPERTY_IS_MISSING_MSG =
@@ -33,7 +30,7 @@ public class CsarCreationErrorBuilder extends BaseErrorBuilder {
   private static final String ZIP_FILE_CREATION = "ZIP_FILE_CREATION";
 
   /**
-   * Instantiates a new Csar creation error builder.
+   * Constructor.
    */
   public CsarCreationErrorBuilder() {
     getErrorCodeBuilder().withId(ZIP_FILE_CREATION);

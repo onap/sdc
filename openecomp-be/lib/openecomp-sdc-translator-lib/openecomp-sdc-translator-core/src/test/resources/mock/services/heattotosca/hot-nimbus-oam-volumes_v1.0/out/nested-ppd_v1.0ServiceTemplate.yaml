@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested-ppd_v1.0
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pcrf_ppd_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -237,11 +213,21 @@ topology_template:
     pcrf_ppd_port_5:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_rx_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_rx
         network:
           get_input: pcrf_rx_net_name
       requirements:
@@ -252,11 +238,21 @@ topology_template:
     pcrf_ppd_port_6:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_sd_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_sd
         network:
           get_input: pcrf_sd_net_name
       requirements:
@@ -267,11 +263,21 @@ topology_template:
     pcrf_ppd_port_3:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_sp_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_sp
         network:
           get_input: pcrf_sp_net_name
       requirements:
@@ -288,21 +294,31 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcrf_ppd_image_name
-        config_drive: 'True'
         metadata:
           vnf_id:
             get_input: pcrf_vnf_id
+        config_drive: true
         user_data_format: RAW
         name:
           get_input: pcrf_ppd_server_name
     pcrf_ppd_port_4:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_sy_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_sy
         network:
           get_input: pcrf_sy_net_name
       requirements:
@@ -313,11 +329,21 @@ topology_template:
     pcrf_ppd_port_7:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_sgi_sy_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_sgi_sy
         network:
           get_input: pcrf_sgi_sy_net_name
       requirements:
@@ -328,14 +354,24 @@ topology_template:
     pcrf_ppd_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_oam_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: pcrf_lb_management_vip
+        network_role_tag: pcrf_oam
         network:
           get_input: pcrf_oam_net_name
       requirements:
@@ -346,11 +382,21 @@ topology_template:
     pcrf_ppd_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_gx_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_gx
         network:
           get_input: pcrf_gx_net_name
       requirements:
@@ -361,14 +407,24 @@ topology_template:
     pcrf_ppd_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_cps_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: pcrf_lb_internal_vip
+        network_role_tag: pcrf_cps
         network:
           get_input: pcrf_cps_net_name
       requirements:
@@ -377,7 +433,7 @@ topology_template:
           node: pcrf_server_ppd
           relationship: tosca.relationships.network.BindsTo
   groups:
-    nested-ppd_v1.0:
+    nested-ppd_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested-ppd_v1.0.yaml
@@ -395,55 +451,403 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-ppd_v1.0
     capabilities:
-      attachment_pcrf_ppd_port_1:
-      - pcrf_ppd_port_1
-      - attachment
-      attachment_pcrf_ppd_port_2:
+      disk.device.read.requests_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.read.requests
+      disk.write.requests_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.write.requests
+      disk.usage_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.usage
+      disk.latency_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.latency
+      network.incoming.packets.rate_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_ppd_port_2:
       - pcrf_ppd_port_2
-      - attachment
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.incoming.packets.rate
+      disk.device.write.bytes_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.write.bytes
+      disk.device.write.bytes.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.write.bytes.rate
+      network.incoming.packets.rate_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.incoming.packets.rate
+      scalable_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - scalable
+      network.incoming.packets.rate_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.incoming.packets.rate
+      disk.read.bytes.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.read.bytes.rate
+      network.incoming.bytes.rate_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.incoming.bytes.rate
+      disk.device.allocation_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.allocation
+      network.incoming.bytes.rate_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.incoming.bytes.rate
+      binding_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - binding
+      binding_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - binding
+      network.incoming.bytes.rate_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.incoming.bytes.rate
+      binding_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - binding
+      network.incoming.bytes.rate_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.incoming.bytes.rate
+      binding_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - binding
+      binding_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - binding
+      binding_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - binding
+      binding_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - binding
+      binding_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - binding
+      memory.resident_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - memory.resident
+      network.outgoing.bytes.rate_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.outgoing.bytes.rate
       binding_pcrf_server_ppd:
       - pcrf_server_ppd
       - binding
+      network.outgoing.bytes.rate_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.outgoing.bytes.rate
+      os_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - os
+      disk.capacity_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.capacity
+      endpoint_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - endpoint
+      feature_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - feature
+      disk.write.bytes_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.write.bytes
+      disk.device.usage_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.usage
+      network.outgoing.bytes.rate_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.outgoing.bytes.rate
+      memory_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - memory
+      network.incoming.packets_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.incoming.packets
+      network.incoming.packets_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.incoming.packets
+      disk.root.size_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.root.size
+      network.incoming.packets_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.incoming.packets
+      disk.allocation_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.allocation
+      network.incoming.packets_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.incoming.packets
+      disk.device.iops_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.iops
+      network.incoming.packets_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.incoming.packets
+      network.incoming.packets_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.incoming.packets
+      network.incoming.packets_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.incoming.packets
+      network.incoming.packets_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.incoming.packets
+      disk.device.write.requests.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.write.requests.rate
+      disk.device.write.requests_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.write.requests
+      disk.device.latency_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.latency
+      host_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - host
+      disk.write.bytes.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.write.bytes.rate
+      disk.read.bytes_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.read.bytes
+      network.outgoing.bytes_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.outgoing.bytes
+      network.outgoing.bytes_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.outgoing.bytes
+      network.outgoing.bytes_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.outgoing.bytes
+      network.outgoing.bytes_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.outgoing.bytes
+      feature_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - feature
+      disk.device.read.bytes_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.read.bytes
+      network.outgoing.bytes_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.outgoing.bytes
+      feature_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - feature
+      network.outgoing.bytes_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.outgoing.bytes
+      network.outgoing.bytes_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.outgoing.bytes
+      feature_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - feature
+      feature_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - feature
+      network.outgoing.bytes_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.outgoing.bytes
+      disk.write.requests.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.write.requests.rate
+      network.outpoing.packets_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.outpoing.packets
+      disk.read.requests_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.read.requests
+      attachment_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - attachment
+      network.outpoing.packets_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.outpoing.packets
+      attachment_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - attachment
+      network.outpoing.packets_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.outpoing.packets
+      network.outpoing.packets_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.outpoing.packets
       attachment_pcrf_ppd_port_0:
       - pcrf_ppd_port_0
       - attachment
       attachment_pcrf_ppd_port_5:
       - pcrf_ppd_port_5
       - attachment
+      network.outpoing.packets_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.outpoing.packets
       attachment_pcrf_ppd_port_6:
       - pcrf_ppd_port_6
       - attachment
+      network.outpoing.packets_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.outpoing.packets
+      cpu_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - cpu
       attachment_pcrf_ppd_port_3:
       - pcrf_ppd_port_3
       - attachment
-      os_pcrf_server_ppd:
-      - pcrf_server_ppd
-      - os
+      network.outpoing.packets_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.outpoing.packets
       attachment_pcrf_ppd_port_4:
       - pcrf_ppd_port_4
       - attachment
-      endpoint_pcrf_server_ppd:
+      network.outpoing.packets_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.outpoing.packets
+      feature_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - feature
+      feature_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - feature
+      feature_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - feature
+      feature_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - feature
+      network.outgoing.packets.rate_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.outgoing.packets.rate
+      network.incoming.bytes_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.incoming.bytes
+      network.outgoing.packets.rate_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.outgoing.packets.rate
+      network.incoming.bytes_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - network.incoming.bytes
+      network.outgoing.packets.rate_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.outgoing.packets.rate
+      network.incoming.bytes_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - network.incoming.bytes
+      network.incoming.bytes_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - network.incoming.bytes
+      network.outgoing.packets.rate_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - network.outgoing.packets.rate
+      network.incoming.bytes_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - network.incoming.bytes
+      network.incoming.bytes_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - network.incoming.bytes
+      network.incoming.bytes_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - network.incoming.bytes
+      cpu_util_pcrf_server_ppd:
       - pcrf_server_ppd
-      - endpoint
-      scalable_pcrf_server_ppd:
+      - cpu_util
+      network.incoming.bytes_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - network.incoming.bytes
+      disk.device.read.requests.rate_pcrf_server_ppd:
       - pcrf_server_ppd
-      - scalable
+      - disk.device.read.requests.rate
       attachment_pcrf_ppd_port_7:
       - pcrf_ppd_port_7
       - attachment
-      host_pcrf_server_ppd:
+      memory.usage_pcrf_server_ppd:
       - pcrf_server_ppd
-      - host
+      - memory.usage
+      disk.device.capacity_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.capacity
+      disk.ephemeral.size_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.ephemeral.size
+      cpu.delta_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - cpu.delta
+      vcpus_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - vcpus
+      instance_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - instance
+      disk.device.read.bytes.rate_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.device.read.bytes.rate
+      disk.iops_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - disk.iops
     requirements:
       link_pcrf_ppd_port_3:
       - pcrf_ppd_port_3
       - link
+      dependency_pcrf_ppd_port_7:
+      - pcrf_ppd_port_7
+      - dependency
       link_pcrf_ppd_port_2:
       - pcrf_ppd_port_2
       - link
-      local_storage_pcrf_server_ppd:
-      - pcrf_server_ppd
-      - local_storage
       link_pcrf_ppd_port_1:
       - pcrf_ppd_port_1
       - link
@@ -462,3 +866,30 @@ topology_template:
       link_pcrf_ppd_port_4:
       - pcrf_ppd_port_4
       - link
+      dependency_pcrf_ppd_port_0:
+      - pcrf_ppd_port_0
+      - dependency
+      dependency_pcrf_ppd_port_1:
+      - pcrf_ppd_port_1
+      - dependency
+      dependency_pcrf_ppd_port_2:
+      - pcrf_ppd_port_2
+      - dependency
+      dependency_pcrf_ppd_port_3:
+      - pcrf_ppd_port_3
+      - dependency
+      dependency_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - dependency
+      dependency_pcrf_ppd_port_4:
+      - pcrf_ppd_port_4
+      - dependency
+      dependency_pcrf_ppd_port_5:
+      - pcrf_ppd_port_5
+      - dependency
+      dependency_pcrf_ppd_port_6:
+      - pcrf_ppd_port_6
+      - dependency
+      local_storage_pcrf_server_ppd:
+      - pcrf_server_ppd
+      - local_storage

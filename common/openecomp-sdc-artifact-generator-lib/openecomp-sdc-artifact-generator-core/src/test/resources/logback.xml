@@ -1,0 +1,51 @@
+<configuration scan="true" scanPeriod="3 seconds">
+
+    <property name="logDir" value="logs"/>
+    <property name="componentName" value="COMMON"/>
+    <property name="OPENECOMP-subcomponent-name" value="ARTIFACT_GENERATOR"/>
+
+    <property name="defaultPattern"
+              value="%msg%n"/>
+
+    <!--<property name="MetricsLogPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{ServerName}|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%X{CategoryLogLevel}|%X{Severity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIP}|%logger%n" />
+    <property name="AuditLogPattern" value="%X{BeginTimestamp}|%X{EndTimestamp}|%X{RequestId}|%X{ServiceInstanceId}|%thread|%X{ServerName}|%X{ServiceName}|%X{PartnerName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%X{CategoryLogLevel}|%X{Severity}|%X{ServerIPAddress}|%X{ElapsedTime}|%X{ServerFQDN}|%X{ClientIP}%n" />
+    <property name="ErrorLogPattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSS, GMT}|%X{RequestId}|%thread|%X{ServiceName}|%X{PartnerName}|%X{TargetEntity}|%X{TargetServiceName}|%X{ErrorCategory}|%X{ErrorCode}|%X{ErrorDescription}|%msg%n"/>
+    <property name="DebugLogPattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSS, GMT}|%X{RequestId}||%logger|%msg%n"/>-->
+
+    <!-- new pattern -->
+    <property name="default-log-pattern"
+              value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{BeginTimestamp}|%X{EndTimestamp}|%X{uuid}|%X{serviceInstanceID}|%thread|%X{ServerName}|%X{ServiceName}|${OPENECOMP-subcomponent-name}|%X{userId}|%X{TargetEntity}|%X{TargetServiceName}|%X{StatusCode}|%X{ResponseCode}|%X{ResponseDescription}|%X{InstanceUUID}|%X{ErrorCategory}|%X{ErrorCode}|%X{ErrorDescription}|%X{level}|%X{alarmSeverity}|%X{localAddr}|%X{ElapsedTime}|%X{beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n"/>
+
+    <property name="logDirectory" value="${logDir}/${componentName}"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${defaultPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DISPATCHER" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator class="org.openecomp.core.logging.logback.EventTypeDiscriminator"/>
+        <sift>
+            <appender name="${eventType}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${logDirectory}/${eventType}.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <fileNamePattern>${logDirectory}/${eventType}.%i.log.zip</fileNamePattern>
+                    <minIndex>1</minIndex>
+                    <maxIndex>9</maxIndex>
+                </rollingPolicy>
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <maxFileSize>5MB</maxFileSize>
+                </triggeringPolicy>
+                <encoder>
+                    <pattern>${default-log-pattern}</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="DISPATCHER"/>
+    </root>
+
+</configuration>

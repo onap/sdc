@@ -20,9 +20,12 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
-
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.messages.AuditMessages;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ProcessRequestDto;
 import org.openecomp.sdcrests.vsp.rest.ComponentProcesses;
 import org.openecomp.sdcrests.vsp.rest.Processes;
@@ -33,6 +36,8 @@ import org.springframework.stereotype.Service;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.GENERAL_COMPONENT_ID;
+
 @Named
 @Service("processes")
 @Scope(value = "prototype")
@@ -40,50 +45,65 @@ public class ProcessesImpl implements Processes {
 
   @Autowired
   private ComponentProcesses componentProcesses;
+  private static final Logger logger =
+          LoggerFactory.getLogger(ProcessesImpl.class);
 
   @Override
-  public Response list(String vspId, String version, String user) {
-    return componentProcesses.list(vspId, GENERAL_COMPONENT_ID, version, user);
+  public Response list(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_Processes.toString());
+    return componentProcesses.list(vspId, versionId, GENERAL_COMPONENT_ID, user);
   }
 
   @Override
-  public Response deleteList(String vspId, String user) {
-    return componentProcesses.deleteList(vspId, GENERAL_COMPONENT_ID, user);
+  public Response deleteList(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_List_Processes.toString());
+    return componentProcesses.deleteList(vspId,versionId, GENERAL_COMPONENT_ID, user);
   }
 
   @Override
-  public Response create(ProcessRequestDto request, String vspId, String user) {
-    return componentProcesses.create(request, vspId, GENERAL_COMPONENT_ID, user);
+  public Response create(ProcessRequestDto request, String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_Process.toString());
+    return componentProcesses.create(request, vspId, versionId, GENERAL_COMPONENT_ID, user);
   }
 
   @Override
-  public Response get(String vspId, String processId, String version, String user) {
-    return componentProcesses.get(vspId, GENERAL_COMPONENT_ID, processId, version, user);
+  public Response get(String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Processes.toString());
+    return componentProcesses.get(vspId, versionId, GENERAL_COMPONENT_ID, processId, user);
   }
 
   @Override
-  public Response delete(String vspId, String processId, String user) {
-    return componentProcesses.delete(vspId, GENERAL_COMPONENT_ID, processId, user);
+  public Response delete(String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_Processes.toString());
+    return componentProcesses.delete(vspId, versionId, GENERAL_COMPONENT_ID, processId, user);
   }
 
   @Override
-  public Response update(ProcessRequestDto request, String vspId, String processId, String user) {
-    return componentProcesses.update(request, vspId, GENERAL_COMPONENT_ID, processId, user);
+  public Response update(ProcessRequestDto request, String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Update_Process.toString());
+    return componentProcesses.update(request, vspId, versionId, GENERAL_COMPONENT_ID, processId, user);
   }
 
   @Override
-  public Response getUploadedFile(String vspId, String processId, String version, String user) {
+  public Response getUploadedFile(String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File_Processes.toString());
     return componentProcesses
-        .getUploadedFile(vspId, GENERAL_COMPONENT_ID, processId, version, user);
+        .getUploadedFile(vspId, versionId, GENERAL_COMPONENT_ID, processId, user);
   }
 
   @Override
-  public Response deleteUploadedFile(String vspId, String processId, String user) {
-    return componentProcesses.deleteUploadedFile(vspId, GENERAL_COMPONENT_ID, processId, user);
+  public Response deleteUploadedFile(String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_Uploaded_File_Processes.toString());
+    return componentProcesses.deleteUploadedFile(vspId, versionId, GENERAL_COMPONENT_ID,
+        processId, user);
   }
 
   @Override
-  public Response uploadFile(Attachment attachment, String vspId, String processId, String user) {
-    return componentProcesses.uploadFile(attachment, vspId, GENERAL_COMPONENT_ID, processId, user);
+  public Response uploadFile(Attachment attachment, String vspId, String versionId, String processId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Upload_File_Processes.toString());
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.UPLOAD_PROCESS_ARTIFACT + vspId);
+    return componentProcesses.uploadFile(attachment, vspId, versionId, GENERAL_COMPONENT_ID,
+        processId,
+        user);
   }
 }

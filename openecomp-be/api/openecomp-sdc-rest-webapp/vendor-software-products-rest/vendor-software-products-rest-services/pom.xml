@@ -4,14 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>vendor-software-products-rest-services</artifactId>
+
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>vendor-software-products-rest</artifactId>
         <version>1.1.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>vendor-software-products-rest-services</artifactId>
-
 
     <dependencies>
     <dependency>
@@ -46,26 +45,19 @@
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         <version>${cxf.version}</version>
     </dependency>
-
     <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>${http.client.version}</version>
     </dependency>
 
-    <dependency>
-        <groupId>javax.ws.rs</groupId>
-        <artifactId>javax.ws.rs-api</artifactId>
-        <version>${ws.rs.version}</version>
-    </dependency>
-
     <!-- Other Stuff-->
-    <dependency>
+    <!--dependency>
         <groupId>cglib</groupId>
         <artifactId>cglib-nodep</artifactId>
         <version>${cglib.nodep.version}</version>
         <scope>runtime</scope>
-    </dependency>
+    </dependency-->
 
     <!-- Java Stuff -->
     <dependency>
@@ -82,7 +74,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.19.1</version>
+            <version>${jersey.core.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>
@@ -93,7 +85,38 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.5.3</version>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.dataformat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>${jersey.multipart.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-common-rest</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.onboarding</groupId>
@@ -101,30 +124,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.7.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.7.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>4.4.1</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
+            <artifactId>openecomp-sdc-activity-log-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
     </dependencies>
-
 
     <build>
         <plugins>
@@ -138,6 +142,11 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!-- Error codes generator plugin -->
+            <!--plugin>
+                <groupId>org.openecomp.nfv.tools</groupId>
+                <artifactId>error-codes-maven-plugin</artifactId>
+            </plugin-->
         </plugins>
     </build>
     

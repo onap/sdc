@@ -1,0 +1,351 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_NCB1
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.NCB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_NCB1_Internal2_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_NCB1_Internal1_mac_address:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_NCB1_Internal1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_NCB1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_NCB1_Internal1_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_NCB1_Internal2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_NCB1_Internal1_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_NCB1_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_NCB1_Internal2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_NCB1_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    NCB1:
+      type: org.openecomp.resource.vfc.nodes.heat.NCB1
+      properties:
+        availability_zone:
+          get_input:
+          - compute_NCB1_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_NCB1_name
+          - index_value
+    NCB1_NCB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_NCB1_Internal1_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_NCB1_Internal1_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_NCB1_Internal1_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_NCB1_Internal1_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB1
+          relationship: tosca.relationships.network.BindsTo
+    NCB1_NCB1_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_NCB1_Internal2_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_NCB1_Internal2_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_NCB1_Internal2_network
+          - index_value
+        mac_address:
+          get_input:
+          - port_NCB1_Internal2_mac_address
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: NCB1
+          relationship: tosca.relationships.network.BindsTo
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.NCB1
+    capabilities:
+      disk.device.write.bytes.rate_NCB1:
+      - NCB1
+      - disk.device.write.bytes.rate
+      memory.resident_NCB1:
+      - NCB1
+      - memory.resident
+      disk.root.size_NCB1:
+      - NCB1
+      - disk.root.size
+      instance_NCB1:
+      - NCB1
+      - instance
+      disk.device.read.bytes.rate_NCB1:
+      - NCB1
+      - disk.device.read.bytes.rate
+      disk.write.requests.rate_NCB1:
+      - NCB1
+      - disk.write.requests.rate
+      cpu_NCB1:
+      - NCB1
+      - cpu
+      binding_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - binding
+      binding_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - binding
+      cpu.delta_NCB1:
+      - NCB1
+      - cpu.delta
+      disk.device.capacity_NCB1:
+      - NCB1
+      - disk.device.capacity
+      binding_NCB1:
+      - NCB1
+      - binding
+      disk.device.read.bytes_NCB1:
+      - NCB1
+      - disk.device.read.bytes
+      network.outgoing.bytes.rate_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.outgoing.bytes.rate
+      disk.device.allocation_NCB1:
+      - NCB1
+      - disk.device.allocation
+      disk.usage_NCB1:
+      - NCB1
+      - disk.usage
+      network.incoming.bytes.rate_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.incoming.bytes.rate
+      network.incoming.packets_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.incoming.packets
+      disk.ephemeral.size_NCB1:
+      - NCB1
+      - disk.ephemeral.size
+      network.incoming.bytes.rate_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.incoming.bytes.rate
+      network.incoming.packets_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.incoming.packets
+      disk.allocation_NCB1:
+      - NCB1
+      - disk.allocation
+      disk.write.bytes_NCB1:
+      - NCB1
+      - disk.write.bytes
+      disk.device.latency_NCB1:
+      - NCB1
+      - disk.device.latency
+      network.outpoing.packets_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.outpoing.packets
+      network.incoming.packets.rate_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.incoming.packets.rate
+      vcpus_NCB1:
+      - NCB1
+      - vcpus
+      feature_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - feature
+      endpoint_NCB1:
+      - NCB1
+      - endpoint
+      network.outgoing.bytes_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.outgoing.bytes
+      disk.device.iops_NCB1:
+      - NCB1
+      - disk.device.iops
+      network.outgoing.bytes_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.outgoing.bytes
+      feature_NCB1:
+      - NCB1
+      - feature
+      network.outpoing.packets_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.outpoing.packets
+      feature_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - feature
+      disk.read.requests_NCB1:
+      - NCB1
+      - disk.read.requests
+      disk.device.write.requests_NCB1:
+      - NCB1
+      - disk.device.write.requests
+      memory.usage_NCB1:
+      - NCB1
+      - memory.usage
+      attachment_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - attachment
+      network.outgoing.packets.rate_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.outgoing.packets.rate
+      attachment_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - attachment
+      network.outgoing.packets.rate_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.outgoing.packets.rate
+      disk.write.bytes.rate_NCB1:
+      - NCB1
+      - disk.write.bytes.rate
+      disk.device.read.requests_NCB1:
+      - NCB1
+      - disk.device.read.requests
+      memory_NCB1:
+      - NCB1
+      - memory
+      disk.device.write.bytes_NCB1:
+      - NCB1
+      - disk.device.write.bytes
+      disk.device.read.requests.rate_NCB1:
+      - NCB1
+      - disk.device.read.requests.rate
+      disk.read.bytes_NCB1:
+      - NCB1
+      - disk.read.bytes
+      disk.read.bytes.rate_NCB1:
+      - NCB1
+      - disk.read.bytes.rate
+      disk.capacity_NCB1:
+      - NCB1
+      - disk.capacity
+      disk.device.write.requests.rate_NCB1:
+      - NCB1
+      - disk.device.write.requests.rate
+      scalable_NCB1:
+      - NCB1
+      - scalable
+      disk.iops_NCB1:
+      - NCB1
+      - disk.iops
+      os_NCB1:
+      - NCB1
+      - os
+      network.incoming.bytes_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - network.incoming.bytes
+      network.incoming.bytes_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - network.incoming.bytes
+      disk.write.requests_NCB1:
+      - NCB1
+      - disk.write.requests
+      disk.latency_NCB1:
+      - NCB1
+      - disk.latency
+      host_NCB1:
+      - NCB1
+      - host
+      cpu_util_NCB1:
+      - NCB1
+      - cpu_util
+      disk.device.usage_NCB1:
+      - NCB1
+      - disk.device.usage
+    requirements:
+      link_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - link
+      local_storage_NCB1:
+      - NCB1
+      - local_storage
+      link_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - link
+      dependency_NCB1_NCB1_Internal1:
+      - NCB1_NCB1_Internal1
+      - dependency
+      dependency_NCB1:
+      - NCB1
+      - dependency
+      dependency_NCB1_NCB1_Internal2:
+      - NCB1_NCB1_Internal2
+      - dependency

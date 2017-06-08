@@ -23,9 +23,11 @@ package org.openecomp.sdc.tosca.services;
 import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.datatypes.model.NodeType;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +39,8 @@ public interface ToscaAnalyzerService {
        */
   Map<String, NodeTemplate> getNodeTemplatesByType(ServiceTemplate serviceTemplate, String nodeType,
                                                    ToscaServiceModel toscaServiceModel);
+
+  Optional<NodeType> fetchNodeType(String nodeTypeKey, Collection<ServiceTemplate> serviceTemplates);
 
   boolean isTypeOf(NodeTemplate nodeTemplate, String nodeType, ServiceTemplate serviceTemplate,
                    ToscaServiceModel toscaServiceModel);
@@ -63,4 +67,13 @@ public interface ToscaAnalyzerService {
 
   Object getFlatEntity(ToscaElementTypes elementType, String type, ServiceTemplate serviceTemplate,
                        ToscaServiceModel toscaModel);
+
+  boolean isSubstitutableNodeTemplate(NodeTemplate nodeTemplate);
+
+  NodeType createInitSubstitutionNodeType(ServiceTemplate substitutionServiceTemplate,
+                                          String nodeTypeDerivedFromValue);
+
+  boolean isRequirementExistInNodeTemplate(NodeTemplate nodeTemplate,
+                                           String requirementId,
+                                           RequirementAssignment requirementAssignment);
 }

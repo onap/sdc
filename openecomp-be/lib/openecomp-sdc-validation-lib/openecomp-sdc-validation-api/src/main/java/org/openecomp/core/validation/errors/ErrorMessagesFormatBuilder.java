@@ -20,8 +20,8 @@
 
 package org.openecomp.core.validation.errors;
 
-public class ErrorMessagesFormatBuilder {
 
+public class ErrorMessagesFormatBuilder {
   public static String getErrorWithParameters(String error, String... params) {
     return String.format(error, params);
   }

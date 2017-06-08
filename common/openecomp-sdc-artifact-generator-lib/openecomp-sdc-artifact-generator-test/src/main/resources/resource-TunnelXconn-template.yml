@@ -1,0 +1,83 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: fadbb726-37b6-4939-ba78-9e86974232c5
+  UUID: 68d68207-007a-49f3-a9ae-5f88757d5061
+  name: Tunnel_XConn
+  description: stella
+  type: VF
+  category: Allotted Resource
+  subcategory: Tunnel XConnect
+  resourceVendor: stella
+  resourceVendorRelease: '1.0'
+imports:
+- newAllotted:
+    file: resource-Newallotted-template.yml
+topology_template:
+  inputs:
+    role:
+      type: string
+    ecomp_naming:
+      type: string
+    max_instances:
+      type: string
+    min_instances:
+      type: string
+    ecomp_homing:
+      type: string
+  node_templates:
+    allotedresource1:
+      type: org.openecomp.resource.vfc.AllottedResource
+      metadata:
+        invariantUUID: cce8d00f-1a7a-439d-b186-207599f8bbf2
+        UUID: 468a08a2-10a7-4ee7-86eb-dcf2e74a028f
+        customizationUUID: a92f5f2e-fe08-4711-84f6-2e64608aca13
+        version: '1.0'
+        name: newAllotted
+        description: vcxvcx
+        type: VFC
+        category: Allotted Resource
+        subcategory: IP Mux Demux
+      properties:
+        ecomp_naming:
+          naming_policy:
+            get input: ecomp_naming
+        providing_service_invariant_uuid: c964ef13-9d61-4d1b-a1a6-7060f3d7ddb4
+        min_instances: 1
+        max_instances: 1
+        providing_service_uuid: 3d6f84f5-84fd-441a-8fd8-401f71196712
+        providing_service_name: ServiceSprint38stella
+  groups: {
+    }
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.TunnelXconn
+    capabilities:
+      Alloted resource 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Alloted resource 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Alloted resource 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

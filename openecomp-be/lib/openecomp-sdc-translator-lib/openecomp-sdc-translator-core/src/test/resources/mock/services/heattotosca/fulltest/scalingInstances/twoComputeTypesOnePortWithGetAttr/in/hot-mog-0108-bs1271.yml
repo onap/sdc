@@ -1,0 +1,94 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  ps_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  ps_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  ps_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+
+
+resources:
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+      user_data_format:  {get_attr: [server_ps_01, accessIPv4]}
+  server_pd_02:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [pd_server_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_1}
+  server_ps_01:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [ps_server_names, 0]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps01_port_0}
+      user_data_format:  {get_attr: [server_pd_01, accessIPv4]}
+  server_ps_02:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [ps_server_names, 1]}
+      image: {get_param: ps_image_name}
+      flavor: {get_param: ps_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: ps01_port_1}
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-PD-0
+      replacement_policy: AUTO
+  pd01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-PD-1
+      replacement_policy: AUTO
+  ps01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-PS-0
+      replacement_policy: AUTO
+  ps01_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: Network-PS-1
+      replacement_policy: AUTO

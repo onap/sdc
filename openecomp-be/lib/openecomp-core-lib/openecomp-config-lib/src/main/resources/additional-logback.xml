@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+	<property scope="system" name="OPENECOMP-component-name" value="ASDC" />
+	<property scope="system" name="OPENECOMP-subcomponent-name" value="ASDC-BE" />
+
+	<!--statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+    <include resource="asdc_debug_logback.xml"/-->
+
+	<!-- value used by pattern field list (| - is inter-field separator, || - unavailable or not applicable field value) (m - mandatory, o- optional)-->
+	<!--timestamp(m)| requestID(m)| serviceInstanceID(o)| threadID(m)| physicalServerName(o)| serviceName(m)| userID(m)| logLevel(m)| severity(o)| serverIpAddress(m)| serverName(m)| clientIpAddress(o)| className(m)| timer(o)| detailedMessage(o)-->
+	<property name="default-log-pattern"
+			  value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{uuid}|%X{serviceInstanceID}|%thread||${OPENECOMP-subcomponent-name}|%X{userId}|%level|%X{alarmSeverity}|%X{localAddr}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
+
+	<property name="asdc-debug-log-pattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg %n"/>
+
+	<appender name="DEBUG_PACKAGE_INCLUDE"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.home}/${OPENECOMP-component-name}/${OPENECOMP-subcomponent-name}/debug_by_package_include.log
+		</file>
+
+		<!-- No need to deny audit messages - they are INFO only, will be denied
+			anyway -->
+		<!-- Transaction messages filter - deny Transaction messages, there are
+			some DEBUG level messages among them -->
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+				<marker>TRANSACTION_MARKER</marker>
+			</evaluator>
+			<onMismatch>NEUTRAL</onMismatch>
+			<onMatch>DENY</onMatch>
+		</filter>
+
+		<!-- accept DEBUG and TRACE level -->
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator">
+				<expression>
+					e.level.toInt() &lt;= DEBUG.toInt()
+				</expression>
+			</evaluator>
+			<OnMismatch>DENY</OnMismatch>
+			<OnMatch>NEUTRAL</OnMatch>
+		</filter>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${log.home}/${OPENECOMP-component-name}/${OPENECOMP-subcomponent-name}/debug_by_package_include.log.%i
+			</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+
+		<triggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>20MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>${asdc-debug-log-pattern}</pattern>
+		</encoder>
+	</appender>
+
+
+	<logger name="org.openecomp.sdc.validation.impl.validators" level="DEBUG" additivity ="false">
+		<appender-ref ref="DEBUG_PACKAGE_INCLUDE" />
+	</logger>
+
+</included>

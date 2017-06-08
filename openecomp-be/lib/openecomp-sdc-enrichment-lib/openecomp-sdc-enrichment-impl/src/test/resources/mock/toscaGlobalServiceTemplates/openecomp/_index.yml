@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_openecomp_1_0
+metadata:
+  filename: openecomp/_index.yml
+  version: '1.0'
+imports:
+- tosca_index:
+    file: ../tosca/_index.yml
+- capabilities:
+    file: capabilities.yml
+- nodes:
+    file: nodes.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- data:
+    file: data.yml

@@ -1,0 +1,401 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.FSB1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    Internal2_name:
+      label: Internal2_name
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_name
+    Internal1_shared:
+      label: Internal1_shared
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_shared
+    FSB1_volume_name:
+      label: FSB1_volume
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_volume_1
+    jsa_cidr:
+      label: jsa_cidr
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_cidr
+      default: 107.243.7.128/26
+    availabilityzone_name:
+      label: availabilityzone_name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone_name
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    pcm_image_name:
+      label: pcm_image_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_image_name
+    Internal2_external:
+      label: Internal2_external
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_external
+    Internal2_forwarding_mode:
+      label: Internal2_forwarding_mode
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_forwarding_mode
+    pcrf_psm_flavor_name:
+      label: pcrf_psm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_flavor_name
+    pcrf_psm_image_name:
+      label: pcrf_psm_image_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_image_name
+    pcrf_vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    FSB_1_image:
+      label: MME_FSB1
+      hidden: false
+      immutable: false
+      type: string
+      description: MME_FSB1_15B-CP04-r5a01
+    snapshot01:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    volume_size:
+      label: volume size
+      hidden: false
+      immutable: false
+      type: float
+      description: my volume size 320GB
+    snapshot02:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    Internal2_shared:
+      label: Internal2_shared
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal2_shared
+    pcm_server_name:
+      label: pcm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_server_name
+    cps_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    Internal1_net_name:
+      label: Internal1_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_net_name
+    oam_net_name:
+      label: oam_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_name
+    fsb1-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    fsb1-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    pcm_vol_01:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type Gold
+    fsb1-zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    fsb_zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    oam_net_gw:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    VMME_FSB1_boot_volume:
+      hidden: false
+      immutable: false
+      type: string
+    network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    jsa_net_name:
+      label: jsa_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_net_name
+      default: jsa_log_net_0
+    pcrf_psm_server_name:
+      label: pcrf_psm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_server_name
+    pcm_flavor_name:
+      label: pcm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_flavor_name
+    oam_net_id:
+      label: oam_net_id
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_id
+    pcrf_cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb2-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    Internal1_forwarding_mode:
+      label: Internal1_forwarding_mode
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_forwarding_mode
+    pcrf_cps_net_name:
+      label: pcrf_cps_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_cps_net_name
+    pcm_vol:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    cps_net_name:
+      label: cps_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: cps_net_name
+    oam_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    oam_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    pcrf_security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    Internal1_external:
+      label: Internal1_external
+      hidden: false
+      immutable: false
+      type: string
+      description: Internal1_external
+  node_templates:
+    FSB2_Internal2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_input: fsb1-Internal2-mac
+        network: Internal2-net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1_template
+          relationship: tosca.relationships.network.BindsTo
+    FSB1_Internal1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        mac_address:
+          get_attribute: [FSB1_template, mac]
+        network: {get_attribute: [jsa_net1, netid] }
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    FSB1_OAM:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        fixed_ips:
+        - ip_address:
+            get_input: fsb1-oam-ip
+        network: jsa_net1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: FSB1_template
+          relationship: tosca.relationships.network.BindsTo
+      - link:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+         get_attribute:
+          - FSB1_Internal1
+          - network_id
+        dhcp_agent_ids:
+         get_attribute:
+          - FSB1_template
+          - addresses
+        tenant_id:
+         get_attribute:
+          - FSB2_Internal2
+          - network_id
+        qos_policy:
+         get_attribute:
+          - FSB2_Internal2
+          - network_id
+    FSB1_template:
+      type: org.openecomp.resource.vfc.nodes.heat.FSB1
+      properties:
+        flavor:
+          get_input: fsb1-flavor
+        availability_zone:
+          get_attribute: [ FSB1_Internal1, myAttr, get_attribute: [FSB1_Internal1, index] ]
+        metadata:
+          get_attribute: [ FSB1_Internal1, myAttr, get_input: index ]
+        name:
+          get_attribute: [ FSB1_Internal1, myAttr, get_attribute: [jsa_net1, index] ]
+      artifacts:
+        nimbus-ethernet-gw:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/nimbus-ethernet-gw
+        nimbus-ethernet:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/nimbus-ethernet
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume1
+          relationship: cmaui_volume_attachment
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume2
+          relationship: cmaui_volume_attachment
+    cmaui_volume1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type: {get_attribute: [ FSB1_template, addresses, {get_attribute: [ FSB2_Internal2,index ] } ]}
+        size: { get_attribute: [FSB1_Internal1, addresses, get_input: [CMAUI_volume_type,{get_attribute: [FSB1_OAM,oam_index ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
+    cmaui_volume2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: { get_input: [a, addresses, get_input: [CMAUI_volume_type, {get_attribute: [FSB1_template,accessIPv6 ] }], 0, "OS-EXT-IPS-MAC:mac_addr"] }
+  groups:
+    ep-jsa_net_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - FSB2_Internal2
+      - FSB1_Internal1
+      - FSB1_OAM
+      - FSB1_template

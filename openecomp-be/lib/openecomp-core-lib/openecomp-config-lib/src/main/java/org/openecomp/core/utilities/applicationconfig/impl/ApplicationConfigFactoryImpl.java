@@ -23,6 +23,7 @@ package org.openecomp.core.utilities.applicationconfig.impl;
 import org.openecomp.core.utilities.applicationconfig.ApplicationConfig;
 import org.openecomp.core.utilities.applicationconfig.ApplicationConfigFactory;
 
+
 public class ApplicationConfigFactoryImpl extends ApplicationConfigFactory {
 
   private static final ApplicationConfig INSTANCE = new ApplicationConfigImpl();

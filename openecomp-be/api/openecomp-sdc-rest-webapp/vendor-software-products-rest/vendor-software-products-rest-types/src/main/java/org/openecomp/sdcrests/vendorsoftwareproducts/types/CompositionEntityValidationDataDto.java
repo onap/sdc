@@ -27,6 +27,7 @@ import java.util.Collection;
 public class CompositionEntityValidationDataDto {
   private CompositionEntityType entityType;
   private String entityId;
+  private String entityName;
   private Collection<String> errors;
   private Collection<CompositionEntityValidationDataDto> subEntitiesValidationData;
 
@@ -44,6 +45,14 @@ public class CompositionEntityValidationDataDto {
 
   public void setEntityId(String entityId) {
     this.entityId = entityId;
+  }
+
+  public String getEntityName() {
+    return entityName;
+  }
+
+  public void setEntityName(String entityName) {
+    this.entityName = entityName;
   }
 
   public Collection<String> getErrors() {

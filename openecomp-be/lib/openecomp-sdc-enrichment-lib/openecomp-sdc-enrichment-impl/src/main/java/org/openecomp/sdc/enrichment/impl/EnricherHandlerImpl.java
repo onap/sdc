@@ -20,70 +20,26 @@
 
 package org.openecomp.sdc.enrichment.impl;
 
-import org.openecomp.core.enrichment.types.EntityInfo;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.datatypes.model.AsdcModel;
-import org.openecomp.sdc.enrichment.EnrichmentInfo;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.enrichment.impl.external.artifact.ExternalArtifactEnricher;
 import org.openecomp.sdc.enrichment.impl.tosca.ToscaEnricher;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.EnricherHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-/**
- * The type Enricher handler.
- */
 public class EnricherHandlerImpl implements EnricherHandler {
 
-  private static Logger logger = LoggerFactory.getLogger(EnricherHandlerImpl.class);
-  private EnrichmentInfo input;
-  private AsdcModel model;
+    private static Logger logger = (Logger) LoggerFactory.getLogger(EnricherHandlerImpl.class);
 
-  @Override
-  public List<Enricher> getEnrichers() {
-    List<Enricher> enricherList = new ArrayList<>();
-    enricherList.add(new ToscaEnricher());
-    enricherList.add(new ExternalArtifactEnricher());
-    return enricherList;
-  }
-
-  @Override
-  public Map<String, List<ErrorMessage>> enrich() {
-    Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    Map<String, List<ErrorMessage>> enricherResponse;
-    for (Enricher enricher : getEnrichers()) {
-      enricher.setInput(this.input);
-      enricher.setModel(this.model);
-      enricherResponse = enricher.enrich();
-      errors.putAll(enricherResponse);
+    @Override
+    public List<Enricher> getEnrichers() {
+        List<Enricher> enricherList = new ArrayList<>();
+        enricherList.add(new ToscaEnricher());
+        enricherList.add(new ExternalArtifactEnricher());
+        return enricherList;
     }
-    return errors;
-  }
 
-  /**
-   * Adds additional input.
-   *
-   * @param key   key
-   * @param input input
-   */
-  public void addAdditionalInput(String key, Object input) {
-    if (!this.input.getAdditionalInfo().containsKey(key)) {
-      this.input.getAdditionalInfo().put(key, new ArrayList<>());
-    }
-    this.input.getAdditionalInfo().get(key).add(input);
-  }
-
-  public void addEntityInfo(String entityId, EntityInfo entityInfo) {
-    this.input.getEntityInfo().put(entityId, entityInfo);
-  }
-
-  public void setModel(AsdcModel model) {
-    this.model = model;
-  }
 }

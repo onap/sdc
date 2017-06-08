@@ -21,69 +21,27 @@
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class UploadFileResponse {
-  private List<String> fileNames;
-  private Map<String, List<org.openecomp.sdc.datatypes.error.ErrorMessage>> errors =
-      new HashMap<>();
+  private Map<String, List<ErrorMessage>> errors = new HashMap<>();
   private UploadFileStatus status = UploadFileStatus.Success;
 
-  /**
-   * Gets status.
-   *
-   * @return the status
-   */
   public UploadFileStatus getStatus() {
     return status;
   }
 
-  /**
-   * Sets status.
-   *
-   * @param status the status
-   */
   public void setStatus(UploadFileStatus status) {
     this.status = status;
-  }
-
-  /**
-   * Gets file names.
-   *
-   * @return the file names
-   */
-  public List<String> getFileNames() {
-    return fileNames;
-  }
-
-  /**
-   * Sets file names.
-   *
-   * @param fileNames the file names
-   */
-  public void setFileNames(List<String> fileNames) {
-    this.fileNames = fileNames;
-  }
-
-  /**
-   * Add new file to list.
-   *
-   * @param filename the filename
-   */
-  public void addNewFileToList(String filename) {
-    this.fileNames.add(filename);
-  }
-
-  /**
-   * Remove file from list.
-   *
-   * @param toRemove the to remove
-   */
-  public void removeFileFromList(String toRemove) {
-    this.fileNames.remove(toRemove);
   }
 
   /**
@@ -92,15 +50,14 @@ public class UploadFileResponse {
    * @param fileName     the file name
    * @param errorMessage the error message
    */
-  public void addStructureError(String fileName,
-                                org.openecomp.sdc.datatypes.error.ErrorMessage errorMessage) {
-    List<org.openecomp.sdc.datatypes.error.ErrorMessage> errorList = errors.get(fileName);
+  public void addStructureError(String fileName, ErrorMessage errorMessage) {
+    List<ErrorMessage> errorList = errors.get(fileName);
     if (errorList == null) {
       errorList = new ArrayList<>();
       errors.put(fileName, errorList);
     }
     errorList.add(errorMessage);
-    if (org.openecomp.sdc.datatypes.error.ErrorLevel.ERROR.equals(errorMessage.getLevel())) {
+    if (ErrorLevel.ERROR.equals(errorMessage.getLevel())) {
       status = UploadFileStatus.Failure;
     }
   }
@@ -110,8 +67,7 @@ public class UploadFileResponse {
    *
    * @param errorsByFileName the errors by file name
    */
-  public void addStructureErrors(
-      Map<String, List<org.openecomp.sdc.datatypes.error.ErrorMessage>> errorsByFileName) {
+  public void addStructureErrors(Map<String, List<ErrorMessage>> errorsByFileName) {
     if (errorsByFileName == null) {
       return;
     }
@@ -121,10 +77,9 @@ public class UploadFileResponse {
     if (status == UploadFileStatus.Failure) {
       return;
     }
-    for (Map.Entry<String, List<org.openecomp.sdc.datatypes.error.ErrorMessage>> entry
-        : errorsByFileName.entrySet()) {
-      for (org.openecomp.sdc.datatypes.error.ErrorMessage errorMessage : entry.getValue()) {
-        if (errorMessage.getLevel() == org.openecomp.sdc.datatypes.error.ErrorLevel.ERROR) {
+    for (Map.Entry<String, List<ErrorMessage>> entry : errorsByFileName.entrySet()) {
+      for (ErrorMessage errorMessage : entry.getValue()) {
+        if (errorMessage.getLevel() == ErrorLevel.ERROR) {
           status = UploadFileStatus.Failure;
           return;
         }
@@ -132,12 +87,7 @@ public class UploadFileResponse {
     }
   }
 
-  /**
-   * Gets errors.
-   *
-   * @return the errors
-   */
-  public Map<String, List<org.openecomp.sdc.datatypes.error.ErrorMessage>> getErrors() {
+  public Map<String, List<ErrorMessage>> getErrors() {
     return errors;
   }
 }

@@ -20,11 +20,13 @@
 
 package org.openecomp.sdc.translator.services.heattotosca;
 
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.translator.datatypes.TranslatorOutput;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -33,38 +35,50 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManager;
 import org.openecomp.sdc.heat.services.tree.HeatTreeManagerUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.GroupDefinition;
-import org.openecomp.sdc.tosca.datatypes.model.Metadata;
+import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition;
+import org.openecomp.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.TopologyTemplate;
+import org.openecomp.sdc.tosca.services.DataModelUtil;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.ToscaUtil;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.FileDataCollection;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.EntityConsolidationData;
+import org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.consolidation.GetAttrFuncData;
 import org.openecomp.sdc.translator.services.heattotosca.errors.ResourceNotFoundInHeatFileErrorBuilder;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 import org.openecomp.sdc.translator.services.heattotosca.mapping.TranslatorHeatToToscaParameterConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-
 public class TranslationService {
 
-  protected static Logger logger = LoggerFactory.getLogger(TranslationService.class);
+  protected static Logger logger = (Logger) LoggerFactory.getLogger(TranslationService.class);
+  protected static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   /**
    * Gets types to process by translator.
@@ -85,6 +99,8 @@ public class TranslationService {
    * @return the translator output
    */
   public TranslatorOutput translateHeatFiles(TranslationContext translationContext) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     ServiceTemplate mainServiceTemplate = createMainServiceTemplate(translationContext);
     List<FileData> fileDataList = translationContext.getManifest().getContent().getData();
     FileDataCollection fileDataCollection = HeatToToscaUtil.getFileCollectionsByFilter(fileDataList,
@@ -102,59 +118,31 @@ public class TranslationService {
     }
 
     ToscaServiceModel toscaServiceModel =
-        createToscaServiceModel(mainServiceTemplate, translationContext);
+        HeatToToscaUtil.createToscaServiceModel(mainServiceTemplate, translationContext);
 
     TranslatorOutput translatorOutput = new TranslatorOutput();
     translatorOutput.setToscaServiceModel(toscaServiceModel);
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return translatorOutput;
   }
 
-  private ToscaServiceModel createToscaServiceModel(ServiceTemplate entryDefinitionServiceTemplate,
-                                                    TranslationContext translationContext) {
-    return new ToscaServiceModel(getCsarArtifactFiles(translationContext),
-        getServiceTemplates(translationContext),
-        ToscaUtil.getServiceTemplateFileName(entryDefinitionServiceTemplate));
-  }
-
-  private Map<String, ServiceTemplate> getServiceTemplates(TranslationContext translationContext) {
-    List<ServiceTemplate> serviceTemplates = new ArrayList<>();
-    serviceTemplates.addAll(GlobalTypesGenerator.getGlobalTypesServiceTemplate().values());
-    serviceTemplates.addAll(translationContext.getTranslatedServiceTemplates().values());
-    Map<String, ServiceTemplate> serviceTemplatesMap = new HashMap<>();
-
-    for (ServiceTemplate template : serviceTemplates) {
-      serviceTemplatesMap.put(ToscaUtil.getServiceTemplateFileName(template), template);
-    }
-    return serviceTemplatesMap;
-  }
-
-  private FileContentHandler getCsarArtifactFiles(TranslationContext translationContext) {
-    FileContentHandler artifactFiles = new FileContentHandler();
-    artifactFiles.setFiles(translationContext.getFiles());
-    artifactFiles.setFiles(translationContext.getExternalArtifacts());
-
-    HeatTreeManager heatTreeManager =
-        HeatTreeManagerUtil.initHeatTreeManager(translationContext.getFiles());
-    heatTreeManager.createTree();
-    ValidationStructureList validationStructureList =
-        new ValidationStructureList(heatTreeManager.getTree());
-    byte[] validationStructureFile =
-        FileUtils.convertToBytes(validationStructureList, FileUtils.FileExtension.JSON);
-    artifactFiles.addFile("HEAT.meta", validationStructureFile);
-
-    return artifactFiles;
-  }
-
   private ServiceTemplate createMainServiceTemplate(TranslationContext translationContext) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     ServiceTemplate mainServiceTemplate = new ServiceTemplate();
-    translationContext.getTranslatedServiceTemplates().put("Main", mainServiceTemplate);
-    Metadata templateMetadata = new Metadata();
-    templateMetadata.setTemplate_name("Main");
+    translationContext.getTranslatedServiceTemplates()
+        .put(Constants.MAIN_TEMPLATE_NAME, mainServiceTemplate);
+    Map<String, String> templateMetadata = new HashMap<>();
+    templateMetadata.put(ToscaConstants.ST_METADATA_TEMPLATE_NAME, Constants.MAIN_TEMPLATE_NAME);
     mainServiceTemplate.setTosca_definitions_version(ToscaConstants.TOSCA_DEFINITIONS_VERSION);
     mainServiceTemplate.setMetadata(templateMetadata);
     mainServiceTemplate.setTopology_template(new TopologyTemplate());
     mainServiceTemplate.setImports(GlobalTypesGenerator.getGlobalTypesImportList());
 
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return mainServiceTemplate;
   }
 
@@ -167,6 +155,10 @@ public class TranslationService {
    */
   public void translateHeatFile(ServiceTemplate serviceTemplate, FileData heatFileData,
                                 TranslationContext context) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     String heatFileName = heatFileData.getFile();
     HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
         .yamlToObject(context.getFileContent(heatFileName), HeatOrchestrationTemplate.class);
@@ -177,23 +169,47 @@ public class TranslationService {
     translateOutputParameters(serviceTemplate, heatOrchestrationTemplate, heatFileData,
         heatFileName, context);
     createHeatStackGroup(serviceTemplate, heatFileData, heatOrchestrationTemplate, context);
+    handleHeatPseudoParam(heatFileName, serviceTemplate, context);
 
     if (Objects.nonNull(heatFileData.getData())) {
       heatFileData.getData().stream().filter(data -> data.getType() == FileData.Type.HEAT_VOL)
           .forEach(data -> translateHeatFile(serviceTemplate, data, context));
+    }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
+  }
+
+  private void handleHeatPseudoParam(String heatFileName, ServiceTemplate serviceTemplate,
+                                     TranslationContext context) {
+    Map<String, String> translatedHeatPseudoParam =
+        context.getUsedHeatPseudoParams().get(heatFileName);
+    if (Objects.nonNull(translatedHeatPseudoParam)) {
+      for (String heatPseudoParam : translatedHeatPseudoParam.keySet()) {
+        if (!serviceTemplate.getTopology_template().getInputs().containsKey(heatPseudoParam)) {
+          ParameterDefinition parameterDefinition = new ParameterDefinition();
+          parameterDefinition.setType(PropertyType.STRING.getDisplayName());
+          parameterDefinition.setRequired(false);
+          String parameterDefinitionId = translatedHeatPseudoParam.get(heatPseudoParam);
+          DataModelUtil.addInputParameterToTopologyTemplate(serviceTemplate, parameterDefinitionId,
+              parameterDefinition);
+        }
+      }
     }
   }
 
   private void createHeatStackGroup(ServiceTemplate serviceTemplate, FileData heatFileData,
                                     HeatOrchestrationTemplate heatOrchestrationTemplate,
                                     TranslationContext context) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
-    String fileName = heatFileData.getFile();
-    final String fileNameWoExtension =
-        FileUtils.getFileWithoutExtention(fileName);//.heatFileData.getFile().split("\\.")[0];
+    final String fileName = heatFileData.getFile();
+    final String heatStackGroupId = FileUtils.getFileWithoutExtention(fileName) + "_group";
 
     GroupDefinition groupDefinition = new GroupDefinition();
-    groupDefinition.setType(ToscaGroupType.HEAT_STACK.getDisplayName());
+    groupDefinition.setType(ToscaGroupType.HEAT_STACK);
     groupDefinition.setProperties(new HashMap<>());
     groupDefinition.getProperties()
         .put("heat_file", "../" + toscaFileOutputService.getArtifactsFolderName() + "/" + fileName);
@@ -207,11 +223,10 @@ public class TranslationService {
       return; //not creating a group when no resources are present in the heat input
     }
     groupDefinition.getMembers().addAll(heatStackGroupMembers.get(fileName));
-    if (serviceTemplate.getTopology_template().getGroups() == null) {
-      Map<String, GroupDefinition> groups = new HashMap<>();
-      serviceTemplate.getTopology_template().setGroups(groups);
-    }
-    serviceTemplate.getTopology_template().getGroups().put(fileNameWoExtension, groupDefinition);
+    DataModelUtil
+        .addGroupDefinitionToTopologyTemplate(serviceTemplate, heatStackGroupId, groupDefinition);
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void translateInputParameters(ServiceTemplate serviceTemplate,
@@ -219,13 +234,16 @@ public class TranslationService {
                                         FileData heatFileData, TranslationContext context,
                                         String heatFileName) {
 
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     if (heatOrchestrationTemplate.getParameters() == null) {
       return;
     }
 
     Map<String, ParameterDefinition> parameterDefinitionMap =
         TranslatorHeatToToscaParameterConverter
-            .parameterConverter(heatOrchestrationTemplate.getParameters(),
+            .parameterConverter(serviceTemplate,heatOrchestrationTemplate.getParameters(),
                 heatOrchestrationTemplate, heatFileName, context);
     Environment heatEnvFile = getHeatEnvFile(heatFileData, context);
     Map<String, Object> parameters = heatEnvFile.getParameters();
@@ -236,7 +254,7 @@ public class TranslationService {
         parameterValue = parameters.get(paramName);
         if (parameterValue != null) {
           entry.getValue().set_default(TranslatorHeatToToscaParameterConverter
-              .getToscaParameterDefaultValue(parameterValue, entry.getValue().getType(),
+              .getToscaParameterDefaultValue(null, null, parameterValue, entry.getValue().getType(),
                   heatFileName, heatOrchestrationTemplate, context));
         }
       }
@@ -248,18 +266,24 @@ public class TranslationService {
     } else {
       inputs.putAll(parameterDefinitionMap);
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void translateOutputParameters(ServiceTemplate serviceTemplate,
                                          HeatOrchestrationTemplate heatOrchestrationTemplate,
                                          FileData heatFileData, String heatFileName,
                                          TranslationContext context) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     if (heatOrchestrationTemplate.getOutputs() == null) {
       return;
     }
     Map<String, ParameterDefinition> parameterDefinitionMap =
         TranslatorHeatToToscaParameterConverter
-            .parameterOutputConverter(heatOrchestrationTemplate.getOutputs(),
+            .parameterOutputConverter(serviceTemplate,heatOrchestrationTemplate.getOutputs(),
                 heatOrchestrationTemplate, heatFileName, context);
     if (serviceTemplate.getTopology_template().getOutputs() != null) {
       serviceTemplate.getTopology_template().getOutputs().putAll(parameterDefinitionMap);
@@ -271,30 +295,40 @@ public class TranslationService {
       updateSharedResources(serviceTemplate, heatFileName, heatOrchestrationTemplate,
           heatOrchestrationTemplate.getOutputs(), context);
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void updateSharedResources(ServiceTemplate serviceTemplate, String heatFileName,
                                      HeatOrchestrationTemplate heatOrchestrationTemplate,
                                      Map<String, Output> outputs, TranslationContext context) {
-    for (Map.Entry<String, Output> paramName : outputs.entrySet()) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    for (Map.Entry<String, Output> parameter : outputs.entrySet()) {
       Optional<AttachedResourceId> attachedSharedResourceId = HeatToToscaUtil
           .extractAttachedResourceId(heatFileName, heatOrchestrationTemplate, context,
-              paramName.getValue().getValue());
+              parameter.getValue().getValue());
       if (attachedSharedResourceId.isPresent() && attachedSharedResourceId.get().isGetResource()
           && attachedSharedResourceId.get().getTranslatedId() != null) {
         String sharedTranslatedResourceId =
             attachedSharedResourceId.get().getTranslatedId().toString();
-        updateSharedResource(serviceTemplate, context, paramName, sharedTranslatedResourceId,
+        updateSharedResource(serviceTemplate, context, parameter, sharedTranslatedResourceId,
             heatOrchestrationTemplate.getResources()
                 .get(attachedSharedResourceId.get().getEntityId()));
       } else {
-        String contrailSharedResourceId = HeatToToscaUtil
-            .extractContrailGetResourceAttachedHeatResourceId(paramName.getValue().getValue());
-        if (contrailSharedResourceId != null
-            && context.getTranslatedIds().get(heatFileName).get(contrailSharedResourceId) != null) {
-          updateSharedResource(serviceTemplate, context, paramName,
-              context.getTranslatedIds().get(heatFileName).get(contrailSharedResourceId),
-              heatOrchestrationTemplate.getResources().get(contrailSharedResourceId));
+        Optional<String> contrailSharedResourceId = HeatToToscaUtil
+            .extractContrailGetResourceAttachedHeatResourceId(parameter.getValue().getValue());
+        if (contrailSharedResourceId.isPresent()
+            && context.getTranslatedIds().get(heatFileName).get(contrailSharedResourceId.get())
+            != null) {
+          String sharedTranslatedResourceId = context.getTranslatedIds().get(heatFileName).get
+              (contrailSharedResourceId.get());
+          ConsolidationDataUtil.removeSharedResource(serviceTemplate, heatOrchestrationTemplate,
+              context, parameter.getKey(),contrailSharedResourceId.get(), sharedTranslatedResourceId);
+          updateSharedResource(serviceTemplate, context, parameter,sharedTranslatedResourceId,
+              heatOrchestrationTemplate.getResources().get(contrailSharedResourceId.get()));
         }
       }
     }
@@ -302,21 +336,40 @@ public class TranslationService {
         && serviceTemplate.getTopology_template().getOutputs().size() == 0) {
       serviceTemplate.getTopology_template().setOutputs(null);
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void updateSharedResource(ServiceTemplate serviceTemplate, TranslationContext context,
                                     Map.Entry<String, Output> paramName,
                                     String sharedTranslatedResourceId, Resource resource) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     context.addHeatSharedResourcesByParam(paramName.getKey(), sharedTranslatedResourceId, resource);
     serviceTemplate.getTopology_template().getOutputs().remove(paramName.getKey());
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void translateResources(String heatFileName, ServiceTemplate serviceTemplate,
                                   HeatOrchestrationTemplate heatOrchestrationTemplate,
                                   TranslationContext context) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
+    if(MapUtils.isEmpty(heatOrchestrationTemplate.getResources())){
+      return;
+    }
+
     for (String resourceId : heatOrchestrationTemplate.getResources().keySet()) {
       Resource resource = heatOrchestrationTemplate.getResources().get(resourceId);
       if (resource == null) {
+        MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+            LoggerTragetServiceName.TRANSLATE_RESOURCE, ErrorLevel.ERROR.name(),
+            LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.TRANSLATE_HEAT);
         throw new CoreException(
             new ResourceNotFoundInHeatFileErrorBuilder(resourceId, heatFileName).build());
       }
@@ -324,6 +377,8 @@ public class TranslationService {
           .translateResource(heatFileName, serviceTemplate, heatOrchestrationTemplate, resource,
               resourceId, context);
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private Environment getHeatEnvFile(FileData heatFileData, TranslationContext context) {

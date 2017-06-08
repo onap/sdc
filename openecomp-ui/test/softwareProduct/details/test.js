@@ -1,84 +1,65 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
-import {expect} from 'chai';
 import deepFreeze from 'deep-freeze';
 import mockRest from 'test-utils/MockRest.js';
-import {cloneAndSet} from 'test-utils/Util.js';
+import {cloneAndSet, buildFromExistingObject} from 'test-utils/Util.js';
 import {storeCreator} from 'sdc-app/AppStore.js';
 
 import SoftwareProductCreationActionHelper from 'sdc-app/onboarding/softwareProduct/creation/SoftwareProductCreationActionHelper.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper.js';
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
+import {forms} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
+import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
+
+import {VSPEditorFactory, VSPEditorPostFactory, VSPEditorFactoryWithLicensingData, VSPEditorPostFactoryWithLicensingData} from 'test-utils/factories/softwareProduct/SoftwareProductEditorFactories.js';
+import {CategoryFactory}  from 'test-utils/factories/softwareProduct/VSPCategoriesFactory.js';
+import {heatSetupManifest} from 'test-utils/factories/softwareProduct/SoftwareProductAttachmentsFactories.js';
+
+import { FeatureGroupStoreFactory as FeatureGroup} from 'test-utils/factories/licenseModel/FeatureGroupFactories.js';
+import {LicenseAgreementStoreFactory as LicenseAgreement} from 'test-utils/factories/licenseModel/LicenseAgreementFactories.js';
+import VersionControllerUtilsFactory from 'test-utils/factories/softwareProduct/VersionControllerUtilsFactory.js';
+
 
 describe('Software Product Module Tests', function () {
 	it('Get Software Products List', () => {
 		const store = storeCreator();
 		deepFreeze(store.getState());
-
-		const softwareProductList = [
-			{
-				name: 'VSP1',
-				description: 'hjhj',
-				version: '0.1',
-				id: 'EBADF561B7FA4A788075E1840D0B5971',
-				subCategory: 'resourceNewCategory.network connectivity.virtual links',
-				category: 'resourceNewCategory.network connectivity',
-				vendorId: '5259EDE4CC814DC9897BA6F69E2C971B',
-				vendorName: 'Vendor',
-				checkinStatus: 'CHECK_OUT',
-				licensingData: {
-					'featureGroups': []
-				}
-			},
-			{
-				name: 'VSP2',
-				description: 'dfdfdfd',
-				version: '0.1',
-				id: '2F47447D22DB4C53B020CA1E66201EF2',
-				subCategory: 'resourceNewCategory.network connectivity.virtual links',
-				category: 'resourceNewCategory.network connectivity',
-				vendorId: '5259EDE4CC814DC9897BA6F69E2C971B',
-				vendorName: 'Vendor',
-				checkinStatus: 'CHECK_OUT',
-				licensingData: {
-					featureGroups: []
-				}
-			}
-		];
-
+		const softwareProductList = VSPEditorFactory.buildList(2);
 		deepFreeze(softwareProductList);
-
 		deepFreeze(store.getState());
-
 		const expectedStore = cloneAndSet(store.getState(), 'softwareProductList', softwareProductList);
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal('/onboarding-api/v1.0/vendor-software-products/');
-			expect(data).to.deep.equal(undefined);
-			expect(options).to.equal(undefined);
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
 			return {results: softwareProductList};
 		});
 
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/?versionFilter=Final');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: []};
+		});
+
 		return SoftwareProductActionHelper.fetchSoftwareProductList(store.dispatch).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			return SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(store.dispatch);
+		}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
@@ -86,62 +67,195 @@ describe('Software Product Module Tests', function () {
 		const store = storeCreator();
 		deepFreeze(store.getState());
 
-		const softwareProductPostRequest = deepFreeze({
-			name: 'vsp1',
-			description: 'string',
-			vendorId: '1',
-			vendorName: 'Vendor',
-			icon: 'icon',
-			subCategory: 'resourceNewCategory.network connectivity.virtual links',
-			category: 'resourceNewCategory.network connectivity',
-			licensingData: {}
-		});
+		const softwareProductPostRequest = VSPEditorPostFactory.build();
+		deepFreeze(softwareProductPostRequest);
+		const idFromResponse = '1';
+		const expectedVSP = VSPEditorPostFactory.build({id: idFromResponse, vendorId: softwareProductPostRequest.vendorId});
+		deepFreeze(expectedVSP);
 
-		const softwareProductToAdd = deepFreeze({
-			...softwareProductPostRequest
-		});
-
-		const softwareProductIdFromResponse = 'ADDED_ID';
-		const softwareProductAfterAdd = deepFreeze({
-			...softwareProductToAdd,
-			id: softwareProductIdFromResponse
-		});
-
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProductList', [softwareProductAfterAdd]);
-
-		mockRest.addHandler('create', ({options, data, baseUrl}) => {
-			expect(baseUrl).to.equal('/onboarding-api/v1.0/vendor-software-products/');
-			expect(data).to.deep.equal(softwareProductPostRequest);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('post', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/');
+			expect(data).toEqual(softwareProductPostRequest);
+			expect(options).toEqual(undefined);
 			return {
-				vspId: softwareProductIdFromResponse
+				vspId: idFromResponse
 			};
 		});
 
 		return SoftwareProductCreationActionHelper.createSoftwareProduct(store.dispatch, {
-			softwareProduct: softwareProductToAdd
-		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			softwareProduct: softwareProductPostRequest
+		}).then((response) => {
+			expect(response.vspId).toEqual(idFromResponse);
 		});
 	});
-	it('Save Software product', () => {
-		const softwareProduct = {
-			name: 'VSP5',
-			id: '4730033D16C64E3CA556AB0AC4478218',
-			description: 'A software model for Fortigate.',
-			subCategory: 'resourceNewCategory.network connectivity.virtual links',
-			category: 'resourceNewCategory.network connectivity',
-			vendorId: '1',
-			vendorName: 'Vendor',
-			licensingVersion: '1.0',
-			icon: 'icon',
-			licensingData: {
-				licenceAgreement: '123',
-				featureGroups: [
-					'123', '234'
-				]
+
+	it('Fetch Software Product with manifest', () => {
+		const store = storeCreator();
+		deepFreeze(store.getState());
+
+		const softwareProductPostRequest = VSPEditorPostFactory.build();
+		deepFreeze(softwareProductPostRequest);
+
+		const expectedGenericInfo = {
+			'name': {
+				isValid: true,
+				errorText: '',
+				validations: [{type: 'validateName', data: true}, {type: 'maxLength', data: 25}, {
+					type: 'required',
+					data: true
+				}]
+			},
+			'description': {
+				isValid: true,
+				errorText: '',
+				validations: [{type: 'required', data: true}]
 			}
 		};
+		const expectedFormName = forms.VENDOR_SOFTWARE_PRODUCT_DETAILS;
+
+		const idFromResponse = '1';
+		const version = { id: '0.1', label: '0.1'};
+		const expectedVSP = VSPEditorPostFactory.build({id: idFromResponse, vendorId: softwareProductPostRequest.vendorId});
+		deepFreeze(expectedVSP);
+		let expectedStore = cloneAndSet(store.getState(), 'softwareProduct.softwareProductEditor.data', expectedVSP);
+		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductEditor.genericFieldInfo', expectedGenericInfo);
+		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductEditor.formName', expectedFormName);
+		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductQuestionnaire', {qdata: {}, dataMap: {}, qgenericFieldInfo: {}});
+
+		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductAttachments.heatValidation', {
+			'attachmentsTree': {},
+			'errorList': [],
+			'selectedNode': 'All'
+		});
+		let manifest = heatSetupManifest.build();
+		expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductAttachments.heatSetup', manifest);
+
+		mockRest.addHandler('post', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-software-products/');
+			expect(data).toEqual(softwareProductPostRequest);
+			expect(options).toEqual(undefined);
+			return {
+				vspId: idFromResponse,
+				version
+			};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${idFromResponse}/versions/${version.id}`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return expectedVSP;
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${idFromResponse}/versions/${version.id}/questionnaire`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {data: JSON.stringify({}), schema: JSON.stringify({})};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${idFromResponse}/versions/${version.id}/orchestration-template-candidate/manifest`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return manifest;
+		});
+
+		return SoftwareProductCreationActionHelper.createSoftwareProduct(store.dispatch, {
+			softwareProduct: softwareProductPostRequest
+		}).then(() => {
+			return SoftwareProductActionHelper.fetchSoftwareProduct(store.dispatch, {softwareProductId: idFromResponse, version});
+		}).then(() => {
+			return SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(store.dispatch, {softwareProductId: idFromResponse, version});
+		}).then(() => {
+			expect(store.getState()).toEqual(expectedStore);
+			let newName = 'newName';
+			expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductEditor.formReady', null);
+			ValidationHelper.dataChanged(store.dispatch, {deltaData: {'name': newName}, formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS});
+			expectedStore = cloneAndSet(expectedStore, 'softwareProduct.softwareProductEditor.data.name', newName);
+			expect(store.getState()).toEqual(expectedStore);
+		});
+	});
+
+	it('Load and edit Software Product licensing data', () => {
+		const store = storeCreator();
+
+		const softwareProductPostRequest = VSPEditorPostFactory.build();
+		deepFreeze(softwareProductPostRequest);
+
+		const licenseModelId = softwareProductPostRequest.vendorId;
+		const LMVersion = VersionControllerUtilsFactory.build().version;
+		const secondLicenseModelId = 'secondLicenseModelId';
+
+		let FG1 = FeatureGroup.build();
+		let LA1 = LicenseAgreement.build({
+			featureGroupsIds: [FG1.id]
+		});
+
+		let FG2 = FeatureGroup.build();
+		let LA2 = LicenseAgreement.build({
+			featureGroupsIds: [FG2.id]
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/sdc1/feProxy/rest/v1/categories/resources/');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return [];
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/onboarding-api/v1.0/vendor-license-models/?versionFilter=Final');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: []};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${licenseModelId}/versions/${LMVersion.id}/license-agreements`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [LA1]};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${licenseModelId}/versions/${LMVersion.id}/feature-groups`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [FG1]};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${secondLicenseModelId}/versions/${LMVersion.id}/license-agreements`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [LA2]};
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-license-models/${secondLicenseModelId}/versions/${LMVersion.id}/feature-groups`);
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return {results: [FG2]};
+		});
+
+		return SoftwareProductActionHelper.loadSoftwareProductDetailsData(store.dispatch, {licenseModelId, licensingVersion: LMVersion}).then(() => {
+			let state = store.getState();
+			expect(state.licenseModel.licenseAgreement.licenseAgreementList).toEqual([LA1]);
+			expect(state.licenseModel.featureGroup.featureGroupsList).toEqual([FG1]);
+			return SoftwareProductActionHelper.softwareProductEditorVendorChanged(store.dispatch,
+				{deltaData: {vendorId: secondLicenseModelId, licensingVersion: LMVersion},
+					formName: forms.VENDOR_SOFTWARE_PRODUCT_DETAILS});
+		}).then(() => {
+			let state = store.getState();
+			expect(state.licenseModel.licenseAgreement.licenseAgreementList).toEqual([LA2]);
+			expect(state.licenseModel.featureGroup.featureGroupsList).toEqual([FG2]);
+		});
+	});
+
+	it('Save Software product', () => {
+
+		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
 
 		const store = storeCreator({
@@ -152,15 +266,20 @@ describe('Software Product Module Tests', function () {
 		});
 		deepFreeze(store.getState());
 
-		const toBeUpdatedSoftwareProductId = softwareProduct.id;
-		const softwareProductUpdateData = {
-			...softwareProduct,
+		const dataForUpdate = {
 			name: 'VSP5_UPDATED',
 			description: 'A software model for Fortigate._UPDATED'
 		};
+
+		const toBeUpdatedSoftwareProductId = softwareProduct.id;
+		let  softwareProductUpdateData = VSPEditorPostFactoryWithLicensingData.build(dataForUpdate);
+		delete softwareProductUpdateData.version;
+
+		const softwareProductPutRequest = buildFromExistingObject(VSPEditorFactoryWithLicensingData, softwareProductUpdateData, {id: toBeUpdatedSoftwareProductId, version: softwareProduct.version});
+
 		deepFreeze(softwareProductUpdateData);
 
-		const expectedStore = cloneAndSet(store.getState(), 'softwareProductList', [softwareProductUpdateData]);
+		const expectedStore = cloneAndSet(store.getState(), 'softwareProductList', [softwareProductPutRequest]);
 		const questionnaireData = {
 			general: {
 				affinityData: {
@@ -171,60 +290,30 @@ describe('Software Product Module Tests', function () {
 		};
 		deepFreeze(questionnaireData);
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			const expectedData = {
-				name: 'VSP5_UPDATED',
-				description: 'A software model for Fortigate._UPDATED',
-				subCategory: 'resourceNewCategory.network connectivity.virtual links',
-				category: 'resourceNewCategory.network connectivity',
-				vendorId: '1',
-				vendorName: 'Vendor',
-				licensingVersion: '1.0',
-				icon: 'icon',
-				licensingData: {
-					licenceAgreement: '123',
-					featureGroups: [
-						'123', '234'
-					]
-				}
-			};
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}`);
-			expect(data).to.deep.equal(expectedData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}`);
+			expect(data).toEqual(softwareProductUpdateData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/questionnaire`);
-			expect(data).to.deep.equal(questionnaireData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}/questionnaire`);
+			expect(data).toEqual(questionnaireData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductActionHelper.updateSoftwareProduct(store.dispatch, {
-			softwareProduct: softwareProductUpdateData,
+			softwareProduct: softwareProductPutRequest,
 			qdata: questionnaireData
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
+
 	it('Save Software product data only', () => {
-		const softwareProduct = {
-			name: 'VSP5',
-			id: '4730033D16C64E3CA556AB0AC4478218',
-			description: 'A software model for Fortigate.',
-			subCategory: 'resourceNewCategory.network connectivity.virtual links',
-			category: 'resourceNewCategory.network connectivity',
-			vendorId: '1',
-			vendorName: 'Vendor',
-			licensingVersion: '1.0',
-			icon: 'icon',
-			licensingData: {
-				licenceAgreement: '123',
-				featureGroups: [
-					'123', '234'
-				]
-			}
-		};
+
+		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
 
 		const store = storeCreator({
@@ -236,61 +325,35 @@ describe('Software Product Module Tests', function () {
 		deepFreeze(store.getState());
 		const expectedStore = store.getState();
 
-		const toBeUpdatedSoftwareProductId = softwareProduct.id;
-		const softwareProductUpdateData = {
-			...softwareProduct,
+		const dataForUpdate = {
 			name: 'VSP5_UPDATED',
 			description: 'A software model for Fortigate._UPDATED'
 		};
+
+		const toBeUpdatedSoftwareProductId = softwareProduct.id;
+		let  softwareProductUpdateData = VSPEditorPostFactoryWithLicensingData.build(dataForUpdate);
+		delete softwareProductUpdateData.version;
+
+		const softwareProductPutRequest = buildFromExistingObject(VSPEditorFactoryWithLicensingData, softwareProductUpdateData, {id: toBeUpdatedSoftwareProductId, version: softwareProduct.version});
+
 		deepFreeze(softwareProductUpdateData);
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			const expectedData = {
-				name: 'VSP5_UPDATED',
-				description: 'A software model for Fortigate._UPDATED',
-				subCategory: 'resourceNewCategory.network connectivity.virtual links',
-				category: 'resourceNewCategory.network connectivity',
-				vendorId: '1',
-				vendorName: 'Vendor',
-				licensingVersion: '1.0',
-				icon: 'icon',
-				licensingData: {
-					licenceAgreement: '123',
-					featureGroups: [
-						'123', '234'
-					]
-				}
-			};
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}`);
-			expect(data).to.deep.equal(expectedData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}`);
+			expect(data).toEqual(softwareProductUpdateData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductActionHelper.updateSoftwareProductData(store.dispatch, {
-			softwareProduct: softwareProductUpdateData
+			softwareProduct: softwareProductPutRequest
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
 	it('Save Software product questionnaire only', () => {
-		const softwareProduct = {
-			name: 'VSP5',
-			id: '4730033D16C64E3CA556AB0AC4478218',
-			description: 'A software model for Fortigate.',
-			subCategory: 'resourceNewCategory.network connectivity.virtual links',
-			category: 'resourceNewCategory.network connectivity',
-			vendorId: '1',
-			vendorName: 'Vendor',
-			icon: 'icon',
-			licensingData: {
-				licenceAgreement: '123',
-				featureGroups: [
-					'123', '234'
-				]
-			}
-		};
+		const softwareProduct = VSPEditorFactoryWithLicensingData.build();
 		deepFreeze(softwareProduct);
 
 		const store = storeCreator({
@@ -313,71 +376,30 @@ describe('Software Product Module Tests', function () {
 		};
 		deepFreeze(questionnaireData);
 
-		mockRest.addHandler('save', ({data, options, baseUrl}) => {
-			expect(baseUrl).to.equal(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/questionnaire`);
-			expect(data).to.deep.equal(questionnaireData);
-			expect(options).to.equal(undefined);
+		mockRest.addHandler('put', ({data, options, baseUrl}) => {
+			expect(baseUrl).toEqual(`/onboarding-api/v1.0/vendor-software-products/${toBeUpdatedSoftwareProductId}/versions/${softwareProduct.version.id}/questionnaire`);
+			expect(data).toEqual(questionnaireData);
+			expect(options).toEqual(undefined);
 			return {returnCode: 'OK'};
 		});
 
 		return SoftwareProductActionHelper.updateSoftwareProductQuestionnaire(store.dispatch, {
 			softwareProductId: softwareProduct.id,
+			version: softwareProduct.version,
 			qdata: questionnaireData
 		}).then(() => {
-			expect(store.getState()).to.deep.equal(expectedStore);
+			expect(store.getState()).toEqual(expectedStore);
 		});
 	});
 
 	it('Handle category without subcategories', () => {
-		const categories = deepFreeze([
-			{
-				name: 'Resource Category 1',
-				normalizedName: 'resource category 1',
-				uniqueId: 'resourceNewCategory.resource category 1',
-				subcategories: [
-					{
-						name: 'Sub Category for RC 1',
-						normalizedName: 'sub category for rc 1',
-						uniqueId: 'resourceNewCategory.resource category 1.sub category for rc 1'
-					},
-					{
-						name: 'SC4RC2',
-						normalizedName: 'sc4rc2',
-						uniqueId: 'resourceNewCategory.resource category 1.sc4rc2'
-					},
-					{
-						name: 'SC4RC1',
-						normalizedName: 'sc4rc1',
-						uniqueId: 'resourceNewCategory.resource category 1.sc4rc1'
-					}
-				]
-			},
-			{
-				name: 'Eeeeee',
-				normalizedName: 'eeeeee',
-				uniqueId: 'resourceNewCategory.eeeeee'
-			},
-			{
-				name: 'Some Recource',
-				normalizedName: 'some recource',
-				uniqueId: 'resourceNewCategory.some recource',
-				subcategories: [
-					{
-						name: 'Second Sub Category for S',
-						normalizedName: 'second sub category for s',
-						uniqueId: 'resourceNewCategory.some recource.second sub category for s'
-					},
-					{
-						name: 'Sub Category for Some Rec',
-						normalizedName: 'sub category for some rec',
-						uniqueId: 'resourceNewCategory.some recource.sub category for some rec'
-					}
-				]
-			}
-		]);
-		const category = SoftwareProductCategoriesHelper.getCurrentCategoryOfSubCategory('resourceNewCategory.some recource.sub category for some rec', categories);
-		expect(category).to.equal('resourceNewCategory.some recource');
+
+		const categories = CategoryFactory.buildList(3);
+		categories[0].subcategories = CategoryFactory.buildList(3);
+		categories[2].subcategories = CategoryFactory.buildList(3);
+
+		const category = SoftwareProductCategoriesHelper.getCurrentCategoryOfSubCategory(categories[2].subcategories[2].uniqueId, categories);
+		expect(category).toEqual(categories[2].uniqueId);
 	});
 
 });
-

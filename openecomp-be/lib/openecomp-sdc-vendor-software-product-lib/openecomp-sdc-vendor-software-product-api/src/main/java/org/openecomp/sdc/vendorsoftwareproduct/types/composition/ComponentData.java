@@ -24,6 +24,7 @@ public class ComponentData implements CompositionDataEntity {
   private String name;
   private String description;
   private String displayName;
+  private String vfcCode;
 
   public String getName() {
     return name;
@@ -50,15 +51,23 @@ public class ComponentData implements CompositionDataEntity {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (!(obj instanceof ComponentData)) {
+    if (!(object instanceof ComponentData)) {
       return false;
     }
 
-    ComponentData that = (ComponentData) obj;
+    ComponentData that = (ComponentData) object;
 
     if (!name.equals(that.name)) {
       return false;
@@ -70,11 +79,11 @@ public class ComponentData implements CompositionDataEntity {
 
   }
 
-  @Override
-  public int hashCode() {
-    int result = name.hashCode();
-    result = 31 * result + (description != null ? description.hashCode() : 0);
-    result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-    return result;
+  public String getVfcCode() {
+    return vfcCode;
+  }
+
+  public void setVfcCode(String vfcCode) {
+    this.vfcCode = vfcCode;
   }
 }

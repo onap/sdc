@@ -1,17 +1,17 @@
 {
-    "name": "vLCP", 
-    "description": "", 
-    "data": [
+  "name": "vLCP",
+  "description": "",
+  "data": [
+    {
+      "file": "lcp1_mss.oam-fw_si.yaml",
+      "type": "HEAT",
+      "isBase": "false",
+      "data": [
         {
-            "file": "lcp1_mss.oam-fw_si.yaml", 
-            "type": "HEAT", 
-            "isBase": "false",
-            "data": [
-                {
-                    "file": "lcp1_mss.oam-fw_si_with_comments.env",
-                    "type": "HEAT_ENV"
-                }
-            ]
+          "file": "lcp1_mss.oam-fw_si_with_comments.env",
+          "type": "HEAT_ENV"
         }
-    ]
+      ]
+    }
+  ]
 }

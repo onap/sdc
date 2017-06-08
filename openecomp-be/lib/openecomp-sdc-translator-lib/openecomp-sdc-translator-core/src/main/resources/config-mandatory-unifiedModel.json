@@ -1,0 +1,32 @@
+{
+  "unifiedCompositionImpl": {
+    "SingleSubstitution": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition.UnifiedCompositionSingleSubstitution"
+    },
+    "ScalingInstances": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition.UnifiedCompositionScalingInstances"
+    },
+    "CatalogInstance": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition.UnifiedCompositionCatalogInstance"
+    },
+    "NestedSingleCompute": {
+      "implementationClass": "org.openecomp.sdc.translator.services.heattotosca.impl.unifiedcomposition.UnifiedCompositionNestedSingleCompute"
+    }
+  },
+  "supportedConsolidationComputeResources": {
+    "OS::Nova::Server": {
+      "enable": true
+    }
+  },
+  "supportedConsolidationPortResources": {
+    "OS::Neutron::Port": {
+      "enable": true
+    },
+    "OS::ContrailV2::VirtualMachineInterface": {
+      "enable": true
+    }
+  },
+  "_config": {
+    "namespace": "mandatoryUnifiedModel"
+  }
+}

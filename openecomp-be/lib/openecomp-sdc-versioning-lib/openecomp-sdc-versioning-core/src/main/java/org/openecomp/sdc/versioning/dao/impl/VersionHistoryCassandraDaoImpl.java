@@ -36,7 +36,8 @@ import org.openecomp.sdc.versioning.dao.types.VersionableEntityId;
 import java.util.Collection;
 
 public class VersionHistoryCassandraDaoImpl extends CassandraBaseDao<VersionHistoryEntity>
-    implements VersionHistoryDao {
+    implements
+    VersionHistoryDao {
 
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static Mapper<VersionHistoryEntity> mapper =

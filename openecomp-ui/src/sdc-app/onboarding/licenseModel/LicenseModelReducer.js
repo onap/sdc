@@ -1,66 +1,85 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import {combineReducers} from 'redux';
+
+import activityLogReducer from 'nfvo-components/activity-log/ActivityLogReducer.js';
 
 import licenseModelCreationReducer from './creation/LicenseModelCreationReducer.js';
 import licenseModelEditorReducer from './LicenseModelEditorReducer.js';
 
 import licenseAgreementListReducer from './licenseAgreement/LicenseAgreementListReducer.js';
 import licenseAgreementEditorReducer from './licenseAgreement/LicenseAgreementEditorReducer.js';
-import {actionTypes as licenseAgreementActionTypes} from './licenseAgreement/LicenseAgreementConstants.js';
 
 import featureGroupsEditorReducer from './featureGroups/FeatureGroupsEditorReducer.js';
 import featureGroupsListReducer from './featureGroups/FeatureGroupsListReducer.js';
-import {actionTypes as featureGroupsActionConstants} from './featureGroups/FeatureGroupsConstants';
 
 import entitlementPoolsListReducer from './entitlementPools/EntitlementPoolsListReducer.js';
 import entitlementPoolsEditorReducer from './entitlementPools/EntitlementPoolsEditorReducer.js';
-import {actionTypes as entitlementPoolsConstants} from './entitlementPools/EntitlementPoolsConstants';
 
 import licenseKeyGroupsEditorReducer from './licenseKeyGroups/LicenseKeyGroupsEditorReducer.js';
 import licenseKeyGroupsListReducer from './licenseKeyGroups/LicenseKeyGroupsListReducer.js';
-import {actionTypes as licenseKeyGroupsConstants} from './licenseKeyGroups/LicenseKeyGroupsConstants.js';
+
+import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
+
+import {actionTypes as licenseModelOverviewConstants, selectedButton, VLM_DESCRIPTION_FORM} from './overview/LicenseModelOverviewConstants.js';
 
 export default combineReducers({
-	licenseModelCreation: licenseModelCreationReducer,
+	licenseModelCreation: createPlainDataReducer(licenseModelCreationReducer),
 	licenseModelEditor: licenseModelEditorReducer,
 
 	licenseAgreement: combineReducers({
-		licenseAgreementEditor: licenseAgreementEditorReducer,
-		licenseAgreementList: licenseAgreementListReducer,
-		licenseAgreementToDelete: (state = false, action) => action.type === licenseAgreementActionTypes.LICENSE_AGREEMENT_DELETE_CONFIRM ? action.licenseAgreementToDelete : state
+		licenseAgreementEditor: createPlainDataReducer(licenseAgreementEditorReducer),
+		licenseAgreementList: licenseAgreementListReducer
 	}),
 	featureGroup: combineReducers({
-		featureGroupEditor: featureGroupsEditorReducer,
-		featureGroupsList: featureGroupsListReducer,
-		featureGroupToDelete: (state = false, action) => action.type === featureGroupsActionConstants.FEATURE_GROUPS_DELETE_CONFIRM ? action.featureGroupToDelete : state
+		featureGroupEditor: createPlainDataReducer(featureGroupsEditorReducer),
+		featureGroupsList: featureGroupsListReducer
 	}),
 	entitlementPool: combineReducers({
-		entitlementPoolEditor: entitlementPoolsEditorReducer,
-		entitlementPoolsList: entitlementPoolsListReducer,
-		entitlementPoolToDelete: (state = false, action) => action.type === entitlementPoolsConstants.ENTITLEMENT_POOLS_DELETE_CONFIRM ? action.entitlementPoolToDelete : state
+		entitlementPoolEditor: createPlainDataReducer(entitlementPoolsEditorReducer),
+		entitlementPoolsList: entitlementPoolsListReducer
 	}),
 	licenseKeyGroup: combineReducers({
-		licenseKeyGroupsEditor: licenseKeyGroupsEditorReducer,
-		licenseKeyGroupsList: licenseKeyGroupsListReducer,
-		licenseKeyGroupToDelete: (state = false, action) => action.type === licenseKeyGroupsConstants.LICENSE_KEY_GROUPS_DELETE_CONFIRM ? action.licenseKeyGroupToDelete : state
+		licenseKeyGroupsEditor: createPlainDataReducer(licenseKeyGroupsEditorReducer),
+		licenseKeyGroupsList: licenseKeyGroupsListReducer
 	}),
+	licenseModelOverview: combineReducers({
+		selectedTab: (state = selectedButton.VLM_LIST_VIEW, action) => action.type === licenseModelOverviewConstants.LICENSE_MODEL_OVERVIEW_TAB_SELECTED ? action.buttonTab : state,
+		descriptionEditor: createPlainDataReducer(function(state = false, action) {
+			if (action.type === licenseModelOverviewConstants.LM_DATA_CHANGED) {
+				return {
+					...state,
+					data : {
+						description : action.description
+					},
+					formReady: null,
+					formName: VLM_DESCRIPTION_FORM,
+					genericFieldInfo: {
+						'description': {
+							isValid: true,
+							errorText: '',
+							validations: [{type: 'required', data: true}, {type: 'maxLength', data: 1000}]
+						}
+					}
+				};
+				//return action.description;
+			} else {
+				return state;
+			}
+		}
+	)}),
+	activityLog: activityLogReducer
 });

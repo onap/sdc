@@ -1,0 +1,430 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_1c1_scalling_instance
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.1c1_scalling_instance:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_1c1_t1_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_1c1_scalling_instance_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t2_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1c1_t1_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1c1_t2_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_1c1_t2_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
+    compute_1c1_scalling_instance_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1c1_t2_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    compute_1c1_scalling_instance_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_1c1_scalling_instance_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_1c1_scalling_instance_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t2_port_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1c1_t2_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+  node_templates:
+    1c1_scalling_instance_1c1_t1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_1c1_t1_port_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_1c1_t1_port_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_1c1_t1_port_fixed_ips
+          - index_value
+        name:
+          get_input:
+          - port_1c1_t1_port_name
+          - index_value
+        network:
+          get_input:
+          - port_1c1_t1_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: 1c1_scalling_instance
+          relationship: tosca.relationships.network.BindsTo
+    1c1_scalling_instance:
+      type: org.openecomp.resource.vfc.nodes.heat.1c1_scalling_instance
+      properties:
+        availability_zone:
+          get_input:
+          - compute_1c1_scalling_instance_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        metadata:
+          get_input:
+          - compute_1c1_scalling_instance_metadata
+          - index_value
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_1c1_scalling_instance_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_1c1_scalling_instance_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_1c1_scalling_instance_user_data_format
+          - index_value
+    1c1_scalling_instance_1c1_t2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input:
+          - port_1c1_t2_port_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_1c1_t2_port_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_1c1_t2_port_mac_requirements
+          - index_value
+        fixed_ips:
+          get_input:
+          - port_1c1_t2_port_fixed_ips
+          - index_value
+        name:
+          get_input:
+          - port_1c1_t2_port_name
+          - index_value
+        network:
+          get_input:
+          - port_1c1_t2_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: 1c1_scalling_instance
+          relationship: tosca.relationships.network.BindsTo
+  outputs:
+    1c1_scalling_instance_1c1_t1_port_tenant_id:
+      type: list
+      value:
+        get_attribute:
+        - 1c1_scalling_instance_1c1_t1_port
+        - tenant_id
+      entry_schema:
+        type: string
+    1c1_scalling_instance_instance_name:
+      type: list
+      value:
+        get_attribute:
+        - 1c1_scalling_instance
+        - instance_name
+      entry_schema:
+        type: string
+    1c1_scalling_instance_1c1_t2_port_tenant_id:
+      type: list
+      value:
+        get_attribute:
+        - 1c1_scalling_instance_1c1_t2_port
+        - tenant_id
+      entry_schema:
+        type: string
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.1c1_scalling_instance
+    capabilities:
+      disk.device.latency_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.latency
+      disk.ephemeral.size_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.ephemeral.size
+      disk.root.size_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.root.size
+      endpoint_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - endpoint
+      disk.read.bytes_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.read.bytes
+      network.outgoing.packets.rate_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.outgoing.packets.rate
+      network.incoming.packets.rate_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.incoming.packets.rate
+      disk.usage_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.usage
+      memory.resident_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - memory.resident
+      network.incoming.bytes.rate_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.incoming.bytes.rate
+      cpu_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - cpu
+      disk.write.bytes_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.write.bytes
+      network.incoming.packets.rate_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.incoming.packets.rate
+      network.incoming.bytes_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.incoming.bytes
+      disk.write.bytes.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.write.bytes.rate
+      disk.device.allocation_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.allocation
+      network.incoming.bytes.rate_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.incoming.bytes.rate
+      feature_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - feature
+      disk.device.write.requests.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.write.requests.rate
+      disk.read.bytes.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.read.bytes.rate
+      network.outpoing.packets_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.outpoing.packets
+      scalable_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - scalable
+      disk.device.read.bytes_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.read.bytes
+      binding_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - binding
+      disk.device.write.bytes_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.write.bytes
+      disk.read.requests_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.read.requests
+      network.incoming.packets_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.incoming.packets
+      vcpus_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - vcpus
+      network.outgoing.bytes_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.outgoing.bytes
+      host_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - host
+      disk.write.requests_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.write.requests
+      feature_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - feature
+      binding_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - binding
+      disk.device.read.requests.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.read.requests.rate
+      attachment_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - attachment
+      disk.device.read.bytes.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.read.bytes.rate
+      network.outgoing.packets.rate_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.outgoing.packets.rate
+      disk.device.iops_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.iops
+      disk.device.capacity_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.capacity
+      disk.capacity_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.capacity
+      disk.write.requests.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.write.requests.rate
+      cpu_util_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - cpu_util
+      disk.device.read.requests_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.read.requests
+      disk.device.write.bytes.rate_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.write.bytes.rate
+      disk.device.write.requests_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.write.requests
+      network.outgoing.bytes.rate_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.outgoing.bytes
+      disk.latency_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.latency
+      binding_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - binding
+      disk.device.usage_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.device.usage
+      network.incoming.packets_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.incoming.packets
+      disk.allocation_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.allocation
+      feature_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - feature
+      memory.usage_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - memory.usage
+      network.incoming.bytes_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.incoming.bytes
+      network.outgoing.bytes.rate_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - network.outgoing.bytes.rate
+      os_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - os
+      disk.iops_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - disk.iops
+      network.outpoing.packets_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - network.outpoing.packets
+      attachment_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - attachment
+      cpu.delta_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - cpu.delta
+      memory_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - memory
+      instance_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - instance
+    requirements:
+      dependency_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - dependency
+      link_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - link
+      dependency_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - dependency
+      dependency_1c1_scalling_instance_1c1_t1_port:
+      - 1c1_scalling_instance_1c1_t1_port
+      - dependency
+      link_1c1_scalling_instance_1c1_t2_port:
+      - 1c1_scalling_instance_1c1_t2_port
+      - link
+      local_storage_1c1_scalling_instance:
+      - 1c1_scalling_instance
+      - local_storage

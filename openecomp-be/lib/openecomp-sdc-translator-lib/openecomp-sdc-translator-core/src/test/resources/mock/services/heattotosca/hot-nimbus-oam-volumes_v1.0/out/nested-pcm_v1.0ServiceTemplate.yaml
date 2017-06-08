@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested-pcm_v1.0
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.pcrf_pcm_server:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -123,11 +99,21 @@ topology_template:
     pcrf_pcm_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_cps_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_cps
         network:
           get_input: pcrf_cps_net_name
       requirements:
@@ -144,21 +130,31 @@ topology_template:
           get_input: availabilityzone_name
         image:
           get_input: pcrf_pcm_image_name
-        config_drive: 'True'
         metadata:
           vnf_id:
             get_input: pcrf_vnf_id
+        config_drive: true
         user_data_format: RAW
         name:
           get_input: pcrf_pcm_server_name
     pcrf_pcm_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: pcrf_security_group_name
         fixed_ips:
         - ip_address:
             get_input: pcrf_oam_net_ip
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: pcrf_oam
         network:
           get_input: pcrf_oam_net_name
       requirements:
@@ -167,7 +163,7 @@ topology_template:
           node: pcrf_server_pcm
           relationship: tosca.relationships.network.BindsTo
   groups:
-    nested-pcm_v1.0:
+    nested-pcm_v1.0_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested-pcm_v1.0.yaml
@@ -183,31 +179,208 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v1.0
     capabilities:
-      endpoint_pcrf_server_pcm:
+      disk.device.latency_pcrf_server_pcm:
       - pcrf_server_pcm
-      - endpoint
+      - disk.device.latency
+      disk.device.write.requests_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.write.requests
+      vcpus_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - vcpus
+      network.outgoing.bytes_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.outgoing.bytes
+      disk.device.write.bytes_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.write.bytes
+      network.outgoing.bytes_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.outgoing.bytes
+      scalable_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - scalable
+      disk.device.read.requests_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.read.requests
+      network.outgoing.bytes.rate_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.outgoing.bytes.rate
+      network.outgoing.bytes.rate_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.outgoing.bytes.rate
+      disk.device.write.requests.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.write.requests.rate
+      disk.usage_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.usage
+      disk.latency_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.latency
+      disk.device.capacity_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.capacity
+      network.incoming.bytes_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.incoming.bytes
+      network.incoming.bytes_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.incoming.bytes
+      disk.device.allocation_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.allocation
+      memory_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - memory
+      disk.device.write.bytes.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.write.bytes.rate
+      disk.write.bytes.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.write.bytes.rate
       attachment_pcrf_pcm_port_0:
       - pcrf_pcm_port_0
       - attachment
+      disk.read.bytes.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.read.bytes.rate
+      network.incoming.packets.rate_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.incoming.packets.rate
+      host_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - host
+      network.incoming.packets.rate_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.incoming.packets.rate
+      attachment_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - attachment
+      disk.write.requests_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.write.requests
+      network.incoming.packets_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.incoming.packets
+      network.incoming.packets_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.incoming.packets
+      memory.resident_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - memory.resident
+      disk.write.requests.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.write.requests.rate
       binding_pcrf_server_pcm:
       - pcrf_server_pcm
+      - binding
+      disk.device.read.bytes_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.read.bytes
+      disk.capacity_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.capacity
+      disk.read.requests_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.read.requests
+      feature_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - feature
+      endpoint_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - endpoint
+      disk.device.read.requests.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.read.requests.rate
+      disk.ephemeral.size_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.ephemeral.size
+      cpu_util_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - cpu_util
+      disk.write.bytes_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.write.bytes
+      disk.device.usage_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.usage
+      feature_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - feature
+      feature_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - feature
+      disk.allocation_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.allocation
+      disk.read.bytes_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.read.bytes
+      network.outgoing.packets.rate_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.outgoing.packets.rate
+      disk.device.read.bytes.rate_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.read.bytes.rate
+      instance_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - instance
+      disk.device.iops_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.device.iops
+      network.outpoing.packets_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.outpoing.packets
+      network.outpoing.packets_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.outpoing.packets
+      disk.iops_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.iops
+      network.incoming.bytes.rate_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - network.incoming.bytes.rate
+      cpu_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - cpu
+      network.incoming.bytes.rate_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - network.incoming.bytes.rate
+      disk.root.size_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - disk.root.size
+      binding_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
       - binding
       os_pcrf_server_pcm:
       - pcrf_server_pcm
       - os
-      host_pcrf_server_pcm:
-      - pcrf_server_pcm
-      - host
-      scalable_pcrf_server_pcm:
-      - pcrf_server_pcm
-      - scalable
-      attachment_pcrf_pcm_port_1:
+      binding_pcrf_pcm_port_1:
       - pcrf_pcm_port_1
-      - attachment
+      - binding
+      cpu.delta_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - cpu.delta
+      memory.usage_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - memory.usage
     requirements:
+      dependency_pcrf_pcm_port_0:
+      - pcrf_pcm_port_0
+      - dependency
+      dependency_pcrf_server_pcm:
+      - pcrf_server_pcm
+      - dependency
       local_storage_pcrf_server_pcm:
       - pcrf_server_pcm
       - local_storage
+      dependency_pcrf_pcm_port_1:
+      - pcrf_pcm_port_1
+      - dependency
       link_pcrf_pcm_port_0:
       - pcrf_pcm_port_0
       - link

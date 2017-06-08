@@ -20,14 +20,8 @@
 
 package org.openecomp.sdc.common.errors;
 
-/**
- * The type Validation error builder.
- */
 public class ValidationErrorBuilder {
 
-  /**
-   * The constant FIELD_VALIDATION_ERROR_ERR_ID.
-   */
   public static final String FIELD_VALIDATION_ERROR_ERR_ID = "FIELD_VALIDATION_ERROR_ERR_ID";
   private static final String FIELD_VALIDATION_ERROR_ERR_MSG =
       "Field does not conform to predefined criteria : %s : %s";
@@ -56,11 +50,6 @@ public class ValidationErrorBuilder {
     }
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

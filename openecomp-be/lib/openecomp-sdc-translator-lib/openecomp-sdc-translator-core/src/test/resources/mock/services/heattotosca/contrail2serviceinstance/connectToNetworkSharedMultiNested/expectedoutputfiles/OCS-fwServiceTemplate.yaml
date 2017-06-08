@@ -1,0 +1,541 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: OCS-fw
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    service_policy_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Policy Name
+    st_static_routes_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of static routes enabled-disabled
+    st_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: service type
+    st_service_interface_type_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of interface types
+    st_mode:
+      hidden: false
+      immutable: false
+      type: string
+      description: service mode
+    Cricket_OCS_protected_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of Cricket OCS network
+    oam_mgmt_net_0_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of OAM network
+    start_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of dst port
+    st_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: availability zone
+    service_instance_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Service instance name
+    st_scaling:
+      hidden: false
+      immutable: false
+      type: string
+      description: Indicates whether service scaling is enabled
+    max_num_fw_instances:
+      hidden: false
+      immutable: false
+      type: float
+      description: maximum number of firewall instances for scaling
+    start_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: Start of src port
+    network_param2:
+      hidden: false
+      immutable: false
+      type: string
+    service_policy_direction:
+      hidden: false
+      immutable: false
+      type: string
+      description: Direction of Policy
+    network_param1:
+      hidden: false
+      immutable: false
+      type: string
+    st_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of service template
+    hsl_direct_net3:
+      hidden: false
+      immutable: false
+      type: string
+    hsl_direct_net4:
+      hidden: false
+      immutable: false
+      type: string
+    HSL_direct_net_gateway:
+      hidden: false
+      immutable: false
+      type: string
+      description: HSL (Logging) network gateway address
+    hsl_direct_net1:
+      hidden: false
+      immutable: false
+      type: string
+    hsl_direct_net2:
+      hidden: false
+      immutable: false
+      type: string
+    st_shared_ip_list:
+      hidden: false
+      immutable: false
+      type: string
+      description: List of shared ip enabled-disabled
+    Cricket_OCS_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of Cricket OCS network
+    end_src_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of src port
+    end_dst_ports:
+      hidden: false
+      immutable: false
+      type: float
+      description: End of dst port
+    st_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the image
+    HSL_direct_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of HSL (Logging) network
+    HSL_direct_net_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: HSL (Logging) network address (CIDR notation)
+  node_templates:
+    service_instance2:
+      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      directives:
+      - substitutable
+      properties:
+        flavor:
+          get_input: st_flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image_name:
+          get_input: st_image_name
+        service_template_filter:
+          substitute_service_template: OCS-fw_service_instance2ServiceTemplate.yaml
+          count:
+            get_input: max_num_fw_instances
+          scaling_enabled:
+            get_input: st_scaling
+          mandatory: false
+        service_type:
+          get_input: st_type
+        static_routes_list:
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 2
+        service_template_name:
+          get_input: st_name
+        service_interface_type_list:
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 2
+        service_instance_name:
+          get_input: service_instance_name
+        interface_list:
+        - virtual_network:
+            get_input: network_param2
+        - virtual_network:
+            get_input: network_param1
+        - virtual_network:
+            get_input: network_param2
+        service_mode:
+          get_input: st_mode
+        shared_ip_list:
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 2
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: hsl_direct_net
+          relationship: tosca.relationships.DependsOn
+    service_instance1:
+      type: org.openecomp.resource.abstract.nodes.heat.service_template
+      directives:
+      - substitutable
+      properties:
+        flavor:
+          get_input: st_flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image_name:
+          get_input: st_image_name
+        service_template_filter:
+          substitute_service_template: OCS-fw_service_instance1ServiceTemplate.yaml
+          count:
+            get_input: max_num_fw_instances
+          scaling_enabled:
+            get_input: st_scaling
+          mandatory: false
+        service_type:
+          get_input: st_type
+        static_routes_list:
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_static_routes_list
+          - ','
+          - 2
+        service_template_name:
+          get_input: st_name
+        service_interface_type_list:
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_service_interface_type_list
+          - ','
+          - 2
+        service_instance_name:
+          get_input: service_instance_name
+        interface_list:
+        - virtual_network:
+            get_input: network_param1
+        - virtual_network:
+            get_input: network_param1
+        - virtual_network:
+            get_input: network_param2
+        service_mode:
+          get_input: st_mode
+        shared_ip_list:
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 0
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 1
+        - token:
+          - get_input: st_shared_ip_list
+          - ','
+          - 2
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: hsl_direct_net
+          relationship: tosca.relationships.DependsOn
+    test_nested2:
+      type: org.openecomp.resource.abstract.nodes.heat.OCS-fw2
+      directives:
+      - substitutable
+      properties:
+        network_param2:
+          get_input: network_param2
+        service_template_filter:
+          substitute_service_template: OCS-fw2ServiceTemplate.yaml
+        network_param1:
+          get_input: network_param1
+    hsl_direct_net:
+      type: org.openecomp.resource.vl.nodes.heat.network.contrail.VirtualNetwork
+      properties:
+        network_name:
+          get_input: HSL_direct_net_id
+        subnets:
+          hsl_ip_subnet:
+            cidr:
+              get_input: HSL_direct_net_cidr
+            gateway_ip:
+              get_input: HSL_direct_net_gateway
+    service_policy:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.contrail.NetworkRules
+      properties:
+        entries:
+          policy_rule:
+          - src_ports:
+            - start_port:
+                get_input: start_src_ports
+              end_port:
+                get_input: end_src_ports
+            protocol: any
+            action_list:
+              apply_service:
+              - service_instance1
+            dst_addresses:
+            - virtual_network:
+                get_input: Cricket_OCS_direct_net_id
+            dst_ports:
+            - start_port:
+                get_input: start_dst_ports
+              end_port:
+                get_input: end_dst_ports
+            src_addresses:
+            - virtual_network:
+                get_input: Cricket_OCS_protected_net_id
+            direction:
+              get_input: service_policy_direction
+        name:
+          get_input: service_policy_name
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: service_instance1
+          relationship: tosca.relationships.DependsOn
+  groups:
+    OCS-fw_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/OCS-fw.yml
+        description: |
+          Based on the following reference for the HOT-DMZ-FW template: Version 3.5 8-10-2015 (Authors: Art Mishurov,am254u & Johhny Chen, jc3066) - HOT-DMZ-FW template that creates two DMZ networks (direct and protected) with a scaled out firewall service between the two.
+      members:
+      - service_instance2
+      - service_instance1
+      - test_nested2
+      - hsl_direct_net
+      - service_policy
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.OCS-fw
+    capabilities:
+      feature_hsl_direct_net_test_nested3_test_nested2:
+      - test_nested2
+      - feature_hsl_direct_net_test_nested3
+      feature_service_instance1:
+      - service_instance1
+      - feature
+      feature_service_policy_test_nested2:
+      - test_nested2
+      - feature_service_policy
+      feature_service_instance2:
+      - service_instance2
+      - feature
+      feature_test_nested3_test_nested2:
+      - test_nested2
+      - feature_test_nested3
+      attachment_hsl_direct_net:
+      - hsl_direct_net
+      - attachment
+      feature_service_instance4_test_nested3_test_nested2:
+      - test_nested2
+      - feature_service_instance4_test_nested3
+      feature_service_instance3_test_nested2:
+      - test_nested2
+      - feature_service_instance3
+      feature_hsl_direct_net_test_nested2:
+      - test_nested2
+      - feature_hsl_direct_net
+      end_point_hsl_direct_net_test_nested3_test_nested2:
+      - test_nested2
+      - end_point_hsl_direct_net_test_nested3
+      end_point_hsl_direct_net:
+      - hsl_direct_net
+      - end_point
+      link_hsl_direct_net:
+      - hsl_direct_net
+      - link
+      feature_service_policy:
+      - service_policy
+      - feature
+      link_hsl_direct_net_test_nested2:
+      - test_nested2
+      - link_hsl_direct_net
+      attachment_hsl_direct_net_test_nested3_test_nested2:
+      - test_nested2
+      - attachment_hsl_direct_net_test_nested3
+      attachment_hsl_direct_net_test_nested2:
+      - test_nested2
+      - attachment_hsl_direct_net
+      feature_service_instance1_test_nested2:
+      - test_nested2
+      - feature_service_instance1
+      link_hsl_direct_net_test_nested3_test_nested2:
+      - test_nested2
+      - link_hsl_direct_net_test_nested3
+      feature_test_nested2:
+      - test_nested2
+      - feature
+      feature_hsl_direct_net:
+      - hsl_direct_net
+      - feature
+      feature_service_policy_test_nested3_test_nested2:
+      - test_nested2
+      - feature_service_policy_test_nested3
+      end_point_hsl_direct_net_test_nested2:
+      - test_nested2
+      - end_point_hsl_direct_net
+    requirements:
+      link_port_1_service_instance4_test_nested3_test_nested2:
+      - test_nested2
+      - link_port_1_service_instance4_test_nested3
+      dependency_hsl_direct_net:
+      - hsl_direct_net
+      - dependency
+      dependency_hsl_direct_net_test_nested2:
+      - test_nested2
+      - dependency_hsl_direct_net
+      dependency_hsl_direct_net_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_hsl_direct_net_test_nested3
+      network_service_policy_test_nested3_test_nested2:
+      - test_nested2
+      - network_service_policy_test_nested3
+      link_port_2_service_instance1:
+      - service_instance1
+      - link_port_2
+      link_port_2_service_instance2:
+      - service_instance2
+      - link_port_2
+      dependency_service_policy:
+      - service_policy
+      - dependency
+      dependency_service_instance1_test_nested2:
+      - test_nested2
+      - dependency_service_instance1
+      link_port_0_service_instance3_test_nested2:
+      - test_nested2
+      - link_port_0_service_instance3
+      link_port_2_service_instance3_test_nested2:
+      - test_nested2
+      - link_port_2_service_instance3
+      dependency_service_instance4_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_service_instance4_test_nested3
+      dependency_service_policy_test_nested2:
+      - test_nested2
+      - dependency_service_policy
+      dependency_test_nested2:
+      - test_nested2
+      - dependency
+      link_port_0_service_instance1_test_nested2:
+      - test_nested2
+      - link_port_0_service_instance1
+      link_port_1_service_instance2:
+      - service_instance2
+      - link_port_1
+      link_port_1_service_instance1:
+      - service_instance1
+      - link_port_1
+      link_port_1_service_instance3_test_nested2:
+      - test_nested2
+      - link_port_1_service_instance3
+      link_port_0_service_instance2:
+      - service_instance2
+      - link_port_0
+      link_port_0_service_instance1:
+      - service_instance1
+      - link_port_0
+      link_port_0_service_instance4_test_nested3_test_nested2:
+      - test_nested2
+      - link_port_0_service_instance4_test_nested3
+      dependency_service_policy_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_service_policy_test_nested3
+      link_port_1_service_instance1_test_nested2:
+      - test_nested2
+      - link_port_1_service_instance1
+      network_service_policy:
+      - service_policy
+      - network
+      network_service_policy_test_nested2:
+      - test_nested2
+      - network_service_policy
+      dependency_service_instance3_test_nested2:
+      - test_nested2
+      - dependency_service_instance3
+      link_port_2_service_instance1_test_nested2:
+      - test_nested2
+      - link_port_2_service_instance1
+      dependency_test_nested3_test_nested2:
+      - test_nested2
+      - dependency_test_nested3
+      dependency_service_instance2:
+      - service_instance2
+      - dependency
+      link_port_2_service_instance4_test_nested3_test_nested2:
+      - test_nested2
+      - link_port_2_service_instance4_test_nested3
+      dependency_service_instance1:
+      - service_instance1
+      - dependency

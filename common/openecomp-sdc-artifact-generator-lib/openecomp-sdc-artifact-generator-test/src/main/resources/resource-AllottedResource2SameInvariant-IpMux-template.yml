@@ -1,0 +1,81 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: a54a5235-b69d-4f8a-838b-d011e6783fa5
+  UUID: f64afdc3-6308-4f0c-a476-0d39c8a1fb4d
+  name: Allotted Resource
+  description: This is a VF - Allotted resource
+  type: VF
+  category: Allotted Resource
+  subcategory: IP Mux Demux
+  resourceVendor: '1'
+  resourceVendorRelease: '1'
+imports:
+- Alloted resource:
+    file: resource-AllotedResource-template.yml
+topology_template:
+  node_templates:
+    allotedresource1:
+      type: org.openecomp.resource.vfc.AllottedResource
+      metadata:
+        invariantUUID: 666b409b-5614-41a8-945e-a53d68f5d439
+        UUID: df0c1c4d-1756-4b2a-998e-73f9f4d77afa
+        customizationUUID: 1c217567-5093-41f5-86e6-22c97ef24e75
+        version: '1.0'
+        name: Alloted resource
+        description: This is a VFC- Allotted resource
+        type: VFC
+        category: Allotted Resource
+        subcategory: Allotted Resource
+      properties:
+        role: name
+        ecomp_naming:
+          naming_policy: test
+          ecomp_generated_naming: false
+          supplemental_data:
+            Key1: key1
+        providing_service_invariant_uuid: 34a4d119-06bc-4ab4-8c5a-a498d638297c
+        min_instances: 1
+        max_instances: 1
+        providing_service_uuid: e14a509f-b611-4b30-b38c-bc7f11b679aa
+        providing_service_name: vVIGaaS
+        ecomp_homing:
+          instance_node_target: Test
+          homing_policy: Test
+          supplemental_data:
+            Key: key
+          ecomp_selected_instance_node_target: false
+  groups: {
+    }
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.AllottedResource
+    capabilities:
+      Alloted resource 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Alloted resource 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Alloted resource 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

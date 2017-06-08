@@ -1,0 +1,304 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.myNovaServer2:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.myNovaServer1:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+  org.openecomp.resource.vfc.nodes.heat.myNovaServer3:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    flavor:
+      hidden: false
+      immutable: false
+      type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: p1
+    image:
+      hidden: false
+      immutable: false
+      type: string
+    p2:
+      hidden: false
+      immutable: false
+      type: string
+      description: p2
+    names:
+      hidden: false
+      immutable: false
+      type: string
+    myIPs:
+      hidden: false
+      immutable: false
+      type: string
+      description: ip1
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: myAvailability_zone_1
+    net:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of network
+  node_templates:
+    myPort6:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p2
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer3
+          relationship: tosca.relationships.network.BindsTo
+    myPort5:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p1
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer3
+          relationship: tosca.relationships.network.BindsTo
+    myNovaServer1:
+      type: org.openecomp.resource.vfc.nodes.heat.myNovaServer1
+      properties:
+        flavor:
+          get_input: flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: image
+        name:
+          get_input:
+          - names
+          - 0
+    myNovaServer2:
+      type: org.openecomp.resource.vfc.nodes.heat.myNovaServer2
+      properties:
+        flavor:
+          get_input: flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: image
+        name:
+          get_input:
+          - names
+          - 0
+    myPort2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p2
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer1
+          relationship: tosca.relationships.network.BindsTo
+    myNovaServer3:
+      type: org.openecomp.resource.vfc.nodes.heat.myNovaServer3
+      properties:
+        flavor:
+          get_input: flavor
+        availability_zone:
+          get_input: availability_zone_1
+        image:
+          get_input: image
+        name:
+          get_input:
+          - names
+          - 0
+    myPort1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p1
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer1
+          relationship: tosca.relationships.network.BindsTo
+    myPort4:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p2
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer2
+          relationship: tosca.relationships.network.BindsTo
+    myPort3:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: p1
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - myIPs
+            - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: net
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: myNovaServer2
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    SVCgroup2_mixGroup_group:
+      type: tosca.groups.Root
+      members:
+      - SVCgroup1_simpleGroup_group
+      - myNovaServer3
+    main_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/main.yml
+        description: cmaui server template for vMMSC
+      members:
+      - myPort6
+      - myPort5
+      - myNovaServer1
+      - myNovaServer2
+      - myPort2
+      - myNovaServer3
+      - myPort1
+      - myPort4
+      - myPort3
+    SVCgroup3_groupsMembers_group:
+      type: tosca.groups.Root
+      members:
+      - SVCgroup1_simpleGroup_group
+      - SVCgroup2_mixGroup_group
+    SVCgroup1_simpleGroup_group:
+      type: tosca.groups.Root
+      members:
+      - myNovaServer1
+      - myNovaServer2
+  policies:
+    SVCgroup2_policy:
+      type: org.openecomp.policies.placement.valet.Diversity
+      properties:
+        level: host
+      targets:
+      - SVCgroup2_mixGroup_group
+    SVCgroup1_policy:
+      type: org.openecomp.policies.placement.valet.Affinity
+      properties:
+        level: host
+      targets:
+      - SVCgroup1_simpleGroup_group
+    SVCgroup3_policy:
+      type: org.openecomp.policies.placement.valet.Exclusivity
+      properties:
+        level: rack
+      targets:
+      - SVCgroup3_groupsMembers_group

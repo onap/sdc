@@ -1,61 +1,55 @@
-$transitionLength: 0.5s;
-
-@mixin expand-transition($tl){
-	transition: width $tl, background-color $tl, cursor $tl;
-}
-
-@mixin color-transition($tl){
-	transition: color $tl;
-}
-
-.expandable-input-wrapper {
-  display: flex;
-	&:hover{
-		.form-control {
-			border-color: $gray;
+.expandable-input-top {
+	display: flex;
+	height: 22px;
+	.svg-icon-wrapper {
+		height: 17px;
+		width: 17px;
+	}
+	.expandable-input-wrapper {
+		display: flex;
+		.svg-icon.search {
+			height: 17px;
+			width: 17px;
 		}
-	}
-  .expandable-input-control {
-    flex: 1 1;
-    margin: 0;
-    .form-control {
-			border-radius: 20px;
-    }
-		align-self: center;
-  }
-	.expandable-active {
-		@include expand-transition($transitionLength);
-		width: 215px;
-		cursor: text;
-	}
-	.expandable-not-active {
-		@include expand-transition($transitionLength);
-		width: 28px;
-		cursor: pointer;
-		background-color: transparent;
-		color: transparent;
-	}
-
-  .expandable-icon {
-		@include color-transition($transitionLength);
-    position: relative;
-    left: -20px;
-    align-self: center;
-    width: 0;
-		cursor: pointer;
-		color: $dark-gray;
-  }
-
-	.expandable-close-button{
-		@extend .expandable-icon;
-		color: $gray;
-		opacity: 0.5;
-		&:hover {
-			opacity: 1;
+		&.closed {
+			.svg-icon.search {
+				transition: fill 0.5s ease-in;
+				fill: $blue;
+				cursor: pointer;
+				&:hover {
+					transition: fill 0.5s ease-in;
+					fill: $dark-blue;
+				}
+			}
 		}
-	}
-	.expandable-icon-active {
-		@include color-transition($transitionLength);
-		color: $blue;
+		&.opened {
+			.svg-icon-wrapper {
+				margin-left: 3px;
+			}
+			.svg-icon.search {
+				fill: $dark-blue;
+			}
+			.svg-icon.close {
+				margin-left: 7px;
+				height: 10px;
+				width: 10px;
+				opacity: 0.6;
+				fill: $dark-gray;
+				&:hover {
+					opacity: 1;
+				}
+			}
+		}
+		.expandable-input-control {
+			.form-control {
+				border: none;
+				background-color: transparent;
+				border-radius: 0;
+				border-bottom: 1px solid $gray;
+				height: 22px;
+				padding: 0 5px;
+			}
+			margin: 0;
+		}
 	}
 }

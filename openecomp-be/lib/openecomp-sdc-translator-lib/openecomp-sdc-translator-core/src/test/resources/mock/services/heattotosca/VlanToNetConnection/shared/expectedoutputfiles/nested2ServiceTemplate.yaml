@@ -1,0 +1,232 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested2
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.cmaui:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    p1:
+      hidden: false
+      immutable: false
+      type: string
+      description: UID of OAM network
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+    security_group_name:
+      hidden: false
+      immutable: false
+      description: not impotrtant
+    vlan_ids:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    lb_st_vlan_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    abc_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+    subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+    subinterface_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    server_cmaui:
+      type: org.openecomp.resource.vfc.nodes.heat.cmaui
+      properties:
+        flavor:
+          get_input: cmaui_flavor
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: cmaui_image
+        name:
+          get_input:
+          - cmaui_names
+          - 0
+    template_Vlan_3:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - cmaui_port_1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_input: p1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: cmaui_port_1
+          relationship: tosca.relationships.network.BindsTo
+    cmaui_port_1:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        security_groups:
+        - get_input: security_group_name
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - cmaui_oam_ips
+            - 0
+        network:
+          get_input: p1
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: server_cmaui
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested2_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested2.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui
+      - template_Vlan_3
+      - cmaui_port_1
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested2
+    capabilities:
+      host_server_cmaui:
+      - server_cmaui
+      - host
+      os_server_cmaui:
+      - server_cmaui
+      - os
+      binding_cmaui_port_1:
+      - cmaui_port_1
+      - binding
+      endpoint_server_cmaui:
+      - server_cmaui
+      - endpoint
+      binding_server_cmaui:
+      - server_cmaui
+      - binding
+      scalable_server_cmaui:
+      - server_cmaui
+      - scalable
+      attachment_cmaui_port_1:
+      - cmaui_port_1
+      - attachment
+    requirements:
+      local_storage_server_cmaui:
+      - server_cmaui
+      - local_storage
+      link_template_Vlan_3:
+      - template_Vlan_3
+      - link
+      link_cmaui_port_1:
+      - cmaui_port_1
+      - link

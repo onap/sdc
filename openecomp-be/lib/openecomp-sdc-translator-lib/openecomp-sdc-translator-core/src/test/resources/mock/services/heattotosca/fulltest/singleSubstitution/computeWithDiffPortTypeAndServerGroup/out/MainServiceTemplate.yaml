@@ -1,0 +1,132 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    port_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: port name
+      default: port_name
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VNF instance
+      default: This_is_ths_SCP_id
+    smp_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: name of VM
+      default: vSMP2
+    flavor_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP Flavor
+      default: m3.xlarge
+    image_smp_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: SCP SMP image
+      default: asc_base_image_smp
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      default: zone_1
+    lab_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Lab name
+      default: Lab-1
+  node_templates:
+    abstract_smp:
+      type: org.openecomp.resource.abstract.nodes.smp
+      directives:
+      - substitutable
+      properties:
+        port_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: image_smp_name
+        port_port_network:
+        - get_input: port_name
+        compute_smp_name:
+        - get_input: smp_name_1
+        compute_smp_availability_zone:
+        - get_input: availability_zone_0
+        vm_flavor_name:
+          get_input: flavor_smp_name
+        compute_smp_metadata:
+        - jx_vm_role: smp2
+          vnf_id:
+            get_input: vnf_id
+          jx_lab_name:
+            get_input: lab_name
+        compute_smp_user_data_format:
+        - RAW
+        port_port_replacement_policy:
+        - AUTO
+        compute_smp_scheduler_hints:
+        - group: BE_Affinity_group
+        service_template_filter:
+          substitute_service_template: Nested_smpServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+    port2:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: port_name
+  groups:
+    hot-mog-0108-bs1271_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/hot-mog-0108-bs1271.yml
+        description: ASC Template
+      members:
+      - port2
+      - abstract_smp
+    BE_Affinity_group:
+      type: tosca.groups.Root
+      members:
+      - abstract_smp
+  policies:
+    BE_Affinity_policy:
+      type: org.openecomp.policies.placement.Colocate
+      properties:
+        name: def
+        affinity: host
+      targets:
+      - BE_Affinity_group

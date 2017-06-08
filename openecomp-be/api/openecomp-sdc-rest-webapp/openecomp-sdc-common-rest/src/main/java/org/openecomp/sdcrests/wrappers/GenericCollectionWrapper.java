@@ -24,20 +24,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class represents a generic collection wrapper to be used by paginated results.
- *
- * @param <T> the type parameter
- */
 public class GenericCollectionWrapper<T> implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private List<T> results;
   private int listCount;
 
-  /**
-   * Instantiates a new Generic collection wrapper.
-   */
   public GenericCollectionWrapper() {
     this.results = new ArrayList<>();
   }
@@ -55,38 +47,18 @@ public class GenericCollectionWrapper<T> implements Serializable {
     }
   }
 
-  /**
-   * Gets results.
-   *
-   * @return the results
-   */
   public List<T> getResults() {
     return results;
   }
 
-  /**
-   * Sets results.
-   *
-   * @param results the results
-   */
   public void setResults(List<T> results) {
     this.results = results;
   }
 
-  /**
-   * Gets list count.
-   *
-   * @return the list count
-   */
   public int getListCount() {
     return listCount;
   }
 
-  /**
-   * Sets list count.
-   *
-   * @param listCount the list count
-   */
   public void setListCount(int listCount) {
     this.listCount = listCount;
   }
@@ -94,11 +66,11 @@ public class GenericCollectionWrapper<T> implements Serializable {
   /**
    * Add boolean.
    *
-   * @param e0 the e 0
+   * @param item the list item
    * @return the boolean
    */
-  public boolean add(T e0) {
-    if (this.getResults().add(e0)) {
+  public boolean add(T item) {
+    if (this.getResults().add(item)) {
       this.setListCount(this.getResults().size());
       return true;
     }

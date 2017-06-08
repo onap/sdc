@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     service_policy_name:
@@ -187,7 +163,7 @@ topology_template:
         image_name:
           get_input: st_image
         service_template_filter:
-          substitute_service_template: service_instance_1ServiceTemplate.yaml
+          substitute_service_template: OCS-fw_service_instance_1ServiceTemplate.yaml
           count: 1
           scaling_enabled:
             get_input: st_scaling
@@ -230,6 +206,8 @@ topology_template:
           - management,left,right,other
           - ','
           - 3
+        service_instance_name:
+          get_input: service_instance_name
         interface_list:
         - virtual_network:
             get_input: oam_mgmt_net_0_id
@@ -245,8 +223,6 @@ topology_template:
               get_input: prefix_2
           virtual_network:
             get_input: oam_mgmt_net_1_id
-        service_instance_name:
-          get_input: service_instance_name
         service_mode:
           get_input: st_mode
         shared_ip_list:
@@ -287,7 +263,7 @@ topology_template:
         image_name:
           get_input: st_image
         service_template_filter:
-          substitute_service_template: service_instance_2ServiceTemplate.yaml
+          substitute_service_template: OCS-fw_service_instance_2ServiceTemplate.yaml
           count:
             get_input: max_num_fw_instances
           scaling_enabled:
@@ -331,6 +307,8 @@ topology_template:
           - management,left,right,other
           - ','
           - 3
+        service_instance_name:
+          get_input: service_instance_name
         interface_list:
         - virtual_network:
             get_input: oam_mgmt_net_0_id
@@ -346,8 +324,6 @@ topology_template:
               get_input: prefix_2
           virtual_network:
             get_input: oam_mgmt_net_1_id
-        service_instance_name:
-          get_input: service_instance_name
         service_mode:
           get_input: st_mode
         shared_ip_list:
@@ -427,7 +403,7 @@ topology_template:
           node: service_instance_1
           relationship: tosca.relationships.DependsOn
   groups:
-    OCS-fw:
+    OCS-fw_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/OCS-fw.yml

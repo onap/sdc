@@ -1,15 +1,26 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
-
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Modal from 'nfvo-components/modal/Modal.jsx';
 
 import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 import LicenseAgreementEditor from './LicenseAgreementEditor.js';
-import InputOptions, {other as optionInputOther} from 'nfvo-components/input/inputOptions/InputOptions.jsx';
-import {optionsInputValues} from './LicenseAgreementConstants';
-import LicenseAgreementConfirmationModal from './LicenseAgreementConfirmationModal.jsx';
-
+import {extractValue} from './LicenseAgreementConstants';
 
 class LicenseAgreementListEditorView extends React.Component {
 	static propTypes = {
@@ -22,7 +33,6 @@ class LicenseAgreementListEditorView extends React.Component {
 		onAddLicenseAgreementClick: React.PropTypes.func,
 		onEditLicenseAgreementClick: React.PropTypes.func,
 		onDeleteLicenseAgreement: React.PropTypes.func,
-		onCallVCAction: React.PropTypes.func
 	};
 
 	static defaultProps = {
@@ -34,35 +44,33 @@ class LicenseAgreementListEditorView extends React.Component {
 	};
 
 	render() {
-		const {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode} = this.props;
+		const {licenseModelId, vendorName, isReadOnlyMode, isDisplayModal, isModalInEditMode, version} = this.props;
 		const {onAddLicenseAgreementClick} = this.props;
 		const {localFilter} = this.state;
 
 		return (
 			<div className='license-agreement-list-editor'>
-					<ListEditorView
-						title={i18n('License Agreements for {vendorName} License Model', {vendorName})}
-						plusButtonTitle={i18n('Add License Agreement')}
-						onAdd={onAddLicenseAgreementClick}
-						filterValue={localFilter}
-						onFilter={filter => this.setState({localFilter: filter})}
-						isReadOnlyMode={isReadOnlyMode}>
-						{this.filterList().map(licenseAgreement => this.renderLicenseAgreementListItem(licenseAgreement, isReadOnlyMode))}
-					</ListEditorView>
-				<Modal show={isDisplayModal} bsSize='large' animation={true} className='license-agreement-modal'>
+				<ListEditorView
+					title={i18n('License Agreements', {vendorName})}
+					plusButtonTitle={i18n('Add License Agreement')}
+					onAdd={() => onAddLicenseAgreementClick(version)}
+					filterValue={localFilter}
+					onFilter={value => this.setState({localFilter: value})}
+					isReadOnlyMode={isReadOnlyMode}>
+					{this.filterList().map(licenseAgreement => this.renderLicenseAgreementListItem(licenseAgreement, isReadOnlyMode, version))}
+				</ListEditorView>
+				<Modal show={isDisplayModal} bsSize='large' animation={true} className='onborading-modal license-agreement-modal'>
 					<Modal.Header>
 						<Modal.Title>{`${isModalInEditMode ? i18n('Edit License Agreement') : i18n('Create New License Agreement')}`}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						{
 							isDisplayModal && (
-								<LicenseAgreementEditor licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode} />
+								<LicenseAgreementEditor version={version} licenseModelId={licenseModelId} isReadOnlyMode={isReadOnlyMode} />
 							)
 						}
 					</Modal.Body>
 				</Modal>
-				<LicenseAgreementConfirmationModal licenseModelId={licenseModelId}/>
-
 			</div>
 		);
 	}
@@ -73,7 +81,7 @@ class LicenseAgreementListEditorView extends React.Component {
 		if (localFilter.trim()) {
 			const filter = new RegExp(escape(localFilter), 'i');
 			return licenseAgreementList.filter(({name = '', description = '', licenseTerm = ''}) => {
-				return escape(name).match(filter) || escape(description).match(filter) || escape(this.extractValue(licenseTerm)).match(filter);
+				return escape(name).match(filter) || escape(description).match(filter) || escape(extractValue(licenseTerm)).match(filter);
 			});
 		}
 		else {
@@ -81,14 +89,14 @@ class LicenseAgreementListEditorView extends React.Component {
 		}
 	}
 
-	renderLicenseAgreementListItem(licenseAgreement, isReadOnlyMode) {
+	renderLicenseAgreementListItem(licenseAgreement, isReadOnlyMode, version) {
 		let {id, name, description, licenseTerm, featureGroupsIds = []} = licenseAgreement;
 		let {onEditLicenseAgreementClick, onDeleteLicenseAgreement} = this.props;
 		return (
 			<ListEditorItemView
 				key={id}
-				onSelect={() => onEditLicenseAgreementClick(licenseAgreement)}
-				onDelete={() => onDeleteLicenseAgreement(licenseAgreement)}
+				onSelect={() => onEditLicenseAgreementClick(licenseAgreement, version)}
+				onDelete={() => onDeleteLicenseAgreement(licenseAgreement, version)}
 				className='list-editor-item-view'
 				isReadOnlyMode={isReadOnlyMode}>
 				<div className='list-editor-item-view-field'>
@@ -98,7 +106,7 @@ class LicenseAgreementListEditorView extends React.Component {
 				<div className='list-editor-item-view-field'>
 					<div className='list-editor-item-view-field-tight'>
 						<div className='title'>{i18n('Type')}</div>
-						<div className='text type'>{this.extractValue(licenseTerm)}</div>
+						<div className='text type'>{extractValue(licenseTerm)}</div>
 					</div>
 					<div className='list-editor-item-view-field-tight'>
 						<div className='title'>{i18n('Feature')}</div>
@@ -112,14 +120,6 @@ class LicenseAgreementListEditorView extends React.Component {
 				</div>
 			</ListEditorItemView>
 		);
-	}
-
-	extractValue(item) {
-		if (item === undefined) {
-			return '';
-		} //TODO fix it later
-
-		return item ? item.choice === optionInputOther.OTHER ? item.other : InputOptions.getTitleByName(optionsInputValues, item.choice) : '';
 	}
 }
 

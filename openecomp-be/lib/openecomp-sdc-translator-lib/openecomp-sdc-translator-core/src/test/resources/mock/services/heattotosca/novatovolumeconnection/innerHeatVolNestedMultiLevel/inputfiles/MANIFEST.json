@@ -1,0 +1,44 @@
+{
+  "name": "Port to Network multi nested test.",
+  "description": "HOT template to create multi nested of 4 levels",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "main.yml",
+      "type": "HEAT",
+      "isBase": "false",
+      "data": [
+        {
+          "file": "vol_a.yml",
+          "type": "HEAT_VOL",
+          "isBase": "false"
+        },
+        {
+          "file": "vol_b.yml",
+          "type": "HEAT_VOL",
+          "isBase": "false"
+        }
+      ]
+    },
+    {
+      "file": "nested1.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    },
+    {
+      "file": "nested2.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    },
+    {
+      "file": "nested3.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    },
+    {
+      "file": "nested4.yml",
+      "type": "HEAT",
+      "isBase": "false"
+    }
+  ]
+}

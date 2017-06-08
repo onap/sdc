@@ -116,7 +116,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.TimeZone;
 
-
 public class ActionUtil {
 
   private static final String UTC_DATE_FORMAT = "dd MMM yyyy kk:mm:ss z";
@@ -125,7 +124,7 @@ public class ActionUtil {
   /**
    * Get Current Timestamp in UTC format.
    *
-   * @return Current Timestamp in UTC format.
+   * @return Current Timestamp in UTC format
    */
   public static Date getCurrentTimeStampUtc() {
     return Date.from(java.time.ZonedDateTime.now(ZoneOffset.UTC).toInstant());
@@ -134,8 +133,8 @@ public class ActionUtil {
   /**
    * Convert timestamp to UTC format date string.
    *
-   * @param timeStamp UTC timestamp to be converted to the UTC Date format.
-   * @return UTC formatted Date string from timestamp.
+   * @param timeStamp UTC timestamp to be converted to the UTC Date format
+   * @return UTC formatted Date string from timestamp
    */
   public static String getUtcDateStringFromTimestamp(Date timeStamp) {
     DateFormat df = new SimpleDateFormat(UTC_DATE_FORMAT);
@@ -146,8 +145,8 @@ public class ActionUtil {
   /**
    * Convert timestamp to UTC format date string.
    *
-   * @param timeStamp UTC timestamp to be converted to the UTC Date format.
-   * @return UTC formatted Date string from timestamp.
+   * @param timeStamp UTC timestamp to be converted to the UTC Date format
+   * @return UTC formatted Date string from timestamp
    */
   public static String getLogUtcDateStringFromTimestamp(Date timeStamp) {
     DateFormat df = new SimpleDateFormat(LOG_UTC_DATE_FORMAT);
@@ -158,7 +157,7 @@ public class ActionUtil {
   /**
    * Method to set up specific attributes MDC for the current logging operation.
    *
-   * @param subOperation Request Name.
+   * @param subOperation Request Name
    */
   public static void actionLogPreProcessor(ActionSubOperation subOperation, String targetEntity) {
     MDC.put(BEGIN_TIMESTAMP, String.valueOf(System.currentTimeMillis()));
@@ -172,7 +171,7 @@ public class ActionUtil {
   /**
    * Method to enhance the MDC after the logging operation for Metrics and Audit logs.
    *
-   * @param statusCode Response code for the current operation.
+   * @param statusCode Response code for the current operation
    */
   public static void actionLogPostProcessor(StatusCode statusCode) {
     actionLogPostProcessor(statusCode, false);
@@ -188,11 +187,13 @@ public class ActionUtil {
   }
 
   /**
-   * Method to enhance the MDC after the logging operation for Metrics and Audit logs.
+   * Action log post processor.
    *
-   * @param statusCode Response code for the current operation.
+   * @param statusCode          the status code
+   * @param responseCode        the response code
+   * @param responseDescription the response description
+   * @param isServiceMetricLog  the is service metric log
    */
-
   public static void actionLogPostProcessor(StatusCode statusCode, String responseCode,
                                             String responseDescription,
                                             boolean isServiceMetricLog) {
@@ -217,9 +218,9 @@ public class ActionUtil {
   /**
    * Action Library Error logging Helper.
    *
-   * @param errorCategory    WARN or ERROR.
-   * @param errorCode        Action Library exception code.
-   * @param errorDescription Description of the error.
+   * @param errorCategory    WARN or ERROR
+   * @param errorCode        Action Library exception code
+   * @param errorDescription Description of the error
    */
   public static void actionErrorLogProcessor(CategoryLogLevel errorCategory, String errorCode,
                                              String errorDescription) {
@@ -237,7 +238,6 @@ public class ActionUtil {
           errorType = "F";
           break;
         default:
-          break;
       }
       MDC.put(ERROR_CODE, getLogResponseCode(errorCode) + errorType);
     }
@@ -245,11 +245,11 @@ public class ActionUtil {
   }
 
   /**
-   * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link.
-   * ActionLogResponseCode} e.g: ACT1060 --> 201.
+   * Method to convert Action Library exception codes to OPENECOMP Audit codes in {@link
+   * ActionLogResponseCode} e.g: ACT1060 --> 201
    *
-   * @param errorCode Action library exception code.
-   * @return Audit log code corresponding to the Action Library exception.
+   * @param errorCode Action library exception code
+   * @return Audit log code corresponding to the Action Library exception
    */
   public static int getLogResponseCode(String errorCode) {
     ActionLogResponseCode responseCode = INTERNAL_SERVER_ERROR;
@@ -365,7 +365,6 @@ public class ActionUtil {
         responseCode = QUERY_FAILURE;
         break;
       default:
-        break;
     }
     return responseCode.getValue();
   }

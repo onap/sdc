@@ -36,8 +36,10 @@ import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 import java.util.Collection;
 import java.util.Objects;
 
+
 public class ApplicationConfigDaoCassandraImpl extends CassandraBaseDao<ApplicationConfigEntity>
-    implements ApplicationConfigDao {
+    implements
+    ApplicationConfigDao {
 
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static final Mapper<ApplicationConfigEntity> mapper =
@@ -56,11 +58,6 @@ public class ApplicationConfigDaoCassandraImpl extends CassandraBaseDao<Applicat
   }
 
   @Override
-  public Collection<ApplicationConfigEntity> list(ApplicationConfigEntity entity) {
-    return accessor.list(entity.getNamespace()).all();
-  }
-
-  @Override
   public void create(ApplicationConfigEntity entity) {
     accessor.updateApplicationConfigData(entity.getNamespace(), entity.getKey(), entity.getValue());
   }
@@ -73,6 +70,11 @@ public class ApplicationConfigDaoCassandraImpl extends CassandraBaseDao<Applicat
   @Override
   public ApplicationConfigEntity get(ApplicationConfigEntity entity) {
     return accessor.get(entity.getNamespace(), entity.getKey());
+  }
+
+  @Override
+  public Collection<ApplicationConfigEntity> list(ApplicationConfigEntity entity) {
+    return accessor.list(entity.getNamespace()).all();
   }
 
   @Override

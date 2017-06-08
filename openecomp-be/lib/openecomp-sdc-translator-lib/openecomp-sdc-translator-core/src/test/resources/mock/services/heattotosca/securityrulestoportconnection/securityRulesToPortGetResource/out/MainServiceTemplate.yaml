@@ -1,0 +1,1069 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    vprobe_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vprobe_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vprobe_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    vProbe_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The component cluster name
+      default: vProbe_cluster
+    qrouter_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The ID or name of the flavor to boot onto
+      default: m1.large
+    version_number:
+      hidden: false
+      immutable: false
+      type: string
+      description: The version number of the component
+      default: 11.1.5
+    vLB_version_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The version name of the component.
+      default: vProbe.r.11.1.e._08_16-12_53
+    vprobe_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the flavor to boot onto
+      default: m1.large
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The servers domain
+    ntp_timezone:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of NTP Time zone to be used
+      default: UTC
+    packet_mirror_network_subnet_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Classless Inter-Domain Routing
+      default: 20.20.5.0/24
+    vLBAgent_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The component cluster name
+      default: vLBAgent_cluster
+    vLB_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of VLB. MME or SGW.
+      default: mme
+    qrouter_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM Names for QRouter VMs
+      entry_schema:
+        type: string
+    win_domain_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Windows servers' domain
+    tenant_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of tenant to be used
+    vLB_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM Names for vLB VMs
+      entry_schema:
+        type: string
+    vprobe_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 1
+    vLBAgent_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The ID or name of the flavor to boot onto
+      default: m1.large
+    vprobe_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: data
+    vprobe_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 100
+    vprobe_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: log
+    vprobe_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 5
+    vprobe_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: config
+    packet_mirror_network_subnet_alloc_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start address for the allocation pool
+      default: 20.20.5.2
+    vLBAgent_version_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The version name of the component
+      default: vProbe.r.11.1.e._08_16-12_53
+    vLB_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: config
+    cdr_network:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+    vLBAgent_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: vLBAgent Type. mme or sgw
+      default: mme
+    vProbe_node_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: The number of nodes to create
+      default: 1
+    packet_internal_network_subnet_alloc_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End address for the allocation pool
+      default: 192.0.6.250
+    vLBAgent_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 1
+    vLBAgent_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Cinder volume type. Used to specify the backend.
+      default: volumes_ceph
+    vLB_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: data
+    vLB_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in Gigabytes.
+      default: 1
+    vLB_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: log
+    vLB_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 15
+    vLB_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: config
+    vLBAgent_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: log
+    vLBAgent_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: data
+    vLB_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB.
+      default: 1
+    vLB_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB.
+      default: 10
+    packet_mirror_network_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the subnet
+      default: rprb_26071_mme_int_pktmirror_net_1_subnet
+    vLB_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB.
+      default: 1
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: The VF MODULE ID of the RADCOM System.
+    qrouter_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The component cluster name
+      default: qrouter_cluster
+    vprobe_type:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of vProbe. MME or SGW.
+      default: mme
+    base_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The base ID or name of the image to boot with
+      default: rprb_centos_6_7_05_24_2016
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The VNF module name for vProbe elements.
+    vLB_node_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: The number of nodes to create.
+      default: 1
+    packet_mirror_network_subnet_alloc_end:
+      hidden: false
+      immutable: false
+      type: string
+      description: End address for the allocation pool
+      default: 20.20.5.250
+    packet_internal_network_subnet_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the subnet
+      default: rprb_26071_mme_int_pktinternal_net_1_subnet
+    vProbe_version_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The version name of the component
+      default: vProbe.r.11.1.e._08_16-12_53
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: The VNF ID of the RADCOM System.
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement
+    region_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of region to be used
+    availability_zone_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement
+    qtrace_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Name for QRouter VMs
+    availability_zone_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement.
+    vprobe_AppDependenciesMachineType:
+      hidden: false
+      immutable: false
+      type: string
+      description: The application dependencies
+      default: DatabaseUpgrade
+    manager_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Name for Manager VM 0
+    availability_zone_3:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for server placement
+    vLB_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The component cluster name.
+      default: vLB_cluster
+    packet_internal_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+      default: rprb_26071_mme_int_pktinternal_net_1
+    packet_mirror_network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: A string specifying a symbolic name for the network
+      default: rprb_26071_mme_int_pktmirror_net_1
+    packet_internal_network_subnet_alloc_start:
+      hidden: false
+      immutable: false
+      type: string
+      description: Start address for the allocation pool
+      default: 192.0.6.2
+    qrouter_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vLBAgent_node_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: The number of nodes to create
+      default: 1
+    qrouter_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    vprobe_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM Names for vProbe VMs
+      entry_schema:
+        type: string
+    qrouter_node_count:
+      hidden: false
+      immutable: false
+      type: float
+      description: The number of nodes to create
+      default: 1
+    qrouter_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: config
+    vLBAgent_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: VM Names for vLBAgent VMs
+      entry_schema:
+        type: string
+    vLB_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the flavor to boot onto.
+      default: m1.large
+    qrouter_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: log
+    qrouter_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The name of the volume
+      default: data
+    qrouter_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The type of the volume mapping to a backend
+      default: volumes_ceph
+    qrouter_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 1
+    qrouter_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 1
+    packet_internal_network_subnet_cidr:
+      hidden: false
+      immutable: false
+      type: string
+      description: The Classless Inter-Domain Routing
+      default: 192.0.6.0/24
+    manager_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The public ip address of the manager
+    qrouter_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+      description: The size of the volume in GB
+      default: 1
+    rpmrepository_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: The public ip address of the repository
+  node_templates:
+    vLBAgent:
+      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBAgentTemplate
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        packet_mirror_network: packet_mirror_network
+        oam_private_net_name:
+          get_input: oam_private_net_name
+        vProbe_cluster_name:
+          get_input: vProbe_cluster_name
+        vlb_agent_image_name:
+          get_input: base_image_name
+        vf_module_name:
+          get_input: vf_module_name
+        vLB_node_count:
+          get_input: vLB_node_count
+        service_template_filter:
+          substitute_service_template: FEAdd_On_Module_vLBAgentTemplateServiceTemplate.yaml
+        domain_name:
+          get_input: domain_name
+        ntp_timezone:
+          get_input: ntp_timezone
+        packet_internal_network: packet_internal_network
+        vnf_id:
+          get_input: vnf_id
+        vLBAgent_cluster_name:
+          get_input: vLBAgent_cluster_name
+        availability_zone_0:
+          get_input: availability_zone_2
+        region_name:
+          get_input: region_name
+        manager_name_0:
+          get_input: manager_name_0
+        vLB_cluster_name:
+          get_input: vLB_cluster_name
+        tenant_name:
+          get_input: tenant_name
+        vLBAgent_flavor_name:
+          get_input: vLBAgent_flavor_name
+        security_group: security_group
+        vLBAgent_version_name:
+          get_input: vLBAgent_version_name
+        vLBAgent_type:
+          get_input: vLBAgent_type
+        vLBAgent_node_count:
+          get_input: vLBAgent_node_count
+        vLBAgent_volume_type_0:
+          get_input: vLBAgent_volume_type_0
+        vLBAgent_volume_type_1:
+          get_input: vLBAgent_volume_type_1
+        vLBAgent_volume_size_1:
+          get_input: vLBAgent_volume_size_1
+        vLBAgent_volume_type_2:
+          get_input: vLBAgent_volume_type_2
+        vLBAgent_names:
+          get_input: vLBAgent_names
+        vLBAgent_volume_size_2:
+          get_input: vLBAgent_volume_size_2
+        vLBAgent_volume_size_0:
+          get_input: vLBAgent_volume_size_0
+        vLBAgent_volume_name_2:
+          get_input: vLBAgent_volume_name_2
+        vLBAgent_volume_name_1:
+          get_input: vLBAgent_volume_name_1
+        vLBAgent_volume_name_0:
+          get_input: vLBAgent_volume_name_0
+        manager_oam_direct_ip_0:
+          get_input: manager_oam_direct_ip_0
+        rpmrepository_ip_0:
+          get_input: rpmrepository_ip_0
+      requirements:
+      - link_packet_mirror_network_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_mirror_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_packet_internal_network_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: security_group
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+    vProbe:
+      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vProbeTemplate
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        vprobe_volume_type_0:
+          get_input: vprobe_volume_type_0
+        vprobe_volume_type_1:
+          get_input: vprobe_volume_type_1
+        qrouter_cluster_name:
+          get_input: qrouter_cluster_name
+        vprobe_volume_type_2:
+          get_input: vprobe_volume_type_2
+        oam_private_net_name:
+          get_input: oam_private_net_name
+        vProbe_cluster_name:
+          get_input: vProbe_cluster_name
+        vprobe_type:
+          get_input: vprobe_type
+        vprobe_image_name:
+          get_input: base_image_name
+        vprobe_flavor_name:
+          get_input: vprobe_flavor_name
+        vf_module_name:
+          get_input: vf_module_name
+        vLB_node_count:
+          get_input: vLB_node_count
+        service_template_filter:
+          substitute_service_template: FEAdd_On_Module_vProbeTemplateServiceTemplate.yaml
+        domain_name:
+          get_input: domain_name
+        ntp_timezone:
+          get_input: ntp_timezone
+        packet_internal_network: packet_internal_network
+        vProbe_version_name:
+          get_input: vProbe_version_name
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_3
+        region_name:
+          get_input: region_name
+        qtrace_name_0:
+          get_input: qtrace_name_0
+        vprobe_AppDependenciesMachineType:
+          get_input: vprobe_AppDependenciesMachineType
+        manager_name_0:
+          get_input: manager_name_0
+        win_domain_name:
+          get_input: win_domain_name
+        tenant_name:
+          get_input: tenant_name
+        vprobe_volume_size_2:
+          get_input: vprobe_volume_size_2
+        vprobe_volume_name_0:
+          get_input: vprobe_volume_name_0
+        vprobe_volume_size_0:
+          get_input: vprobe_volume_size_0
+        vprobe_volume_name_1:
+          get_input: vprobe_volume_name_1
+        vprobe_volume_size_1:
+          get_input: vprobe_volume_size_1
+        vprobe_volume_name_2:
+          get_input: vprobe_volume_name_2
+        security_group: security_group
+        cdr_network:
+          get_input: cdr_network
+        vProbe_node_count:
+          get_input: vProbe_node_count
+        vprobe_names:
+          get_input: vprobe_names
+        manager_oam_direct_ip_0:
+          get_input: manager_oam_direct_ip_0
+        rpmrepository_ip_0:
+          get_input: rpmrepository_ip_0
+      requirements:
+      - link_packet_internal_network_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: security_group
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+    QRouter:
+      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_QRouterTemplate
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        qrouter_cluster_name:
+          get_input: qrouter_cluster_name
+        oam_private_net_name:
+          get_input: oam_private_net_name
+        qrouter_flavor_name:
+          get_input: qrouter_flavor_name
+        version_number:
+          get_input: version_number
+        vf_module_name:
+          get_input: vf_module_name
+        service_template_filter:
+          substitute_service_template: FEAdd_On_Module_QRouterTemplateServiceTemplate.yaml
+        domain_name:
+          get_input: domain_name
+        ntp_timezone:
+          get_input: ntp_timezone
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        region_name:
+          get_input: region_name
+        manager_name_0:
+          get_input: manager_name_0
+        qrouter_names:
+          get_input: qrouter_names
+        tenant_name:
+          get_input: tenant_name
+        security_group: security_group
+        cdr_network:
+          get_input: cdr_network
+        qrouter_image_name:
+          get_input: base_image_name
+        qrouter_volume_type_1:
+          get_input: qrouter_volume_type_1
+        qrouter_volume_type_2:
+          get_input: qrouter_volume_type_2
+        qrouter_node_count:
+          get_input: qrouter_node_count
+        qrouter_volume_name_2:
+          get_input: qrouter_volume_name_2
+        qrouter_volume_name_1:
+          get_input: qrouter_volume_name_1
+        qrouter_volume_name_0:
+          get_input: qrouter_volume_name_0
+        qrouter_volume_type_0:
+          get_input: qrouter_volume_type_0
+        qrouter_volume_size_0:
+          get_input: qrouter_volume_size_0
+        qrouter_volume_size_1:
+          get_input: qrouter_volume_size_1
+        manager_oam_direct_ip_0:
+          get_input: manager_oam_direct_ip_0
+        qrouter_volume_size_2:
+          get_input: qrouter_volume_size_2
+        rpmrepository_ip_0:
+          get_input: rpmrepository_ip_0
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: security_group
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+    packet_mirror_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: true
+        network_name:
+          get_input: packet_mirror_network_name
+        subnets:
+          packet_mirror_network_subnet:
+            enable_dhcp: true
+            name:
+              get_input: packet_mirror_network_subnet_name
+            cidr:
+              get_input: packet_mirror_network_subnet_cidr
+            allocation_pools:
+            - start:
+                get_input: packet_mirror_network_subnet_alloc_start
+              end:
+                get_input: packet_mirror_network_subnet_alloc_end
+    packet_internal_network:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        dhcp_enabled: true
+        network_name:
+          get_input: packet_internal_network_name
+        subnets:
+          packet_internal_network_subnet:
+            enable_dhcp: true
+            name:
+              get_input: packet_internal_network_subnet_name
+            cidr:
+              get_input: packet_internal_network_subnet_cidr
+            allocation_pools:
+            - start:
+                get_input: packet_internal_network_subnet_alloc_start
+              end:
+                get_input: packet_internal_network_subnet_alloc_end
+    security_group:
+      type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
+      properties:
+        name: FE_radcom_security_group
+        rules:
+        - protocol: tcp
+          port_range_max: 23
+          port_range_min: 23
+        - protocol: tcp
+          port_range_max: 123
+          port_range_min: 123
+        - protocol: tcp
+          port_range_max: 3389
+          port_range_min: 3389
+        - protocol: udp
+          port_range_max: 5434
+          port_range_min: 5434
+        - protocol: tcp
+          port_range_max: 5443
+          port_range_min: 5435
+        - protocol: tcp
+          port_range_max: 8000
+          port_range_min: 8000
+        - protocol: tcp
+          port_range_max: 9900
+          port_range_min: 9900
+        - protocol: tcp
+          port_range_max: 12050
+          port_range_min: 12000
+        - protocol: tcp
+          port_range_max: 161
+          port_range_min: 161
+        - protocol: udp
+          port_range_max: 8000
+          port_range_min: 8000
+        - protocol: icmp
+        - protocol: 47
+        - protocol: tcp
+          port_range_max: 22
+          port_range_min: 22
+        - protocol: tcp
+          port_range_max: 3050
+          port_range_min: 3000
+        - protocol: tcp
+          port_range_max: 8081
+          port_range_min: 8080
+        - protocol: tcp
+          port_range_max: 8084
+          port_range_min: 8084
+        - protocol: tcp
+          port_range_max: 4000
+          port_range_min: 4000
+        - protocol: tcp
+          port_range_max: 33000
+          port_range_min: 33000
+        - protocol: tcp
+          port_range_max: 8082
+          port_range_min: 8082
+      requirements:
+      - port:
+          capability: attachment_oam_private_net_network_port
+          node: QRouter
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cdr_network_port
+          node: QRouter
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_private_net_network_port
+          node: vLB
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_packet_internal_network_port
+          node: vLB
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_packet_mirror_network_port
+          node: vLB
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_private_net_network_port
+          node: vLBAgent
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_packet_internal_network_port
+          node: vLBAgent
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_packet_mirror_network_port
+          node: vLBAgent
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_oam_private_net_network_port
+          node: vProbe
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_cdr_network_port
+          node: vProbe
+          relationship: org.openecomp.relationships.AttachesTo
+      - port:
+          capability: attachment_packet_internal_network_port
+          node: vProbe
+          relationship: org.openecomp.relationships.AttachesTo
+    vLB:
+      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBTemplate
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        packet_mirror_network: packet_mirror_network
+        oam_private_net_name:
+          get_input: oam_private_net_name
+        vProbe_cluster_name:
+          get_input: vProbe_cluster_name
+        vLB_version_name:
+          get_input: vLB_version_name
+        vf_module_name:
+          get_input: vf_module_name
+        vLB_node_count:
+          get_input: vLB_node_count
+        service_template_filter:
+          substitute_service_template: FEAdd_On_Module_vLBTemplateServiceTemplate.yaml
+        domain_name:
+          get_input: domain_name
+        ntp_timezone:
+          get_input: ntp_timezone
+        packet_internal_network: packet_internal_network
+        vnf_id:
+          get_input: vnf_id
+        vLB_type:
+          get_input: vLB_type
+        availability_zone_0:
+          get_input: availability_zone_1
+        region_name:
+          get_input: region_name
+        manager_name_0:
+          get_input: manager_name_0
+        vLB_cluster_name:
+          get_input: vLB_cluster_name
+        tenant_name:
+          get_input: tenant_name
+        vLB_names:
+          get_input: vLB_names
+        security_group: security_group
+        vLB_volume_name_2:
+          get_input: vLB_volume_name_2
+        vLB_volume_name_0:
+          get_input: vLB_volume_name_0
+        vLB_volume_type_1:
+          get_input: vLB_volume_type_1
+        vLB_flavor_name:
+          get_input: vLB_flavor_name
+        vLB_volume_name_1:
+          get_input: vLB_volume_name_1
+        vLB_volume_type_2:
+          get_input: vLB_volume_type_2
+        vLB_volume_type_0:
+          get_input: vLB_volume_type_0
+        vLB_volume_size_1:
+          get_input: vLB_volume_size_1
+        vlb_image_name:
+          get_input: base_image_name
+        vLB_volume_size_0:
+          get_input: vLB_volume_size_0
+        manager_oam_direct_ip_0:
+          get_input: manager_oam_direct_ip_0
+        rpmrepository_ip_0:
+          get_input: rpmrepository_ip_0
+        vLB_volume_size_2:
+          get_input: vLB_volume_size_2
+      requirements:
+      - link_packet_mirror_network_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_mirror_network
+          relationship: tosca.relationships.network.LinksTo
+      - link_packet_internal_network_port:
+          capability: tosca.capabilities.network.Linkable
+          node: packet_internal_network
+          relationship: tosca.relationships.network.LinksTo
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: security_group
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+  groups:
+    FEBase_Module_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/FEBase_Module.yaml
+      members:
+      - vLBAgent
+      - vProbe
+      - QRouter
+      - packet_mirror_network
+      - packet_internal_network
+      - security_group
+      - vLB

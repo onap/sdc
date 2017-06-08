@@ -1,0 +1,37 @@
+heat_template_version: 2013-05-23
+
+description: ASC External Networks Template
+
+parameters:
+  Internal1_net_name:
+    type: string
+  Internal2_net_name:
+    type: string
+  Internal1_forwarding_mode:
+    type: string
+  Internal2_forwarding_mode:
+    type: string
+  Internal1_shared:
+    type: string
+  Internal2_shared:
+    type: string
+
+resources:
+  Internal1-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+  Internal2-net:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: Internal1_net_name }
+      forwarding_mode: { get_param: Internal1_forwarding_mode }
+      shared: { get_param: Internal1_shared }
+
+  test_nested:
+    type: OCS-fw.yml
+    properties:
+      network_param1: { get_resource: Internal1-net}
+      network_param2: { get_resource: Internal2-net}

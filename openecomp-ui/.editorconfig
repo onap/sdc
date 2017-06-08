@@ -13,6 +13,7 @@ insert_final_newline = true
 # tab indentation
 [src/**.js]
 [src/**.jsx]
+[resources/scss]
 indent_style = tab
 
 

@@ -54,7 +54,7 @@ import org.openecomp.core.factory.impl.AbstractFactoryBase;
  *   static {
  *     registerFactory(ConcreteFactory.class, BaselineFactoryImpl.class);
  *   }
- * public static ConcreteFactory getInstance() {
+ *   public static ConcreteFactory getInstance() {
  * return AbstractFactory.&lt;IUnknown, ConcreteFactory.class&gt;getInstance(ConcreteFactory.class);
  *   }
  * }

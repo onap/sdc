@@ -23,7 +23,6 @@ package org.openecomp.server.filters;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Base64;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -40,6 +39,7 @@ public class ActionAuthenticationFilter implements Filter {
 
   @Override
   public void destroy() {
+    // TODO Auto-generated method stub
 
   }
 
@@ -57,7 +57,7 @@ public class ActionAuthenticationFilter implements Filter {
               httpRequest.getHeader("Authorization").replace("Basic", "").trim();
           String decodedCredentials = new String(Base64.getDecoder().decode(base64Credentials));
           username = decodedCredentials.substring(0, decodedCredentials.indexOf(":"));
-        } catch (Exception e0) {
+        } catch (Exception exception) {
           setResponseStatus((HttpServletResponse) arg1, HttpServletResponse.SC_FORBIDDEN);
           return;
         }
@@ -81,7 +81,7 @@ public class ActionAuthenticationFilter implements Filter {
                 ActionLibraryPrivilege userPrivilege = ActionLibraryPrivilege
                     .valueOf(username.substring(username.indexOf("-") + 1).toUpperCase());
                 return userPrivilege.ordinal() >= requiredPrivilege.ordinal();
-              } catch (Exception e0) {
+              } catch (Exception exception) {
                 return false;
               }
             }
@@ -106,10 +106,7 @@ public class ActionAuthenticationFilter implements Filter {
 
   @Override
   public void init(FilterConfig arg0) throws ServletException {
-  /*runningOnLocal = System.getProperty("file.separator").equals("\\");
-  if (!runningOnLocal){
-  // call to super init of cadi filter as we are not running on windows
-  }*/
+
   }
 
 }

@@ -25,6 +25,12 @@ import com.datastax.driver.mapping.annotations.UDT;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
+import org.openecomp.sdc.logging.types.LoggerConstants;
+import org.openecomp.sdc.logging.types.LoggerErrorCode;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -127,10 +133,14 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
       String result = results.iterator().next();
       try {
         choices.add(E.valueOf(enumClass, result));
-      } catch (IllegalArgumentException illegalArgumentException) {
+      } catch (IllegalArgumentException exception) {
         try {
           choices.add(E.valueOf(enumClass, OTHER_ENUM_VALUE));
         } catch (IllegalArgumentException ex) {
+
+          MdcDataErrorMessage.createErrorMessageAndUpdateMdc(LoggerConstants.TARGET_ENTITY_DB,
+              LoggerTragetServiceName.VALIDATE_CHOICE_VALUE, ErrorLevel.ERROR.name(),
+              LoggerErrorCode.DATA_ERROR.getErrorCode(), LoggerErrorDescription.INVALID_VALUE);
           throw new CoreException(new ErrorCode.ErrorCodeBuilder()
               .withId(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_ERR_ID)
               .withMessage(MULTI_CHOICE_OR_OTHER_INVALID_ENUM_MSG)
@@ -139,6 +149,14 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
         other = result;
       }
     }
+  }
+
+  @Override
+  public int hashCode() {
+    int result = choices != null ? choices.hashCode() : 0;
+    result = 31 * result + (other != null ? other.hashCode() : 0);
+    result = 31 * result + (results != null ? results.hashCode() : 0);
+    return result;
   }
 
   @Override
@@ -160,13 +178,5 @@ public class MultiChoiceOrOther<E extends Enum<E>> {
     }
     return results != null ? results.equals(that.results) : that.results == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = choices != null ? choices.hashCode() : 0;
-    result = 31 * result + (other != null ? other.hashCode() : 0);
-    result = 31 * result + (results != null ? results.hashCode() : 0);
-    return result;
   }
 }

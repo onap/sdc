@@ -24,28 +24,28 @@ import org.openecomp.core.dao.BaseDao;
 import org.openecomp.sdc.action.dao.types.ActionEntity;
 import org.openecomp.sdc.action.errors.ActionException;
 import org.openecomp.sdc.action.types.Action;
-import org.openecomp.sdc.action.types.EcompComponent;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
 import java.util.List;
 
 public interface ActionDao extends VersionableDao, BaseDao<ActionEntity> {
 
-  Action createAction(Action actionDto) throws ActionException;
+  public Action createAction(Action actionDto) throws ActionException;
 
-  Action updateAction(Action actionDto) throws ActionException;
+  public Action updateAction(Action actionDto) throws ActionException;
 
-  void deleteAction(String actionInvariantUuId) throws ActionException;
+  public void deleteAction(String actionInvariantUuId) throws ActionException;
 
-  List<Action> getFilteredActions(String filterType, String filterId) throws ActionException;
+  public List<Action> getFilteredActions(String filterType, String filterId) throws ActionException;
 
-  Action getActionsByActionUuId(String uniqueId) throws ActionException;
+  public Action getActionsByActionUuId(String uniqueId) throws ActionException;
 
-  List<EcompComponent> getEcompComponents() throws ActionException;
+  public List<OpenEcompComponent> getOpenEcompComponents() throws ActionException;
 
-  List<Action> getActionsByActionInvariantUuId(String actionInvariantUuId)
+  public List<Action> getActionsByActionInvariantUuId(String actionInvariantUuId)
       throws ActionException;
 
-  Action getLockedAction(String actionInvariantUuId, String user) throws ActionException;
+  public Action getLockedAction(String actionInvariantUuId, String user) throws ActionException;
 
 }

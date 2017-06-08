@@ -21,13 +21,17 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
+import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ComponentRequestDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
@@ -42,27 +46,26 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapCompositionEntityValidationDat
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
+import java.util.Collection;
 
 @Named
 @Service("components")
 @Scope(value = "prototype")
 public class ComponentsImpl implements Components {
-  @Autowired
-  private VendorSoftwareProductManager vendorSoftwareProductManager;
+  private ComponentManager componentManager =
+      ComponentManagerFactory.getInstance().createInterface();
 
   @Override
-  public Response list(String vspId, String version, String user) {
+  public Response list(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_Components.toString());
     Collection<ComponentEntity> components =
-        vendorSoftwareProductManager.listComponents(vspId, Version.valueOf(version), user);
+        componentManager.listComponents(vspId, resolveVspVersion(vspId, versionId, user,
+            VersionableEntityAction.Read), user);
 
     MapComponentEntityToComponentDto mapper = new MapComponentEntityToComponentDto();
     GenericCollectionWrapper<ComponentDto> results = new GenericCollectionWrapper<>();
@@ -74,27 +77,33 @@ public class ComponentsImpl implements Components {
   }
 
   @Override
-  public Response deleteList(String vspId, String user) {
-    vendorSoftwareProductManager.deleteComponents(vspId, user);
+  public Response deleteList(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_List_Components.toString());
+    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    componentManager.deleteComponents(vspId, version, user);
     return Response.ok().build();
   }
 
   @Override
-  public Response create(ComponentRequestDto request, String vspId, String user) {
+  public Response create(ComponentRequestDto request, String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_Component.toString());
     ComponentEntity component =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     component.setVspId(vspId);
-    ComponentEntity createdComponent =
-        vendorSoftwareProductManager.createComponent(component, user);
+    component.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
+
+    ComponentEntity createdComponent = componentManager.createComponent(component, user);
     return Response
         .ok(createdComponent != null ? new StringWrapperResponse(createdComponent.getId()) : null)
         .build();
   }
 
   @Override
-  public Response get(String vspId, String componentId, String version, String user) {
-    CompositionEntityResponse<ComponentData> response = vendorSoftwareProductManager
-        .getComponent(vspId, Version.valueOf(version), componentId, user);
+  public Response get(String vspId, String versionId, String componentId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Component.toString());
+    CompositionEntityResponse<ComponentData> response = componentManager
+        .getComponent(vspId, resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read),
+            componentId, user);
 
     CompositionEntityResponseDto<ComponentDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapComponentDataToComponentDto(),
@@ -103,32 +112,38 @@ public class ComponentsImpl implements Components {
   }
 
   @Override
-  public Response delete(String vspId, String componentId, String user) {
-    vendorSoftwareProductManager.deleteComponent(vspId, componentId, user);
+  public Response delete(String vspId, String versionId, String componentId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_Component.toString());
+    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    componentManager.deleteComponent(vspId, version, componentId, user);
     return Response.ok().build();
   }
 
   @Override
-  public Response update(ComponentRequestDto request, String vspId, String componentId,
+  public Response update(ComponentRequestDto request, String vspId, String versionId, String componentId,
                          String user) {
+    MdcUtil.initMdc(LoggerServiceName.Update_Component.toString());
     ComponentEntity componentEntity =
         new MapComponentRequestDtoToComponentEntity().applyMapping(request, ComponentEntity.class);
     componentEntity.setVspId(vspId);
+    componentEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
     componentEntity.setId(componentId);
 
     CompositionEntityValidationData validationData =
-        vendorSoftwareProductManager.updateComponent(componentEntity, user);
+        componentManager.updateComponent(componentEntity, user);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
-            new MapCompositionEntityValidationDataToDto()
-                .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
-        Response.ok().build();
+        new MapCompositionEntityValidationDataToDto().applyMapping(validationData,
+            CompositionEntityValidationDataDto.class)).build() : Response.ok().build();
   }
 
   @Override
-  public Response getQuestionnaire(String vspId, String componentId, String version, String user) {
-    QuestionnaireResponse questionnaireResponse = vendorSoftwareProductManager
-        .getComponentQuestionnaire(vspId, Version.valueOf(version), componentId, user);
+  public Response getQuestionnaire(String vspId, String versionId, String componentId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_Component.toString());
+    QuestionnaireResponse questionnaireResponse = componentManager
+        .getQuestionnaire(vspId,
+            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), componentId,
+            user);
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
@@ -136,10 +151,11 @@ public class ComponentsImpl implements Components {
   }
 
   @Override
-  public Response updateQuestionnaire(String questionnaireData, String vspId, String componentId,
+  public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId,
                                       String user) {
-    vendorSoftwareProductManager
-        .updateComponentQuestionnaire(vspId, componentId, questionnaireData, user);
+    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_Component.toString());
+    Version version = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    componentManager.updateQuestionnaire(vspId, version, componentId, questionnaireData, user);
     return Response.ok().build();
   }
 }

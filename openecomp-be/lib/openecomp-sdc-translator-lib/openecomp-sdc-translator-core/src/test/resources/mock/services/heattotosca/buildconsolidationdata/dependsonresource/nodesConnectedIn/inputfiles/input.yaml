@@ -1,0 +1,65 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  oam_flavor_name:
+    type: string
+    label: OAM flavor name
+    description: flavor name of OAM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_name:
+    type: string
+    label: oam network name
+    description: name of the oam network
+  packet_mirror_network_name:
+    type: string
+    label: packet mirror network name
+    description: name of the oam network
+
+resources:
+
+  resources_with_dependOn:
+    type: OS::Neutron::Net
+    depends_on:
+      - server_pd_01
+    properties:
+      name:
+        get_param: packet_mirror_network_name
+
+  server_pd_01:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [pd_server_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: pd01_port_0}
+        - port: {get_resource: pd02_port_0}
+      user_data_format:  RAW
+
+  pd01_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+  pd02_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+

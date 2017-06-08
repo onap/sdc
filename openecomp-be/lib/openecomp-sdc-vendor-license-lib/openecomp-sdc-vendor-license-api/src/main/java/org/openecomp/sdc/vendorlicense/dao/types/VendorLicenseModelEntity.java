@@ -42,9 +42,6 @@ public class VendorLicenseModelEntity implements VersionableEntity {
   @Frozen
   private Version version;
 
-  //    @Column(name = "last_modification_time")
-  //    private Date lastModificationTime;
-
   @Column(name = "vendor_name")
   private String vendorName;
   private String description;
@@ -115,6 +112,11 @@ public class VendorLicenseModelEntity implements VersionableEntity {
   }
 
   @Override
+  public int hashCode() {
+    return Objects.hash(id, version, vendorName, description, iconRef);
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -129,19 +131,6 @@ public class VendorLicenseModelEntity implements VersionableEntity {
         && Objects.equals(description, that.description)
         && Objects.equals(iconRef, that.iconRef);
   }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, version, vendorName, description, iconRef);
-  }
-
-  //    public Date getLastModificationTime() {
-  //        return lastModificationTime;
-  //    }
-  //
-  //    public void setLastModificationTime(Date lastModificationTime) {
-  //        this.lastModificationTime = lastModificationTime;
-  //    }
 
   public Long getWritetimeMicroSeconds() {
     return writetimeMicroSeconds;

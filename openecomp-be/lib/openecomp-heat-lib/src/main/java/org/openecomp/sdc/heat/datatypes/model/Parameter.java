@@ -60,8 +60,8 @@ public class Parameter {
     return _default;
   }
 
-  public void set_default(Object defaultValue) {
-    this._default = defaultValue;
+  public void set_default(Object _default) {
+    this._default = _default;
   }
 
   public boolean isHidden() {

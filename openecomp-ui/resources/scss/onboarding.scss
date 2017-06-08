@@ -1,10 +1,68 @@
 .dox-ui {
-	@import "bootstrap";
+  @import "bootstrap";
+  @import "~react-select/dist/react-select.min.css";
 
-	@import "../css/font-awesome.min.css";
-	@import "~react-select/dist/react-select.min.css";
+  @import "common";
+  @import "components";
+  @import "modules";
+}
 
-	@import "common";
-	@import "components";
-	@import "modules";
+/* Out of namespace context for tooltips */
+div[data-reactroot].tooltip {
+  @import "common/variables";
+  @import "common/typography";
+
+  &.in {
+	opacity: 1;
+  }
+  &.validation-error-message {
+	&.bottom {
+	  .tooltip-arrow {
+		border-bottom-color: $red !important;
+	  }
+	}
+  }
+  &.bottom {
+	.tooltip-arrow {
+	  border-bottom-color: $dark-gray !important;
+	}
+  }
+  &.top {
+	.tooltip-arrow {
+	  border-top-color: $dark-gray !important;
+	}
+  }
+  .tooltip-inner {
+	max-width: 100%;
+	background-color: $dark-gray;
+  }
+
+  // activity log tooltip
+  &.activity-log-message-tooltip {
+	@include base-font-regular;
+	font-size: $body-font-2;
+	.message-block {
+	  text-align: left;
+	  padding: 3px 12px;
+	}
+  }
+  //dependency table error tooltip
+  &.select-action-table-error-tooltip{
+    @include base-font-regular;
+    margin-right: 5px;
+    font-size: $body-font-2;
+    .message-block {
+      text-align: left;
+      padding: 3px 12px;
+    }
+    .tooltip-arrow {
+           border-bottom-color: $red !important;
+	  }
+
+    .tooltip-inner {
+      background-color: $red;
+      padding: 6px 8px;
+      font-size: $body-font-2;
+    }
+  }
 }

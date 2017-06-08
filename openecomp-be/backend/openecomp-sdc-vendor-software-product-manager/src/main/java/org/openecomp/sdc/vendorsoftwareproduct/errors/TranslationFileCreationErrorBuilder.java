@@ -20,20 +20,16 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .TRANSLATION_FILE_CREATION;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.TRANSLATION_FILE_CREATION;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-/**
- * The type Translation file creation error builder.
- */
 public class TranslationFileCreationErrorBuilder {
   private static final String TRANSLATION_FILE_CREATION_ERROR_MSG =
-      "Error while trying to create translation file from the package of vendor software "
-          + "product with Id %s and version %s.";
+      "Error while trying to create translation file from the package of vendor software product "
+          + "with Id %s and version %s.";
   private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
   /**
@@ -49,11 +45,6 @@ public class TranslationFileCreationErrorBuilder {
         .format(TRANSLATION_FILE_CREATION_ERROR_MSG, vendorSoftwareProductId, version.toString()));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

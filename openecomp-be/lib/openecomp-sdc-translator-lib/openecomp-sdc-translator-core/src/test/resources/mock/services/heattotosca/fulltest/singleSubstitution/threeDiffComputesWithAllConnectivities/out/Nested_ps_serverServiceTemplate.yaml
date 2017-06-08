@@ -1,0 +1,303 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_ps_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.ps_server:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    port_pd01_port_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_ps_server_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    compute_ps_server_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_ps_server_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_ps_server_scheduler_hints:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    vm_flavor_name:
+      type: string
+      required: true
+    port_pd01_port_security_groups:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+  node_templates:
+    ps_server_pd01_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        security_groups:
+          get_input:
+          - port_pd01_port_security_groups
+          - index_value
+        ip_requirements:
+          get_input:
+          - port_pd01_port_ip_requirements
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_pd01_port_mac_requirements
+          - index_value
+        network:
+          get_input:
+          - port_pd01_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ps_server
+          relationship: tosca.relationships.network.BindsTo
+    ps_server:
+      type: org.openecomp.resource.vfc.nodes.heat.ps_server
+      properties:
+        availability_zone:
+          get_input:
+          - compute_ps_server_availability_zone
+          - index_value
+        flavor:
+          get_input: vm_flavor_name
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_ps_server_name
+          - index_value
+        scheduler_hints:
+          get_input:
+          - compute_ps_server_scheduler_hints
+          - index_value
+        user_data_format:
+          get_input:
+          - compute_ps_server_user_data_format
+          - index_value
+  outputs:
+    ps_server_accessIPv4:
+      type: list
+      value:
+        get_attribute:
+        - ps_server
+        - accessIPv4
+      entry_schema:
+        type: string
+    ps_server_pd01_port_device_id:
+      type: list
+      value:
+        get_attribute:
+        - ps_server_pd01_port
+        - device_id
+      entry_schema:
+        type: string
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.ps_server
+    capabilities:
+      instance_ps_server:
+      - ps_server
+      - instance
+      binding_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - binding
+      host_ps_server:
+      - ps_server
+      - host
+      cpu.delta_ps_server:
+      - ps_server
+      - cpu.delta
+      disk.write.bytes.rate_ps_server:
+      - ps_server
+      - disk.write.bytes.rate
+      feature_ps_server:
+      - ps_server
+      - feature
+      disk.root.size_ps_server:
+      - ps_server
+      - disk.root.size
+      disk.device.read.requests.rate_ps_server:
+      - ps_server
+      - disk.device.read.requests.rate
+      cpu_ps_server:
+      - ps_server
+      - cpu
+      disk.device.write.bytes_ps_server:
+      - ps_server
+      - disk.device.write.bytes
+      disk.device.read.bytes_ps_server:
+      - ps_server
+      - disk.device.read.bytes
+      disk.read.bytes_ps_server:
+      - ps_server
+      - disk.read.bytes
+      disk.device.iops_ps_server:
+      - ps_server
+      - disk.device.iops
+      network.outpoing.packets_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.outpoing.packets
+      disk.device.latency_ps_server:
+      - ps_server
+      - disk.device.latency
+      disk.read.bytes.rate_ps_server:
+      - ps_server
+      - disk.read.bytes.rate
+      memory_ps_server:
+      - ps_server
+      - memory
+      scalable_ps_server:
+      - ps_server
+      - scalable
+      disk.write.requests.rate_ps_server:
+      - ps_server
+      - disk.write.requests.rate
+      network.outgoing.bytes_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.outgoing.bytes
+      disk.write.requests_ps_server:
+      - ps_server
+      - disk.write.requests
+      network.incoming.bytes.rate_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.incoming.bytes.rate
+      network.incoming.packets_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.incoming.packets
+      disk.latency_ps_server:
+      - ps_server
+      - disk.latency
+      disk.ephemeral.size_ps_server:
+      - ps_server
+      - disk.ephemeral.size
+      disk.device.capacity_ps_server:
+      - ps_server
+      - disk.device.capacity
+      disk.iops_ps_server:
+      - ps_server
+      - disk.iops
+      disk.device.read.bytes.rate_ps_server:
+      - ps_server
+      - disk.device.read.bytes.rate
+      network.outgoing.packets.rate_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.outgoing.packets.rate
+      cpu_util_ps_server:
+      - ps_server
+      - cpu_util
+      memory.resident_ps_server:
+      - ps_server
+      - memory.resident
+      disk.device.read.requests_ps_server:
+      - ps_server
+      - disk.device.read.requests
+      disk.write.bytes_ps_server:
+      - ps_server
+      - disk.write.bytes
+      feature_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - feature
+      network.outgoing.bytes.rate_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.outgoing.bytes.rate
+      attachment_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - attachment
+      disk.device.write.requests.rate_ps_server:
+      - ps_server
+      - disk.device.write.requests.rate
+      network.incoming.packets.rate_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.incoming.packets.rate
+      disk.read.requests_ps_server:
+      - ps_server
+      - disk.read.requests
+      disk.allocation_ps_server:
+      - ps_server
+      - disk.allocation
+      memory.usage_ps_server:
+      - ps_server
+      - memory.usage
+      binding_ps_server:
+      - ps_server
+      - binding
+      os_ps_server:
+      - ps_server
+      - os
+      disk.device.usage_ps_server:
+      - ps_server
+      - disk.device.usage
+      disk.device.write.bytes.rate_ps_server:
+      - ps_server
+      - disk.device.write.bytes.rate
+      vcpus_ps_server:
+      - ps_server
+      - vcpus
+      network.incoming.bytes_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - network.incoming.bytes
+      disk.usage_ps_server:
+      - ps_server
+      - disk.usage
+      disk.device.write.requests_ps_server:
+      - ps_server
+      - disk.device.write.requests
+      endpoint_ps_server:
+      - ps_server
+      - endpoint
+      disk.capacity_ps_server:
+      - ps_server
+      - disk.capacity
+      disk.device.allocation_ps_server:
+      - ps_server
+      - disk.device.allocation
+    requirements:
+      dependency_ps_server:
+      - ps_server
+      - dependency
+      dependency_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - dependency
+      link_ps_server_pd01_port:
+      - ps_server_pd01_port
+      - link
+      local_storage_ps_server:
+      - ps_server
+      - local_storage

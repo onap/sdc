@@ -20,6 +20,7 @@
 
 package org.openecomp.server.interceptors;
 
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.net.URI;
@@ -48,6 +49,7 @@ public class DefaultOutput extends Response implements Serializable {
     this.status = s0;
     this.entity = e0;
   }
+
   public Object getEntity() {
     return entity;
   }
@@ -140,6 +142,7 @@ public class DefaultOutput extends Response implements Serializable {
   public boolean hasLink(String s0) {
     return false;
   }
+
 
   @Override
   public Link getLink(String s0) {

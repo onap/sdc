@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+        <name>
+            <maxlength>14</maxlength>
+            <allowedChar>a-zA-Z</allowedChar>
+            <allowedchar>a-zA-Z</allowedchar>
+        </name>
+       <!-- <maxsize></maxsize>-->
+        <extension>pdf</extension>
+        <extension>zip,xml</extension>
+
+        <supportedEncryption>Base64</supportedEncryption>
+        <supportedEncryption>MD5</supportedEncryption>
+        <status>deleted</status>
+        <status>Deleted</status>
+        <persistLocation>/opt/spool,${sys:user.home}/asdc</persistLocation>
+        <jsonSchema>@GeneratorList.json</jsonSchema>
+        <xmlSchema>@${env:path}/myschema.json</xmlSchema>
+        <consumerAPPC>${artifact.consumer}</consumerAPPC>
+    </artifact>
+    <_config>
+        <namespace>XMLConfig</namespace>
+    </_config>
+</configuration>

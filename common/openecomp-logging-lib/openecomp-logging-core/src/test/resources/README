@@ -1,0 +1,8 @@
+Different routing/dispatching mechanisms can be tested using -Dlogback.configurationFile and a custom configuration
+file, for example
+
+-Dlogback.configurationFile=<path>/dispatching-logback.xml
+
+or
+
+-Dlogback.configurationFile=<path>/sifting-logback.xml

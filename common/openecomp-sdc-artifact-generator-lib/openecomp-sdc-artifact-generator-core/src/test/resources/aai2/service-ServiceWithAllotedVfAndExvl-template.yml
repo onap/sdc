@@ -1,0 +1,90 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: e8a6c85c-429f-47cd-b594-376a0ffccd29
+  UUID: 14fd2446-691a-4d7d-8ef4-ece19c3176f5
+  name: Service with alloted VF and  exVL
+  description: 'This service contains two instances : 1. Allotted resource VF 2. ExVL
+    - Network'
+  type: Service
+  category: Mobility
+  serviceEcompNaming: false
+  serviceHoming: false
+imports:
+- ExtVL:
+    file: resource-Extvl-template.yml
+- Allotted Resource:
+    file: resource-AllottedResource-template.yml
+topology_template:
+  node_templates:
+    ExtVL 1:
+      type: org.openecomp.resource.vl.extVL
+      metadata:
+        invariantUUID: f148dbb0-8c53-466d-9687-791c0e9d40cf
+        UUID: 3f8fa4d2-2b86-4b36-bbc8-ffb8f9f57468
+        version: '2.0'
+        name: ExtVL
+        description: OPENECOMP generic virtual link (network) base type for all other service-level and global networks
+        type: VL
+        category: Generic
+        subcategory: Network Elements
+    Allotted Resource 2:
+      type: org.openecomp.resource.vf.AllottedResource
+      metadata:
+        invariantUUID: a54a5235-b69d-4f8a-838b-d011e6783fa5
+        UUID: f32afdc3-6308-4f0c-a476-0d39c8a1fb4d
+        version: '0.1'
+        name: Allotted Resource
+        description: This is a VF - Allotted resource
+        type: VF
+        category: Allotted Resource
+        subcategory: Allotted Resource
+  substitution_mappings:
+    node_type: org.openecomp.service.ServiceWithAllotedVfAndExvl
+    capabilities:
+      ExtVL 1.virtual_linkable:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      Allotted Resource 2.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      ExtVL 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      ExtVL 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Allotted Resource 2.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Allotted Resource 2.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

@@ -1,0 +1,382 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates MOG stack
+
+parameters:
+  pd_server_names:
+    type: comma_delimited_list
+    label: PD server names
+    description: name of the PD instance
+  pd_image_name:
+    type: string
+    label: image name
+    description: PD image name
+  pd_flavor_name:
+    type: string
+    label: PD flavor name
+    description: flavor name of PD instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  a_single_1a_names:
+    type: string
+  oam_net_name:
+    type: string
+  ppds_net_name:
+    type: string
+  b_single_1b_names:
+    type: string
+  1c1_scalling_instance_names:
+    type: string
+  myIPs:
+    type: string
+  1c2_catalog_instance_names:
+    type: string
+  pcm_server_names:
+    type: string
+  pcm_image_name:
+    type: string
+  pcm_flavor_name:
+    type: string
+  net_name:
+    type: string
+  security_group_name:
+    type: string
+resources:
+  1a_single_1A:
+    type: OS::Nova::Server
+    depends_on:
+    - 4p_nested
+    - nestedWithNoNovaHadDependencyToIt
+    properties:
+      name: {get_param: [a_single_1a_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1a_t1_port_0}
+        - port: {get_resource: 1a_t2_port_0}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1a_t1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: a_single_1a_network}
+  1a_t2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+
+  a_single_1a_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  4p_nested:
+    type: nested-pcm_v0.1.yaml
+    depends_on:
+    - 1a_single_1A
+    - 1b_t1_port_0
+    - nestedWithNoNovaHadDependencyToIt
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+
+  nested_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1b01_single_1B:
+    type: OS::Nova::Server
+    depends_on:
+    - 1a_single_1A
+    - 4p_nested
+    - nestedWithNoNovaHadDependencyToIt
+    properties:
+      name: {get_param: [b_single_1b_names, 0]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_0}
+        - port: {get_resource: 1b_t2_port_0}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1b_t1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_attr: [1b01_single_1B, accessIPv6]}
+
+  1b_t2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network}
+
+  b_single_1b_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1b02_single_1B:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [b_single_1b_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1b_t1_port_1}
+        - port: {get_resource: 1b_t2_port_1}
+      user_data_format:  RAW
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1b_t1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: oam_net_name}
+
+  1b_t2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: b_single_1b_network}
+
+  1c101_scalling_instance_1C1:
+    type: OS::Nova::Server
+    depends_on:
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      name: {get_param: [1c1_scalling_instance_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_0}
+        - port: {get_resource: 1c1_t2_port_0}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c1_t1_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
+      name: 1c1_t1_port_0
+  1c1_t2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 2]}}]
+      name: 1c1_t2_port_0
+
+  1c1_scalling_instance_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1c102_scalling_instance_1C1:
+    type: OS::Nova::Server
+    depends_on:
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      name: {get_param: [1c1_scalling_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c1_t1_port_1}
+        - port: {get_resource: 1c1_t2_port_1}
+      user_data_format:  RAW2
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c1_t1_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c1_scalling_instance_network}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 3]}}]
+      name: 1c1_t1_port_1
+
+  1c1_t2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: ppds_net_name}
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 4]}}]
+      name: 1c1_t2_port_1
+
+  1c201_catalog_instance_1C2:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names, 1]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_0}
+        - port: {get_resource: 1c2_t2_port_0}
+      user_data_format:  RAW1
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c2_t1_port_0:
+    type: OS::Neutron::Port
+    depends_on:
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+  1c2_catalog_instance_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        get_param: net_name
+
+  1c202_scalling_instance_1C2:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: [1c2_catalog_instance_names, 2]}
+      image: {get_param: pd_image_name}
+      flavor: {get_param: pd_flavor_name}
+      availability_zone: {get_param: availabilityzone_name}
+      networks:
+        - port: {get_resource: 1c2_t1_port_1}
+        - port: {get_resource: 1c2_t2_port_1}
+      user_data_format:  {get_attr: [1c201_catalog_instance_1C2, instance_name]}
+      scheduler_hints: { group: { get_resource: BE_Affinity }  }
+
+  1c2_t1_port_1:
+    type: OS::Neutron::Port
+    depends_on:
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      network: {get_param: oam_net_name}
+  1c2_t2_port_1:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_resource: 1c2_catalog_instance_network}
+
+
+  nestedNoUnified:
+    type: nested-no_vfc_v0.1.yaml
+    depends_on:
+      - 1c2_t2_port_1
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      cps_net_name: { get_resource: nested_network}
+      security_group_name: { get_resource: jsa_security_group}
+      server_group: { get_resource: BE_Affinity }
+
+  nestedWithNoNova:
+    type: nested-no-nova.yaml
+    depends_on:
+      - 1a_single_1A
+      - 4p_nested
+      - 1b_t1_port_0
+      - 1b_t1_port_1
+      - 1c101_scalling_instance_1C1
+      - 1c102_scalling_instance_1C1
+      - 1c201_catalog_instance_1C2
+      - 1c202_scalling_instance_1C2
+      - nestedNoUnified
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      security_group_name: group1
+      net_name: myNetwork
+
+  nestedWithNoNovaHadDependencyToIt:
+    type: nested-no-nova.yaml
+    properties:
+      security_group_name: group1
+      net_name: myNetwork
+
+  jsa_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: ems security group
+      name: {get_param: security_group_name}
+      rules: [{"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": egress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv4, "protocol": icmp, "remote_ip_prefix": 0.0.0.0/0},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": tcp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "port_range_min": 1, "port_range_max": 65535, "protocol": udp, "remote_ip_prefix": "::/0"},
+              {"direction": ingress, "ethertype": IPv6, "protocol": icmp, "remote_ip_prefix": "::/0"}
+              ]
+
+  dependsOn_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - nestedNoUnified
+      - 4p_nested
+      - 1c2_t1_port_1
+      - 1c2_t1_port_0
+      - 1c201_catalog_instance_1C2
+      - 1c202_scalling_instance_1C2
+      - 1c101_scalling_instance_1C1
+      - 1c102_scalling_instance_1C1
+      - 1c1_t2_port_0
+      - 1c1_t2_port_1
+      - 1b01_single_1B
+      - 1b02_single_1B
+      - 1b_t1_port_0
+      - 1b_t1_port_1
+      - 1a_single_1A
+      - 1a_t1_port_0
+      - nestedWithNoNovaHadDependencyToIt
+    properties:
+      name:
+        get_param: net_name
+
+  nodeGetAttIn_network:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
+      dhcp_agent_ids: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
+      tenant_id: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_t2_port_0, tenant_id, {get_attr:[1c1_t2_port_1, tenant_id]}]}]}]}
+      value_specs: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[1b_t1_port_0, tenant_id, {get_attr:[1b_t1_port_1, tenant_id]}]}]] }
+      qos_policy: {get_attr:[1a_single_1A, instance_name]}
+      admin_state_up: {get_attr:[1a_t1_port_0, tenant_id]}
+
+  BE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["affinity"]
+      name: def
+
+outputs:
+  out1:
+    value: { get_attr: [nestedNoUnified, portId, {get_attr: [4p_nested, server_pcm_id]}]}
+  out2:
+    value: { get_attr: [1c2_t1_port_1, tenant_id, {get_attr: [1c2_t1_port_0, tenant_id, {get_attr: [1c201_catalog_instance_1C2, instance_name, {get_attr: [1c202_scalling_instance_1C2,instance_name]}]}]}]}
+  out3:
+    value: { get_attr:[1c101_scalling_instance_1C1, instance_name, {get_attr:[1c102_scalling_instance_1C1, instance_name, {get_attr:[1c1_t2_port_0, tenant_id, {get_attr:[1c1_t2_port_1, tenant_id]}]}]}]}
+  out4:
+    value: {get_attr:[1b01_single_1B, instance_name, get_attr:[1b02_single_1B,instance_name, {get_attr:[1b_t1_port_0, tenant_id, {get_attr:[1b_t1_port_1, tenant_id]}]}]] }
+  out5:
+    value: {get_attr:[1a_single_1A, instance_name]}
+  out6:
+    value: {get_attr:[1a_t1_port_0, tenant_id]}
+  out7:
+    value: {get_attr:[nestedWithNoNovaHadDependencyToIt, output1]}
+

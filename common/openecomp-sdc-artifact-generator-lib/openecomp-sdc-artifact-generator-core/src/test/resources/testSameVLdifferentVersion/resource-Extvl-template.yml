@@ -1,0 +1,61 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: f148dbb0-8c53-466d-9687-791c0e9d40cf
+  UUID: 3f8fa4d2-2b86-4b36-bbc8-ffb8f9f57468
+  name: ExtVL1
+  description: OPENECOMP generic virtual link (network) base type for all other service-level and global networks
+  type: VL
+  category: Generic
+  subcategory: Network Elements
+  resourceVendor: OPENECOMP (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+node_types:
+  org.openecomp.resource.vl.extVL:
+    derived_from: tosca.nodes.Root
+    description: OPENECOMP generic virtual link (network) base type for all other service-level and global networks
+    properties:
+      physical_network:
+        type: org.openecomp.datatypes.network.PhysicalNetwork
+      network_role:
+        type: string
+        description: |
+          Unique label that defines the role that this network performs.   example: vce oam network, vnat sr-iov1 network
+      network_assignments:
+        type: org.openecomp.datatypes.network.NetworkAssignments
+      network_flows:
+        type: org.openecomp.datatypes.network.NetworkFlows
+      vl_artifacts:
+        type: map
+        description: List of artifacts associated with the VL
+        entry_schema:
+          type: org.openecomp.datatypes.Artifact
+      network_scope:
+        type: string
+        description: |
+          Uniquely identifies the network scope. Valid values for the network scope   includes: VF - VF-level network. Intra-VF network which connects the VFCs (VMs) inside the VF. SERVICE - Service-level network. Intra-Service network which connects  the VFs within the service GLOBAL - Global network which can be shared by multiple services
+      network_ecomp_naming:
+        type: org.openecomp.datatypes.EcompNaming
+      network_type:
+        type: string
+        description: OPENECOMP supported network types.
+      network_technology:
+        type: string
+        description: OPENECOMP supported network technology
+      network_homing:
+        type: org.openecomp.datatypes.EcompHoming
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable
+        occurrences:
+        - 1
+        - UNBOUNDED
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

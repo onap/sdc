@@ -6,31 +6,7 @@
 	<artifactId>sdc-main</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
-
-
-
-	<modules>
-		<module>security-utils</module>
-		<module>common-app-api</module>
-		<module>common-be</module>
-		<module>catalog-dao</module>
-		<module>catalog-model</module>
-		<module>catalog-be</module>
-		<module>asdctool</module>
-		<module>catalog-ui</module>
-		<module>catalog-fe</module>
-		<module>asdc-tests</module>
-		<module>ui-ci</module>
-		
-		<module>openecomp-be</module>
-		<module>openecomp-ui</module>
-
-		<module>sdc-os-chef</module>
-
-	</modules>
-
-
+	
 
 	<properties>
 
@@ -39,77 +15,7 @@
 		<!-- ==================== -->
 		<build.type>-SNAPSHOT</build.type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-
-		<!-- ==================== -->
-		<!-- Versions -->
-		<!-- ==================== -->
-		<!-- Global project version -->
-		<asdc.major.version>1610</asdc.major.version>
-		<asdc.minor.version>0</asdc.minor.version>
-		<asdc.servicepack.version>2</asdc.servicepack.version>
-		<sprint.number>33</sprint.number>
-		<asdc.full.version>${project.version}</asdc.full.version>
-
-		<!-- BE -->
-		<catalog-be.major.version>${asdc.major.version}</catalog-be.major.version>
-		<catalog-be.minor.version>${asdc.minor.version}</catalog-be.minor.version>
-		<catalog-be.servicepack.version>${asdc.servicepack.version}</catalog-be.servicepack.version>
-		<catalog-be.full.version>${catalog-be.major.version}.${catalog-be.minor.version}.${catalog-be.servicepack.version}${build.type}</catalog-be.full.version>
-
-		<!-- FE -->
-		<catalog-fe.major.version>${asdc.major.version}</catalog-fe.major.version>
-		<catalog-fe.minor.version>${asdc.minor.version}</catalog-fe.minor.version>
-		<catalog-fe.servicepack.version>${asdc.servicepack.version}</catalog-fe.servicepack.version>
-		<catalog-fe.full.version>${catalog-fe.major.version}.${catalog-fe.minor.version}.${catalog-fe.servicepack.version}${build.type}</catalog-fe.full.version>
-
-		<!-- CI -->
-		<catalog-ci.major.version>${asdc.major.version}</catalog-ci.major.version>
-		<catalog-ci.minor.version>${asdc.minor.version}</catalog-ci.minor.version>
-		<catalog-ci.servicepack.version>${asdc.servicepack.version}</catalog-ci.servicepack.version>
-		<catalog-ci.full.version>${catalog-ci.major.version}.${catalog-ci.minor.version}.${catalog-ci.servicepack.version}${build.type}</catalog-ci.full.version>
-
-		<!-- UI -->
-		<catalog-ui.major.version>${asdc.major.version}</catalog-ui.major.version>
-		<catalog-ui.minor.version>${asdc.minor.version}</catalog-ui.minor.version>
-		<catalog-ui.servicepack.version>${asdc.servicepack.version}</catalog-ui.servicepack.version>
-		<catalog-ui.full.version>${catalog-ui.major.version}.${catalog-ui.minor.version}.${catalog-ui.servicepack.version}${build.type}</catalog-ui.full.version>
-
-		<!-- Model -->
-		<catalog-model.major.version>${asdc.major.version}</catalog-model.major.version>
-		<catalog-model.minor.version>${asdc.minor.version}</catalog-model.minor.version>
-		<catalog-model.servicepack.version>${asdc.servicepack.version}</catalog-model.servicepack.version>
-		<catalog-model.full.version>${catalog-model.major.version}.${catalog-model.minor.version}.${catalog-model.servicepack.version}${build.type}</catalog-model.full.version>
-
-		<!-- CHEF -->
-		<asdc-chef.major.version>${asdc.major.version}</asdc-chef.major.version>
-		<asdc-chef.minor.version>${asdc.minor.version}</asdc-chef.minor.version>
-		<asdc-chef.servicepack.version>${asdc.servicepack.version}</asdc-chef.servicepack.version>
-		<asdc-chef.full.version>${asdc-chef.major.version}.${asdc-chef.minor.version}.${asdc-chef.servicepack.version}${build.type}</asdc-chef.full.version>
-
-		<!-- TESTS -->
-		<sdnc-tests.major.version>${asdc.major.version}</sdnc-tests.major.version>
-		<sdnc-tests.minor.version>${asdc.minor.version}</sdnc-tests.minor.version>
-		<sdnc-tests.servicepack.version>${asdc.servicepack.version}</sdnc-tests.servicepack.version>
-		<sdnc-tests.full.version>${sdnc-tests.major.version}.${sdnc-tests.minor.version}.${sdnc-tests.servicepack.version}${build.type}</sdnc-tests.full.version>
-
-		<!-- TESTS2 -->
-		<asdc-tests.major.version>${asdc.major.version}</asdc-tests.major.version>
-		<asdc-tests.minor.version>${asdc.minor.version}</asdc-tests.minor.version>
-		<asdc-tests.servicepack.version>${asdc.servicepack.version}</asdc-tests.servicepack.version>
-		<asdc-tests.full.version>${asdc-tests.major.version}.${asdc-tests.minor.version}.${asdc-tests.servicepack.version}${build.type}</asdc-tests.full.version>
-
-
-		<!-- Sub modules versioning -->
-		<sdnc-tests.version>${asdc.full.version}</sdnc-tests.version>
-		<asdc-tests.version>${asdc.full.version}</asdc-tests.version>
-		<catalog-dao.version>${asdc.full.version}</catalog-dao.version>
-		<catalog-model.version>${asdc.full.version}</catalog-model.version>
-		<common-app-api.version>${asdc.full.version}</common-app-api.version>
-		<common-be.version>${asdc.full.version}</common-be.version>
-		<security-utils.version>${asdc.full.version}</security-utils.version>
-		<asdctool.version>${asdc.full.version}</asdctool.version>
-
+		<sprint.number>42</sprint.number>
 
 		<!-- 3rd parties versions -->
 		<lang3.version>3.3.2</lang3.version>
@@ -119,17 +25,17 @@
 		<spring.version>4.3.4.RELEASE</spring.version>
 		<spring.security.version>3.2.3.RELEASE</spring.security.version>
 		<spring.ldap.version>2.0.1.RELEASE</spring.ldap.version>
-		<mockito.version>1.9.0</mockito.version>
+        <jersey-bom.version>2.24</jersey-bom.version>
+        <servlet-api.version>2.5</servlet-api.version>
+
+		<!--<ecomp.version>3.3.6</ecomp.version>-->
+		<artifact-generator-api.version>1.1.0-SNAPSHOT</artifact-generator-api.version>
+		<artifact-generator-core.version>1.1.0-SNAPSHOT</artifact-generator-core.version>
 		<ecomp.version>1.1.0-SNAPSHOT</ecomp.version>
-		<artefact-gen-api.version>1.1.0-SNAPSHOT</artefact-gen-api.version>
-		<artefact-gen-core.version>1.1.0-SNAPSHOT</artefact-gen-core.version>
 		<dox-common-lib.version>1.1.0-SNAPSHOT</dox-common-lib.version>
 
-		
 		<!-- Elastic Search mapper (reference the elastic search version actually). -->
 		<elastic-search.version>2.1.0</elastic-search.version>
-		<springockito.version>1.0.4</springockito.version>
-		<alien4cloud.version>1.0.0-SM19</alien4cloud.version>
 		<catalog-artifacts.version>1.0.0-SNAPSHOT</catalog-artifacts.version>
 		<catalog-builders.version>1.0.0-SNAPSHOT</catalog-builders.version>
 		<jetty.version>9.2.10.v20150310</jetty.version>
@@ -139,37 +45,59 @@
 		<jackson.annotations.version>2.6.0</jackson.annotations.version>
 
 		<!-- Yaml for properties -->
-		<snakeyaml.version>1.12</snakeyaml.version>
-		<functionaljava.version>4.2</functionaljava.version>
+		<snakeyaml.version>1.14</snakeyaml.version>
+		<functionaljava.version>4.4</functionaljava.version>
 		<httpclient.version>4.4.1</httpclient.version>
 		<httpcore.version>4.4.1</httpcore.version>
 		<json-simple.version>1.1</json-simple.version>
-		<jetty.servlets.version>9.2.10.v20150310</jetty.servlets.version>
+
 
 		<!-- Logging start -->
 		<!-- logback -->
-		<logback.version>1.1.2</logback.version>
+        <logback.version>1.1.2</logback.version>
+        <slf4j-api.version>1.7.10</slf4j-api.version>
+        <commons-codec>1.10</commons-codec>
+        <commons-logging>1.2</commons-logging>
 		<groovy.version>2.3.5</groovy.version>
 		<janino.version>3.0.6</janino.version>
+		
 		<!-- aspects -->
 		<jcabi.version>0.20.1</jcabi.version>
 		<aspectjrt.version>1.8.4</aspectjrt.version>
+		<aspectj.version>1.7.4</aspectj.version>
 		<jcabi.plugin.version>0.13.2</jcabi.plugin.version>
+		
 		<!-- Logging end -->
 		<!-- System Metrics -->
 		<sigar.version>1.6.4</sigar.version>
 
+		<regex.version>3.0.3</regex.version>
 
+		<codehaus.jackson.core>1.9.2</codehaus.jackson.core>
+
+		<!--GSON-->
+		<gson.version>2.3.1</gson.version>
+
+        <!--listen to file changes-->
+        <commons-jci-core.version>1.1</commons-jci-core.version>
+
+		<!--TESTING-->
+		<mockito.version>1.10.19</mockito.version>
+		<junit.version>4.12</junit.version>
+		<testng.version>6.9.10</testng.version>
+		<extentreports.version>3.0.3</extentreports.version>
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>${project.basedir}/target/it-jacoco.exec</sonar.jacoco.itReportPath>
-		<!--sonar.language>java</sonar.language-->
-		<sonar.version>${asdc.major.version}</sonar.version>
+		<sonar.language>java</sonar.language>
+		<sonar.version>${project.version}</sonar.version>
 
 		<!--cassandra -->
 		<cassandra.driver.version>3.0.0</cassandra.driver.version>
-
+		<!-- maven central (Nexus) -->
+		<nexus.id.release>nexus</nexus.id.release>
+		<nexus.id.snapshot>nexus</nexus.id.snapshot>
 		<!-- Sonar properties -->
 		<sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
 		<sonar.skipDesign>true</sonar.skipDesign>
@@ -208,127 +136,6 @@
 		</plugins>
 	</reporting>
 
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.elasticsearch</groupId>
-				<artifactId>elasticsearch</artifactId>
-				<version>${elastic-search.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.2.10.v20150310</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>9.2.10.v20150310</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-webapp</artifactId>
-				<version>9.2.10.v20150310</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.glassfish.jersey</groupId>
-				<artifactId>jersey-bom</artifactId>
-				<version>2.24</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
-				<scope>provided</scope>
-			</dependency>
-
-
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-json-jackson</artifactId>
-				<version>2.24</version>
-				<scope>compile</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-moxy</artifactId>
-				<version>2.24</version>
-				<scope>compile</scope>
-			</dependency>
-
-
-			<!-- listen to file changes -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-jci-core</artifactId>
-				<version>1.1</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>com.relevantcodes</groupId>
-				<artifactId>extentreports</artifactId>
-				<version>2.41.0</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.googlecode.json-simple</groupId>
-				<artifactId>json-simple</artifactId>
-				<version>${json-simple.version}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<!-- functional java -->
-			<dependency>
-				<groupId>org.functionaljava</groupId>
-				<artifactId>functionaljava</artifactId>
-				<version>${functionaljava.version}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<!-- Aspects -->
-			<dependency>
-				<groupId>com.jcabi</groupId>
-				<artifactId>jcabi-aspects</artifactId>
-				<version>${jcabi.version}</version>
-				<scope>provided</scope>
-			</dependency>
-
-
-			<!-- System metrics -->
-			<dependency>
-				<groupId>org.fusesource</groupId>
-				<artifactId>sigar</artifactId>
-				<version>${sigar.version}</version>
-			</dependency>		
-		</dependencies>
-
-	</dependencyManagement>
-
-
-
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -346,15 +153,6 @@
 					</dependencies>
 				</plugin>
 
-				<plugin>
-					<groupId>io.wcm.maven.plugins</groupId>
-					<artifactId>nodejs-maven-plugin</artifactId>
-					<configuration>
-						<npmVersion>4.3.0</npmVersion>
-						<nodeJsVersion>7.5.0</nodeJsVersion>
-						<nodeJsDirectory>/tmp/nodejs</nodeJsDirectory>
-					</configuration>
-				</plugin>			
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -376,7 +174,6 @@
 		</pluginManagement>
 
 		<plugins>
-
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
@@ -386,10 +183,22 @@
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
+			<!-- plugin for parsing the project version -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-			<!-- ================================================== -->
 			<!-- Set the JDK compiler version. -->
-			<!-- ================================================== -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -401,17 +210,13 @@
 				</configuration>
 			</plugin>
 
-			<!-- ============================================= -->
 			<!-- Java Code Coverage -->
-			<!-- ============================================= -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.7.1.201405082137</version>
 				<inherited>True</inherited>
-
 				<executions>
-
 					<!-- Unit-Tests -->
 					<execution>
 						<id>prepare-agent</id>
@@ -422,8 +227,6 @@
 							<destFile>${sonar.jacoco.reportPath}</destFile>
 						</configuration>
 					</execution>
-
-
 					<execution>
 						<id>report</id>
 						<goals>
@@ -449,11 +252,7 @@
 				</executions>
 			</plugin>
 
-
-
-			<!-- ================================================== -->
 			<!-- Set the deployment repositories properties. -->
-			<!-- ================================================== -->
 			<plugin>
 				<groupId>org.codehaus.gmaven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
@@ -480,19 +279,6 @@
 				</executions>
 			</plugin>
 
-			<!-- Staging Plugin -->
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<nexusUrl>${nexus.proxy}</nexusUrl>
-					<stagingProfileId>${staging.profile.id}</stagingProfileId>
-					<serverId>ecomp-staging</serverId>
-				</configuration>
-			</plugin>
-			
 			<!-- license plugin -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -514,15 +300,20 @@
 					<verbose>false</verbose>
 					<includes>
 						<include>**/*.java</include>
-						<include>**/*.js</include>
 						<include>**/*.ts</include>
 					</includes>
+					<excludes>
+						<exclude>**/*.d.ts</exclude>
+					</excludes>
 					<roots>
 						<root>src</root>
 						<root>app</root>
 						<root>server-mock</root>
 						<root>typings</root>
 					</roots>
+					<extraExtensions>
+						<ts>java</ts>
+					</extraExtensions>
 				</configuration>
 				<executions>
 					<execution>
@@ -530,101 +321,240 @@
 						<goals>
 							<goal>update-file-header</goal>
 						</goals>
-						<!--phase>process-sources</phase-->
+						<!--phase>process-sources</phase -->
 					</execution>
 				</executions>
 			</plugin>
+		</plugins>
+	</build>
 
-			<!-- blackduck maven plugin -->
-			<!-- <plugin>
- 				<groupId>com.blackducksoftware.integration</groupId>
- 				<artifactId>hub-maven-plugin</artifactId>
- 				<version>1.0.4</version>
- 				<inherited>false</inherited>
- 				<configuration>
-  					<target>${project.basedir}</target>
-	 			</configuration>
- 				<executions>
-  					<execution>
-   						<id>create-bdio-file</id>
-   						<phase>package</phase>
-   						<goals>
-    						<goal>createHubOutput</goal>
-   						</goals>
-  					</execution>
- 				</executions>
- 			</plugin> -->
- 		</plugins>
- 	</build>
+	<profiles>
+		<profile>
+			<id>all</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>onboarding</module>
+				<!--module>security-utils</module>
+				<module>common-app-api</module>
+				<module>common-be</module>
+				<module>catalog-dao</module>
+				<module>catalog-model</module>
+				<module>catalog-be</module>
+				<module>asdctool</module>
+				<module>catalog-ui</module>
+				<module>catalog-fe</module>
+				<module>asdc-tests</module>
+				<module>test-apis-ci</module>
+				<module>ui-ci</module>
+				<module>sdc-os-chef</module-->
+			</modules>
+
+		</profile>
 
 
 
- 	<repositories>
- 		<repository>
- 			<id>virtuos</id>
- 			<name>Virtuos</name>
- 			<url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
- 			<layout>default</layout>
- 		</repository>
- 		<repository>
- 			<id>apache-public</id>
- 			<name>Apache-Public</name>
- 			<url>https://repository.apache.org/content/groups/public/</url>
- 			<layout>default</layout>
- 		</repository>
- 		<repository>
- 			<id>elasticsearch-releases</id>
- 			<url>https://maven.elasticsearch.org/releases</url>
- 			<releases>
- 				<enabled>true</enabled>
- 			</releases>
- 			<snapshots>
- 				<enabled>false</enabled>
- 			</snapshots>
- 		</repository>
- 		<repository>
- 			<id>central</id>
- 			<name>Official Maven repository</name>
- 			<url>http://repo2.maven.org/maven2/</url>
- 		</repository>
- 		<repository>
- 			<id>ecomp-releases</id>
- 			<name>Release Repository</name>
- 			<url>${nexus.proxy}/content/repositories/releases/</url>
- 		</repository>
- 		<repository>
- 			<id>ecomp-staging</id>
- 			<name>Staging Repository</name>
- 			<url>${nexus.proxy}/content/repositories/staging/</url>
- 		</repository>
- 		<repository>
- 			<id>ecomp-snapshots</id>
- 			<name>Snapshots Repository</name>
- 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
- 		</repository>
- 		<repository>
- 			<id>node</id>
- 			<name>Node</name>
- 			<url>https://maven-nodejs-proxy.pvtool.org/</url>
- 		</repository>
- 	</repositories>
+		<profile>
+			<id>catalog</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>security-utils</module>
+				<module>common-app-api</module>
+				<module>common-be</module>
+				<module>catalog-dao</module>
+				<module>catalog-model</module>
+				<module>catalog-be</module>
+				<module>asdctool</module>
+				<module>catalog-ui</module>
+				<module>catalog-fe</module>
+				<module>asdc-tests</module>
+				<module>test-apis-ci</module>
+				<module>ui-ci</module>
+			</modules>
+		
+			<build>
+				<plugins>
+					<!-- Create the 'next build number' file -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.5.0</version>
+						
+						<executions>
+							<execution>
+								<inherited>false</inherited>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<phase>initialize</phase>
+								<id>get.next.build.number</id>
+								<configuration>
+									<workingDirectory>${project.basedir}</workingDirectory>
+									<executable>/usr/bin/perl</executable>
+									<arguments>
+										<argument>scripts/get_next_version.pl</argument>
+										<argument>-groupId=${project.groupId}</argument>
+										<argument>-artifactId=${project.artifactId}</argument>
+										<argument>-baseVersion=${project.version}.${sprint.number}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 
- 	<distributionManagement>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>properties-maven-plugin</artifactId>
+						<version>1.0-alpha-2</version>
 
- 		<repository>
- 			<id>ecomp-releases</id>
- 			<name>Release Repository</name>
- 			<url>${nexus.proxy}/content/repositories/releases/</url>
- 		</repository>
- 		<snapshotRepository>
- 			<id>ecomp-snapshots</id>
- 			<name>Snapshot Repository</name>
- 			<url>${nexus.proxy}/content/repositories/snapshots/</url>
- 		</snapshotRepository>
-    <site>
-        <id>ecomp-site</id>
-        <url>dav:${nexus.proxy}${sitePath}</url>
-    </site>
- 	</distributionManagement>
- </project>
+						<executions>
+							<execution>
+								<phase>initialize</phase>
+								<inherited>false</inherited>
+								<goals>
+									<goal>read-project-properties</goal>
+								</goals>
+								<configuration>
+									<files>
+										<file>${project.build.directory}/FullReleaseVersion.properties</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>onboarding</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>onboarding</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>Fortify</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.fortify.ps.maven.plugin</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>4.30</version>
+						<configuration>
+							<source>1.8</source>
+							<buildId>${project.artifactId}</buildId>
+							<toplevelArtifactId>${project.artifactId}</toplevelArtifactId>
+							<fortify.sca.exclude>**/node_modules/*</fortify.sca.exclude>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>WhiteSource</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.whitesource</groupId>
+						<artifactId>whitesource-maven-plugin</artifactId>
+						<version>3.1.6</version>
+						<configuration>
+							<orgToken>2809bf29-b00c-48c0-a1f0-ca5c9c22f3df</orgToken>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<repositories>
+		<repository>
+			<id>virtuos</id>
+			<name>Virtuos</name>
+			<url>http://nexus.virtuos.uos.de/nexus/content/repositories/public/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>apache-public</id>
+			<name>Apache-Public</name>
+			<url>https://repository.apache.org/content/groups/public/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>elasticsearch-releases</id>
+			<url>https://maven.elasticsearch.org/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Official Maven repository</name>
+			<url>http://repo2.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>ecomp-releases</id>
+			<name>Release Repository</name>
+			<url>${nexus.proxy}/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>ecomp-staging</id>
+			<name>Staging Repository</name>
+			<url>${nexus.proxy}/content/repositories/staging/</url>
+		</repository>
+		<repository>
+			<id>ecomp-snapshots</id>
+			<name>Snapshots Repository</name>
+			<url>${nexus.proxy}/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>node</id>
+			<name>Node</name>
+			<url>https://maven-nodejs-proxy.pvtool.org/</url>
+		</repository>
+		<repository>
+			<id>SonoType</id>
+			<name>sonotype</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+
+		<repository>
+			<id>ecomp-releases</id>
+			<name>Release Repository</name>
+			<url>${nexus.proxy}/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>ecomp-snapshots</id>
+			<name>Snapshot Repository</name>
+			<url>${nexus.proxy}/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<site>
+			<id>ecomp-site</id>
+			<url>dav:${nexus.proxy}${sitePath}</url>
+		</site>
+	</distributionManagement>
+</project>
 

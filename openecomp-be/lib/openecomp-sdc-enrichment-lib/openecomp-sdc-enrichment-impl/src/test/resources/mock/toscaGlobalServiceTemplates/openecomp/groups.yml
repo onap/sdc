@@ -1,0 +1,61 @@
+tosca_definitions_version: tosca_simple_openecomp_1_0
+metadata:
+  filename: openecomp/groups.yml
+  version: '1.0'
+imports:
+- openecomp_index:
+    file: _index.yml
+group_types:
+  org.openecomp.groups.VfModule:
+    derived_from: tosca.groups.Root
+    description: Grouped all heat resources which are in the same VF Module
+    properties:
+      isBase:
+        type: boolean
+        description: Whether this module should be deployed before other modules
+        required: true
+        default: false
+        status: SUPPORTED
+      vf_module_label:
+        type: string
+        description: |
+          Alternate textual key used to reference this VF-Module model.  Must be unique within the VNF model
+        required: true
+        status: SUPPORTED
+      vf_module_description:
+        type: string
+        description: |
+          Description of the VF-modules contents and purpose   (e.g. "Front-End" or "Database Cluster")
+        required: true
+        status: SUPPORTED
+      min_vf_module_instances:
+        type: integer
+        description: The minimum instances of this VF-Module
+        required: true
+        status: SUPPORTED
+      max_vf_module_instances:
+        type: integer
+        description: The maximum instances of this VF-Module
+        required: false
+        status: SUPPORTED
+      initial_count:
+        type: integer
+        description: |
+          The initial count of instances of the VF-Module. The value must be in the  range between min_vfmodule_instances and max_vfmodule_instances. If no value provided the initial count is the min_vfmodule_instances.
+        required: false
+        status: SUPPORTED
+      vf_module_type:
+        type: string
+        required: true
+        status: SUPPORTED
+        constraints:
+        - valid_values:
+          - Base
+          - Expansion
+      volume_group:
+        type: boolean
+        description: |
+          "true" indicates that this VF Module model requires attachment to a Volume   Group.  VID operator must select the Volume Group instance to attach to a VF-Module  at deployment time.
+        required: true
+        default: false
+        status: SUPPORTED

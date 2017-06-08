@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 topology_template:
   inputs:
     security_group_name:
@@ -54,6 +30,17 @@ topology_template:
       type: string
       description: network name of jsa log network
   node_templates:
+    test_nestedArrayParam:
+      type: org.openecomp.resource.abstract.nodes.heat.nested
+      directives:
+      - substitutable
+      properties:
+        service_template_filter:
+          substitute_service_template: nestedServiceTemplate.yaml
+        p2:
+          get_input:
+          - shared_security_group_id2
+          - 0
     jsa_security_group1:
       type: org.openecomp.resource.vfc.rules.nodes.heat.network.neutron.SecurityRules
       properties:
@@ -222,15 +209,7 @@ topology_template:
         shared_security_group_id1:
           get_input: shared_security_group_id1
   groups:
-    addOn:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/addOn.yml
-        description: |
-          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
-      members:
-      - test_nested
-    main:
+    main_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/main.yml
@@ -239,3 +218,12 @@ topology_template:
       members:
       - jsa_security_group1
       - jsa_security_group2
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - test_nestedArrayParam
+      - test_nested

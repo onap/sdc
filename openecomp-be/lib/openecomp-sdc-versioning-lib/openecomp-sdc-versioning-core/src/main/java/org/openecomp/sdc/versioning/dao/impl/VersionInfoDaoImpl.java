@@ -40,8 +40,6 @@ public class VersionInfoDaoImpl extends CassandraBaseDao<VersionInfoEntity>
       noSqlDb.getMappingManager().mapper(VersionInfoEntity.class);
   private static VersionInfoAccessor accessor =
       noSqlDb.getMappingManager().createAccessor(VersionInfoAccessor.class);
-  //private static UDTMapper<VersionableEntityId> versionedEntityIdMapper = noSqlDb
-  //.getMappingManager().udtMapper(VersionableEntityId.class);
 
   @Override
   protected Mapper<VersionInfoEntity> getMapper() {

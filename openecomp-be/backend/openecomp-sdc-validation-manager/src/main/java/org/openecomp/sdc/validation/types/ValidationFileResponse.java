@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.validation.types;
 
-
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
 public class ValidationFileResponse {

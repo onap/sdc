@@ -22,10 +22,13 @@ package org.openecomp.sdc.versioning.dao;
 
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
+import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 
 public abstract class VersionableEntityDaoFactory
     extends AbstractComponentFactory<VersionableEntityDao> {
   public static VersionableEntityDaoFactory getInstance() {
     return AbstractFactory.getInstance(VersionableEntityDaoFactory.class);
   }
+
+  public abstract VersionableEntityDao createInterface(VersionableEntityStoreType storeType);
 }

@@ -1,0 +1,238 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested4
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    cmaui_names:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    template_PortTuple_LB1:
+      hidden: false
+      immutable: false
+      type: string
+    lb_st_interface_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+    oam_sec_group_name:
+      hidden: false
+      immutable: false
+      type: string
+    virtual_ip_address:
+      hidden: false
+      immutable: false
+      type: string
+    net2:
+      hidden: false
+      immutable: false
+      type: string
+    net1:
+      hidden: false
+      immutable: false
+      type: string
+    indx:
+      hidden: false
+      immutable: false
+      type: float
+    security_group_name:
+      hidden: false
+      immutable: false
+      type: list
+      description: CMAUI1, CMAUI2 server names
+      entry_schema:
+        type: string
+    port1:
+      hidden: false
+      immutable: false
+      type: string
+    port2:
+      hidden: false
+      immutable: false
+      type: string
+    vlan_ids:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_image:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image for CMAUI server
+    virtual_ipv6_address:
+      hidden: false
+      immutable: false
+      type: string
+    cmaui_flavor:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor for CMAUI server
+    lb_st_vlan_type_oam:
+      hidden: false
+      immutable: false
+      type: string
+      description: dummy
+    mac_address:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      label: availabilityzone name
+      hidden: false
+      immutable: false
+      type: string
+      description: availabilityzone name
+    subinterface_name_prefix:
+      hidden: false
+      immutable: false
+      type: string
+    subinterface_instance_index:
+      hidden: false
+      immutable: false
+      type: float
+    cmaui_oam_ips:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    template_Vlan_8:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: port2
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_input: net2
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+    template_Vlan_7:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+      properties:
+        virtual_machine_interface_refs:
+        - get_input: port1
+        name:
+          str_replace:
+            template: $NAME$VLAN
+            params:
+              $NAME:
+                get_input: subinterface_name_prefix
+              $VLAN:
+                get_input:
+                - vlan_ids
+                - get_input: subinterface_instance_index
+        virtual_network_refs:
+        - get_input: net1
+        virtual_machine_interface_properties:
+          sub_interface_vlan_tag:
+            get_input: lb_st_vlan_type_oam
+        virtual_machine_interface_allowed_address_pairs:
+          allowed_address_pair:
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ip_address
+              ip_prefix_len: 32
+            mac:
+              get_input: mac_address
+          - address_mode: active-standby
+            ip:
+              ip_prefix:
+                get_input: virtual_ipv6_address
+              ip_prefix_len: 128
+            mac:
+              get_input: mac_address
+        virtual_machine_interface_mac_addresses:
+          mac_address:
+          - get_input: mac_address
+  groups:
+    nested4_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested4.yml
+        description: nested4
+      members:
+      - template_Vlan_8
+      - template_Vlan_7
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested4
+    requirements:
+      link_template_Vlan_7:
+      - template_Vlan_7
+      - link
+      link_template_Vlan_8:
+      - template_Vlan_8
+      - link
+      binding_template_Vlan_8:
+      - template_Vlan_8
+      - binding
+      binding_template_Vlan_7:
+      - template_Vlan_7
+      - binding

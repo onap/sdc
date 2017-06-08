@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.validation.errors;
 
+/**
+ * Created by TALIO on 4/24/2016.
+ */
 public class ValidationErrorCodes {
   public static final String VALIDATION_INVALID = "VALIDATION_INVALID";
 

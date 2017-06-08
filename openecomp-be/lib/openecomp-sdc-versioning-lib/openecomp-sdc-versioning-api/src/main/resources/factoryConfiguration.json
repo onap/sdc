@@ -1,7 +1,6 @@
 {
   "org.openecomp.sdc.versioning.VersioningManagerFactory": "org.openecomp.sdc.versioning.impl.VersioningManagerFactoryImpl",
-  "org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory" : "org.openecomp.sdc.versioning.dao.impl.VersionableEntityDaoFactoryImpl",
+  "org.openecomp.sdc.versioning.dao.VersionableEntityDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionableEntityDaoFactoryImpl",
   "org.openecomp.sdc.versioning.dao.VersionInfoDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionInfoDaoFactoryImpl",
   "org.openecomp.sdc.versioning.dao.VersionInfoDeletedDaoFactory": "org.openecomp.sdc.versioning.dao.impl.VersionInfoDeletedDaoFactoryImpl"
-
 }

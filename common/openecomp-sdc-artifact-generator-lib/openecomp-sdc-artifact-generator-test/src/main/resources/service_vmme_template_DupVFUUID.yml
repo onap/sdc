@@ -1,0 +1,229 @@
+tosca_definitions_version: tosca_simple_profile_for_ecomp_1_0
+
+description: Service Template for deploing MME Service
+
+metadata:
+  invariantUUID: e255f20c-5331-4245-9ad5-8861a73080b7
+  UUID: 7787da18-7516-40cf-bec0-ebd4202c60f0
+  name: vMME_Service
+  description: vMME_Service
+  type: Service
+  category: Mobility
+  ecompNaming: false
+  homing: false
+
+imports:
+  vmmeToscaTemplate:
+    file: vf_vmme_template_1.yml
+    
+topology_template:
+
+  inputs:    
+    mme_vf_instance_name:
+      type: string
+      description: VF instance name
+    mme_vf_deployment_node:
+      type: string
+      description: The target LCP node for deployment of this VF instance
+    gtp_net_network_name:
+      type: string
+      description: The GTP network route targets
+      default: MME-24474-Ericsson-WTC-lab_gn_GTP_net_1 # HEAT ENV
+    gtp_net_route_targets:
+      type: string
+      description: The GTP network route targets
+      default: "13979:105715" # HEAT ENV
+    gtp_net_cidr:
+      type: string
+      description: The GTP network cidr
+      default: 107.243.37.64/27 # HEAT ENV
+    gtp_net_gateway_ip:
+      type: string
+      description: The GTP network gateway
+      default: 107.243.37.65 # HEAT ENV
+    gtp_net_start_ip:
+      type: string
+      description: The GTP network start ip
+      default: 107.243.37.67 # HEAT ENV
+    gtp_net_end_ip:
+      type: string
+      description: The GTP network end ip
+      default: 107.243.37.94 # HEAT ENV
+     # more inputs were removed for brevity 
+      
+  node_templates:
+
+    mme: # vMME VNF
+      type: org.openecomp.resource.vf.vmme
+
+      metadata:
+          invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+          UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+          version: 1.0
+          name: vMME_VF
+          description: vMME_VF
+          type: VF
+          category: Application L4+
+          subcategory: Firewall
+          vendor: Ericsson
+
+      properties:
+        vf_ecomp_name: false
+        vf_instance_name: { get_input: vf_instance_name }
+        vf_homing: false
+        vf_deployment_node: { get_input: vf_deployment_node }
+
+      requirements:
+        - vlc1_sctp_a.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_a_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_sctp_b.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_b_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_gtp_net.link:
+              capability: tosca.capabilities.network.Bindable
+              node: gtp_net
+              relationship: tosca.relationships.network.BindsTo
+
+
+    mme1: # vMME VNF1
+      type: org.openecomp.resource.vf.vmme
+
+      metadata:
+          invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+          UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+          version: 1.0
+          name: vMME_VF2
+          description: vMME_VF2
+          type: VF
+          category: Application L4+
+          subcategory: Firewall
+          vendor: Ericsson
+
+      properties:
+        vf_ecomp_name: false
+        vf_instance_name: { get_input: vf_instance_name }
+        vf_homing: false
+        vf_deployment_node: { get_input: vf_deployment_node }
+
+      requirements:
+        - vlc1_sctp_a.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_a_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_sctp_b.link:
+              capability: tosca.capabilities.network.Bindable
+              node: sctp_b_net
+              relationship: tosca.relationships.network.BindsTo
+        - vlc1_gtp_net.link:
+              capability: tosca.capabilities.network.Bindable
+              node: gtp_net
+              relationship: tosca.relationships.network.BindsTo
+
+ 
+     
+  # Virtual Links (Networks)
+  
+    gtp_net:
+      type: abc.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: ab2995c59-ff34-4f86-a60d-371d4d9d1896
+        UUID: 101a0ed2e-a12d-ff20-004e-cc7af4daffc3
+        version: 1.0
+        name: GTPNet
+        description: GTP External Network
+        type: VL
+        category: VL
+        vendor: AT&T
+      properties:
+        network_type: Tenant_Layer_3 
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input : network_deployment_node }
+        contrail_virtual_network:
+          network_name: {get_input: gtp_net_network_name}
+          route_targets: {get_input: gtp_net_route_targets}
+        network_id:
+        layer_protocol: IP
+        flow_pattern: E-LAN 
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: {get_input: gtp_net_cidr}
+          gateway_ip: {get_input: gtp_net_gateway_ip}
+          start_ip: {get_input: gtp_net_start_ip}
+          end_ip: {get_input: gtp_net_end_ip}
+    
+    sctp_a_net:
+      type: abc.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: 29205c59-1111-4f86-880d-371d4d9dc999
+        UUID: 1890ed2e-abcd-3f20-124e-cc7af4da4321
+        version: 1.0
+        name: SCTPANet
+        description: SCTP A External Network
+        type: VL
+        category: VL
+        vendor: AT&T
+      properties:
+        network_type: Tenant_Layer_3
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input : network_deployment_node }
+        contrail_virtual_network:
+          network_name: MME-24474-Ericsson-WTC-lab_gn_SCTPA_net_1
+          route_targets: 13979:105717
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 107.243.37.0/27 # HEAT ENV
+          gateway_ip: 107.243.37.1 # HEAT ENV
+          start_ip: 107.243.37.3 # HEAT ENV
+          end_ip: 107.243.37.30 # HEAT ENV
+      
+    sctp_b_net:
+      type: abc.openecomp.resource.vl.VL
+      metadata:
+        invariantUUID: 89595c59-2134-4f86-880d-371d4d9d12a6
+        UUID: 1af0ed2e-abcd-3f20-834e-cc7af4dafc45
+        version: 1.0
+        name: SCTPBNet
+        description: SCTP B External Network
+        type: VL
+        category: VL
+        vendor: AT&T
+      properties:
+        network_type: Tenant_Layer_3
+        network_technology: Contrail
+        network_ecomp_name: false
+        network_homing: false
+        network_deployment_node: { get_input : network_deployment_node }
+        contrail_virtual_network:
+          network_name: MME-24474-Ericsson-WTC-lab_gn_SCTPB_net_1
+          route_targets: 13979:105719
+        network_id:
+        layer_protocol: IP
+        flow_pattern: E-LAN
+        test_access: none
+        l3_access_parameters:
+          ip_version: 4
+          cidr: 107.243.37.32/24 # HEAT ENV
+          gateway_ip: 107.243.37.33 # HEAT ENV
+          start_ip: 107.243.37.35 # HEAT ENV
+          end_ip: 107.243.37.62 # HEAT ENV
+      
+  groups:
+
+    external_networks: # vMME_External_Network
+      type: org.openecomp.groups.externalNetworks
+      properties:
+        contrail_service_instance: true # from HEAT
+        availability_zone_count: 1 # from HEAT
+              
+      members: [ sctp_a_net, sctp_b_net, gtp_net ]

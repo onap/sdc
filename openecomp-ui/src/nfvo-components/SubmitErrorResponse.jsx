@@ -1,9 +1,24 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React, {Component} from 'react';
 import ListGroupItem from 'react-bootstrap/lib/ListGroupItem.js';
-import ListGroup from 'react-bootstrap/lib/ListGroup.js';
-import Panel from 'react-bootstrap/lib/Panel.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-
+import SVGIcon from 'nfvo-components/icon/SVGIcon.jsx';
+import Icon from 'nfvo-components/icon/Icon.jsx';
+import {Collapse} from 'react-bootstrap';
 /**
  * parsing and showing the following Java Response object
  *
@@ -31,103 +46,117 @@ class SubmitErrorResponse extends Component {
 
 
 	render() {
-		let {validationResponse} = this.props;
+		let {validationResponse : {vspErrors, licensingDataErrors, questionnaireValidationResult, uploadDataErrors}} = this.props;
 		return (
 			<div className='submit-error-response-view'>
-				{validationResponse.vspErrors && this.renderVspErrors(validationResponse.vspErrors)}
-				{validationResponse.licensingDataErrors && this.renderVspErrors(validationResponse.licensingDataErrors)}
-				{validationResponse.compilationErrors && this.renderCompilationErrors(validationResponse.compilationErrors)}
-				{validationResponse.uploadDataErrors && this.renderUploadDataErrors(validationResponse.uploadDataErrors)}
-				{validationResponse.questionnaireValidationResult && this.renderQuestionnaireValidationResult(validationResponse.questionnaireValidationResult)}
+				{vspErrors && this.renderVspErrors(vspErrors)}
+				{licensingDataErrors && this.renderVspErrors(licensingDataErrors)}
+				{questionnaireValidationResult && this.renderComponentsErrors(questionnaireValidationResult)}
+				{uploadDataErrors && this.renderUploadDataErrors(uploadDataErrors)}
 			</div>
 		);
 	}
 
-	renderVspErrors(vspErrors) {
+	renderVspErrors(errors) {
 		return (
-			<Panel header={i18n('VSP Errors')} collapsible>{this.parseErrorCodeCollection(vspErrors)}</Panel>
+			<ErrorBlock errorType={i18n('VSP Errors')}>
+				<div>
+					{errors.length && errors.map(error=>{return (<ErrorMessage error={error.message}/>);})}
+				</div>
+			</ErrorBlock>
 		);
 	}
 
-	renderLicensingDataErrors(licensingDataErrors) {
+
+	renderComponentsErrors(errors) {
 		return (
-			<Panel
-				header={i18n('Licensing Data Errors')}
-				collapsible>{this.parseErrorCodeCollection(licensingDataErrors)}
-			</Panel>
+			<ErrorBlock errorType={i18n('Components Errors')}>
+				<div>
+					{errors.validationData.length && errors.validationData.map(item =>{ return (<ComponentError item={item}/>);})}
+				</div>
+			</ErrorBlock>
 		);
 	}
 
 	renderUploadDataErrors(uploadDataErrors) {
 		return (
-			<Panel
-				header={i18n('Upload Data Errors')}
-				collapsible>{this.parseMapOfErrorMessagesList(uploadDataErrors)}
-			</Panel>
+			<ErrorBlock errorType={i18n('Upload Data Errors')}>
+				<div>
+					<UploadErrorList items={uploadDataErrors}/>
+				</div>
+			</ErrorBlock>
 		);
 	}
-
-	renderCompilationErrors(compilationErrors) {
-		return (
-			<Panel
-				header={i18n('Compilation Errors')}
-				collapsible>{this.parseMapOfErrorMessagesList(compilationErrors)}
-			</Panel>
-		);
-	}
-
-	parseErrorCodeCollection(errors) {
-		return (
-			<ListGroup>{errors.map(error =>
-				<ListGroupItem className='error-code-list-item'>
-					<div><span>{i18n('Category: ')}</span>{error.category}</div>
-					<div><span>{i18n('Message: ')}</span>{error.message}</div>
-				</ListGroupItem>
-			)}</ListGroup>
-		);
-	}
-
-	parseMapOfErrorMessagesList(errorMap) {
-		return (
-			<ListGroup>
-				{Object.keys(errorMap).map(errorStringKey =>
-					<Panel header={errorStringKey} collapsible>
-						<ListGroup>{errorMap[errorStringKey].map(error =>
-							<ListGroupItem className='error-code-list-item'>
-								<div><span>{i18n('Level: ')}</span>{error.level}</div>
-								<div><span>{i18n('Message: ')}</span>{error.message}</div>
-							</ListGroupItem>
-						)}</ListGroup>
-					</Panel>
-				)}
-			</ListGroup>
-		);
-	}
-
-
-	renderQuestionnaireValidationResult(questionnaireValidationResult) {
-		if (!questionnaireValidationResult.valid) {
-			return this.parseAndRenderCompositionEntityValidationData(questionnaireValidationResult.validationData);
-		}
-	}
-
-	parseAndRenderCompositionEntityValidationData(validationData) {
-		let {entityType, entityId, errors = [], subEntitiesValidationData = []} = validationData;
-		return (
-			<ListGroup>
-				<Panel header={`${entityType}: ${entityId}`} collapsible>
-					<ListGroup>{errors.map(error =>
-						<ListGroupItem className='error-code-list-item'>
-							<div>{error}</div>
-						</ListGroupItem>
-					)}</ListGroup>
-					{subEntitiesValidationData.map(subValidationData => this.parseAndRenderCompositionEntityValidationData(subValidationData))}
-				</Panel>
-			</ListGroup>
-		);
-	}
-
-
 }
+
+
+const ComponentError = ({item}) => {
+	let i = 0;
+	return (
+		<div>
+			<div className='component-name-header'>{item.entityName}</div>
+			{item.errors.map(error => {return(<ErrorMessage key={i++} error={error}/>);})}
+		</div>
+	);
+};
+
+function* entries(obj) {
+	for (let key of Object.keys(obj)) {
+		yield {header: key, list: obj[key]};
+	}
+}
+
+const UploadErrorList = ({items}) => {
+	let generator = entries(items);
+
+	let errors = [];
+	let i = 0;
+	for (let item of generator) {errors.push(
+		<div>
+			<div className='component-name-header'>{item.header}</div>
+			{item.list.map(error => <ErrorMessage key={i++} warning={error.level === 'WARNING'} error={error.message}/> )}
+		</div>
+	);}
+	return (
+		<div>
+			{errors}
+		</div>
+	);
+};
+
+class ErrorBlock extends React.Component {
+	state = {
+		collapsed: false
+	};
+
+	render() {
+		let {errorType, children} = this.props;
+		return (
+			<div className='error-block'>
+				<ErrorHeader collapsed={this.state.collapsed} onClick={()=>{this.setState({collapsed: !this.state.collapsed});}} errorType={errorType}/>
+				<Collapse in={this.state.collapsed}>
+					{children}
+				</Collapse>
+			</div>
+		);
+	}
+}
+
+const ErrorHeader = ({errorType, collapsed, onClick}) => {
+	return(
+		<div onClick={onClick} className='error-block-header'>
+			<SVGIcon iconClassName={collapsed ? '' : 'right' } name='chevron-down'/>
+			{errorType}
+		</div>
+	);
+};
+
+const ErrorMessage = ({error, warning}) => {
+	return (
+		<ListGroupItem className='error-code-list-item'>
+			<Icon image={warning ? 'warning' : 'error'} label={error}/>
+		</ListGroupItem>
+	);
+};
 
 export default SubmitErrorResponse;

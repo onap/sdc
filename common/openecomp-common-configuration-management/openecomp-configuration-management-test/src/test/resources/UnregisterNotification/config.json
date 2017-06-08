@@ -1,0 +1,9 @@
+{
+  "artifact": {
+      "name": { "minlength": "6" },
+      "extension": "pdf,tgz,xls"
+   },
+
+  "_config": { "mergeStrategy": "union","namespace":"UnregisterNotification" }
+
+}

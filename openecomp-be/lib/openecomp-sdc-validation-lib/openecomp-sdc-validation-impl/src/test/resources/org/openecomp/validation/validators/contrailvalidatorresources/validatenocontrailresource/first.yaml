@@ -1,0 +1,15 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  nems_traffic_name:
+    description: dummy
+    type: string
+
+resources:
+  template_NetworkPolicy:
+      type: OS::Contrail::NetworkPolicy
+      properties:
+        name:
+          get_param: policy_name

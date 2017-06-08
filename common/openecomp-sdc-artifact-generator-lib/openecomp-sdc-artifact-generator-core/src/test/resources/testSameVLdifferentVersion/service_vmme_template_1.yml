@@ -1,0 +1,139 @@
+--- 
+description: "Service Template for deploing MME Service"
+imports: 
+  - 
+    vmmeToscaTemplate: 
+      file: vf_vmme_template_1.yml
+  - 
+    ExtVL: 
+      file: resource-Extvl-template.yml
+  - 
+    ? "Allotted Resource"
+    : 
+      file: resource-AllottedResource-template.yml
+metadata: 
+  UUID: 7787da18-7516-40cf-bec0-ebd4202c60f0
+  category: Mobility
+  description: vMME_Service
+  invariantUUID: e255f20c-5331-4245-9ad5-8861a73080b7
+  name: vMME_Service
+  serviceEcompNaming: false
+  serviceHoming: false
+  type: Service
+topology_template: 
+  groups: 
+    external_networks: 
+      members: 
+        - sctp_a_net
+        - sctp_b_net
+        - gtp_net
+      properties: 
+        availability_zone_count: 1
+        contrail_service_instance: true
+      type: org.openecomp.groups.externalNetworks
+  inputs: 
+    gtp_net_cidr: 
+      default: 107.243.37.64/27
+      description: "The GTP network cidr"
+      type: string
+    gtp_net_end_ip: 
+      default: "107.243.37.94"
+      description: "The GTP network end ip"
+      type: string
+    gtp_net_gateway_ip: 
+      default: "107.243.37.65"
+      description: "The GTP network gateway"
+      type: string
+    gtp_net_network_name: 
+      default: MME-24474-Ericsson-WTC-lab_gn_GTP_net_1
+      description: "The GTP network route targets"
+      type: string
+    gtp_net_route_targets: 
+      default: "13979:105715"
+      description: "The GTP network route targets"
+      type: string
+    gtp_net_start_ip: 
+      default: "107.243.37.67"
+      description: "The GTP network start ip"
+      type: string
+    mme_vf_deployment_node: 
+      description: "The target LCP node for deployment of this VF instance"
+      type: string
+    mme_vf_instance_name: 
+      description: "VF instance name"
+      type: string
+  node_templates: 
+    ? "Allotted Resource 2"
+    : 
+      metadata: 
+        UUID: f32afdc3-6308-4f0c-a476-0d39c8a1fb4d
+        category: "Allotted Resource"
+        description: "This is a VF - Allotted resource"
+        invariantUUID: a54a5235-b69d-4f8a-838b-d011e6783fa5
+        name: "Allotted Resource"
+        subcategory: "Allotted Resource"
+        type: VF
+        version: "1.0"
+      type: org.openecomp.resource.vf.AllottedResource
+    ? "ExtVL 1"
+    : 
+      metadata: 
+        UUID: 3f8fa4d2-2b86-4b36-bbc8-ffb8f9f57468
+        category: Generic
+        description: "OPENECOMP generic virtual link (network) base type for all other service-level and global networks"
+        invariantUUID: f148dbb0-8c53-466d-9687-791c0e9d40cf
+        name: ExtVL
+        subcategory: "Network Elements"
+        type: VL
+        version: "2.0"
+      type: org.openecomp.resource.vl.extVL
+    ? "ExtVL 2"
+    : 
+      metadata: 
+        UUID: 3f8fa4d2-2b86-4b36-bbc8-ffb8f9f57433
+        category: Generic
+        description: "OPENECOMP generic virtual link (network) base type for all other service-level and global networks"
+        invariantUUID: f148dbb0-8c53-466d-9687-791c0e9d40cf
+        name: ExtVL
+        subcategory: "Network Elements"
+        type: VL
+        version: "4.0"
+      type: org.openecomp.resource.vl.extVL
+
+    mme: 
+      metadata: 
+        UUID: b020ed1e-4bc7-4fc0-ba7e-cc7af6da7ffc
+        category: "Application L4+"
+        description: vMME_VF
+        invariantUUID: b8643c59-e2c2-4f86-880d-571d4d9d5d22
+        name: vMME_VF
+        resourceVendor: Ericsson
+        subcategory: Firewall
+        type: VF
+        version: 1.0
+      properties: 
+        vf_deployment_node: 
+          get_input: vf_deployment_node
+        vf_ecomp_name: false
+        vf_homing: false
+        vf_instance_name: 
+          get_input: vf_instance_name
+      requirements: 
+        - 
+          vlc1_sctp_a.link: 
+            capability: tosca.capabilities.network.Bindable
+            node: sctp_a_net
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          vlc1_sctp_b.link: 
+            capability: tosca.capabilities.network.Bindable
+            node: sctp_b_net
+            relationship: tosca.relationships.network.BindsTo
+        - 
+          vlc1_gtp_net.link: 
+            capability: tosca.capabilities.network.Bindable
+            node: gtp_net
+            relationship: tosca.relationships.network.BindsTo
+      type: org.openecomp.resource.vf.vmme
+
+tosca_definitions_version: tosca_simple_profile_for_ecomp_1_0

@@ -1,3 +1,18 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -6,7 +21,6 @@ import ListEditorView from 'nfvo-components/listEditor/ListEditorView.jsx';
 import ListEditorItemView from 'nfvo-components/listEditor/ListEditorItemView.jsx';
 
 import FeatureGroupEditor from './FeatureGroupEditor.js';
-import FeatureGroupsConfirmationModal from './FeatureGroupsConfirmationModal.jsx';
 
 class FeatureGroupListEditorView extends React.Component {
 	static propTypes = {
@@ -37,46 +51,45 @@ class FeatureGroupListEditorView extends React.Component {
 	};
 
 	render() {
-		let {vendorName, licenseModelId, featureGroupsModal, isReadOnlyMode, onAddFeatureGroupClick} = this.props;
+		let {vendorName, licenseModelId, featureGroupsModal, isReadOnlyMode, onAddFeatureGroupClick, version} = this.props;
 		const {localFilter} = this.state;
-
 		return (
 			<div className='feature-groups-list-editor'>
 				<ListEditorView
-					title={i18n('Feature Groups for {vendorName} License Model', {vendorName})}
+					title={i18n('Feature Groups', {vendorName})}
 					plusButtonTitle={i18n('Add Feature Group')}
 					filterValue={localFilter}
-					onFilter={filter => this.setState({localFilter: filter})}
-					onAdd={() => onAddFeatureGroupClick()}
+					onFilter={value => this.setState({localFilter: value})}
+					onAdd={() => onAddFeatureGroupClick(version)}
 					isReadOnlyMode={isReadOnlyMode}>
-					{this.filterList().map(listItem => this.renderFeatureGroupListItem(listItem, isReadOnlyMode))}
+					{this.filterList().map(listItem => this.renderFeatureGroupListItem(listItem, isReadOnlyMode, version))}
 				</ListEditorView>
-				<Modal show={featureGroupsModal.show} bsSize='large' animation={true} className='feature-group-modal'>
-					<Modal.Header>
-						<Modal.Title>{`${featureGroupsModal.editMode ? i18n('Edit Feature Group') : i18n('Create New Feature Group')}`}</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<FeatureGroupEditor
-							onCancel={() => this.closeFeatureGroupsEditor()}
-							licenseModelId={licenseModelId}
-							isReadOnlyMode={isReadOnlyMode}/>
-					</Modal.Body>
-				</Modal>
-
-				<FeatureGroupsConfirmationModal licenseModelId={licenseModelId}/>
+				{featureGroupsModal.show && <Modal show={featureGroupsModal.show} bsSize='large' animation={true}
+					       className='onborading-modal feature-group-modal'>
+						<Modal.Header>
+							<Modal.Title>{`${featureGroupsModal.editMode ? i18n('Edit Feature Group') : i18n('Create New Feature Group')}`}</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<FeatureGroupEditor
+								version={version}
+								licenseModelId={licenseModelId}
+								isReadOnlyMode={isReadOnlyMode}/>
+						</Modal.Body>
+					</Modal>
+				}
 
 			</div>
 		);
 	}
 
 
-	renderFeatureGroupListItem(listItem, isReadOnlyMode) {
+	renderFeatureGroupListItem(listItem, isReadOnlyMode, version) {
 		let {name, description, entitlementPoolsIds = [], licenseKeyGroupsIds = []} = listItem;
 		return (
 			<ListEditorItemView
 				key={listItem.id}
-				onDelete={() => this.deleteFeatureGroupItem(listItem)}
-				onSelect={() => this.editFeatureGroupItem(listItem)}
+				onDelete={() => this.deleteFeatureGroupItem(listItem, version)}
+				onSelect={() => this.editFeatureGroupItem(listItem, version)}
 				className='list-editor-item-view'
 				isReadOnlyMode={isReadOnlyMode}>
 				<div className='list-editor-item-view-field'>
@@ -120,17 +133,28 @@ class FeatureGroupListEditorView extends React.Component {
 		}
 	}
 
-	closeFeatureGroupsEditor() {
-		this.props.onCancelFeatureGroupsEditor();
+	editFeatureGroupItem(featureGroup, version) {
+		this.props.onEditFeatureGroupClick(featureGroup, version);
 	}
 
-	editFeatureGroupItem(featureGroup) {
-		this.props.onEditFeatureGroupClick(featureGroup);
-	}
-
-	deleteFeatureGroupItem(featureGroup) {
-		this.props.onDeleteFeatureGroupClick(featureGroup);
+	deleteFeatureGroupItem(featureGroup, version) {
+		this.props.onDeleteFeatureGroupClick(featureGroup, version);
 	}
 }
 
 export default FeatureGroupListEditorView;
+
+export function generateConfirmationMsg(featureGroupToDelete) {
+	let name = featureGroupToDelete ? featureGroupToDelete.name : '';
+	let msg = i18n('Are you sure you want to delete "{name}"?', {name});
+	let subMsg = featureGroupToDelete.referencingLicenseAgreements
+	&& featureGroupToDelete.referencingLicenseAgreements.length > 0 ?
+		i18n('This feature group is associated with one ore more license agreements') :
+		'';
+	return (
+		<div>
+			<p>{msg}</p>
+			<p>{subMsg}</p>
+		</div>
+	);
+}

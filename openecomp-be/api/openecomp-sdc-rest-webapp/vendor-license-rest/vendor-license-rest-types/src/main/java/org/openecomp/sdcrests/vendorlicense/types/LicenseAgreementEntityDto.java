@@ -26,7 +26,6 @@ import io.swagger.annotations.ApiModel;
 import java.util.Set;
 import javax.validation.constraints.Size;
 
-
 @ApiModel(value = "LicenseAgreementEntity")
 public class LicenseAgreementEntityDto extends LicenseAgreementDescriptorDto {
   private String id;

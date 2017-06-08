@@ -20,12 +20,14 @@
 
 package org.openecomp.sdc.model.impl;
 
-
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
+import org.openecomp.core.zusammen.api.ZusammenAdaptorFactory;
+import org.openecomp.sdc.model.impl.zusammen.EnrichedServiceModelDaoZusammenImpl;
 
 public class EnrichedServiceModelDaoFactoryImpl extends EnrichedServiceModelDaoFactory {
-  private static final EnrichedServiceModelDao INSTANCE = new EnrichedServiceModelDaoImpl();
+  private static final EnrichedServiceModelDao INSTANCE = new EnrichedServiceModelDaoZusammenImpl( ZusammenAdaptorFactory
+      .getInstance().createInterface());
 
   @Override
   public EnrichedServiceModelDao createInterface() {

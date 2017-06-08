@@ -1,0 +1,1134 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: ComputeGlobalTypes
+  template_version: 1.0.0
+description: Compute TOSCA Global Types
+imports:
+- common_definitions:
+    file: CommonGlobalTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.Compute:
+    derived_from: tosca.nodes.Compute
+    capabilities:
+      disk.ephemeral.size:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: GB
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.ephemeral.size
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Size of ephemeral disk
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      instance:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: instance
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: instance
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Existence of instance
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      memory:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: MB
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: memory
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of RAM allocated to the instance
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.iops:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: count/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.iops
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average disk iops
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.device.read.requests:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.read.requests
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of read requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      cpu.delta:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: ns
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: cpu.delta
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: CPU time used since previous datapoint
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Delta
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.capacity:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.capacity
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The amount of disk that the instance can see
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.write.bytes:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.write.bytes
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of writes
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.read.bytes:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.read.bytes
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of reads
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.latency:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: ms
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.latency
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average disk latency
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.usage
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The physical size in bytes of the image container on the host
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      cpu_util:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: '%'
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: cpu_util
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average CPU utilization
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.allocation:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.allocation
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The amount of disk per device occupied by the instance on the host machine
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.write.requests.rate:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.write.requests.rate
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average rate of write requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.write.bytes.rate:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.write.bytes.rate
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average rate of writes
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.latency:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: ms
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.latency
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average disk latency per device
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      cpu:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: ns
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: cpu
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: CPU time used
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.read.requests:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.read.requests
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of read requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.root.size:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: GB
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.root.size
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Size of root disk
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.write.requests:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.write.requests
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of write requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      vcpus:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: ms
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: vcpus
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of virtual CPUs allocated to the instance
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.iops:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: count/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.iops
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average disk iops per device
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.device.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.usage
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The physical size in bytes of the image container on the host per device
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.device.read.requests.rate:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.read.requests.rate
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average rate of read requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.device.write.requests.rate:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.write.requests.rate
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average rate of write requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      instance:type:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: instance
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: instance:type
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Existence of instance <type> (OpenStack types)
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.allocation:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.allocation
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The amount of disk occupied by the instance on the host machine
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      disk.read.bytes.rate:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B/s
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.read.bytes.rate
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Average rate of reads
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.read.bytes:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.read.bytes
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of reads
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      memory.usage:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: MB
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: memory.usage
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of RAM used by the instance from the amount of its allocated memory
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.device.capacity:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: B
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.device.capacity
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: The amount of disk per device that the instance can see
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: disk
+            status: SUPPORTED
+      memory.resident:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: MB
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: memory.resident
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Volume of RAM used by the instance on the physical machine
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Gauge
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED
+      disk.write.requests:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        properties:
+          unit:
+            type: string
+            description: Unit of the metric value
+            required: true
+            default: request
+            status: SUPPORTED
+          name:
+            type: string
+            description: Ceilometer metric type name to monitor. (The name ceilometer is using)
+            required: true
+            default: disk.write.requests
+            status: SUPPORTED
+          description:
+            type: string
+            description: Description of the metric
+            required: false
+            default: Number of write requests
+            status: SUPPORTED
+          type:
+            type: string
+            description: Type of the metric value, for an example, Cumulative, Delta, Gauge and etc.
+            required: true
+            default: Cumulative
+            status: SUPPORTED
+          category:
+            type: string
+            description: Category of the metric, for an example, compute, disk, network, storage and etc.
+            required: false
+            default: compute
+            status: SUPPORTED

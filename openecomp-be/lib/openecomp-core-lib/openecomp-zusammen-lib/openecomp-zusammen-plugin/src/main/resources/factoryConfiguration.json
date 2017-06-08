@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.zusammen.plugin.dao.ElementRepositoryFactory": "org.openecomp.core.zusammen.plugin.dao.impl.CassandraElementRepositoryFactory"
+}

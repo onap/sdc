@@ -21,10 +21,10 @@ import { DragSource, DropTarget } from 'react-dnd';
 import Common from '../../../../../../common/Common';
 
 import Icon from '../../../../../icons/Icon';
-import iconDelete from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/delete.svg';
-import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/handle.svg';
-import iconNotes from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/notes.svg';
-import iconSettings from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/settings.svg';
+import iconDelete from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/delete.svg';
+import iconHandle from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/handle.svg';
+import iconNotes from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/notes.svg';
+import iconSettings from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/settings.svg';
 import iconRequestSync from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/arrow/request-sync.svg';
 import iconRequestAsync from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/arrow/request-async.svg';
 import iconResponse from '../../../../../../../../../../res/ecomp/asdc/sequencer/sprites/arrow/response.svg';

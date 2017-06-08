@@ -23,5 +23,5 @@ package org.openecomp.sdc.vendorlicense.dao.types;
 public enum LicenseKeyType {
   Universal,
   Unique,
-  One_Time
+  One_Time;
 }

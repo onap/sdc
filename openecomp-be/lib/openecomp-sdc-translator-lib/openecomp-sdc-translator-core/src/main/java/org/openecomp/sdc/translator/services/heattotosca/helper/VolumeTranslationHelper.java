@@ -20,20 +20,23 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.helper;
 
+import static org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.sdc.common.utils.CommonUtil;
+import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
-import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
 import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.translator.datatypes.heattotosca.AttachedResourceId;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.ResourceFileDataAndIDs;
 import org.openecomp.sdc.translator.datatypes.heattotosca.to.TranslateTo;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
-import org.openecomp.sdc.translator.services.heattotosca.TranslationContext;
-import org.openecomp.sdc.translator.services.heattotosca.impl.ResourceTranslationBase;
-import org.slf4j.Logger;
+import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.impl.resourcetranslation.ResourceTranslationBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ import java.util.stream.Collectors;
 
 public class VolumeTranslationHelper {
   private final Logger logger;
+  private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   public VolumeTranslationHelper(Logger logger) {
     this.logger = logger;
@@ -63,22 +67,34 @@ public class VolumeTranslationHelper {
                                                                       String resourceId,
                                                                       TranslateTo translateTo,
                                                                       FileData.Type... types) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     if (CollectionUtils.isEmpty(filesToSearch)) {
+      mdcDataDebugMessage.debugExitMessage(null, null);
       return Optional.empty();
     }
 
-    List<FileData> fileDatas = Objects.isNull(types) ? filesToSearch
-        : HeatToToscaUtil.getFilteredListOfFileDataByTypes(filesToSearch, types);
+    List<FileData> fileDatas = Objects.isNull(types) ? filesToSearch : HeatToToscaUtil
+        .getFilteredListOfFileDataByTypes(filesToSearch, types);
     Optional<ResourceFileDataAndIDs> fileDataAndIDs =
         getResourceFileDataAndIDsForVolumeConnection(resourceId, translateTo, fileDatas);
     if (fileDataAndIDs.isPresent()) {
+      mdcDataDebugMessage.debugExitMessage(null, null);
       return fileDataAndIDs;
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
   private Optional<ResourceFileDataAndIDs> getResourceFileDataAndIDsForVolumeConnection(
       String resourceId, TranslateTo translateTo, List<FileData> fileDatas) {
+
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     for (FileData data : fileDatas) {
       HeatOrchestrationTemplate heatOrchestrationTemplate = new YamlUtil()
           .yamlToObject(translateTo.getContext().getFiles().getFileContent(data.getFile()),
@@ -108,13 +124,15 @@ public class VolumeTranslationHelper {
           } else {
             logger.warn(
                 "output: '" + resourceId + "' in file '" + data.getFile() + "' is not of type '"
-                    + HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource() + "'");
+                    + CINDER_VOLUME_RESOURCE_TYPE.getHeatResource() + "'");
           }
         }
       } else {
         logger.warn("output: '" + resourceId + "' in file '" + data.getFile() + "' is not found");
       }
     }
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return Optional.empty();
   }
 
@@ -122,14 +140,16 @@ public class VolumeTranslationHelper {
                                              HeatOrchestrationTemplate heatOrchestrationTemplate,
                                              String translatedId) {
     return getResourceByTranslatedResourceId(data.getFile(), heatOrchestrationTemplate,
-        translatedId, translateTo,
-            HeatResourcesTypes.CINDER_VOLUME_RESOURCE_TYPE.getHeatResource())
-            .isPresent();
+        translatedId, translateTo, CINDER_VOLUME_RESOURCE_TYPE.getHeatResource()).isPresent();
   }
 
   private Optional<List<Map.Entry<String, Resource>>> getResourceByTranslatedResourceId(
       String fileName, HeatOrchestrationTemplate heatOrchestrationTemplate,
       String translatedResourceId, TranslateTo translateTo, String heatResourceType) {
+
+
+    mdcDataDebugMessage.debugEntryMessage("file", fileName);
+
     List<Map.Entry<String, Resource>> list = heatOrchestrationTemplate.getResources().entrySet()
         .stream()
         .filter(
@@ -139,8 +159,10 @@ public class VolumeTranslationHelper {
                     .allMatch(p -> p.test(entry)))
         .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(list)) {
+      mdcDataDebugMessage.debugExitMessage("file", fileName);
       return Optional.empty();
     } else {
+      mdcDataDebugMessage.debugExitMessage("file", fileName);
       return Optional.of(list);
     }
   }
@@ -165,7 +187,7 @@ public class VolumeTranslationHelper {
       return true;
     } else {
       logger.warn("output: '" + resourceId + "' in file '" + data.getFile()
-          + "' is not defined as get_resource and therefor not supported.");
+          + "' is not defined as get_resource and therefore not supported as shared resource.");
       return false;
     }
   }

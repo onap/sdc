@@ -1,0 +1,94 @@
+{
+    "name": "vTSBC", 
+    "description": "", 
+    "data": [
+        {
+            "file": "module_2_perimeta_rtp_msc_b_healing.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "module_1_perimeta_ssc_a_healing.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "module_1_perimeta_ssc_rebuild.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "perimeta_ha_swmu.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "perimeta_ha_sw_b.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "module_2_perimeta_rtp_msc_a_healing.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "perimeta_ha_sw.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "vlan_subinterface_dual.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "module_2_perimeta_rtp_msc_rebuild_scaling.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "perimeta_ha_swmu_b.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "module_1_perimeta_ssc_b_healing.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "perimeta_ha_swmu_a.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "base_perimeta_deployment_create.yaml", 
+            "type": "HEAT", 
+            "isBase": "true", 
+            "data": [
+                {
+                    "file": "base_perimeta_deployment_create.env", 
+                    "type": "HEAT_ENV"
+                }
+            ]
+        }, 
+        {
+            "file": "perimeta_ha_sw_a.yaml", 
+            "type": "HEAT", 
+            "isBase": "false"
+        }, 
+        {
+            "file": "ssc_a_template.json", 
+            "type": "OTHER"
+        }, 
+        {
+            "file": "msc_a_template.json", 
+            "type": "OTHER"
+        }, 
+        {
+            "file": "custom.ini", 
+            "type": "OTHER"
+        }
+    ]
+}

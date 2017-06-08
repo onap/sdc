@@ -23,6 +23,7 @@ package org.openecomp.sdc.action.dao;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
+
 public abstract class ActionArtifactDaoFactory extends AbstractComponentFactory<ActionArtifactDao> {
 
   public static ActionArtifactDaoFactory getInstance() {

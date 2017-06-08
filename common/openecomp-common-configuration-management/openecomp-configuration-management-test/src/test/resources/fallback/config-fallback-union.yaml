@@ -1,0 +1,5 @@
+ artifact:
+  name:
+   minlength: 6
+  maxsize: 1048
+  extension: "pdf,tgz,xls"

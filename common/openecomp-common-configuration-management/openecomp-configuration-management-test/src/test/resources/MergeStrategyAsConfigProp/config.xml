@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+        <name>
+            <maxlength>28</maxlength>
+        </name>
+        <extension>gz,tgz</extension>
+        <mandatory>
+            <name>true</name>
+        </mandatory>
+    </artifact>
+    <_config>
+        <namespace>ModeAsConfigProp</namespace>
+        <mergeStrategy>merge</mergeStrategy>
+    </_config>
+</configuration>

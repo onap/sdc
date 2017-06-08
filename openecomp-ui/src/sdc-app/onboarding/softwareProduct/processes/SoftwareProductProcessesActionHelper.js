@@ -1,61 +1,56 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import {actionTypes} from './SoftwareProductProcessesConstants.js';
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
-function baseUrl(svpId) {
+function baseUrl(vspId, version) {
+	let {id: versionId} = version;
 	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-software-products/${svpId}/processes`;
+	return `${restPrefix}/v1.0/vendor-software-products/${vspId}/versions/${versionId}/processes`;
 }
 
-function putProcess(softwareProductId, process) {
-	return RestAPIUtil.save(`${baseUrl(softwareProductId)}/${process.id}`, {
+function putProcess(softwareProductId, version, process) {
+	return RestAPIUtil.put(`${baseUrl(softwareProductId, version)}/${process.id}`, {
 		name: process.name,
-		description: process.description
+		description: process.description,
+		type: process.type === '' ? null : process.type
 	});
 }
 
-function postProcess(softwareProductId, process) {
-	return RestAPIUtil.create(`${baseUrl(softwareProductId)}`, {
+function postProcess(softwareProductId, version, process) {
+	return RestAPIUtil.post(`${baseUrl(softwareProductId, version)}`, {
 		name: process.name,
-		description: process.description
+		description: process.description,
+		type: process.type === '' ? null : process.type
 	});
 }
 
-function deleteProcess(softwareProductId, processId) {
-	return RestAPIUtil.destroy(`${baseUrl(softwareProductId)}/${processId}`);
+function deleteProcess(softwareProductId, version, processId) {
+	return RestAPIUtil.destroy(`${baseUrl(softwareProductId, version)}/${processId}`);
 }
 
-function uploadFileToProcess(softwareProductId, processId, formData)
+function uploadFileToProcess(softwareProductId, version, processId, formData)
 {
-	return RestAPIUtil.create(`${baseUrl(softwareProductId)}/${processId}/upload`, formData);
+	return RestAPIUtil.post(`${baseUrl(softwareProductId, version)}/${processId}/upload`, formData);
 }
 
 function fetchProcesses(softwareProductId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl(softwareProductId)}${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl(softwareProductId, version)}`);
 }
-
-
 
 const SoftwareProductActionHelper = {
 
@@ -80,8 +75,8 @@ const SoftwareProductActionHelper = {
 		});
 	},
 
-	deleteProcess(dispatch, {process, softwareProductId}) {
-		return deleteProcess(softwareProductId, process.id).then(() => {
+	deleteProcess(dispatch, {process, softwareProductId, version}) {
+		return deleteProcess(softwareProductId, version, process.id).then(() => {
 			dispatch({
 				type: actionTypes.DELETE_SOFTWARE_PRODUCT_PROCESS,
 				processId: process.id
@@ -96,18 +91,11 @@ const SoftwareProductActionHelper = {
 		});
 	},
 
-	processEditorDataChanged(dispatch, {deltaData}) {
-		dispatch({
-			type: actionTypes.processEditor.DATA_CHANGED,
-			deltaData
-		});
-	},
-
-	saveProcess(dispatch, {softwareProductId, previousProcess, process}) {
+	saveProcess(dispatch, {softwareProductId, version, previousProcess, process}) {
 		if (previousProcess) {
-			return putProcess(softwareProductId, process).then(() => {
+			return putProcess(softwareProductId, version, process).then(() => {
 				if (process.formData){
-					uploadFileToProcess(softwareProductId, process.id, process.formData);
+					uploadFileToProcess(softwareProductId, version, process.id, process.formData);
 				}
 				dispatch({
 					type: actionTypes.EDIT_SOFTWARE_PRODUCT_PROCESS,
@@ -116,9 +104,9 @@ const SoftwareProductActionHelper = {
 			});
 		}
 		else {
-			return postProcess(softwareProductId, process).then(response => {
+			return postProcess(softwareProductId, version, process).then(response => {
 				if (process.formData) {
-					uploadFileToProcess(softwareProductId, response.value, process.formData);
+					uploadFileToProcess(softwareProductId, version, response.value, process.formData);
 				}
 				dispatch({
 					type: actionTypes.ADD_SOFTWARE_PRODUCT_PROCESS,

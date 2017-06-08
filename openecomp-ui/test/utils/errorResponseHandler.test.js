@@ -1,28 +1,24 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import deepFreeze from 'deep-freeze';
-import expect from 'expect';
+
 import {cloneAndSet} from '../../test-utils/Util.js';
 import store from 'sdc-app/AppStore.js';
 import errorResponseHandler from 'nfvo-utils/ErrorResponseHandler.js';
+import {typeEnum as modalType} from 'nfvo-components/modal/GlobalModalConstants.js';
 
 describe('Error Response Handler Util', () => {
 
@@ -44,15 +40,20 @@ describe('Error Response Handler Util', () => {
 		};
 		deepFreeze(xhr);
 
-		const errorNotification = {
-			type: 'error', title: 'Error: SVC4122', msg: 'Error: Invalid data.', timeout: undefined,
-			validationResponse: undefined
+		const errorNotification = {			
+			title: 'Error: SVC4122',
+			msg: 'Error: Invalid data.',			
+			modalClassName: 'notification-modal',
+			type: modalType.ERROR	
 		};
-		const expectedStore = cloneAndSet(store.getState(), 'notification', errorNotification);
+
+
+
+		const expectedStore = cloneAndSet(store.getState(), 'modal', errorNotification);
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
-		setTimeout(function () {
+		setTimeout(function () {			
 			expect(store.getState()).toEqual(expectedStore);
 			done();
 		}, 100);
@@ -72,12 +73,15 @@ describe('Error Response Handler Util', () => {
 			}
 		};
 		deepFreeze(xhr);
-
-		const errorNotification = {
-			type: 'error', title: 'Error: SVC4122', msg: 'Error: Invalid artifact type newType.', timeout: undefined,
-			validationResponse: undefined
+	
+		const errorNotification = {			
+			title: 'Error: SVC4122',
+			msg: 'Error: Invalid artifact type newType.',			
+			modalClassName: 'notification-modal',
+			type: modalType.ERROR	
 		};
-		const expectedStore = cloneAndSet(store.getState(), 'notification', errorNotification);
+
+		const expectedStore = cloneAndSet(store.getState(), 'modal', errorNotification);
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
@@ -97,11 +101,14 @@ describe('Error Response Handler Util', () => {
 		};
 		deepFreeze(xhr);
 
-		const errorNotification = {
-			type: 'error', title: 'AA', msg: 'Error: Invalid data.', timeout: undefined,
-			validationResponse: undefined
+		const errorNotification = {			
+			title: 'AA',
+			msg: 'Error: Invalid data.',			
+			modalClassName: 'notification-modal',
+			type: modalType.ERROR	
 		};
-		const expectedStore = cloneAndSet(store.getState(), 'notification', errorNotification);
+
+		const expectedStore = cloneAndSet(store.getState(), 'modal', errorNotification);
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 
@@ -118,12 +125,15 @@ describe('Error Response Handler Util', () => {
 			responseText: 'Internal server error.'
 		};
 		deepFreeze(xhr);
-
-		const errorNotification = {
-			type: 'error', title: '500', msg: 'Internal server error.', timeout: undefined,
-			validationResponse: undefined
+	
+		const errorNotification = {			
+			title: '500',
+			msg: 'Internal server error.',			
+			modalClassName: 'notification-modal',
+			type: modalType.ERROR	
 		};
-		const expectedStore = cloneAndSet(store.getState(), 'notification', errorNotification);
+
+		const expectedStore = cloneAndSet(store.getState(), 'modal', errorNotification);
 
 		errorResponseHandler(xhr, textStatus, errorThrown);
 

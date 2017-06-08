@@ -23,6 +23,7 @@ package org.openecomp.core.utilities.applicationconfig.dao.impl;
 import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDao;
 import org.openecomp.core.utilities.applicationconfig.dao.ApplicationConfigDaoFactory;
 
+
 public class ApplicationConfigDaoFactoryImpl extends ApplicationConfigDaoFactory {
   private static final ApplicationConfigDao INSTANCE = new ApplicationConfigDaoCassandraImpl();
 

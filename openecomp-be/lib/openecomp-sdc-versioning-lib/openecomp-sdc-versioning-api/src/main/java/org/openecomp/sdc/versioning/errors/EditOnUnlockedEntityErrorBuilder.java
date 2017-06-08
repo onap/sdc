@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.versioning.errors;
 
+import static org.openecomp.sdc.versioning.errors.VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY;
+
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
@@ -38,7 +40,7 @@ public class EditOnUnlockedEntityErrorBuilder extends BaseErrorBuilder {
    * @param entityId   the entity id
    */
   public EditOnUnlockedEntityErrorBuilder(String entityType, String entityId) {
-    getErrorCodeBuilder().withId(VersioningErrorCodes.EDIT_ON_UNLOCKED_ENTITY);
+    getErrorCodeBuilder().withId(EDIT_ON_UNLOCKED_ENTITY);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder()
         .withMessage(String.format(EDIT_ON_UNLOCKED_ENTITY_MSG, entityType, entityId));

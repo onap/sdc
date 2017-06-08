@@ -34,7 +34,5 @@ public interface ServiceModelDao<M, E> extends VersionableDao {
 
   E getServiceModelInfo(String vspId, Version version, String name);
 
-  void storeExternalArtifact(ServiceArtifact serviceArtifact);
-
-  List<String> getServiceModelContentNames();
+  void deleteAll(String vspId, Version version);
 }

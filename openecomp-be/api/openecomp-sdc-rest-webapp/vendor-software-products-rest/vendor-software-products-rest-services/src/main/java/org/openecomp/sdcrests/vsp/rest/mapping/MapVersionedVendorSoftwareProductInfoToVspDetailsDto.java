@@ -24,7 +24,7 @@ import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProductInfo;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdcrests.common.types.VersionDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 
@@ -38,14 +38,15 @@ public class MapVersionedVendorSoftwareProductInfoToVspDetailsDto
     VspDetails vsp = source.getVspDetails();
 
     target.setId(vsp.getId());
-    target.setVersion(vsp.getVersion().toString());
+    target.setVersion(new VersionDto(vsp.getVersion().toString(), vsp.getVersion().toString()));
     target.setName(vsp.getName());
     target.setDescription(vsp.getDescription());
     target.setCategory(vsp.getCategory());
     target.setSubCategory(vsp.getSubCategory());
     target.setVendorId(vsp.getVendorId());
     target.setVendorName(vsp.getVendorName());
-    target.setLicensingVersion(vsp.getVlmVersion() == null ? null : vsp.getVlmVersion().toString());
+    target.setLicensingVersion(vsp.getVlmVersion() == null ? null : new VersionDto(vsp.getVlmVersion().toString(), vsp.getVlmVersion().toString()));
+    target.setIsOldVersion("False");
 
     if (vsp.getLicenseAgreement() != null || vsp.getFeatureGroups() != null) {
       LicensingData licensingData = new LicensingData();
@@ -61,13 +62,15 @@ public class MapVersionedVendorSoftwareProductInfoToVspDetailsDto
 
     if (!CommonMethods.isEmpty(source.getVersionInfo().getViewableVersions())) {
       target.setViewableVersions(
-          source.getVersionInfo().getViewableVersions().stream().map(Version::toString)
+          source.getVersionInfo().getViewableVersions().stream()
+              .map(version -> new VersionDto(version.toString(), version.toString()))
               .collect(Collectors.toList()));
     }
 
     if (!CommonMethods.isEmpty(source.getVersionInfo().getFinalVersions())) {
       target.setFinalVersions(
-          source.getVersionInfo().getFinalVersions().stream().map(Version::toString)
+          source.getVersionInfo().getFinalVersions().stream()
+              .map(version -> new VersionDto(version.toString(), version.toString()))
               .collect(Collectors.toList()));
     }
   }

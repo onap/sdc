@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.datatypes.error;
 
+
 public enum ErrorLevel {
   ERROR, WARNING, INFO
 }

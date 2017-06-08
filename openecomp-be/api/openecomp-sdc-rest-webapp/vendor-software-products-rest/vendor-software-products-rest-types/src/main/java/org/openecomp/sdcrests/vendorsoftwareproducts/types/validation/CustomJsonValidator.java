@@ -25,6 +25,7 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+
 public class CustomJsonValidator implements ConstraintValidator<IsValidJson, String> {
 
   @Override

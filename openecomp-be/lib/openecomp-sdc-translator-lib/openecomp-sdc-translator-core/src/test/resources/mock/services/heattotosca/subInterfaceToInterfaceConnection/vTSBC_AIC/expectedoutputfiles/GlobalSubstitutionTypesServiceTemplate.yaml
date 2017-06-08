@@ -1,0 +1,2919 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_swmu:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_vips:
+        type: list
+        description: List of service network 3 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_net_id:
+        type: string
+        description: Service network 3 network UUID
+        required: true
+        status: SUPPORTED
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      serv3_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      unused_net_id:
+        type: string
+        description: Service network unused port network UUID
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_sec_groups:
+        type: list
+        description: List of security groups to add on serv3 interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      serv3_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_perimeta_a_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_a_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_b_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_serv3_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_serv3_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      attachment_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      endpoint_perimeta_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_serv3_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_serv3_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_serv3_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_serv3_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      scalable_perimeta_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      attachment_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_sw:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_perimeta_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_a_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_b_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      attachment_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      endpoint_perimeta_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      attachment_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_perimeta_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_sw_b:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_perimeta_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_b_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      binding_perimeta_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.vlan_subinterface_dual:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vlan_ids:
+        type: list
+        description: List of VLAN IDs to use for subinterfaces
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      parent_interface:
+        type: string
+        description: Parent Contrail interface
+        required: true
+        status: SUPPORTED
+      virtual_ipv6_address:
+        type: string
+        description: virtual IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      virtual_ip_address:
+        type: string
+        description: virtual IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        description: MAC address to use for subinterface
+        required: true
+        status: SUPPORTED
+      ipv6_address:
+        type: string
+        description: IPv6 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      subinterface_name_prefix:
+        type: string
+        description: Combined with subinterface_instance_index, this is used as the name of the subinterface resource
+        required: true
+        status: SUPPORTED
+      subinterface_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      ip_address:
+        type: string
+        description: IPv4 address associated with subinterfaces
+        required: true
+        status: SUPPORTED
+      vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use for the subinterfaces.   The order and number of these must match the VLAN ID list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    requirements:
+    - link_contrail_vmi_subinterface:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_contrail_vmi_subinterface:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_sw_a:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_contrail_vmi_subinterface_perimeta_a_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      scalable_perimeta_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      endpoint_perimeta_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_swmu_a:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_vips:
+        type: list
+        description: List of service network 3 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_net_id:
+        type: string
+        description: Service network 3 network UUID
+        required: true
+        status: SUPPORTED
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      serv3_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      unused_net_id:
+        type: string
+        description: Service network unused port network UUID
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_sec_groups:
+        type: list
+        description: List of security groups to add on serv3 interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      serv3_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_perimeta_a_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_a_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_serv3_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_a_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - link_perimeta_a_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_a_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    capabilities:
+      scalable_perimeta_a_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_a_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_a_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      endpoint_perimeta_a_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      attachment_perimeta_a_serv3_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_a_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_a_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_a_serv3_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+  org.openecomp.resource.abstract.nodes.heat.perimeta_ha_swmu_b:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vf_module_id:
+        type: string
+        description: Unique ID for this VF Module instance
+        required: true
+        status: SUPPORTED
+      untrusted_net_id:
+        type: string
+        description: Service network 2 network UUID
+        required: true
+        status: SUPPORTED
+      mgmt_net_plen:
+        type: string
+        description: Prefix length of management network
+        required: true
+        status: SUPPORTED
+      perimeta_config:
+        type: string
+        description: Orchestration template configuration for instance.
+        required: true
+        status: SUPPORTED
+      vm_a_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_vips:
+        type: list
+        description: List of service network 3 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_net_id:
+        type: string
+        description: HA network id
+        required: true
+        status: SUPPORTED
+      perimeta_param_server_group:
+        type: string
+        description: Server group to use for these VMs - ignored
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_networks:
+        type: list
+        description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_sec_groups:
+        type: list
+        description: List of security groups to add on management interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_instance_index:
+        type: float
+        description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+        required: true
+        status: SUPPORTED
+      untrusted_vlan_ids:
+        type: list
+        description: List of VLAN IDs to use on the untrusted/access network
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_net_id:
+        type: string
+        description: Service network 3 network UUID
+        required: true
+        status: SUPPORTED
+      perimeta_keypair:
+        type: string
+        description: Keypair to use for accessing this Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_vips:
+        type: list
+        description: List of management virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_vips:
+        type: list
+        description: List of service network 2 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vnf_id:
+        type: string
+        description: VNF ID of this deployment
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: Availability zone for A instances.
+        required: true
+        status: SUPPORTED
+      availability_zone_1:
+        type: string
+        description: Availability zone for B instances.  May be the same as A instance.
+        required: true
+        status: SUPPORTED
+      serv3_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      unused_net_id:
+        type: string
+        description: Service network unused port network UUID
+        required: true
+        status: SUPPORTED
+      ha_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_v6_vips:
+        type: list
+        description: List of service network 2 alternate virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_sec_groups:
+        type: list
+        description: List of security groups to add on HA interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_num_vlans:
+        type: float
+        description: Number of VLANs to connect to on the untrusted/access network
+        required: true
+        status: SUPPORTED
+      system_names:
+        type: list
+        description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_b_names:
+        type: list
+        description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_sec_groups:
+        type: list
+        description: List of security groups to add on trusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      serv3_sec_groups:
+        type: list
+        description: List of security groups to add on serv3 interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_vips:
+        type: list
+        description: List of service network 1 virtual IP addresses for all instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      trusted_net_id:
+        type: string
+        description: Service network 1 network UUID
+        required: true
+        status: SUPPORTED
+      serv3_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as serv3 fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      ha_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as HA IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_a_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_b_v6_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_role:
+        type: string
+        description: Role of these VMs
+        required: true
+        status: SUPPORTED
+      trusted_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      perimeta_image_name:
+        type: string
+        description: Glance image for Perimeta instance
+        required: true
+        status: SUPPORTED
+      mgmt_net_default_gateway:
+        type: string
+        description: IP address of management default gateway
+        required: true
+        status: SUPPORTED
+      untrusted_a_ips:
+        type: list
+        description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      untrusted_sec_groups:
+        type: list
+        description: List of security groups to add on untrusted interfaces.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      mgmt_net_id:
+        type: string
+        description: Management network id
+        required: true
+        status: SUPPORTED
+      perimeta_flavor_name:
+        type: string
+        description: Flavor to use for creating VM instances
+        required: true
+        status: SUPPORTED
+      ha_network_plen:
+        type: float
+        required: true
+        status: SUPPORTED
+        constraints:
+        - in_range:
+          - 0
+          - 32
+      mgmt_b_ips:
+        type: list
+        description: List of fixed IP addresses to use as management IPs of B instances.
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+    attributes:
+      server_group_used:
+        type: string
+        description: Server group used for these VMs
+    requirements:
+    - link_perimeta_b_ha_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_serv3_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_trusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_untrusted_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_contrail_vmi_subinterface_perimeta_b_untrusted_0_vlan_ports:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_unused_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - link_perimeta_b_mgmt_0_port:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - local_storage_perimeta_b_server_0:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
+    capabilities:
+      binding_perimeta_b_ha_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      os_perimeta_b_server_0:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_unused_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      binding_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      attachment_perimeta_b_unused_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_server_0:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_serv3_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_perimeta_b_server_0:
+        type: tosca.capabilities.Scalable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_ha_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_trusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_perimeta_b_server_0:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      binding_perimeta_b_serv3_0_port:
+        type: tosca.capabilities.network.Bindable
+        valid_source_types:
+        - org.openecomp.resource.cp.nodes.heat.network.contrailV2.VLANSubInterface
+        occurrences:
+        - 0
+        - UNBOUNDED
+      attachment_perimeta_b_untrusted_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_perimeta_b_server_0:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
+        occurrences:
+        - 1
+        - UNBOUNDED
+      attachment_perimeta_b_mgmt_0_port:
+        type: tosca.capabilities.Attachment
+        occurrences:
+        - 1
+        - UNBOUNDED

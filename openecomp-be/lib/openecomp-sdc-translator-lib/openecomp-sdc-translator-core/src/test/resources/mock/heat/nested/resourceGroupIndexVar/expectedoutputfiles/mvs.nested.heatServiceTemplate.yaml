@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: mvs.nested.heat
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.vnfci:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -174,6 +150,12 @@ topology_template:
     mgmt_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: sec_groups
         fixed_ips:
@@ -182,6 +164,9 @@ topology_template:
             - get_input: indx
             - get_input:
               - get_input: mvs_mgmt_ip_0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: virtual_mgmt_ip_0
@@ -202,6 +187,7 @@ topology_template:
                 get_input: vf_component
               $VF_INSTANCE_NUM:
                 get_input: vf_instance_num
+        network_role_tag: mgmt
         network:
           get_input: mgmt_net_id
       requirements:
@@ -210,7 +196,7 @@ topology_template:
           node: vnfci
           relationship: tosca.relationships.network.BindsTo
   groups:
-    mvs.nested.heat:
+    mvs.nested.heat_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/mvs.nested.heat.yaml
@@ -227,25 +213,169 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.mvs.nested.heat
     capabilities:
+      disk.ephemeral.size_vnfci:
+      - vnfci
+      - disk.ephemeral.size
+      disk.iops_vnfci:
+      - vnfci
+      - disk.iops
+      network.outgoing.bytes.rate_mgmt_port:
+      - mgmt_port
+      - network.outgoing.bytes.rate
+      disk.device.write.bytes_vnfci:
+      - vnfci
+      - disk.device.write.bytes
+      disk.device.iops_vnfci:
+      - vnfci
+      - disk.device.iops
+      cpu_util_vnfci:
+      - vnfci
+      - cpu_util
+      disk.write.bytes.rate_vnfci:
+      - vnfci
+      - disk.write.bytes.rate
+      disk.device.latency_vnfci:
+      - vnfci
+      - disk.device.latency
+      disk.latency_vnfci:
+      - vnfci
+      - disk.latency
+      disk.write.requests_vnfci:
+      - vnfci
+      - disk.write.requests
+      network.outpoing.packets_mgmt_port:
+      - mgmt_port
+      - network.outpoing.packets
+      memory.resident_vnfci:
+      - vnfci
+      - memory.resident
       os_vnfci:
       - vnfci
       - os
+      memory.usage_vnfci:
+      - vnfci
+      - memory.usage
       attachment_mgmt_port:
       - mgmt_port
       - attachment
+      disk.device.write.bytes.rate_vnfci:
+      - vnfci
+      - disk.device.write.bytes.rate
+      disk.root.size_vnfci:
+      - vnfci
+      - disk.root.size
+      disk.device.usage_vnfci:
+      - vnfci
+      - disk.device.usage
+      disk.read.bytes_vnfci:
+      - vnfci
+      - disk.read.bytes
+      disk.device.read.bytes.rate_vnfci:
+      - vnfci
+      - disk.device.read.bytes.rate
+      disk.read.bytes.rate_vnfci:
+      - vnfci
+      - disk.read.bytes.rate
+      cpu_vnfci:
+      - vnfci
+      - cpu
+      disk.device.write.requests.rate_vnfci:
+      - vnfci
+      - disk.device.write.requests.rate
+      network.incoming.bytes_mgmt_port:
+      - mgmt_port
+      - network.incoming.bytes
+      disk.capacity_vnfci:
+      - vnfci
+      - disk.capacity
+      disk.device.read.requests_vnfci:
+      - vnfci
+      - disk.device.read.requests
+      binding_mgmt_port:
+      - mgmt_port
+      - binding
+      network.outgoing.bytes_mgmt_port:
+      - mgmt_port
+      - network.outgoing.bytes
+      network.incoming.packets_mgmt_port:
+      - mgmt_port
+      - network.incoming.packets
+      instance_vnfci:
+      - vnfci
+      - instance
+      feature_mgmt_port:
+      - mgmt_port
+      - feature
+      disk.device.read.bytes_vnfci:
+      - vnfci
+      - disk.device.read.bytes
+      disk.allocation_vnfci:
+      - vnfci
+      - disk.allocation
+      disk.write.requests.rate_vnfci:
+      - vnfci
+      - disk.write.requests.rate
+      disk.write.bytes_vnfci:
+      - vnfci
+      - disk.write.bytes
+      disk.device.write.requests_vnfci:
+      - vnfci
+      - disk.device.write.requests
+      disk.usage_vnfci:
+      - vnfci
+      - disk.usage
+      network.incoming.packets.rate_mgmt_port:
+      - mgmt_port
+      - network.incoming.packets.rate
+      feature_vnfci:
+      - vnfci
+      - feature
+      memory_vnfci:
+      - vnfci
+      - memory
       endpoint_vnfci:
       - vnfci
       - endpoint
-      host_vnfci:
-      - vnfci
-      - host
       binding_vnfci:
       - vnfci
       - binding
       scalable_vnfci:
       - vnfci
       - scalable
+      disk.device.capacity_vnfci:
+      - vnfci
+      - disk.device.capacity
+      network.outgoing.packets.rate_mgmt_port:
+      - mgmt_port
+      - network.outgoing.packets.rate
+      vcpus_vnfci:
+      - vnfci
+      - vcpus
+      cpu.delta_vnfci:
+      - vnfci
+      - cpu.delta
+      host_vnfci:
+      - vnfci
+      - host
+      disk.device.allocation_vnfci:
+      - vnfci
+      - disk.device.allocation
+      network.incoming.bytes.rate_mgmt_port:
+      - mgmt_port
+      - network.incoming.bytes.rate
+      disk.read.requests_vnfci:
+      - vnfci
+      - disk.read.requests
+      disk.device.read.requests.rate_vnfci:
+      - vnfci
+      - disk.device.read.requests.rate
     requirements:
+      dependency_mgmt_port:
+      - mgmt_port
+      - dependency
+      dependency_vnfci:
+      - vnfci
+      - dependency
       local_storage_vnfci:
       - vnfci
       - local_storage

@@ -70,6 +70,7 @@ resources:
       oam_net_ip: { get_param: [oam_net_ips, 0] }
       oam_net_mask: { get_param: oam_net_mask }
       oam_net_gw: { get_param: oam_net_gw }
+      user_data_format: { get_attr: [server_pcm_002 , pcm_vol] }
 
   server_pcm_002:
       type: nested-pcm_v0.1.yaml
@@ -80,3 +81,19 @@ resources:
         availabilityzone_name: { get_param: availabilityzone_name }
         security_group_name: { get_param: security_group_name }
         pcm_vol: { get_param: [pcm_volumes, 0] }
+        metadata: { get_attr: [server_pcm_001]}
+
+  packet_mirror_network:
+    type: OS::Neutron::Net
+    depends_on:
+      - server_pcm_001
+    properties:
+      name:
+        get_param: cps_net_name
+
+outputs:
+    output_attr_1:
+      value: {get_attr: [server_pcm_001 , pcm_vol] }
+
+    output_attr_2:
+          value: {get_attr: [server_pcm_002 , oam_net_ip] }

@@ -44,6 +44,10 @@ input {
   padding: 7px 10px;
 }
 
+.disabled {
+  opacity: 0.7 !important;
+}
+
 fieldset {
   border: none;
 }
@@ -64,3 +68,7 @@ fieldset {
 .box-hover {
   border: 1px solid $light-blue;
 }
+
+
+
+
