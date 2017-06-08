@@ -41,27 +41,27 @@ public class Network implements CompositionDataEntity {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public int hashCode() {
+    int result = name != null ? name.hashCode() : 0;
+    result = 31 * result + (dhcp ? 1 : 0);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (object == null || getClass() != object.getClass()) {
       return false;
     }
 
-    Network network = (Network) obj;
+    Network network = (Network) object;
 
     if (dhcp != network.dhcp) {
       return false;
     }
     return name != null ? name.equals(network.name) : network.name == null;
 
-  }
-
-  @Override
-  public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + (dhcp ? 1 : 0);
-    return result;
   }
 }

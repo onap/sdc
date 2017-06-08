@@ -20,19 +20,19 @@
 
 package org.openecomp.sdcrests.action.types;
 
-import org.openecomp.sdc.action.types.EcompComponent;
+import org.openecomp.sdc.action.types.OpenEcompComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Defines DTO used for creating Response with list of {@link ActionResponseDto }
- * or list of {@link EcompComponent }.
+ * Defines DTO used for creating Response with list of {@link ActionResponseDto } or list of {@link
+ * openEcompComponent }.
  */
 public class ListResponseWrapper {
 
   List<ActionResponseDto> actionList;
-  List<EcompComponent> componentList;
+  List<OpenEcompComponent> componentList;
   List<ActionResponseDto> versions;
 
 
@@ -56,15 +56,15 @@ public class ListResponseWrapper {
     this.actionList = actionList;
   }
 
-  public List<EcompComponent> getComponentList() {
+  public List<OpenEcompComponent> getComponentList() {
     return componentList;
   }
 
-  public void setComponentList(List<EcompComponent> componentList) {
+  public void setComponentList(List<OpenEcompComponent> componentList) {
     this.componentList = componentList;
   }
 
-  public void add(ActionResponseDto e0) {
-    this.getActionList().add(e0);
+  public void add(ActionResponseDto exception) {
+    this.getActionList().add(exception);
   }
 }

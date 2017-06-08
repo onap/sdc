@@ -25,6 +25,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+
 public class ServiceElement {
 
   private String vspId;

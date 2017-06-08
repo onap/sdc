@@ -5,6 +5,7 @@ form {
       flex: 1;
     }
     .nav-tabs {
+      position: relative;
       .invalid-tab:not(.active) {
         a {
           color: $red;
@@ -73,14 +74,17 @@ form {
           flex: 0.2;
           content: ' ';
         }
-        &.add-line-break {
-          .control-label {
-            &:after {
-              content: "\00a0";
-              display: block;
+        @media (min-width: 1349px) {
+          &.add-line-break {
+            .control-label {
+              &:after {
+                content: "\00a0";
+                display: block;
+              }
             }
           }
         }
+
       }
     }
   }
@@ -91,6 +95,16 @@ form {
     button:first-child {
       margin-right: 15px;
     }
+		.svg-icon {
+			height: 14px;
+			width: 14px;
+		}
+		.svg-icon.check {
+			fill: $white;
+		}
+		.svg-icon.close {
+			fill: $blue;
+		}
   }
 }
 

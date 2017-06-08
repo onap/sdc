@@ -1,0 +1,480 @@
+# Heat template which intstantiates a 1+1 HA Perimeta instance with 4 or 5
+# vNICs.
+#
+# This is designed to be included in a higher level template.
+#
+# This template puts the Perimeta configuration in place using userdata
+# injected via OpenStack's ConfigDrive mechanism.
+#
+# Host anti-affinity is achieved using different availability zones for
+# the Perimeta instance or server group anti-affinity if they are in the
+# same availability zone.
+#
+# Template requires Juno or above and has been tested on Kilo.
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate a Perimeta 1+1 HA instance with 4vNICs as part of a nested template
+
+parameters:
+  vnf_id:
+    type: string
+    description: VNF ID of this deployment
+  vm_role:
+    type: string
+    description: Role of these VMs
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+  system_names:
+    type: comma_delimited_list
+    description: List of system names of Perimeta instances.  Name of a specific instance is indexed by perimeta_instance_index
+  vm_a_names:
+    type: comma_delimited_list
+    description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+  vm_b_names:
+    type: comma_delimited_list
+    description: List of names of Perimeta VM A instances, indexed by perimeta_instance_index
+  perimeta_instance_index:
+    type: number
+    description: Index of instance among multiple instances.  Use to retrieve correct parameter for this instance when passed all parameters for all instances.
+  perimeta_image_name:
+    type: string
+    description: Glance image for Perimeta instance
+    constraints:
+    - custom_constraint: glance.image
+  perimeta_flavor_name:
+    type: string
+    description: Flavor to use for creating VM instances
+    constraints:
+    - custom_constraint: nova.flavor
+  perimeta_keypair:
+    type: string
+    description: Keypair to use for accessing this Perimeta instance
+    constraints:
+    - custom_constraint: nova.keypair
+  availability_zone_0:
+    # Can be commented out along with references if always using a single availability zone
+    type: string
+    description: Availability zone for A instances.
+  availability_zone_1:
+    # Can be commented out along with references if always using a single availability zone
+    type: string
+    description: Availability zone for B instances.  May be the same as A instance.
+  mgmt_net_id:
+    type: string
+    description: Management network id
+    constraints:
+    - custom_constraint: neutron.network
+  mgmt_net_plen:
+    type: string
+    description: Prefix length of management network
+  mgmt_net_default_gateway:
+    type: string
+    description: IP address of management default gateway
+  mgmt_vips:
+    type: comma_delimited_list
+    description: List of management virtual IP addresses for all instances.
+  mgmt_a_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as management IPs of A instances.
+  mgmt_b_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as management IPs of B instances.
+  mgmt_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on management interfaces.
+  ha_net_id:
+    type: string
+    description: HA network id
+    constraints:
+    - custom_constraint: neutron.network
+  ha_network_plen:
+    type: number
+    constraints:
+    - range: { min: 0, max: 32 }
+      description: ha_network_plen must be between 0 and 32
+  ha_a_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as HA IPs of A instances.
+  ha_b_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as HA IPs of B instances.
+  ha_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on HA interfaces.
+  trusted_net_id:
+    type: string
+    description: Service network 1 network UUID
+    constraints:
+    - custom_constraint: neutron.network
+  trusted_vips:
+    type: comma_delimited_list
+    description: List of service network 1 virtual IP addresses for all instances.
+  trusted_a_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as trusted fixed IPs of A instances.
+  trusted_b_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as trusted fixed IPs of B instances.
+  trusted_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on trusted interfaces.
+  untrusted_net_id:
+    type: string
+    description: Service network 2 network UUID
+    constraints:
+    - custom_constraint: neutron.network
+  untrusted_vips:
+    type: comma_delimited_list
+    description: List of service network 2 virtual IP addresses for all instances.
+  untrusted_v6_vips:
+    type: comma_delimited_list
+    description: List of service network 2 alternate virtual IP addresses for all instances.
+  untrusted_a_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as untrusted fixed IPs of A instances.
+  untrusted_a_v6_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as untrusted alternate fixed IPs of A instances.
+  untrusted_b_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as untrusted fixed IPs of B instances.
+  untrusted_b_v6_ips:
+    type: comma_delimited_list
+    description: List of fixed IP addresses to use as untrusted alternate fixed IPs of B instances.
+  untrusted_sec_groups:
+    type: comma_delimited_list
+    description: List of security groups to add on untrusted interfaces.
+  untrusted_num_vlans:
+    type: number
+    description: Number of VLANs to connect to on the untrusted/access network
+  untrusted_vlan_ids:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use on the untrusted/access network
+  untrusted_vlan_networks:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list.
+  perimeta_param_server_group:
+    type: string
+    description: Server group to use for these VMs - ignored
+  perimeta_config:
+    type: string
+    description: Orchestration template configuration for instance.
+
+resources:
+
+  # Perimeta management ports
+  perimeta_a_mgmt_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_mgmt_port
+          params:
+            $VM: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: mgmt_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ mgmt_a_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: mgmt_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ mgmt_vips, { get_param: perimeta_instance_index } ] }
+
+  perimeta_b_mgmt_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_mgmt_port
+          params:
+            $VM: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: mgmt_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ mgmt_b_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: mgmt_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ mgmt_vips, { get_param: perimeta_instance_index } ] }
+
+  # Perimeta HA ports
+  perimeta_a_ha_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_ha_port
+          params:
+            $VM: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: ha_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ ha_a_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: ha_sec_groups }
+
+  perimeta_b_ha_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_ha_port
+          params:
+            $VM: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: ha_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ ha_b_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: ha_sec_groups }
+
+  # Perimeta core/trusted service network ports
+  #
+  # Dual stack core network - if only IPv4 required, comment out second entry
+  # in fixed_ips and allowed_addrsess_pairs parameters.
+  perimeta_a_trusted_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_trusted_port
+          params:
+            $VM: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: trusted_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ trusted_a_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: trusted_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ trusted_vips, { get_param: perimeta_instance_index } ] }
+
+  perimeta_b_trusted_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_trusted_port
+          params:
+            $VM: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: trusted_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ trusted_b_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: trusted_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ trusted_vips, { get_param: perimeta_instance_index } ] }
+
+  # Perimeta access/untrusted service network ports
+  #
+  # Dual stack access network - if only IPv4 required, comment out second entry
+  # in fixed_ips and allowed_addrsess_pairs parameters.
+  perimeta_a_untrusted_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_untrusted_port
+          params:
+            $VM: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: untrusted_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ untrusted_a_ips, { get_param: perimeta_instance_index } ] }
+        - ip_address: { get_param: [ untrusted_a_v6_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: untrusted_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ untrusted_vips, { get_param: perimeta_instance_index } ] }
+        - ip_address: { get_param: [ untrusted_v6_vips, { get_param: perimeta_instance_index } ] }
+
+  # Contrail VLAN subinterfaces
+  perimeta_a_untrusted_0_vlan_ports:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: untrusted_num_vlans }
+      resource_def:
+        type: vlan_subinterface_dual.yaml
+        properties:
+          subinterface_instance_index: "%index%"
+          subinterface_name_prefix:
+            str_replace:
+              template: $VM_untrusted_port_vlan_
+              params:
+                $VM: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+          parent_interface: { get_resource: perimeta_a_untrusted_0_port }
+          mac_address: { get_attr: [ perimeta_a_untrusted_0_port, mac_address ] }
+          ip_address: { get_param: [ untrusted_a_ips, { get_param: perimeta_instance_index } ] }
+          ipv6_address: { get_param: [ untrusted_a_v6_ips, { get_param: perimeta_instance_index } ] }
+          virtual_ip_address: { get_param: [ untrusted_vips, { get_param: perimeta_instance_index } ] }
+          virtual_ipv6_address: { get_param: [ untrusted_v6_vips, { get_param: perimeta_instance_index } ] }
+          vlan_ids: { get_param: untrusted_vlan_ids }
+          vlan_networks: { get_param: untrusted_vlan_networks }
+
+  perimeta_b_untrusted_0_port:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: $VM_untrusted_port
+          params:
+            $VM: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+      network_id: { get_param: untrusted_net_id }
+      fixed_ips:
+        - ip_address: { get_param: [ untrusted_b_ips, { get_param: perimeta_instance_index } ] }
+        - ip_address: { get_param: [ untrusted_b_v6_ips, { get_param: perimeta_instance_index } ] }
+      security_groups: { get_param: untrusted_sec_groups }
+      allowed_address_pairs:
+        - ip_address: { get_param: [ untrusted_vips, { get_param: perimeta_instance_index } ] }
+        - ip_address: { get_param: [ untrusted_v6_vips, { get_param: perimeta_instance_index } ] }
+
+  # Contrail VLAN subinterfaces
+  perimeta_b_untrusted_0_vlan_ports:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: untrusted_num_vlans }
+      resource_def:
+        type: vlan_subinterface_dual.yaml
+        properties:
+          subinterface_instance_index: "%index%"
+          subinterface_name_prefix:
+            str_replace:
+              template: $VM_untrusted_port_vlan_
+              params:
+                $VM: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+          parent_interface: { get_resource: perimeta_b_untrusted_0_port }
+          mac_address: { get_attr: [ perimeta_b_untrusted_0_port, mac_address ] }
+          ip_address: { get_param: [ untrusted_b_ips, { get_param: perimeta_instance_index } ] }
+          ipv6_address: { get_param: [ untrusted_b_v6_ips, { get_param: perimeta_instance_index } ] }
+          virtual_ip_address: { get_param: [ untrusted_vips, { get_param: perimeta_instance_index } ] }
+          virtual_ipv6_address: { get_param: [ untrusted_v6_vips, { get_param: perimeta_instance_index } ] }
+          vlan_ids: { get_param: untrusted_vlan_ids }
+          vlan_networks: { get_param: untrusted_vlan_networks }
+
+  # Perimeta Rf service network ports (SSC only)
+  #
+  # Dual stack access network - if only IPv4 required, comment out second entry
+  # in fixed_ips and allowed_addrsess_pairs parameters.
+  # Add any additional service ports here.
+
+  # Only supported in Juno and beyond - used to enforce host anti-affinity
+  # Can be commented out along with references to it if always using
+  # different availability zones.
+  perimeta_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: $SYSTEM_server_group
+          params:
+            $SYSTEM: { get_param: [ system_names, { get_param: perimeta_instance_index } ] }
+      policies: ['anti-affinity']
+
+  perimeta_a_server_0:
+    type: OS::Nova::Server
+    depends_on: perimeta_b_server_0
+    properties:
+      name: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+      image: { get_param: perimeta_image_name }
+      flavor: { get_param: perimeta_flavor_name }
+      key_name: { get_param: perimeta_keypair }
+      scheduler_hints: { group: { get_resource: perimeta_server_group } }
+      metadata:
+        'vnf_id': { get_param: vnf_id }
+        'vm_role':
+            str_replace:
+              template: $ROLE_a
+              params:
+                $ROLE: { get_param: vm_role }
+        'vf_module_id': { get_param: vf_module_id }
+      personality:
+        '/opt/MetaSwitch/init/custom.ini': { get_file: custom.ini }
+
+      networks:
+        - port: { get_resource: perimeta_a_mgmt_0_port }
+        - port: { get_resource: perimeta_a_ha_0_port }
+        - port: { get_resource: perimeta_a_trusted_0_port }
+        - port: { get_resource: perimeta_a_untrusted_0_port }
+      availability_zone: { get_param: availability_zone_0 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: { get_param: perimeta_config }
+          params:
+            $MGMT_MACADDR: { get_attr: [perimeta_a_mgmt_0_port, mac_address] }
+            $HA_MACADDR: { get_attr: [perimeta_a_ha_0_port, mac_address] }
+            $TRUSTED_MACADDR: { get_attr: [perimeta_a_trusted_0_port, mac_address] }
+            $UNTRUSTED_MACADDR: { get_attr: [perimeta_a_untrusted_0_port, mac_address] }
+            $LOCAL_HA_IP_ADDR: { get_param: [ ha_a_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_HA_IP_ADDR: { get_param: [ ha_b_ips, { get_param: perimeta_instance_index } ] }
+            $HA_NETWORK_PLEN: { get_param: ha_network_plen }
+            $LOCAL_MGMT_IP_ADDR: { get_param: [ mgmt_a_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_MGMT_IP_ADDR: { get_param: [ mgmt_b_ips, { get_param: perimeta_instance_index } ] }
+            $MGMT_NETWORK_PLEN: { get_param: mgmt_net_plen }
+            $MGMT_NETWORK_DEFAULT_GATEWAY: { get_param: mgmt_net_default_gateway }
+            $VIRT_MGMT_IP_ADDR: { get_param: [ mgmt_vips, { get_param: perimeta_instance_index } ] }
+            $VIRT_TRUSTED_IP_ADDR: { get_param: [ trusted_vips, { get_param: perimeta_instance_index } ] }
+            $LOCAL_TRUSTED_IP_ADDR: { get_param: [ trusted_a_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_TRUSTED_IP_ADDR: { get_param: [ trusted_b_ips, { get_param: perimeta_instance_index } ] }
+            $VIRT_UNTRUSTED_IP_ADDR: { get_param: [ untrusted_vips, { get_param: perimeta_instance_index } ] }
+            $VIRT_UNTRUSTED_ALT_IP_ADDR: { get_param: [ untrusted_v6_vips, { get_param: perimeta_instance_index } ] }
+            $LOCAL_UNTRUSTED_IP_ADDR: { get_param: [ untrusted_a_ips, { get_param: perimeta_instance_index } ] }
+            $LOCAL_UNTRUSTED_ALT_IP_ADDR: { get_param: [ untrusted_a_v6_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_UNTRUSTED_IP_ADDR: { get_param: [ untrusted_b_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_UNTRUSTED_ALT_IP_ADDR: { get_param: [ untrusted_b_v6_ips, { get_param: perimeta_instance_index } ] }
+            $VM_NAME_A: { get_param: [ vm_a_names, { get_param: perimeta_instance_index } ] }
+            $VM_NAME_B: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+            $SYSTEM_NAME: { get_param: [ system_names, { get_param: perimeta_instance_index } ] }
+
+  perimeta_b_server_0:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [ vm_b_names, { get_param: perimeta_instance_index } ] }
+      image: { get_param: perimeta_image_name }
+      flavor: { get_param: perimeta_flavor_name }
+      key_name: { get_param: perimeta_keypair }
+      scheduler_hints: { group: { get_resource: perimeta_server_group } }
+      metadata:
+        'vnf_id': { get_param: vnf_id }
+        'vm_role':
+            str_replace:
+              template: $ROLE_b
+              params:
+                $ROLE: { get_param: vm_role }
+        'vf_module_id': { get_param: vf_module_id }
+      networks:
+        - port: { get_resource: perimeta_b_mgmt_0_port }
+        - port: { get_resource: perimeta_b_ha_0_port }
+        - port: { get_resource: perimeta_b_trusted_0_port }
+        - port: { get_resource: perimeta_b_untrusted_0_port }
+      availability_zone: { get_param: availability_zone_1 }
+      config_drive: True
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: |
+            {
+              "vnic_assignment": {
+                "IBG1mgmt": {"mac": "$MGMT_MACADDR"},
+                "IPG1": {"mac": "$HA_MACADDR"},
+                "RPG1": {"mac": "$TRUSTED_MACADDR"},
+                "RPG2": {"mac": "$UNTRUSTED_MACADDR"}
+              },
+              "ip_ha_local": "$LOCAL_HA_IP_ADDR",
+              "ip_ha_remote": "$REMOTE_HA_IP_ADDR",
+              "ip_ha_plen": "$HA_NETWORK_PLEN"
+              //"ip_mgmt_local": "$LOCAL_MGMT_IP_ADDR",
+              //"ip_mgmt_remote": "$REMOTE_MGMT_IP_ADDR",
+              //"ip_mgmt_plen": "$MGMT_NETWORK_PLEN",
+              //"ip_mgmt_gway": "$MGMT_NETWORK_DEFAULT_GATEWAY"
+            }
+
+          params:
+            $MGMT_MACADDR: { get_attr: [perimeta_b_mgmt_0_port, mac_address] }
+            $HA_MACADDR: { get_attr: [perimeta_b_ha_0_port, mac_address] }
+            $TRUSTED_MACADDR: { get_attr: [perimeta_b_trusted_0_port, mac_address] }
+            $UNTRUSTED_MACADDR: { get_attr: [perimeta_b_untrusted_0_port, mac_address] }
+            $LOCAL_HA_IP_ADDR: { get_param: [ ha_b_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_HA_IP_ADDR: { get_param: [ ha_a_ips, { get_param: perimeta_instance_index } ] }
+            $HA_NETWORK_PLEN: { get_param: ha_network_plen }
+            $LOCAL_MGMT_IP_ADDR: { get_param: [ mgmt_b_ips, { get_param: perimeta_instance_index } ] }
+            $REMOTE_MGMT_IP_ADDR: { get_param: [ mgmt_a_ips, { get_param: perimeta_instance_index } ] }
+            $MGMT_NETWORK_PLEN: { get_param: mgmt_net_plen }
+            $MGMT_NETWORK_DEFAULT_GATEWAY: { get_param: mgmt_net_default_gateway }
+
+outputs:
+
+  server_group_used:
+    description: Server group used for these VMs
+    value: { get_resource: perimeta_server_group }

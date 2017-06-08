@@ -1,0 +1,61 @@
+heat_template_version: 2013-05-23
+
+description: heat template that creates PCRF Cluman stack
+
+parameters:
+  pcm_server_names:
+    type: comma_delimited_list
+    label: PCRF CM server names
+    description: name of the PCRF CM instance
+  pcm_image_name:
+    type: string
+    label: PCRF CM image name
+    description: PCRF CM image name
+  pcm_flavor_name:
+    type: string
+    label: PCRF CM flavor name
+    description: flavor name of PCRF CM instance
+  availabilityzone_name:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  oam_net_gw:
+    type: string
+    label: CPS network gateway
+    description: CPS network gateway
+  compute_image_name:
+    type: string
+  net_name:
+    type: string
+
+resources:
+  server_pcm_001:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+
+  server_pcm_002:
+    type: nested-pcm_v0.1.yaml
+    properties:
+      pcm_server_name: { get_param: [pcm_server_names, 0] }
+      pcm_image_name: { get_param: pcm_image_name }
+      pcm_flavor_name: { get_param: pcm_flavor_name }
+      availabilityzone_name: { get_param: availabilityzone_name }
+
+  server_compute:
+    type: OS::Nova::Server
+    properties:
+      config_drive: {get_attr: [compute_port_0]}
+      name: { compute_name }
+      image: { get_param: compute_image_name }
+      flavor: { compute_flavor_name }
+      user_data_format: { get_attr: [server_pcm_001 , oam_net_gw] }
+      user_data: { get_attr: [server_pcm_001]}
+
+  compute_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: net_name }

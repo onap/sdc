@@ -60,10 +60,10 @@ public class NetworkDaoCassandraImpl extends CassandraBaseDao<NetworkEntity> imp
         mapper.getTableMetadata().getPartitionKey().get(1).getName());
 
 
-    metadata.setUniqueValuesMetadata(Collections.singletonList(
-        new UniqueValueMetadata(VendorSoftwareProductConstants.UniqueValues.NETWORK_NAME,
-            Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
-                mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
+    metadata.setUniqueValuesMetadata(Collections.singletonList(new UniqueValueMetadata(
+        VendorSoftwareProductConstants.UniqueValues.NETWORK_NAME,
+        Arrays.asList(mapper.getTableMetadata().getPartitionKey().get(0).getName(),
+            mapper.getTableMetadata().getPartitionKey().get(1).getName(), "name"))));
 
     VersioningManagerFactory.getInstance().createInterface()
         .register(versionableEntityType, metadata);
@@ -86,28 +86,30 @@ public class NetworkDaoCassandraImpl extends CassandraBaseDao<NetworkEntity> imp
         entity.getId(), entity.getCompositionData());
   }
 
-  @Override
+  /*@Override
   public void updateQuestionnaireData(String vspId, Version version, String id,
                                       String questionnaireData) {
     accessor.updateQuestionnaireData(questionnaireData, vspId, versionMapper.toUDT(version), id);
-  }
-
-  @Override
-  public Collection<NetworkEntity> list(NetworkEntity entity) {
-    return accessor.list(entity.getVspId(), versionMapper.toUDT(entity.getVersion())).all();
-  }
+  }*/
 
   @Override
   public void deleteAll(String vspId, Version version) {
     accessor.deleteAll(vspId, version);
   }
 
+
+
+  @Override
+  public Collection<NetworkEntity> list(NetworkEntity entity) {
+    return accessor.list(entity.getVspId(), versionMapper.toUDT(entity.getVersion())).all();
+  }
+
   @Accessor
   interface NetworkAccessor {
 
     @Query(
-        "select vsp_id, version, network_id, composition_data from vsp_network where vsp_id=? "
-            + "and version=?")
+        "select vsp_id, version, network_id, composition_data from vsp_network where vsp_id=?"
+            + " and version=?")
     Result<NetworkEntity> list(String vspId, UDTValue version);
 
     @Query(

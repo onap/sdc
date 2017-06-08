@@ -2,34 +2,10 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  GlobalSubstitutionTypes:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -100,7 +76,7 @@ topology_template:
         virtual_network_refs:
         - get_input: p1
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -118,7 +94,7 @@ topology_template:
         - get_input: p1
         - get_input: p2
         virtual_machine_interface_properties:
-          virtual_machine_interface_properties_service_interface_type:
+          service_interface_type:
             get_input: lb_st_interface_type_oam
         port_tuple_refs:
         - get_input: template_PortTuple_LB1
@@ -142,7 +118,7 @@ topology_template:
           - cmaui_names
           - 0
   groups:
-    nested:
+    nested_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/nested.yml
@@ -154,28 +130,205 @@ topology_template:
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.heat.nested
     capabilities:
-      host_server_cmaui:
+      cpu.delta_server_cmaui:
       - server_cmaui
-      - host
-      os_server_cmaui:
+      - cpu.delta
+      disk.device.write.requests.rate_server_cmaui:
       - server_cmaui
-      - os
-      endpoint_server_cmaui:
+      - disk.device.write.requests.rate
+      disk.device.allocation_server_cmaui:
       - server_cmaui
-      - endpoint
-      binding_server_cmaui:
-      - server_cmaui
-      - binding
+      - disk.device.allocation
       scalable_server_cmaui:
       - server_cmaui
       - scalable
+      disk.read.bytes.rate_server_cmaui:
+      - server_cmaui
+      - disk.read.bytes.rate
+      cpu_server_cmaui:
+      - server_cmaui
+      - cpu
+      disk.write.bytes.rate_server_cmaui:
+      - server_cmaui
+      - disk.write.bytes.rate
+      disk.device.read.bytes.rate_server_cmaui:
+      - server_cmaui
+      - disk.device.read.bytes.rate
+      host_server_cmaui:
+      - server_cmaui
+      - host
+      cpu_util_server_cmaui:
+      - server_cmaui
+      - cpu_util
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.bytes.rate
+      disk.device.latency_server_cmaui:
+      - server_cmaui
+      - disk.device.latency
+      disk.device.write.requests_server_cmaui:
+      - server_cmaui
+      - disk.device.write.requests
+      disk.read.requests_server_cmaui:
+      - server_cmaui
+      - disk.read.requests
+      network.outgoing.bytes.rate_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.outgoing.bytes.rate
+      disk.device.capacity_server_cmaui:
+      - server_cmaui
+      - disk.device.capacity
+      network.incoming.bytes_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.incoming.bytes
+      disk.usage_server_cmaui:
+      - server_cmaui
+      - disk.usage
+      network.incoming.bytes_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.bytes
+      disk.device.usage_server_cmaui:
+      - server_cmaui
+      - disk.device.usage
+      disk.capacity_server_cmaui:
+      - server_cmaui
+      - disk.capacity
+      disk.write.requests.rate_server_cmaui:
+      - server_cmaui
+      - disk.write.requests.rate
+      network.incoming.packets.rate_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.incoming.packets.rate
+      network.incoming.packets.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.packets.rate
+      disk.device.read.requests_server_cmaui:
+      - server_cmaui
+      - disk.device.read.requests
+      feature_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - feature
+      instance_server_cmaui:
+      - server_cmaui
+      - instance
+      disk.device.read.bytes_server_cmaui:
+      - server_cmaui
+      - disk.device.read.bytes
+      feature_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - feature
+      memory_server_cmaui:
+      - server_cmaui
+      - memory
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.packets.rate
+      disk.root.size_server_cmaui:
+      - server_cmaui
+      - disk.root.size
+      binding_server_cmaui:
+      - server_cmaui
+      - binding
+      disk.device.read.requests.rate_server_cmaui:
+      - server_cmaui
+      - disk.device.read.requests.rate
+      disk.write.bytes_server_cmaui:
+      - server_cmaui
+      - disk.write.bytes
+      os_server_cmaui:
+      - server_cmaui
+      - os
+      disk.device.write.bytes.rate_server_cmaui:
+      - server_cmaui
+      - disk.device.write.bytes.rate
+      network.outpoing.packets_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outpoing.packets
+      network.outpoing.packets_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.outpoing.packets
+      network.incoming.packets_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.packets
+      network.incoming.packets_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.incoming.packets
+      network.outgoing.bytes_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.outgoing.bytes
+      network.outgoing.bytes_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.outgoing.bytes
+      memory.resident_server_cmaui:
+      - server_cmaui
+      - memory.resident
+      disk.latency_server_cmaui:
+      - server_cmaui
+      - disk.latency
+      feature_server_cmaui:
+      - server_cmaui
+      - feature
+      vcpus_server_cmaui:
+      - server_cmaui
+      - vcpus
+      disk.device.write.bytes_server_cmaui:
+      - server_cmaui
+      - disk.device.write.bytes
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - network.incoming.bytes.rate
+      binding_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - binding
+      binding_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - binding
+      network.incoming.bytes.rate_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - network.incoming.bytes.rate
+      disk.allocation_server_cmaui:
+      - server_cmaui
+      - disk.allocation
+      disk.write.requests_server_cmaui:
+      - server_cmaui
+      - disk.write.requests
+      memory.usage_server_cmaui:
+      - server_cmaui
+      - memory.usage
+      disk.ephemeral.size_server_cmaui:
+      - server_cmaui
+      - disk.ephemeral.size
+      endpoint_server_cmaui:
+      - server_cmaui
+      - endpoint
+      disk.iops_server_cmaui:
+      - server_cmaui
+      - disk.iops
+      disk.device.iops_server_cmaui:
+      - server_cmaui
+      - disk.device.iops
+      disk.read.bytes_server_cmaui:
+      - server_cmaui
+      - disk.read.bytes
     requirements:
       link_template_VMInt_OAM_lb_1:
       - template_VMInt_OAM_lb_1
       - link
+      dependency_server_cmaui:
+      - server_cmaui
+      - dependency
       local_storage_server_cmaui:
       - server_cmaui
       - local_storage
       link_template_VMInt_OAM_lb_2:
       - template_VMInt_OAM_lb_2
       - link
+      dependency_template_VMInt_OAM_lb_1:
+      - template_VMInt_OAM_lb_1
+      - dependency
+      dependency_template_VMInt_OAM_lb_2:
+      - template_VMInt_OAM_lb_2
+      - dependency

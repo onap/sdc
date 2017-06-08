@@ -1,0 +1,74 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: c2749b42-28db-45e0-ab55-b05d0118d91d
+  UUID: b8ff69ca-786d-479e-9f9c-217a90ee0ebc
+  name: service_mock
+  description: aaa
+  type: Service
+  category: Mobility
+  serviceEcompNaming: false
+  serviceHoming: false
+imports:
+- Network:
+    file: NeutronNet-template.yml
+- vadtran_Demo:
+    file: VadtranDemo-template.yml
+- Port:
+    file: ContrailPort-template.yml
+topology_template:
+  node_templates:
+    Port 1:
+      type: org.openecomp.resource.cp.nodes.heat.network.contrail.Port
+      metadata:
+        invariantUUID: fc94daa0-a1a9-405e-a84c-b15987f92357
+        UUID: 4dd2144f-72d4-47de-b361-8ed51c33c4a8
+        resourceCustomizationUUID: 6402d92d-0050-46a9-8202-623a46680ba7
+        version: '1.0'
+        name: ContrailPort
+        description: Represents a logical entity that associates between Compute and Network normative types for contrail.
+        type: CP
+        category: Generic
+        subcategory: Network Elements
+
+    vadtran_Demo 1:
+      type: org.openecomp.resource.vf.VadtranDemo
+      metadata:
+        invariantUUID: 886d689d-351d-485a-829c-d86ec2dde4c4
+        UUID: 3d6e1e60-14ac-4665-83de-6e2c729f0222
+        resourceCustomizationUUID: 8cc0b0f6-d0fd-4742-b054-8d1786e07ff8
+        version: '1.0'
+        name: vadtran_Demo
+        description: test
+        type: VF
+        category: Generic
+        subcategory: Database
+    
+  groups: 
+    vadtran_Demo..base_adtran_pmaa_heat_04..module-0:
+      type: org.openecomp.groups.VfModule
+      metadata:
+        vfModuleModelName: vadtran_Demo..base_adtran_pmaa_heat_04..module-0
+        vfModuleModelCustomizationUUID: fbf41c77-6b84-4e77-ae26-d86ec2dde4c4
+        vfModuleModelInvariantUUID: d84f61c9-160a-44b6-a008-6caadbb6c612
+        vfModuleModelUUID: fbf41c77-a7ee-4203-ad6c-eeb8a4ad7178
+        vfModuleModelVersion: '1'
+      properties:
+        vf_module_type: Base
+        vf_module_description:
+        volume_group: false  
+        vf_module_label: 
+        min_vf_module_instances: 2
+        max_vf_module_instances: 2
+        initial_count: 2
+
+  
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

@@ -20,9 +20,9 @@
 
 package org.openecomp.core.utilities.yaml;
 
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.utilities.CommonMethods;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -45,19 +45,20 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  * The type Yaml util.
  */
 public class YamlUtil {
 
-  private static Logger logger = LoggerFactory.getLogger(YamlUtil.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(YamlUtil.class);
 
   /**
    * Yaml to object t.
    *
    * @param <T>         the type parameter
    * @param yamlContent the yaml content
-   * @param typClass    the typ class
+   * @param typClass      the t class
    * @return the t
    */
   public <T> T yamlToObject(String yamlContent, Class<T> typClass) {
@@ -76,7 +77,7 @@ public class YamlUtil {
    *
    * @param <T>         the type parameter
    * @param yamlContent the yaml content
-   * @param typClass    the typ class
+   * @param typClass      the t class
    * @return the t
    */
   public <T> T yamlToObject(InputStream yamlContent, Class<T> typClass) {
@@ -102,7 +103,7 @@ public class YamlUtil {
           yamlContent.close();
         }
       } catch (IOException ignore) {
-        //nothing to dd
+        //do nothing
       }
     }
   }
@@ -111,8 +112,8 @@ public class YamlUtil {
   /**
    * Gets constructor.
    *
-   * @param <T>      the type parameter
-   * @param typClass the typ class
+   * @param <T>    the type parameter
+   * @param typClass the t class
    * @return the constructor
    */
   public <T> Constructor getConstructor(Class<T> typClass) {
@@ -127,6 +128,7 @@ public class YamlUtil {
   protected PropertyUtils getPropertyUtils() {
     return new MyPropertyUtils();
   }
+
 
   /**
    * Yaml to map map.
@@ -145,7 +147,7 @@ public class YamlUtil {
    * Object to yaml string.
    *
    * @param <T> the type parameter
-   * @param obj the obj
+   * @param obj   the obj
    * @return the string
    */
   public <T> String objectToYaml(Object obj) {
@@ -192,6 +194,16 @@ public class YamlUtil {
 
   private class CustomRepresenter extends Representer {
     @Override
+    protected MappingNode representJavaBean(Set<Property> properties, Object javaBean) {
+      //remove the bean type from the output yaml (!! ...)
+      if (!classTags.containsKey(javaBean.getClass())) {
+        addClassTag(javaBean.getClass(), Tag.MAP);
+      }
+
+      return super.representJavaBean(properties, javaBean);
+    }
+
+    @Override
     protected NodeTuple representJavaBeanProperty(Object javaBean, Property property,
                                                   Object propertyValue, Tag customTag) {
       if (propertyValue == null) {
@@ -205,16 +217,6 @@ public class YamlUtil {
             : defaultNode;
       }
     }
-
-    @Override
-    protected MappingNode representJavaBean(Set<Property> properties, Object javaBean) {
-      //remove the bean type from the output yaml (!! ...)
-      if (!classTags.containsKey(javaBean.getClass())) {
-        addClassTag(javaBean.getClass(), Tag.MAP);
-      }
-
-      return super.representJavaBean(properties, javaBean);
-    }
   }
 
 
@@ -222,20 +224,20 @@ public class YamlUtil {
    * The type My property utils.
    */
   public class MyPropertyUtils extends PropertyUtils {
+    //Unsorted properties
+    @Override
+    protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bnAccess)
+        throws IntrospectionException {
+      return new LinkedHashSet<Property>(getPropertiesMap(type,
+          BeanAccess.FIELD).values());
+    }
+
     @Override
     public Property getProperty(Class<?> type, String name) throws IntrospectionException {
       if (name.equals("default")) {
         name = "_default";
       }
       return super.getProperty(type, name);
-    }
-
-    //Unsorted properties
-    @Override
-    protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess beanAccess)
-        throws IntrospectionException {
-      return new LinkedHashSet<Property>(getPropertiesMap(type,
-          BeanAccess.FIELD).values());
     }
 
   }
@@ -255,16 +257,6 @@ public class YamlUtil {
     }
 
     @Override
-    protected Map<Object, Object> constructMapping(MappingNode node) {
-      try {
-        return super.constructMapping(node);
-      } catch (IllegalStateException exception) {
-        throw new ParserException("while parsing MappingNode", node.getStartMark(),
-            exception.getMessage(), node.getEndMark());
-      }
-    }
-
-    @Override
     protected Map<Object, Object> createDefaultMap() {
       final Map<Object, Object> delegate = super.createDefaultMap();
       return new AbstractMap<Object, Object>() {
@@ -281,6 +273,17 @@ public class YamlUtil {
           return delegate.entrySet();
         }
       };
+    }
+
+    @Override
+    protected Map<Object, Object> constructMapping(MappingNode node) {
+      try {
+        return super.constructMapping(node);
+      } catch (IllegalStateException exception) {
+        throw new ParserException("while parsing MappingNode",
+            node.getStartMark(), exception.getMessage(),
+            node.getEndMark());
+      }
     }
   }
 }

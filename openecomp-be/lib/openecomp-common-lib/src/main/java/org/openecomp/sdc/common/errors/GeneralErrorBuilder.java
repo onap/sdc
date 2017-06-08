@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.common.errors;
 
-/**
- * The type General error builder.
- */
 public class GeneralErrorBuilder {
 
   private static final String GENERAL_ERROR_REST_ID = "GENERAL_ERROR_REST_ID";
@@ -41,11 +38,6 @@ public class GeneralErrorBuilder {
     builder.withMessage(String.format(GENERAL_ERROR_REST_MSG, detailedError));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

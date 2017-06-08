@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.vendorlicense.dao.impl;
 
+import static org.openecomp.core.utilities.CommonMethods.toSingleElementSet;
+
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.mapping.Mapper;
@@ -44,7 +46,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 
 public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupEntity>
     implements FeatureGroupDao {
@@ -95,6 +96,12 @@ public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupE
   }
 
   @Override
+  public void deleteAll(FeatureGroupEntity entity) {
+    accessor.deleteByVlmVersion(entity.getVendorLicenseModelId(),
+        versionMapper.toUDT(entity.getVersion())).all();
+  }
+
+  @Override
   public void updateFeatureGroup(FeatureGroupEntity entity,
                                  Set<String> addedEntitlementPools,
                                  Set<String> removedEntitlementPools,
@@ -115,18 +122,6 @@ public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupE
   }
 
   @Override
-  public Collection<FeatureGroupEntity> list(FeatureGroupEntity entity) {
-    return accessor.listByVlmVersion(entity.getVendorLicenseModelId(),
-        versionMapper.toUDT(entity.getVersion())).all();
-  }
-
-  @Override
-  public void deleteAll(FeatureGroupEntity entity) {
-    accessor.deleteByVlmVersion(entity.getVendorLicenseModelId(),
-        versionMapper.toUDT(entity.getVersion())).all();
-  }
-
-  @Override
   public void addReferencingLicenseAgreement(FeatureGroupEntity entity, String licenseAgreementId) {
     accessor.addReferencingLicenseAgreements(CommonMethods.toSingleElementSet(licenseAgreementId),
         entity.getVendorLicenseModelId(), versionMapper.toUDT(entity.getVersion()), entity.getId());
@@ -143,14 +138,20 @@ public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupE
 
   @Override
   public void removeEntitlementPool(FeatureGroupEntity entity, String entitlementPoolId) {
-    accessor.removeEntitlementPools(CommonMethods.toSingleElementSet(entitlementPoolId),
+    accessor.removeEntitlementPools(toSingleElementSet(entitlementPoolId),
         entity.getVendorLicenseModelId(), versionMapper.toUDT(entity.getVersion()), entity.getId());
   }
 
   @Override
   public void removeLicenseKeyGroup(FeatureGroupEntity entity, String licenseKeyGroupId) {
-    accessor.removeLicenseKeyGroup(CommonMethods.toSingleElementSet(licenseKeyGroupId),
+    accessor.removeLicenseKeyGroup(toSingleElementSet(licenseKeyGroupId),
         entity.getVendorLicenseModelId(), versionMapper.toUDT(entity.getVersion()), entity.getId());
+  }
+
+  @Override
+  public Collection<FeatureGroupEntity> list(FeatureGroupEntity entity) {
+    return accessor.listByVlmVersion(entity.getVendorLicenseModelId(),
+        versionMapper.toUDT(entity.getVersion())).all();
   }
 
   @Accessor
@@ -167,8 +168,8 @@ public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupE
 
     @Query(
         "update feature_group set name=?,description=?, part_num=?, ep_ids=ep_ids+ ?,"
-                + "ep_ids=ep_ids-?, lkg_ids=lkg_ids+?,lkg_ids=lkg_ids-? WHERE "
-                + "vlm_id=? AND version=? AND fg_id=?")
+            + "ep_ids=ep_ids-?, lkg_ids=lkg_ids+?,lkg_ids=lkg_ids-? WHERE vlm_id=? AND version=? "
+            + "AND fg_id=?")
     ResultSet updateColumnsAndDeltaFeatureGroupIds(String name, String description,
                                                    String partNumber,
                                                    Set<String> addedEntitlementPools,
@@ -179,15 +180,15 @@ public class FeatureGroupCassandraDaoImpl extends CassandraBaseDao<FeatureGroupE
                                                    String id);
 
     @Query(
-        "UPDATE feature_group SET ref_la_ids = ref_la_ids "
-                + "+ ? WHERE vlm_id=? AND version=? AND fg_id=?")
+        "UPDATE feature_group SET ref_la_ids = ref_la_ids + ? WHERE vlm_id=? AND version=? "
+            + "AND fg_id=?")
     ResultSet addReferencingLicenseAgreements(Set<String> licenseAgreementIds,
                                               String vendorLicenseModelId, UDTValue version,
                                               String id);
 
     @Query(
-        "UPDATE feature_group SET ref_la_ids = ref_la_ids - ? "
-               + "WHERE vlm_id=? AND version=? AND fg_id=?")
+        "UPDATE feature_group SET ref_la_ids = ref_la_ids - ? WHERE vlm_id=? AND version=? AND "
+            + "fg_id=?")
     ResultSet removeReferencingLicenseAgreements(Set<String> licenseAgreementIds,
                                                  String vendorLicenseModelId, UDTValue version,
                                                  String id);

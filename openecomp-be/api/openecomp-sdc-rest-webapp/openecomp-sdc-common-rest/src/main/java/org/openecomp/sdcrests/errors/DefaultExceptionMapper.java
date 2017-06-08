@@ -22,6 +22,8 @@ package org.openecomp.sdcrests.errors;
 
 import org.codehaus.jackson.map.JsonMappingException;
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.utilities.CommonMethods;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
@@ -32,8 +34,14 @@ import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.common.errors.GeneralErrorBuilder;
 import org.openecomp.sdc.common.errors.JsonMappingErrorBuilder;
 import org.openecomp.sdc.common.errors.ValidationErrorBuilder;
-import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +50,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.core.Response;
 
 public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static final String ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE =
@@ -51,23 +59,28 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
   private static Map<String, String> errorCodeToResponseStatus = JsonUtil
       .json2Object(FileUtils.getFileInputStream(ERROR_CODES_TO_RESPONSE_STATUS_MAPPING_FILE),
           Map.class);
-  private static org.slf4j.Logger logger = LoggerFactory.getLogger(DefaultExceptionMapper.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
   @Override
-  public Response toResponse(Exception e0) {
+  public Response toResponse(Exception exception) {
     Response response;
-    if (e0 instanceof CoreException) {
-      response = transform(CoreException.class.cast(e0));
-    } else if (e0 instanceof ConstraintViolationException) {
-      response = transform(ConstraintViolationException.class.cast(e0));
+    if (exception instanceof CoreException) {
+      response = transform(CoreException.class.cast(exception));
+    } else if (exception instanceof ConstraintViolationException) {
+      response = transform(ConstraintViolationException.class.cast(exception));
 
-    } else if (e0 instanceof JsonMappingException) {
-      response = transform(JsonMappingException.class.cast(e0));
+    } else if (exception instanceof JsonMappingException) {
+      response = transform(JsonMappingException.class.cast(exception));
 
     } else {
-      response = transform(e0);
+      response = transform(exception);
     }
 
+    try {
+      writeStackTraceToFile(exception);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     List<Object> contentTypes = new ArrayList<>();
     contentTypes.add(MediaType.APPLICATION_JSON);
     response.getMetadata().put("Content-Type", contentTypes);
@@ -133,7 +146,6 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         .build();
   }
 
-
   private Response transform(JsonMappingException jsonMappingException) {
     ErrorCode jsonMappingErrorCode = new JsonMappingErrorBuilder().build();
     logger.error(jsonMappingErrorCode.message(), jsonMappingException);
@@ -143,9 +155,9 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         .build();
   }
 
-  private Response transform(Exception e0) {
-    ErrorCode generalErrorCode = new GeneralErrorBuilder(e0.getMessage()).build();
-    logger.error(generalErrorCode.message(), e0);
+  private Response transform(Exception exception) {
+    ErrorCode generalErrorCode = new GeneralErrorBuilder(exception.getMessage()).build();
+    logger.error(generalErrorCode.message(), exception);
     return Response
         .status(Response.Status.INTERNAL_SERVER_ERROR)
         .entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, generalErrorCode))
@@ -158,6 +170,19 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
 
   private Object toEntity(Response.Status status, ErrorCode code) {
     return new ErrorCodeAndMessage(status, code);
+  }
+
+  private void writeStackTraceToFile(Exception exception) throws IOException {
+    File file = new File("stack_trace.txt");
+    OutputStream outputStream = new FileOutputStream(file);
+
+    if(!file.exists()){
+      file.createNewFile();
+    }
+
+    PrintWriter printWriter = new PrintWriter(file);
+    exception.printStackTrace(printWriter);
+    printWriter.close();
   }
 
 }

@@ -41,4 +41,6 @@ public interface ServiceArtifactDaoInter extends VersionableDao {
   Object[] getKeys(String vspId, Version version);
 
   ServiceArtifact getArtifactInfo(String vspId, Version version, String name);
+
+  void deleteAll(String vspId, Version version);
 }

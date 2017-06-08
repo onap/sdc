@@ -46,13 +46,13 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
     public Property getProperty(Class<? extends Object> type, String name)
         throws IntrospectionException {
       try {
-        if (type.equals(
-            Class.forName("org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition"))) {
-          type = Class.forName(
-              "org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt");
+        if (type
+            .equals(Class.forName("org.openecomp.sdc.tosca.datatypes.model.ParameterDefinition"))) {
+          type = Class
+              .forName("org.openecomp.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt");
         }
-      } catch (ClassNotFoundException exception) {
-        throw new RuntimeException(exception);
+      } catch (ClassNotFoundException ex) {
+        throw new RuntimeException(ex);
       }
       return super.getProperty(type, name);
     }
@@ -80,9 +80,8 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
             // create JavaBean
             return super.constructJavaBean2ndStep(node, object);
           }
-        } catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException exception) {
-          throw new RuntimeException(exception);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+          throw new RuntimeException(ex);
         }
       }
     }

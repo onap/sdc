@@ -18,8 +18,8 @@ import React from 'react';
 
 import Common from '../../../../common/Common';
 
-import iconPlus from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/plus.svg';
-import iconOpen from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icon/open.svg';
+import iconPlus from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/plus.svg';
+import iconOpen from '../../../../../../../../res/ecomp/asdc/sequencer/sprites/icons/open.svg';
 
 /**
  * Toolbar view. Buttons offered in the toolbar depend on the mode. Unless in demo mode,

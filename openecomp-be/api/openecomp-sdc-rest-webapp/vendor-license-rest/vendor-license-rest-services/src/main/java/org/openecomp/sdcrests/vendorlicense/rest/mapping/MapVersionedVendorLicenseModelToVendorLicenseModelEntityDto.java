@@ -25,6 +25,7 @@ import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
 import org.openecomp.sdc.vendorlicense.types.VersionedVendorLicenseModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionInfo;
+import org.openecomp.sdcrests.common.types.VersionDto;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelEntityDto;
 
@@ -42,17 +43,20 @@ public class MapVersionedVendorLicenseModelToVendorLicenseModelEntityDto
 
     VersionInfo versionInfo = source.getVersionInfo();
     if (versionInfo != null) {
-      target.setVersion(versionInfo.getActiveVersion().toString());
+      target.setVersion(new VersionDto(versionInfo.getActiveVersion().toString(),versionInfo
+          .getActiveVersion().toString()));
       target.setStatus(versionInfo.getStatus());
       target.setLockingUser(versionInfo.getLockingUser());
 
       if (!CommonMethods.isEmpty(versionInfo.getViewableVersions())) {
-        target.setViewableVersions(versionInfo.getViewableVersions().stream().map(Version::toString)
+        target.setViewableVersions(versionInfo.getViewableVersions().stream().map(version->new
+            VersionDto(version.toString(),version.toString()))
             .collect(Collectors.toList()));
       }
 
       if (!CommonMethods.isEmpty(versionInfo.getFinalVersions())) {
-        target.setFinalVersions(versionInfo.getFinalVersions().stream().map(Version::toString)
+        target.setFinalVersions(versionInfo.getFinalVersions().stream().map(version->new
+            VersionDto(version.toString(),version.toString()))
             .collect(Collectors.toList()));
       }
     }

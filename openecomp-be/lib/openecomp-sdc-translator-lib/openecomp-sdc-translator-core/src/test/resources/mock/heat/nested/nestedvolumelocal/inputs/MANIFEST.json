@@ -6,7 +6,8 @@
     {
       "file": "hot-nimbus-pcm_v0.4.yaml",
       "type": "HEAT"
-    },{
+    },
+    {
       "file": "nested-pcm_v0.1.yaml",
       "type": "HEAT"
     }

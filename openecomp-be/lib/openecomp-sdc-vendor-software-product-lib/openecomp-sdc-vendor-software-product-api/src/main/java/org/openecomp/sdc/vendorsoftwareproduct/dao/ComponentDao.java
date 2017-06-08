@@ -29,10 +29,14 @@ import java.util.Collection;
 
 public interface ComponentDao extends VersionableDao, BaseDao<ComponentEntity> {
 
+  ComponentEntity getQuestionnaireData(String vspId, Version version, String componentId);
+
   void updateQuestionnaireData(String vspId, Version version, String componentId,
                                String questionnaireData);
 
   Collection<ComponentEntity> listQuestionnaires(String vspId, Version version);
+
+  Collection<ComponentEntity> listCompositionAndQuestionnaire(String vspId, Version version);
 
   void deleteAll(String vspId, Version version);
 }

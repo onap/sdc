@@ -1,0 +1,664 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: GlobalSubstitutionTypes
+imports:
+- CommonGlobalTypes:
+    file: CommonGlobalTypesServiceTemplate.yaml
+- NovaServerGlobalTypes:
+    file: NovaServerGlobalTypesServiceTemplate.yaml
+- NeutronPortGlobalTypes:
+    file: NeutronPortGlobalTypesServiceTemplate.yaml
+- NeutronSecurityRulesGlobalTypes:
+    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
+- NeutronNetGlobalTypes:
+    file: NeutronNetGlobalTypesServiceTemplate.yaml
+- CinderVolumeGlobalTypes:
+    file: CinderVolumeGlobalTypesServiceTemplate.yaml
+- ContrailVirtualNetworkGlobalType:
+    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailNetworkRuleGlobalType:
+    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
+- AbstractSubstituteGlobalTypes:
+    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualMachineInterfaceGlobalType:
+    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- ContrailComputeGlobalTypes:
+    file: ContrailComputeGlobalTypesServiceTemplate.yaml
+- ContrailPortGlobalTypes:
+    file: ContrailPortGlobalTypesServiceTemplate.yaml
+- ContrailAbstractSubstituteGlobalTypes:
+    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
+- ContrailV2VirtualNetworkGlobalType:
+    file: ContrailV2VirtualNetworkGlobalTypeServiceTemplate.yaml
+- ContrailV2NetworkRuleGlobalType:
+    file: ContrailV2NetworkRuleGlobalTypeServiceTemplate.yaml
+- ContrailV2VLANSubInterfaceGlobalType:
+    file: ContrailV2VLANSubInterfaceGlobalTypeServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.abstract.nodes.heat.nested1:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      vlan_ids:
+        type: string
+        required: true
+        status: SUPPORTED
+      virtual_ipv6_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      virtual_ip_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      lb_st_vlan_type_oam:
+        type: string
+        description: dummy
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      indx:
+        type: float
+        required: true
+        status: SUPPORTED
+      subinterface_name_prefix:
+        type: string
+        required: true
+        status: SUPPORTED
+      subinterface_instance_index:
+        type: float
+        required: true
+        status: SUPPORTED
+      port1:
+        type: string
+        required: true
+        status: SUPPORTED
+      port2:
+        type: string
+        required: true
+        status: SUPPORTED
+    requirements:
+    - link_template_Vlan_2:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_2:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_1:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_1:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_8_test_nested4Level_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_7_test_nested4Level_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_6_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_6_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_5_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_5_test_nested3Level_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_4_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_4_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_3_test_nested2Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_3_test_nested2Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.abstract.nodes.heat.nested2:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      cmaui_names:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      template_PortTuple_LB1:
+        type: string
+        required: true
+        status: SUPPORTED
+      lb_st_interface_type_oam:
+        type: string
+        required: true
+        status: SUPPORTED
+      oam_sec_group_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      virtual_ip_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      indx:
+        type: float
+        required: true
+        status: SUPPORTED
+      security_group_name:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port1:
+        type: string
+        required: true
+        status: SUPPORTED
+      port2:
+        type: string
+        required: true
+        status: SUPPORTED
+      vlan_ids:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_image:
+        type: string
+        description: Image for CMAUI server
+        required: true
+        status: SUPPORTED
+      virtual_ipv6_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_flavor:
+        type: string
+        description: Flavor for CMAUI server
+        required: true
+        status: SUPPORTED
+      lb_st_vlan_type_oam:
+        type: string
+        description: dummy
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: availabilityzone name
+        required: true
+        status: SUPPORTED
+      subinterface_name_prefix:
+        type: string
+        required: true
+        status: SUPPORTED
+      subinterface_instance_index:
+        type: float
+        required: true
+        status: SUPPORTED
+      cmaui_oam_ips:
+        type: string
+        required: true
+        status: SUPPORTED
+    requirements:
+    - link_template_Vlan_8_test_nested4Level_test_nested3Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_8_test_nested4Level_test_nested3Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_7_test_nested4Level_test_nested3Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_7_test_nested4Level_test_nested3Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_6_test_nested3Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_6_test_nested3Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_5_test_nested3Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_5_test_nested3Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_4:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_4:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_3:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_3:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.abstract.nodes.heat.nested3:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      cmaui_names:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      template_PortTuple_LB1:
+        type: string
+        required: true
+        status: SUPPORTED
+      lb_st_interface_type_oam:
+        type: string
+        required: true
+        status: SUPPORTED
+      oam_sec_group_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      virtual_ip_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      indx:
+        type: float
+        required: true
+        status: SUPPORTED
+      security_group_name:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port1:
+        type: string
+        required: true
+        status: SUPPORTED
+      port2:
+        type: string
+        required: true
+        status: SUPPORTED
+      vlan_ids:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_image:
+        type: string
+        description: Image for CMAUI server
+        required: true
+        status: SUPPORTED
+      virtual_ipv6_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_flavor:
+        type: string
+        description: Flavor for CMAUI server
+        required: true
+        status: SUPPORTED
+      lb_st_vlan_type_oam:
+        type: string
+        description: dummy
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: availabilityzone name
+        required: true
+        status: SUPPORTED
+      subinterface_name_prefix:
+        type: string
+        required: true
+        status: SUPPORTED
+      subinterface_instance_index:
+        type: float
+        required: true
+        status: SUPPORTED
+      cmaui_oam_ips:
+        type: string
+        required: true
+        status: SUPPORTED
+    requirements:
+    - link_template_Vlan_8_test_nested4Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_8_test_nested4Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_7_test_nested4Level:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_7_test_nested4Level:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_6:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_6:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_5:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_5:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+  org.openecomp.resource.abstract.nodes.heat.nested4:
+    derived_from: org.openecomp.resource.abstract.nodes.AbstractSubstitute
+    properties:
+      cmaui_names:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      template_PortTuple_LB1:
+        type: string
+        required: true
+        status: SUPPORTED
+      lb_st_interface_type_oam:
+        type: string
+        required: true
+        status: SUPPORTED
+      oam_sec_group_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      virtual_ip_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      net2:
+        type: string
+        required: true
+        status: SUPPORTED
+      net1:
+        type: string
+        required: true
+        status: SUPPORTED
+      indx:
+        type: float
+        required: true
+        status: SUPPORTED
+      security_group_name:
+        type: list
+        description: CMAUI1, CMAUI2 server names
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port1:
+        type: string
+        required: true
+        status: SUPPORTED
+      port2:
+        type: string
+        required: true
+        status: SUPPORTED
+      vlan_ids:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_image:
+        type: string
+        description: Image for CMAUI server
+        required: true
+        status: SUPPORTED
+      virtual_ipv6_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      cmaui_flavor:
+        type: string
+        description: Flavor for CMAUI server
+        required: true
+        status: SUPPORTED
+      lb_st_vlan_type_oam:
+        type: string
+        description: dummy
+        required: true
+        status: SUPPORTED
+      mac_address:
+        type: string
+        required: true
+        status: SUPPORTED
+      availability_zone_0:
+        type: string
+        description: availabilityzone name
+        required: true
+        status: SUPPORTED
+      subinterface_name_prefix:
+        type: string
+        required: true
+        status: SUPPORTED
+      subinterface_instance_index:
+        type: float
+        required: true
+        status: SUPPORTED
+      cmaui_oam_ips:
+        type: string
+        required: true
+        status: SUPPORTED
+    requirements:
+    - link_template_Vlan_8:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_8:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1
+    - link_template_Vlan_7:
+        capability: tosca.capabilities.network.Linkable
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.network.LinksTo
+        occurrences:
+        - 1
+        - 1
+    - binding_template_Vlan_7:
+        capability: tosca.capabilities.network.Bindable
+        node: org.openecomp.resource.cp.nodes.network.Port
+        relationship: tosca.relationships.network.BindsTo
+        occurrences:
+        - 1
+        - 1

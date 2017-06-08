@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+/**
+ * Created by TALIO on 4/20/2016.
+ */
 public class TranslatedFileDataDto {
 
   private String displayName;

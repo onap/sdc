@@ -1,0 +1,67 @@
+heat_template_version: 2013-05-23
+
+description: cmaui server template for vMMSC
+
+parameters:
+  p1:
+    type: comma_delimited_list
+  p2:
+    type: string
+    description: UID of OAM network
+  security_group_name:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_names:
+    type: comma_delimited_list
+    description: CMAUI1, CMAUI2 server names
+  cmaui_image:
+    type: string
+    description: Image for CMAUI server
+  availability_zone_0:
+    type: string
+    label: availabilityzone name
+    description: availabilityzone name
+  cmaui_flavor:
+    type: string
+    description: Flavor for CMAUI server
+  cmaui_oam_ips:
+    type: string
+  oam_sec_group_name:
+    type: string
+  lb_st_interface_type_oam:
+    type: string
+  template_PortTuple_LB1:
+    type: string
+resources:
+  template_VMInt_OAM_lb_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb_st_interface_type_oam },
+        }
+      virtual_network_refs: [{ get_param: [ p1, 0] }]
+      port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
+      security_group_refs: [{ get_param: oam_sec_group_name}]
+
+  template_VMInt_OAM_lb_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_service_interface_type: { get_param: lb_st_interface_type_oam },
+        }
+      virtual_network_refs: [{ get_param: [ p1, 1] },{ get_param: p2 }]
+      port_tuple_refs: [{ get_param: template_PortTuple_LB1 }]
+      security_group_refs: [{ get_param: oam_sec_group_name}]
+
+  server_cmaui:
+    type: OS::Nova::Server
+    properties:
+      name: { get_param: [cmaui_names, 0]}
+      image: { get_param: cmaui_image }
+      availability_zone: { get_param: availability_zone_0 }
+      flavor: { get_param: cmaui_flavor }
+      networks:
+      - port: { get_resource: template_VMInt_OAM_lb_1 }
+      - port: { get_resource: template_VMInt_OAM_lb_2 }

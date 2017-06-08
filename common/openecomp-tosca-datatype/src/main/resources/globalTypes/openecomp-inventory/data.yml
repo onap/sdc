@@ -1,0 +1,209 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp-inventory/data.yml
+  version: '1.0'
+
+imports:
+- inventory_index:
+    file: _index.yml
+
+
+data_types:
+
+  org.openecomp.datatypes.inventory.CloudInfrastructure:
+    description: Namespace for cloud infrastructure.
+    attributes:
+      complexes:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.cloud.infrastructure.Complex
+        annotations:
+          max_query_depth: 0
+      cloud_regions:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.cloud.infrastructure.CloudRegion
+        annotations:
+          max_query_depth: 0
+      network_profiles:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.cloud.infrastructure.NetworkProfile
+      pservers:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.cloud.infrastructure.Pserver
+        annotations:
+          max_query_depth: 0
+      virtual_data_centers:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.cloud.infrastructure.VirtualDataCenter
+
+  org.openecomp.datatypes.inventory.RelatedToProperty:
+    attributes:
+      property_key:
+        description: Key part of a key/value pair
+        type: string
+      property_value:
+        description: Value part of a key/value pair
+        type: string
+
+  org.openecomp.datatypes.inventory.Network:
+    description: Namespace for network inventory resources.
+    attributes:
+      logical_links:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.LogicalLink
+      site_pair_sets:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.SitePairSet
+      vpn_bindings:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.VpnBinding
+      vpls_pes:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.VplsPe
+      multicast_configurations:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.MulticastConfiguration
+      vces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Vce
+      vpes:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Vpe
+      vnfcs:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Vnfc
+      l3_networks:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.L3Network
+      network_policies:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.NetworkPolicy
+      generic_vnfs:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.GenericVnf
+        annotations:
+          max_query_depth: 0
+      lag_links:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.LagLink
+      newvces:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Newvce
+      pnfs:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Pnf
+        annotations:
+          max_query_depth: 0
+      physical_links:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.PhysicalLink
+        annotations:
+          max_query_depth: 0
+      ipsec_configurations:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.IpsecConfiguration
+      route_table_references:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.RouteTableReference
+      instance_groups:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.InstanceGroup
+      zones:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.network.Zone
+
+  org.openecomp.datatypes.inventory.Relationship:
+    attributes:
+      related_to:
+        description: A keyword provided by A&AI to indicate type of node.
+        type: string
+      related_link:
+        description: URL to the object in A&AI.
+        type: string
+      relationship_data:
+        type: org.openecomp.datatypes.inventory.RelationshipData
+        occurrences:
+        - 0
+        - UNBOUNDED
+      related_to_property:
+        type: org.openecomp.datatypes.inventory.RelatedToProperty
+        occurrences:
+        - 0
+        - UNBOUNDED
+
+  org.openecomp.datatypes.inventory.Business:
+    description: Namespace for business related constructs
+    attributes:
+      connectors:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.business.Connector
+      customers:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.business.Customer
+        annotations:
+          max_query_depth: 0
+
+  org.openecomp.datatypes.inventory.AzAndDvsSwitches:
+    attributes:
+      dvs_switches:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.DvsSwitch
+      availability_zone:
+        type: org.openecomp.nodes.inventory.AvailabilityZone
+
+  org.openecomp.datatypes.inventory.RelationshipData:
+    attributes:
+      relationship_key:
+        description: A keyword provided by A&AI to indicate an attribute.
+        type: string
+      relationship_value:
+        description: Value of the attribute.
+        type: string
+
+  org.openecomp.datatypes.inventory.LicenseManagement:
+    attributes:
+      license_key_resources:
+        type: list
+        entry_schema:
+          type: org.openecomp.nodes.inventory.license.management.LicenseKeyResource

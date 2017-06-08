@@ -37,7 +37,8 @@ import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 import java.util.Collection;
 
 public class VendorLicenseModelCassandraDaoImpl extends CassandraBaseDao<VendorLicenseModelEntity>
-    implements VendorLicenseModelDao {
+    implements
+    VendorLicenseModelDao {
 
   private static NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
   private static Mapper<VendorLicenseModelEntity> mapper =
@@ -71,21 +72,11 @@ public class VendorLicenseModelCassandraDaoImpl extends CassandraBaseDao<VendorL
     return accessor.getAll().all();
   }
 
-  //    @Override
-  //    public void updateLastModificationTime(VendorLicenseModelEntity vendorLicenseModel){
-  //        accessor.updateLastModificationTime(vendorLicenseModel.getLastModificationTime(),
-  // vendorLicenseModel.getId(), versionMapper.toUDT(vendorLicenseModel.getVersion()));
-  //    }
-
   @Accessor
   interface VendorLicenseModelAccessor {
 
     @Query("SELECT * FROM vendor_license_model")
     Result<VendorLicenseModelEntity> getAll();
 
-    //        @Query("UPDATE vendor_license_model set last_modification_time
-    // = ? where vlm_id = ? and version = ?")
-    //        ResultSet updateLastModificationTime(Date lastModificationTime,
-    // String vlmId, UDTValue version);
   }
 }

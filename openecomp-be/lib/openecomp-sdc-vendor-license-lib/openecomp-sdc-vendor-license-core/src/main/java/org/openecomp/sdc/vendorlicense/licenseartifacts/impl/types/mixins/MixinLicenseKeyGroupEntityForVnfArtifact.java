@@ -41,6 +41,9 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
   abstract String getVersion();
 
   @JsonIgnore
+  abstract String getVersionForArtifact();
+
+  @JsonIgnore
   abstract String getVendorLicenseModelId();
 
 
@@ -52,7 +55,6 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
 
   @JsonIgnore
   abstract String getFirstClassCitizenId();
-
 
 
   @JsonIgnore
@@ -71,4 +73,3 @@ public abstract class MixinLicenseKeyGroupEntityForVnfArtifact {
 
 
 }
-

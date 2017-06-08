@@ -21,5 +21,12 @@
 package org.openecomp.sdc.tosca.datatypes;
 
 public enum ToscaElementTypes {
-  CAPABILITY_TYPE
+  CAPABILITY_TYPE,
+  NODE_TYPE,
+  ARTIFACT_TYPE,
+  DATA_TYPE,
+  INTERFCAE_TYPE,
+  RELATIONSHIP_TYPE,
+  GROUP_TYPE,
+  POLICY_TYPE
 }

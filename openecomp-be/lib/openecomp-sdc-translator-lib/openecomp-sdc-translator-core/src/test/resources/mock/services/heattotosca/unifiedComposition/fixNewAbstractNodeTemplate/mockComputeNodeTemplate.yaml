@@ -1,0 +1,9 @@
+type: org.openecomp.resource.vfc.nodes.heat.FSB1
+properties:
+  flavor:
+    get_input: fsb1-flavor
+  availability_zone:
+    get_input: fsb_zone
+  metadata:
+    write_files:
+      - path: /etc/sysconfig/network-scripts/ifcfg-eth0

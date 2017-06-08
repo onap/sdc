@@ -29,6 +29,9 @@ import java.util.Collection;
 
 public interface NicDao extends VersionableDao, BaseDao<NicEntity> {
 
+  NicEntity getQuestionnaireData(String vspId, Version version, String componentId,
+                                 String nicId);
+
   void updateQuestionnaireData(String vspId, Version version, String componentId, String nicId,
                                String questionnaireData);
 

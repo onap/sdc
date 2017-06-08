@@ -20,6 +20,8 @@
 
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessType;
+
 import javax.validation.constraints.NotNull;
 
 public class ProcessRequestDto {
@@ -28,6 +30,8 @@ public class ProcessRequestDto {
   private String name;
 
   private String description;
+
+  private ProcessType type;
 
   public String getName() {
     return name;
@@ -44,4 +48,8 @@ public class ProcessRequestDto {
   public void setDescription(String description) {
     this.description = description;
   }
+
+  public ProcessType getType() { return type; }
+
+  public void setType(ProcessType type) { this.type = type; }
 }

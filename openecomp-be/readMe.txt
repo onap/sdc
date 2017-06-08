@@ -5,7 +5,7 @@
 
 # Introduction
 
-SDC is the component within the design time environment that provides multiple organizations the ability to create and manage ECOMP assets in terms of “models”. SDC asset models are generally categorized into four object types: Resource, Service, Product and Offer.
+SDC is the component within the design time environment that provides multiple organizations the ability to create and manage OPENECOMP assets in terms of “models”. SDC asset models are generally categorized into four object types: Resource, Service, Product and Offer.
 
 # Compiling Onboarding be war
 

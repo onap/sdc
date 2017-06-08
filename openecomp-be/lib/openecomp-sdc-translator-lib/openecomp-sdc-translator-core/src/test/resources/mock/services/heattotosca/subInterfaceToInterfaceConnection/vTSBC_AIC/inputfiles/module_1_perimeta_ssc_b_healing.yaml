@@ -1,0 +1,384 @@
+# Heat template which intstantiates a Perimeta SSC and up to 10 Perimeta
+# RTP MSCs and up to 10 Perimeta MSRP MSCs.  Currently all instances are
+# HA although standalone MSCs may be supported in future.
+#
+# This Heat template commissions, partners and configures the Perimeta SSC and
+# MSCs with basic configuration defined by ssc_a_template.json,
+# msc_a_template.json and mmc_a_template.json.  These can be modified
+# as required to obtain the required Perimeta configuration.
+#
+# This template puts the Perimeta configuration in place using userdata
+# injected via OpenStack's ConfigDrive mechanism.
+#
+# This template sets up anti-affinity using server group anti-affinity and
+# optionally availability zone anti-affinity.
+#
+# This template will work with any version of Perimeta software from 3.9.20.
+#
+# Pre-requisites are:
+# - existing networks as follows
+#     - network for management traffic
+#     - network for HA traffic
+#     - network for core/trusted service traffic
+#     - network for access/untrusted service traffic
+# - pre-loaded Perimeta image
+# - suitable flavor to use for Perimeta SSC
+# - suitable flavor to use for Perimeta RTP MSCs
+# - suitable flavor to use for Perimeta MSRP MSCs
+# - suitable keypair to use for Perimeta
+#
+# Virtual IP address and fixed IP addresses to use for the Perimeta instances
+# must be provided as parameters.
+#
+# Template requires Juno or above and has been tested on Kilo.  Note that in
+# some deployments, Heat template validation will fail but actually creating
+# a stack using the template will succeed.   This is due to problems with
+# Heat validating nested templates.
+#
+heat_template_version: 2014-10-16
+
+description: >
+  HOT template to instantiate a Perimeta SSC plus MxRTP MSCs plus NxMSRP MSCs
+
+parameters:
+  # General VNF parameters
+  vnf_id:
+    type: string
+    description: ID of VNF
+
+  vf_module_id:
+    type: string
+    description: Unique ID for this VF Module instance
+
+  availability_zone_0:
+    type: string
+    description: Availability zone for A instances.
+  availability_zone_1:
+    type: string
+    description: Availability zone for B instances.
+  perimeta_keypair:
+    type: string
+    description: Keypair to use for accessing these Perimeta instances
+    constraints:
+    - custom_constraint: nova.keypair
+  ntp_server_ip_addrs:
+    type: string
+    description: NTP server IPv4 addresses, separated by commas.  These must be accessible from the management network
+    constraints:
+    - allowed_pattern: "((?:\\d{1,3}\\.){3}\\d{1,3},)*((?:\\d{1,3}\\.){3}\\d{1,3})"
+      description: ntp_server_ip_addrs must be a comma separated list of IPv4 addresses (with no spaces)
+  perimeta_param_server_group:
+    type: string
+    description: UUID of server group to set anti-affinity policy for Perimeta instance.  Only used when doing healing.
+
+  # Management network parameters
+  mgmt_net_id:
+    type: string
+    description: Management network ID
+    constraints:
+    - custom_constraint: neutron.network
+  mgmt_net_plen:
+    type: number
+    description: Management network prefix length
+    constraints:
+    - range: { min: 0, max: 32 }
+      description: mgmt_net_plen must be between 0 and 32
+  mgmt_net_default_gateway:
+    type: string
+    description: Default gateway for management network
+  mgmt_net_sec_groups:
+    type: comma_delimited_list
+    description: Management network security groups
+
+  # Internal high availability network parameters
+  int_ha_net_id:
+    type: string
+    description: Internal HA network ID
+    constraints:
+    - custom_constraint: neutron.network
+  int_ha_net_plen:
+    type: number
+    description: Intermal HA network prefix length.
+    constraints:
+    - range: { min: 0, max: 32 }
+      description: int_ha_net_plen must be between 0 and 32
+  int_ha_net_sec_groups:
+    type: comma_delimited_list
+    description: Security groups associated with internal HA network
+
+  # Trusted/core network parameters
+  trusted_net_id:
+    type: string
+    description: Network ID of trusted/core network.
+    constraints:
+    - custom_constraint: neutron.network
+  trusted_net_sec_groups:
+    type: comma_delimited_list
+    description: Security groups associated with trusted/core network
+
+  # Untrusted/access network parameters
+  untrusted_net_id:
+    type: string
+    description: Network ID of untrusted/access network.
+    constraints:
+    - custom_constraint: neutron.network
+  untrusted_net_sec_groups:
+    type: comma_delimited_list
+    description: Security groups associated with untrusted/access network
+  untrusted_num_vlans:
+    type: number
+    description: Number of VLANs to connect to on the untrusted/access network
+  untrusted_vlan_ids:
+    type: comma_delimited_list
+    description: List of VLAN IDs to use on the untrusted/access network
+  untrusted_vlan_networks:
+    type: comma_delimited_list
+    description: List of Contrail VLAN networks to use on the untrusted/access network.   The order and number of these must match the VLAN ID list
+
+  # Unused network parameters
+  #
+  # This is used for connecting the unused 4th SSC service interface.
+  unused_port_net_id:
+    type: string
+    description: Unused network ID
+    constraints:
+    - custom_constraint: neutron.network
+
+  # SSC parameters
+  ssc_flavor_name:
+    type: string
+    description: Flavor to use for creating SSC VM instance
+    constraints:
+    - custom_constraint: nova.flavor
+  ssc_image_name:
+    type: string
+    description: Glance image to use for launching SSC Perimeta instances.
+    constraints:
+    - custom_constraint: glance.image
+  ssc_a_name_0:
+    type: string
+    description: Name of VM A of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: VM A name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+  ssc_b_name_0:
+    type: string
+    description: Name of VM B of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: VM B name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+  ssc_system_name_0:
+    type: string
+    description: System name of SSC
+    constraints:
+    - allowed_pattern: '[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$'
+      description: System name must be 32 characters or less and a valid hostname.  Only alphanumeric characters plus hyphen are allowed.
+
+  # SSC IP addresses on management network
+  ssc_mgmt_vip_0:
+    type: string
+    description: Management virtual IP address to use for SSC.  Only required when predefining VIPs.
+  ssc_a_mgmt_ip_0:
+    type: string
+    description: Management fixed IP address to use for SSC A.  Only required when predefining fixed IPs.
+  ssc_b_mgmt_ip_0:
+    type: string
+    description: Management fixed IP address to use for SSC B.  Only required when predefining fixed IPs.
+
+  # SSC IP addresses on internal HA network
+  ssc_a_int_ha_ip_0:
+    type: string
+    description: HA fixed IP address to use for SSC A.  Only required when predefining fixed IPs.
+  ssc_b_int_ha_ip_0:
+    type: string
+    description: HA fixed IP address to use for SSC B.  Only required when predefining fixed IPs.
+
+  # SSC IP addresses on trusted/core network
+  ssc_trusted_vip_0:
+    type: string
+    description: Virtual IPv4 address on trusted/core network for SSC.
+  ssc_a_trusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on trusted/core network for SSC A. Only required when predefining fixed IPs.
+  ssc_b_trusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on trusted/core network for SSC B. Only required when predefining fixed IPs.
+
+  # SSC IP addresses on untrusted/access network
+  ssc_untrusted_vip_0:
+    type: string
+    description: Virtual IPv4 address on untrusted/access network for SSC. Only required when predefining virtual IPs.
+  ssc_untrusted_v6_vip_0:
+    type: string
+    description: Virtual IPv6 address on untrusted/access network for SSC. Only required when predefining virtual IPs.
+  ssc_a_untrusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on untrusted/access network for SSC A. Only required when predefining fixed IPs.
+  ssc_a_untrusted_v6_ip_0:
+    type: string
+    description: Fixed IPv6 address on untrusted/access network for SSC A. Only required when predefining fixed IPs.
+  ssc_b_untrusted_ip_0:
+    type: string
+    description: Fixed IPv4 address on untrusted/access network for SSC B. Only required when predefining fixed IPs.
+  ssc_b_untrusted_v6_ip_0:
+    type: string
+    description: Fixed IPv6 address on untrusted/access network for SSC B. Only required when predefining fixed IPs.
+
+  # SSC IP addresses on management/Rf network
+  ssc_rf_vip_0:
+    type: string
+    description: Virtual IPv4 address on management/Rf network for SSC. Only required when predefining virtual IPs.
+  ssc_a_rf_ip_0:
+    type: string
+    description: Fixed IPv4 address on management/Rf network for SSC A. Only required when predefining fixed IPs.
+  ssc_b_rf_ip_0:
+    type: string
+    description: Fixed IPv4 address on management/Rf network for SSC B. Only required when predefining fixed IPs.
+
+  # RTP MSC parameters
+  rtp_msc_count:
+    type: number
+    description: Count of required RTP MSCs
+  rtp_msc_flavor_name:
+    type: string
+    description: Flavor to use for creating RTP MSC VM instances
+    constraints:
+    - custom_constraint: nova.flavor
+  rtp_msc_image_name:
+    type: string
+    description: Glance image to use for launching RTP MSC Perimeta instances.
+    constraints:
+    - custom_constraint: glance.image
+  rtp_msc_a_names:
+    type: comma_delimited_list
+    description: List of names of RTP MSC VM A instances
+  rtp_msc_b_names:
+    type: comma_delimited_list
+    description: List of names of RTP MSC VM B instances
+  rtp_msc_system_names:
+    type: comma_delimited_list
+    description: List of system names of RTP MSC instances
+
+  # RTP MSC IP addresses on management network
+  rtp_msc_mgmt_vips:
+    type: comma_delimited_list
+    description: Management virtual IP addresses to use for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_a_mgmt_ips:
+    type: comma_delimited_list
+    description: Management fixed IP addresses to use for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_b_mgmt_ips:
+    type: comma_delimited_list
+    description: Management fixed IP addresses to use for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+
+  # RTP MSC IP addresses on internal HA network
+  rtp_msc_a_int_ha_ips:
+    type: comma_delimited_list
+    description: HA fixed IP addresses to use for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_b_int_ha_ips:
+    type: comma_delimited_list
+    description: HA fixed IP addresses to use for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+
+  # RTP MSC IP addresses on trusted/core network
+  rtp_msc_trusted_vips:
+    type: comma_delimited_list
+    description: Virtual IPv4 addresses on trusted/core network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_a_trusted_ips:
+    type: comma_delimited_list
+    description: Fixed IPv4 addresses on trusted/core network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_b_trusted_ips:
+    type: comma_delimited_list
+    description: Fixed IPv4 address on trusted/core network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+
+  # RTP MSC IP addresses on untrusted/access network
+  rtp_msc_untrusted_vips:
+    type: comma_delimited_list
+    description: Virtual IPv4 address on untrusted/access network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_untrusted_v6_vips:
+    type: comma_delimited_list
+    description: Virtual IPv6 address on untrusted/access network for RTP MSC instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_a_untrusted_ips:
+    type: comma_delimited_list
+    description: Fixed IPv4 address on untrusted/access network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_a_untrusted_v6_ips:
+    type: comma_delimited_list
+    description: Fixed IPv6 address on untrusted/access network for RTP MSC A instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_b_untrusted_ips:
+    type: comma_delimited_list
+    description: Fixed IPv4 address on untrusted/access network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+  rtp_msc_b_untrusted_v6_ips:
+    type: comma_delimited_list
+    description: Fixed IPv6 address on untrusted/access network for RTP MSC B instances. There must be at least as many as the number of RTP MSCs.
+
+resources:
+
+  # Perimeta SSC
+  perimeta_ssc:
+    type: perimeta_ha_swmu_b.yaml
+    properties:
+      vnf_id: { get_param: vnf_id }
+      vm_role: 'ssc'
+      vf_module_id: { get_param: vf_module_id }
+      system_names: [{ get_param: ssc_system_name_0 }]
+      vm_a_names: [{ get_param: ssc_a_name_0 }]
+      vm_b_names: [{ get_param: ssc_b_name_0 }]
+      perimeta_instance_index: 0
+      perimeta_image_name: { get_param: ssc_image_name }
+      perimeta_flavor_name: { get_param: ssc_flavor_name }
+      perimeta_keypair: { get_param: perimeta_keypair }
+      availability_zone_0: { get_param: availability_zone_0 }
+      availability_zone_1: { get_param: availability_zone_1 }
+      mgmt_net_id: { get_param: mgmt_net_id }
+      mgmt_net_plen: { get_param: mgmt_net_plen }
+      mgmt_net_default_gateway: { get_param: mgmt_net_default_gateway }
+      mgmt_vips: [{ get_param: ssc_mgmt_vip_0 }]
+      mgmt_a_ips: [{ get_param: ssc_a_mgmt_ip_0 }]
+      mgmt_b_ips: [{ get_param: ssc_b_mgmt_ip_0 }]
+      mgmt_sec_groups: { get_param: mgmt_net_sec_groups }
+      ha_net_id: { get_param: int_ha_net_id }
+      ha_network_plen: { get_param: int_ha_net_plen }
+      ha_a_ips: [{ get_param: ssc_a_int_ha_ip_0 }]
+      ha_b_ips: [{ get_param: ssc_b_int_ha_ip_0 }]
+      ha_sec_groups: { get_param: int_ha_net_sec_groups }
+      trusted_net_id: { get_param: trusted_net_id }
+      trusted_vips: [{ get_param: ssc_trusted_vip_0 }]
+      trusted_a_ips: [{ get_param: ssc_a_trusted_ip_0 }]
+      trusted_b_ips: [{ get_param: ssc_b_trusted_ip_0 }]
+      trusted_sec_groups: { get_param: trusted_net_sec_groups }
+      untrusted_net_id: { get_param: untrusted_net_id }
+      untrusted_vips: [{ get_param: ssc_untrusted_vip_0 }]
+      untrusted_v6_vips: [{ get_param: ssc_untrusted_v6_vip_0 }]
+      untrusted_a_ips: [{ get_param: ssc_a_untrusted_ip_0 }]
+      untrusted_a_v6_ips: [{ get_param: ssc_a_untrusted_v6_ip_0 }]
+      untrusted_b_ips: [{ get_param: ssc_b_untrusted_ip_0 }]
+      untrusted_b_v6_ips: [{ get_param: ssc_b_untrusted_v6_ip_0 }]
+      untrusted_sec_groups: { get_param: untrusted_net_sec_groups }
+      untrusted_num_vlans: { get_param: untrusted_num_vlans }
+      untrusted_vlan_ids: { get_param: untrusted_vlan_ids }
+      untrusted_vlan_networks: { get_param: untrusted_vlan_networks }
+      serv3_net_id: { get_param: mgmt_net_id }
+      serv3_vips: [{ get_param: ssc_rf_vip_0 }]
+      serv3_a_ips: [{ get_param: ssc_a_rf_ip_0 }]
+      serv3_b_ips: [{ get_param: ssc_b_rf_ip_0 }]
+      serv3_sec_groups: { get_param: mgmt_net_sec_groups }
+      unused_net_id: { get_param: unused_port_net_id }
+      perimeta_param_server_group: { get_param: perimeta_param_server_group }
+      perimeta_config:
+        str_replace:
+          template: {get_file: ssc_a_template.json}
+          params:
+                $NTP_SERVER_IP_ADDRS: { get_param: ntp_server_ip_addrs }
+                $COMPLETION_PARAMS: ''
+
+
+
+outputs:
+
+  ssc_server_group:
+    description: Server group for SSC pair
+    value: { get_attr: [ perimeta_ssc, server_group_used ] }
+
+
+
+  msw_template_version:
+    description: Version of the heat templates used to instantiate the VMs
+    value: "4.0.1 - 2016-10-28"

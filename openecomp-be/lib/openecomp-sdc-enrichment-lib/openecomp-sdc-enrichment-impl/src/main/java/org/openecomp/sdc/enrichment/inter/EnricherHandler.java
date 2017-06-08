@@ -20,22 +20,10 @@
 
 package org.openecomp.sdc.enrichment.inter;
 
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.datatypes.model.AsdcModel;
-
 import java.util.List;
-import java.util.Map;
 
 public interface EnricherHandler {
 
-
-  List<Enricher> getEnrichers();
-
-  Map<String, List<ErrorMessage>> enrich();
-
-  void addAdditionalInput(String key, Object input);
-
-  void setModel(AsdcModel model);
-
+    List<Enricher> getEnrichers();
 
 }

@@ -44,21 +44,21 @@ public enum ErrorCategory {
   VALIDATION,
 
   /**
-   * Problems caused by attempt of a user to perform certain operations which contradict the
-   * system rules. Mostly applicable to UI-driven flows in presentation tier.
+   * Problems caused by attempt of a user to perform certain operations which contradict the system
+   * rules. Mostly applicable to UI-driven flows in presentation tier.
    */
   USER,
 
   /**
    * Improper values set in the system configuration (negative numbers, missing or inconsistent
    * definitions, mismatch with valid values list etc).
-   * */
+   */
   CONFIGURATION,
 
   /**
-   * Security constraint violations (failed login attempts, lack of permissions to perform
-   * operation and so on). Any problems related to authentication/authorization should use the
-   * special category for system auditing purposes.
+   * Security constraint violations (failed login attempts, lack of permissions to perform operation
+   * and so on). Any problems related to authentication/authorization should use the special
+   * category for system auditing purposes.
    */
   SECURITY
 }

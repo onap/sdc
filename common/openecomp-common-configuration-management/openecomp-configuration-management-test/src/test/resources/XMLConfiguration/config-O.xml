@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <artifact>
+        <name>
+            <allowedChar>a-zA-Z_0-9</allowedChar>
+        </name>
+        <encoded>true</encoded>
+        <consumer>appc,catalog</consumer>
+    </artifact>
+    <_config>
+        <namespace>XMLConfig</namespace>
+        <mergeStrategy>override</mergeStrategy>
+    </_config>
+</configuration>

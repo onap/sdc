@@ -15,27 +15,27 @@ $browserPrefixes: webkit moz o ms;
 
 @mixin prefix($property, $value, $prefixeslist: 'all') {
   @if $prefixeslist == all {
-	-webkit-#{$property}: $value;
-	-moz-#{$property}: $value;
-	-ms-#{$property}: $value;
-	-o-#{$property}: $value;
-	#{$property}: $value;
+    -webkit-#{$property}: $value;
+    -moz-#{$property}: $value;
+    -ms-#{$property}: $value;
+    -o-#{$property}: $value;
+    #{$property}: $value;
   } @else {
-	@each $prefix in $prefixeslist {
-	  @if $prefix == webkit {
-		-webkit-#{$property}: $value;
-	  } @else if $prefix == moz {
-		-moz-#{$property}: $value;
-	  } @else if $prefix == ms {
-		-ms-#{$property}: $value;
-	  } @else if $prefix == o {
-		-o-#{$property}: $value;
-	  } @else if $prefix == spec {
-		#{$property}: $value;
-	  } @else {
-		@warn "No such prefix: #{$prefix}";
-	  }
-	}
+    @each $prefix in $prefixeslist {
+      @if $prefix == webkit {
+        -webkit-#{$property}: $value;
+      } @else if $prefix == moz {
+        -moz-#{$property}: $value;
+      } @else if $prefix == ms {
+        -ms-#{$property}: $value;
+      } @else if $prefix == o {
+        -o-#{$property}: $value;
+      } @else if $prefix == spec {
+        #{$property}: $value;
+      } @else {
+        @warn "No such prefix: #{$prefix}";
+      }
+    }
   }
 }
 
@@ -43,25 +43,25 @@ $browserPrefixes: webkit moz o ms;
 @mixin value-suffix-with-range($property, $valuesuffix, $from, $to, $prefixeslist) {
 
   @if $prefixeslist == all {
-	#{property} : -webkit-#{$valuesuffix}($from, $to);
-	#{property} : -moz-#{$valuesuffix}($from, $to);
-	#{property} : -o-#{$valuesuffix}($from, $to);
-	#{property} : -ms-#{$valuesuffix}($from, $to);
+    #{property} : -webkit-#{$valuesuffix}($from, $to);
+    #{property} : -moz-#{$valuesuffix}($from, $to);
+    #{property} : -o-#{$valuesuffix}($from, $to);
+    #{property} : -ms-#{$valuesuffix}($from, $to);
 
   } @else {
-	@each $prefix in $prefixeslist {
-	  @if $prefix == webkit {
-		#{property} : -webkit-#{$valuesuffix}($from, $to);
-	  } @else if $prefix == moz {
-		#{property} : -moz-#{$valuesuffix}($from, $to);
-	  } @else if $prefix == ms {
-		#{property} : -ms-#{$valuesuffix}($from, $to);
-	  } @else if $prefix == o {
-		#{property} : -o-#{$valuesuffix}($from, $to);
-	  } @else {
-		@warn "No such prefix: #{$prefix}";
-	  }
-	}
+    @each $prefix in $prefixeslist {
+      @if $prefix == webkit {
+        #{property} : -webkit-#{$valuesuffix}($from, $to);
+      } @else if $prefix == moz {
+        #{property} : -moz-#{$valuesuffix}($from, $to);
+      } @else if $prefix == ms {
+        #{property} : -ms-#{$valuesuffix}($from, $to);
+      } @else if $prefix == o {
+        #{property} : -o-#{$valuesuffix}($from, $to);
+      } @else {
+        @warn "No such prefix: #{$prefix}";
+      }
+    }
   }
 }
 
@@ -81,11 +81,11 @@ $browserPrefixes: webkit moz o ms;
 
 @mixin border-radius($value, $positions: all) {
   @if ($positions == all) {
-	@include prefix(border-radius, $value, $border-radius-prefix);
+    @include prefix(border-radius, $value, $border-radius-prefix);
   } @else {
-	@each $position in $positions {
-	  @include prefix(border-#{$position}-radius, $value, $border-radius-prefix);
-	}
+    @each $position in $positions {
+      @include prefix(border-#{$position}-radius, $value, $border-radius-prefix);
+    }
   }
 
 }
@@ -102,12 +102,39 @@ $browserPrefixes: webkit moz o ms;
 }
 
 /* Ellipsis */
-@mixin ellipsis() {
+@mixin ellipsis($width: 100%, $display: inline-block, $max-width: none) {
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
+  width: $width;
   white-space: nowrap;
-  display: inline-block;
+  display: $display;
+  max-width: $max-width;
+}
+
+@mixin multiline-ellipsis($lineHeight: 1.3em, $lineCount: 2, $bgColor: $white){
+  overflow: hidden;
+  position: relative;
+  line-height: $lineHeight;
+  max-height: $lineHeight * $lineCount;
+  text-align: justify;
+  word-break: break-all;
+  // margin-right: -1em;
+  padding-right: 1em;
+  &:before {
+    content: '...';
+    position: absolute;
+    right: 3px;
+    bottom: 0;
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    background: $bgColor;
+  }
 }
 
 @mixin gradient($from, $to) {
@@ -124,52 +151,13 @@ $browserPrefixes: webkit moz o ms;
   margin-top: -$height/2;
 }
 
-@mixin multiline-ellipsis($height, $lineheight, $ellipsiswidth: 3em) {
-
-  $ellipsiswidth: 3em !default;
-
-  .ellipsis {
-	overflow: hidden;
-	height: $height;
-	line-height: $lineheight;
-  }
-
-  .ellipsis:before {
-	content: "";
-	float: left;
-	width: 5px;
-	height: $height;
-  }
-
-  .ellipsis > *:first-child {
-	float: right;
-	width: 100%;
-	margin-left: -5px;
-  }
-
-  .ellipsis:after {
-	content: "\02026";
-
-	float: right;
-	position: relative;
-	top: -25px;
-	left: 100%;
-	width: $ellipsiswidth;
-	margin-left: -$ellipsiswidth;
-	padding-right: 5px;
-
-	text-align: right;
-  }
-
-}
-
 @mixin text-vertical-align($align: middle) {
   display: table;
   width: 100%;
 
   & > * {
-	vertical-align: $align;
-	display: table-cell;
+    vertical-align: $align;
+    display: table-cell;
   }
 }
 
@@ -181,7 +169,7 @@ $browserPrefixes: webkit moz o ms;
 
 @mixin center-content($width) {
   & > * {
-	@include center-element($width);
+    @include center-element($width);
   }
 }
 
@@ -202,9 +190,9 @@ $browserPrefixes: webkit moz o ms;
 // @param
 //     $deg - angle in degrees
 @mixin transform-translate($x, $y) {
-	transform: translate($x, $y); /* IE10 and Mozilla */
-	-ms-transform: translate($x, $y); /* IE 9 */
-	-webkit-transform: translate($x, $y); /* Safari and Chrome */
+  transform: translate($x, $y); /* IE10 and Mozilla */
+  -ms-transform: translate($x, $y); /* IE 9 */
+  -webkit-transform: translate($x, $y); /* Safari and Chrome */
 }
 
 /* transform-scale */
@@ -222,7 +210,22 @@ $browserPrefixes: webkit moz o ms;
 
 @mixin scrollable() {
   ::-webkit-scrollbar {
-	width: 8px;
+    width: 8px;
+  }
+}
+
+@mixin create-circle($size, $bgcolor, $content) {
+  border-radius: 50%;
+  width: $size;
+  height: $size;
+  background: $bgcolor;
+  border: 3px solid $bgcolor;
+  &:after {
+    content: $content;
+    position: relative;
+    left: 9px;
+    top: 9px;
+    @extend .circle-icon-text;
   }
 }
 
@@ -296,4 +299,10 @@ $browserPrefixes: webkit moz o ms;
       }
     }
   }
+}
+
+
+/**/
+@mixin border-shadow($xShadow: 0.545px, $yShadow: 0.839px, $blur: 4px, $spread: 0, $color: $light-gray, $opacity: 0.2) {
+  @include box-shadow($xShadow $yShadow $blur $spread rgba($color, $opacity));
 }

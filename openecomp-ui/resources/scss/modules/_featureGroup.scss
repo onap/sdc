@@ -28,21 +28,6 @@
     padding: 0;
   }
   .feature-group-form {
-    .button-tab {
-      @extend .body-1-medium;
-      color: $dark-gray;
-      padding: 6px;
-      border: 0;
-      background-color: $white;
-      box-shadow: none;
-      &:first-child {
-        margin-right: 28px;
-      }
-      &.active, &:hover {
-        color: $text-black;
-        border-bottom: 2px solid $blue;
-      }
-    }
     .no-items-msg {
       margin-top: 55px;
       color: $dark-gray;

@@ -31,6 +31,7 @@ public class MapProcessEntityToProcessEntityDto
     target.setId(source.getId());
     target.setName(source.getName());
     target.setDescription(source.getDescription());
+    target.setType(source.getType());
     target.setArtifactName(source.getArtifactName());
   }
 }

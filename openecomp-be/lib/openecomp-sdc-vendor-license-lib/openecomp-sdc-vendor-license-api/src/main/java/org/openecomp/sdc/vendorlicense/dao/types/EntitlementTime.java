@@ -26,5 +26,5 @@ public enum EntitlementTime { //TODO MetricTime ? ask Segev...
   Month,
   Quarter,
   Year,
-  Other
+  Other;
 }

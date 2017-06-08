@@ -1,0 +1,38 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+
+parameters:
+  jsa_net_name:
+    type: string
+    description: network name of jsa log network
+  p1:
+    type: string
+  shared_test_group2:
+    type: string
+  shared_test_nova:
+    type: string
+
+resources:
+
+  test_nested1Level:
+    type: nested1.yml
+    properties:
+      p1: { get_param: p1}
+      p2: { get_param: shared_test_group2}
+
+  test_resourceGroup:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: 9
+      resource_def:
+        type: nested3.yml
+        properties:
+          p1: { get_param: shared_test_group2}
+          indx: "%index%"
+
+  test_nestedInvalidConnectionToNova:
+    type: nested1.yml
+    properties:
+      p1: { get_param: shared_test_nova}

@@ -1,0 +1,81 @@
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  invariantUUID: 63b95d9a-9c89-40d3-a646-36a1418c5246
+  UUID: ae79ba1b-5d12-4813-b01c-755fa6c800bb
+  name: Tunnel_XConn
+  description: Tunnel_XConn
+  type: VF
+  category: Allotted Resource
+  subcategory: Tunnel XConnect
+  resourceVendor: '1'
+  resourceVendorRelease: '1'
+imports:
+- Allotedresource:
+    file: resource-Allotedresource-template.yml
+topology_template:
+  inputs:
+    role:
+      type: string
+    ecomp_naming:
+      type: string
+    min_instances:
+      type: string
+    max_instances:
+      type: string
+    ecomp_homing:
+      type: string
+  node_templates:
+    Alloted resource 1:
+      type: org.openecomp.resource.vfc.AllottedResource
+      metadata:
+        invariantUUID: bc0bebc1-6dc1-4637-883e-aed77bffd63c
+        UUID: 7763d3a3-048f-4e5b-96c5-e7818dbc066a
+        customizationUUID: 22ca20ca-1577-46d3-b3ef-77483cca37d6
+        version: '1.0'
+        name: Allotedresource
+        description: Allotedresource
+        type: VFC
+        category: Allotted Resource
+        subcategory: Tunnel XConnect
+      properties:
+        ecomp_naming:
+          naming_policy:
+            get input: ecomp_naming
+        providing_service_invariant_uuid: 34a4d119-06bc-4ab4-8c5a-a498d638297c
+        min_instances: 1
+        max_instances: 1
+        providing_service_uuid: e14a509f-b611-4b30-b38c-bc7f11b679aa
+        providing_service_name: vVIGaaS
+  substitution_mappings:
+    node_type: org.openecomp.resource.vf.TunnelXconn
+    capabilities:
+      Alloted resource 1.feature:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+    requirements:
+      Alloted resource 1.dependency:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+      Alloted resource 1.service_dependency:
+        occurrences:
+        - 1
+        - 1
+        capability: org.openecomp.capabilities.AllottedResource
+        node: tosca.services.Root
+        relationship: tosca.relationships.DependsOn
+#_______________________________________________________________________________________________________________________________________
+ #|                                    					    AT&T Proprietary (Restricted)           									 |
+ #|                                     Only for use by authorized individuals or any above-designated team(s)                            |
+ #|                                          within the AT&T companies and not for general distribution      							 |
+ #|_______________________________________________________________________________________________________________________________________|

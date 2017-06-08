@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.nems_be:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -1375,6 +1351,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1382,6 +1364,10 @@ topology_template:
             get_input:
             - lb_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1393,11 +1379,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: mms_traffic_net_local_ip2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: mms_traffic_net_floating_ip
@@ -1415,6 +1410,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1422,6 +1423,9 @@ topology_template:
             get_input:
             - nems_fe_nems_traffic_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_traffic_net
       requirements:
       - link:
@@ -1436,6 +1440,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1443,6 +1453,9 @@ topology_template:
             get_input:
             - nems_fe_nems_internal_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_internal_net
       requirements:
       - link:
@@ -1473,6 +1486,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1480,6 +1499,9 @@ topology_template:
             get_input:
             - nems_fe_nems_user_web_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_user_web_net
       requirements:
       - link:
@@ -1494,6 +1516,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1501,6 +1529,9 @@ topology_template:
             get_input:
             - nems_fe_nems_user_web_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_user_web_net
       requirements:
       - link:
@@ -1515,6 +1546,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1522,6 +1559,9 @@ topology_template:
             get_input:
             - nems_fe_nems_traffic_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_traffic_net
       requirements:
       - link:
@@ -1536,6 +1576,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1543,6 +1589,10 @@ topology_template:
             get_input:
             - nems_fe_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1554,6 +1604,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1561,6 +1617,10 @@ topology_template:
             get_input:
             - nems_fe_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1572,6 +1632,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1579,6 +1645,9 @@ topology_template:
             get_input:
             - nems_fe_nems_internal_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_internal_net
       requirements:
       - link:
@@ -1593,6 +1662,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1600,6 +1675,9 @@ topology_template:
             get_input:
             - nems_fe_nems_imap_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_imap_net
       requirements:
       - link:
@@ -1614,6 +1692,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1621,6 +1705,9 @@ topology_template:
             get_input:
             - nems_fe_nems_imap_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_imap_net
       requirements:
       - link:
@@ -1680,11 +1767,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: eca_traffic_net_local_ip2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: eca_traffic_net_floating_ip
@@ -1702,11 +1798,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: ha_net_local_ip2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: ha_net
       requirements:
       - link:
@@ -1721,6 +1826,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1728,6 +1839,10 @@ topology_template:
             get_input:
             - eca_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1755,11 +1870,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: ha_net_local_ip1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: ha_net
       requirements:
       - link:
@@ -1802,6 +1926,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1809,6 +1939,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 15
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1820,6 +1954,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1827,6 +1967,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 18
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -1841,6 +1984,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1848,6 +1997,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 15
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -1859,6 +2012,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1866,6 +2025,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 18
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -1877,6 +2040,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1884,6 +2053,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 14
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1895,6 +2068,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1902,6 +2081,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 18
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -1913,11 +2096,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_traffic_net_local_ip1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: nems_traffic_net_floating_ip
@@ -1956,6 +2148,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1963,6 +2161,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 10
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -1974,6 +2176,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -1981,6 +2189,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 10
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -1995,6 +2206,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2002,6 +2219,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 11
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2022,6 +2242,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2029,6 +2255,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 11
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2040,6 +2270,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2047,6 +2283,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 10
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2058,6 +2298,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2065,6 +2311,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 11
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2076,6 +2326,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2083,6 +2339,10 @@ topology_template:
             get_input:
             - mmsc_oam_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2094,6 +2354,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2101,6 +2367,10 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2112,6 +2382,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2119,6 +2395,10 @@ topology_template:
             get_input:
             - mmsc_oam_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2130,6 +2410,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2137,6 +2423,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 14
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2151,6 +2440,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2158,6 +2453,9 @@ topology_template:
             get_input:
             - mmsc_mms_traffic_net_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: mms_traffic_net
       requirements:
       - link:
@@ -2172,6 +2470,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2179,6 +2483,9 @@ topology_template:
             get_input:
             - mmsc_mms_traffic_net_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: mms_traffic_net
       requirements:
       - link:
@@ -2193,6 +2500,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2200,6 +2513,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 14
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2211,6 +2528,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2218,6 +2541,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 15
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2232,6 +2558,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2239,6 +2571,10 @@ topology_template:
             get_input:
             - arb_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2250,6 +2586,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2257,6 +2599,10 @@ topology_template:
             get_input:
             - lb_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2274,6 +2620,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2281,6 +2633,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 6
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2295,6 +2650,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2302,6 +2663,10 @@ topology_template:
             get_input:
             - eca_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2335,6 +2700,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2342,6 +2713,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 6
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2353,6 +2728,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2360,6 +2741,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 6
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2377,6 +2762,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2384,6 +2775,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2395,6 +2790,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2402,6 +2803,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2413,6 +2818,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2420,6 +2831,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2478,6 +2892,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2485,6 +2905,9 @@ topology_template:
             get_input:
             - lb_dmz_protected_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input:
@@ -2514,6 +2937,7 @@ topology_template:
             get_input:
             - mmsc_dmz_protected_snat_ips
             - 3
+        network_role_tag: dmz_protected
         network:
           get_input: dmz_protected_net_name
       requirements:
@@ -2525,11 +2949,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: eca_traffic_net_local_ip1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: eca_traffic_net_floating_ip
@@ -2547,6 +2980,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2554,6 +2993,9 @@ topology_template:
             get_input:
             - lb_dmz_protected_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input:
@@ -2583,6 +3025,7 @@ topology_template:
             get_input:
             - mmsc_dmz_protected_snat_ips
             - 3
+        network_role_tag: dmz_protected
         network:
           get_input: dmz_protected_net_name
       requirements:
@@ -2594,11 +3037,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: mms_traffic_net_local_ip1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: mms_traffic_net_floating_ip
@@ -2632,6 +3084,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2639,6 +3097,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2735,6 +3196,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2742,6 +3209,9 @@ topology_template:
             get_input:
             - lb_cor_direct_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input:
@@ -2771,6 +3241,7 @@ topology_template:
             get_input:
             - mmsc_core_snat_ips
             - 4
+        network_role_tag: cor_direct
         network:
           get_input: cor_direct_net_name
       requirements:
@@ -2782,6 +3253,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2789,6 +3266,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 19
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2800,6 +3281,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2807,6 +3294,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 19
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2821,6 +3311,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2828,6 +3324,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 19
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2839,6 +3339,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2846,6 +3352,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 7
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2857,6 +3367,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2864,6 +3380,10 @@ topology_template:
             get_input:
             - eca_eca_mgmt_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -2875,6 +3395,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2882,6 +3408,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 5
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -2893,11 +3423,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_user_web_net_local_ip2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: nems_user_web_net_floating_ip
@@ -2931,6 +3470,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2938,6 +3483,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 5
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2952,6 +3500,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -2959,6 +3513,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 7
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -2973,11 +3530,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_user_web_net_local_ip1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: nems_user_web_net_floating_ip
@@ -2995,6 +3561,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3002,6 +3574,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 5
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3013,6 +3589,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3020,6 +3602,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 7
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3031,6 +3617,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3038,6 +3630,10 @@ topology_template:
             get_input:
             - arb_eca_mgmt_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3087,11 +3683,21 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_be_oam_ips
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3103,6 +3709,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3110,6 +3722,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3143,11 +3759,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_be_nems_internal_net_ips
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_internal_net
       requirements:
       - link:
@@ -3162,6 +3787,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3169,6 +3800,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3180,6 +3815,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3187,6 +3828,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3220,11 +3865,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_be_nems_imap_net_ips
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: nems_imap_net
       requirements:
       - link:
@@ -3239,6 +3893,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3246,6 +3906,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3260,6 +3923,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3267,6 +3936,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3297,6 +3969,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3304,6 +3982,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 3
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3365,6 +4047,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3372,6 +4060,10 @@ topology_template:
             get_input:
             - eca_eca_mgmt_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3383,6 +4075,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3390,6 +4088,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 16
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3401,6 +4103,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3408,6 +4116,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 17
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3422,6 +4133,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3429,6 +4146,9 @@ topology_template:
             get_input:
             - lb_cor_direct_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input:
@@ -3458,6 +4178,7 @@ topology_template:
             get_input:
             - mmsc_core_snat_ips
             - 4
+        network_role_tag: cor_direct
         network:
           get_input: cor_direct_net_name
       requirements:
@@ -3469,6 +4190,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3476,6 +4203,10 @@ topology_template:
             get_input:
             - mmsc_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3487,6 +4218,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3494,6 +4231,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 16
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3508,6 +4248,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3515,6 +4261,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 17
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3526,6 +4276,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3533,6 +4289,9 @@ topology_template:
             get_input:
             - mmsc_mms_traffic_net_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: mms_traffic_net
       requirements:
       - link:
@@ -3547,6 +4306,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3554,6 +4319,9 @@ topology_template:
             get_input:
             - mmsc_mms_traffic_net_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: mms_traffic_net
       requirements:
       - link:
@@ -3568,6 +4336,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3575,6 +4349,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 16
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3586,6 +4364,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3593,6 +4377,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 17
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3620,6 +4408,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3627,6 +4421,10 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3638,6 +4436,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3645,6 +4449,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 9
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3688,6 +4496,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3695,6 +4509,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 9
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3744,6 +4562,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3751,6 +4575,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 9
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3829,6 +4656,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3836,6 +4669,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 13
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3847,6 +4684,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3854,6 +4697,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 12
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3865,6 +4712,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3872,6 +4725,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 13
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3883,6 +4740,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3890,6 +4753,9 @@ topology_template:
             get_input:
             - mmsc_mms_traffic_net_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: mms_traffic_net
       requirements:
       - link:
@@ -3904,6 +4770,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3911,6 +4783,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 12
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -3922,6 +4798,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3929,6 +4811,10 @@ topology_template:
             get_input:
             - mmsc_oam_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -3940,6 +4826,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3947,6 +4839,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 12
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3961,6 +4856,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3968,6 +4869,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 13
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -3982,6 +4886,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -3989,6 +4899,10 @@ topology_template:
             get_input:
             - mmsc_oam_ips
             - 1
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -4048,6 +4962,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4055,6 +4975,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 8
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -4066,6 +4990,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4073,6 +5003,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 8
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -4084,6 +5018,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4091,6 +5031,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 8
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -4105,11 +5048,20 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: true
         security_groups:
         - get_input: security_group_name
         fixed_ips:
         - ip_address:
             get_input: nems_traffic_net_local_ip2
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         allowed_address_pairs:
         - ip_address:
             get_input: nems_traffic_net_floating_ip
@@ -4127,6 +5079,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4134,6 +5092,9 @@ topology_template:
             get_input:
             - eca_trx_eca_traffic_net_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
         network: eca_traffic_net
       requirements:
       - link:
@@ -4164,6 +5125,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4171,6 +5138,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -4182,6 +5153,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4189,6 +5166,10 @@ topology_template:
             get_input:
             - eca_trx_mgmt_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: eca_mgmt
         network:
           get_input: eca_mgmt_net_name
       requirements:
@@ -4221,6 +5202,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4228,6 +5215,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -4239,6 +5230,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -4246,6 +5243,10 @@ topology_template:
             get_input:
             - eca_trx_oam_ips
             - 4
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -4261,72 +5262,102 @@ topology_template:
         size: '(get_input : mmsc_cinder_volume_size) * 1024'
   relationship_templates:
     mmsc1_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: mmsc1_volume
         instance_uuid: server_mmsc1
     mmsc4_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: mmsc4_volume
         instance_uuid: server_mmsc4
     arb_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: arb_volume
         instance_uuid: arb_instance
     cmaui_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: cmaui_volume
         instance_uuid: server_cmaui
     nems1_fe_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: nems1_fe_volume
         instance_uuid: server_nems_fe1
     mmsc3_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: mmsc3_volume
         instance_uuid: server_mmsc3
     oam2_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: oam2_volume
         instance_uuid: oam2_instance
     cmaui1_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: cmaui1_volume
         instance_uuid: server_cmaui1
     nems_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: nems_be_volume
         instance_uuid: server_nems_be1
     oam1_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: oam1_volume
         instance_uuid: oam1_instance
     nems2_fe_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: nems2_fe_volume
         instance_uuid: server_nems_fe2
     mmsc5_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: mmsc5_volume
         instance_uuid: server_mmsc5
     mmsc2_volume_attachment:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id: mmsc2_volume
         instance_uuid: server_mmsc2
   groups:
-    MMSC_Capacity_Line:
+    eca_oam_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/eca_oam.yaml
+        description: This stack creates two ECA OAM VM and one ARB VM
+      members:
+      - arb_mgmt_port
+      - oam2_mgmt_port
+      - arb_instance
+      - arb_volume
+      - oam1_instance
+      - oam2_volume
+      - oam1_volume
+      - oam1_int_port
+      - oam1_mgmt_port
+      - arb_int_port
+      - oam2_int_port
+      - oam2_instance
+    cmaui_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/cmaui.yml
+        description: cmaui server template for vMMSC
+      members:
+      - server_cmaui1
+      - server_cmaui
+      - cmaui1_port_0
+      - cmaui_volume
+      - cmaui1_volume
+      - cmaui_port_0
+    MMSC_Capacity_Line_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/MMSC_Capacity_Line.yml
@@ -4477,25 +5508,7 @@ topology_template:
       - eca_trx1_port_0
       - eca_trx5_port_0
       - mmsc3_volume
-    eca_oam:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/eca_oam.yaml
-        description: This stack creates two ECA OAM VM and one ARB VM
-      members:
-      - arb_mgmt_port
-      - oam2_mgmt_port
-      - arb_instance
-      - arb_volume
-      - oam1_instance
-      - oam2_volume
-      - oam1_volume
-      - oam1_int_port
-      - oam1_mgmt_port
-      - arb_int_port
-      - oam2_int_port
-      - oam2_instance
-    SG_ECA_MGMT:
+    SG_ECA_MGMT_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/SG_ECA_MGMT.yaml
@@ -4504,15 +5517,3 @@ topology_template:
       members:
       - mms_security_group
       - eca_mgmt_net
-    cmaui:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/cmaui.yml
-        description: cmaui server template for vMMSC
-      members:
-      - server_cmaui1
-      - server_cmaui
-      - cmaui1_port_0
-      - cmaui_volume
-      - cmaui1_volume
-      - cmaui_port_0

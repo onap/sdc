@@ -1,44 +1,39 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as licenseKeyGroupsConstants} from './LicenseKeyGroupsConstants.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 
-function baseUrl(licenseModelId) {
+function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/license-key-groups`;
+	const {id: versionId} = version;
+	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/versions/${versionId}/license-key-groups`;
 }
 
 function fetchLicenseKeyGroupsList(licenseModelId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl(licenseModelId)}${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}`);
 }
 
-function deleteLicenseKeyGroup(licenseModelId, licenseKeyGroupId) {
-	return RestAPIUtil.destroy(`${baseUrl(licenseModelId)}/${licenseKeyGroupId}`);
+function deleteLicenseKeyGroup(licenseModelId, licenseKeyGroupId, version) {
+	return RestAPIUtil.destroy(`${baseUrl(licenseModelId, version)}/${licenseKeyGroupId}`);
 }
 
-function postLicenseKeyGroup(licenseModelId, licenseKeyGroup) {
-	return RestAPIUtil.create(baseUrl(licenseModelId), {
+function postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
+	return RestAPIUtil.post(baseUrl(licenseModelId, version), {
 		name: licenseKeyGroup.name,
 		description: licenseKeyGroup.description,
 		operationalScope: licenseKeyGroup.operationalScope,
@@ -46,8 +41,8 @@ function postLicenseKeyGroup(licenseModelId, licenseKeyGroup) {
 	});
 }
 
-function putLicenseKeyGroup(licenseModelId, licenseKeyGroup) {
-	return RestAPIUtil.save(`${baseUrl(licenseModelId)}/${licenseKeyGroup.id}`, {
+function putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version) {
+	return RestAPIUtil.put(`${baseUrl(licenseModelId, version)}/${licenseKeyGroup.id}`, {
 		name: licenseKeyGroup.name,
 		description: licenseKeyGroup.description,
 		operationalScope: licenseKeyGroup.operationalScope,
@@ -77,9 +72,9 @@ export default {
 		});
 	},
 
-	saveLicenseKeyGroup(dispatch, {licenseModelId, previousLicenseKeyGroup, licenseKeyGroup}) {
+	saveLicenseKeyGroup(dispatch, {licenseModelId, previousLicenseKeyGroup, licenseKeyGroup, version}) {
 		if (previousLicenseKeyGroup) {
-			return putLicenseKeyGroup(licenseModelId, licenseKeyGroup).then(() => {
+			return putLicenseKeyGroup(licenseModelId, licenseKeyGroup, version).then(() => {
 				dispatch({
 					type: licenseKeyGroupsConstants.EDIT_LICENSE_KEY_GROUP,
 					licenseKeyGroup
@@ -87,11 +82,12 @@ export default {
 			});
 		}
 		else {
-			return postLicenseKeyGroup(licenseModelId, licenseKeyGroup).then(response => {
+			return postLicenseKeyGroup(licenseModelId, licenseKeyGroup, version).then(response => {
 				dispatch({
 					type: licenseKeyGroupsConstants.ADD_LICENSE_KEY_GROUP,
 					licenseKeyGroup: {
 						...licenseKeyGroup,
+						referencingFeatureGroups: [],
 						id: response.value
 					}
 				});
@@ -101,19 +97,12 @@ export default {
 
 	},
 
-	deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId}){
-		return deleteLicenseKeyGroup(licenseModelId, licenseKeyGroupId).then(()=> {
+	deleteLicenseKeyGroup(dispatch, {licenseModelId, licenseKeyGroupId, version}){
+		return deleteLicenseKeyGroup(licenseModelId, licenseKeyGroupId, version).then(()=> {
 			dispatch({
 				type: licenseKeyGroupsConstants.DELETE_LICENSE_KEY_GROUP,
 				licenseKeyGroupId
 			});
-		});
-	},
-
-	licenseKeyGroupEditorDataChanged(dispatch, {deltaData}) {
-		dispatch({
-			type: licenseKeyGroupsConstants.licenseKeyGroupsEditor.DATA_CHANGED,
-			deltaData
 		});
 	},
 

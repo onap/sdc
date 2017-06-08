@@ -27,8 +27,8 @@ import org.openecomp.sdc.common.errors.ErrorCategory;
 public class ReferenceToUnsupportedResourceErrorBuilder extends BaseErrorBuilder {
 
   private static final String REFERENCE_TO_UNSUPPORTED_RESOURCE_MSG =
-      "Resource id '%s' with type '%s' has reference to"
-             + " unsupported resource '%s' with type '%s' in property '%s'";
+      "Resource id '%s' with type '%s' has reference "
+          + "to unsupported resource '%s' with type '%s' in property '%s'";
 
   /**
    * Instantiates a new Reference to unsupported resource error builder.

@@ -58,24 +58,24 @@ public class Resource {
     return depends_on;
   }
 
-  public void setDepends_on(Object dependsOn) {
-    this.depends_on = dependsOn;
+  public void setDepends_on(Object depends_on) {
+    this.depends_on = depends_on;
   }
 
   public Object getUpdate_policy() {
     return update_policy;
   }
 
-  public void setUpdate_policy(Object updatePolicy) {
-    this.update_policy = updatePolicy;
+  public void setUpdate_policy(Object update_policy) {
+    this.update_policy = update_policy;
   }
 
   public Object getDeletion_policy() {
     return deletion_policy;
   }
 
-  public void setDeletion_policy(Object deletionPolicy) {
-    this.deletion_policy = deletionPolicy;
+  public void setDeletion_policy(Object deletion_policy) {
+    this.deletion_policy = deletion_policy;
   }
 
   @Override

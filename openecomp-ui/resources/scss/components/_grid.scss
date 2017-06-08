@@ -1,0 +1,64 @@
+$gridItemSpace: 15%;
+
+.grid-section {
+		padding-bottom: 30px;
+		.grid-items {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		%grid-col-base {
+			flex-shrink: 0;
+			display: flex;
+		}
+
+		.grid-item {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.grid-item-stretch {
+			@extend .grid-item;
+			& *:last-child {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+		}
+
+		.grid-col-1 {
+			@extend %grid-col-base;
+			flex-basis: 25%;
+      &:after {
+        flex-basis: $gridItemSpace;
+        content: ' ';
+      }
+		}
+
+		.grid-col-2 {
+			@extend %grid-col-base;
+			flex-basis: 50%;
+      &:after {
+        flex-basis: $gridItemSpace / 2;
+        content: ' ';
+      }
+		}
+		.grid-col-3 {
+			@extend %grid-col-base;
+			flex-basis: 75%;
+      &:after {
+        flex-basis: $gridItemSpace / 3;
+        content: ' ';
+      }
+		}
+		.grid-col-4 {
+			@extend %grid-col-base;
+			flex-basis: 100%;
+      &:after {
+        flex-basis: $gridItemSpace / 4;
+        content: ' ';
+      }
+		}
+}

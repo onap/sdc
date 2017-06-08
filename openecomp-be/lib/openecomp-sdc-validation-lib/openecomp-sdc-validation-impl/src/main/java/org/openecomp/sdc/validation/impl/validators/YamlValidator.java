@@ -21,75 +21,62 @@
 package org.openecomp.sdc.validation.impl.validators;
 
 import org.openecomp.core.utilities.yaml.YamlUtil;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
-import org.openecomp.core.validation.errors.Messages;
-import org.openecomp.core.validation.interfaces.Validator;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.error.MarkedYAMLException;
-import org.yaml.snakeyaml.parser.ParserException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
+import org.openecomp.sdc.logging.types.LoggerErrorDescription;
+import org.openecomp.sdc.logging.types.LoggerTragetServiceName;
+import org.openecomp.sdc.validation.impl.util.YamlValidatorUtil;
 
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 public class YamlValidator implements Validator {
-
-  private static final Logger logger = LoggerFactory.getLogger(YamlValidator.class);
+  public static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final Logger logger = (Logger) LoggerFactory.getLogger(YamlValidator.class);
 
   @Override
   public void validate(GlobalValidationContext globalContext) {
+    mdcDataDebugMessage.debugEntryMessage(null, null);
 
     Collection<String> files = globalContext.files(
         (fileName, globalValidationContext) -> (fileName.endsWith(".yaml")
             || fileName.endsWith(".yml") || fileName.endsWith(".env")));
 
     files.stream().forEach(fileName -> validate(fileName, globalContext));
+
+    mdcDataDebugMessage.debugExitMessage(null, null);
   }
 
   private void validate(String fileName, GlobalValidationContext globalContext) {
-    InputStream rowContent = globalContext.getFileContent(fileName);
-    if (rowContent == null) {
+    Optional<InputStream> rowContent = globalContext.getFileContent(fileName);
+    if (!rowContent.isPresent()) {
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-          .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-              Messages.EMPTY_YAML_FILE.getErrorMessage()));
+              .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                  Messages.EMPTY_YAML_FILE.getErrorMessage()),
+          LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
+          LoggerErrorDescription.INVALID_YAML_FORMAT);
       return; /* no need to continue validation */
     }
 
     try {
-      convert(rowContent, Map.class);
+      convert(rowContent.get(), Map.class);
     } catch (Exception exception) {
 
       globalContext.addMessage(fileName, ErrorLevel.ERROR, ErrorMessagesFormatBuilder
-          .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
-              getParserExceptionReason(exception)));
-      logger.error("Exception in yaml parser. message:" + exception.getMessage());
+              .getErrorWithParameters(Messages.INVALID_YAML_FORMAT_REASON.getErrorMessage(),
+                  YamlValidatorUtil.getParserExceptionReason(exception)),
+          LoggerTragetServiceName.VALIDATE_YAML_CONTENT,
+          LoggerErrorDescription.INVALID_YAML_FORMAT);
     }
   }
-
-  private String getParserExceptionReason(Exception exception) {
-    String reason = null;
-
-    if (exception.getCause() instanceof MarkedYAMLException) {
-      if (exception.getCause() != null) {
-        if (exception.getCause().getCause() instanceof ParserException) {
-          reason = exception.getCause().getCause().getMessage();
-        } else {
-          reason = exception.getCause().getMessage();
-        }
-      }
-    } else if (exception instanceof MarkedYAMLException) {
-
-      reason = exception.getMessage();
-
-    } else {
-      reason = Messages.GENERAL_YAML_PARSER_ERROR.getErrorMessage();
-    }
-    return reason;
-  }
-
 
   private <T> T convert(InputStream content, Class<T> type) {
     return new YamlUtil().yamlToObject(content, type);

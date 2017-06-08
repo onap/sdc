@@ -20,14 +20,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.HEAT_PACKAGE_FILE_CREATION;
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-/**
- * The type File creation error builder.
- */
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.HEAT_PACKAGE_FILE_CREATION;
+
 public class FileCreationErrorBuilder {
   private static final String HEAT_PKG_FILE_CREATION_ERROR_MSG =
       "Error while trying to create heat file from the package of vendor software product "
@@ -45,11 +43,6 @@ public class FileCreationErrorBuilder {
     builder.withMessage(String.format(HEAT_PKG_FILE_CREATION_ERROR_MSG, vendorSoftwareProductId));
   }
 
-  /**
-   * Build error code.
-   *
-   * @return the error code
-   */
   public ErrorCode build() {
     return builder.build();
   }

@@ -2,32 +2,8 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: Main
 imports:
-  ContrailComputeGlobalTypes:
-    file: ContrailComputeGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
-    file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
-    file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
-    file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailPortGlobalTypes:
-    file: ContrailPortGlobalTypesServiceTemplate.yaml
-  NeutronPortGlobalTypes:
-    file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
-    file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
-    file: CommonGlobalTypesServiceTemplate.yaml
-  ContrailAbstractSubstituteGlobalTypes:
-    file: ContrailAbstractSubstituteGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
-    file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
-    file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
-    file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailV2VirtualMachineInterfaceGlobalType:
-    file: ContrailV2VirtualMachineInterfaceGlobalTypeServiceTemplate.yaml
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
@@ -155,6 +131,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -162,6 +144,10 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -173,6 +159,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -180,6 +172,10 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -264,6 +260,12 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         replacement_policy: AUTO
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         security_groups:
         - get_input: security_group_name
         fixed_ips:
@@ -271,6 +273,10 @@ topology_template:
             get_input:
             - cmaui_oam_ips
             - 0
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam
         network:
           get_input: oam_net_name
       requirements:
@@ -280,29 +286,19 @@ topology_template:
           relationship: tosca.relationships.network.BindsTo
   relationship_templates:
     cmaui_volume_attachment2:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id:
           get_input: cmaui_volume_param2
         instance_uuid: server_cmaui1
     cmaui_volume_attachment3:
-      type: org.openecomp.relationships.heat.cinder.VolumeAttachesTo
+      type: org.openecomp.relationships.VolumeAttachesTo
       properties:
         volume_id:
           get_input: cmaui_volume_param2
         instance_uuid: server_cmaui2
   groups:
-    addOn:
-      type: org.openecomp.groups.heat.HeatStack
-      properties:
-        heat_file: ../Artifacts/addOn.yml
-        description: cmaui server template for vMMSC
-      members:
-      - cmaui_port_2
-      - server_cmaui2
-      - server_cmaui1
-      - cmaui_port_1
-    main:
+    main_group:
       type: org.openecomp.groups.heat.HeatStack
       properties:
         heat_file: ../Artifacts/main.yml
@@ -312,3 +308,13 @@ topology_template:
       - cmaui_volume1
       - server_cmaui21
       - cmaui_volume2
+    addOn_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/addOn.yml
+        description: cmaui server template for vMMSC
+      members:
+      - cmaui_port_2
+      - server_cmaui2
+      - server_cmaui1
+      - cmaui_port_1

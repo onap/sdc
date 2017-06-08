@@ -1,0 +1,19 @@
+{
+  "name": "vEP_JSA_Net",
+  "description": "Version 2.0 02-09-2016 (Authors: Paul Phillips, pp2854 PROD)",
+  "version": "2013-05-23",
+  "data": [
+    {
+      "file": "ep-jsa_net.yaml",
+      "type": "HEAT"
+    },
+    {
+      "file": "nimbus-ethernet",
+      "type": "OTHER"
+    },
+    {
+      "file": "nimbus-ethernet-gw",
+      "type": "OTHER"
+    }
+  ]
+}

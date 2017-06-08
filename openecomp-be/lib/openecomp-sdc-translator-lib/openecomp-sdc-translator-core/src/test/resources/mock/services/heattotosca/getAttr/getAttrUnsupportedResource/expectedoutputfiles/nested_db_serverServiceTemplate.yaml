@@ -1,0 +1,289 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_db_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.db:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      label: VF Module ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    security_group_ids:
+      label: Security Group IDs
+      hidden: false
+      immutable: false
+      type: list
+      description: IDs of the security groups for the server
+      entry_schema:
+        type: string
+    vm_role:
+      label: DB VM Role
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Role for the db vms
+    db_name:
+      label: Database Hostname
+      hidden: false
+      immutable: false
+      type: string
+      description: Hostname of the database servers
+    vnf_id:
+      label: VNF ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance
+    server_group_id:
+      label: Server Group ID
+      hidden: false
+      immutable: false
+      type: string
+      description: ID of the server group
+    availability_zone_0:
+      label: Availability Zone
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the availability zone for this server
+    db_image_name:
+      label: Image
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the server
+    keypair_id:
+      label: Key Name
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the security key for the server
+    db_volume_id_3:
+      label: Data Volume IDs for disk 3
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volume
+    db_volume_id_2:
+      label: Data Volume IDs for disk 2
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volume
+    deploy_timeout:
+      label: Deployment Timeout
+      hidden: false
+      immutable: false
+      type: float
+      description: Timeout before declaring the stack deployment as failed.
+      constraints:
+      - in_range:
+        - 60
+        - 3600
+    oam_net_name:
+      label: OAM Network Name
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the oam network
+    db_oam_ip_0:
+      label: OAM IP Addresse
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM IP Address of the database servers
+    db_flavor_name:
+      label: Flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor to be used for the server
+    db_volume_id_1:
+      label: Data Volume IDs for disk 1
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volume
+    db_volume_id_0:
+      label: Data Volume IDs for disk 0
+      hidden: false
+      immutable: false
+      type: string
+      description: IDs to be used for the database volume
+  node_templates:
+    db_server_0:
+      type: org.openecomp.resource.vfc.nodes.heat.db
+      properties:
+        flavor:
+          get_input: db_flavor_name
+        key_name:
+          get_input: keypair_id
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: db_image_name
+        security_groups:
+          get_input: security_group_ids
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vm_role:
+            get_input: vm_role
+          vnf_id:
+            get_input: vnf_id
+        user_data_format: RAW
+        name:
+          get_input: db_name
+        scheduler_hints:
+          group:
+            get_input: server_group_id
+  groups:
+    nested_db_server_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_db_server.yaml
+        description: Pronghorn Openstack Heat Template for Mongo DB
+      members:
+      - db_server_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.nested_db_server
+    capabilities:
+      disk.device.write.bytes.rate_db_server_0:
+      - db_server_0
+      - disk.device.write.bytes.rate
+      cpu_db_server_0:
+      - db_server_0
+      - cpu
+      disk.write.requests_db_server_0:
+      - db_server_0
+      - disk.write.requests
+      os_db_server_0:
+      - db_server_0
+      - os
+      disk.write.requests.rate_db_server_0:
+      - db_server_0
+      - disk.write.requests.rate
+      disk.root.size_db_server_0:
+      - db_server_0
+      - disk.root.size
+      memory.resident_db_server_0:
+      - db_server_0
+      - memory.resident
+      disk.device.iops_db_server_0:
+      - db_server_0
+      - disk.device.iops
+      memory.usage_db_server_0:
+      - db_server_0
+      - memory.usage
+      disk.iops_db_server_0:
+      - db_server_0
+      - disk.iops
+      disk.capacity_db_server_0:
+      - db_server_0
+      - disk.capacity
+      disk.device.read.bytes_db_server_0:
+      - db_server_0
+      - disk.device.read.bytes
+      disk.device.allocation_db_server_0:
+      - db_server_0
+      - disk.device.allocation
+      disk.read.requests_db_server_0:
+      - db_server_0
+      - disk.read.requests
+      endpoint_db_server_0:
+      - db_server_0
+      - endpoint
+      cpu.delta_db_server_0:
+      - db_server_0
+      - cpu.delta
+      feature_db_server_0:
+      - db_server_0
+      - feature
+      binding_db_server_0:
+      - db_server_0
+      - binding
+      memory_db_server_0:
+      - db_server_0
+      - memory
+      disk.read.bytes_db_server_0:
+      - db_server_0
+      - disk.read.bytes
+      disk.device.write.requests_db_server_0:
+      - db_server_0
+      - disk.device.write.requests
+      disk.allocation_db_server_0:
+      - db_server_0
+      - disk.allocation
+      disk.device.read.requests.rate_db_server_0:
+      - db_server_0
+      - disk.device.read.requests.rate
+      disk.device.capacity_db_server_0:
+      - db_server_0
+      - disk.device.capacity
+      host_db_server_0:
+      - db_server_0
+      - host
+      disk.device.read.bytes.rate_db_server_0:
+      - db_server_0
+      - disk.device.read.bytes.rate
+      disk.device.write.bytes_db_server_0:
+      - db_server_0
+      - disk.device.write.bytes
+      disk.latency_db_server_0:
+      - db_server_0
+      - disk.latency
+      disk.usage_db_server_0:
+      - db_server_0
+      - disk.usage
+      disk.write.bytes.rate_db_server_0:
+      - db_server_0
+      - disk.write.bytes.rate
+      cpu_util_db_server_0:
+      - db_server_0
+      - cpu_util
+      scalable_db_server_0:
+      - db_server_0
+      - scalable
+      vcpus_db_server_0:
+      - db_server_0
+      - vcpus
+      disk.device.usage_db_server_0:
+      - db_server_0
+      - disk.device.usage
+      disk.device.write.requests.rate_db_server_0:
+      - db_server_0
+      - disk.device.write.requests.rate
+      disk.write.bytes_db_server_0:
+      - db_server_0
+      - disk.write.bytes
+      disk.device.latency_db_server_0:
+      - db_server_0
+      - disk.device.latency
+      instance_db_server_0:
+      - db_server_0
+      - instance
+      disk.ephemeral.size_db_server_0:
+      - db_server_0
+      - disk.ephemeral.size
+      disk.read.bytes.rate_db_server_0:
+      - db_server_0
+      - disk.read.bytes.rate
+      disk.device.read.requests_db_server_0:
+      - db_server_0
+      - disk.device.read.requests
+    requirements:
+      dependency_db_server_0:
+      - db_server_0
+      - dependency
+      local_storage_db_server_0:
+      - db_server_0
+      - local_storage

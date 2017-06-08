@@ -1,30 +1,10 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- */
-
 'use strict';
 
 /* jshint quotmark: double */
 window.SwaggerTranslator.learn({
     "Warning: Deprecated":"警告: 廃止予定",
     "Implementation Notes":"実装メモ",
-    "Response Class":"レス�?ンスクラス",
+    "Response Class":"レスポンスクラス",
     "Status":"ステータス",
     "Parameters":"パラメータ群",
     "Parameter":"パラメータ",
@@ -32,42 +12,42 @@ window.SwaggerTranslator.learn({
     "Description":"説明",
     "Parameter Type":"パラメータタイプ",
     "Data Type":"データタイプ",
-    "Response Messages":"レス�?ンスメッセージ",
+    "Response Messages":"レスポンスメッセージ",
     "HTTP Status Code":"HTTPステータスコード",
-    "Reason":"�?�由",
-    "Response Model":"レス�?ンスモデル",
+    "Reason":"理由",
+    "Response Model":"レスポンスモデル",
     "Request URL":"リクエストURL",
-    "Response Body":"レス�?ンスボディ",
-    "Response Code":"レス�?ンスコード",
-    "Response Headers":"レス�?ンスヘッダ",
-    "Hide Response":"レス�?ンスを隠�?�",
+    "Response Body":"レスポンスボディ",
+    "Response Code":"レスポンスコード",
+    "Response Headers":"レスポンスヘッダ",
+    "Hide Response":"レスポンスを隠す",
     "Headers":"ヘッダ",
-    "Try it out!":"実際�?�実行!",
-    "Show/Hide":"表示/�?�表示",
-    "List Operations":"�?作一覧",
-    "Expand Operations":"�?作�?�展開",
+    "Try it out!":"実際に実行!",
+    "Show/Hide":"表示/非表示",
+    "List Operations":"操作一覧",
+    "Expand Operations":"操作の展開",
     "Raw":"Raw",
-    "can't parse JSON.  Raw result":"JSON�?�解釈�?��??�?��?�ん.  未加工�?��?果",
+    "can't parse JSON.  Raw result":"JSONへ解釈できません.  未加工の結果",
     "Model Schema":"モデルスキーマ",
     "Model":"モデル",
     "apply":"実行",
-    "Username":"ユーザ�??",
+    "Username":"ユーザ名",
     "Password":"パスワード",
-    "Terms of service":"サービス利用�?約",
+    "Terms of service":"サービス利用規約",
     "Created by":"Created by",
     "See more at":"See more at",
-    "Contact the developer":"開発者�?�連絡",
-    "api version":"API�?ージョン",
-    "Response Content Type":"レス�?ンス コンテンツタイプ",
-    "fetching resource":"リソース�?��?�得",
-    "fetching resource list":"リソース一覧�?��?�得",
+    "Contact the developer":"開発者に連絡",
+    "api version":"APIバージョン",
+    "Response Content Type":"レスポンス コンテンツタイプ",
+    "fetching resource":"リソースの取得",
+    "fetching resource list":"リソース一覧の取得",
     "Explore":"Explore",
-    "Show Swagger Petstore Example Apis":"SwaggerペットストアAPI�?�表示",
-    "Can't read from server.  It may not have the appropriate access-control-origin settings.":"サー�?�?�ら読�?�込�?�?��?�ん.  �?�切�?�access-control-origin設定を�?�?��?��?��?��?��?�能性�?��?�り�?��?�.",
-    "Please specify the protocol for":"プロトコルを指定�?��?��??�?��?��?�",
-    "Can't read swagger JSON from":"次�?�らswagger JSONを読�?�込�?�?��?�ん",
-    "Finished Loading Resource Information. Rendering Swagger UI":"リソース情報�?�読�?�込�?��?�完了�?��?��?��?�. Swagger UIを�??画�?��?��?��?��?�",
-    "Unable to read api":"APIを読�?�込�?�?��?�ん",
-    "from path":"次�?�パス�?�ら",
-    "server returned":"サー�?�?�ら�?�返答"
+    "Show Swagger Petstore Example Apis":"SwaggerペットストアAPIの表示",
+    "Can't read from server.  It may not have the appropriate access-control-origin settings.":"サーバから読み込めません.  適切なaccess-control-origin設定を持っていない可能性があります.",
+    "Please specify the protocol for":"プロトコルを指定してください",
+    "Can't read swagger JSON from":"次からswagger JSONを読み込めません",
+    "Finished Loading Resource Information. Rendering Swagger UI":"リソース情報の読み込みが完了しました. Swagger UIを描画しています",
+    "Unable to read api":"APIを読み込めません",
+    "from path":"次のパスから",
+    "server returned":"サーバからの返答"
 });

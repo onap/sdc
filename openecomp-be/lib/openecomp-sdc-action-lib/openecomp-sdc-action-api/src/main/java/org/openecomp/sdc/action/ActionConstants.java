@@ -20,13 +20,14 @@
 
 package org.openecomp.sdc.action;
 
+
 public class ActionConstants {
 
   //
   public static final long MAX_ACTION_ARTIFACT_SIZE = 20 * 1024 * 1024; //20 MB
   //REST layer constants
-  public static final String X_ECOMP_INSTANCE_ID_HEADER_PARAM = "X-ECOMP-InstanceID";
-  public static final String X_ECOMP_REQUEST_ID_HEADER_PARAM = "X-ECOMP-RequestID";
+  public static final String X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM = "X-OPEN-ECOMP-InstanceID";
+  public static final String X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM = "X-OPEN-ECOMP-RequestID";
   public static final String WWW_AUTHENTICATE_HEADER_PARAM = "WWW-Authenticate";
 
   public static final String ACTION_REQUEST_PARAM_NAME = "name";
@@ -66,7 +67,7 @@ public class ActionConstants {
   public static final String FILTER_TYPE_CATEGORY = "CATEGORY";
   public static final String FILTER_TYPE_NAME = "NAME";
   public static final String FILTER_TYPE_MODEL = "MODEL";
-  public static final String FILTER_TYPE_ECOMP_COMPONENT = "ECOMP_COMPONENT";
+  public static final String FILTER_TYPE_OPEN_ECOMP_COMPONENT = "OPEN_ECOMP_COMPONENT";
   public static final String FILTER_TYPE_NONE = "NONE";
 
   public static final String ARTIFACT_METADATA_ATTR_UUID = "ARTIFACT_UUID";

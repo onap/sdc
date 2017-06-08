@@ -1,0 +1,811 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+tosca_definitions_version: tosca_simple_openecomp_1_0
+
+metadata:
+  filename: openecomp-heat/data.yml
+  version: '1.0'
+  
+imports:
+- heat_index:
+    file: _index.yml
+
+data_types:
+
+  org.openecomp.datatypes.heat.network.AddressPair:
+    derived_from: tosca.datatypes.Root
+    description: MAC/IP address pairs
+    properties:
+      mac_address:
+        description: MAC address
+        type: string
+        status: SUPPORTED
+        required: false
+      ip_address:
+        description: IP address
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.novaServer.network.PortExtraProperties:
+    derived_from: tosca.datatypes.Root
+    description: Nova server network expand properties for port
+    properties:
+      port_security_enabled:
+        description: Flag to enable/disable port security on the port
+        type: boolean
+        status: SUPPORTED
+        required: false
+      mac_address:
+        description: MAC address to give to this port
+        type: string
+        status: SUPPORTED
+        required: false
+      admin_state_up:
+        description: The administrative state of this port
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      qos_policy:
+        description: The name or ID of QoS policy to attach to this port
+        type: string
+        status: SUPPORTED
+        required: false
+      allowed_address_pairs:
+        description: Additional MAC/IP address pairs allowed to pass through the port
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AddressPair
+        required: false
+      binding:vnic_type:
+        description: The vnic type to be bound on the neutron port
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - macvtap
+          - direct
+          - normal
+      value_specs:
+        description: Extra parameters to include in the request
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: {}
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs:
+    derived_from: tosca.datatypes.Root
+    description: source port pairs
+    properties:
+      network_policy_entries_policy_rule_src_ports_start_port:
+        description: Start port
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries_policy_rule_src_ports_end_port:
+        description: End port
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPair:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Sub Interface Address Pair.
+    properties:
+      address_mode:
+        description: Address Mode.
+        type: string
+        status: SUPPORTED
+        required: false
+      ip:
+        description: IP.
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp
+        status: SUPPORTED
+        required: false
+      mac:
+        description: Mac.
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork:
+    derived_from: tosca.datatypes.Root
+    description: destination addresses
+    properties:
+      network_policy_entries_policy_rule_dst_addresses_virtual_network:
+        description: Destination addresses Virtual network
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.Rule:
+    derived_from: tosca.datatypes.Root
+    description: policy rule
+    properties:
+      network_policy_entries_policy_rule_dst_addresses:
+        description: Destination addresses
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork
+        required: false
+      network_policy_entries_policy_rule_dst_ports:
+        description: Destination ports
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs
+        required: false
+      network_policy_entries_policy_rule_protocol:
+        description: Protocol
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries_policy_rule_src_addresses:
+        description: Source addresses
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork
+        required: false
+      network_policy_entries_policy_rule_direction:
+        description: Direction
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries_policy_rule_src_ports:
+        description: Source ports
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs
+        required: false
+      network_policy_entries_policy_rule_action_list:
+        description: Action list
+        type: org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule:
+    derived_from: tosca.datatypes.Root
+    description: Rules Pairs
+    properties:
+      remote_group_id:
+        description: The remote group ID to be associated with this security group rule
+        type: string
+        status: SUPPORTED
+        required: false
+      protocol:
+        description: The protocol that is matched by the security group rule
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - tcp
+          - udp
+          - icmp
+      ethertype:
+        description: Ethertype of the traffic
+        type: string
+        status: SUPPORTED
+        default: IPv4
+        required: false
+        constraints:
+        - valid_values:
+          - IPv4
+          - IPv6
+      port_range_max:
+        description: 'The maximum port number in the range that is matched by the
+          security group rule. '
+        type: integer
+        status: SUPPORTED
+        required: false
+        constraints:
+        - in_range:
+          - 0
+          - 65535
+      remote_ip_prefix:
+        description: The remote IP prefix (CIDR) to be associated with this security group rule
+        type: string
+        status: SUPPORTED
+        required: false
+      remote_mode:
+        description: Whether to specify a remote group or a remote IP prefix
+        type: string
+        status: SUPPORTED
+        default: remote_ip_prefix
+        required: false
+        constraints:
+        - valid_values:
+          - remote_ip_prefix
+          - remote_group_id
+      direction:
+        description: The direction in which the security group rule is applied
+        type: string
+        status: SUPPORTED
+        default: ingress
+        required: false
+        constraints:
+        - valid_values:
+          - egress
+          - ingress
+      port_range_min:
+        description: The minimum port number in the range that is matched by the security group rule.
+        type: integer
+        status: SUPPORTED
+        required: false
+        constraints:
+        - in_range:
+          - 0
+          - 65535
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data Subnet
+    properties:
+      network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len:
+        description: Network ipam refs data ipam subnets ip prefix len
+        type: string
+        status: SUPPORTED
+        required: false
+      network_ipam_refs_data_ipam_subnets_subnet_ip_prefix:
+        description: Network ipam refs data ipam subnets ip prefix
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.Properties:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Sub Interface VLAN Properties.
+    properties:
+      sub_interface_vlan_tag:
+        description: Sub Interface VLAN Tag.
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Sub Interface Address Pair IP.
+    properties:
+      ip_prefix:
+        description: IP Prefix.
+        type: string
+        status: SUPPORTED
+        required: false
+      ip_prefix_len:
+        description: IP Prefix Len.
+        type: integer
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork:
+    derived_from: tosca.datatypes.Root
+    description: source addresses
+    properties:
+      network_policy_entries_policy_rule_src_addresses_virtual_network:
+        description: Source addresses Virtual network
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
+    derived_from: tosca.datatypes.Root
+    description: Action List
+    properties:
+      network_policy_entries_policy_rule_action_list_simple_action:
+        description: Simple Action
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries_policy_rule_action_list_apply_service:
+        description: Apply Service
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data
+    properties:
+      network_ipam_refs_data_ipam_subnets:
+        description: Network ipam refs data ipam subnets
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList
+        required: false
+
+  org.openecomp.datatypes.heat.FileInfo:
+    derived_from: tosca.datatypes.Root
+    description: Heat File Info
+    properties:
+      file:
+        description: The required URI string (relative or absolute) which can be used to locate the file
+        type: string
+        status: SUPPORTED
+        required: true
+      file_type:
+        description: The type of the file
+        type: string
+        status: SUPPORTED
+        required: true
+        constraints:
+        - valid_values:
+          - base
+          - env
+          - volume
+          - network
+
+  org.openecomp.datatypes.heat.network.contrail.InterfaceData:
+    derived_from: tosca.datatypes.Root
+    description: Interface Data
+    properties:
+      static_routes:
+        description: An ordered list of static routes to be added to this interface
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.port.StaticRoute
+        required: false
+      virtual_network:
+        description: Virtual Network for this interface
+        type: string
+        status: SUPPORTED
+        required: true
+      allowed_address_pairs:
+        description: List of allowed address pair for this interface
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.contrail.AddressPair
+        required: false
+      ip_address:
+        description: IP for this interface
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData:
+    derived_from: tosca.datatypes.Root
+    description: network policy refs data
+    properties:
+      network_policy_refs_data_sequence:
+        description: Network Policy ref data sequence
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs:
+    derived_from: tosca.datatypes.Root
+    description: destination port pairs
+    properties:
+      network_policy_entries_policy_rule_dst_ports_start_port:
+        description: Start port
+        type: string
+        status: SUPPORTED
+        required: false
+      network_policy_entries_policy_rule_dst_ports_end_port:
+        description: End port
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.network.AllocationPool:
+    derived_from: tosca.datatypes.Root
+    description: The start and end addresses for the allocation pool
+    properties:
+      start:
+        description: Start address for the allocation pool
+        type: string
+        status: SUPPORTED
+        required: false
+      end:
+        description: End address for the allocation pool
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrail.network.rule.PortPairs:
+    derived_from: tosca.datatypes.Root
+    description: source and destination port pairs
+    properties:
+      start_port:
+        description: Start port
+        type: string
+        status: SUPPORTED
+        required: false
+      end_port:
+        description: End port
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrail.network.rule.VirtualNetwork:
+    derived_from: tosca.datatypes.Root
+    description: source and destination addresses
+    properties:
+      virtual_network:
+        description: Virtual network
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrail.network.rule.RuleList:
+    derived_from: tosca.datatypes.Root
+    description: list of policy rules
+    properties:
+      policy_rule:
+        description: Contrail network rule
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrail.network.rule.Rule
+        required: false
+
+  org.openecomp.datatypes.heat.network.contrail.AddressPair:
+    derived_from: tosca.datatypes.Root
+    description: Address Pair
+    properties:
+      address_mode:
+        description: Address mode active-active or active-standy
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - active-active
+          - active-standby
+      prefix:
+        description: IP address prefix
+        type: string
+        status: SUPPORTED
+        required: false
+      mac_address:
+        description: Mac address
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Sub Interface Mac Address.
+    properties:
+      mac_address:
+        description: Mac Addresses List.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList:
+    derived_from: tosca.datatypes.Root
+    description: Network Ipam Ref Data Subnet List
+    properties:
+      network_ipam_refs_data_ipam_subnets_subnet:
+        description: Network ipam refs data ipam subnets
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet
+        status: SUPPORTED
+        required: false
+      network_ipam_refs_data_ipam_subnets_addr_from_start:
+        description: Network ipam refs data ipam subnets addr from start
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList:
+    derived_from: tosca.datatypes.Root
+    description: list of policy rules
+    properties:
+      network_policy_entries_policy_rule:
+        description: Contrail network rule
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.network.rule.Rule
+        required: false
+
+  org.openecomp.datatypes.heat.novaServer.network.AddressInfo:
+    derived_from: tosca.datatypes.network.NetworkInfo
+    description: Network addresses with corresponding port id
+    properties:
+      port_id:
+        description: Port id
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Sub Interface Address Pairs.
+    properties:
+      allowed_address_pair:
+        description: Addresses pair List.
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPair
+        required: false
+
+  org.openecomp.datatypes.heat.neutron.port.FixedIps:
+    derived_from: tosca.datatypes.Root
+    description: subnet/ip_address
+    properties:
+      subnet:
+        description: Subnet in which to allocate the IP address for this port
+        type: string
+        status: SUPPORTED
+        required: false
+      ip_address:
+        description: IP address desired in the subnet for this port
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties:
+    derived_from: tosca.datatypes.Root
+    description: Virtual Machine Interface Properties.
+    properties:
+      service_interface_type:
+        description: Service Interface Type.
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.network.subnet.HostRoute:
+    derived_from: tosca.datatypes.Root
+    description: Host route info for the subnet
+    properties:
+      destination:
+        description: The destination for static route
+        type: string
+        status: SUPPORTED
+        required: false
+      nexthop:
+        description: The next hop for the destination
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.network.contrail.port.StaticRoute:
+    derived_from: tosca.datatypes.Root
+    description: static route
+    properties:
+      prefix:
+        description: Route prefix
+        type: string
+        status: SUPPORTED
+        required: false
+      next_hop:
+        description: Next hop
+        type: string
+        status: SUPPORTED
+        required: false
+      next_hop_type:
+        description: Next hop type
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
+    derived_from: tosca.datatypes.Root
+    description: Substitution Filter
+    properties:
+      substitute_service_template:
+        description: Substitute Service Template
+        type: string
+        status: SUPPORTED
+        required: true
+      index_value:
+        description: Index value of the substitution service template runtime instance
+        type: integer
+        status: SUPPORTED
+        default: 0
+        required: false
+        constraints:
+        - greater_or_equal: 0
+      count:
+        description: Count
+        type: string
+        status: SUPPORTED
+        default: 1
+        required: false
+      scaling_enabled:
+        description: Indicates whether service scaling is enabled
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      mandatory:
+        description: Mandatory
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+
+  org.openecomp.datatypes.heat.network.neutron.Subnet:
+    derived_from: tosca.datatypes.Root
+    description: A subnet represents an IP address block that can be used for assigning IP addresses to virtual instances
+    properties:
+      tenant_id:
+        description: The ID of the tenant who owns the network
+        type: string
+        status: SUPPORTED
+        required: false
+      enable_dhcp:
+        description: Set to true if DHCP is enabled and false if DHCP is disabled
+        type: boolean
+        status: SUPPORTED
+        default: true
+        required: false
+      ipv6_address_mode:
+        description: IPv6 address mode
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - dhcpv6-stateful
+          - dhcpv6-stateless
+          - slaac
+      ipv6_ra_mode:
+        description: IPv6 RA (Router Advertisement) mode
+        type: string
+        status: SUPPORTED
+        required: false
+        constraints:
+        - valid_values:
+          - dhcpv6-stateful
+          - dhcpv6-stateless
+          - slaac
+      value_specs:
+        description: Extra parameters to include in the request
+        type: map
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: {}
+        required: false
+      allocation_pools:
+        description: The start and end addresses for the allocation pools
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.AllocationPool
+        required: false
+      subnetpool:
+        description: The name or ID of the subnet pool
+        type: string
+        status: SUPPORTED
+        required: false
+      dns_nameservers:
+        description: A specified set of DNS name servers to be used
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: string
+        default: []
+        required: false
+      host_routes:
+        description: The gateway IP address
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.network.subnet.HostRoute
+        required: false
+      ip_version:
+        description: The gateway IP address
+        type: integer
+        status: SUPPORTED
+        default: 4
+        required: false
+        constraints:
+        - valid_values:
+          - 4
+          - 6
+      name:
+        description: The name of the subnet
+        type: string
+        status: SUPPORTED
+        required: false
+      prefixlen:
+        description: Prefix length for subnet allocation from subnet pool
+        type: integer
+        status: SUPPORTED
+        required: false
+        constraints:
+        - greater_or_equal: 0
+      cidr:
+        description: The CIDR
+        type: string
+        status: SUPPORTED
+        required: false
+      gateway_ip:
+        description: The gateway IP address
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrail.network.rule.Rule:
+    derived_from: tosca.datatypes.Root
+    description: policy rule
+    properties:
+      src_ports:
+        description: Source ports
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrail.network.rule.PortPairs
+        required: false
+      protocol:
+        description: Protocol
+        type: string
+        status: SUPPORTED
+        required: false
+      dst_addresses:
+        description: Destination addresses
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrail.network.rule.VirtualNetwork
+        required: false
+      apply_service:
+        description: Service to apply
+        type: string
+        status: SUPPORTED
+        required: false
+      dst_ports:
+        description: Destination ports
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrail.network.rule.PortPairs
+        required: false
+      src_addresses:
+        description: Source addresses
+        type: list
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.heat.contrail.network.rule.VirtualNetwork
+        required: false
+      direction:
+        description: Direction
+        type: string
+        status: SUPPORTED
+        required: false
+
+  org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence:
+    derived_from: tosca.datatypes.Root
+    description: network policy refs data sequence
+    properties:
+      network_policy_refs_data_sequence_major:
+        description: Network Policy ref data sequence Major
+        type: integer
+        status: SUPPORTED
+        required: false
+      network_policy_refs_data_sequence_minor:
+        description: Network Policy ref data sequence Minor
+        type: integer
+        status: SUPPORTED
+        required: false

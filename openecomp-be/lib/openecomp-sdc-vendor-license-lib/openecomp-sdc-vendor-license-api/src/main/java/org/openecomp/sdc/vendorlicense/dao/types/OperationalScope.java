@@ -28,5 +28,5 @@ public enum OperationalScope {
   VM,
   CPU,
   Core,
-  Other
+  Other;
 }

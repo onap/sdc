@@ -2,6 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>openecomp-nosqldb-api</name>
+    <artifactId>openecomp-nosqldb-api</artifactId>
+    <groupId>org.openecomp.core</groupId>
+
     <parent>
         <artifactId>openecomp-sdc-lib</artifactId>
         <groupId>org.openecomp.sdc</groupId>
@@ -9,13 +13,9 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <name>openecomp-nosqldb-api</name>
-    <artifactId>openecomp-nosqldb-api</artifactId>
-    
-
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-facade-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -30,8 +30,13 @@
             <version>${datasatx.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

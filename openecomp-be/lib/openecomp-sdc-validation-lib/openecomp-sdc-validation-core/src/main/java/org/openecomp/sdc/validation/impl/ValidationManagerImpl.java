@@ -21,28 +21,40 @@
 package org.openecomp.sdc.validation.impl;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.validation.api.ValidationManager;
-import org.openecomp.core.validation.interfaces.Validator;
+import org.openecomp.sdc.validation.Validator;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.core.validation.types.MessageContainer;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.validation.utils.ValidationConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.validation.services.ValidationFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ValidationManagerImpl implements ValidationManager {
 
-  private static Logger logger = LoggerFactory.getLogger(ValidationManagerImpl.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(ValidationManagerImpl.class);
+
   private GlobalValidationContext globalContext;
   private List<Validator> validators;
 
   public ValidationManagerImpl() {
     globalContext = new GlobalValidationContext();
-    validators = ValidationConfigurationManager.initValidators();
+    validators = ValidationFactory.getValidators();
+  }
+
+  @Override
+  public Map<String, List<ErrorMessage>> validate() {
+    for (Validator validator : validators) {
+      if(Objects.nonNull(validator)) {
+        validator.validate(globalContext);
+      }
+    }
+    return convertMessageContainsToErrorMessage(globalContext.getContextMessageContainers());
   }
 
   @Override
@@ -51,11 +63,8 @@ public class ValidationManagerImpl implements ValidationManager {
   }
 
   @Override
-  public Map<String, List<ErrorMessage>> validate() {
-    for (Validator validator : validators) {
-      validator.validate(globalContext);
-    }
-    return convertMessageContainsToErrorMessage(globalContext.getContextMessageContainers());
+  public void updateGlobalContext(GlobalValidationContext globalContext) {
+    this.globalContext = globalContext;
   }
 
   private Map<String, List<ErrorMessage>> convertMessageContainsToErrorMessage(
@@ -66,4 +75,5 @@ public class ValidationManagerImpl implements ValidationManager {
         .forEach(entry -> errors.put(entry.getKey(), entry.getValue().getErrorMessageList()));
     return errors;
   }
+
 }

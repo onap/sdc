@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@
 
 package org.openecomp.sdcrests.vsp.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
 import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
 
 import io.swagger.annotations.Api;
@@ -43,62 +43,66 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
-@Path("/v1.0/vendor-software-products/{vspId}/components/{componentId}/monitors")
+@Path("/v1.0/vendor-software-products/{vspId}/versions/{versionId}/components/{componentId}/monitors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Vendor Software Product Component MIB Uploads")
 @Validated
-public interface ComponentUploads {
+public interface ComponentUploads extends VspEntities {
   @POST
   @Path("/snmp-trap/upload")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Upload vendor software product MIB Trap Definitions file")
+  @ApiOperation(value = "Upload vendor software product MIB SNMP_TRAP Definitions file")
   Response uploadTrapMibFile(@Multipart("upload") Attachment attachment,
-                             @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
-                                 String vspId,
-                             @ApiParam(value = "Vendor software product component Id")
-                             @PathParam("componentId") String componentId,
+                             @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+                             @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+                             @ApiParam(value = "Component Id") @PathParam("componentId") String
+                                 componentId,
                              @NotNull(message = USER_MISSING_ERROR_MSG)
-                             @HeaderParam(USER_HEADER_PARAM) String user);
+                             @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/snmp-trap")
-  @ApiOperation(value = "Delete vendor software product MIB Trap Definitions file")
+  @ApiOperation(value = "Delete vendor software product MIB SNMP_TRAP Definitions file")
   Response deleteTrapMibFile(
       @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
-      @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
-          String componentId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
+      @ApiParam(value = "Component Id") @PathParam("componentId") String componentId,
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/snmp/upload")
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @ApiOperation(value = "Upload vendor software product MIB Poll Definitions file")
+  @ApiOperation(value = "Upload vendor software product MIB SNMP_POLL Definitions file")
   Response uploadPollMibFile(@Multipart("upload") Attachment attachment,
                              @ApiParam(value = "Vendor software product Id") @PathParam("vspId")
                                  String vspId,
+                             @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                              @ApiParam(value = "Vendor software product component Id")
                              @PathParam("componentId") String componentId,
                              @NotNull(message = USER_MISSING_ERROR_MSG)
-                             @HeaderParam(USER_HEADER_PARAM) String user);
+                             @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/snmp")
-  @ApiOperation(value = "Delete vendor software product MIB Poll Definitions file")
+  @ApiOperation(value = "Delete vendor software product MIB SNMP_POLL Definitions file")
   Response deletePollMibFile(
       @ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+      @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
       @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
           String componentId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
+
+  // TODO: 2/27/2017 add version
   @GET
   @Path("/snmp/")
   @ApiOperation(value = "Get the filenames of uploaded MIB definitions",
       response = MibUploadStatusDto.class)
   Response list(@ApiParam(value = "Vendor software product Id") @PathParam("vspId") String vspId,
+                @ApiParam(value = "Vendor software product version Id") @PathParam("versionId") String versionId,
                 @ApiParam(value = "Vendor software product component Id") @PathParam("componentId")
                     String componentId,
-                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM)
+                @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM)
                     String user);
 }

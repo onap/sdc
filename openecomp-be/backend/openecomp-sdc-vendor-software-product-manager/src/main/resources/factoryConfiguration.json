@@ -1,0 +1,11 @@
+{
+  "org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.VspManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ComponentManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.NetworkManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.NetworkManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.NicManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.OrchestrationTemplateCandidateManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.ProcessManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ProcessManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.MibManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.MibManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.ComponentDependencyModelManagerFactory": "org.openecomp.sdc.vendorsoftwareproduct.impl.ComponentDependencyModelManagerFactoryImpl",
+  "org.openecomp.sdc.vendorsoftwareproduct.factories.VspServiceFactory": "org.openecomp.sdc.vendorsoftwareproduct.factories.impl.VspServiceFactoryImpl"
+}

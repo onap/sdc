@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
-import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes
-    .UPLOAD_INVALID;
-
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
@@ -31,9 +28,6 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Upload invalid error builder.
- */
 public class UploadInvalidErrorBuilder extends BaseErrorBuilder {
   private static final String UPLOAD_INVALID_DETAILED_MSG =
       "File uploaded for vendor software product with Id %s and version %s is invalid: %s";
@@ -48,7 +42,7 @@ public class UploadInvalidErrorBuilder extends BaseErrorBuilder {
    */
   public UploadInvalidErrorBuilder(String vendorSoftwareProductId, Version version,
                                    Map<String, List<ErrorMessage>> errors) {
-    getErrorCodeBuilder().withId(UPLOAD_INVALID);
+    getErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.UPLOAD_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(String
         .format(UPLOAD_INVALID_DETAILED_MSG, vendorSoftwareProductId, version.toString(),
@@ -59,7 +53,7 @@ public class UploadInvalidErrorBuilder extends BaseErrorBuilder {
    * Instantiates a new Upload invalid error builder.
    */
   public UploadInvalidErrorBuilder() {
-    getErrorCodeBuilder().withId(UPLOAD_INVALID);
+    getErrorCodeBuilder().withId(VendorSoftwareProductErrorCodes.UPLOAD_INVALID);
     getErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION);
     getErrorCodeBuilder().withMessage(UPLOAD_INVALID_MSG);
   }

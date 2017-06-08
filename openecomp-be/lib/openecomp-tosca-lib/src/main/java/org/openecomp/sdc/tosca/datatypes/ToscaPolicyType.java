@@ -20,24 +20,21 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
-public enum ToscaPolicyType {
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-  PLACEMENT("tosca.policy.placement"),
-  PLACEMENT_ANTILOCATE("org.openecomp.policies.placement.Antilocate"),
-  PLACEMENT_COLOCATE("org.openecomp.policies.placement.Colocate"),
-  PLACEMENT_VALET_AFFINITY("org.openecomp.policies.placement.valet.Affinity"),
-  PLACEMENT_VALET_EXCLUSIVITY("org.openecomp.policies.placement.valet.Exclusivity"),
-  PLACEMENT_VALET_DIVERSITY("org.openecomp.policies.placement.valet.Diversity");
+public class ToscaPolicyType {
 
-  private String displayName;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  ToscaPolicyType(String displayName) {
-    this.displayName = displayName;
-  }
+  public static String POLICY_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_POLICY_TYPE);
 
-  public String getDisplayName() {
-    return displayName;
-  }
+  //TOSCA native types
+  public static String NATIVE_PLACEMENT = "tosca.policy.placement";
 
-
+  //Additional types
+  public static String PLACEMENT_ANTILOCATE = POLICY_TYPE_PREFIX + "placement.Antilocate";
+  public static String PLACEMENT_COLOCATE = POLICY_TYPE_PREFIX + "placement.Colocate";
 }

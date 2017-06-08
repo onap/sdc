@@ -1,0 +1,90 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+metadata:
+  filename: tosca/relationships.yml
+  version: '1.0'
+imports:
+- tosca_index:
+    file: _index.yml
+relationship_types:
+  tosca.relationships.Root:
+    description: This is the default (root) TOSCA Relationship Type definition that all other TOSCA Relationship Types derive from.
+    attributes:
+      tosca_id:
+        type: string
+        description: A unique identifier of the realized instance of a Relationship Template that derives from any TOSCA normative type.
+        status: SUPPORTED
+      tosca_name:
+        type: string
+        description: This attribute reflects the name of the Relationship Template as defined in the TOSCA service template. This name is not unique to the realized instance model of corresponding deployed application as each template in the model can result in one or more instances (e.g., scaled) when orchestrated to a provider environment.
+        status: SUPPORTED
+      state:
+        type: string
+        description: The state of the relationship instance.
+        default: initial
+        status: SUPPORTED
+    interfaces:
+      Configure:
+        type: tosca.interfaces.relationship.Configure
+  tosca.relationships.RoutesTo:
+    derived_from: tosca.relationships.ConnectsTo
+    description: This type represents an intentional network routing between two Endpoints in different networks.
+    valid_target_types:
+    - tosca.capabilities.Endpoint
+  tosca.relationships.network.LinksTo:
+    derived_from: tosca.relationships.DependsOn
+    description: This relationship type represents an association relationship between Port and Network node types.
+    valid_target_types:
+    - tosca.capabilities.network.Linkable
+  tosca.relationships.AttachesTo:
+    derived_from: tosca.relationships.Root
+    description: This type represents an attachment relationship between two nodes. For example, an AttachesTo relationship type would be used for attaching a storage node to a Compute node.
+    properties:
+      location:
+        type: string
+        description: 'The relative location (e.g., path on the file system), which
+          provides the root location to address an attached node. e.g., a mount point
+          / path such as ''/usr/data''. Note: The user must provide it and it cannot
+          be "root".'
+        required: true
+        status: SUPPORTED
+        constraints:
+        - min_length: 1
+      device:
+        type: string
+        description: The logical device name which for the attached device (which is represented by the target node in the model). e.g., '/dev/hda1'.
+        required: false
+        status: SUPPORTED
+    attributes:
+      device:
+        type: string
+        description: 'The logical name of the device as exposed to the instance. Note:
+          A runtime property that gets set when the model gets instantiated by the
+          orchestrator.'
+        status: SUPPORTED
+    valid_target_types:
+    - tosca.capabilities.Attachment
+  tosca.relationships.network.BindsTo:
+    derived_from: tosca.relationships.DependsOn
+    description: This type represents a network association relationship between Port and Compute node types.
+    valid_target_types:
+    - tosca.capabilities.network.Bindable
+  tosca.relationships.HostedOn:
+    derived_from: tosca.relationships.Root
+    description: This type represents a hosting relationship between two nodes.
+    valid_target_types:
+    - tosca.capabilities.Container
+  tosca.relationships.DependsOn:
+    derived_from: tosca.relationships.Root
+    description: This type represents a general dependency relationship between two nodes.
+    valid_target_types:
+    - tosca.capabilities.Node
+  tosca.relationships.ConnectsTo:
+    derived_from: tosca.relationships.Root
+    description: This type represents a network connection relationship between two nodes.
+    properties:
+      credential:
+        type: tosca.datatypes.Credential
+        required: false
+        status: SUPPORTED
+    valid_target_types:
+    - tosca.capabilities.Endpoint

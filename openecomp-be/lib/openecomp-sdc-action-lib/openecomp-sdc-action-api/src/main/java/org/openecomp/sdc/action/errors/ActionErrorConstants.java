@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.action.errors;
 
+/**
+ * Action Library Error Constants for Error codes and user-friendly detailed error messages.
+ */
 public class ActionErrorConstants {
 
   //Error Codes
@@ -65,6 +68,7 @@ public class ActionErrorConstants {
   public static final String ACTION_DELETE_ON_LOCKED_ENTITY_CODE = "ACT1048";
 
   public static final String ACTION_INTERNAL_SERVER_ERR_CODE = "ACT1060";
+  //Logging Query failure Response code
   public static final String ACTION_QUERY_FAILURE_CODE = "QUERY_FAILURE";
   public static final String ACTION_QUERY_FAILURE_MSG = "Query Failure";
 
@@ -74,10 +78,10 @@ public class ActionErrorConstants {
   //"The API failed due to missing body";
   public static final String ACTION_REQUEST_MISSING_MANDATORY_PARAM =
       "Missing mandatory parameter(s) : ";
-  public static final String ACTION_REQUEST_ECOMP_INSTANCE_ID_INVALID =
-      "X-ECOMP-InstanceID HTTP header missing or empty";
-  public static final String ACTION_REQUEST_ECOMP_REQUEST_ID_INVALID =
-      "X-ECOMP-RequestID HTTP header missing or empty";
+  public static final String ACTION_REQUEST_OPEN_ECOMP_INSTANCE_ID_INVALID =
+      "X-OPEN-ECOMP-InstanceID HTTP header missing or empty";
+  public static final String ACTION_REQUEST_OPEN_ECOMP_REQUEST_ID_INVALID =
+      "X-OPEN-ECOMP-RequestID HTTP header missing or empty";
   public static final String ACTION_REQUEST_CONTENT_TYPE_INVALID =
       "Content-Type HTTP header missing or empty";
   public static final String ACTION_REQUEST_AUTHORIZATION_HEADER_INVALID =
@@ -95,8 +99,8 @@ public class ActionErrorConstants {
       "Invalid artifact protection value";
 
   public static final String ACTION_ARTIFACT_INVALID_NAME =
-      "Artifact name cannot contain any of the following characters : #<>$+%!`&*'|{}?=/:@ "
-          + "including whitespaces, double quotes and back-slash";
+      "Artifact name cannot contain any of the following characters : #<>$+%!`&*'|{}?=/:@ including"
+          + " whitespaces, double quotes and back-slash";
   public static final String ACTION_ARTIFACT_READ_FILE_ERROR = "Error Occurred while reading file";
   public static final String ACTION_REQUEST_ARTIFACT_OPERATION_ALLOWED =
       "Artifacts cannot be created/updated using this operation";
@@ -116,7 +120,7 @@ public class ActionErrorConstants {
   public static final String ACTION_ARTIFACT_ALREADY_EXISTS =
       "Artifact name already exists for Action with id %s. Please use another name.";
   public static final String ACTION_ENTITY_INTERNAL_SERVER_ERROR_MSG =
-      "The request failed due to an internal ASDC problem. ECOMP Component should continue the "
+      "The request failed due to an internal ASDC problem. Open ECOMP Component should continue the "
           + "attempts, with corrected data if required, to create the resource.";
   public static final String ACTION_ARTIFACT_DELETE_READ_ONLY_MSG =
       "Cannot delete read only artifact.";
@@ -131,6 +135,6 @@ public class ActionErrorConstants {
   public static final String UNDO_CHECKOUT_ON_UNLOCKED_ENTITY_MSG =
       "Can not undo checkout on versionable entity %s with id %s since it is not checked out.";
   public static final String UNDO_CHECKOUT_ON_ENTITY_LOCKED_BY_OTHER_USER_MSG =
-      "Can not undo checkout on versionable entity %s with id"
-          + " %s since it is checked out by other user: %s.";
+      "Can not undo checkout on versionable entity %s with id %s since it is checked out by other "
+          + "user: %s.";
 }

@@ -23,18 +23,15 @@ package org.openecomp.sdc.tosca.exceptions;
 import org.openecomp.sdc.common.errors.BaseErrorBuilder;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 
-/**
- * The type Csar missing entry point error builder.
- */
 public class CsarMissingEntryPointErrorBuilder extends BaseErrorBuilder {
 
   private static final String MANDATORY_PROPERTY_IS_MISSING_MSG =
       "Failed to create CSAR file from ToscaServiceModel,missing mandatory "
-          + "EntryDefinitionServiceTemplate ";
+         + "EntryDefinitionServiceTemplate ";
   private static final String ZIP_FILE_CREATION = "ZIP_FILE_CREATION__MISSING_ENTRY_DEFINITION";
 
   /**
-   * Instantiates a new Csar missing entry point error builder.
+   * Constructor.
    */
   public CsarMissingEntryPointErrorBuilder() {
     getErrorCodeBuilder().withId(ZIP_FILE_CREATION);

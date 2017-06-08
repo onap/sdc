@@ -1,0 +1,33 @@
+heat_template_version: 2013-05-23
+
+description: ASC Template
+
+parameters:
+  smp_name_2:
+    type: string
+  image_smp_name:
+    type: string
+  availability_zone_0:
+    type: string
+  flavor_smp_name:
+    type: string
+  shared_server_group:
+    type: string
+  shared_nova:
+    type: string
+
+
+resources:
+  server_smp_addOn:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: smp_name_2 }
+        image: { get_param: image_smp_name }
+        availability_zone: { get_param: availability_zone_0 }
+        flavor: { get_param: flavor_smp_name }
+        scheduler_hints: { group1: { get_param: shared_server_group }, group2: { get_param: shared_nova }}
+
+
+
+
+

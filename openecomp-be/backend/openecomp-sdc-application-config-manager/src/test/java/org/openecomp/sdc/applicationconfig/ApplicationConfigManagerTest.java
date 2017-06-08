@@ -1,15 +1,37 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.applicationconfig;
 
-import org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl;
-import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.core.utilities.applicationconfig.dao.type.ApplicationConfigEntity;
 import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
-
+import org.openecomp.sdc.applicationconfig.impl.ApplicationConfigManagerImpl;
+import org.openecomp.sdc.common.errors.CoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
 
+/**
+ * Created by Talio on 8/9/2016.
+ */
 public class ApplicationConfigManagerTest {
 
   public static final String TEST_NAMESPACE_1 = "test-app-namespace";
@@ -22,8 +44,8 @@ public class ApplicationConfigManagerTest {
   public void testInsertIntoTable() {
     try {
       applicationConfigManager.insertIntoTable(TEST_NAMESPACE_1, TEST_KEY, TEST_VALUE);
-    } catch (CoreException e) {
-      Assert.assertEquals(e.getMessage(),
+    } catch (CoreException exception) {
+      Assert.assertEquals(exception.getMessage(),
           "Error occurred while loading questionnaire schema templates");
     }
   }

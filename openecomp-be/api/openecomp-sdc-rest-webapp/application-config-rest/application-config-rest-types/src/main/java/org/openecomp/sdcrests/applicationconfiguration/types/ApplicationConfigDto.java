@@ -20,6 +20,9 @@
 
 package org.openecomp.sdcrests.applicationconfiguration.types;
 
+/**
+ * Created by Talio on 8/10/2016.
+ */
 public class ApplicationConfigDto {
 
   private String key;

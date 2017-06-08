@@ -25,26 +25,23 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 
 public class SubmitUncompletedLicenseModelErrorBuilder {
 
-  private static final String SUBMIT_UNCOMPLETED_LICENSE_MODEL_MSG =
-      "Uncompleted vendor license model %s cannot be submitted. "
-              + "It must contain license_agreement(s) that all feature groups "
-              + "contain at least one entitlement pool.";
-  private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  /**
-   * Instantiates a new Submit uncompleted license model error builder.
-   *
-   * @param vlmId the vlm id
-   */
-  public SubmitUncompletedLicenseModelErrorBuilder(String vlmId) {
-    builder.withId(VendorLicenseErrorCodes.SUBMIT_UNCOMPLETED_LICENSE_MODEL);
-    builder.withCategory(ErrorCategory.APPLICATION);
-    builder.withMessage(String.format(SUBMIT_UNCOMPLETED_LICENSE_MODEL_MSG, vlmId));
-  }
+    private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
-  public ErrorCode build() {
-    return builder.build();
-  }
+    /**
+     * Instantiates a new Submit uncompleted license model error builder.
+     *
+     * @param error
+     */
+    public SubmitUncompletedLicenseModelErrorBuilder(UncompletedVendorLicenseModelErrorType error) {
+        builder.withId(VendorLicenseErrorCodes.SUBMIT_UNCOMPLETED_LICENSE_MODEL);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(error.getErrorMessage());
+    }
+
+    public ErrorCode build() {
+        return builder.build();
+    }
 
 
 }

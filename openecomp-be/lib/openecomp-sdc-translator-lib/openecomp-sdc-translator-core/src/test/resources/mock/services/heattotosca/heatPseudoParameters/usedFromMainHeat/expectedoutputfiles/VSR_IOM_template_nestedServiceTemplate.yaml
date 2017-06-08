@@ -1,0 +1,694 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: VSR_IOM_template_nested
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    iom_image_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Image to be used for the instance
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF Module ID
+    mgt_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Management interface
+    data3_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the fourth Data interface
+    ctrl_fabric_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Control Fabric interface
+    iom_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Flavor of the VNF to be used
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+      description: Security group to be used
+    iom_slot:
+      hidden: false
+      immutable: false
+      type: string
+      description: The slot value assigned to the module eg 1, 2, 3, etc
+    data0_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Data interface
+    data1_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the second Data interface
+    mgt_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Management interface
+    ctrl_fabric_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the Control Fabric interface
+    data0_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the Data interface
+    data2_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the third Data interface
+    iom_mtu:
+      hidden: false
+      immutable: false
+      type: string
+      description: MTU size in bytes
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: VNF ID
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+      description: Availability zone where this component should be instantiated
+    iom_smbios:
+      hidden: false
+      immutable: false
+      type: string
+      description: Parameters to be passed to the VM at boot up as key-value pairs
+    data2_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the third Data interface
+    data3_net_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Network used by the fourth Data interface
+    data1_subnet_id:
+      hidden: false
+      immutable: false
+      type: string
+      description: Subnet used by the second Data interface
+    stack_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the HEAT stack
+    vm_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the VM
+  node_templates:
+    iom_data_1_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        binding:vnic_type: direct
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: iom_mtu
+        network_role_tag: data1
+        network:
+          get_input: data1_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+    iom_data_2_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        binding:vnic_type: direct
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: iom_mtu
+        network_role_tag: data2
+        network:
+          get_input: data2_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+    IOM:
+      type: org.openecomp.resource.vfc.nodes.heat.vm
+      properties:
+        flavor:
+          get_input: iom_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: iom_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vnf_id:
+            get_input: vnf_id
+        config_drive: true
+        user_data_format: RAW
+        name:
+          get_input: vm_name
+    iom_data_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        binding:vnic_type: direct
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: iom_mtu
+        network_role_tag: data0
+        network:
+          get_input: data0_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+    iom_ctrl_fabric_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - subnet_id:
+            get_input: ctrl_fabric_subnet_id
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: iom_mtu
+        network_role_tag: ctrl_fabric
+        network:
+          get_input: ctrl_fabric_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+    iom_data_3_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        binding:vnic_type: direct
+        value_specs:
+          extra_dhcp_opts:
+          - opt_name: interface-mtu
+            opt_value:
+              get_input: iom_mtu
+        network_role_tag: data3
+        network:
+          get_input: data3_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+    iom_mgt_0_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        fixed_ips:
+        - subnet_id:
+            get_input: mgt_subnet_id
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: mgt
+        network:
+          get_input: mgt_net_id
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: IOM
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    VSR_IOM_template_nested_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/VSR_IOM_template_nested.yaml
+      members:
+      - iom_data_1_port
+      - iom_data_2_port
+      - IOM
+      - iom_data_0_port
+      - iom_ctrl_fabric_0_port
+      - iom_data_3_port
+      - iom_mgt_0_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.VSR_IOM_template_nested
+    capabilities:
+      cpu_IOM:
+      - IOM
+      - cpu
+      feature_iom_data_0_port:
+      - iom_data_0_port
+      - feature
+      disk.device.usage_IOM:
+      - IOM
+      - disk.device.usage
+      disk.iops_IOM:
+      - IOM
+      - disk.iops
+      binding_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - binding
+      disk.read.bytes_IOM:
+      - IOM
+      - disk.read.bytes
+      disk.capacity_IOM:
+      - IOM
+      - disk.capacity
+      disk.device.read.bytes_IOM:
+      - IOM
+      - disk.device.read.bytes
+      feature_iom_data_1_port:
+      - iom_data_1_port
+      - feature
+      disk.usage_IOM:
+      - IOM
+      - disk.usage
+      network.incoming.bytes_iom_data_0_port:
+      - iom_data_0_port
+      - network.incoming.bytes
+      binding_IOM:
+      - IOM
+      - binding
+      disk.device.read.bytes.rate_IOM:
+      - IOM
+      - disk.device.read.bytes.rate
+      network.outgoing.bytes_iom_data_3_port:
+      - iom_data_3_port
+      - network.outgoing.bytes
+      network.outpoing.packets_iom_data_3_port:
+      - iom_data_3_port
+      - network.outpoing.packets
+      attachment_iom_data_3_port:
+      - iom_data_3_port
+      - attachment
+      instance_IOM:
+      - IOM
+      - instance
+      network.incoming.packets_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.incoming.packets
+      disk.write.requests_IOM:
+      - IOM
+      - disk.write.requests
+      attachment_iom_data_2_port:
+      - iom_data_2_port
+      - attachment
+      network.incoming.bytes.rate_iom_data_3_port:
+      - iom_data_3_port
+      - network.incoming.bytes.rate
+      disk.ephemeral.size_IOM:
+      - IOM
+      - disk.ephemeral.size
+      binding_iom_data_3_port:
+      - iom_data_3_port
+      - binding
+      network.outgoing.bytes.rate_iom_data_2_port:
+      - iom_data_2_port
+      - network.outgoing.bytes.rate
+      disk.device.capacity_IOM:
+      - IOM
+      - disk.device.capacity
+      network.outgoing.packets.rate_iom_data_3_port:
+      - iom_data_3_port
+      - network.outgoing.packets.rate
+      disk.device.iops_IOM:
+      - IOM
+      - disk.device.iops
+      disk.write.requests.rate_IOM:
+      - IOM
+      - disk.write.requests.rate
+      network.incoming.packets_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.incoming.packets
+      network.outgoing.bytes.rate_iom_data_1_port:
+      - iom_data_1_port
+      - network.outgoing.bytes.rate
+      network.incoming.packets.rate_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.incoming.packets.rate
+      network.incoming.bytes_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.incoming.bytes
+      attachment_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - attachment
+      network.outgoing.bytes_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.outgoing.bytes
+      cpu.delta_IOM:
+      - IOM
+      - cpu.delta
+      network.outgoing.bytes_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.outgoing.bytes
+      disk.write.bytes_IOM:
+      - IOM
+      - disk.write.bytes
+      disk.device.write.bytes_IOM:
+      - IOM
+      - disk.device.write.bytes
+      network.incoming.packets.rate_iom_data_1_port:
+      - iom_data_1_port
+      - network.incoming.packets.rate
+      disk.read.requests_IOM:
+      - IOM
+      - disk.read.requests
+      vcpus_IOM:
+      - IOM
+      - vcpus
+      network.incoming.bytes_iom_data_2_port:
+      - iom_data_2_port
+      - network.incoming.bytes
+      endpoint_IOM:
+      - IOM
+      - endpoint
+      disk.device.read.requests_IOM:
+      - IOM
+      - disk.device.read.requests
+      disk.latency_IOM:
+      - IOM
+      - disk.latency
+      memory.resident_IOM:
+      - IOM
+      - memory.resident
+      network.incoming.packets_iom_data_1_port:
+      - iom_data_1_port
+      - network.incoming.packets
+      disk.device.write.requests_IOM:
+      - IOM
+      - disk.device.write.requests
+      feature_iom_data_2_port:
+      - iom_data_2_port
+      - feature
+      network.outpoing.packets_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.outpoing.packets
+      network.outgoing.bytes_iom_data_2_port:
+      - iom_data_2_port
+      - network.outgoing.bytes
+      network.outpoing.packets_iom_data_2_port:
+      - iom_data_2_port
+      - network.outpoing.packets
+      network.incoming.packets_iom_data_0_port:
+      - iom_data_0_port
+      - network.incoming.packets
+      binding_iom_data_0_port:
+      - iom_data_0_port
+      - binding
+      feature_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - feature
+      network.outgoing.packets.rate_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.outgoing.packets.rate
+      network.outgoing.packets.rate_iom_data_0_port:
+      - iom_data_0_port
+      - network.outgoing.packets.rate
+      network.incoming.packets.rate_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.incoming.packets.rate
+      disk.allocation_IOM:
+      - IOM
+      - disk.allocation
+      network.incoming.packets.rate_iom_data_3_port:
+      - iom_data_3_port
+      - network.incoming.packets.rate
+      network.incoming.bytes.rate_iom_data_0_port:
+      - iom_data_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.incoming.bytes
+      scalable_IOM:
+      - IOM
+      - scalable
+      network.incoming.packets.rate_iom_data_2_port:
+      - iom_data_2_port
+      - network.incoming.packets.rate
+      feature_IOM:
+      - IOM
+      - feature
+      network.incoming.bytes.rate_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.incoming.bytes.rate
+      network.incoming.bytes.rate_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.incoming.bytes.rate
+      network.outpoing.packets_iom_data_0_port:
+      - iom_data_0_port
+      - network.outpoing.packets
+      disk.device.write.bytes.rate_IOM:
+      - IOM
+      - disk.device.write.bytes.rate
+      attachment_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - attachment
+      network.outgoing.packets.rate_iom_data_1_port:
+      - iom_data_1_port
+      - network.outgoing.packets.rate
+      disk.device.allocation_IOM:
+      - IOM
+      - disk.device.allocation
+      network.outgoing.bytes_iom_data_0_port:
+      - iom_data_0_port
+      - network.outgoing.bytes
+      network.incoming.bytes.rate_iom_data_1_port:
+      - iom_data_1_port
+      - network.incoming.bytes.rate
+      attachment_iom_data_0_port:
+      - iom_data_0_port
+      - attachment
+      network.incoming.packets_iom_data_2_port:
+      - iom_data_2_port
+      - network.incoming.packets
+      network.incoming.bytes_iom_data_3_port:
+      - iom_data_3_port
+      - network.incoming.bytes
+      binding_iom_data_1_port:
+      - iom_data_1_port
+      - binding
+      network.incoming.packets_iom_data_3_port:
+      - iom_data_3_port
+      - network.incoming.packets
+      network.outgoing.bytes_iom_data_1_port:
+      - iom_data_1_port
+      - network.outgoing.bytes
+      network.incoming.packets.rate_iom_data_0_port:
+      - iom_data_0_port
+      - network.incoming.packets.rate
+      network.outgoing.bytes.rate_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.outgoing.bytes.rate
+      host_IOM:
+      - IOM
+      - host
+      feature_iom_data_3_port:
+      - iom_data_3_port
+      - feature
+      feature_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - feature
+      binding_iom_data_2_port:
+      - iom_data_2_port
+      - binding
+      network.outpoing.packets_iom_data_1_port:
+      - iom_data_1_port
+      - network.outpoing.packets
+      network.outgoing.packets.rate_iom_data_2_port:
+      - iom_data_2_port
+      - network.outgoing.packets.rate
+      disk.device.latency_IOM:
+      - IOM
+      - disk.device.latency
+      network.incoming.bytes.rate_iom_data_2_port:
+      - iom_data_2_port
+      - network.incoming.bytes.rate
+      disk.device.write.requests.rate_IOM:
+      - IOM
+      - disk.device.write.requests.rate
+      network.incoming.bytes_iom_data_1_port:
+      - iom_data_1_port
+      - network.incoming.bytes
+      disk.write.bytes.rate_IOM:
+      - IOM
+      - disk.write.bytes.rate
+      cpu_util_IOM:
+      - IOM
+      - cpu_util
+      network.outpoing.packets_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.outpoing.packets
+      disk.device.read.requests.rate_IOM:
+      - IOM
+      - disk.device.read.requests.rate
+      os_IOM:
+      - IOM
+      - os
+      memory.usage_IOM:
+      - IOM
+      - memory.usage
+      attachment_iom_data_1_port:
+      - iom_data_1_port
+      - attachment
+      disk.read.bytes.rate_IOM:
+      - IOM
+      - disk.read.bytes.rate
+      network.outgoing.bytes.rate_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - network.outgoing.bytes.rate
+      network.outgoing.packets.rate_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - network.outgoing.packets.rate
+      binding_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - binding
+      network.outgoing.bytes.rate_iom_data_3_port:
+      - iom_data_3_port
+      - network.outgoing.bytes.rate
+      memory_IOM:
+      - IOM
+      - memory
+      disk.root.size_IOM:
+      - IOM
+      - disk.root.size
+      network.outgoing.bytes.rate_iom_data_0_port:
+      - iom_data_0_port
+      - network.outgoing.bytes.rate
+    requirements:
+      link_iom_data_2_port:
+      - iom_data_2_port
+      - link
+      dependency_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - dependency
+      dependency_iom_data_3_port:
+      - iom_data_3_port
+      - dependency
+      dependency_IOM:
+      - IOM
+      - dependency
+      dependency_iom_data_0_port:
+      - iom_data_0_port
+      - dependency
+      dependency_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - dependency
+      dependency_iom_data_2_port:
+      - iom_data_2_port
+      - dependency
+      link_iom_mgt_0_port:
+      - iom_mgt_0_port
+      - link
+      link_iom_ctrl_fabric_0_port:
+      - iom_ctrl_fabric_0_port
+      - link
+      dependency_iom_data_1_port:
+      - iom_data_1_port
+      - dependency
+      link_iom_data_1_port:
+      - iom_data_1_port
+      - link
+      link_iom_data_0_port:
+      - iom_data_0_port
+      - link
+      link_iom_data_3_port:
+      - iom_data_3_port
+      - link
+      local_storage_IOM:
+      - IOM
+      - local_storage

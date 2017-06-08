@@ -20,14 +20,30 @@
 
 package org.openecomp.server.filters;
 
+/**
+ * The enum Action library privilege.
+ */
 public enum ActionLibraryPrivilege {
 
-  RETRIEVE, CREATE, UPDATE, DELETE;
+  /**
+   * Retrieve action library privilege.
+   */
+  RETRIEVE, /**
+   * Create action library privilege.
+   */
+  CREATE, /**
+   * Update action library privilege.
+   */
+  UPDATE, /**
+   * Delete action library privilege.
+   */
+  DELETE;
 
   /**
+   * Gets privilege.
    *
-   * @param operation .
-   * @return actionLibraryPrivilege
+   * @param operation the operation
+   * @return the privilege
    */
   public static ActionLibraryPrivilege getPrivilege(String operation) {
 

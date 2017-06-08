@@ -20,8 +20,8 @@
 
 package org.openecomp.core.model.types;
 
-public class ServiceArtifact extends ServiceElement {
 
+public class ServiceArtifact extends ServiceElement {
 
   public ServiceArtifact() {
     super();

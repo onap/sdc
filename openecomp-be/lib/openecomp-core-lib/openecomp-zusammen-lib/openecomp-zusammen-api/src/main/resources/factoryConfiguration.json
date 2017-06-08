@@ -1,0 +1,3 @@
+{
+  "org.openecomp.core.zusammen.api.ZusammenAdaptorFactory": "org.openecomp.core.zusammen.impl.ZusammenAdaptorFactoryImpl"
+}

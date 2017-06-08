@@ -16,6 +16,9 @@
       ],
       "default": "${component.displayName}"</#if>
     },
+    "vfcCode": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     }

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.translator.services.heattotosca.errors;
 
+
 public class TranslatorErrorCodes {
   public static final String MISSING_MANDATORY_PROPERTY = "MISSING_MANDATORY_PROPERTY";
   public static final String HEAT_TO_TOSCA_MAPPING_COLLISION = "HEAT_TO_TOSCA_MAPPING_COLLISION";

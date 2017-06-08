@@ -20,87 +20,65 @@
 
 package org.openecomp.sdc.enrichment.impl.external.artifact;
 
-import org.openecomp.core.enrichment.types.ComponentArtifactType;
-import org.openecomp.core.enrichment.types.MibInfo;
-import org.openecomp.core.model.dao.EnrichedServiceModelDao;
-import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
-import org.openecomp.core.model.types.ServiceArtifact;
-import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.core.validation.errors.Messages;
-import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
-import org.openecomp.sdc.enrichment.impl.tosca.ComponentInfo;
 import org.openecomp.sdc.enrichment.inter.Enricher;
-import org.openecomp.sdc.versioning.dao.types.Version;
+import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
+import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExternalArtifactEnricher extends Enricher {
+  private MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static String EXTERNAL_ARTIFACT_ENRICH_CONF_FILE = "ExternalArtifactConfiguration.json";
+  private static final String EXTERNAL_ARTIFACT_ENRICH_ERROR = "ERROR_CREATING_EXTERNAL_ARTIFACTS";
+  private static final String EXTERNAL_ARTIFACT_ENRICH_ERROR_MSG =
+      "An Error has occured during enrichment of external artifacts ";
+  private static Collection<String> implementingClasses =
+      getExternalArtifactEnrichedImplClassesList();
 
-  private static EnrichedServiceModelDao enrichedServiceModelDao =
-      EnrichedServiceModelDaoFactory.getInstance().createInterface();
+  private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
+    InputStream externalArtifactEnrichConfigurationJson =
+        FileUtils.getFileInputStream(EXTERNAL_ARTIFACT_ENRICH_CONF_FILE);
+    @SuppressWarnings("unchecked")
+    Map<String, String> confFileAsMap =
+        JsonUtil.json2Object(externalArtifactEnrichConfigurationJson, Map.class);
 
+    return confFileAsMap.values();
+  }
 
   @Override
   public Map<String, List<ErrorMessage>> enrich() {
 
+
+    mdcDataDebugMessage.debugEntryMessage(null, null);
+
     Map<String, List<ErrorMessage>> errors = new HashMap<>();
-    input.getEntityInfo().entrySet().stream().forEach(
-        entry -> enrichComponentMib(entry.getKey(), (ComponentInfo) entry.getValue(), errors));
 
+        try {
+            for (String implementingClassName : implementingClasses) {
+                ExternalArtifactEnricherInterface externalArtifactEnricherInstance = getExternalArtifactEnricherInstance(implementingClassName);
+                externalArtifactEnricherInstance.enrich(this.data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); //// FIXME: 29-Nov-16
+        }
 
+    mdcDataDebugMessage.debugExitMessage(null, null);
     return errors;
   }
 
-
-  private void enrichComponentMib(String componentName, ComponentInfo componentInfo,
-                                  Map<String, List<ErrorMessage>> errors) {
-
-    String vspId = input.getKey();
-    Version version = input.getVersion();
-    ServiceArtifact mibServiceArtifact = new ServiceArtifact();
-    mibServiceArtifact.setVspId(vspId);
-    mibServiceArtifact.setVersion(version);
-    enrichMibFiles(mibServiceArtifact, componentInfo, errors);
-  }
-
-  private void enrichMibFiles(ServiceArtifact mibServiceArtifact, ComponentInfo componentInfo,
-                              Map<String, List<ErrorMessage>> errors) {
-    if (componentInfo.getMibInfo() == null) {
-      return;
-    }
-    enrichMibByType(componentInfo.getMibInfo().getSnmpTrap(), ComponentArtifactType.SNMP_TRAP,
-        mibServiceArtifact, errors);
-    enrichMibByType(componentInfo.getMibInfo().getSnmpPoll(), ComponentArtifactType.SNMP_POLL,
-        mibServiceArtifact, errors);
-  }
-
-  private void enrichMibByType(MibInfo mibInfo, ComponentArtifactType type,
-                               ServiceArtifact mibServiceArtifact,
-                               Map<String, List<ErrorMessage>> errors) {
-    if (mibInfo == null) {
-      return;
-    }
-    FileContentHandler mibs;
-    try {
-      mibs = FileUtils.getFileContentMapFromZip(FileUtils.toByteArray(mibInfo.getContent()));
-    } catch (IOException ioException) {
-      ErrorMessage.ErrorMessageUtil
-          .addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
-          .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
-      return;
-    }
-    Set<String> fileList = mibs.getFileList();
-    for (String fileName : fileList) {
-      mibServiceArtifact.setContentData(FileUtils.toByteArray(mibs.getFileContent(fileName)));
-      mibServiceArtifact.setName(mibInfo.getName() + File.separator + fileName);
-      enrichedServiceModelDao.storeExternalArtifact(mibServiceArtifact);
-    }
+  private ExternalArtifactEnricherInterface getExternalArtifactEnricherInstance(
+      String implementingClassName) throws Exception {
+    Class<?> clazz = Class.forName(implementingClassName);
+    Constructor<?> constructor = clazz.getConstructor();
+    return (ExternalArtifactEnricherInterface) constructor.newInstance();
   }
 }

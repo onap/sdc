@@ -23,8 +23,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao;
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 
-public abstract class VendorSoftwareProductDaoFactory
-    extends AbstractComponentFactory<VendorSoftwareProductDao> {
+
+public abstract class VendorSoftwareProductDaoFactory extends
+    AbstractComponentFactory<VendorSoftwareProductDao> {
 
 
   public static VendorSoftwareProductDaoFactory getInstance() {

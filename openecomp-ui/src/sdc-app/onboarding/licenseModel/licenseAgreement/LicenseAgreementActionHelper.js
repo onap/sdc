@@ -1,41 +1,36 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import {actionTypes as licenseAgreementActionTypes} from './LicenseAgreementConstants.js';
 import FeatureGroupsActionHelper from 'sdc-app/onboarding/licenseModel/featureGroups/FeatureGroupsActionHelper.js';
 import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper.js';
 
-function baseUrl(licenseModelId) {
+function baseUrl(licenseModelId, version) {
 	const restPrefix = Configuration.get('restPrefix');
-	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/license-agreements`;
+	const {id: versionId} = version;
+	return `${restPrefix}/v1.0/vendor-license-models/${licenseModelId}/versions/${versionId}/license-agreements`;
 }
 
 function fetchLicenseAgreementList(licenseModelId, version) {
-	let versionQuery = version ? `?version=${version}` : '';
-	return RestAPIUtil.fetch(`${baseUrl(licenseModelId)}${versionQuery}`);
+	return RestAPIUtil.fetch(`${baseUrl(licenseModelId, version)}`);
 }
 
-function postLicenseAgreement(licenseModelId, licenseAgreement) {
-	return RestAPIUtil.create(baseUrl(licenseModelId), {
+function postLicenseAgreement(licenseModelId, licenseAgreement, version) {
+	return RestAPIUtil.post(baseUrl(licenseModelId, version), {
 		name: licenseAgreement.name,
 		description: licenseAgreement.description,
 		licenseTerm: licenseAgreement.licenseTerm,
@@ -44,10 +39,10 @@ function postLicenseAgreement(licenseModelId, licenseAgreement) {
 	});
 }
 
-function putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement) {
+function putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement, version) {
 	const {featureGroupsIds = []} = licenseAgreement;
 	const {featureGroupsIds: prevFeatureGroupsIds = []} = previousLicenseAgreement;
-	return RestAPIUtil.save(`${baseUrl(licenseModelId)}/${licenseAgreement.id}`, {
+	return RestAPIUtil.put(`${baseUrl(licenseModelId, version)}/${licenseAgreement.id}`, {
 		name: licenseAgreement.name,
 		description: licenseAgreement.description,
 		licenseTerm: licenseAgreement.licenseTerm,
@@ -57,8 +52,8 @@ function putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAg
 	});
 }
 
-function deleteLicenseAgreement(licenseModelId, licenseAgreementId) {
-	return RestAPIUtil.destroy(`${baseUrl(licenseModelId)}/${licenseAgreementId}`);
+function deleteLicenseAgreement(licenseModelId, licenseAgreementId, version) {
+	return RestAPIUtil.destroy(`${baseUrl(licenseModelId, version)}/${licenseAgreementId}`);
 }
 
 export default {
@@ -70,18 +65,11 @@ export default {
 		}));
 	},
 
-	openLicenseAgreementEditor(dispatch, {licenseModelId, licenseAgreement}) {
-		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId});
+	openLicenseAgreementEditor(dispatch, {licenseModelId, licenseAgreement, version}) {
+		FeatureGroupsActionHelper.fetchFeatureGroupsList(dispatch, {licenseModelId, version});
 		dispatch({
 			type: licenseAgreementActionTypes.licenseAgreementEditor.OPEN,
 			licenseAgreement
-		});
-	},
-
-	licenseAgreementEditorDataChanged(dispatch, {deltaData}) {
-		dispatch({
-			type: licenseAgreementActionTypes.licenseAgreementEditor.DATA_CHANGED,
-			deltaData
 		});
 	},
 
@@ -92,9 +80,9 @@ export default {
 	},
 
 
-	saveLicenseAgreement(dispatch, {licenseModelId, previousLicenseAgreement, licenseAgreement}) {
+	saveLicenseAgreement(dispatch, {licenseModelId, previousLicenseAgreement, licenseAgreement, version}) {
 		if (previousLicenseAgreement) {
-			return putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement).then(() => {
+			return putLicenseAgreement(licenseModelId, previousLicenseAgreement, licenseAgreement, version).then(() => {
 				dispatch({
 					type: licenseAgreementActionTypes.EDIT_LICENSE_AGREEMENT,
 					licenseAgreement
@@ -102,7 +90,7 @@ export default {
 			});
 		}
 		else {
-			return postLicenseAgreement(licenseModelId, licenseAgreement).then(response => {
+			return postLicenseAgreement(licenseModelId, licenseAgreement, version).then(response => {
 				dispatch({
 					type: licenseAgreementActionTypes.ADD_LICENSE_AGREEMENT,
 					licenseAgreement: {
@@ -114,8 +102,8 @@ export default {
 		}
 	},
 
-	deleteLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId}) {
-		return deleteLicenseAgreement(licenseModelId, licenseAgreementId).then(() => {
+	deleteLicenseAgreement(dispatch, {licenseModelId, licenseAgreementId, version}) {
+		return deleteLicenseAgreement(licenseModelId, licenseAgreementId, version).then(() => {
 			dispatch({
 				type: licenseAgreementActionTypes.DELETE_LICENSE_AGREEMENT,
 				licenseAgreementId
@@ -130,31 +118,9 @@ export default {
 		});
 	},
 
-	selectLicenseAgreementEditorFeatureGroupsButtonTab(dispatch, {buttonTab}) {
-		dispatch({
-			type: licenseAgreementActionTypes.licenseAgreementEditor.SELECT_FEATURE_GROUPS_BUTTONTAB,
-			buttonTab
-		});
-	},
-
-	hideDeleteConfirm(dispatch) {
-		dispatch({
-			type: licenseAgreementActionTypes.LICENSE_AGREEMENT_DELETE_CONFIRM,
-			licenseAgreementToDelete: false
-		});
-	},
-
-	openDeleteLicenseAgreementConfirm(dispatch, {licenseAgreement} ) {
-		dispatch({
-			type: licenseAgreementActionTypes.LICENSE_AGREEMENT_DELETE_CONFIRM,
-			licenseAgreementToDelete: licenseAgreement
-		});
-	},
-
 	switchVersion(dispatch, {licenseModelId, version}) {
 		LicenseModelActionHelper.fetchLicenseModelById(dispatch, {licenseModelId, version}).then(() => {
 			this.fetchLicenseAgreementList(dispatch, {licenseModelId, version});
 		});
 	}
 };
-

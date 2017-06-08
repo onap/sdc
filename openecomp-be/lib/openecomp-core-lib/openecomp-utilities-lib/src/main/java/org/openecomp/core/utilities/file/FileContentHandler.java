@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class FileContentHandler {
+
   private Map<String, byte[]> files = new HashMap<>();
 
   /**
@@ -55,6 +56,10 @@ public class FileContentHandler {
   public void addFile(String fileName, InputStream is) {
 
     files.put(fileName, FileUtils.toByteArray(is));
+  }
+
+  public Map<String, byte[]> getFiles() {
+    return files;
   }
 
   public void setFiles(FileContentHandler extFiles) {

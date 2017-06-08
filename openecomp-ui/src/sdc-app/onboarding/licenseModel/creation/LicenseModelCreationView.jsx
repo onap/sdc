@@ -1,7 +1,24 @@
+/*!
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 import React from 'react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import ValidationInput from 'nfvo-components/input/validation/ValidationInput.jsx';
-import ValidationForm from 'nfvo-components/input/validation/ValidationForm.jsx';
+import Validator from 'nfvo-utils/Validator.js';
+import Input from 'nfvo-components/input/validation/Input.jsx';
+import Form from 'nfvo-components/input/validation/Form.jsx';
+import {LICENSE_MODEL_CREATION_FORM_NAME} from './LicenseModelCreationConstants.js';
 
 const LicenseModelPropType = React.PropTypes.shape({
 	id: React.PropTypes.string,
@@ -13,39 +30,49 @@ class LicenseModelCreationView extends React.Component {
 
 	static propTypes = {
 		data: LicenseModelPropType,
+		VLMNames: React.PropTypes.object,
 		onDataChanged: React.PropTypes.func.isRequired,
 		onSubmit: React.PropTypes.func.isRequired,
+		onValidateForm: React.PropTypes.func.isRequired,
 		onCancel: React.PropTypes.func.isRequired
 	};
 
 	render() {
-		let {data = {}, onDataChanged} = this.props;
+		let {data = {}, onDataChanged, genericFieldInfo} = this.props;
 		let {vendorName, description} = data;
 		return (
 			<div>
-				<ValidationForm
+				{genericFieldInfo && <Form
 					ref='validationForm'
 					hasButtons={true}
 					onSubmit={ () => this.submit() }
 					onReset={ () => this.props.onCancel() }
-					labledButtons={true}>
-					<ValidationInput
+					labledButtons={true}
+					isValid={this.props.isFormValid}
+					formReady={this.props.formReady}
+					onValidateForm={() => this.validate() }>
+					<Input
 						value={vendorName}
 						label={i18n('Vendor Name')}
-						ref='vendor-name'
-						onChange={vendorName => onDataChanged({vendorName})}
-						validations={{maxLength: 25, required: true}}
+						data-test-id='vendor-name'
+						onChange={vendorName => onDataChanged({vendorName}, LICENSE_MODEL_CREATION_FORM_NAME, {vendorName: name => this.validateName(name)})}
+						isValid={genericFieldInfo.vendorName.isValid}
+						errorText={genericFieldInfo.vendorName.errorText}
 						type='text'
+						isRequired={true}
 						className='field-section'/>
-					<ValidationInput
+					<Input
+						isRequired={true}
 						value={description}
 						label={i18n('Description')}
-						ref='description'
-						onChange={description => onDataChanged({description})}
-						validations={{maxLength: 1000, required: true}}
+						data-test-id='vendor-description'
+						overlayPos='bottom'
+						onChange={description => onDataChanged({description}, LICENSE_MODEL_CREATION_FORM_NAME)}
+						isValid={genericFieldInfo.description.isValid}
+						errorText={genericFieldInfo.description.errorText}
 						type='textarea'
 						className='field-section'/>
-				</ValidationForm>
+				</Form>}
 			</div>
 		);
 	}
@@ -54,6 +81,18 @@ class LicenseModelCreationView extends React.Component {
 	submit() {
 		const {data:licenseModel} = this.props;
 		this.props.onSubmit(licenseModel);
+	}
+
+	validateName(value) {
+		const {data: {id}, VLMNames} = this.props;
+		const isExists = Validator.isItemNameAlreadyExistsInList({itemId: id, itemName: value, list: VLMNames});
+
+		return !isExists ?  {isValid: true, errorText: ''} :
+			{isValid: false, errorText: i18n('License model by the name \'' + value + '\' already exists. License model name must be unique')};
+	}
+
+	validate() {
+		this.props.onValidateForm(LICENSE_MODEL_CREATION_FORM_NAME);
 	}
 }
 

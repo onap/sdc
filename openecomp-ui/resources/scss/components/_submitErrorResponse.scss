@@ -20,4 +20,41 @@
       }
     }
   }
+  .error-block {
+    margin: 10px 0;
+    .error-block-header {
+      background-color: $tlv-gray;
+      padding: 5px;
+      cursor: pointer;
+      .chevron-down {
+        width:10px;
+        height:10px;
+        margin-right: 10px;
+        &.right {
+          transform: rotate(270deg);
+        }
+      }
+
+    }
+    .error-code-list-item {
+      .icon-label {
+        @extend .body-1;
+        color: $dark-gray;
+      }
+      .icon-component {
+        align-items: baseline;
+      }
+    }
+    .list-group-item {
+      .error-item-text {
+        margin-top:-2px;
+        //position: fixed;
+      }
+    }
+    .component-name-header {
+      margin-left: 45px;
+      margin-top: 10px;
+      @extend .heading-5-medium;
+    }
+  }
 }

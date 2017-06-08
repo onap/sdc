@@ -23,12 +23,13 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileStatus;
 
-
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class UploadFileResponseDto {
-  private List<String> fileNames;
   private Map<String, List<ErrorMessage>> errors;
   private UploadFileStatus status;
 
@@ -46,18 +47,6 @@ public class UploadFileResponseDto {
 
   public void setStatus(UploadFileStatus status) {
     this.status = status;
-  }
-
-  public List<String> getFileNames() {
-    return fileNames;
-  }
-
-  public void setFileNames(List<String> fileNames) {
-    this.fileNames = fileNames;
-  }
-
-  public void addNewFileToList(String filename) {
-    this.fileNames.add(filename);
   }
 
 }

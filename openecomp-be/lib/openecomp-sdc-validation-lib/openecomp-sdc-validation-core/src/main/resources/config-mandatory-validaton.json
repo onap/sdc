@@ -1,0 +1,20 @@
+{
+  "validatorImplementations": {
+    "yamlValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.YamlValidator"
+    },
+    "heatValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.HeatValidator"
+    },
+    "manifestValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.ManifestValidator"
+    }
+  },
+
+  "_config":{
+    "namespace": "mandatoryValidation"
+  }
+}

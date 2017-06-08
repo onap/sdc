@@ -1,0 +1,81 @@
+heat_template_version: 2013-05-23
+
+description: ASC Template
+
+parameters:
+  fe_smp_affinity_param:
+    type: string
+    description: be affinity param
+  multi_anti_affinity_param:
+    type: string
+    description: be affinity param
+  availability_zone_0:
+    type: string
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance
+    default: This_is_ths_SCP_id
+  port_name:
+    type: string
+    description: port name
+    default: port_name
+  flavor_smp_name:
+    type: string
+    description: SCP SMP Flavor
+    default: a1.Small
+  image_smp_name:
+    type: string
+    description: SCP SMP image
+    default: asc_base_image_smp
+  smp_name_2:
+    type: string
+    default: vSMP2
+    description: name of VM
+  lab_name:
+    type: string
+    description: Lab name
+
+resources:
+  server_smp3:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: smp_name_2 }
+        image: { get_param: image_smp_name }
+        availability_zone: { get_param: availability_zone_0 }
+        flavor: { get_param: flavor_smp_name }
+        scheduler_hints: { group1: { get_param: fe_smp_affinity_param }, group2: { get_param: multi_anti_affinity_param }  }
+        networks:
+        - port: { get_resource: port3 }
+        - port: { get_resource: port4 }
+        metadata:
+          vnf_id: { get_param: vnf_id }
+          jx_lab_name: {get_param: lab_name}
+          jx_vm_role:  smp2
+        user_data_format: RAW
+
+  server_smp4:
+      type: OS::Nova::Server
+      properties:
+        name: { get_param: smp_name_2 }
+        image: { get_param: image_smp_name }
+        availability_zone: { get_param: availability_zone_0 }
+        flavor: { get_param: flavor_smp_name }
+        scheduler_hints: { group1: { get_param: [multi_anti_affinity_param,0] }  }
+        metadata:
+          vnf_id: { get_param: vnf_id }
+          jx_lab_name: {get_param: lab_name}
+          jx_vm_role:  smp2
+        user_data_format: RAW
+
+  port3:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: port_name}
+      replacement_policy: AUTO
+
+  port4:
+    type: OS::Neutron::Port
+    properties:
+      network: {get_param: port_name}
+      replacement_policy: AUTO
+

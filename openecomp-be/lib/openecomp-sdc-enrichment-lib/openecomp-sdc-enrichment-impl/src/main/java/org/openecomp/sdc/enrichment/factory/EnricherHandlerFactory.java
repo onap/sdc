@@ -20,13 +20,15 @@
 
 package org.openecomp.sdc.enrichment.factory;
 
+
 import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.sdc.enrichment.inter.EnricherHandler;
 
+
 public abstract class EnricherHandlerFactory extends AbstractComponentFactory<EnricherHandler> {
 
-  public static EnricherHandlerFactory getInstance() {
-    return AbstractFactory.getInstance(EnricherHandlerFactory.class);
-  }
+    public static EnricherHandlerFactory getInstance() {
+        return AbstractFactory.getInstance(EnricherHandlerFactory.class);
+    }
 }

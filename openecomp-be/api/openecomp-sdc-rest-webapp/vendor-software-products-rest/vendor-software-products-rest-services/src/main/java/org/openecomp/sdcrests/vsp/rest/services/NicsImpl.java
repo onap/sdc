@@ -21,14 +21,19 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.logging.context.MdcUtil;
+import org.openecomp.sdc.logging.types.LoggerServiceName;
+import org.openecomp.sdc.vendorsoftwareproduct.ComponentManager;
+import org.openecomp.sdc.vendorsoftwareproduct.ComponentManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.NicManager;
+import org.openecomp.sdc.vendorsoftwareproduct.NicManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityResponse;
-import org.openecomp.sdc.vendorsoftwareproduct.types.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.QuestionnaireResponse;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionEntityValidationData;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.Nic;
 import org.openecomp.sdc.versioning.dao.types.Version;
-
+import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.CompositionEntityValidationDataDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.NicDto;
@@ -43,27 +48,27 @@ import org.openecomp.sdcrests.vsp.rest.mapping.MapNicToNicDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
-
+import java.util.Collection;
 
 @Named
 @Service("nics")
 @Scope(value = "prototype")
 public class NicsImpl implements Nics {
-  @Autowired
-  private VendorSoftwareProductManager vendorSoftwareProductManager;
+  private NicManager nicManager = NicManagerFactory.getInstance().createInterface();
+  private ComponentManager componentManager =
+      ComponentManagerFactory.getInstance().createInterface();
 
   @Override
-  public Response list(String vspId, String componentId, String version, String user) {
-    Collection<NicEntity> nics =
-        vendorSoftwareProductManager.listNics(vspId, Version.valueOf(version), componentId, user);
+  public Response list(String vspId, String versionId, String componentId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_nics.toString());
+    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
+    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    Collection<NicEntity> nics = nicManager.listNics(vspId, vspVersion, componentId, user);
 
     MapNicEntityToNicDto mapper = new MapNicEntityToNicDto();
     GenericCollectionWrapper<NicDto> results = new GenericCollectionWrapper<>();
@@ -75,20 +80,26 @@ public class NicsImpl implements Nics {
   }
 
   @Override
-  public Response create(NicRequestDto request, String vspId, String componentId, String user) {
+  public Response create(NicRequestDto request, String vspId, String versionId, String componentId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_nic.toString());
     NicEntity nic = new MapNicRequestDtoToNicEntity().applyMapping(request, NicEntity.class);
     nic.setVspId(vspId);
+    nic.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
     nic.setComponentId(componentId);
+    componentManager.validateComponentExistence(vspId, nic.getVersion(), componentId, user);
 
-    NicEntity createdNic = vendorSoftwareProductManager.createNic(nic, user);
+    NicEntity createdNic = nicManager.createNic(nic, user);
     return Response.ok(createdNic != null ? new StringWrapperResponse(createdNic.getId()) : null)
         .build();
   }
 
   @Override
-  public Response get(String vspId, String componentId, String nicId, String version, String user) {
-    CompositionEntityResponse<Nic> response = vendorSoftwareProductManager
-        .getNic(vspId, Version.valueOf(version), componentId, nicId, user);
+  public Response get(String vspId, String versionId, String componentId, String nicId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_nic.toString());
+    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
+    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    CompositionEntityResponse<Nic> response =
+        nicManager.getNic(vspId, vspVersion, componentId, nicId, user);
 
     CompositionEntityResponseDto<NicDto> responseDto = new CompositionEntityResponseDto<>();
     new MapCompositionEntityResponseToDto<>(new MapNicToNicDto(), NicDto.class)
@@ -97,33 +108,42 @@ public class NicsImpl implements Nics {
   }
 
   @Override
-  public Response delete(String vspId, String componentId, String nicId, String user) {
-    vendorSoftwareProductManager.deleteNic(vspId, componentId, nicId, user);
+  public Response delete(String vspId, String versionId, String componentId, String nicId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_nic.toString());
+    Version vspVersion = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    nicManager.deleteNic(vspId, vspVersion, componentId, nicId, user);
     return Response.ok().build();
   }
 
   @Override
-  public Response update(NicRequestDto request, String vspId, String componentId, String nicId,
+  public Response update(NicRequestDto request, String vspId, String versionId, String componentId, String nicId,
                          String user) {
+    MdcUtil.initMdc(LoggerServiceName.Update_nic.toString());
     NicEntity nicEntity = new MapNicRequestDtoToNicEntity().applyMapping(request, NicEntity.class);
     nicEntity.setVspId(vspId);
+    nicEntity.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
     nicEntity.setComponentId(componentId);
     nicEntity.setId(nicId);
 
+    componentManager.validateComponentExistence(vspId, nicEntity.getVersion(), componentId, user);
     CompositionEntityValidationData validationData =
-        vendorSoftwareProductManager.updateNic(nicEntity, user);
+        nicManager.updateNic(nicEntity, user);
     return validationData != null && CollectionUtils.isNotEmpty(validationData.getErrors())
         ? Response.status(Response.Status.EXPECTATION_FAILED).entity(
-            new MapCompositionEntityValidationDataToDto()
-                .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
+        new MapCompositionEntityValidationDataToDto()
+            .applyMapping(validationData, CompositionEntityValidationDataDto.class)).build() :
         Response.ok().build();
   }
 
   @Override
-  public Response getQuestionnaire(String vspId, String componentId, String nicId, String version,
+  public Response getQuestionnaire(String vspId, String versionId, String componentId, String nicId,
                                    String user) {
-    QuestionnaireResponse questionnaireResponse = vendorSoftwareProductManager
-        .getNicQuestionnaire(vspId, Version.valueOf(version), componentId, nicId, user);
+    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_nic.toString());
+    Version vspVersion = resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read);
+    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    QuestionnaireResponse questionnaireResponse =
+        nicManager.getNicQuestionnaire(vspId, vspVersion, componentId, nicId, user);
 
     QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
         .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
@@ -131,10 +151,13 @@ public class NicsImpl implements Nics {
   }
 
   @Override
-  public Response updateQuestionnaire(String questionnaireData, String vspId, String componentId,
+  public Response updateQuestionnaire(String questionnaireData, String vspId, String versionId, String componentId,
                                       String nicId, String user) {
-    vendorSoftwareProductManager
-        .updateNicQuestionnaire(vspId, componentId, nicId, questionnaireData, user);
+    MdcUtil.initMdc(LoggerServiceName.Update_Questionnaire_nic.toString());
+    Version vspVersion = resolveVspVersion(vspId, null, user, VersionableEntityAction.Write);
+    componentManager.validateComponentExistence(vspId, vspVersion, componentId, user);
+    nicManager
+        .updateNicQuestionnaire(vspId, vspVersion, componentId, nicId, questionnaireData, user);
     return Response.ok().build();
   }
 }

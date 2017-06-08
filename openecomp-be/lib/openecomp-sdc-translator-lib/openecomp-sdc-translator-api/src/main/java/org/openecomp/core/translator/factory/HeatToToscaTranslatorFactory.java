@@ -24,6 +24,8 @@ import org.openecomp.core.factory.api.AbstractComponentFactory;
 import org.openecomp.core.factory.api.AbstractFactory;
 import org.openecomp.core.translator.api.HeatToToscaTranslator;
 
+
+
 public abstract class HeatToToscaTranslatorFactory
     extends AbstractComponentFactory<HeatToToscaTranslator> {
 

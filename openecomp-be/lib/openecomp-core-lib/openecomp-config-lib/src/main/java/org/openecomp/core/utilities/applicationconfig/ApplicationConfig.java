@@ -25,6 +25,7 @@ import org.openecomp.core.utilities.applicationconfig.type.ConfigurationData;
 
 import java.util.Collection;
 
+
 public interface ApplicationConfig {
 
   ConfigurationData getConfigurationData(String namespace, String key);

@@ -1,0 +1,12 @@
+{
+  "name": "YY2016-227_vmme_vmme_.zip",
+  "description": "Desc",
+  "version": "0.1",
+  "data": [
+    {
+      "isBase": false,
+      "file": "vmme_vlc.yml",
+      "type": "HEAT"
+    }
+  ]
+}

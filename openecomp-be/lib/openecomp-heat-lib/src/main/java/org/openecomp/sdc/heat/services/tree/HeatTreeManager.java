@@ -25,31 +25,28 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.yaml.YamlUtil;
 import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.common.utils.AsdcCommon;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.structure.Artifact;
 import org.openecomp.sdc.heat.datatypes.structure.HeatStructureTree;
-import org.openecomp.sdc.heat.services.HeatStructureUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-/**
- * The type Heat tree manager.
- */
+
 public class HeatTreeManager {
 
-  private static Logger logger = LoggerFactory.getLogger(HeatTreeManager.class);
+  private static Logger logger = (Logger) LoggerFactory.getLogger(HeatTreeManager.class);
 
 
   private FileContentHandler heatContentMap = new FileContentHandler();
@@ -70,7 +67,7 @@ public class HeatTreeManager {
    * @param content  the content
    */
   public void addFile(String fileName, InputStream content) {
-    if (fileName.equals(AsdcCommon.MANIFEST_NAME)) {
+    if (fileName.equals(SdcCommon.MANIFEST_NAME)) {
       manifest = FileUtils.toByteArray(content);
 
     } else {
@@ -93,18 +90,16 @@ public class HeatTreeManager {
     addNonNestedVolumeNetworkToTree(networkFileToParent, nestedFiles.keySet(), false);
     handleOrphans();
 
-    tree = fileTreeRef.get(AsdcCommon.PARENT);
+    tree = fileTreeRef.get(SdcCommon.PARENT);
   }
 
   private void handleOrphans() {
-    tree = fileTreeRef.get(AsdcCommon.PARENT);
+    tree = fileTreeRef.get(SdcCommon.PARENT);
     candidateOrphanArtifacts.entrySet().stream()
         .forEach(entry -> tree.addArtifactToArtifactList(entry.getValue()));
     nestedFiles
-        .values()
-        .stream()
-        .filter(heatStructureTree -> tree.getHEAT().contains(heatStructureTree))
-        .forEach(heatStructureTree -> tree.getHEAT().remove(heatStructureTree));
+        .values().stream().filter(heatStructureTree -> tree.getHeat().contains(heatStructureTree))
+        .forEach(heatStructureTree -> tree.getHeat().remove(heatStructureTree));
 
     heatContentMap.getFileList().stream().filter(fileName -> !manifestFiles.contains(fileName))
         .forEach(fileName -> addTreeOther(fileName));
@@ -132,13 +127,14 @@ public class HeatTreeManager {
       HeatOrchestrationTemplate hot =
           new YamlUtil().yamlToObject(fileContent, HeatOrchestrationTemplate.class);
 
-      Set<String> nestedSet = HeatStructureUtil.getNestedFiles(filename, hot, globalContext);
+      Set<String> nestedSet = HeatTreeManagerUtil.getNestedFiles(filename, hot, globalContext);
       addHeatNestedFiles(fileHeatStructureTree, nestedSet);
 
-      Set<String> artifactSet = HeatStructureUtil.getArtifactFiles(filename, hot, globalContext);
+      Set<String> artifactSet = HeatTreeManagerUtil.getArtifactFiles(filename, hot, globalContext);
       addHeatArtifactFiles(fileHeatStructureTree, artifactSet);
     } catch (Exception ignore) { /* invalid yaml no need to process reference */ }
   }
+
 
   private void addHeatArtifactFiles(HeatStructureTree fileHeatStructureTree,
                                     Set<String> artifactSet) {
@@ -203,7 +199,7 @@ public class HeatTreeManager {
     Artifact artifact;
     if (parent == null) {
       parentHeatStructureTree = new HeatStructureTree();
-      fileTreeRef.put(AsdcCommon.PARENT, parentHeatStructureTree);
+      fileTreeRef.put(SdcCommon.PARENT, parentHeatStructureTree);
     } else {
       parentHeatStructureTree = fileTreeRef.get(parent);
     }
@@ -213,7 +209,7 @@ public class HeatTreeManager {
       manifestFiles.add(fileName);
       type = fileData.getType();
 
-      if (FileData.Type.HEAT.equals(type)) {
+      if (Objects.nonNull(type) && FileData.Type.HEAT.equals(type)) {
         fileHeatStructureTree = fileTreeRef.get(fileName);
         if (fileHeatStructureTree == null) {
           fileHeatStructureTree = new HeatStructureTree();
@@ -223,7 +219,7 @@ public class HeatTreeManager {
         fileHeatStructureTree.setBase(fileData.getBase());
         fileHeatStructureTree.setType(type);
         handleHeatContentReference(null, fileHeatStructureTree, null);
-        parentHeatStructureTree.addHeatToHEATList(fileHeatStructureTree);
+        parentHeatStructureTree.addHeatToHeatList(fileHeatStructureTree);
         if (fileData.getData() != null) {
           scanTree(fileName, fileData.getData());
         }
@@ -237,14 +233,14 @@ public class HeatTreeManager {
         if (type == null) {
           parentHeatStructureTree.addOtherToOtherList(childHeatStructureTree);
         } else if (FileData.Type.HEAT_NET.equals(type)) {
-          //  parentHeatStructureTree.addNetworkToNetworkList(childHeatStructureTree);
+          //parentHeatStructureTree.addNetworkToNetworkList(childHeatStructureTree);
           networkFileToParent.put(childHeatStructureTree, parentHeatStructureTree);
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
           }
 
         } else if (FileData.Type.HEAT_VOL.equals(type)) {
-          // parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
+          //parentHeatStructureTree.addVolumeFileToVolumeList(childHeatStructureTree);
           volumeFileToParent.put(childHeatStructureTree, parentHeatStructureTree);
           if (fileData.getData() != null) {
             scanTree(fileName, fileData.getData());
@@ -287,11 +283,6 @@ public class HeatTreeManager {
   }
 
 
-  /**
-   * Gets tree.
-   *
-   * @return the tree
-   */
   public HeatStructureTree getTree() {
     return tree;
   }

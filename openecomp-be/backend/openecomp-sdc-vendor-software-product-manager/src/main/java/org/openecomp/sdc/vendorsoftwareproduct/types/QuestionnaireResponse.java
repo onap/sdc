@@ -20,9 +20,12 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.types;
 
+import org.openecomp.sdc.datatypes.error.ErrorMessage;
+
 public class QuestionnaireResponse {
   private String schema;
   private String data;
+  private ErrorMessage errorMessage;
 
   public String getSchema() {
     return schema;
@@ -38,5 +41,13 @@ public class QuestionnaireResponse {
 
   public void setData(String data) {
     this.data = data;
+  }
+
+  public ErrorMessage getErrorMessage() {
+    return errorMessage;
+  }
+
+  public void setErrorMessage(ErrorMessage errorMessage) {
+    this.errorMessage = errorMessage;
   }
 }

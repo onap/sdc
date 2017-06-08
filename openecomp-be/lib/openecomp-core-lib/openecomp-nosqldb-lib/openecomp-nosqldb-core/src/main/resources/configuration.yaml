@@ -7,9 +7,6 @@ identificationHeaderFields:
 
 
 
-# catalog backend hostname
-beFqdn: sdccatalog.att.com
-
 # catalog backend http port
 beHttpPort: 8080
 
@@ -54,7 +51,7 @@ cassandraConfig:
     cassandraHosts: ['127.0.0.1']
     reconnectTimeout : 30000
     authenticate: false
-    username: sdc_user
+    username: asdc_user
     password: Aa1234%^!
     ssl: false
     truststorePath : /path/path
@@ -152,7 +149,7 @@ informationalServiceArtifacts:
       displayName: Service Artifact Plan
       type: OTHER
   summaryOfImpactsToECOMPElements:
-      displayName: Summary of impacts to ECOMP elements,OSSs, BSSs
+      displayName: Summary of impacts to OPENECOMP elements,OSSs, BSSs
       type: OTHER
   controlLoopFunctions:
       displayName: Control Loop Functions

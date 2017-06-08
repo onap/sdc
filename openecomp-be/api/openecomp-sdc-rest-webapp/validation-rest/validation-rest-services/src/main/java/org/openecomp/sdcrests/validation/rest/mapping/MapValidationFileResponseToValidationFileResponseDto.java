@@ -25,10 +25,16 @@ import org.openecomp.sdc.validation.types.ValidationFileResponse;
 import org.openecomp.sdcrests.mapping.MappingBase;
 import org.openecomp.sdcrests.validation.types.ValidationFileResponseDto;
 
+/**
+ * Created by TALIO on 4/27/2016.
+ */
 public class MapValidationFileResponseToValidationFileResponseDto
     extends MappingBase<ValidationFileResponse, ValidationFileResponseDto> {
   @Override
   public void doMapping(ValidationFileResponse source, ValidationFileResponseDto target) {
+    //target.setErrors(source.getErrors());
+    //target.setFileNames(source.getFileNames());
+    //target.setStatus(source.getStatus());
     target.setValidationData(source.getValidationData());
   }
 }

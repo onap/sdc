@@ -1,0 +1,34 @@
+{
+    // The vnic_assignment parameter is ignored by Perimeta releases prior to
+    // V4.0.00.
+    "vnic_assignment": {
+      "IBG1mgmt": {"mac": "$MGMT_MACADDR"},
+      "IPG1": {"mac": "$HA_MACADDR"},
+      "RPG1": {"mac": "$TRUSTED_MACADDR"},
+      "RPG2": {"mac": "$UNTRUSTED_MACADDR"},
+      "RPG3": {"mac": "$SERV3_MACADDR"},
+      "RPG4": {"mac": "$SERV4_MACADDR"}
+    },
+    "autocommission":"SSC",
+    "autostart":"true",
+    "autopartner":"",
+    "ip_mgmt_global": "$VIRT_MGMT_IP_ADDR",
+    "ip_mgmt_local": "$LOCAL_MGMT_IP_ADDR",
+    "ip_mgmt_remote": "$REMOTE_MGMT_IP_ADDR",
+    "ip_mgmt_plen": "$MGMT_NETWORK_PLEN",
+    "ip_mgmt_gway": "$MGMT_NETWORK_DEFAULT_GATEWAY",
+    "ip_ha_local": "$LOCAL_HA_IP_ADDR",
+    "ip_ha_remote": "$REMOTE_HA_IP_ADDR",
+    "ip_ha_plen": "$HA_NETWORK_PLEN",
+    "system_name": "$SYSTEM_NAME",
+    "node_local": "$VM_NAME_A",
+    "node_remote": "$VM_NAME_B",
+    "ntp_servers": "$NTP_SERVER_IP_ADDRS",
+   "perimeta": {
+     "dpdk_opt_enable":true,
+     "vlans_opt_enable":true
+   }
+
+   // $COMPLETION_PARAMS
+}
+

@@ -1,0 +1,490 @@
+heat_template_version: 2015-04-30
+
+description: |
+  Example HOT file illustrating elasticity groups.
+
+parameters:
+
+  backup_file:
+    type: string
+    description: |
+      <cURL path>/<backup file>
+      This is only used for restore (aka "disaster recovery").
+      The value only needs to go to the OAM pair.
+      Note that there is a 255 character limit on this value.
+
+  cloud_name_delimiter:
+    type: string
+    description: Separator for cloud resource naming.
+
+  install_config:
+    type: string
+    description: JSON formatted string of install config values.
+
+  lcm_keypair:
+    type: string
+    description: Keypair used for lifecycle management access.
+    constraints:
+      - custom_constraint: nova.keypair
+
+  default_action:
+    type: string
+    description: |
+      Default action for all VMs. This may be overridden for
+      specific VM groups, pairs or VMs via the ENV file.
+    constraints:
+      - allowed_values:
+        - "install"
+        - "recreate"
+        - "scale-in"
+        - "scale-out"
+        - "heal"
+        - "update"
+
+  int_vlan_id:
+    type: string
+    description: Optional VLAN associated with the (0th) internal network.
+    constraints:
+      - allowed_pattern: "[0-9]*"
+        description: VLAN Ids are expressed in base 10 digits.
+
+  ssh_access_key:
+    type: string
+    description: |
+      Optional SSH public key value for lifecycle management
+      administrative access.
+
+  v4_dns_server:
+    type: string
+    description: |
+      (optional) IPV4 DNS server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  v6_dns_server:
+    type: string
+    description: |
+      (optional) IPV6 DNS server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  v4_enum_server:
+    type: string
+    description: |
+      (optional) IPV4 ENUM server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  v6_enum_server:
+    type: string
+    description: |
+      (optional) IPV6 ENUM server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  v4_ntp_server:
+    type: string
+    description: |
+      (optional) IPV4 NTP server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  v6_ntp_server:
+    type: string
+    description: |
+      (optional) IPV6 NTP server list.
+      It is passed as a string instead of a CDL because
+      of how it is handled internally.
+
+  vnf_id:
+    type: string
+    description: Unique ID for this VNF instance.
+    default: ""
+
+  vnf_name:
+    type: string
+    description: Unique name for this VNF instance.
+    default: ""
+
+  vnf_module_id:
+    type: string
+    description: Unique ID for this VNF Module instance.
+    default: ""
+
+  vnf_module_name:
+    type: string
+    description: Unique name for this VNF module instance.
+    default: ""
+
+  net_types:
+    type: comma_delimited_list
+    description: CDL of subnet tags.
+
+  oam_management_v4_source:
+    type: string
+    description: Name of the OAM IP parameter to use.
+
+  oam_management_v4_index:
+    type: number
+    description: Index to the V4 management IP address.
+
+  oam_management_v6_source:
+    type: string
+    description: Name of the OAM IP parameter to use.
+
+  oam_management_v6_index:
+    type: number
+    description: Index to the V6 management IP address.
+
+  oam_net_id:
+    type: string
+    description: ID of the network associated with tag "oam".
+    constraints:
+      - custom_constraint: neutron.network
+
+  oam_subnet_id:
+    type: string
+    description: ID of the subnet associated with tag "oam".
+
+  oam_cidr:
+    type: string
+    description: CIDR associated with tag "oam".
+    constraints:
+      - custom_constraint: net_cidr
+
+  oam_default_gateway:
+    type: string
+    description: Default gateway IP address  associated with tag "oam".
+
+  access_net_id:
+    type: string
+    description: ID of the network associated with tag "access".
+    constraints:
+      - custom_constraint: neutron.network
+
+  access_subnet_id:
+    type: string
+    description: ID of the subnet associated with tag "access".
+
+  access_cidr:
+    type: string
+    description: CIDR associated with tag "access".
+    constraints:
+      - custom_constraint: net_cidr
+
+  access_default_gateway:
+    type: string
+    description: Default gateway IP address  associated with tag "access".
+
+  vm_counts:
+    type: json
+    description: |
+      Maps VM type tags to the number of pairs of that type.
+
+  vm_info:
+    type: json
+    description: Provides keys into type-specific parameters and vnic info.
+    default: {}
+
+  availability_zone_0:
+    type: string
+    description: Availability zone name.
+
+  availability_zone_1:
+    type: string
+    description: Availability zone name.
+
+  oam_names:
+    description: CDL of OAM VM names.
+    type: comma_delimited_list
+
+  ims_names:
+    description: CDL of IMS VM names.
+    type: comma_delimited_list
+
+  oam_image_name:
+    description: Image for this VMtype.
+    type: string
+
+  ims_image_name:
+    description: Image for this VMtype.
+    type: string
+
+  oam_flavor_name:
+    description: CDL of OAM flavor values.
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+
+  ims_flavor_name:
+    description: CDL of IMS flavor values.
+    type: string
+    constraints:
+      - custom_constraint: nova.flavor
+
+  oam_oam_ips:
+    type: comma_delimited_list
+    description: List of IP addresses for this VMtype_NETtype combination.
+
+  ims_access_ips:
+    type: comma_delimited_list
+    description: List of IP addresses for this VMtype_NETtype combination.
+
+resources:
+
+  FORMATXLATE:
+    type: LCP-OPENECOMP.template.yaml
+    properties:
+      backup_file: {get_param: backup_file}
+      cloud_name_delimiter: {get_param: cloud_name_delimiter}
+      default_action: {get_param: default_action}
+      install_config: {get_param: install_config}
+      lcm_keypair: {get_param: lcm_keypair}
+      ssh_access_key: {get_param: ssh_access_key}
+      v4_dns_server: {get_param: v4_dns_server}
+      v6_dns_server: {get_param: v6_dns_server}
+      v4_enum_server: {get_param: v4_enum_server}
+      v6_enum_server: {get_param: v6_enum_server}
+      v4_ntp_server: {get_param: v4_ntp_server}
+      v6_ntp_server: {get_param: v6_ntp_server}
+      vnf_id: {get_param: vnf_id}
+      vnf_name: {get_param: vnf_name}
+      vnf_module_id: {get_param: vnf_module_id}
+      vnf_module_name: {get_param: vnf_module_name}
+      net_types: {get_param: net_types}
+      net_ids: {
+        "oam": {get_param: oam_net_id},
+        "access": {get_param: access_net_id},
+        ""
+      }
+      subnet_ids: {
+        "oam": {get_param: oam_subnet_id},
+        "access": {get_param: access_subnet_id},
+        ""
+      }
+      cidrs: {
+        "oam": {get_param: oam_cidr},
+        "access": {get_param: access_cidr},
+        ""
+      }
+      default_gateways: {
+        "oam": {get_param: oam_default_gateway},
+        "access": {get_param: access_default_gateway},
+        ""
+      }
+      # This list must be ordered by group ID.
+      vmtype_list: ["oam", "ims"]
+      vmtype_count: 2
+      vm_counts: {get_param: vm_counts}
+      vm_info: {get_param: vm_info}
+      availability_zones:
+        - {get_param: availability_zone_0}
+        - {get_param: availability_zone_1}
+      images: {
+        "oam": {get_param: oam_image_name},
+        "ims": {get_param: ims_image_name},
+        "": ""
+      }
+      flavors: {
+        "oam": {get_param: oam_flavor_name},
+        "ims": {get_param: ims_flavor_name},
+        "": ""
+      }
+      ip_lists: {
+        "oam_oam_ips": {get_param: oam_oam_ips},
+        "ims_access_ips": {get_param: ims_access_ips},
+        "": []
+      }
+      name_lists: {
+        "oam": {get_param: oam_names},
+        "ims": {get_param: ims_names},
+        "": []
+      }
+
+  NOKIA-LCP-Base:
+    depends_on:
+      - FORMATXLATE
+    type: LCP-Base.template.yaml
+    properties:
+      default_prefix:
+        str_replace:
+          template: |
+            {"": "$stk$delimiter"}
+          params:
+            $stk: {get_param: "OS::stack_name"}
+            $delimiter: {get_attr: [FORMATXLATE, usage_info, cloud_name_delimiter]}
+      int_net_count: 2
+      ext_net_list: ["oam", "access"]
+      ext_net_info: {get_attr: [FORMATXLATE, ext_net_info]}
+      total_vm_pairs: {get_attr: [FORMATXLATE, total_vm_pairs]}
+
+  OAM_RRG:
+    depends_on:
+      - NOKIA-LCP-Base
+    type: LCP-PairGroup.template.yaml
+    properties:
+      default_action: {get_attr: [FORMATXLATE, default_action]}
+      default_name_base:
+        str_replace:
+          template: |
+            {"": "oam$delimiter0$delimiter"}
+          params:
+            $delimiter: {get_attr: [FORMATXLATE, usage_info, cloud_name_delimiter]}
+      group_id: "0"
+      group_tag: "oam"
+      group_index: '0'
+      current_group_count: {get_attr: [FORMATXLATE, vm_counts, "oam"]}
+      role: "oam"
+      lcm_keypair: {get_attr: [FORMATXLATE, lcm_keypair]}
+      total_pair_count: {get_attr: [NOKIA-LCP-Base, TotalPairCount]}
+      backup_file: {get_attr: [FORMATXLATE, backup_file]}
+      name_delimiter: {get_attr: [FORMATXLATE, usage_info, cloud_name_delimiter]}
+      int_net_count: 2
+      install_config: {get_attr: [FORMATXLATE, install_config]}
+      net_info_str: {get_attr: [NOKIA-LCP-Base, NetInfoStr]}
+      sec_group: {get_attr: [NOKIA-LCP-Base, OpenSec]}
+      ssh_access_key: {get_attr: [FORMATXLATE, ssh_access_key]}
+      ssh_public_key: {get_attr: [NOKIA-LCP-Base, PublicKey]}
+      ssh_private_key: {get_attr: [NOKIA-LCP-Base, PrivateKey]}
+      stack: {get_param: "OS::stack_name"}
+      storage_size: 68
+      int_net_info: {get_attr: [NOKIA-LCP-Base, IntNetInfo]}
+      ext_net_info: {get_attr: [FORMATXLATE, ext_net_info]}
+      usage_info: {get_attr: [FORMATXLATE, usage_info]}
+      config_info: {
+        poolinfo: '["mi-0", "cnfg-0", "sns-0"]',
+        v4_static_routes: '{}',
+        v6_static_routes: '{}',
+        v4_default_gateway: "oam",
+        v6_default_gateway: "",
+        vnic_count: 3,
+        "0": { # VM member index.
+          vnic_info: {
+            "0": [
+              {"count": "0", "binding_type": "direct", "subnet_count": "1", "allowed_subnets": ["INTERNALnet0"]},
+              {"label": "connectivity_ip;subnet=INTERNALnet0", "subnet": "INTERNALnet0"},
+            ],
+            "1": [
+              {"count": "0", "binding_type": "direct", "subnet_count": "1", "allowed_subnets": ["INTERNALnet1"]},
+              {"label": "connectivity_ip;subnet=INTERNALnet1", "subnet": "INTERNALnet1"},
+            ],
+            "2": [
+              {"count": "3", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["oam"]},
+              {"label": "servicetype=cnfg-0;float;nitype=default;subnet=oam", "subnet": "oam"},
+              {"label": "servicetype=mi-0;float;nitype=default;subnet=oam", "subnet": "oam"},
+              {"label": "servicetype=mi-0;fixed;nitype=default;subnet=oam", "subnet": "oam"},
+            ],
+          }
+        },
+        "1": {
+          vnic_info: {
+            "0": [
+              {"count": "0", "binding_type": "direct", "subnet_count": "1", "allowed_subnets": ["INTERNALnet0"]},
+              {"label": "connectivity_ip;subnet=INTERNALnet0", "subnet": "INTERNALnet0"},
+            ],
+            "1": [
+              {"count": "0", "binding_type": "direct", "subnet_count": "1", "allowed_subnets": ["INTERNALnet1"]},
+              {"label": "connectivity_ip;subnet=INTERNALnet1", "subnet": "INTERNALnet1"},
+            ],
+            "2": [
+              {"count": "1", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["oam"]},
+              {"label": "servicetype=mi-0;fixed;nitype=default;subnet=oam", "subnet": "oam"},
+            ],
+          }
+        }
+      }
+
+  IMS_RRG:
+    type: OS::Heat::ResourceGroup
+    depends_on:
+      - NOKIA-LCP-Base
+    properties:
+      count: {get_attr: [FORMATXLATE, vm_counts, "ims"]}
+      resource_def:
+        type: LCP-PairGroup.template.yaml
+        properties:
+          default_action: {get_attr: [FORMATXLATE, default_action]}
+          default_name_base:
+            str_replace:
+              template: |
+                {"": "ims$delimiter%index%$delimiter"}
+              params:
+                $delimiter: {get_attr: [FORMATXLATE, usage_info, cloud_name_delimiter]}
+          group_id: "1"
+          lcm_keypair: {get_attr: [FORMATXLATE, lcm_keypair]}
+          group_tag: "ims"
+          group_index: '%index%'
+          current_group_count: {get_attr: [FORMATXLATE, vm_counts, "ims"]}
+          total_pair_count: {get_attr: [NOKIA-LCP-Base, TotalPairCount]}
+          name_delimiter: {get_attr: [FORMATXLATE, usage_info, cloud_name_delimiter]}
+          net_info_str: {get_attr: [NOKIA-LCP-Base, NetInfoStr]}
+          sec_group: {get_attr: [NOKIA-LCP-Base, OpenSec]}
+          ssh_access_key: {get_attr: [FORMATXLATE, ssh_access_key]}
+          ssh_public_key: {get_attr: [NOKIA-LCP-Base, PublicKey]}
+          ssh_private_key: {get_attr: [NOKIA-LCP-Base, PrivateKey]}
+          stack: {get_param: "OS::stack_name"}
+          storage_size: 4
+          install_config: {get_attr: [FORMATXLATE, install_config]}
+          int_net_count: 2
+          int_net_info: {get_attr: [NOKIA-LCP-Base, IntNetInfo]}
+          ext_net_info: {get_attr: [FORMATXLATE, ext_net_info]}
+          usage_info: {get_attr: [FORMATXLATE, usage_info]}
+          config_info: {
+            poolinfo: '["ims-0", "ims-1", "gos-0"]',
+            v4_static_routes: '{
+              "ims-0": {"subnet": "access", "dest_subnet": "2.2.2.0", "mask": "255.255.255.0"},
+              "ims-1": {"subnet": "access", "dest_subnet": "2.2.2.0", "mask": "255.255.255.0"}
+            }',
+            v6_static_routes: '{}',
+            v4_default_gateway: "access",
+            v6_default_gateway: "",
+            vnic_count: 3,
+            "0": { # VM member index.
+              vnic_info: {
+                "0": [
+                  {"count": "0", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["INTERNALnet0"]},
+                  {"label": "connectivity_ip;subnet=INTERNALnet0", "subnet": "INTERNALnet0"},
+                ],
+                "1": [
+                  {"count": "0", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["INTERNALnet1"]},
+                  {"label": "connectivity_ip;subnet=INTERNALnet1", "subnet": "INTERNALnet1"},
+                ],
+                "2": [
+                  {"count": "1", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["access"]},
+                  {"label": "servicetype=ims-0;float;nitype=published;subnet=access", "subnet": "access"},
+                ],
+              }
+            },
+            "1": {
+              vnic_info: {
+                "0": [
+                  {"count": "0", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["INTERNALnet0"]},
+                  {"label": "connectivity_ip;subnet=INTERNALnet0", "subnet": "INTERNALnet0"},
+                ],
+                "1": [
+                  {"count": "0", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["INTERNALnet1"]},
+                  {"label": "connectivity_ip;subnet=INTERNALnet1", "subnet": "INTERNALnet1"},
+                ],
+                "2": [
+                  {"count": "1", "binding_type": "normal", "subnet_count": "1", "allowed_subnets": ["access"]},
+                  {"label": "servicetype=ims-1;float;nitype=published;subnet=access", "subnet": "access"},
+                ],
+              }
+            }
+          }
+
+outputs:
+
+  oam_management_v4_address:
+    description: IPV4 of the active MI service.
+    value: {get_param: [{get_param: oam_management_v4_source}, {get_param: oam_management_v4_index}]}
+
+  oam_management_v6_address:
+    description: IPV6 of the active MI service.
+    value: {get_param: [{get_param: oam_management_v6_source}, {get_param: oam_management_v6_index}]}
+
+  internal_net_info:
+    description: |
+      Internal network IDs, CIDR etc. for use by modular additions to
+      this stack.
+    value: {get_attr: [NOKIA-LCP-Base, IntNetInfo]}

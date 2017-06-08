@@ -2,6 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>openecomp-nosqldb-core</name>
+    <artifactId>openecomp-nosqldb-core</artifactId>
+    <groupId>org.openecomp.core</groupId>
+
     <parent>
         <artifactId>openecomp-sdc-lib</artifactId>
         <groupId>org.openecomp.sdc</groupId>
@@ -9,33 +13,30 @@
         <relativePath>../../..</relativePath>
     </parent>
 
-    <artifactId>openecomp-nosqldb-core</artifactId>
-    <name>openecomp-nosqldb-core</name>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.sdc</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-nosqldb-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.14</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.3.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
-            <version>1.10.19</version>
+            <version>${mockito.all.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -53,7 +54,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>RELEASE</version>
+            <version>4.11</version>
         </dependency>
     </dependencies>
 </project>

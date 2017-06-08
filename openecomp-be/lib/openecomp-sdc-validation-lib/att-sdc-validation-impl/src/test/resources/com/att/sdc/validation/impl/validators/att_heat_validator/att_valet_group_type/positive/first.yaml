@@ -1,0 +1,17 @@
+heat_template_version: 2013-05-23
+
+description: heat expose volume resource
+
+resources:
+  valet_group_assigment_legal_1:
+    type: ATT::Valet::GroupAssignment
+    properties:
+      group_type: affinity
+
+  valet_group_assigment_legal_2:
+    type: ATT::Valet::GroupAssignment
+    properties:
+      group_type: diversity
+
+
+

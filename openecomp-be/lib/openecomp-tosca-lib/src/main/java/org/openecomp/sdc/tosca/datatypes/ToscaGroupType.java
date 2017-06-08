@@ -20,21 +20,22 @@
 
 package org.openecomp.sdc.tosca.datatypes;
 
+import org.openecomp.config.api.Configuration;
+import org.openecomp.config.api.ConfigurationManager;
+import org.openecomp.sdc.tosca.services.ConfigConstants;
 
-public enum ToscaGroupType {
+public class ToscaGroupType {
 
-  ROOT("tosca.groups.Root"),
-  HEAT_STACK("org.openecomp.groups.heat.HeatStack"),;
+  private static Configuration config = ConfigurationManager.lookup();
 
-  private String displayName;
+  public static String GROUP_TYPE_PREFIX =
+      config.getAsString(ConfigConstants.NAMESPACE, ConfigConstants.PREFIX_GROUP_TYPE);
 
-  ToscaGroupType(String displayName) {
-    this.displayName = displayName;
-  }
+  //TOSCA native types
+  public static String NATIVE_ROOT = "tosca.groups.Root";
 
-  public String getDisplayName() {
-    return displayName;
-  }
+  //Additional types
+  public static String HEAT_STACK = GROUP_TYPE_PREFIX + "heat.HeatStack";
 
 
 }

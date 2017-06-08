@@ -2,48 +2,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <name>openecomp-utilities-lib</name>
+    <artifactId>openecomp-utilities-lib</artifactId>
+
+
     <parent>
         <artifactId>openecomp-core-lib</artifactId>
-        <groupId>org.openecomp.sdc</groupId>
+        <groupId>org.openecomp.core</groupId>
         <version>1.1.0-SNAPSHOT</version>
     </parent>
-
-    <artifactId>openecomp-utilities-lib</artifactId>
-    <name>openecomp-utilities-lib</name>
-
 
     <dependencies>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.17</version>
+            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>${commons.lang3.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>${commons.collections.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.3.1</version>
+            <version>${gson.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.10</version>
-
-        </dependency>
-        <!--<dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.17</version>
-        </dependency>-->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -53,12 +42,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>RELEASE</version>
+            <version>4.11</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>${org.codehaus.jackson.version}</version>
+            <version>${jackson.mapper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.everit.json</groupId>
@@ -76,6 +65,11 @@
                     <groupId>org.yaml</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openecomp.sdc</groupId>
+            <artifactId>openecomp-sdc-logging-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

@@ -7,7 +7,12 @@
   }
 
   .modal-body{
-    padding: 15px;
+    padding: 0;
+    .validation-form-content {
+      padding: 50px;
+        overflow-y: auto;
+        max-height: 490px;
+    }
   }
 
   .modal-footer {

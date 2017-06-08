@@ -1,26 +1,23 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
-
 import {combineReducers} from 'redux';
-import {actionTypes} from './SoftwareProductConstants.js';
-import SoftwareProductAttachmentsReducer from './attachments/SoftwareProductAttachmentsReducer.js';
+import {actionTypes, PRODUCT_QUESTIONNAIRE} from './SoftwareProductConstants.js';
+import HeatValidationReducer from './attachments/validation/HeatValidationReducer.js';
+import HeatSetupReducer from './attachments/setup/HeatSetupReducer.js';
+import {actionTypes as heatSetupActionTypes} from './attachments/setup/HeatSetupConstants.js';
 import SoftwareProductCreationReducer from './creation/SoftwareProductCreationReducer.js';
 import SoftwareProductDetailsReducer from './details/SoftwareProductDetailsReducer.js';
 import SoftwareProductProcessesListReducer from './processes/SoftwareProductProcessesListReducer.js';
@@ -35,30 +32,40 @@ import  {actionTypes as componentProcessesActionTypes} from './components/proces
 import SoftwareProductComponentsNICListReducer from './components/network/SoftwareProductComponentsNICListReducer.js';
 import SoftwareProductComponentsNICEditorReducer from './components/network/SoftwareProductComponentsNICEditorReducer.js';
 import SoftwareProductComponentsMonitoringReducer from './components/monitoring/SoftwareProductComponentsMonitoringReducer.js';
+import {createPlainDataReducer} from 'sdc-app/common/reducers/PlainDataReducer.js';
+import SoftwareProductDependenciesReducer from './dependencies/SoftwareProductDependenciesReducer.js';
+import {createJSONSchemaReducer, createComposedJSONSchemaReducer} from 'sdc-app/common/reducers/JSONSchemaReducer.js';
+import {COMPONENTS_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponentsConstants.js';
+import {NIC_QUESTIONNAIRE} from 'sdc-app/onboarding/softwareProduct/components/network/SoftwareProductComponentsNetworkConstants.js';
 
 export default combineReducers({
-	softwareProductAttachments: SoftwareProductAttachmentsReducer,
-	softwareProductCreation: SoftwareProductCreationReducer,
-	softwareProductEditor: SoftwareProductDetailsReducer,
+	softwareProductAttachments: combineReducers({
+		heatValidation: HeatValidationReducer,
+		heatSetup: HeatSetupReducer,
+		heatSetupCache: (state = {}, action) => action.type === heatSetupActionTypes.FILL_HEAT_SETUP_CACHE ? action.payload : state
+	}),
+	softwareProductCreation: createPlainDataReducer(SoftwareProductCreationReducer),
+	softwareProductEditor: createPlainDataReducer(SoftwareProductDetailsReducer),
 	softwareProductProcesses: combineReducers({
 		processesList: SoftwareProductProcessesListReducer,
-		processesEditor: SoftwareProductProcessesEditorReducer,
+		processesEditor: createPlainDataReducer(SoftwareProductProcessesEditorReducer),
 		processToDelete: (state = false, action) => action.type === processesActionTypes.SOFTWARE_PRODUCT_PROCESS_DELETE_CONFIRM ? action.processToDelete : state
 	}),
 	softwareProductNetworks: combineReducers({
 		networksList: SoftwareProductNetworksListReducer
 	}),
+	softwareProductDependencies: SoftwareProductDependenciesReducer,
 	softwareProductComponents: combineReducers({
 		componentsList: SoftwareProductComponentsListReducer,
-		componentEditor: SoftwareProductComponentEditorReducer,
+		componentEditor: createPlainDataReducer(createComposedJSONSchemaReducer(COMPONENTS_QUESTIONNAIRE, SoftwareProductComponentEditorReducer)),
 		componentProcesses: combineReducers({
 			processesList: SoftwareProductComponentProcessesListReducer,
-			processesEditor: SoftwareProductComponentProcessesEditorReducer,
+			processesEditor: createPlainDataReducer(SoftwareProductComponentProcessesEditorReducer),
 			processToDelete: (state = false, action) => action.type === componentProcessesActionTypes.SOFTWARE_PRODUCT_PROCESS_DELETE_COMPONENTS_CONFIRM ? action.processToDelete : state,
 		}),
 		network: combineReducers({
 			nicList: SoftwareProductComponentsNICListReducer,
-			nicEditor: SoftwareProductComponentsNICEditorReducer
+			nicEditor: createPlainDataReducer(createComposedJSONSchemaReducer(NIC_QUESTIONNAIRE, SoftwareProductComponentsNICEditorReducer))
 		}),
 		monitoring: SoftwareProductComponentsMonitoringReducer
 	}),
@@ -68,13 +75,5 @@ export default combineReducers({
 		}
 		return state;
 	},
-	softwareProductQuestionnaire: (state = {}, action) => {
-		if (action.type === actionTypes.SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE) {
-			return {
-				...state,
-				...action.payload
-			};
-		}
-		return state;
-	}
+	softwareProductQuestionnaire: createJSONSchemaReducer(PRODUCT_QUESTIONNAIRE)
 });

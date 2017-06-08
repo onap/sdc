@@ -1,0 +1,694 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: FEAdd_On_Module_vProbeTemplate
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vprobe:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_type_0:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_type_1:
+      hidden: false
+      immutable: false
+      type: string
+    qrouter_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_type_2:
+      hidden: false
+      immutable: false
+      type: string
+    oam_private_net_name:
+      hidden: false
+      immutable: false
+      type: string
+    vProbe_cluster_name:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_type:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_image_name:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_flavor_name:
+      hidden: false
+      immutable: false
+      type: string
+    vf_module_name:
+      hidden: false
+      immutable: false
+      type: string
+    vLB_node_count:
+      hidden: false
+      immutable: false
+      type: float
+    domain_name:
+      hidden: false
+      immutable: false
+      type: string
+    ntp_timezone:
+      hidden: false
+      immutable: false
+      type: string
+    packet_internal_network:
+      hidden: false
+      immutable: false
+      type: string
+    vProbe_version_name:
+      hidden: false
+      immutable: false
+      type: string
+    vnf_id:
+      hidden: false
+      immutable: false
+      type: string
+    availability_zone_0:
+      hidden: false
+      immutable: false
+      type: string
+    region_name:
+      hidden: false
+      immutable: false
+      type: string
+    qtrace_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_AppDependenciesMachineType:
+      hidden: false
+      immutable: false
+      type: string
+    manager_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    win_domain_name:
+      hidden: false
+      immutable: false
+      type: string
+    tenant_name:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_size_2:
+      hidden: false
+      immutable: false
+      type: float
+    vprobe_volume_name_0:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_size_0:
+      hidden: false
+      immutable: false
+      type: float
+    vprobe_volume_name_1:
+      hidden: false
+      immutable: false
+      type: string
+    vprobe_volume_size_1:
+      hidden: false
+      immutable: false
+      type: float
+    vprobe_volume_name_2:
+      hidden: false
+      immutable: false
+      type: string
+    security_group:
+      hidden: false
+      immutable: false
+      type: string
+    cdr_network:
+      hidden: false
+      immutable: false
+      type: string
+    vProbe_node_count:
+      hidden: false
+      immutable: false
+      type: float
+    vprobe_names:
+      hidden: false
+      immutable: false
+      type: list
+      entry_schema:
+        type: string
+    vprobe_index:
+      hidden: false
+      immutable: false
+      type: float
+    manager_oam_direct_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+    rpmrepository_ip_0:
+      hidden: false
+      immutable: false
+      type: string
+  node_templates:
+    ProbeInstance:
+      type: org.openecomp.resource.vfc.nodes.heat.vprobe
+      properties:
+        flavor:
+          get_input: vprobe_flavor_name
+        availability_zone:
+          get_input: availability_zone_0
+        image:
+          get_input: vprobe_image_name
+        metadata:
+          ProbeInstance:
+            get_input: vprobe_index
+          vf_module_id:
+            get_input: vf_module_id
+          probe_id: P_ID
+          cdr_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_cdr_network_port.fixed_ip_0s
+          packet_internal_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_packet_internal_network_port.fixed_ip_0s
+          version_number:
+            get_input: vProbe_version_name
+          vprobe_type:
+            get_input: vprobe_type
+          machine_name:
+            get_input:
+            - vprobe_names
+            - get_input: vprobe_index
+          vf_module_name:
+            get_input: vf_module_name
+          vLB_node_count:
+            get_input: vLB_node_count
+          ntp_timezone:
+            get_input: ntp_timezone
+          vProbe_version_name:
+            get_input: vProbe_version_name
+          vnf_id:
+            get_input: vnf_id
+          mount_colon__slash_log: vprobe_volume_1
+          probe_name:
+            get_input:
+            - vprobe_names
+            - get_input: vprobe_index
+          mount_colon__slash_config: vprobe_volume_2
+          oam_private_network_cidr:
+            get_attribute:
+            - oam_private_net_network_port
+            - subnets
+            - 0
+            - cidr
+          tenant:
+            get_input: tenant_name
+          machine_type: vProbe
+          cluster_name:
+            get_input: vProbe_cluster_name
+          cdr_network_cidr:
+            get_attribute:
+            - cdr_network_port
+            - subnets
+            - 0
+            - cidr
+          repo_ip_0:
+            get_input: rpmrepository_ip_0
+          mount_colon__slash_data: vprobe_volume_0
+          AppDependencies:
+            get_input: vprobe_AppDependenciesMachineType
+          packet_internal_network_cidr:
+            get_attribute:
+            - packet_internal_network_port
+            - subnets
+            - 0
+            - cidr
+          vProbe_node_count:
+            get_input: vProbe_node_count
+          DPDK: DPDK_IP
+          oam_private_network_ip_0:
+          - UNSUPPORTED_ATTRIBUTE_oam_private_net_network_port.fixed_ip_0s
+          region:
+            get_input: region_name
+          manager_oam_direct_ip_0:
+            get_input: manager_oam_direct_ip_0
+        config_drive: true
+        personality:
+          /root/RegisterStatus/register_status.py:
+            get_artifact:
+            - SELF
+            - register_status
+          /root/CheckAvailability/check_availability.py:
+            get_artifact:
+            - SELF
+            - check_availability
+          /tmp/wait_for_resources.py:
+            get_artifact:
+            - SELF
+            - wait_for_resources
+          /root/call_home.py:
+            get_artifact:
+            - SELF
+            - call_home
+          /root/dependencies.json:
+            get_artifact:
+            - SELF
+            - vprobedependencies
+        user_data_format: RAW
+        name:
+          get_input:
+          - vprobe_names
+          - get_input: vprobe_index
+      requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vprobe_volume_0
+          relationship: vprobe_volume_0_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vprobe_volume_1
+          relationship: vprobe_volume_1_att
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: vprobe_volume_2
+          relationship: vprobe_volume_2_att
+      artifacts:
+        call_home:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/call_home.py
+        check_availability:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/check_availability.py
+        vprobedependencies:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/vprobedependencies.json
+        wait_for_resources:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/wait_for_resources.py
+        register_status:
+          type: tosca.artifacts.Deployment
+          file: ../Artifacts/register_status.py
+    vprobe_volume_2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vprobe_volume_type_2
+        size: '(get_input : vprobe_volume_size_2) * 1024'
+        description:
+          get_input: vprobe_volume_name_2
+    vprobe_volume_1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vprobe_volume_type_1
+        size: '(get_input : vprobe_volume_size_1) * 1024'
+        description:
+          get_input: vprobe_volume_name_1
+    vprobe_volume_0:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: vprobe_volume_type_0
+        size: '(get_input : vprobe_volume_size_0) * 1024'
+        description:
+          get_input: vprobe_volume_name_0
+    cdr_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: cdr_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ProbeInstance
+          relationship: tosca.relationships.network.BindsTo
+    oam_private_net_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network_role_tag: oam_private
+        network:
+          get_input: oam_private_net_name
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ProbeInstance
+          relationship: tosca.relationships.network.BindsTo
+    packet_internal_network_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
+        security_groups:
+        - get_input: security_group
+        mac_requirements:
+          mac_count_required:
+            is_required: false
+        network:
+          get_input: packet_internal_network
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: ProbeInstance
+          relationship: tosca.relationships.network.BindsTo
+  relationship_templates:
+    vprobe_volume_0_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vprobe_volume_0
+        instance_uuid: ProbeInstance
+    vprobe_volume_1_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vprobe_volume_1
+        instance_uuid: ProbeInstance
+    vprobe_volume_2_att:
+      type: org.openecomp.relationships.VolumeAttachesTo
+      properties:
+        volume_id: vprobe_volume_2
+        instance_uuid: ProbeInstance
+  groups:
+    FEAdd_On_Module_vProbeTemplate_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/FEAdd_On_Module_vProbeTemplate.yaml
+      members:
+      - ProbeInstance
+      - vprobe_volume_2
+      - vprobe_volume_1
+      - vprobe_volume_0
+      - cdr_network_port
+      - oam_private_net_network_port
+      - packet_internal_network_port
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vProbeTemplate
+    capabilities:
+      disk.device.write.bytes.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.device.write.bytes.rate
+      network.outgoing.bytes_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.bytes
+      disk.device.write.requests_ProbeInstance:
+      - ProbeInstance
+      - disk.device.write.requests
+      attachment_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - attachment
+      disk.iops_ProbeInstance:
+      - ProbeInstance
+      - disk.iops
+      network.incoming.packets_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.packets
+      attachment_cdr_network_port:
+      - cdr_network_port
+      - attachment
+      network.incoming.packets_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.packets
+      feature_ProbeInstance:
+      - ProbeInstance
+      - feature
+      network.outgoing.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes.rate
+      network.outpoing.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outpoing.packets
+      network.outpoing.packets_cdr_network_port:
+      - cdr_network_port
+      - network.outpoing.packets
+      network.incoming.bytes.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.bytes.rate
+      disk.device.latency_ProbeInstance:
+      - ProbeInstance
+      - disk.device.latency
+      feature_cdr_network_port:
+      - cdr_network_port
+      - feature
+      disk.write.bytes.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.write.bytes.rate
+      network.incoming.bytes_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.bytes
+      host_ProbeInstance:
+      - ProbeInstance
+      - host
+      binding_packet_internal_network_port:
+      - packet_internal_network_port
+      - binding
+      network.incoming.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes
+      memory_ProbeInstance:
+      - ProbeInstance
+      - memory
+      feature_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - feature
+      attachment_packet_internal_network_port:
+      - packet_internal_network_port
+      - attachment
+      disk.device.read.requests_ProbeInstance:
+      - ProbeInstance
+      - disk.device.read.requests
+      network.incoming.bytes.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.bytes.rate
+      memory.resident_ProbeInstance:
+      - ProbeInstance
+      - memory.resident
+      disk.device.allocation_ProbeInstance:
+      - ProbeInstance
+      - disk.device.allocation
+      disk.device.write.requests.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.device.write.requests.rate
+      cpu_ProbeInstance:
+      - ProbeInstance
+      - cpu
+      disk.read.bytes_ProbeInstance:
+      - ProbeInstance
+      - disk.read.bytes
+      scalable_ProbeInstance:
+      - ProbeInstance
+      - scalable
+      network.incoming.bytes.rate_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.bytes.rate
+      disk.write.bytes_ProbeInstance:
+      - ProbeInstance
+      - disk.write.bytes
+      network.outgoing.bytes_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.bytes
+      disk.device.capacity_ProbeInstance:
+      - ProbeInstance
+      - disk.device.capacity
+      endpoint_ProbeInstance:
+      - ProbeInstance
+      - endpoint
+      network.outgoing.packets.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.packets.rate
+      disk.ephemeral.size_ProbeInstance:
+      - ProbeInstance
+      - disk.ephemeral.size
+      disk.read.bytes.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.read.bytes.rate
+      disk.latency_ProbeInstance:
+      - ProbeInstance
+      - disk.latency
+      os_ProbeInstance:
+      - ProbeInstance
+      - os
+      network.outgoing.bytes_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.bytes
+      network.incoming.bytes_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.bytes
+      cpu_util_ProbeInstance:
+      - ProbeInstance
+      - cpu_util
+      instance_ProbeInstance:
+      - ProbeInstance
+      - instance
+      disk.device.read.bytes_ProbeInstance:
+      - ProbeInstance
+      - disk.device.read.bytes
+      disk.device.write.bytes_ProbeInstance:
+      - ProbeInstance
+      - disk.device.write.bytes
+      disk.device.usage_ProbeInstance:
+      - ProbeInstance
+      - disk.device.usage
+      vcpus_ProbeInstance:
+      - ProbeInstance
+      - vcpus
+      attachment_vprobe_volume_2:
+      - vprobe_volume_2
+      - attachment
+      network.incoming.packets.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.incoming.packets.rate
+      attachment_vprobe_volume_1:
+      - vprobe_volume_1
+      - attachment
+      attachment_vprobe_volume_0:
+      - vprobe_volume_0
+      - attachment
+      network.outgoing.bytes.rate_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.bytes.rate
+      binding_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - binding
+      binding_ProbeInstance:
+      - ProbeInstance
+      - binding
+      disk.read.requests_ProbeInstance:
+      - ProbeInstance
+      - disk.read.requests
+      disk.capacity_ProbeInstance:
+      - ProbeInstance
+      - disk.capacity
+      disk.write.requests.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.write.requests.rate
+      network.incoming.packets.rate_cdr_network_port:
+      - cdr_network_port
+      - network.incoming.packets.rate
+      feature_vprobe_volume_1:
+      - vprobe_volume_1
+      - feature
+      feature_vprobe_volume_2:
+      - vprobe_volume_2
+      - feature
+      network.incoming.packets_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets
+      feature_vprobe_volume_0:
+      - vprobe_volume_0
+      - feature
+      network.incoming.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.incoming.packets.rate
+      disk.device.read.requests.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.device.read.requests.rate
+      disk.write.requests_ProbeInstance:
+      - ProbeInstance
+      - disk.write.requests
+      disk.root.size_ProbeInstance:
+      - ProbeInstance
+      - disk.root.size
+      disk.allocation_ProbeInstance:
+      - ProbeInstance
+      - disk.allocation
+      memory.usage_ProbeInstance:
+      - ProbeInstance
+      - memory.usage
+      disk.usage_ProbeInstance:
+      - ProbeInstance
+      - disk.usage
+      network.outgoing.bytes.rate_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outgoing.bytes.rate
+      binding_cdr_network_port:
+      - cdr_network_port
+      - binding
+      disk.device.iops_ProbeInstance:
+      - ProbeInstance
+      - disk.device.iops
+      cpu.delta_ProbeInstance:
+      - ProbeInstance
+      - cpu.delta
+      network.outgoing.packets.rate_cdr_network_port:
+      - cdr_network_port
+      - network.outgoing.packets.rate
+      network.outpoing.packets_packet_internal_network_port:
+      - packet_internal_network_port
+      - network.outpoing.packets
+      feature_packet_internal_network_port:
+      - packet_internal_network_port
+      - feature
+      disk.device.read.bytes.rate_ProbeInstance:
+      - ProbeInstance
+      - disk.device.read.bytes.rate
+      network.outgoing.packets.rate_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - network.outgoing.packets.rate
+    requirements:
+      dependency_packet_internal_network_port:
+      - packet_internal_network_port
+      - dependency
+      link_packet_internal_network_port:
+      - packet_internal_network_port
+      - link
+      dependency_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - dependency
+      dependency_cdr_network_port:
+      - cdr_network_port
+      - dependency
+      link_oam_private_net_network_port:
+      - oam_private_net_network_port
+      - link
+      dependency_vprobe_volume_1:
+      - vprobe_volume_1
+      - dependency
+      dependency_ProbeInstance:
+      - ProbeInstance
+      - dependency
+      dependency_vprobe_volume_0:
+      - vprobe_volume_0
+      - dependency
+      link_cdr_network_port:
+      - cdr_network_port
+      - link
+      local_storage_ProbeInstance:
+      - ProbeInstance
+      - local_storage
+      dependency_vprobe_volume_2:
+      - vprobe_volume_2
+      - dependency

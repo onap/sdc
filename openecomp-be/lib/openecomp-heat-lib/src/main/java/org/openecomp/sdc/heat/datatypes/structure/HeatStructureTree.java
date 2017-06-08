@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * The type Heat structure tree.
- */
 public class HeatStructureTree implements Comparable<HeatStructureTree> {
 
   private String fileName;
@@ -40,27 +37,18 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
   private Boolean isBase;
   private HeatStructureTree env;
   private List<ErrorMessage> errors;
-  private Set<HeatStructureTree> HEAT;
+  private Set<HeatStructureTree> heat;
   private Set<HeatStructureTree> volume;
   private Set<HeatStructureTree> network;
   private Set<HeatStructureTree> nested;
   private Set<HeatStructureTree> other;
   private Set<Artifact> artifacts;
 
-  /**
-   * Instantiates a new Heat structure tree.
-   */
   public HeatStructureTree() {
   }
 
   ;
 
-  /**
-   * Instantiates a new Heat structure tree.
-   *
-   * @param fileName the file name
-   * @param isBase   the is base
-   */
   public HeatStructureTree(String fileName, boolean isBase) {
     setBase(isBase);
     setFileName(fileName);
@@ -84,102 +72,47 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     return null;
   }
 
-  /**
-   * Sets type.
-   *
-   * @param type the type
-   */
   public void setType(FileData.Type type) {
     this.type = type;
   }
 
-  /**
-   * Gets base.
-   *
-   * @return the base
-   */
   public Boolean getBase() {
     return isBase;
   }
 
-  /**
-   * Sets base.
-   *
-   * @param base the base
-   */
   public void setBase(Boolean base) {
     isBase = base;
   }
 
-  /**
-   * Gets file name.
-   *
-   * @return the file name
-   */
   public String getFileName() {
     return fileName;
   }
 
-  /**
-   * Sets file name.
-   *
-   * @param file the file
-   */
   public void setFileName(String file) {
     this.fileName = file;
   }
 
-  /**
-   * Gets heat.
-   *
-   * @return the heat
-   */
-  @JsonProperty(value = "HEAT")
-  public Set<HeatStructureTree> getHEAT() {
-    return HEAT;
+  @JsonProperty(value = "heat")
+  public Set<HeatStructureTree> getHeat() {
+    return heat;
   }
 
-  /**
-   * Sets heat.
-   *
-   * @param heat the heat
-   */
-  public void setHEAT(Set<HeatStructureTree> heat) {
-    this.HEAT = heat;
+  public void setHeat(Set<HeatStructureTree> heat) {
+    this.heat = heat;
   }
 
-  /**
-   * Gets nested.
-   *
-   * @return the nested
-   */
   public Set<HeatStructureTree> getNested() {
     return nested;
   }
 
-  /**
-   * Sets nested.
-   *
-   * @param nested the nested
-   */
   public void setNested(Set<HeatStructureTree> nested) {
     this.nested = nested;
   }
 
-  /**
-   * Gets artifacts.
-   *
-   * @return the artifacts
-   */
   public Set<Artifact> getArtifacts() {
     return artifacts;
   }
 
-  /**
-   * Sets artifacts.
-   *
-   * @param artifacts the artifacts
-   */
   public void setArtifacts(Set<Artifact> artifacts) {
     this.artifacts = artifacts;
   }
@@ -210,56 +143,26 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     this.artifacts.add(artifact);
   }
 
-  /**
-   * Gets env.
-   *
-   * @return the env
-   */
   public HeatStructureTree getEnv() {
     return env;
   }
 
-  /**
-   * Sets env.
-   *
-   * @param env the env
-   */
   public void setEnv(HeatStructureTree env) {
     this.env = env;
   }
 
-  /**
-   * Gets volume.
-   *
-   * @return the volume
-   */
   public Set<HeatStructureTree> getVolume() {
     return volume;
   }
 
-  /**
-   * Sets volume.
-   *
-   * @param volume the volume
-   */
   public void setVolume(Set<HeatStructureTree> volume) {
     this.volume = volume;
   }
 
-  /**
-   * Gets network.
-   *
-   * @return the network
-   */
   public Set<HeatStructureTree> getNetwork() {
     return network;
   }
 
-  /**
-   * Sets network.
-   *
-   * @param network the network
-   */
   public void setNetwork(Set<HeatStructureTree> network) {
     this.network = network;
   }
@@ -297,12 +200,12 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
    *
    * @param heat the heat
    */
-  public void addHeatToHEATList(HeatStructureTree heat) {
-    if (this.HEAT == null) {
-      this.HEAT = new TreeSet<>();
+  public void addHeatToHeatList(HeatStructureTree heat) {
+    if (this.heat == null) {
+      this.heat = new TreeSet<>();
     }
 
-    this.HEAT.add(heat);
+    this.heat.add(heat);
   }
 
   /**
@@ -351,6 +254,21 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
   }
 
   @Override
+  public int hashCode() {
+    int result1 = fileName != null ? fileName.hashCode() : 0;
+    result1 = 31 * result1 + (env != null ? env.hashCode() : 0);
+    result1 = 31 * result1 + (heat != null ? heat.hashCode() : 0);
+    result1 = 31 * result1 + (volume != null ? volume.hashCode() : 0);
+    result1 = 31 * result1 + (network != null ? network.hashCode() : 0);
+    result1 = 31 * result1 + (artifacts != null ? artifacts.hashCode() : 0);
+    result1 = 31 * result1 + (nested != null ? nested.hashCode() : 0);
+    result1 = 31 * result1 + (errors != null ? errors.hashCode() : 0);
+
+
+    return result1;
+  }
+
+  @Override
   public boolean equals(Object other) {
     if (this == other) {
       return true;
@@ -368,7 +286,7 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     if (env != null ? !env.equals(heatStructureTree.env) : heatStructureTree.env != null) {
       return false;
     }
-    if (HEAT != null ? !HEAT.equals(heatStructureTree.HEAT) : heatStructureTree.HEAT != null) {
+    if (heat != null ? !heat.equals(heatStructureTree.heat) : heatStructureTree.heat != null) {
       return false;
     }
     if (volume != null ? !volume.equals(heatStructureTree.volume)
@@ -395,35 +313,10 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     return true;
   }
 
-  @Override
-  public int hashCode() {
-    int result1 = fileName != null ? fileName.hashCode() : 0;
-    result1 = 31 * result1 + (env != null ? env.hashCode() : 0);
-    result1 = 31 * result1 + (HEAT != null ? HEAT.hashCode() : 0);
-    result1 = 31 * result1 + (volume != null ? volume.hashCode() : 0);
-    result1 = 31 * result1 + (network != null ? network.hashCode() : 0);
-    result1 = 31 * result1 + (artifacts != null ? artifacts.hashCode() : 0);
-    result1 = 31 * result1 + (nested != null ? nested.hashCode() : 0);
-    result1 = 31 * result1 + (errors != null ? errors.hashCode() : 0);
-
-
-    return result1;
-  }
-
-  /**
-   * Gets errors.
-   *
-   * @return the errors
-   */
   public List<ErrorMessage> getErrors() {
     return errors;
   }
 
-  /**
-   * Sets errors.
-   *
-   * @param errors the errors
-   */
   public void setErrors(List<ErrorMessage> errors) {
     this.errors = errors;
   }
@@ -442,26 +335,16 @@ public class HeatStructureTree implements Comparable<HeatStructureTree> {
     }
   }
 
-  /**
-   * Gets other.
-   *
-   * @return the other
-   */
   public Set<HeatStructureTree> getOther() {
     return other;
   }
 
-  /**
-   * Sets other.
-   *
-   * @param other the other
-   */
   public void setOther(Set<HeatStructureTree> other) {
     this.other = other;
   }
 
   @Override
-  public int compareTo(HeatStructureTree heatStructureTree) {
-    return heatStructureTree.getFileName().compareTo(this.getFileName());
+  public int compareTo(HeatStructureTree obj) {
+    return obj.getFileName().compareTo(this.getFileName());
   }
 }

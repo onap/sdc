@@ -20,20 +20,15 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest;
 
-import static org.openecomp.sdcrests.common.RestConstants.USER_HEADER_PARAM;
-import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupEntityDto;
 import org.openecomp.sdcrests.vendorlicense.types.LicenseKeyGroupRequestDto;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -43,11 +38,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/v1.0/vendor-license-models/{vlmId}/license-key-groups")
+import static org.openecomp.sdcrests.common.RestConstants.USER_ID_HEADER_PARAM;
+import static org.openecomp.sdcrests.common.RestConstants.USER_MISSING_ERROR_MSG;
+
+
+@Path("/v1.0/vendor-license-models/{vlmId}/versions/{versionId}/license-key-groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Api(value = "Vendor License Model - License Key Groups")
@@ -60,9 +58,8 @@ public interface LicenseKeyGroups {
       responseContainer = "List")
   Response listLicenseKeyGroups(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @Pattern(regexp = Version.VERSION_REGEX, message = Version.VERSION_STRING_VIOLATION_MSG)
-      @QueryParam("version") String version,
-      @HeaderParam(USER_HEADER_PARAM) String user);
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
+      @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @POST
   @Path("/")
@@ -70,8 +67,10 @@ public interface LicenseKeyGroups {
   Response createLicenseKeyGroup(@Valid LicenseKeyGroupRequestDto request,
                                  @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
                                      String vlmId,
+                                 @ApiParam(value = "Vendor license model version Id")
+                                 @PathParam("versionId") String versionId,
                                  @NotNull(message = USER_MISSING_ERROR_MSG)
-                                 @HeaderParam(USER_HEADER_PARAM) String user);
+                                 @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @PUT
   @Path("/{licenseKeyGroupId}")
@@ -79,9 +78,11 @@ public interface LicenseKeyGroups {
   Response updateLicenseKeyGroup(@Valid LicenseKeyGroupRequestDto request,
                                  @ApiParam(value = "Vendor license model Id") @PathParam("vlmId")
                                      String vlmId,
+                                 @ApiParam(value = "Vendor license model version Id")
+                                 @PathParam("versionId") String versionId,
                                  @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
                                  @NotNull(message = USER_MISSING_ERROR_MSG)
-                                 @HeaderParam(USER_HEADER_PARAM) String user);
+                                 @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET
   @Path("/{licenseKeyGroupId}")
@@ -89,16 +90,16 @@ public interface LicenseKeyGroups {
       response = LicenseKeyGroupEntityDto.class)
   Response getLicenseKeyGroup(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
-      @Pattern(regexp = Version.VERSION_REGEX, message = Version.VERSION_STRING_VIOLATION_MSG)
-      @QueryParam("version") String version,
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @DELETE
   @Path("/{licenseKeyGroupId}")
   @ApiOperation(value = "Delete vendor license key group")
   Response deleteLicenseKeyGroup(
       @ApiParam(value = "Vendor license model Id") @PathParam("vlmId") String vlmId,
+      @ApiParam(value = "Vendor license model version Id") @PathParam("versionId") String versionId,
       @PathParam("licenseKeyGroupId") String licenseKeyGroupId,
-      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_HEADER_PARAM) String user);
+      @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 }

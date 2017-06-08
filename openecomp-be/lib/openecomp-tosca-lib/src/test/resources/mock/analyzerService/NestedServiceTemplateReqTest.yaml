@@ -2,25 +2,25 @@ tosca_definitions_version: tosca_simple_yaml_1_0_0
 metadata:
   template_name: nested
 imports:
-  NeutronPortGlobalTypes:
+- NeutronPortGlobalTypes:
     file: NeutronPortGlobalTypesServiceTemplate.yaml
-  NeutronNetGlobalTypes:
+- NeutronNetGlobalTypes:
     file: NeutronNetGlobalTypesServiceTemplate.yaml
-  CommonGlobalTypes:
+- CommonGlobalTypes:
     file: CommonGlobalTypesServiceTemplate.yaml
-  CinderVolumeGlobalTypes:
+- CinderVolumeGlobalTypes:
     file: CinderVolumeGlobalTypesServiceTemplate.yaml
-  ContrailNetworkRuleGlobalType:
+- ContrailNetworkRuleGlobalType:
     file: ContrailNetworkRuleGlobalTypeServiceTemplate.yaml
-  NeutronSecurityRulesGlobalTypes:
+- NeutronSecurityRulesGlobalTypes:
     file: NeutronSecurityRulesGlobalTypesServiceTemplate.yaml
-  NovaServerGlobalTypes:
+- NovaServerGlobalTypes:
     file: NovaServerGlobalTypesServiceTemplate.yaml
-  ContrailVirtualNetworkGlobalType:
+- ContrailVirtualNetworkGlobalType:
     file: ContrailVirtualNetworkGlobalTypeServiceTemplate.yaml
-  AbstractSubstituteGlobalTypes:
+- AbstractSubstituteGlobalTypes:
     file: AbstractSubstituteGlobalTypesServiceTemplate.yaml
-  nested:
+- nested:
     file: GlobalSubstitutionTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.vfc.nodes.heat.cmaui_image:

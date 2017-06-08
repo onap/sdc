@@ -1,0 +1,294 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Main
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+topology_template:
+  inputs:
+    fsb1-name:
+      label: FSB1_name
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_name
+    fsb1-Internal1-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    cps_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-flavor:
+      label: FSB1_flavor
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_flavor
+    fsb1-Internal2-mac:
+      label: FSB1_internal_mac
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_internal_mac
+    volume_type:
+      label: volume type
+      hidden: false
+      immutable: false
+      type: string
+      description: volume type Gold
+    fsb_zone:
+      label: FSB1_zone
+      hidden: false
+      immutable: false
+      type: string
+      description: FSB1_zone
+    oam_net_gw:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    network_name:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    cps_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    jsa_net_name:
+      label: jsa_net_name
+      hidden: false
+      immutable: false
+      type: string
+      description: jsa_net_name
+      default: jsa_log_net_0
+    pcrf_psm_server_name:
+      label: pcrf_psm_server_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcrf_psm_server_name
+    pcm_flavor_name:
+      label: pcm_flavor_name
+      hidden: false
+      immutable: false
+      type: string
+      description: pcm_flavor_name
+    oam_net_id:
+      label: oam_net_id
+      hidden: false
+      immutable: false
+      type: string
+      description: oam_net_id
+    oam_net_ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    oam_net_mask:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+    fsb1-oam-ip:
+      hidden: false
+      immutable: false
+      type: string
+      description: prop
+  node_templates:
+    jsa_net1:
+      type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
+      properties:
+        shared: true
+        network_name:
+          get_attribute:
+          - FSB1_Internal1
+          - network_id
+        dhcp_agent_ids:
+          get_attribute:
+          - FSB1_template
+          - addresses
+        tenant_id:
+          get_attribute:
+          - FSB2_Internal2
+          - network_id
+        qos_policy:
+          get_attribute:
+          - FSB2_Internal2
+          - network_id
+    cmaui_volume1:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    cmaui_volume2:
+      type: org.openecomp.resource.vfc.nodes.heat.cinder.Volume
+      properties:
+        volume_type:
+          get_input: CMAUI_volume_type
+        size: '(get_input : cmaui_cinder_volume_size) * 1024'
+    abstract_FSB1_0:
+      type: org.openecomp.resource.abstract.nodes.FSB1_0
+      directives:
+      - substitutable
+      properties:
+        port_FSB1_Internal_mac_address:
+        - get_input: fsb1-Internal1-mac
+        compute_FSB1_availability_zone:
+        - get_input: fsb_zone
+        port_FSB1_Internal_network:
+        - Internal1-net
+        port_FSB2_Internal_network:
+        - Internal2-net
+        vm_flavor_name:
+          get_input: fsb1-flavor
+        port_FSB2_Internal_mac_address:
+        - get_input: fsb1-Internal2-mac
+        service_template_filter:
+          substitute_service_template: Nested_FSB1_0ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_FSB1_FSB1_Internal:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume1
+          relationship: cmaui_volume_attachment
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume2
+          relationship: cmaui_volume_attachment
+    abstract_FSB1_1:
+      type: org.openecomp.resource.abstract.nodes.FSB1_1
+      directives:
+      - substitutable
+      properties:
+        compute_FSB1_availability_zone:
+        - get_input: fsb_zone
+        vm_flavor_name:
+          get_input: fsb1-flavor
+        service_template_filter:
+          substitute_service_template: Nested_FSB1_1ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_FSB1_FSB1_Internal:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume1
+          relationship: cmaui_volume_attachment
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume2
+          relationship: cmaui_volume_attachment
+    abstract_FSB1_2:
+      type: org.openecomp.resource.abstract.nodes.FSB1_2
+      directives:
+      - substitutable
+      properties:
+        compute_FSB1_availability_zone:
+        - get_input: fsb_zone
+        vm_flavor_name:
+          get_input: fsb1-flavor
+        service_template_filter:
+          substitute_service_template: Nested_FSB1_2ServiceTemplate.yaml
+          count: 1
+        index_value:
+          get_property:
+          - SELF
+          - service_template_filter
+          - index_value
+      requirements:
+      - link_FSB1_FSB1_Internal:
+          capability: tosca.capabilities.network.Linkable
+          node: jsa_net1
+          relationship: tosca.relationships.network.LinksTo
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume1
+          relationship: cmaui_volume_attachment
+      - local_storage_FSB1:
+          capability: tosca.capabilities.Attachment
+          node: cmaui_volume2
+          relationship: cmaui_volume_attachment
+  groups:
+    ep-jsa_net_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/ep-jsa_net.yaml
+        description: |
+          Version 2.0 02-09-2016 (Authors: John Doe, user PROD)
+      members:
+      - abstract_FSB1_0
+      - abstract_FSB1_1
+      - abstract_FSB1_2
+  outputs:
+    simpleOutput1:
+      value:
+        get_attribute:
+        - abstract_FSB1_0
+        - FSB1_accessIPv4
+    simpleOutput2:
+      value:
+        get_attribute:
+        - FSB2_template
+        - addresses
+        - key1
+    complexOutput1:
+      value:
+        get_attribute:
+        - abstract_FSB1_0
+        - FSB1_addresses
+        - get_attribute:
+          - abstract_FSB1_0
+          - FSB1_FSB2_Internal_index
+    complexOutput2:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_attribute:
+        - FSB1_Internal2
+        - addresses
+        - get_input:
+          - CMAUI_volume_type
+          - get_attribute:
+            - FSB2_Internal1
+            - oam_index
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr
+    complexOutput3:
+      description: cgi fw01 left interface Mac-Address
+      value:
+        get_input:
+        - a
+        - addresses
+        - get_input:
+          - CMAUI_volume_type
+          - get_attribute:
+            - abstract_FSB1_0
+            - FSB1_FSB1_Internal_accessIPv6
+        - 0
+        - OS-EXT-IPS-MAC:mac_addr

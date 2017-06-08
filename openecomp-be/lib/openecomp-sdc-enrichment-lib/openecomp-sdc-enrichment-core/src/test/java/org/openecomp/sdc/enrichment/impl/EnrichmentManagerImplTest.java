@@ -1,29 +1,54 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.enrichment.impl;
 
-import org.openecomp.sdc.enrichment.impl.tosca.ComponentInfo;
+import static org.junit.Assert.assertEquals;
+
+import org.openecomp.core.enrichment.api.EnrichmentManager;
+import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
+import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.tosca.services.yamlutil.ToscaExtensionYamlUtil;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.core.enrichment.api.EnrichmentManager;
-import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
-
-import org.openecomp.core.enrichment.types.CeilometerInfo;
-import org.openecomp.core.enrichment.types.ComponentCeilometerInfo;
-import org.openecomp.core.utilities.file.FileUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.NotDirectoryException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static org.junit.Assert.assertEquals;
 
 
 public class EnrichmentManagerImplTest {
@@ -88,100 +113,15 @@ public class EnrichmentManagerImplTest {
     }
   }
 
-//  @Test
+  @Test
   public void testEnrichmentManagerImpl() throws Exception {
     Assert.assertTrue(
         EnrichmentManagerFactory.getInstance().createInterface() instanceof EnrichmentManagerImpl);
   }
 
-//  @Test
-  public void testEnrichModel() throws Exception {
-    ToscaServiceModel toscaServiceModel =
-        loadToscaServiceModel("/extractServiceComposition/onlyComponents/",
-            "/extractServiceComposition/toscaGlobalServiceTemplates/", "OnlyComponentsST.yaml");
-    EnrichmentManager enrichmentManager = EnrichmentManagerFactory.getInstance().createInterface();
-    enrichmentManager.initInput("vsp_enrich", new Version(0, 1));
-    enrichmentManager.addModel(toscaServiceModel);
-
-    String[] componentNames = new String[]{"org.openecomp.resource.vfc.nodes.heat.pcrf_psm",
-        "org.openecomp.resource.vfc.nodes.heat.pcm"};
-    ComponentInfo componentInfo = new ComponentInfo();
-
-    CeilometerInfo ceilometerInfo;
-    ComponentCeilometerInfo componentCeilometerInfo = new ComponentCeilometerInfo();
-    componentCeilometerInfo.setCeilometerInfoList(new ArrayList<>());
-    componentInfo.setCeilometerInfo(componentCeilometerInfo);
-
-    for (String componentName : componentNames) {
-      ceilometerInfo =
-          getCeilometerInfo("instance", "Gauge", "instance", "compute", "Existence of instance");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      ceilometerInfo = getCeilometerInfo("memory", "Gauge", "MB", "compute",
-          "Volume of RAM allocated to the instance");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      ceilometerInfo = getCeilometerInfo("cpu", "Cumulative", "ns", "compute", "CPU time used");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      enrichmentManager.addEntityInput(componentName, componentInfo);
-    }
-
-    enrichmentManager.enrich();
-
-    File csrFile = getToscaModelAsFile(toscaServiceModel);
-    compareActualAndExpected(csrFile);
-
-  }
-
-//  @Test
-  public void testAllEnrichModel() throws Exception {
-    ToscaServiceModel toscaServiceModel = loadToscaServiceModel("/extractServiceComposition/all/",
-        "/extractServiceComposition/toscaGlobalServiceTemplates/", "OnlyComponentsST.yaml");
-    EnrichmentManager enrichmentManager = EnrichmentManagerFactory.getInstance().createInterface();
-    enrichmentManager.initInput("vsp_enrich", new Version(0, 1));
-    enrichmentManager.addModel(toscaServiceModel);
-
-    String[] componentNames = new String[]{"org.openecomp.resource.vfc.nodes.heat.pcrf_psm",
-        "org.openecomp.resource.vfc.nodes.heat.pcm"};
-    ComponentInfo componentInfo = new ComponentInfo();
-
-    CeilometerInfo ceilometerInfo;
-    ComponentCeilometerInfo componentCeilometerInfo = new ComponentCeilometerInfo();
-    componentCeilometerInfo.setCeilometerInfoList(new ArrayList<>());
-    componentInfo.setCeilometerInfo(componentCeilometerInfo);
-
-    for (String componentName : componentNames) {
-      ceilometerInfo =
-          getCeilometerInfo("instance", "Gauge", "instance", "compute", "Existence of instance");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      ceilometerInfo = getCeilometerInfo("memory", "Gauge", "MB", "compute",
-          "Volume of RAM allocated to the instance");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      ceilometerInfo = getCeilometerInfo("cpu", "Cumulative", "ns", "compute", "CPU time used");
-      componentInfo.getCeilometerInfo().getCeilometerInfoList().add(ceilometerInfo);
-      enrichmentManager.addEntityInput(componentName, componentInfo);
-    }
-
-    enrichmentManager.enrich();
-
-    File csrFile = getToscaModelAsFile(toscaServiceModel);
-    compareActualAndExpected(csrFile);
-
-  }
-
-  private CeilometerInfo getCeilometerInfo(String name, String type, String unit, String category,
-                                           String description) {
-    CeilometerInfo ceilometerInfo = new CeilometerInfo();
-    ceilometerInfo.setName(name);
-    ceilometerInfo.setType(type);
-    ceilometerInfo.setUnit(unit);
-    ceilometerInfo.setCategory(category);
-    ceilometerInfo.setDescription(description);
-    return ceilometerInfo;
-  }
-
   private File getToscaModelAsFile(ToscaServiceModel toscaServiceModel) throws IOException {
 
-    URL inputFilesUrl =
-        EnrichmentManagerImplTest.class.getResource("/extractServiceComposition/onlyComponents");
+    URL inputFilesUrl = EnrichmentManagerImplTest.class.getResource("/mock/enrich/input");
     String path = inputFilesUrl.getPath();
 
 
@@ -198,16 +138,16 @@ public class EnrichmentManagerImplTest {
     return file;
   }
 
-  protected void compareActualAndExpected(File actualFile) throws IOException {
+  protected void compareActualAndExpected(File actualFile, String expectedOutputPath)
+      throws IOException {
 
-    URL url = EnrichmentManagerImplTest.class
-        .getResource("/extractServiceComposition/onlyComponents/expectedOutput");
+    URL url = EnrichmentManagerImplTest.class.getResource(expectedOutputPath);
     Set<String> expectedResultFileNameSet = new HashSet<>();
     Map<String, byte[]> expectedResultMap = new HashMap<>();
     String path = url.getPath();
     File pathFile = new File(path);
     File[] files = pathFile.listFiles();
-    org.junit.Assert.assertNotNull("manifest files is empty", files);
+    org.junit.Assert.assertNotNull("model is empty", files);
     for (File expectedFile : files) {
       expectedResultFileNameSet.add(expectedFile.getName());
       try (FileInputStream input = new FileInputStream(expectedFile)) {

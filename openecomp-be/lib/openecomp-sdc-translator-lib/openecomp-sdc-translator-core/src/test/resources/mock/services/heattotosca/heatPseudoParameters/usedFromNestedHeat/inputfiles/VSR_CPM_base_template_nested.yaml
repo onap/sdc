@@ -1,0 +1,98 @@
+heat_template_version: 2013-05-23
+
+parameters:
+
+  availability_zone_0:
+    type: string
+    description: Availability zone where this component should be instantiated
+  cpm_image_name:
+    type: string
+    description: Image to be used for the instance
+  cpm_flavor_name:
+    type: string
+    description: Flavor of the VNF to be used
+  security_group:
+    type: string
+    description: Security group to be used
+  mgt_net_id:
+    type: string
+    description: Network used by the Management interface
+  mgt_subnet_id:
+    type: string
+    description: Subnet used by the Management interface
+  ctrl_fabric_net_id: 
+    type: string
+    description: Network used by the Control Fabric interface
+  ctrl_fabric_subnet_id: 
+    type: string
+    description: Subnet used by the Control Fabric interface
+  cpm_mgt_ip:
+    type: string
+    description: Fixed IP that will be used by the primary Management Interface
+  cpm_mgt_cidr:
+    type: string
+    description: Fixed IP that will be used by the secondary Management Interface
+  stack_name:
+    type: string
+    description: Name of the HEAT stack
+  stack_id:
+    type: string
+    description: Id of the HEAT stack
+  project_id:
+    type: string
+    description: Id of the HEAT project
+  cpm_smbios:
+    type: string
+    description: Parameters to be passed to the VM at boot up as key-value pairs
+  cpm_slot:
+    type: string
+    description: The slot value assigned to the module eg A and B
+  cpm_mtu:
+    type: string
+    description: MTU size in bytes
+  vnf_id:
+    type: string
+    description: VNF ID
+  vm_name:
+    type: string
+    description: Name of the VNF
+  vf_module_id:
+    type: string
+    description: VNF Module ID
+
+resources: 
+  cpm_mgt_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: mgt_net_id }
+      security_groups: [ { get_param: security_group} ]
+      fixed_ips: [ { subnet_id: { get_param: mgt_subnet_id }, ip_address: { get_param: cpm_mgt_ip } } ]
+      allowed_address_pairs: [ { ip_address: { get_param: cpm_mgt_cidr } } ]
+
+  cpm_ctrl_fabric_0_port:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: ctrl_fabric_net_id }
+      security_groups: [ { get_param: security_group} ]
+      fixed_ips: [ { subnet_id: { get_param: ctrl_fabric_subnet_id } } ]
+      value_specs:
+        extra_dhcp_opts:
+        - {opt_name: interface-mtu, opt_value: { get_param: cpm_mtu } }
+
+  CPM:
+    type: OS::Nova::Server
+    depends_on: [ cpm_mgt_0_port, cpm_ctrl_fabric_0_port ]
+    properties:
+      name: { get_param: vm_name }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+      image: { get_param: cpm_image_name }
+      flavor: { get_param: cpm_flavor_name }
+      availability_zone: { get_param: availability_zone_0 }
+      config_drive: "true"
+      user_data: { get_param: cpm_smbios }
+      user_data_format: "RAW"
+      networks:
+        - port: { get_resource: cpm_mgt_0_port }
+        - port: { get_resource: cpm_ctrl_fabric_0_port }

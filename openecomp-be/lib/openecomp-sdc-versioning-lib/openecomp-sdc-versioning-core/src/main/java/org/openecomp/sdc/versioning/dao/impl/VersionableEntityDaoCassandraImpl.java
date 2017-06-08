@@ -24,6 +24,8 @@ import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.mapping.UDTMapper;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.core.nosqldb.api.NoSqlDb;
 import org.openecomp.core.nosqldb.factory.NoSqlDbFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -32,8 +34,6 @@ import org.openecomp.sdc.versioning.dao.VersionableEntityDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.UniqueValueMetadata;
 import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
-
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +45,8 @@ import java.util.stream.Collectors;
 class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
 
   private static final NoSqlDb noSqlDb = NoSqlDbFactory.getInstance().createInterface();
-  private static org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(VersionableEntityDaoCassandraImpl.class);
+  private static Logger Logger =
+      (Logger) LoggerFactory.getLogger(VersionableEntityDaoCassandraImpl.class);
   private static UDTMapper<Version> versionMapper =
       noSqlDb.getMappingManager().udtMapper(Version.class);
 
@@ -96,6 +96,22 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
     }
   }
 
+  @Override
+  public void deleteVersion(VersionableEntityMetadata metadata, String entityId,
+                            Version versionToDelete, Version backToVersion) {
+    deleteRowsUniqueValues(metadata, entityId, versionToDelete);
+
+    String deleteCql = String.format("delete from %s where %s=? and %s=?", metadata.getName(),
+        metadata.getIdentifierName(), metadata.getVersionIdentifierName());
+    noSqlDb.execute(deleteCql, entityId, versionMapper.toUDT(versionToDelete));
+  }
+
+  @Override
+  public void closeVersion(VersionableEntityMetadata versionableTableMetadata, String entityId,
+                           Version versionToClose) {
+    // redundant in cassandra impl.
+  }
+
   private ResultSet loadVersionRows(VersionableEntityMetadata metadata, String entityId,
                                     Version version) {
     String selectCql = String.format("select * from %s where %s=? and %s=?", metadata.getName(),
@@ -105,16 +121,6 @@ class VersionableEntityDaoCassandraImpl implements VersionableEntityDao {
     Logger.debug("version", version);
 
     return noSqlDb.execute(selectCql, entityId, versionMapper.toUDT(version));
-  }
-
-  @Override
-  public void deleteVersion(VersionableEntityMetadata metadata, String entityId,
-                            Version versionToDelete) {
-    deleteRowsUniqueValues(metadata, entityId, versionToDelete);
-
-    String deleteCql = String.format("delete from %s where %s=? and %s=?", metadata.getName(),
-        metadata.getIdentifierName(), metadata.getVersionIdentifierName());
-    noSqlDb.execute(deleteCql, entityId, versionMapper.toUDT(versionToDelete));
   }
 
   private void initRowUniqueValues(List<UniqueValueMetadata> metadata,

@@ -1,30 +1,27 @@
-/*-
- * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
+/*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
- * ================================================================================
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+'use strict';
 
-var gulp, replace, Promise, webpack, webpackProductionConfig;
+let gulp, replace, Promise, webpack, webpackProductionConfig;
 
-var supportedLanguages = ['en'];
+const supportedLanguages = ['en'];
 
 function start(options) {
 
-	var promises = [buildIndex(options)];
+	let promises = [buildIndex(options)];
 	supportedLanguages.forEach(function (lang) {
 		promises.push(bundleJS(options, lang));
 	});
@@ -33,7 +30,7 @@ function start(options) {
 
 function bundleJS(options, lang) {
 	return new Promise(function (resolve, reject) {
-		var prodConfig = webpackProductionConfig;
+		let prodConfig = webpackProductionConfig;
 		prodConfig.resolve.alias.i18nJson = options.outDir + '/i18n/' + lang + '/locale.json';
 		prodConfig.output.filename = jsFileByLang(options.outFileName, lang);
 		webpack(prodConfig, function (err, stats) {
@@ -54,9 +51,9 @@ function buildIndex(options) {
 
 	return new Promise(function (resolve, reject) {
 
-		var stream = gulp.src(options.outDir + '/index.html');
-
-		stream.pipe(replace(/\/\/<!--prod:delete-->(.|[\r\n])*?<!--\/prod:delete-->/g, ''))//in script occurrences.
+		// gulp.src returns a stream object
+		gulp.src(options.outDir + '/index.html')
+			.pipe(replace(/\/\/<!--prod:delete-->(.|[\r\n])*?<!--\/prod:delete-->/g, ''))//in script occurrences.
 			.pipe(replace(/<!--prod:delete-->(.|[\r\n])*?<!--\/prod:delete-->/g, ''))//out of script occurrences.
 			.pipe(replace(/<!--prod:add(-->)?/g, ''))
 			.pipe(replace(/\/\/<!--prod:supported-langs-->(.|[\r\n])*?<!--\/prod:supported-langs-->/g, supportedLanguages.map(function (val) {
@@ -84,12 +81,21 @@ function jsFileByLang(fileName, lang) {
  * @param options.outFileName optional <default build>
  */
 function prodTask(options) {
-
 	gulp = require('gulp');
 	replace = require('gulp-replace');
 	Promise = require('bluebird');
 	webpack = require('webpack');
-	webpackProductionConfig = options.webpackProductionConfig;
+
+	webpackProductionConfig = require('../../../webpack.production');
+	webpackProductionConfig.module.rules = webpackProductionConfig.module.rules.filter(rule => ((rule.enforce !== 'pre') || (rule.enforce === 'pre' && rule.loader !== 'source-map-loader')));
+	webpackProductionConfig.module.rules.forEach(loader => {
+		if (loader.use && loader.use[0].loader === 'style-loader') {
+			loader.use = loader.use.map(loaderObj => loaderObj.loader.replace('?sourceMap', ''));
+		}
+	});
+
+
+	webpackProductionConfig.module.rules.push({test: /config.json$/, use: [{loader:'config-json-loader'}]});
 
 	return start({
 		outFileName: options.outFileName || '[name].js',

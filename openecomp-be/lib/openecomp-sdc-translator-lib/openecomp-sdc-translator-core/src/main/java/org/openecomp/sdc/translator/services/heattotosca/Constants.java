@@ -44,6 +44,13 @@ public class Constants {
   public static final String CONTRAIL_PORT_TEMPLATE_NAME = "ContrailPortGlobalTypes";
   public static final String CONTRAIL_ABSTRACT_SUBSTITUTE_TEMPLATE_NAME =
       "ContrailAbstractSubstituteGlobalTypes";
+  public static final String MAIN_TEMPLATE_NAME = "Main";
+  public static final String PORT_TEMPLATE_NAME = "PortGlobalTypes";
+  public static final String COMPUTE_TEMPLATE_NAME = "ComputeGlobalTypes";
+  public static final String NETWORK_TEMPLATE_NAME = "NetworkGlobalTypes";
+  public static final String SUB_INTERFACE_TEMPLATE_NAME = "SubInterfaceGlobalTypes";
+  public static final String CONTRAILV2_VLAN_SUB_INTERFACE_TEMPLATE_NAME =
+          "ContrailV2VLANSubInterfaceGlobalType";
   //properties
   public static final String MAX_INSTANCES_PROPERTY_NAME = "max_instances";
   public static final String DESCRIPTION_PROPERTY_NAME = "description";
@@ -54,6 +61,12 @@ public class Constants {
   //General
   public static final String PROP = "properties";
   public static final String ATTR = "attributes";
+  public static final String SERVICE_INSTANCE_PORT_PREFIX = "port_";
+  public static final String SERVICE_INSTANCE_LINK_PREFIX = "link_";
+  //Unified model
+  public static final String IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
+  public static final String IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";
+  public static final String ABSTRACT_NODE_TEMPLATE_ID_PREFIX = "abstract_";
 
   private Constants() {
   }
