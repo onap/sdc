@@ -596,7 +596,7 @@
 						WEB-INF/classes/portal.properties</packagingExcludes>
 					<archive>
 						<manifestEntries>
-							<SDC-Version>${full.release.version}</SDC-Version>
+							<SDC-Version>${project.version}</SDC-Version>
 						</manifestEntries>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -738,7 +738,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-normatives/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
+							<outputDirectory>${project.parent.basedir}/sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default</outputDirectory>
 							<resources>
 								<resource>
 									<directory>./target</directory>

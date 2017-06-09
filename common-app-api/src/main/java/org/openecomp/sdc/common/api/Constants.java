@@ -62,7 +62,7 @@ public interface Constants {
 	public static final String SERVICE_ARTIFACT_ID_FORMAT = "%s:%s:%s:%s"; // serviceName:serviceVersion:nodeTemplateName:artifactName
 	public static final String CONTENT_DISPOSITION = "content-disposition";
 	public static final String DOWNLOAD_ARTIFACT_LOGIC_ATTR = "downloadArtifactLogic";
-	public static final String ASDC_RELEASE_VERSION_ATTR = "ASDC-Version";
+	public static final String ASDC_RELEASE_VERSION_ATTR = "SDC-Version";
 	// public static final String AUDITING_MANAGER = "auditingManager";
 	// public static final String USER_ADMIN_MANAGER = "userAdminManager";
 	public static final String YEAR = "year";
