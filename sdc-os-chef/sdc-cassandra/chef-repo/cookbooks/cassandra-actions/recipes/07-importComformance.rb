@@ -1,5 +1,5 @@
 working_directory =  "/tmp"
-cl_release=node['version'].split('.')[0..2].join('.').split('-')[0]
+cl_release="1.1.1"
 printf("\033[33mcl_release=[%s]\n\033[0m", cl_release)
 
 cookbook_file "/tmp/sdctool.tar" do
