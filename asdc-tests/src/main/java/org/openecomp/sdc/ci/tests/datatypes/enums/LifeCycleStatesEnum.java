@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
+import java.util.List;
+
 public enum LifeCycleStatesEnum {
 
 	CHECKOUT("checkout", "NOT_CERTIFIED_CHECKOUT"), 

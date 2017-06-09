@@ -1,0 +1,50 @@
+package org.openecomp.sdc.be.dao.jsongraph.types;
+
+public enum EdgeLabelEnum {
+	ARTIFACTS,
+	DEPLOYMENT_ARTIFACTS,
+	INST_DEPLOYMENT_ARTIFACTS,
+	INSTANCE_ARTIFACTS,
+	INTERFACE_ARTIFACTS,
+	TOSCA_ARTIFACTS,
+	PROPERTIES,
+	CAPABILITIES,
+	CAPABILITIES_PROPERTIES,
+	REQUIREMENTS,
+	ATTRIBUTES,
+	ADDITIONAL_INFORMATION,
+	CATEGORY,
+	DERIVED_FROM,
+	STATE,
+	LAST_STATE,
+	LAST_MODIFIER,
+	VERSION,
+	CREATOR,
+	SUB_CATEGORY,
+	INPUTS,
+	GROUPS,
+	INST_PROPERTIES,
+	INST_INPUTS,
+	INST_ATTRIBUTES,
+	INST_GROUPS,
+	SERVICE_API_ARTIFACTS,
+	CALCULATED_CAPABILITIES,
+	FULLFILLED_CAPABILITIES, 
+	CALCULATED_REQUIREMENTS,
+	FULLFILLED_REQUIREMENTS,
+	LAST_DISTRIBUTION_STATE_MODIFIER,
+	CALCULATED_CAP_PROPERTIES;
+	/**
+	 * Returns EdgeLabelEnum according received name
+	 * @param name
+	 * @return
+	 */
+	public static EdgeLabelEnum getEdgeLabelEnum(String name){
+		for(EdgeLabelEnum currLabel : EdgeLabelEnum.values()){
+			if (currLabel.name().equals(name)){
+				return currLabel;
+			}
+		}
+		return null;
+	}
+}

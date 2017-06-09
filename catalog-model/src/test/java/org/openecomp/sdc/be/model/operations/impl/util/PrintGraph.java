@@ -316,7 +316,7 @@ public class PrintGraph {
 		switch (typeEnum) {
 
 		case User:
-			uid = (String) properties.get(GraphPropertiesDictionary.USER_ID.getProperty());
+			uid = (String) properties.get(GraphPropertiesDictionary.USERID.getProperty());
 			break;
 		case ServiceCategory:
 		case ResourceCategory:

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum FilterKeyEnum {
-	SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus");
+	RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT("nameFragment");
 
 	private String name;
 
@@ -44,9 +44,9 @@ public enum FilterKeyEnum {
 	public static List<String> getValidFiltersByAssetType(ComponentTypeEnum assetType) {
 		switch (assetType) {
 		case RESOURCE:
-			return getAllFilters().subList(0, 2);
+			return getAllFilters().subList(0, 3);
 		case SERVICE:
-			return getAllFilters().subList(1, 3);
+			return getAllFilters().subList(2, 4);
 		default:
 			return null;
 		}

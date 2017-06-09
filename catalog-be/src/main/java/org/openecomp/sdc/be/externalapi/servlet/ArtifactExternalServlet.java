@@ -40,11 +40,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.servlets.BeGenericServlet;
+import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
@@ -71,12 +72,14 @@ import fj.data.Either;
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
 @Singleton
-public class ArtifactExternalServlet extends BeGenericServlet {
+public class ArtifactExternalServlet extends AbstractValidationsServlet {
 
 	@Context
 	private HttpServletRequest request;
 
 	private static Logger log = LoggerFactory.getLogger(ArtifactExternalServlet.class.getName());
+	
+	private static String startLog = "Start handle request of ";
 
 	/**
 	 * Uploads an artifact to resource or service
@@ -92,60 +95,58 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact uploaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response uploadArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @ApiParam(value = "json describe the artifact", required = true) String data) {
-
-		Wrapper<Response> responseWrapper = new Wrapper<>();
-		ResponseFormat responseFormat = null;
+		init(log);
+		
+		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		
 		if (componentType == null) {
 			log.debug("uploadArtifact: assetType parameter {} is not valid", assetType);
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
-			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
-		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
-			log.debug("uploadArtifact: Missing X-ECOMP-InstanceID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
-			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
-		}
-		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
-			log.debug("uploadArtifact: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
-			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
+			responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
 		}
 		if (responseWrapper.isEmpty()) {
-			try {
+			validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
+		}
+		if (responseWrapper.isEmpty() ) {
+			validateHttpCspUserIdHeader(userId, responseWrapper);
+		}
+		Response response = null;
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToComponentByUUID(data, request, componentType, uuid,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Create));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to upload artifact");
-					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
-					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
+					responseWrapper.setInnerElement(uploadArtifactEither.right().value());
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
-					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
-					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
+					responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.OK));
+					response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers);
 				}
-			} catch (Exception e) {
-				final String message = "failed to upload artifact to a resource or service";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+			} 
+			if( response == null ){
+				response = buildErrorResponse(responseWrapper.getInnerElement());
 			}
+			return response;
+		} catch (Exception e) {
+			final String message = "failed to upload artifact to a resource or service";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		} finally {
+			getComponentsUtils().auditExternalUploadArtifact(responseWrapper.getInnerElement(), componentTypeValue, request, additionalParams);
 		}
-		return responseWrapper.getInnerElement();
 	}
 
 	/**
@@ -171,51 +172,51 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 		String requestURI = request.getRequestURI();
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceInstanceName);
 		if (componentType == null) {
 			log.debug("uploadArtifact: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("uploadArtifact: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
 		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
 			log.debug("uploadArtifact: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.uploadArtifactToRiByUUID(data, request, componentType, uuid, resourceInstanceName,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Create));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to upload artifact");
 					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to upload artifact to a resource instance";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
-			}
+			} 
+		}catch (Exception e) {
+			final String message = "failed to upload artifact to a resource instance";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalUploadArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -243,52 +244,51 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 		String requestURI = request.getRequestURI();
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("updateArtifact: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
-		// Mandatory
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("updateArtifact: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
 		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
-			log.debug("updateArtifact: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
+			log.debug("updateArtifact: Missing USER_ID");
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnComponentByUUID(data, request, componentType, uuid, artifactUUID,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Update));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to update artifact");
 					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to update artifact on a resource or service";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
 			}
+		} catch (Exception e) {
+			final String message = "failed to update artifact on a resource or service";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -317,51 +317,52 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 		String requestURI = request.getRequestURI();
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceInstanceName);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("updateArtifactOnResourceInstance: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("updateArtifactOnResourceInstance: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
 		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
 			log.debug("updateArtifactOnResourceInstance: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.updateArtifactOnRiByUUID(data, request, componentType, uuid, resourceInstanceName, artifactUUID,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Update));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to update artifact");
 					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to update artifact on resource instance";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
 			}
+		} catch (Exception e) {
+			final String message = "failed to update artifact on resource instance";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalUpdateArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -383,57 +384,56 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 	public Response deleteArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
-		ResponseFormat responseFormat;
+		ResponseFormat responseFormat = null;
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
-
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("deleteArtifact: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("deleteArtifact: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
 		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
 			log.debug("deleteArtifact: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnComponentByUUID(request, componentType, uuid, artifactUUID,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Delete));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to delete artifact");
 					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to delete an artifact of a resource or service";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
 			}
+		} catch (Exception e) {
+			final String message = "failed to delete an artifact of a resource or service";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -456,57 +456,57 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 			@PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
-		ResponseFormat responseFormat;
+		ResponseFormat responseFormat = null;
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
-
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceInstanceName);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("deleteArtifactOnResourceInsatnce: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("deleteArtifactOnResourceInsatnce: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
 		if (responseWrapper.isEmpty() && (userId == null || userId.isEmpty())) {
 			log.debug("deleteArtifactOnResourceInsatnce: Missing USER_ID header");
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.COMPONENT_MISSING_CONTACT);
-			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
+			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_USER_ID);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID, additionalParams);
+				Either<ArtifactDefinition, ResponseFormat> uploadArtifactEither = artifactsLogic.deleteArtifactOnRiByUUID(request, componentType, uuid, resourceInstanceName, artifactUUID,
+						additionalParams, artifactsLogic.new ArtifactOperationInfo(true, false, ArtifactOperationEnum.Delete));
 				if (uploadArtifactEither.isRight()) {
 					log.debug("failed to delete artifact");
 					responseFormat = uploadArtifactEither.right().value();
-					getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					Object representation = RepresentationUtils.toRepresentation(uploadArtifactEither.left().value());
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByString((String) representation));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentType.getValue(), request, additionalParams);
 					responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), representation, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to delete an artifact of a resource instance";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
-			}
+			} 
+		} catch (Exception e) {
+			final String message = "failed to delete an artifact of a resource instance";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalDeleteArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -530,33 +530,32 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 			@PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
-		ResponseFormat responseFormat;
+		ResponseFormat responseFormat = null;
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("downloadComponentArtifact: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("downloadComponentArtifact: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<byte[], ResponseFormat> downloadComponentArtifactEither = artifactsLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, additionalParam);
+				Either<byte[], ResponseFormat> downloadComponentArtifactEither = artifactsLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, additionalParams);
 				if (downloadComponentArtifactEither.isRight()) {
 					responseFormat = downloadComponentArtifactEither.right().value();
-					getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					byte[] value = downloadComponentArtifactEither.left().value();
@@ -564,15 +563,16 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByByteArray(value));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 					responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to download an artifact of a resource or service";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
 			}
+		} catch (Exception e) {
+			final String message = "failed to download an artifact of a resource or service";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}
@@ -597,33 +597,33 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 			@PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName, @PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
-		ResponseFormat responseFormat;
+		ResponseFormat responseFormat = null;
 		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
+		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		String componentTypeValue = componentType == null ? null : componentType.getValue();
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceInstanceName);
+		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_CURR_ARTIFACT_UUID, artifactUUID);
 		if (componentType == null) {
 			log.debug("downloadResourceInstanceArtifact: assetType parameter {} is not valid", assetType);
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<>(AuditingFieldsKeysEnum.class);
-
 		if (responseWrapper.isEmpty() && (instanceIdHeader == null || instanceIdHeader.isEmpty())) {
 			log.debug("downloadResourceInstanceArtifact: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
-			getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 			responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 		}
-		if (responseWrapper.isEmpty()) {
-			try {
+		try {
+			if (responseWrapper.isEmpty()) {
 				ServletContext context = request.getSession().getServletContext();
 				ArtifactsBusinessLogic artifactsLogic = getArtifactBL(context);
-				Either<byte[], ResponseFormat> downloadResourceArtifactEither = artifactsLogic.downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID, additionalParam);
+				Either<byte[], ResponseFormat> downloadResourceArtifactEither = artifactsLogic.downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID, additionalParams);
 				if (downloadResourceArtifactEither.isRight()) {
 					responseFormat = downloadResourceArtifactEither.right().value();
-					getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 					responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
 				} else {
 					byte[] value = downloadResourceArtifactEither.left().value();
@@ -631,15 +631,16 @@ public class ArtifactExternalServlet extends BeGenericServlet {
 					Map<String, String> headers = new HashMap<>();
 					headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5ByByteArray(value));
 					responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-					getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentType.getValue(), request, additionalParam);
 					responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
 				}
-			} catch (Exception e) {
-				final String message = "failed to download an artifact of a resource instance";
-				BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
-				log.debug(message, e);
-				responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
 			}
+		} catch (Exception e) {
+			final String message = "failed to download an artifact of a resource instance";
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError(message);
+			log.debug(message, e);
+			responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
+		} finally {
+			getComponentsUtils().auditExternalDownloadArtifact(responseFormat, componentTypeValue, request, additionalParams);
 		}
 		return responseWrapper.getInnerElement();
 	}

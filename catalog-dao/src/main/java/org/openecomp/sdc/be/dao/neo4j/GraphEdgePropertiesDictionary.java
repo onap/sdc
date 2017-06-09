@@ -29,10 +29,14 @@ public enum GraphEdgePropertiesDictionary {
 
 	// field name class type
 	// stored in graph
-	STATE("state", String.class), NAME("name", String.class), GROUP_TYPE("groupType", String.class), SOURCE("source",
-			String.class), OWNER_ID("ownerId", String.class), REQUIRED_OCCURRENCES("requiredOccurrences",
-					String.class), LEFT_OCCURRENCES("leftOccurrences",
-							String.class), GET_INPUT_INDEX("get_input_index", String.class);
+	STATE("state", String.class), 
+	NAME("name", String.class), 
+	GROUP_TYPE("groupType", String.class), 
+	SOURCE("source", String.class), 
+	OWNER_ID("ownerId", String.class), 
+	REQUIRED_OCCURRENCES("requiredOccurrences", String.class), 
+	LEFT_OCCURRENCES("leftOccurrences", String.class), 
+	GET_INPUT_INDEX("get_input_index", String.class);
 
 	private String property;
 	private Class clazz;

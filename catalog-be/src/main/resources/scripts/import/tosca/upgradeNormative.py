@@ -5,11 +5,9 @@ import json
 import copy
 import time
 from importCategoryTypes import importCategories
-from importHeatTypes import importHeatTypes
-from importNormativeCapabilities import importNormativeCapabilities
+from upgradeHeatTypes1707 import upgradeHeatTypes1707
 from importDataTypes import importDataTypes
-from importGroupTypes import importGroupTypes
-from importPolicyTypes import importPolicyTypes
+
 from importCommon import *
 import importCommon
 
@@ -46,7 +44,7 @@ def main(argv):
 	bePort = '8080'
 	adminUser = 'jh0003'
 	debugf = None
-	updateversion = 'false'
+	updateversion = 'true'
 	importCommon.debugFlag = False 
 
 	try:
@@ -94,17 +92,9 @@ def main(argv):
 
 	print 'sleep until data type cache is updated'
 	time.sleep( 70 )
-	fileLocation = baseFileLocation + "capability-types/"
-	importNormativeCapabilities(beHost, bePort, adminUser, False, fileLocation)
-  
-	fileLocation = baseFileLocation + "group-types/"
-	importGroupTypes(beHost, bePort, adminUser, False, fileLocation)
-
-	fileLocation = baseFileLocation + "policy-types/"
-	importPolicyTypes(beHost, bePort, adminUser, False, fileLocation)
 
 	fileLocation = baseFileLocation + "heat-types/"
-	resultsHeat = importHeatTypes(beHost, bePort, adminUser, fileLocation, updateversion)
+	resultsHeat = upgradeHeatTypes1707(beHost, bePort, adminUser, fileLocation, updateversion)
 	handleResults(resultsHeat, 'false')
 
 	errorAndExit(0, None)	

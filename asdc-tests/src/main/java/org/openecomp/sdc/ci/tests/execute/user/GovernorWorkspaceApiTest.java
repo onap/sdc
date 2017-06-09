@@ -47,7 +47,9 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
+import org.openecomp.sdc.ci.tests.execute.lifecycle.LCSbaseTest;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
+import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
@@ -125,47 +127,10 @@ public class GovernorWorkspaceApiTest extends ComponentBaseTest {
 		tags = serviceDetails33.getTags();
 		tags.add(serviceDetails33.getName());
 		serviceDetails33.setTags(tags);
-		//
-		// serviceUtils.deleteService_allVersions(serviceDetails11, designer1);
-		// serviceUtils.deleteService_allVersions(serviceDetails22, designer1);
-		// serviceUtils.deleteService_allVersions(serviceDetails33, designer1);
-
+		
 		RestResponse createServiceResponse1 = createService(user, serviceDetails11);
 		RestResponse createServiceResponse2 = createService(user, serviceDetails22);
 		RestResponse createServiceResponse3 = createService(user, serviceDetails33);
-
-		// addResourceWithHeatArt();
-		//
-		// serviceUtils.addServiceMandatoryArtifacts(user,
-		// createServiceResponse1);
-		//
-		//
-		// RestResponse createServiceResponse2 =
-		// serviceUtils.createServiceTowardsCatalogBe(serviceDetails22, user);
-		// assertNotNull("check response object is not null after creating
-		// service", createServiceResponse2);
-		// assertNotNull("check if error code exists in response after creating
-		// service", createServiceResponse2.getErrorCode());
-		// assertEquals("Check response code after creating service", 201,
-		// createServiceResponse2.getErrorCode().intValue());
-		// serviceDetails22.setUniqueId(serviceUtils.getServiceUniqueId(createServiceResponse2));
-		// logger.debug("Created service2 = {}", serviceDetails22);
-		// serviceUtils.addServiceMandatoryArtifacts(user,
-		// createServiceResponse2);
-		//
-		// RestResponse createServiceResponse3 =
-		// serviceUtils.createServiceTowardsCatalogBe(serviceDetails33, user);
-		// assertNotNull("check response object is not null after creating
-		// service", createServiceResponse3);
-		// assertNotNull("check if error code exists in response after creating
-		// service", createServiceResponse3.getErrorCode());
-		// assertEquals("Check response code after creating service", 201,
-		// createServiceResponse3.getErrorCode().intValue());
-		// serviceDetails33.setUniqueId(serviceUtils.getServiceUniqueId(createServiceResponse3));
-		// logger.debug("Created service3 = {}", serviceDetails33);
-		// serviceUtils.addServiceMandatoryArtifacts(user,
-		// createServiceResponse3);
-
 	}
 
 	protected RestResponse createService(User user, ServiceReqDetails serviceDetails) throws Exception, IOException {
@@ -178,7 +143,7 @@ public class GovernorWorkspaceApiTest extends ComponentBaseTest {
 		Service convertServiceResponseToJavaObject = ResponseParser
 				.convertServiceResponseToJavaObject(createServiceResponse1.getResponse());
 		serviceDetails.setUniqueId(convertServiceResponseToJavaObject.getUniqueId());
-		logger.debug("Created service1 = {}", serviceDetails);
+		logger.debug("Created service1 ={}",serviceDetails);
 		addResourceWithHeatArt(serviceDetails);
 		return createServiceResponse1;
 	}

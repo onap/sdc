@@ -48,7 +48,7 @@ public class Configuration extends BasicConfiguration {
 	private Integer healthCheckSocketTimeoutInMs;
 
 	private Integer healthCheckIntervalInSeconds;
-	
+
 	private FeMonitoringConfig systemMonitoring;
 
 	private String kibanaHost;
@@ -114,7 +114,7 @@ public class Configuration extends BasicConfiguration {
 	public void setHealthCheckIntervalInSeconds(Integer healthCheckInterval) {
 		this.healthCheckIntervalInSeconds = healthCheckInterval;
 	}
-	
+
 	/**
 	 * be http context
 	 */
@@ -134,6 +134,7 @@ public class Configuration extends BasicConfiguration {
 
 	private List<List<String>> identificationHeaderFields;
 	private List<List<String>> optionalHeaderFields;
+	private List<String> forwardHeaderFields;
 
 	public Date getReleased() {
 		return released;
@@ -237,6 +238,14 @@ public class Configuration extends BasicConfiguration {
 
 	public void setOptionalHeaderFields(List<List<String>> optionalHeaderFields) {
 		this.optionalHeaderFields = optionalHeaderFields;
+	}
+
+	public List<String> getForwardHeaderFields() {
+		return forwardHeaderFields;
+	}
+
+	public void setForwardHeaderFields(List<String> forwardHeaderFields) {
+		this.forwardHeaderFields = forwardHeaderFields;
 	}
 
 	public String getFeFqdn() {

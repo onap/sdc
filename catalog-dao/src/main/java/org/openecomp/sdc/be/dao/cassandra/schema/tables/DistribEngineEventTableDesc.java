@@ -68,14 +68,17 @@ public class DistribEngineEventTableDesc implements ITableDescription {
 	}
 
 	enum DEEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESCRIPTION(
-				"description", DataType.varchar(),
-				false), CONSUMER_ID("consumer_id", DataType.varchar(), false), REQUEST_ID("request_id",
-						DataType.varchar(), true), SERVICE_INST_ID("service_instance_id", DataType.varchar(),
-								false), ROLE("role", DataType.varchar(), false), D_ENV("d_env", DataType.varchar(),
-										false), API_KEY("api_key", DataType.varchar(), false), DSTATUS_TOPIC(
-												"dstatus_topic", DataType.varchar(),
-												false), DNOTIF_TOPIC("dnotif_topic", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESCRIPTION("description", DataType.varchar(), false), 
+		CONSUMER_ID("consumer_id", DataType.varchar(), false),
+		REQUEST_ID("request_id", DataType.varchar(), true), 
+		SERVICE_INST_ID("service_instance_id", DataType.varchar(), false), 
+		ROLE("role", DataType.varchar(), false), 
+		D_ENV("d_env", DataType.varchar(), false), 
+		API_KEY("api_key", DataType.varchar(), false),
+		DSTATUS_TOPIC("dstatus_topic", DataType.varchar(), false), 
+		DNOTIF_TOPIC("dnotif_topic", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

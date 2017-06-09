@@ -44,6 +44,7 @@ import javax.annotation.Resource;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
@@ -154,71 +155,57 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 		}
 		titanGenericDao.commit();
 		deleteAndCreateCategory(CATEGORY_NAME);
-		UserData modifierData = deleteAndCreateUser(ResourceCreationUtils.MODIFIER_ATT_UID + "rfc",
-				ResourceCreationUtils.MODIFIER_FIRST_NAME, ResourceCreationUtils.MODIFIER_LAST_NAME, "ADMIN");
+		UserData modifierData = deleteAndCreateUser(ResourceCreationUtils.MODIFIER_ATT_UID + "rfc", ResourceCreationUtils.MODIFIER_FIRST_NAME, ResourceCreationUtils.MODIFIER_LAST_NAME, "ADMIN");
 		rfcUser = convertUserDataToUser(modifierData);
 	}
 
 	@Test
+	@Ignore
 	public void testAddCapabilityPropertyValuesToResourceInstance() {
 		String rootName = "Root123";
-		org.openecomp.sdc.be.model.Resource rootResource = createResource(rfcUser.getUserId(), CATEGORY_NAME, rootName,
-				"1.0", null, false, true);
+		org.openecomp.sdc.be.model.Resource rootResource = createResource(rfcUser.getUserId(), CATEGORY_NAME, rootName, "1.0", null, false, true);
 
 		// certification request
-		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> requestCertificationResult = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Resource, rootResource, rfcUser, rfcUser, false);
+		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> requestCertificationResult = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Resource, rootResource, rfcUser, rfcUser, false);
 		assertTrue(requestCertificationResult.isLeft());
 
-		org.openecomp.sdc.be.model.Resource resultResource = (org.openecomp.sdc.be.model.Resource) requestCertificationResult
-				.left().value();
+		org.openecomp.sdc.be.model.Resource resultResource = (org.openecomp.sdc.be.model.Resource) requestCertificationResult.left().value();
 
 		// start certification
-		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> startCertificationResult = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Resource, resultResource, rfcUser, rfcUser, false);
+		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> startCertificationResult = lifecycleOperation.startComponentCertification(NodeTypeEnum.Resource, resultResource, rfcUser, rfcUser, false);
 		assertEquals(true, startCertificationResult.isLeft());
 
-		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> certifiedResourceRes = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Resource, rootResource, rfcUser, rfcUser, false);
+		Either<? extends org.openecomp.sdc.be.model.Component, StorageOperationStatus> certifiedResourceRes = lifecycleOperation.certifyComponent(NodeTypeEnum.Resource, rootResource, rfcUser, rfcUser, false);
 		assertTrue(certifiedResourceRes.isLeft());
 
 		CapabilityTypeDefinition capabilityType = buildCapabilityType();
-		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityTypeRes = capabilityTypeOperation
-				.addCapabilityType(capabilityType);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityTypeRes = capabilityTypeOperation.addCapabilityType(capabilityType);
 		assertTrue(capabilityTypeRes.isLeft());
 
 		CapabilityData capData = FactoryUtils.createCapabilityData();
-		CapabilityDefinition capabilityDefinitionRoot = FactoryUtils
-				.convertCapabilityDataToCapabilityDefinitionRoot(capData);
+		CapabilityDefinition capabilityDefinitionRoot = FactoryUtils.convertCapabilityDataToCapabilityDefinitionRoot(capData);
 
-		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRootRes = capabilityOperation.addCapability(
-				(String) certifiedResourceRes.left().value().getUniqueId(), capabilityDefinitionRoot.getName(),
-				capabilityDefinitionRoot);
+		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRootRes = capabilityOperation.addCapability((String) certifiedResourceRes.left().value().getUniqueId(), capabilityDefinitionRoot.getName(), capabilityDefinitionRoot);
 		assertTrue(addCapabilityRootRes.isLeft());
 
 		String resourceName = "tosca.nodes.Apache.2.0";
 
-		CapabilityDefinition capabilityDefinition = FactoryUtils
-				.convertCapabilityDataToCapabilityDefinitionAddProperties(capData);
-		org.openecomp.sdc.be.model.Resource resource = createResource(rfcUser.getUserId(), CATEGORY_NAME, resourceName,
-				"0.1", rootName, false, true);
+		CapabilityDefinition capabilityDefinition = FactoryUtils.convertCapabilityDataToCapabilityDefinitionAddProperties(capData);
+		org.openecomp.sdc.be.model.Resource resource = createResource(rfcUser.getUserId(), CATEGORY_NAME, resourceName, "0.1", rootName, false, true);
 
-		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRes = capabilityOperation
-				.addCapability((String) resource.getUniqueId(), capabilityDefinition.getName(), capabilityDefinition);
+		Either<CapabilityDefinition, StorageOperationStatus> addCapabilityRes = capabilityOperation.addCapability((String) resource.getUniqueId(), capabilityDefinition.getName(), capabilityDefinition);
 		assertTrue(addCapabilityRes.isLeft());
 		List<ComponentInstanceProperty> properties = addCapabilityRes.left().value().getProperties();
 		assertTrue(properties.size() == 2);
 
-		Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> clonedResourceRes = resourceOperation
-				.cloneComponent(resource, "0.2", false);
+		Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> clonedResourceRes = resourceOperation.cloneComponent(resource, "0.2", false);
 		assertTrue(clonedResourceRes.isLeft());
 		org.openecomp.sdc.be.model.Resource clonedResource = clonedResourceRes.left().value();
 
 		ComponentInstance instance = buildResourceInstance(clonedResource.getUniqueId(), "1", "tosca.nodes.Apache");
 
 		Service origService = createService(rfcUser.getUserId(), CATEGORY_NAME, "my-service", "1.0", true);
-		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(),
-				false);
+		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(), false);
 		assertTrue(service2.isLeft());
 		origService = service2.left().value();
 
@@ -228,9 +215,7 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 
 		Service fullService = origService;
 
-		Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent((String) origService.getUniqueId(), NodeTypeEnum.Service, "1",
-						true, instance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent((String) origService.getUniqueId(), NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 		assertTrue(status.isLeft());
 
 		ComponentInstance resourceInstance = status.left().value();
@@ -239,17 +224,14 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 		List<ComponentInstanceProperty> propertyValues = FactoryUtils.createComponentInstancePropertyList();
 		capability.setProperties(propertyValues);
 
-		Either<Map<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> addCPVsToRiRes = componentInstanceOperation
-				.addCapabilityPropertyValuesToResourceInstance(resourceInstance.getUniqueId(), capability, true);
+		Either<Map<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> addCPVsToRiRes = componentInstanceOperation.addCapabilityPropertyValuesToResourceInstance(resourceInstance.getUniqueId(), capability, true);
 		assertTrue(addCPVsToRiRes.isLeft());
 
-		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0",
-				false);
+		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0", false);
 		assertTrue(createService.isLeft());
 		Map<String, List<CapabilityDefinition>> capabilitiesMap = createService.left().value().getCapabilities();
 		assertTrue(capabilitiesMap != null && capabilitiesMap.size() == 1);
-		Map<String, CapabilityDefinition> capabilities = capabilitiesMap.values().iterator().next().stream()
-				.collect(Collectors.toMap(CapabilityDefinition::getName, Function.identity()));
+		Map<String, CapabilityDefinition> capabilities = capabilitiesMap.values().iterator().next().stream().collect(Collectors.toMap(CapabilityDefinition::getName, Function.identity()));
 		assertTrue(capabilities.containsKey("Cap1") && capabilities.containsKey("Cap2"));
 
 		// String outputFile = exportGraphMl();
@@ -343,8 +325,7 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 	public ResourceMetadataData createResource(String resourceName, TitanGenericDao titanGenericDao) {
 		ResourceMetadataData serviceData1 = new ResourceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(resourceName);
-		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(serviceData1,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(serviceData1, ResourceMetadataData.class);
 		assertTrue("check service created", createNode.isLeft());
 		return createNode.left().value();
 	}
@@ -352,21 +333,18 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 	public ServiceMetadataData createServiceMetadataData(String serviceName, TitanGenericDao titanGenericDao) {
 		ServiceMetadataData serviceData1 = new ServiceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(serviceName);
-		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(serviceData1,
-				ServiceMetadataData.class);
+		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(serviceData1, ServiceMetadataData.class);
 		assertTrue("check service created", createNode.isLeft());
 		return createNode.left().value();
 	}
 
-	public Service createService(String userId, String category, String serviceName, String serviceVersion,
-			boolean isHighestVersion) {
+	public Service createService(String userId, String category, String serviceName, String serviceVersion, boolean isHighestVersion) {
 		Service service = buildServiceMetadata(userId, category, serviceName, serviceVersion);
 		service.setHighestVersion(isHighestVersion);
 		Either<Service, StorageOperationStatus> result = serviceOperation.createService(service, true);
 		assertTrue(result.isLeft());
 		Service resultService = result.left().value();
-		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT,
-				resultService.getLifecycleState());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultService.getLifecycleState());
 		return resultService;
 	}
 
@@ -412,8 +390,7 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 		return userData;
 	}
 
-	public org.openecomp.sdc.be.model.Resource createResource(String userId, String category, String resourceName,
-			String resourceVersion, String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
+	public org.openecomp.sdc.be.model.Resource createResource(String userId, String category, String resourceName, String resourceVersion, String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
 
 		String propName1 = "disk_size";
 		String propName2 = "num_cpus";
@@ -422,8 +399,7 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 		if (parentResourceName != null) {
 			derivedFrom.add(parentResourceName);
 		}
-		org.openecomp.sdc.be.model.Resource resource = buildResourceMetadata(userId, category, resourceName,
-				resourceVersion);
+		org.openecomp.sdc.be.model.Resource resource = buildResourceMetadata(userId, category, resourceName, resourceVersion);
 
 		resource.setAbstract(isAbstract);
 		resource.setHighestVersion(isHighestVersion);
@@ -432,8 +408,7 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 
 		PropertyDefinition property1 = new PropertyDefinition();
 		property1.setDefaultValue("10");
-		property1.setDescription(
-				"Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
+		property1.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
 		property1.setType(ToscaType.INTEGER.name().toLowerCase());
 		List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
 		GreaterThanConstraint propertyConstraint1 = new GreaterThanConstraint("0");
@@ -466,18 +441,15 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 
 		resource.setProperties(convertMapToList(properties));
 
-		Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> result = resourceOperation
-				.createResource(resource, true);
+		Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> result = resourceOperation.createResource(resource, true);
 
 		assertTrue(result.isLeft());
 		org.openecomp.sdc.be.model.Resource resultResource = result.left().value();
-		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT,
-				resultResource.getLifecycleState());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultResource.getLifecycleState());
 
 		String resourceId = resultResource.getUniqueId();
 
-		Either<PropertyDefinition, StorageOperationStatus> either = propertyOperation.getPropertyOfResource(propName1,
-				resourceId);
+		Either<PropertyDefinition, StorageOperationStatus> either = propertyOperation.getPropertyOfResource(propName1, resourceId);
 
 		assertTrue(either.isLeft());
 		PropertyDefinition propertyDefinition = either.left().value();
@@ -485,14 +457,12 @@ public class ComponentInstanceOperationSpringTest extends ModelTestBase {
 		assertEquals("check property description", property1.getDescription(), propertyDefinition.getDescription());
 		assertEquals("check property type", property1.getType(), propertyDefinition.getType());
 		assertEquals("check property unique id", property1.getUniqueId(), propertyDefinition.getUniqueId());
-		assertEquals("check property consitraints size", property1.getConstraints().size(),
-				propertyDefinition.getConstraints().size());
+		assertEquals("check property consitraints size", property1.getConstraints().size(), propertyDefinition.getConstraints().size());
 
 		return resultResource;
 	}
 
-	private org.openecomp.sdc.be.model.Resource buildResourceMetadata(String userId, String category,
-			String resourceName, String resourceVersion) {
+	private org.openecomp.sdc.be.model.Resource buildResourceMetadata(String userId, String category, String resourceName, String resourceVersion) {
 
 		org.openecomp.sdc.be.model.Resource resource = new org.openecomp.sdc.be.model.Resource();
 		resource.setName(resourceName);

@@ -77,9 +77,8 @@ public class SerializationUtils {
 			T castObject = clazz.cast(object);
 			return Either.left(castObject);
 		} catch (Exception e) {
-			log.debug("Failed to deserialize object of type " + clazz + " and uid " + componentName, e);
-			BeEcompErrorManager.getInstance().logInternalUnexpectedError("DeserializeObjectFromCache",
-					"Failed to deserialize object of type " + clazz, ErrorSeverity.WARNING);
+			log.debug("Failed to deserialize object of type {} and uid {}",clazz,componentName, e);
+			BeEcompErrorManager.getInstance().logInternalUnexpectedError("DeserializeObjectFromCache", "Failed to deserialize object of type " + clazz, ErrorSeverity.WARNING);
 			return Either.right(false);
 		}
 	}

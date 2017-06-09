@@ -30,17 +30,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL2CacheConfig;
+import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.Configuration.BeMonitoringConfig;
-import org.openecomp.sdc.be.config.Configuration.DeploymentArtifactTypeConfig;
 import org.openecomp.sdc.be.config.Configuration.EcompPortalConfig;
 import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig;
+import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
 import org.openecomp.sdc.be.config.Configuration.OnboardingConfig;
 import org.openecomp.sdc.be.config.Configuration.SwitchoverDetectorConfig;
 import org.openecomp.sdc.be.config.Configuration.ToscaValidatorsConfig;
-import org.openecomp.sdc.be.config.Configuration.ElasticSearchConfig.IndicesTimeFrequencyEntry;
+import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.ComponentArtifactTypesConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.CreateTopicConfig;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
@@ -102,9 +102,9 @@ public class YamlToObjectConverter {
 
 		// resourceDeploymentArtifacts and serviceDeploymentArtifacts
 		beConfDescription.putMapPropertyType("resourceDeploymentArtifacts", String.class,
-				DeploymentArtifactTypeConfig.class);
+				ArtifactTypeConfig.class);
 		beConfDescription.putMapPropertyType("serviceDeploymentArtifacts", String.class,
-				DeploymentArtifactTypeConfig.class);
+				ArtifactTypeConfig.class);
 
 		// onboarding
 		beConfDescription.putListPropertyType("onboarding", OnboardingConfig.class);
@@ -158,7 +158,7 @@ public class YamlToObjectConverter {
 			config = convert(fullFileName, className);
 
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file " + configFileName + " to object.", e);
+			log.error("Failed to convert yaml file {} to object.", configFileName,e);
 		}
 
 		return config;
@@ -214,13 +214,13 @@ public class YamlToObjectConverter {
 
 			// System.out.println(config.toString());
 		} catch (Exception e) {
-			log.error("Failed to convert yaml file " + fullFileName + " to object.", e);
+			log.error("Failed to convert yaml file {} to object.", fullFileName, e);
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					log.debug("Failed to close input stream {} ", e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -249,7 +249,7 @@ public class YamlToObjectConverter {
 				try {
 					in.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+					log.debug("Failed to close input stream {} ", e.getMessage(), e);
 					e.printStackTrace();
 				}
 			}
@@ -258,11 +258,14 @@ public class YamlToObjectConverter {
 		return config;
 	}
 
+	public boolean isValidYamlEncoded64(byte[] fileContents) {
+		log.trace("Received Base64 data - decoding before validating...");
+		byte[] decodedFileContents = Base64.decodeBase64(fileContents);
+		
+		return isValidYaml(decodedFileContents);
+	}
+	
 	public boolean isValidYaml(byte[] fileContents) {
-		if (Base64.isBase64(fileContents)) {
-			log.trace("Received Base64 data - decoding before validating...");
-			fileContents = Base64.decodeBase64(fileContents);
-		}
 		try {
 			Map<String, Object> mappedToscaTemplate = (Map<String, Object>) defaultYaml
 					.load(new ByteArrayInputStream(fileContents));

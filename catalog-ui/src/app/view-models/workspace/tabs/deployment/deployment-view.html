@@ -1,0 +1,10 @@
+<div class="deployment-view">
+    <loader display="isLoading"></loader>
+    <div class="w-sdc-deployment-canvas" data-ng-class="{sidebaractive: displayDesignerRightSidebar}">
+        <deployment-graph component="currentComponent" is-view-only="isViewOnly"></deployment-graph>
+    </div>
+
+    <div class="w-sdc-deployment-right-bar">
+        <sdc-tabs tabs="tabs" is-view-only="isViewOnly" selected-tab="selectedTab"></sdc-tabs>
+    </div>
+</div>

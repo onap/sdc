@@ -25,6 +25,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openecomp.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
+import org.openecomp.portalsdk.core.onboarding.crossapi.PortalAPIException;
+import org.openecomp.portalsdk.core.restful.domain.EcompRole;
+import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -38,11 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
-
-import org.openecomp.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
-import org.openecomp.portalsdk.core.onboarding.crossapi.PortalAPIException;
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 
 import fj.data.Either;
 
@@ -76,7 +75,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
 			Either<User, String> newASDCUser = EcompUserConverter.convertEcompUserToUser(user);
 			if (newASDCUser.isRight()) {
 				BeEcompErrorManager.getInstance().logInvalidInputError("PushUser", "Failed to convert user", ErrorSeverity.INFO);
-				log.debug("Failed to create user {}",user.toString());
+				log.debug("Failed to create user {}", user.toString());
 				throw new PortalAPIException("Failed to create user " + newASDCUser.right().value());
 			} else if (newASDCUser.left().value() == null) {
 				BeEcompErrorManager.getInstance().logInvalidInputError("PushUser", "NULL pointer returned from user converter", ErrorSeverity.INFO);
@@ -292,23 +291,29 @@ public class EcompIntImpl implements IPortalRestAPIService {
 		String updatedRole = null;
 
 		if (roles == null) {
-			throw new PortalAPIException("Error: Recieved null for roles");
+			throw new PortalAPIException("Error: Recieved null for roles");			
 		} else if (roles.iterator().hasNext()) {
 			EcompRole ecompRole = roles.iterator().next();
 			updatedRole = EcompRoleConverter.convertEcompRoleToRole(ecompRole);
 			log.debug("pushing role: {} to user: {}", updatedRole, loginId);
+			Either<User, ResponseFormat> updateUserRoleResponse = userBusinessLogic.updateUserRole(modifier, loginId, updatedRole);
+			if (updateUserRoleResponse.isRight()) {
+				log.debug("Error: Failed to update role");
+				BeEcompErrorManager.getInstance().logInvalidInputError("PushUserRole", "Failed to update role", ErrorSeverity.INFO);
+				throw new PortalAPIException("Failed to update role" + updateUserRoleResponse.right().value().toString());
+			}
 		} else {
 			log.debug("Error: No roles in List");
 			BeEcompErrorManager.getInstance().logInvalidInputError("PushUserRole", "Failed to fetch roles", ErrorSeverity.INFO);
-			throw new PortalAPIException("Error: No roles in List");
-		}
-
-		Either<User, ResponseFormat> updateUserRoleResponse = userBusinessLogic.updateUserRole(modifier, loginId, updatedRole);
-		if (updateUserRoleResponse.isRight()) {
-			log.debug("Error: Failed to update role");
-			BeEcompErrorManager.getInstance().logInvalidInputError("PushUserRole", "Failed to update role", ErrorSeverity.INFO);
-			throw new PortalAPIException("Failed to update role" + updateUserRoleResponse.right().value().toString());
-		}
+			//throw new PortalAPIException("Error: No roles in List");
+			//in this cases we want to deactivate the user
+			Either<User, ResponseFormat> deActivateUserResponse = userBusinessLogic.deActivateUser(modifier, loginId);
+			if (deActivateUserResponse.isRight()) {
+				log.debug("Error: Failed to deactivate user {}",loginId);
+				BeEcompErrorManager.getInstance().logInvalidInputError("PushUserRole", "Failed to deactivate user", ErrorSeverity.INFO);
+				throw new PortalAPIException(deActivateUserResponse.right().value().getFormattedMessage());
+			}
+		}		
 	}
 
 	@Override
@@ -359,7 +364,7 @@ public class EcompIntImpl implements IPortalRestAPIService {
 
 		if (USERNAME != null && PASSWORD != null) {
 			if (!USERNAME.equals("") && !PASSWORD.equals("")) {
-				log.debug("User authenticated - Username: {} Password: {}", USERNAME, PASSWORD);
+				log.debug("User authenticated - Username: ,Password: {}", USERNAME, PASSWORD);
 				return true;
 			}
 		}

@@ -21,36 +21,26 @@
 package org.openecomp.sdc.be.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class GroupDefinition extends GroupDataDefinition implements Serializable {
-
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -852613634651112247L;
 
-	// map of componentInstances <name: uniqueId>
-	private Map<String, String> members;
-
 	// properties (properties should be defined in the group type, the
 	// properties here are actually the value for the properties)
-	private List<GroupProperty> properties;
+	
 
-	// artifacts - list of artifact uid. All artifacts in the group must already
-	// be uploaded to the VF
-	private List<String> artifacts;
 
-	private List<String> artifactsUuid;
 
 	// The unique id of the type of this group
-	private String typeUid;
+
 
 	public GroupDefinition() {
 		super();
@@ -68,66 +58,26 @@ public class GroupDefinition extends GroupDataDefinition implements Serializable
 		this.setInvariantUUID(other.getInvariantUUID());
 		this.setGroupUUID(other.getGroupUUID());
 		this.setDescription(other.getDescription());
-		if (other.members != null) {
-			this.members = new HashMap<String, String>(other.getMembers());
-		}
-		if (other.properties != null) {
-			this.properties = other.properties.stream().map(p -> new GroupProperty(p)).collect(Collectors.toList());
-		}
-		if (other.artifacts != null) {
-			this.artifacts = new ArrayList<String>(other.getArtifacts());
-		}
-
-		if (other.artifactsUuid != null) {
-			this.artifactsUuid = new ArrayList<String>(other.getArtifactsUuid());
-		}
-		this.setTypeUid(other.typeUid);
+		this.setTypeUid(other.getTypeUid());
+		this.setProperties(other.getProperties());
+		
 	}
 
-	public Map<String, String> getMembers() {
-		return members;
-	}
-
-	public void setMembers(Map<String, String> members) {
-		this.members = members;
-	}
-
-	public List<GroupProperty> getProperties() {
+	public List<GroupProperty> convertToGroupProperties() {
+		List<GroupProperty> properties = null;
+		List<PropertyDataDefinition> propList = super.getProperties();
+		if(propList != null && !propList .isEmpty()){
+			 properties = propList.stream().map(pr -> new GroupProperty(pr)).collect(Collectors.toList());
+		}
 		return properties;
 	}
 
-	public void setProperties(List<GroupProperty> properties) {
-		this.properties = properties;
-	}
-
-	public List<String> getArtifacts() {
-		return artifacts;
-	}
-
-	public void setArtifacts(List<String> artifacts) {
-		this.artifacts = artifacts;
-	}
-
-	public String getTypeUid() {
-		return typeUid;
-	}
-
-	public void setTypeUid(String typeUid) {
-		this.typeUid = typeUid;
-	}
-
-	public List<String> getArtifactsUuid() {
-		return artifactsUuid;
-	}
-
-	public void setArtifactsUuid(List<String> artifactsUuid) {
-		this.artifactsUuid = artifactsUuid;
-	}
-
-	@Override
-	public String toString() {
-		return "GroupDefinition [" + super.toString() + "members=" + members + ", properties=" + properties
-				+ ", artifacts=" + artifacts + ", artifactsUUID=" + artifactsUuid + ", typeUid=" + typeUid + "]";
+	public void convertFromGroupProperties(List<GroupProperty> properties) {
+		if(properties != null && !properties .isEmpty()){
+			List<PropertyDataDefinition> propList = properties.stream().map(pr -> new PropertyDataDefinition(pr)).collect(Collectors.toList());
+			super.setProperties(propList);
+		}
+		
 	}
 
 }

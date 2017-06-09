@@ -326,6 +326,7 @@ public class ComponentInstanceBaseTest extends ComponentBaseTest {
 		if (resourceRequirements == null) {
 			resourceRequirements = new HashMap<>();
 		}
+		
 		Function<Entry<String, List<RequirementDefinition>>, List<RequirementDefinition>> requirementDefinitionMapper = e -> new ArrayList<>(e.getValue().stream().map(item -> new RequirementDefinition(item)).collect(Collectors.toList()));
 		Map<String, List<RequirementDefinition>> reqCopy = resourceRequirements.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), requirementDefinitionMapper));
 		

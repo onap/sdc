@@ -46,11 +46,11 @@ public class ConsumerOperation implements IConsumerOperation {
 	@Override
 	public Either<ConsumerData, StorageOperationStatus> getCredentials(String consumerName) {
 		Either<ConsumerData, StorageOperationStatus> result = null;
-		log.debug("retriving Credentials for: {}.", consumerName);
+		log.debug("retriving Credentials for: {}", consumerName);
 		Either<ConsumerData, TitanOperationStatus> getNode = titanGenericDao.getNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
 		if (getNode.isRight()) {
 			TitanOperationStatus status = getNode.right().value();
-			log.error("Error returned after get Consumer Data node " + consumerName + ". status returned is " + status);
+			log.error("Error returned after get Consumer Data node {}. status returned is {}", consumerName, status);
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 			return result;
 		}
@@ -67,11 +67,11 @@ public class ConsumerOperation implements IConsumerOperation {
 	public Either<ConsumerData, StorageOperationStatus> createCredentials(ConsumerData consumerData, boolean inTransaction) {
 		Either<ConsumerData, StorageOperationStatus> result = null;
 		try {
-			log.debug("creating Credentials for: {}.", consumerData.getUniqueId());
+			log.debug("creating Credentials for: {}", consumerData.getUniqueId());
 			Either<ConsumerData, TitanOperationStatus> createNode = titanGenericDao.createNode(consumerData, ConsumerData.class);
 			if (createNode.isRight()) {
 				TitanOperationStatus status = createNode.right().value();
-				log.error("Error returned after creating Consumer Data node " + consumerData.getUniqueId() + ". status returned is " + status);
+				log.error("Error returned after creating Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -96,7 +96,7 @@ public class ConsumerOperation implements IConsumerOperation {
 			Either<ConsumerData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(GraphPropertiesDictionary.CONSUMER_NAME.getProperty(), consumerName, ConsumerData.class);
 			if (deleteNode.isRight()) {
 				TitanOperationStatus status = deleteNode.right().value();
-				log.error("Error returned after delete Consumer Data node {}. Status returned is {}", consumerName, status);
+				log.error("Error returned after delete Consumer Data node {}. status returned is {}", consumerName, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -120,11 +120,11 @@ public class ConsumerOperation implements IConsumerOperation {
 
 		Either<ConsumerData, StorageOperationStatus> result = null;
 		try {
-			log.debug("update Credentials for: {}.", consumerData.getUniqueId());
+			log.debug("update Credentials for: {}", consumerData.getUniqueId());
 			Either<ConsumerData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(consumerData, ConsumerData.class);
 			if (updateNode.isRight()) {
 				TitanOperationStatus status = updateNode.right().value();
-				log.error("Error returned after delete Consumer Data node {}. Status returned is {}", consumerData.getUniqueId(), status);
+				log.error("Error returned after delete Consumer Data node {}. status returned is {}", consumerData.getUniqueId(), status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}

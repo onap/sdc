@@ -34,7 +34,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 
-@Table(keyspace = "sdcAudit", name = AuditingTypesConstants.AUTH_EVENT_TYPE)
+@Table(keyspace = "sdcaudit", name = AuditingTypesConstants.AUTH_EVENT_TYPE)
 public class AuthEvent extends AuditingGenericEvent {
 
 	private static String AUTH_EVENT_TEMPLATE = "action=\"%s\" timestamp=\"%s\" "

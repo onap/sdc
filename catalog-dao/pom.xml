@@ -5,60 +5,58 @@
 	<groupId>org.openecomp.sdc.be</groupId>
 	<artifactId>catalog-dao</artifactId>
 
-
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
-
-	<properties>
-		<aspectj.version>1.7.4</aspectj.version>
-		<hibernate-validator.version>5.3.4.Final</hibernate-validator.version>
-		<groovy.version>2.3.5</groovy.version>
-		<lucene.version>4.10.2</lucene.version>
-		<mockito.version>1.9.0</mockito.version>
-		<regex.version>3.0.3</regex.version>
-	</properties>
-
-
 	<dependencies>
-
+	
+		<!-- Common of SDC -->
 		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
-			<scope>test</scope>
+			<groupId>org.openecomp.sdc</groupId>
+			<artifactId>common-app-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
+			<groupId>org.openecomp.sdc.be</groupId>
+			<artifactId>common-be</artifactId>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>2.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+                        <version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+                        <version>${elastic-search.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.elasticsearch.plugin</groupId>
+			<artifactId>shield</artifactId>
+			<version>${elastic-search.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- SPRING -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -75,106 +73,10 @@
 
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
+			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Common of SD&C -->
-		<dependency>
-			<groupId>org.openecomp.sdc</groupId>
-			<artifactId>common-app-api</artifactId>
-			<version>${common-app-api.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openecomp.sdc.be</groupId>
-			<artifactId>common-be</artifactId>
-			<version>${common-be.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.elasticsearch.plugin</groupId>
-			<artifactId>shield</artifactId>
-			<version>${elastic-search.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-
-		<!-- Elasticsearch delete by query was extracted to plugin: adding this 
-			plugin requires updating elasticsearch.yml with: plugin.types: "DeleteByQueryPlugin" 
-			and installing the plugin in the server -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.elasticsearch.plugin</groupId> -->
-		<!-- <artifactId>delete-by-query</artifactId> -->
-		<!-- <scope>provided</scope> -->
-		<!-- </dependency> -->
-
-
-		<!-- SPRING -->
 
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -198,15 +100,16 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+            <version>${slf4j-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
+			<version>${json-simple.version}</version>
 			<scope>provided</scope>
-
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-regex</artifactId>
@@ -216,29 +119,28 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<!--<version>${mockito.version}</version>&lt;!&ndash;$NO-MVN-MAN-VER$ &ndash;&gt;-->
-			<version>1.10.19</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.14</version>
+			<version>${snakeyaml.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
+			<version>${gson.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.functionaljava</groupId>
 			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -246,7 +148,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+            <version>${httpclient.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -260,22 +162,36 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version><!--$NO-MVN-MAN-VER$ -->
+			<version>${guava.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<!-- TEST -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-jci-core</artifactId>
+			<version>${commons-jci-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -306,10 +222,9 @@
 
 		<dependency>
 			<groupId>com.thinkaurelius.titan</groupId>
-			<artifactId>titan-cassandra</artifactId>
-			<!--<artifactId>asdc-titan-cassandra</artifactId> -->
+			 <artifactId>titan-cassandra</artifactId>
+			<!--<artifactId>asdc-titan-cassandra</artifactId>-->
 			<version>${titan.version}</version>
-			<!--<version>1.0.0-snapshot</version> -->
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -325,7 +240,6 @@
 			<version>${lang3.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<!-- TITAN END -->
 
 		<!-- CASSANDRA -->
@@ -343,10 +257,7 @@
 		</dependency>
 		<!-- CASSANDRA END -->
 
-
 	</dependencies>
-
-
 
 	<build>
 
@@ -390,8 +301,6 @@
 		</pluginManagement>
 	</build>
 
-
-	
 	<profiles>
 		<profile>
 			<id>Fortify</id>

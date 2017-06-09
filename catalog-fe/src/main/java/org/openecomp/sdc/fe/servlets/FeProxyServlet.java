@@ -85,7 +85,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 		String serviceInstanceID = httpRequest.getHeader(Constants.X_ECOMP_SERVICE_ID_HEADER);
 
 		if (uuid != null && uuid.length() > 0) {
-			// User Id for logging
+			// UserId for logging
 			String userId = httpRequest.getHeader(Constants.USER_ID_HEADER);
 
 			String remoteAddr = httpRequest.getRemoteAddr();
@@ -201,6 +201,7 @@ public class FeProxyServlet extends SSLProxyServlet {
 		if (onboardingForwardContext == null || onboardingForwardContext.isEmpty()) {
 			onboardingForwardContext = "/onboarding-api";
 		}
+		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/dcae-api", "/dcae");
 		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy/onboarding-api", onboardingForwardContext);
 		redirectedUrl = redirectedUrl.replace("/sdc1/feProxy", "/sdc2");
 		return redirectedUrl;

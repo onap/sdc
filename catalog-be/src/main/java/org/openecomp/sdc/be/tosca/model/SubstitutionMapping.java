@@ -24,9 +24,8 @@ import java.util.Map;
 
 public class SubstitutionMapping {
 	private String node_type;
-
-	private Map<String, ToscaCapability> capabilities;
-	private Map<String, ToscaRequirement> requirements;
+	private Map<String, String[]> capabilities;
+	private Map<String, String[]> requirements;
 
 	public SubstitutionMapping() {
 		super();
@@ -41,20 +40,19 @@ public class SubstitutionMapping {
 		this.node_type = node_type;
 	}
 
-	public Map<String, ToscaCapability> getCapabilities() {
+	public Map<String, String[]> getCapabilities() {
 		return capabilities;
 	}
 
-	public void setCapabilities(Map<String, ToscaCapability> capabilities) {
+	public void setCapabilities(Map<String, String[]> capabilities) {
 		this.capabilities = capabilities;
 	}
 
-	public Map<String, ToscaRequirement> getRequirements() {
+	public Map<String, String[]> getRequirements() {
 		return requirements;
 	}
 
-	public void setRequirements(Map<String, ToscaRequirement> requirements) {
+	public void setRequirements(Map<String, String[]> requirements) {
 		this.requirements = requirements;
 	}
-
 }

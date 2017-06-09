@@ -90,77 +90,6 @@ public class CsarBuildServlet extends ToscaDaoServlet {
 	 */
 
 	public static final String TOSCA_META_PATH = "TOSCA-Metadata/TOSCA.meta";
-	// protected void addToscaMetaToZip(ZipOutputStream zipOutputStream,
-	// TopologyService topService, IResourceUploader resUploader) throws
-	// IOException {
-	// String serviceVersion = topService.getTopologyVersion();
-	// String serviceName = topService.getTopologyName();
-	// StringBuffer buff = new StringBuffer();
-	//
-	// String[] serviceToscaMeta = prepareToscaMetaHeader(serviceName);
-	//
-	// for( String toAppend : serviceToscaMeta){
-	// buff.append(toAppend);
-	// }
-	//
-	// List<String> toscaMetaComponents =
-	// prepareToscaMetaComponents(topService.getDependenciesYamls().keySet());
-	// for( String toAppend : toscaMetaComponents ){
-	// buff.append(toAppend);
-	// }
-	//
-	// Either<ServiceArtifactsDataCollection, ResourceUploadStatus>
-	// getServiceArtifactsCollectionStatus =
-	// Either.right(ResourceUploadStatus.ERROR);//resUploader.getServiceArtifactsCollection(serviceName,
-	// serviceVersion);
-	// if(getServiceArtifactsCollectionStatus.isLeft()){
-	// List<String> toscaMetaArtifacts =
-	// prepareToscaMetaArtifacts(getServiceArtifactsCollectionStatus.left().value());
-	// for( String toAppend : toscaMetaArtifacts ){
-	// buff.append(toAppend);
-	// }
-	// }
-	//
-	// addZipEntry(zipOutputStream, TOSCA_META_PATH, buff.toString());
-	// }
-
-	// protected List<String> prepareToscaMetaArtifacts(
-	// ServiceArtifactsDataCollection serviceArtifactsDataCollection) {
-	// List<String> artifactsForToscaMeta = new ArrayList<String>();
-	// Iterator<Entry<String, List<ArtifactData>>> nodeTemplateArtifactsItr =
-	// serviceArtifactsDataCollection.getServiceArtifactDataMap().entrySet().iterator();
-	// while( nodeTemplateArtifactsItr.hasNext() ){
-	// Entry<String, List<ArtifactData>> nodeNameArtifacts =
-	// nodeTemplateArtifactsItr.next();
-	// String nodeName = nodeNameArtifacts.getKey();
-	// Iterator<ArtifactData> artifactDataItr =
-	// nodeNameArtifacts.getValue().iterator();
-	// while( artifactDataItr.hasNext() ){
-	// ArtifactData artifactData = artifactDataItr.next();
-	// artifactsForToscaMeta.add("\n");
-	// artifactsForToscaMeta.add("Name: "+getArtifactPath(nodeName,
-	// artifactData)+"\n");
-	// artifactsForToscaMeta.add("Content-Type:
-	// application/"+getAppliactionMime(artifactData.getArtifactName())+"\n");
-	// }
-	// }
-	// return artifactsForToscaMeta;
-	// }
-
-	// protected List<String> prepareToscaMetaComponents(Set<String> components)
-	// {
-	// Iterator<String> resourceNameItr = components.iterator();
-	// List<String> componentsForToscaMeta = new ArrayList<String>();
-	// while( resourceNameItr.hasNext() ){
-	// String resourceName = resourceNameItr.next();
-	// componentsForToscaMeta.add("\n");
-	// componentsForToscaMeta.add("Name: "+getResourcePath(resourceName)+"\n");
-	// componentsForToscaMeta.add("Content-Type:
-	// application/vnd.oasis.tosca.definitions.yaml\n");
-	//
-	// }
-	// return componentsForToscaMeta;
-	// }
 
 	protected String[] prepareToscaMetaHeader(String serviceName) {
 		return new String[] { "TOSCA-Meta-File-Version: 1.0\n", "CSAR-Version: 1.1\n", "Created-By: INTERWISE\n", "\n", "Entry-Definitions: Definitions/" + serviceName + ".yaml\n", "\n", "Name: Definitions/" + serviceName + ".yaml\n",
@@ -198,17 +127,6 @@ public class CsarBuildServlet extends ToscaDaoServlet {
 		return mimeType;
 	}
 
-	// protected void addResourcesToZip(ZipOutputStream zipOutputStream,
-	// TopologyService topService) throws IOException {
-	// Iterator<Entry<String, String>> resourceNameDataItr =
-	// topService.getDependenciesYamls().entrySet().iterator();
-	// while( resourceNameDataItr.hasNext() ){
-	// Entry<String, String> resourceNameData = resourceNameDataItr.next();
-	// addZipEntry(zipOutputStream, getResourcePath(resourceNameData.getKey()),
-	// resourceNameData.getValue());
-	// }
-	// }
-
 	protected String getArtifactPath(String nodeTamplateName, ESArtifactData artifactData) {
 		// return "Scripts/"+nodeTamplateName+"/"+
 		// artifactData.getArtifactName();
@@ -219,57 +137,6 @@ public class CsarBuildServlet extends ToscaDaoServlet {
 		return "Definitions/" + resourceName + ".yaml";
 	}
 
-	// protected void addArtifactsToZip(String serviceName, String
-	// serviceVersion, ZipOutputStream zipOutputStream, IResourceUploader
-	// resourceUploader)
-	// throws IOException {
-	// //Add Artifacts to Zip
-	// Either<ServiceArtifactsDataCollection, ResourceUploadStatus>
-	// getServiceArtifactsCollectionStatus =
-	// Either.right(ResourceUploadStatus.ERROR);//resourceUploader.getServiceArtifactsCollection(serviceName,
-	// serviceVersion);
-	// if(getServiceArtifactsCollectionStatus.isLeft()){
-	// Iterator<Entry<String, List<ArtifactData>>> nodeTemplateArtifactsItr
-	// =getServiceArtifactsCollectionStatus.left().value().getServiceArtifactDataMap().entrySet().iterator();
-	// while( nodeTemplateArtifactsItr.hasNext() ){
-	// Entry<String, List<ArtifactData>> nodeTemplateArtifacts =
-	// nodeTemplateArtifactsItr.next();
-	// String nodeTamplateName = nodeTemplateArtifacts.getKey();
-	// List<ArtifactData> artifacts = nodeTemplateArtifacts.getValue();
-	// for(ArtifactData artifactData : artifacts ){
-	// addZipEntry(zipOutputStream,
-	// getArtifactPath(nodeTamplateName,artifactData), artifactData.getData());
-	// }
-	//
-	// }
-	// }
-	// }
-
-	// private Response buildResponse(String fileName, ByteArrayOutputStream
-	// fileOutputStream) {
-	// final InputStream inputStream = new
-	// ByteArrayInputStream(fileOutputStream.toByteArray());
-	//
-	// StreamingOutput stream = new StreamingOutput() {
-	// public void write(OutputStream output) throws WebApplicationException {
-	// try {
-	// IOUtils.copy(inputStream, output);
-	// } catch (Exception e) {
-	// throw new WebApplicationException(e);
-	// }
-	// }
-	// };
-	//
-	// return
-	// Response.ok(stream).type(MediaType.APPLICATION_OCTET_STREAM_TYPE).header("content-disposition","attachment;
-	// filename = "+fileName).build();
-	// }
-
-	// protected void addZipEntry(ZipOutputStream zipOutputStream, String
-	// filePath, String data) throws IOException {
-	// addZipEntry(zipOutputStream, filePath, encodeString(data));
-	// }
-
 	private byte[] encodeString(String data) throws CharacterCodingException {
 		Charset charset = Charset.forName("UTF-8");
 		CharsetEncoder encoder = charset.newEncoder();
@@ -278,15 +145,6 @@ public class CsarBuildServlet extends ToscaDaoServlet {
 		bb.get(ba);
 		return ba;
 	}
-
-	// private void addZipEntry(ZipOutputStream zipOutputStream, String
-	// filePath, byte[] data) throws IOException {
-	// log.debug("Adding to CSAR zip :{}", filePath);
-	// ZipEntry entry = new ZipEntry(filePath);
-	// zipOutputStream.putNextEntry(entry);
-	// zipOutputStream.write(data);
-	// zipOutputStream.closeEntry();
-	// }
 
 	@Override
 	public Logger getLogger() {

@@ -1,0 +1,54 @@
+&.expanded {
+    .input-row {
+        background-color: @tlv_color_v;
+    }
+}
+
+.input-row {
+    padding-left: 45px;
+    background: @tlv_color_t;
+    border: @main_color_o solid 1px;
+    align-items: center;
+    .hand;
+    margin: 1px 0px 1px 0px;
+
+    &.selected {
+        background-color: @tlv_color_v;
+    }
+    .flex-item {
+        min-height: 60px;
+        padding: 0 15px;
+    }
+    .input-check-box {
+        padding-right: 10px;
+        margin-top: 9px;
+    }
+    & > .title-text {
+        text-align: start;
+        padding: 4px 35px 0 35px;
+    }
+
+    .expand-collapse-inputs-table-icon {
+        margin-top: 15px;
+    }
+
+    .delete {
+        width: 50px;
+        padding: 0;
+        position: relative;
+    }
+
+    .remove-input-icon {
+        position: absolute;
+        top: 12px;
+        right: 18px;
+    }
+
+    .remove-input-icon:hover {
+        .delete-icon-hover;
+    }
+}
+
+.input-row:hover {
+    .bg_j;
+}

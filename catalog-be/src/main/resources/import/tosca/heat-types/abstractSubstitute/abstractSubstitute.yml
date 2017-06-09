@@ -1,11 +1,4 @@
 tosca_definitions_version: tosca_simple_yaml_1_0_0
-metadata:
-  template_name: AbstractSubstituteGlobalTypes
-  template_version: 1.0.0
-description: Abstract Substitute Global Types
-imports:
-  common_definitions:
-    file: CommonGlobalTypesServiceTemplate.yaml
 node_types:
   org.openecomp.resource.abstract.nodes.AbstractSubstitute:
     derived_from: tosca.nodes.Root

@@ -39,4 +39,17 @@ public class CommonBeUtilsTest {
 		assertFalse(CommonBeUtils.compareAsdcComponentVersions("1", "1.0"));
 		assertTrue(CommonBeUtils.compareAsdcComponentVersions("2", "1.15"));
 	}
+	
+	@Test
+	public void testConformanceLevelCompare() {
+
+		assertTrue(CommonBeUtils.conformanceLevelCompare("1.1", "0.15") > 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("0.5", "0.5") == 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("0.5", "0.6") < 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "2.6") < 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("1.5", "1.5.3") < 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("2.5", "1.5.300") > 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("0.10", "0.1") > 0);
+		assertTrue(CommonBeUtils.conformanceLevelCompare("2", "1.15") > 0);
+	}
 }

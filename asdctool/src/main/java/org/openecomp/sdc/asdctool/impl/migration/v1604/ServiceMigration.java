@@ -100,12 +100,8 @@ import fj.data.Either;
 
 public class ServiceMigration {
 
-	private static final String[] NORMATIVE_OLD_NAMES = { 
-			"tosca.nodes.network.Network", "tosca.nodes.network.Port",
-			"tosca.nodes.BlockStorage", "tosca.nodes.Compute", "tosca.nodes.Container.Application",
-			"tosca.nodes.Container.Runtime", "tosca.nodes.Database", "tosca.nodes.DBMS", "tosca.nodes.LoadBalancer",
-			"tosca.nodes.ObjectStorage", "tosca.nodes.Root", "tosca.nodes.SoftwareComponent",
-			"tosca.nodes.WebApplication", "tosca.nodes.WebServer", };
+	private static final String[] NORMATIVE_OLD_NAMES = { "tosca.nodes.network.Network", "tosca.nodes.network.Port", "tosca.nodes.BlockStorage", "tosca.nodes.Compute", "tosca.nodes.Container.Application", "tosca.nodes.Container.Runtime",
+			"tosca.nodes.Database", "tosca.nodes.DBMS", "tosca.nodes.LoadBalancer", "tosca.nodes.ObjectStorage", "tosca.nodes.Root", "tosca.nodes.SoftwareComponent", "tosca.nodes.WebApplication", "tosca.nodes.WebServer", };
 
 	private static Logger log = LoggerFactory.getLogger(ServiceMigration.class.getName());
 
@@ -204,7 +200,7 @@ public class ServiceMigration {
 				return false;
 			}
 		} catch (Exception e) {
-			log.debug("Failed to load category migration file :{} error: {}",categoryMigrationFile, e);
+			log.debug("Failed to load category migration file : {}", categoryMigrationFile, e);
 			return false;
 		}
 		for (Map.Entry<String, List<MigrationCategory>> entry : categoriesFromYml.entrySet()) {
@@ -227,7 +223,7 @@ public class ServiceMigration {
 					log.debug("updateCategories no changes for categories from type {}", componentType);
 				}
 			} else {
-				log.debug("updateCategories failed not supported component file in migration categories file {}", entry.getKey());
+				log.debug("updateCategories failed not supported component file in migration categories file" + entry.getKey());
 				return false;
 			}
 		}
@@ -236,10 +232,9 @@ public class ServiceMigration {
 
 	private boolean updateServiceCategories(List<MigrationCategory> categories) {
 		log.debug("updateServiceCategories STARTED");
-		Either<List<CategoryDefinition>, ActionStatus> serviceCategories = elementOperation
-				.getAllCategories(NodeTypeEnum.ServiceNewCategory, true);
+		Either<List<CategoryDefinition>, ActionStatus> serviceCategories = elementOperation.getAllCategories(NodeTypeEnum.ServiceNewCategory, true);
 		if (serviceCategories.isRight()) {
-			log.debug("updateServiceCategories failed fetch all service categories ,error: {}", serviceCategories.right().value());
+			log.debug("updateServiceCategories failed fetch all service categories ,error " + serviceCategories.right().value());
 			return false;
 		}
 		for (MigrationCategory newCat : categories) {
@@ -255,10 +250,9 @@ public class ServiceMigration {
 				}
 				if (!exist) {
 					CategoryDefinition categoryDefinition = new CategoryDefinition(newCat);
-					Either<CategoryDefinition, ActionStatus> result = elementOperation
-							.createCategory(categoryDefinition, NodeTypeEnum.ServiceNewCategory, true);
+					Either<CategoryDefinition, ActionStatus> result = elementOperation.createCategory(categoryDefinition, NodeTypeEnum.ServiceNewCategory, true);
 					if (result.isRight()) {
-						log.debug("Failed to create service category {}, error: {}", categoryDefinition, result.right().value());
+						log.debug("Failed to create service category {} error {}", categoryDefinition, result.right().value());
 						return false;
 					}
 					log.debug("service category {} created", categoryDefinition);
@@ -267,8 +261,7 @@ public class ServiceMigration {
 				// update exist
 				for (CategoryDefinition catInDB : serviceCategories.left().value()) {
 					if (newCat.getOldName().equals(catInDB.getName())) {
-						Either<CategoryData, TitanOperationStatus> updateSingleResult = updateSingleResourceCategory(
-								newCat, NodeTypeEnum.ServiceNewCategory);
+						Either<CategoryData, TitanOperationStatus> updateSingleResult = updateSingleResourceCategory(newCat, NodeTypeEnum.ServiceNewCategory);
 						if (updateSingleResult.isRight()) {
 							return false;
 						}
@@ -281,15 +274,12 @@ public class ServiceMigration {
 		return true;
 	}
 
-	private Either<CategoryData, TitanOperationStatus> updateSingleResourceCategory(MigrationCategory newCat,
-			NodeTypeEnum nodetype) {
+	private Either<CategoryData, TitanOperationStatus> updateSingleResourceCategory(MigrationCategory newCat, NodeTypeEnum nodetype) {
 		Map<String, Object> properties = new HashMap<>();
 		properties.put(GraphPropertiesDictionary.NAME.getProperty(), newCat.getOldName());
-		Either<List<CategoryData>, TitanOperationStatus> categoryEither = titanGenericDao.getByCriteria(nodetype,
-				properties, CategoryData.class);
+		Either<List<CategoryData>, TitanOperationStatus> categoryEither = titanGenericDao.getByCriteria(nodetype, properties, CategoryData.class);
 		if (categoryEither.isRight() && categoryEither.right().value() != TitanOperationStatus.NOT_FOUND) {
-			log.debug("Failed to get {} categories, for name {} error {}", nodetype, newCat.getOldName(),
-					categoryEither.right().value());
+			log.debug("Failed to get {} categories, for name {} error {}", nodetype, newCat.getOldName(), categoryEither.right().value());
 			return Either.right(categoryEither.right().value());
 		}
 		List<CategoryData> categoryList = (categoryEither.isLeft() ? categoryEither.left().value() : null);
@@ -300,10 +290,8 @@ public class ServiceMigration {
 		CategoryData categoryData = categoryList.get(0);
 		categoryData.getCategoryDataDefinition().setName(newCat.getName());
 		categoryData.getCategoryDataDefinition().setIcons(newCat.getIcons());
-		categoryData.getCategoryDataDefinition()
-				.setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(newCat.getName()));
-		Either<CategoryData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(categoryData,
-				CategoryData.class);
+		categoryData.getCategoryDataDefinition().setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(newCat.getName()));
+		Either<CategoryData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(categoryData, CategoryData.class);
 		if (updateNode.isRight()) {
 			log.debug("Failed to update {} category {} error {}", nodetype, categoryData, updateNode.right().value());
 			return Either.right(updateNode.right().value());
@@ -314,11 +302,9 @@ public class ServiceMigration {
 
 	private boolean updateResourceCategories(List<MigrationCategory> categories) {
 		log.debug("updateResourceCategories STARTED");
-		Either<List<CategoryDefinition>, ActionStatus> resourceCategories = elementOperation
-				.getAllCategories(NodeTypeEnum.ResourceNewCategory, true);
+		Either<List<CategoryDefinition>, ActionStatus> resourceCategories = elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, true);
 		if (resourceCategories.isRight()) {
-			log.debug("updateResourceCategories failed fetch all resource categories ,error "
-					+ resourceCategories.right().value());
+			log.debug("updateResourceCategories failed fetch all resource categories ,error " + resourceCategories.right().value());
 			return false;
 		}
 		for (MigrationCategory newCat : categories) {
@@ -333,10 +319,9 @@ public class ServiceMigration {
 				}
 				if (!exist) {
 					CategoryDefinition categoryDefinition = new CategoryDefinition(newCat);
-					Either<CategoryDefinition, ActionStatus> resultCat = elementOperation
-							.createCategory(categoryDefinition, NodeTypeEnum.ResourceNewCategory, true);
+					Either<CategoryDefinition, ActionStatus> resultCat = elementOperation.createCategory(categoryDefinition, NodeTypeEnum.ResourceNewCategory, true);
 					if (resultCat.isRight()) {
-						log.debug("Failed to create resource category {}, error: {}", categoryDefinition, resultCat.right().value());
+						log.debug("Failed to create resource category {} error {}", categoryDefinition, resultCat.right().value());
 						return false;
 					}
 					log.debug("resource category {} created", categoryDefinition);
@@ -346,10 +331,9 @@ public class ServiceMigration {
 					List<MigrationSubCategory> subcategories = newSubcat;
 					for (MigrationSubCategory msubcat : subcategories) {
 						SubCategoryDefinition subcat = new SubCategoryDefinition(msubcat);
-						Either<SubCategoryDefinition, ActionStatus> resultSubcat = elementOperation.createSubCategory(
-								resultCat.left().value().getUniqueId(), subcat, NodeTypeEnum.ResourceSubcategory, true);
+						Either<SubCategoryDefinition, ActionStatus> resultSubcat = elementOperation.createSubCategory(resultCat.left().value().getUniqueId(), subcat, NodeTypeEnum.ResourceSubcategory, true);
 						if (resultSubcat.isRight()) {
-							log.debug("Failed to create resource sub category {} error: {}", subcat, resultSubcat.right().value());
+							log.debug("Failed to create resource sub category {} error {}", subcat, resultSubcat.right().value());
 							return false;
 						}
 						log.debug("resource sub category {} created for category {}", categoryDefinition, resultCat.left().value().getName());
@@ -359,8 +343,7 @@ public class ServiceMigration {
 				// update exist
 				for (CategoryDefinition catInDB : resourceCategories.left().value()) {
 					if (newCat.getOldName().equals(catInDB.getName())) {
-						Either<CategoryData, TitanOperationStatus> updateSingleResult = updateSingleResourceCategory(
-								newCat, NodeTypeEnum.ResourceNewCategory);
+						Either<CategoryData, TitanOperationStatus> updateSingleResult = updateSingleResourceCategory(newCat, NodeTypeEnum.ResourceNewCategory);
 						if (updateSingleResult.isRight()) {
 							return false;
 						}
@@ -378,18 +361,15 @@ public class ServiceMigration {
 								if (!existSub) {
 									SubCategoryDefinition subcat = new SubCategoryDefinition(migSubCat);
 
-									Either<SubCategoryDefinition, ActionStatus> resultSubcat = elementOperation
-											.createSubCategory((String) categoryData.getUniqueId(), subcat,
-													NodeTypeEnum.ResourceSubcategory, true);
+									Either<SubCategoryDefinition, ActionStatus> resultSubcat = elementOperation.createSubCategory((String) categoryData.getUniqueId(), subcat, NodeTypeEnum.ResourceSubcategory, true);
 									if (resultSubcat.isRight()) {
-										log.debug("Failed to create resource sub category {} error: {}", subcat, resultSubcat.right().value());
+										log.debug("Failed to create resource sub category {} error {}", subcat, resultSubcat.right().value());
 										return false;
 									}
-									log.debug("resource sub category {}", categoryData, resultSubcat.left().value().getName());
+									log.debug("resource sub category {} created for category {}", categoryData, resultSubcat.left().value().getName());
 								}
 							} else {
-								if (updateSingleSubCategory(newCat, migSubCat,
-										updateSingleResult.left().value()) == false) {
+								if (updateSingleSubCategory(newCat, migSubCat, updateSingleResult.left().value()) == false) {
 									return false;
 								}
 							}
@@ -402,17 +382,13 @@ public class ServiceMigration {
 		return true;
 	}
 
-	private boolean updateSingleSubCategory(MigrationCategory newCat, MigrationSubCategory migSubCat,
-			CategoryData categoryData) {
+	private boolean updateSingleSubCategory(MigrationCategory newCat, MigrationSubCategory migSubCat, CategoryData categoryData) {
 
-		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> subcategories = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory),
-						(String) categoryData.getUniqueId(), GraphEdgeLabels.SUB_CATEGORY,
-						NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
+		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> subcategories = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
+				GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
 
 		if (subcategories.isRight()) {
-			log.debug("Failed to get resource sub categories, for name {} error {}", newCat.getOldName(),
-					subcategories.right().value());
+			log.debug("Failed to get resource sub categories, for name {} error {}", newCat.getOldName(), subcategories.right().value());
 			return false;
 		}
 
@@ -421,13 +397,10 @@ public class ServiceMigration {
 				SubCategoryData subCategoryData = pair.getKey();
 				subCategoryData.getSubCategoryDataDefinition().setName(migSubCat.getName());
 				subCategoryData.getSubCategoryDataDefinition().setIcons(migSubCat.getIcons());
-				subCategoryData.getSubCategoryDataDefinition()
-						.setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(migSubCat.getName()));
-				Either<SubCategoryData, TitanOperationStatus> updateSubNode = titanGenericDao
-						.updateNode(subCategoryData, SubCategoryData.class);
+				subCategoryData.getSubCategoryDataDefinition().setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(migSubCat.getName()));
+				Either<SubCategoryData, TitanOperationStatus> updateSubNode = titanGenericDao.updateNode(subCategoryData, SubCategoryData.class);
 				if (updateSubNode.isRight()) {
-					log.debug("Failed to update resource sub category {} error {}", subCategoryData,
-							updateSubNode.right().value());
+					log.debug("Failed to update resource sub category {} error {}", subCategoryData, updateSubNode.right().value());
 					return false;
 				}
 				log.debug("Update resource subcategory category {} ", subCategoryData);
@@ -540,11 +513,9 @@ public class ServiceMigration {
 	private boolean updateCalculatedEdges() {
 		log.debug("update calculated edges STARTED");
 
-		Either<List<ComponentInstanceData>, TitanOperationStatus> allInstances = titanGenericDao
-				.getByCriteria(NodeTypeEnum.ResourceInstance, null, ComponentInstanceData.class);
+		Either<List<ComponentInstanceData>, TitanOperationStatus> allInstances = titanGenericDao.getByCriteria(NodeTypeEnum.ResourceInstance, null, ComponentInstanceData.class);
 		if (allInstances.isRight() && !allInstances.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-			log.debug(
-					"updateCalculatedEdges failed fetch all resource instances ,error " + allInstances.right().value());
+			log.debug("updateCalculatedEdges failed fetch all resource instances ,error " + allInstances.right().value());
 			return false;
 		}
 		if (allInstances.isRight() && allInstances.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
@@ -556,15 +527,11 @@ public class ServiceMigration {
 			// check if already have calculated edges
 			log.debug("start handle instance {}", instance.getUniqueId());
 			boolean needProcess = true;
-			Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> vfci = titanGenericDao
-					.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance),
-							instance.getUniqueId(), GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability,
-							CapabilityData.class);
+			Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> vfci = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), instance.getUniqueId(),
+					GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class);
 			if (vfci.isRight()) {
 				if (!vfci.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource {} error: {}", 
-							instance.getComponentInstDataDefinition().getComponentUid(),
-							vfci.right().value());
+					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource " + instance.getComponentInstDataDefinition().getComponentUid() + " error " + vfci.right().value());
 					return false;
 				}
 			} else {
@@ -572,15 +539,11 @@ public class ServiceMigration {
 					needProcess = false;
 				}
 			}
-			Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> vfciReq = titanGenericDao
-					.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance),
-							instance.getUniqueId(), GraphEdgeLabels.CALCULATED_REQUIREMENT, NodeTypeEnum.Requirement,
-							RequirementData.class);
+			Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> vfciReq = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), instance.getUniqueId(),
+					GraphEdgeLabels.CALCULATED_REQUIREMENT, NodeTypeEnum.Requirement, RequirementData.class);
 			if (vfciReq.isRight()) {
 				if (!vfciReq.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource {} error: {}",
-							instance.getComponentInstDataDefinition().getComponentUid(),
-							vfciReq.right().value());
+					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource " + instance.getComponentInstDataDefinition().getComponentUid() + " error " + vfciReq.right().value());
 					return false;
 				}
 			} else {
@@ -588,16 +551,12 @@ public class ServiceMigration {
 					needProcess = false;
 				}
 			}
-			Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> vfciReqFF = titanGenericDao
-					.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance),
-							instance.getUniqueId(), GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED,
-							NodeTypeEnum.Requirement, RequirementData.class);
+			Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> vfciReqFF = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), instance.getUniqueId(),
+					GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED, NodeTypeEnum.Requirement, RequirementData.class);
 			if (vfciReqFF.isRight()) {
 
 				if (!vfciReqFF.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource "
-							+ instance.getComponentInstDataDefinition().getComponentUid() + " error "
-							+ vfciReqFF.right().value());
+					log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource " + instance.getComponentInstDataDefinition().getComponentUid() + " error " + vfciReqFF.right().value());
 					return false;
 				}
 			} else {
@@ -613,7 +572,7 @@ public class ServiceMigration {
 			String originId = instance.getComponentInstDataDefinition().getComponentUid();
 			Either<Resource, StorageOperationStatus> resourceE = resourceOperation.getResource(originId, true);
 			if (resourceE.isRight()) {
-				log.debug("updateCalculatedEdges failed to fetch origin resource with id {} error: {}", originId, resourceE.right().value());
+				log.debug("updateCalculatedEdges failed to fetch origin resource with id {} error {}", originId, resourceE.right().value());
 				return false;
 			}
 			Resource resource = resourceE.left().value();
@@ -631,16 +590,12 @@ public class ServiceMigration {
 		return true;
 	}
 
-	private boolean createCalculatedCapabilitiesForInstance(ComponentInstanceData instance,
-			Map<String, List<CapabilityDefinition>> capabilities) {
+	private boolean createCalculatedCapabilitiesForInstance(ComponentInstanceData instance, Map<String, List<CapabilityDefinition>> capabilities) {
 		for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
 			for (CapabilityDefinition capability : entry.getValue()) {
-				Either<CapabilityData, TitanOperationStatus> capNode = titanGenericDao.getNode(
-						UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), capability.getUniqueId(),
-						CapabilityData.class);
+				Either<CapabilityData, TitanOperationStatus> capNode = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), capability.getUniqueId(), CapabilityData.class);
 				if (capNode.isRight()) {
-					log.debug("createCalculatedCapabilitiesForInstance failed to fetch capability node  with id "
-							+ capability.getUniqueId() + " error " + capNode.right().value());
+					log.debug("createCalculatedCapabilitiesForInstance failed to fetch capability node  with id " + capability.getUniqueId() + " error " + capNode.right().value());
 					return false;
 				}
 				Map<String, Object> props = new HashMap<>();
@@ -649,16 +604,13 @@ public class ServiceMigration {
 					return false;
 				}
 
-				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(instance,
-						capNode.left().value(), GraphEdgeLabels.CALCULATED_CAPABILITY, props);
+				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(instance, capNode.left().value(), GraphEdgeLabels.CALCULATED_CAPABILITY, props);
 				if (createRelation.isRight()) {
 					TitanOperationStatus titanOperationStatus = createRelation.right().value();
-					log.debug(
-							"Failed to create calculated requirement from component instance {} to requirement {}, error: {}",
-							instance.getUniqueId(), capNode.left().value().getUniqueId(), titanOperationStatus);
+					log.debug("Failed to create calculated requirement from component instance {} to requirement {}, error: {}", instance.getUniqueId(), capNode.left().value().getUniqueId(), titanOperationStatus);
 					return false;
 				}
-				log.debug("CALCULATED_CAPABILITY was created from {} to {} with props: {}", capNode.left().value().getUniqueId(), instance.getUniqueId(), props);
+				log.debug("CALCULATED_CAPABILITY was created from {} to {} with props : {}", capNode.left().value().getUniqueId(), instance.getUniqueId(), props);
 			}
 		}
 		return true;
@@ -666,39 +618,30 @@ public class ServiceMigration {
 
 	private boolean fillEdgeProperties(ComponentInstanceData instance, Map<String, Object> props) {
 		if (instance.getComponentInstDataDefinition().getOriginType().equals(OriginTypeEnum.VF)) {
-			Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> vfci = titanGenericDao
-					.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource),
-							instance.getComponentInstDataDefinition().getComponentUid(), GraphEdgeLabels.RESOURCE_INST,
-							NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
+			Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> vfci = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource),
+					instance.getComponentInstDataDefinition().getComponentUid(), GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
 			if (vfci.isRight()) {
-				log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource {} error: {}",
-						instance.getComponentInstDataDefinition().getComponentUid(),
-						vfci.right().value());
+				log.debug("createCalculatedCapabilitiesForInstance failed to fetch instance for resource " + instance.getComponentInstDataDefinition().getComponentUid() + " error " + vfci.right().value());
 				return false;
 			}
 			ImmutablePair<ComponentInstanceData, GraphEdge> immutablePair = vfci.left().value().get(0);
 			String vfciId = immutablePair.getLeft().getUniqueId();
 			props.put(GraphEdgePropertiesDictionary.OWNER_ID.getProperty(), vfciId);
-			props.put(GraphEdgePropertiesDictionary.SOURCE.getProperty(),
-					immutablePair.getLeft().getComponentInstDataDefinition().getComponentUid());
+			props.put(GraphEdgePropertiesDictionary.SOURCE.getProperty(), immutablePair.getLeft().getComponentInstDataDefinition().getComponentUid());
 
 		} else {
 			props.put(GraphEdgePropertiesDictionary.OWNER_ID.getProperty(), instance.getUniqueId());
-			props.put(GraphEdgePropertiesDictionary.SOURCE.getProperty(),
-					instance.getComponentInstDataDefinition().getComponentUid());
+			props.put(GraphEdgePropertiesDictionary.SOURCE.getProperty(), instance.getComponentInstDataDefinition().getComponentUid());
 		}
 		return true;
 	}
 
-	private boolean createCalculatedRequirementsForInstance(ComponentInstanceData instance,
-			Map<String, List<RequirementDefinition>> requirements) {
+	private boolean createCalculatedRequirementsForInstance(ComponentInstanceData instance, Map<String, List<RequirementDefinition>> requirements) {
 		for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
 			for (RequirementDefinition requirement : entry.getValue()) {
-				Either<RequirementData, TitanOperationStatus> reqNode = titanGenericDao.getNode(
-						UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirement.getUniqueId(),
-						RequirementData.class);
+				Either<RequirementData, TitanOperationStatus> reqNode = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirement.getUniqueId(), RequirementData.class);
 				if (reqNode.isRight()) {
-					log.debug("updateCalculatedEdges failed to fetch requirement node  with id {} error: {}", requirement.getUniqueId(), reqNode.right().value());
+					log.debug("updateCalculatedEdges failed to fetch requirement node  with id " + requirement.getUniqueId() + " error " + reqNode.right().value());
 					return false;
 				}
 				Map<String, Object> props = new HashMap<>();
@@ -708,16 +651,13 @@ public class ServiceMigration {
 					return false;
 				}
 
-				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(instance,
-						reqNode.left().value(), GraphEdgeLabels.CALCULATED_REQUIREMENT, props);
+				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(instance, reqNode.left().value(), GraphEdgeLabels.CALCULATED_REQUIREMENT, props);
 				if (createRelation.isRight()) {
 					TitanOperationStatus titanOperationStatus = createRelation.right().value();
-					log.debug(
-							"Failed to create calculated requirement from component instance {} to requirement {}, error: {}",
-							instance.getUniqueId(), reqNode.left().value().getUniqueId(), titanOperationStatus);
+					log.debug("Failed to create calculated requirement from component instance {} to requirement {}, error: {}", instance.getUniqueId(), reqNode.left().value().getUniqueId(), titanOperationStatus);
 					return false;
 				}
-				log.debug("CALCULATED_REQUIREMENT was created from {} to {} with props: {}", reqNode.left().value().getUniqueId(), instance.getUniqueId(), props);
+				log.debug("CALCULATED_REQUIREMENT was created from {} to {} with props : {}", reqNode.left().value().getUniqueId(), instance.getUniqueId(), props);
 			}
 		}
 		return true;
@@ -725,8 +665,7 @@ public class ServiceMigration {
 
 	private boolean updateRelations() {
 		log.debug("update relations and edges STARTED");
-		Either<List<RelationshipInstData>, TitanOperationStatus> allRelations = titanGenericDao
-				.getByCriteria(NodeTypeEnum.RelationshipInst, null, RelationshipInstData.class);
+		Either<List<RelationshipInstData>, TitanOperationStatus> allRelations = titanGenericDao.getByCriteria(NodeTypeEnum.RelationshipInst, null, RelationshipInstData.class);
 		if (allRelations.isRight()) {
 			if (allRelations.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				log.debug("updateRelations : No relations to update. updateRelations ENDED");
@@ -752,10 +691,9 @@ public class ServiceMigration {
 				return false;
 			}
 
-			Either<RelationshipInstData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(rel,
-					RelationshipInstData.class);
+			Either<RelationshipInstData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(rel, RelationshipInstData.class);
 			if (updateNode.isRight()) {
-				log.debug("updateRelations : failed to update relation node with id {}, error: {}", rel.getUniqueId(), updateNode.right().value());
+				log.debug("updateRelations : failed to update relation node with id {} , error {}", rel.getUniqueId(), updateNode.right().value());
 				return false;
 			}
 			log.debug("Relations was updated with values {}", rel);
@@ -765,22 +703,19 @@ public class ServiceMigration {
 	}
 
 	private boolean updateRequirementFieldsInRelation(RelationshipInstData rel) {
-		Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> reqInst = titanGenericDao
-				.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst), rel.getUniqueId(),
-						GraphEdgeLabels.RELATIONSHIP_INST, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
+		Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> reqInst = titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst), rel.getUniqueId(), GraphEdgeLabels.RELATIONSHIP_INST,
+				NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
 		if (reqInst.isRight()) {
-			log.debug("updateRelations : failed to fetch capabilty component instance for relation {}, error: {}", rel.getUniqueId(), reqInst.right().value());
+			log.debug("updateRelations : failed to fetch capabilty component instance for relation {}, error {}", rel.getUniqueId(), reqInst.right().value());
 			return false;
 		}
 		ComponentInstanceData requirementInstanceData = reqInst.left().value().getLeft();
 		ComponentInstanceDataDefinition reqRI = requirementInstanceData.getComponentInstDataDefinition();
 		if (reqRI.getOriginType().equals(OriginTypeEnum.VF)) {
-			Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> vfcInstInOrigVf = titanGenericDao
-					.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource),
-							reqRI.getComponentUid(), GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance,
-							ComponentInstanceData.class, null);
+			Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> vfcInstInOrigVf = titanGenericDao.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), reqRI.getComponentUid(),
+					GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class, null);
 			if (vfcInstInOrigVf.isRight()) {
-				log.debug("updateRelations : failed to fetch VFC instance in origin VF with id {}, error: {}", reqRI.getComponentUid(), vfcInstInOrigVf.right().value());
+				log.debug("updateRelations : failed to fetch VFC instance in origin VF with id  " + reqRI.getComponentUid() + ", error ", vfcInstInOrigVf.right().value());
 				return false;
 			}
 			rel.setRequirementOwnerId(vfcInstInOrigVf.left().value().getLeft().getUniqueId());
@@ -788,30 +723,26 @@ public class ServiceMigration {
 			rel.setRequirementOwnerId(reqRI.getUniqueId());
 		}
 		// get vertex
-		Either<TitanVertex, TitanOperationStatus> vertexReqRI = titanGenericDao.getVertexByProperty(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), requirementInstanceData.getUniqueId());
+		Either<TitanVertex, TitanOperationStatus> vertexReqRI = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), requirementInstanceData.getUniqueId());
 		if (vertexReqRI.isRight()) {
-			log.debug("updateRelations : failed to fetch veterx for instance {}, error: {}", requirementInstanceData.getUniqueId(), vertexReqRI.right().value());
+			log.debug("updateRelations : failed to fetch veterx for instance  {}, error {}", requirementInstanceData.getUniqueId(), vertexReqRI.right().value());
 			return false;
 		}
 		String[] splitIds = rel.getUniqueId().split("\\.");
 		String reqName = splitIds[splitIds.length - 1];
 		Map<String, Object> props = new HashMap<>();
 		props.put(GraphEdgePropertiesDictionary.NAME.getProperty(), reqName);
-		Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao
-				.getOutgoingEdgesByCriteria(vertexReqRI.left().value(), GraphEdgeLabels.CALCULATED_REQUIREMENT, props);
+		Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao.getOutgoingEdgesByCriteria(vertexReqRI.left().value(), GraphEdgeLabels.CALCULATED_REQUIREMENT, props);
 		if (edgesForNode.isRight()) {
-			log.debug("updateRelations : failed to fetch edges for instance {}, error: {}", requirementInstanceData.getUniqueId(), edgesForNode.right().value());
+			log.debug("updateRelations : failed to fetch edges for instance {}  error {}", requirementInstanceData.getUniqueId(), edgesForNode.right().value());
 			return false;
 		}
 		Edge edge = edgesForNode.left().value().get(0);
-		String reqId = (String) titanGenericDao.getProperty((TitanVertex) edge.inVertex(),
-				GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+		String reqId = (String) titanGenericDao.getProperty((TitanVertex) edge.inVertex(), GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		rel.setRequirementId(reqId);
 
 		// change edge label
-		TitanEdge newEdge = (TitanEdge) vertexReqRI.left().value()
-				.addEdge(GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED.getProperty(), edge.inVertex());
+		TitanEdge newEdge = (TitanEdge) vertexReqRI.left().value().addEdge(GraphEdgeLabels.CALCULATED_REQUIREMENT_FULLFILLED.getProperty(), edge.inVertex());
 		titanGenericDao.setProperties(newEdge, titanGenericDao.getProperties(edge));
 		edge.remove();
 
@@ -822,23 +753,19 @@ public class ServiceMigration {
 
 	public boolean updateCapabiltyFieldsInRelation(RelationshipInstData rel) {
 		// update capability parameters
-		Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> capInst = titanGenericDao
-				.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst),
-						rel.getUniqueId(), GraphEdgeLabels.CAPABILITY_NODE, NodeTypeEnum.ResourceInstance,
-						ComponentInstanceData.class, null);
+		Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> capInst = titanGenericDao.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipInst), rel.getUniqueId(),
+				GraphEdgeLabels.CAPABILITY_NODE, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class, null);
 		if (capInst.isRight()) {
-			log.debug("updateRelations : failed to fetch capabilty component instance for relation {}, error: {}", rel.getUniqueId(), capInst.right().value());
+			log.debug("updateRelations : failed to fetch capabilty component instance for relation {}, error {}", rel.getUniqueId(), capInst.right().value());
 			return false;
 		}
 		ComponentInstanceData capabiltyInstanceData = capInst.left().value().getLeft();
 		ComponentInstanceDataDefinition capRI = capabiltyInstanceData.getComponentInstDataDefinition();
 		if (capRI.getOriginType().equals(OriginTypeEnum.VF)) {
-			Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> vfcInstInOrigVf = titanGenericDao
-					.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource),
-							capRI.getComponentUid(), GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance,
-							ComponentInstanceData.class, null);
+			Either<ImmutablePair<ComponentInstanceData, GraphEdge>, TitanOperationStatus> vfcInstInOrigVf = titanGenericDao.getChildByEdgeCriteria(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), capRI.getComponentUid(),
+					GraphEdgeLabels.RESOURCE_INST, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class, null);
 			if (vfcInstInOrigVf.isRight()) {
-				log.debug("updateRelations : failed to fetch VFC instance in origin VF with id {}, error: {}", capRI.getComponentUid(), vfcInstInOrigVf.right().value());
+				log.debug("updateRelations : failed to fetch VFC instance in origin VF with id  " + capRI.getComponentUid() + ", error ", vfcInstInOrigVf.right().value());
 				return false;
 			}
 			rel.setCapabilityOwnerId(vfcInstInOrigVf.left().value().getLeft().getUniqueId());
@@ -847,66 +774,27 @@ public class ServiceMigration {
 		}
 
 		// get vertex
-		Either<TitanVertex, TitanOperationStatus> vertexCapRI = titanGenericDao.getVertexByProperty(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), capabiltyInstanceData.getUniqueId());
+		Either<TitanVertex, TitanOperationStatus> vertexCapRI = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), capabiltyInstanceData.getUniqueId());
 		if (vertexCapRI.isRight()) {
-			log.debug("updateRelations : failed to fetch veterx for instance {}, error: {}", capabiltyInstanceData.getUniqueId(), vertexCapRI.right().value());
+			log.debug("updateRelations : failed to fetch veterx for instance {} , error {}", capabiltyInstanceData.getUniqueId(), vertexCapRI.right().value());
 			return false;
 		}
 		// String[] splitIds = rel.getUniqueId().split("\\.");
-		String capName = (String) capInst.left().value().getRight().getProperties()
-				.get(GraphEdgePropertiesDictionary.NAME.getProperty());// splitIds[splitIds.length
-																		// - 1];
+		String capName = (String) capInst.left().value().getRight().getProperties().get(GraphEdgePropertiesDictionary.NAME.getProperty());// splitIds[splitIds.length
+																																			// - 1];
 		Map<String, Object> props = new HashMap<>();
 		props.put(GraphEdgePropertiesDictionary.NAME.getProperty(), capName);
-		Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao
-				.getOutgoingEdgesByCriteria(vertexCapRI.left().value(), GraphEdgeLabels.CALCULATED_CAPABILITY, props);
+		Either<List<Edge>, TitanOperationStatus> edgesForNode = titanGenericDao.getOutgoingEdgesByCriteria(vertexCapRI.left().value(), GraphEdgeLabels.CALCULATED_CAPABILITY, props);
 		if (edgesForNode.isRight()) {
-			log.debug("updateRelations : failed to fetch edges for instance {}, error: {}", capabiltyInstanceData.getUniqueId(), edgesForNode.right().value());
+			log.debug("updateRelations : failed to fetch edges for instance {} , error {}", capabiltyInstanceData.getUniqueId(), edgesForNode.right().value());
 			return false;
 		}
 		Edge edge = edgesForNode.left().value().get(0);
-		String capId = (String) titanGenericDao.getProperty((TitanVertex) edge.inVertex(),
-				GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+		String capId = (String) titanGenericDao.getProperty((TitanVertex) edge.inVertex(), GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 		rel.setCapabiltyId(capId);
 
 		return true;
 	}
-
-	// private boolean fixDerivedFv() {
-	// Map<String, Object> props = new HashMap<String, Object>();
-	// props.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(),
-	// ResourceTypeEnum.VF.name());
-	// Either<List<ResourceMetadataData>, TitanOperationStatus> allVF =
-	// titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props,
-	// ResourceMetadataData.class);
-	// if (allVF.isRight() &&
-	// !allVF.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
-	// log.debug("fixDerivedFv failed fetch all VF resources,error {}", allVF.right().value());
-	// return false;
-	// }
-	// if ( allVF.right().value().equals(TitanOperationStatus.NOT_FOUND) ){
-	// log.debug("fixDerivedFv - no VF");
-	// return true;
-	// }
-	// Set<String> finishedResources = new HashSet<>();
-	//
-	// for (ResourceMetadataData metadata : allVF.left().value()) {
-	// ComponentMetadataDataDefinition metadataDD =
-	// metadata.getMetadataDataDefinition();
-	//
-	// if (!finishedResources.contains(metadataDD.getUniqueId())) {
-	// Either<List<String>, StorageOperationStatus> processedIds =
-	// handleVfGroup(metadata);
-	// if (processedIds.isRight()) {
-	// log.debug("fixDerivedFv failed to process FV group {}", processedIds.right().value());
-	// return false;
-	// }
-	// finishedResources.addAll(processedIds.left().value());
-	// }
-	// }
-	// return true;
-	// }
 
 	private Either<List<String>, StorageOperationStatus> handleVfGroup(ResourceMetadataData metadata) {
 		Map<String, Object> props = new HashMap<String, Object>();
@@ -915,8 +803,7 @@ public class ServiceMigration {
 
 		List<String> finished = new ArrayList<>();
 
-		Either<List<ResourceMetadataData>, TitanOperationStatus> allVFByName = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> allVFByName = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
 		if (allVFByName.isRight()) {
 			log.debug("fixDerivedFv failed fetch all VF resources,error {}", allVFByName.right().value());
 			return Either.right(StorageOperationStatus.GENERAL_ERROR);
@@ -937,10 +824,9 @@ public class ServiceMigration {
 		props.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VF.name());
 		props.put(GraphPropertiesDictionary.UUID.getProperty(), uuid10);
 
-		Either<List<ResourceMetadataData>, TitanOperationStatus> allVFByUUID = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> allVFByUUID = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
 		if (allVFByUUID.isRight()) {
-			log.debug("fixDerivedFv failed fetch all VF resources by UUID  {}, error: {}", uuid10, allVFByUUID.right().value());
+			log.debug("fixDerivedFv failed fetch all VF resources by UUID {} ,error {}", uuid10, allVFByUUID.right().value());
 			return Either.right(StorageOperationStatus.GENERAL_ERROR);
 		}
 		for (ResourceMetadataData mdata : allVFByUUID.left().value()) {
@@ -957,7 +843,7 @@ public class ServiceMigration {
 			// handleSingleVf(finished, derivedMapping, resourceId);
 			StorageOperationStatus handleSingleVfResult = handleSingleVf(finished, resourceId);
 			if (!handleSingleVfResult.equals(StorageOperationStatus.OK)) {
-				log.debug("fixDerivedFv failed - handleSingleVfResult failed for resource {}, error: {}", resourceId, handleSingleVfResult);
+				log.debug("fixDerivedFv failed - handleSingleVfResult failed for resource {} ,error {}", resourceId, handleSingleVfResult);
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 		}
@@ -967,10 +853,9 @@ public class ServiceMigration {
 	// private StorageOperationStatus handleSingleVf(List<String> finished,
 	// Map<String, String> derivedMapping, String resourceId) {
 	private StorageOperationStatus handleSingleVf(List<String> finished, String resourceId) {
-		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao
-				.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), resourceId);
+		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), resourceId);
 		if (vertexByProperty.isRight()) {
-			log.debug("fixDerivedFv failed to fetch resource by id {}, error: {}", resourceId, vertexByProperty.right().value());
+			log.debug("fixDerivedFv failed to fetch resource by id {} ,error {}", resourceId, vertexByProperty.right().value());
 			return StorageOperationStatus.GENERAL_ERROR;
 		}
 		Vertex vertexR = vertexByProperty.left().value();
@@ -979,8 +864,7 @@ public class ServiceMigration {
 			// move edges
 			// must be only one
 			TitanVertex vertexD = (TitanVertex) vertexDIter.next();
-			String idDerived = (String) titanGenericDao.getProperty(vertexD,
-					GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+			String idDerived = (String) titanGenericDao.getProperty(vertexD, GraphPropertiesDictionary.UNIQUE_ID.getProperty());
 
 			// TODO clone resource
 
@@ -996,30 +880,27 @@ public class ServiceMigration {
 
 	private boolean updateComponentInstanceType() {
 		log.debug("update component instances type STARTED");
-		Either<List<ComponentInstanceData>, TitanOperationStatus> allInstances = titanGenericDao
-				.getByCriteria(NodeTypeEnum.ResourceInstance, null, ComponentInstanceData.class);
+		Either<List<ComponentInstanceData>, TitanOperationStatus> allInstances = titanGenericDao.getByCriteria(NodeTypeEnum.ResourceInstance, null, ComponentInstanceData.class);
 		if (allInstances.isRight()) {
 			if (allInstances.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				log.debug("updateComponentInstanceType:  no instances ti update ");
 				return true;
 			}
-			log.debug("updateComponentInstanceType failed fetch all resource instances ,error {}", allInstances.right().value());
+			log.debug("updateComponentInstanceType failed fetch all resource instances ,error " + allInstances.right().value());
 			return false;
 		}
 
 		List<ComponentInstanceData> listOfInstances = allInstances.left().value();
 		for (ComponentInstanceData instance : listOfInstances) {
 			String originId = instance.getComponentInstDataDefinition().getComponentUid();
-			Either<ComponentMetadataData, TitanOperationStatus> nodeResource = titanGenericDao.getNode(
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), originId, ComponentMetadataData.class);
+			Either<ComponentMetadataData, TitanOperationStatus> nodeResource = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), originId, ComponentMetadataData.class);
 			if (nodeResource.isRight()) {
-				log.debug("updateComponentInstanceType failed to fetch origin resource with id {}, error: {}", originId, nodeResource.right().value());
+				log.debug("updateComponentInstanceType failed to fetch origin resource with id {} error {}", originId, nodeResource.right().value());
 				return false;
 			}
-			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) nodeResource.left().value()
-					.getMetadataDataDefinition()).getResourceType();
+			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) nodeResource.left().value().getMetadataDataDefinition()).getResourceType();
 			if (resourceType == null) {
-				log.debug("updateComponentInstanceType failed, no resource type for origin resource with id {}", originId);
+				log.debug("updateComponentInstanceType failed, no resource type for origin resource with id " + originId);
 				return false;
 			}
 			OriginTypeEnum originType;
@@ -1042,10 +923,9 @@ public class ServiceMigration {
 			}
 			instance.getComponentInstDataDefinition().setOriginType(originType);
 
-			Either<ComponentInstanceData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(instance,
-					ComponentInstanceData.class);
+			Either<ComponentInstanceData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(instance, ComponentInstanceData.class);
 			if (updateNode.isRight()) {
-				log.debug("updateComponentInstanceType failed, failed to update component instance node with id {}, error: {}", instance.getUniqueId(), updateNode.right().value());
+				log.debug("updateComponentInstanceType failed, failed to update component instance node with id  " + instance.getUniqueId() + " error " + updateNode.right().value());
 				return false;
 			}
 			log.debug("For instance with id {} the origin type was detected as {}", instance.getUniqueId(), originType);
@@ -1056,8 +936,7 @@ public class ServiceMigration {
 
 	private boolean addResourceCounterToResources() {
 
-		Either<List<ResourceMetadataData>, TitanOperationStatus> allResources = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Resource, null, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> allResources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, null, ResourceMetadataData.class);
 		if (allResources.isRight()) {
 			if (allResources.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				log.debug("addResourceCounterToResources - no resources");
@@ -1067,11 +946,9 @@ public class ServiceMigration {
 			return false;
 		}
 		for (ResourceMetadataData resource : allResources.left().value()) {
-			Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId());
+			Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId());
 			if (vertexByProperty.isRight()) {
-				log.error("failed to add instanceCounter to VF {} . error is: {}", resource.getUniqueId(),
-						vertexByProperty.right().value().name());
+				log.error("failed to add instanceCounter to VF {} . error is: {}", resource.getUniqueId(), vertexByProperty.right().value().name());
 				return false;
 			}
 			Vertex vfVertex = vertexByProperty.left().value();
@@ -1086,8 +963,7 @@ public class ServiceMigration {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VF.name());
-		Either<List<ResourceMetadataData>, TitanOperationStatus> allVF = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> allVF = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
 		if (allVF.isRight()) {
 			if (allVF.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				log.debug("fixDerivedVf - no VFs");
@@ -1099,11 +975,9 @@ public class ServiceMigration {
 
 		Map<String, String> vfUuidToVfcUuid = new HashMap<String, String>();
 		for (ResourceMetadataData metadata : allVF.left().value()) {
-			Either<Resource, StorageOperationStatus> eitherResource = resourceOperation
-					.getResource(metadata.getMetadataDataDefinition().getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> eitherResource = resourceOperation.getResource(metadata.getMetadataDataDefinition().getUniqueId(), true);
 			if (eitherResource.isRight()) {
-				log.error("failed to migrate VF {} from version 1602 to version 1604. error is: {}",
-						metadata.getMetadataDataDefinition().getUniqueId(), eitherResource.right().value().name());
+				log.error("failed to migrate VF {} from version 1602 to version 1604. error is: {}", metadata.getMetadataDataDefinition().getUniqueId(), eitherResource.right().value().name());
 				return false;
 			}
 			Resource vfResource = eitherResource.left().value();
@@ -1121,12 +995,10 @@ public class ServiceMigration {
 			// handle lifecycle
 			String vfUniqueId = vfResource.getUniqueId();
 			LifecycleStateEnum vfcTargetState = vfResource.getLifecycleState();
-			if (vfcTargetState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION)
-					|| vfcTargetState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
+			if (vfcTargetState.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION) || vfcTargetState.equals(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS)) {
 				User user = new User();
 				user.setUserId(vfResource.getLastUpdaterUserId());
-				Either<? extends Component, StorageOperationStatus> checkinComponent = lifecycleOperaion
-						.checkinComponent(NodeTypeEnum.Resource, vfResource, user, user, true);
+				Either<? extends Component, StorageOperationStatus> checkinComponent = lifecycleOperaion.checkinComponent(NodeTypeEnum.Resource, vfResource, user, user, true);
 				if (checkinComponent.isRight()) {
 					log.error("failed to checkin VF {}. error={}", vfUniqueId, checkinComponent.right().value().name());
 					return false;
@@ -1138,51 +1010,35 @@ public class ServiceMigration {
 			// delete VF Properties
 			List<PropertyDefinition> properties = vfResource.getProperties();
 			if (properties != null && !properties.isEmpty()) {
-				Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllProperties = propertyOperation
-						.deleteAllPropertiesAssociatedToNode(NodeTypeEnum.Resource, vfUniqueId);
-				if (deleteAllProperties.isRight()
-						&& !deleteAllProperties.right().value().equals(StorageOperationStatus.NOT_FOUND)
-						&& !deleteAllProperties.right().value().equals(StorageOperationStatus.OK)) {
-					log.error("failed to delete properties of VF {} . error is: {}",
-							metadata.getMetadataDataDefinition().getUniqueId(),
-							deleteAllProperties.right().value().name());
+				Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllProperties = propertyOperation.deleteAllPropertiesAssociatedToNode(NodeTypeEnum.Resource, vfUniqueId);
+				if (deleteAllProperties.isRight() && !deleteAllProperties.right().value().equals(StorageOperationStatus.NOT_FOUND) && !deleteAllProperties.right().value().equals(StorageOperationStatus.OK)) {
+					log.error("failed to delete properties of VF {} . error is: {}", metadata.getMetadataDataDefinition().getUniqueId(), deleteAllProperties.right().value().name());
 					return false;
 				}
 			}
 			// delete VF Additional Info
 			List<AdditionalInformationDefinition> additionalInformation = vfResource.getAdditionalInformation();
 			if (additionalInformation != null && !additionalInformation.isEmpty()) {
-				Either<AdditionalInformationDefinition, StorageOperationStatus> deleteAllAdditionalInformationParameters = additionalInformationOperation
-						.deleteAllAdditionalInformationParameters(NodeTypeEnum.Resource, vfUniqueId, true);
-				if (deleteAllAdditionalInformationParameters.isRight()
-						&& !deleteAllAdditionalInformationParameters.right().value().equals(StorageOperationStatus.OK)
-						&& !deleteAllAdditionalInformationParameters.right().value()
-								.equals(StorageOperationStatus.NOT_FOUND)) {
-					log.error("failed to delete properties of VF {} . error is: {}",
-							metadata.getMetadataDataDefinition().getUniqueId(),
-							deleteAllAdditionalInformationParameters.right().value().name());
+				Either<AdditionalInformationDefinition, StorageOperationStatus> deleteAllAdditionalInformationParameters = additionalInformationOperation.deleteAllAdditionalInformationParameters(NodeTypeEnum.Resource, vfUniqueId, true);
+				if (deleteAllAdditionalInformationParameters.isRight() && !deleteAllAdditionalInformationParameters.right().value().equals(StorageOperationStatus.OK)
+						&& !deleteAllAdditionalInformationParameters.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+					log.error("failed to delete properties of VF {} . error is: {}", metadata.getMetadataDataDefinition().getUniqueId(), deleteAllAdditionalInformationParameters.right().value().name());
 					return false;
 				}
 			}
 			// delete VF derivedFrom
 			GraphRelation derivedFromRelation = new GraphRelation(GraphEdgeLabels.DERIVED_FROM.getProperty());
-			derivedFromRelation.setFrom(new RelationEndPoint(NodeTypeEnum.Resource,
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), vfUniqueId));
-			Either<GraphRelation, TitanOperationStatus> deleteDerivedFromRelation = titanGenericDao
-					.deleteOutgoingRelation(derivedFromRelation);
+			derivedFromRelation.setFrom(new RelationEndPoint(NodeTypeEnum.Resource, UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), vfUniqueId));
+			Either<GraphRelation, TitanOperationStatus> deleteDerivedFromRelation = titanGenericDao.deleteOutgoingRelation(derivedFromRelation);
 			if (deleteDerivedFromRelation.isRight()) {
-				log.error("failed to delete derivedFrom relation of VF {} . error is: {}",
-						metadata.getMetadataDataDefinition().getUniqueId(),
-						deleteDerivedFromRelation.right().value().name());
+				log.error("failed to delete derivedFrom relation of VF {} . error is: {}", metadata.getMetadataDataDefinition().getUniqueId(), deleteDerivedFromRelation.right().value().name());
 				return false;
 			}
 
 			// create VFC
-			Either<Resource, StorageOperationStatus> createVFC = createVFC(metadata, vfResource, vfcUUID,
-					vfcTargetState);
+			Either<Resource, StorageOperationStatus> createVFC = createVFC(metadata, vfResource, vfcUUID, vfcTargetState);
 			if (createVFC.isRight()) {
-				log.error("failed to split VF {} to VFC. error is: {}",
-						metadata.getMetadataDataDefinition().getUniqueId(), createVFC.right().value().name());
+				log.error("failed to split VF {} to VFC. error is: {}", metadata.getMetadataDataDefinition().getUniqueId(), createVFC.right().value().name());
 				return false;
 			}
 			Resource vfcResource = createVFC.left().value();
@@ -1191,11 +1047,9 @@ public class ServiceMigration {
 			}
 			// update VFC to deleted if required
 			if (isVfDeleted != null && isVfDeleted) {
-				Either<Component, StorageOperationStatus> markResourceToDelete = resourceOperation
-						.markComponentToDelete(vfcResource, true);
+				Either<Component, StorageOperationStatus> markResourceToDelete = resourceOperation.markComponentToDelete(vfcResource, true);
 				if (markResourceToDelete.isRight()) {
-					log.error("failed to mark isDeleted on VFC {} . error is: {}", vfcResource.getUniqueId(),
-							markResourceToDelete.right().value().name());
+					log.error("failed to mark isDeleted on VFC {} . error is: {}", vfcResource.getUniqueId(), markResourceToDelete.right().value().name());
 					return false;
 				}
 			}
@@ -1204,8 +1058,7 @@ public class ServiceMigration {
 		return true;
 	}
 
-	private Either<Resource, StorageOperationStatus> createVFC(ResourceMetadataData metadata, Resource vfcResource,
-			String uuid, LifecycleStateEnum vfcTargetState) {
+	private Either<Resource, StorageOperationStatus> createVFC(ResourceMetadataData metadata, Resource vfcResource, String uuid, LifecycleStateEnum vfcTargetState) {
 
 		Boolean highestVersion = vfcResource.isHighestVersion();
 		// Resource vfcResource = new Resource((ResourceMetadataDefinition)
@@ -1237,8 +1090,7 @@ public class ServiceMigration {
 			return createResource;
 		}
 		Resource afterCreateResource = createResource.left().value();
-		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), afterCreateResource.getUniqueId());
+		Either<TitanVertex, TitanOperationStatus> vertexByProperty = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), afterCreateResource.getUniqueId());
 		if (vertexByProperty.isRight()) {
 			return createResource;
 		}
@@ -1264,23 +1116,18 @@ public class ServiceMigration {
 			log.error("failed to create logical name for vfc instance");
 			return false;
 		}
-		Either<ComponentInstance, StorageOperationStatus> createComponentInstance = componentInstanceOperaion
-				.createComponentInstance(vfUniqueId, NodeTypeEnum.Resource, handleNameLogic.left().value(),
-						componentInstance, NodeTypeEnum.Resource, true);
+		Either<ComponentInstance, StorageOperationStatus> createComponentInstance = componentInstanceOperaion.createComponentInstance(vfUniqueId, NodeTypeEnum.Resource, handleNameLogic.left().value(), componentInstance, NodeTypeEnum.Resource, true);
 
 		if (createComponentInstance.isRight()) {
-			log.error("failed to create vfc instance on vf {}. error: {}", vfUniqueId,
-					createComponentInstance.right().value().name());
+			log.error("failed to create vfc instance on vf {}. error: {}", vfUniqueId, createComponentInstance.right().value().name());
 			return false;
 		}
 		return true;
 	}
 
-	private Either<String, Boolean> handleNameLogic(ComponentInstance componentInstance, String containerComponentId,
-			String resourceName) {
+	private Either<String, Boolean> handleNameLogic(ComponentInstance componentInstance, String containerComponentId, String resourceName) {
 
-		Either<Integer, StorageOperationStatus> componentInNumberStatus = resourceOperation
-				.increaseAndGetComponentInstanceCounter(containerComponentId, true);
+		Either<Integer, StorageOperationStatus> componentInNumberStatus = resourceOperation.increaseAndGetComponentInstanceCounter(containerComponentId, true);
 
 		if (componentInNumberStatus.isRight()) {
 			log.debug("Failed to get component instance number for container component {} ", containerComponentId);
@@ -1299,13 +1146,12 @@ public class ServiceMigration {
 		return Either.left(resourceInNumber);
 	}
 
-	private Boolean validateComponentInstanceName(String resourceInstanceName, ComponentInstance resourceInstance,
-			boolean isCreate) {
+	private Boolean validateComponentInstanceName(String resourceInstanceName, ComponentInstance resourceInstance, boolean isCreate) {
 
 		if (!ValidationUtils.validateStringNotEmpty(resourceInstanceName)) {
 			return false;
 		}
-		resourceInstance.setNormalizedName(ValidationUtils.normaliseComponentInstanceName(resourceInstanceName));
+		resourceInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(resourceInstanceName));
 		if (!isCreate) {
 			if (!ValidationUtils.validateResourceInstanceNameLength(resourceInstanceName)) {
 				return false;
@@ -1325,8 +1171,7 @@ public class ServiceMigration {
 		boolean result = false;
 		Either<Boolean, StorageOperationStatus> resourceEither = null;
 		try {
-			Either<List<ResourceMetadataData>, TitanOperationStatus> allResources = titanGenericDao
-					.getByCriteria(NodeTypeEnum.Resource, null, ResourceMetadataData.class);
+			Either<List<ResourceMetadataData>, TitanOperationStatus> allResources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, null, ResourceMetadataData.class);
 			if (allResources.isRight()) {
 				log.error("Couldn't get resources from DB, error: {}", allResources.right().value());
 				result = false;
@@ -1350,8 +1195,7 @@ public class ServiceMigration {
 						return result;
 					}
 				}
-				if (((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType().name()
-						.equals("VF")) {
+				if (((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType().name().equals("VF")) {
 					resourceEither = setVfToscaResourceName(resource);
 					if (resourceEither.isRight()) {
 						log.error("DB error during tosca resource name setting");
@@ -1388,11 +1232,9 @@ public class ServiceMigration {
 		List<ComponentMetadataData> fullComponentList = new ArrayList<ComponentMetadataData>();
 
 		// getting resources
-		Either<List<ResourceMetadataData>, TitanOperationStatus> allHighestVersionResources = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> allHighestVersionResources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, props, ResourceMetadataData.class);
 		if (allHighestVersionResources.isRight()) {
-			log.error("Couldn't get resources with highest version from DB, error: {}",
-					allHighestVersionResources.right().value());
+			log.error("Couldn't get resources with highest version from DB, error: {}", allHighestVersionResources.right().value());
 			return false;
 		}
 		List<ResourceMetadataData> allHighestVersionResourcesAL = allHighestVersionResources.left().value();
@@ -1404,11 +1246,9 @@ public class ServiceMigration {
 		fullComponentList.addAll(allHighestVersionResourcesAL);
 
 		// getting services
-		Either<List<ServiceMetadataData>, TitanOperationStatus> allHighestVersionServices = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Service, props, ServiceMetadataData.class);
+		Either<List<ServiceMetadataData>, TitanOperationStatus> allHighestVersionServices = titanGenericDao.getByCriteria(NodeTypeEnum.Service, props, ServiceMetadataData.class);
 		if (allHighestVersionServices.isRight()) {
-			log.error("Couldn't get services with highest version from DB, error: {}",
-					allHighestVersionServices.right().value());
+			log.error("Couldn't get services with highest version from DB, error: {}", allHighestVersionServices.right().value());
 			return false;
 		}
 		List<ServiceMetadataData> allHighestVersionServicesAL = allHighestVersionServices.left().value();
@@ -1422,11 +1262,9 @@ public class ServiceMigration {
 		List<ComponentMetadataData> reducedComponentsAL = reduceHighestVersionResourcesList(fullComponentList);
 
 		// getting products
-		Either<List<ProductMetadataData>, TitanOperationStatus> allHighestVersionProducts = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Product, props, ProductMetadataData.class);
+		Either<List<ProductMetadataData>, TitanOperationStatus> allHighestVersionProducts = titanGenericDao.getByCriteria(NodeTypeEnum.Product, props, ProductMetadataData.class);
 		if (allHighestVersionProducts.isRight()) {
-			log.error("Couldn't get products with highest version from DB, error: {}",
-					allHighestVersionProducts.right().value());
+			log.error("Couldn't get products with highest version from DB, error: {}", allHighestVersionProducts.right().value());
 			return false;
 		}
 		List<ProductMetadataData> allHighestVersionProductsAL = allHighestVersionProducts.left().value();
@@ -1457,15 +1295,12 @@ public class ServiceMigration {
 				componentMetaData.getMetadataDataDefinition().setInvariantUUID(invariantUUID);
 			}
 			log.debug("new invariantUUID {}", componentMetaData.getMetadataDataDefinition().getInvariantUUID());
-			Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao
-					.updateNode(componentMetaData, ComponentMetadataData.class);
+			Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentMetaData, ComponentMetadataData.class);
 			if (updateNode.isRight()) {
-				log.error("DB error during while updating component {}, error: {}",
-						componentMetaData.getMetadataDataDefinition().getName(), updateNode.right().value());
+				log.error("DB error during while updating component {}, error: {}", componentMetaData.getMetadataDataDefinition().getName(), updateNode.right().value());
 				return false;
 			}
-			log.debug("updated invariantUUID {}",
-					updateNode.left().value().getMetadataDataDefinition().getInvariantUUID());
+			log.debug("updated invariantUUID {}", updateNode.left().value().getMetadataDataDefinition().getInvariantUUID());
 			if (!isOnlyVersion(componentMetaData)) {
 				ComponentOperation componentOperation = null;
 				switch (NodeTypeEnum.getByName(componentMetaData.getLabel())) {
@@ -1481,11 +1316,9 @@ public class ServiceMigration {
 				default:
 					break;
 				}
-				Either<Component, StorageOperationStatus> getComponentResult = componentOperation
-						.getComponent((String) componentMetaData.getUniqueId(), true);
+				Either<Component, StorageOperationStatus> getComponentResult = componentOperation.getComponent((String) componentMetaData.getUniqueId(), true);
 				if (getComponentResult.isRight()) {
-					log.error("DB error during while getting component with uniqueID {}, error: {}",
-							componentMetaData.getUniqueId(), getComponentResult.right().value());
+					log.error("DB error during while getting component with uniqueID {}, error: {}", componentMetaData.getUniqueId(), getComponentResult.right().value());
 					return false;
 				}
 				Component component = getComponentResult.left().value();
@@ -1514,8 +1347,7 @@ public class ServiceMigration {
 	}
 
 	private boolean setProductInvariantUUIDIfExists(ProductMetadataData product) {
-		Either<TitanVertex, TitanOperationStatus> getVertexRes = titanGenericDao
-				.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), product.getUniqueId());
+		Either<TitanVertex, TitanOperationStatus> getVertexRes = titanGenericDao.getVertexByProperty(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), product.getUniqueId());
 		if (getVertexRes.isRight()) {
 			log.error("DB error during retrieving product vertex {}", product.getMetadataDataDefinition().getName());
 			return false;
@@ -1528,27 +1360,21 @@ public class ServiceMigration {
 		return true;
 	}
 
-	private Either<Boolean, StorageOperationStatus> updateAllVersions(Map<String, String> allVersions,
-			String invariantUUID) {
+	private Either<Boolean, StorageOperationStatus> updateAllVersions(Map<String, String> allVersions, String invariantUUID) {
 
 		if (allVersions != null) {
 			for (String uniqueID : allVersions.values()) {
-				Either<ComponentMetadataData, TitanOperationStatus> getNodeResult = titanGenericDao.getNode(
-						GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueID, ComponentMetadataData.class);
+				Either<ComponentMetadataData, TitanOperationStatus> getNodeResult = titanGenericDao.getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueID, ComponentMetadataData.class);
 				if (getNodeResult.isRight()) {
-					log.error("DB error during while getting component with uniqueID {}, error: {}", uniqueID,
-							getNodeResult.right().value());
+					log.error("DB error during while getting component with uniqueID {}, error: {}", uniqueID, getNodeResult.right().value());
 					return Either.right(StorageOperationStatus.GENERAL_ERROR);
 				}
 				ComponentMetadataData component = getNodeResult.left().value();
 				component.getMetadataDataDefinition().setInvariantUUID(invariantUUID);
-				Either<ComponentMetadataData, TitanOperationStatus> updateNodeResult = titanGenericDao
-						.updateNode(component, ComponentMetadataData.class);
-				log.debug("updated child invariantUUID {}",
-						updateNodeResult.left().value().getMetadataDataDefinition().getInvariantUUID());
+				Either<ComponentMetadataData, TitanOperationStatus> updateNodeResult = titanGenericDao.updateNode(component, ComponentMetadataData.class);
+				log.debug("updated child invariantUUID {}", updateNodeResult.left().value().getMetadataDataDefinition().getInvariantUUID());
 				if (updateNodeResult.isRight()) {
-					log.error("DB error during while updating component {}, error: {}",
-							component.getMetadataDataDefinition().getName(), updateNodeResult.right().value());
+					log.error("DB error during while updating component {}, error: {}", component.getMetadataDataDefinition().getName(), updateNodeResult.right().value());
 					return Either.right(StorageOperationStatus.GENERAL_ERROR);
 				}
 			}
@@ -1556,24 +1382,19 @@ public class ServiceMigration {
 		return Either.left(true);
 	}
 
-	private List<ComponentMetadataData> reduceHighestVersionResourcesList(
-			List<ComponentMetadataData> allHighestVersionResources) {
+	private List<ComponentMetadataData> reduceHighestVersionResourcesList(List<ComponentMetadataData> allHighestVersionResources) {
 		List<ComponentMetadataData> resultList = null;
 		Map<String, ComponentMetadataData> resultHM = new HashMap<String, ComponentMetadataData>();
 		for (ComponentMetadataData resource : allHighestVersionResources) {
-			if (resource.getMetadataDataDefinition().getInvariantUUID() != null
-					&& !resource.getMetadataDataDefinition().getInvariantUUID().isEmpty()) {
+			if (resource.getMetadataDataDefinition().getInvariantUUID() != null && !resource.getMetadataDataDefinition().getInvariantUUID().isEmpty()) {
 				log.debug("invariantUUID {} ", resource.getMetadataDataDefinition().getInvariantUUID());
 				continue;
 			}
 			String curUUID = resource.getMetadataDataDefinition().getUUID();
 			if (resultHM.containsKey(curUUID)) {
-				int isHighest = resultHM.get(curUUID).getMetadataDataDefinition().getVersion()
-						.compareTo(resource.getMetadataDataDefinition().getVersion());
+				int isHighest = resultHM.get(curUUID).getMetadataDataDefinition().getVersion().compareTo(resource.getMetadataDataDefinition().getVersion());
 				if (isHighest > 0) {
-					log.debug("version {} is great than {} ",
-							resultHM.get(curUUID).getMetadataDataDefinition().getVersion(),
-							resource.getMetadataDataDefinition().getVersion());
+					log.debug("version {} is great than {} ", resultHM.get(curUUID).getMetadataDataDefinition().getVersion(), resource.getMetadataDataDefinition().getVersion());
 					continue;
 				}
 			}
@@ -1622,11 +1443,9 @@ public class ServiceMigration {
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 			
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resource,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resource, ResourceMetadataData.class);
 			if (updateNode.isRight()) {
-				log.error("DB error during while updating normative type {}, error: {}",
-						resource.getMetadataDataDefinition().getName(), updateNode.right().value());
+				log.error("DB error during while updating normative type {}, error: {}", resource.getMetadataDataDefinition().getName(), updateNode.right().value());
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 			log.debug("Normative type {} was successfully updated", resource.getMetadataDataDefinition().getName());
@@ -1636,15 +1455,11 @@ public class ServiceMigration {
 		return Either.left(false);
 	}
 
-	private Either<Boolean, StorageOperationStatus> generateAndSetToscaResourceName(ResourceMetadataData resource,
-			String toscaResourceName) {
+	private Either<Boolean, StorageOperationStatus> generateAndSetToscaResourceName(ResourceMetadataData resource, String toscaResourceName) {
 		if (toscaResourceName == null) {
-			toscaResourceName = CommonBeUtils.generateToscaResourceName(
-					((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType().name(),
-					resource.getMetadataDataDefinition().getSystemName());
+			toscaResourceName = CommonBeUtils.generateToscaResourceName(((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType().name(), resource.getMetadataDataDefinition().getSystemName());
 		}
-		Either<Boolean, StorageOperationStatus> validateToscaResourceNameExists = resourceOperation
-				.validateToscaResourceNameExists(toscaResourceName);
+		Either<Boolean, StorageOperationStatus> validateToscaResourceNameExists = resourceOperation.validateToscaResourceNameExists(toscaResourceName);
 		if (validateToscaResourceNameExists.isRight()) {
 			StorageOperationStatus storageOperationStatus = validateToscaResourceNameExists.right().value();
 			log.error("Couldn't validate toscaResourceName uniqueness - error: {}", storageOperationStatus);
@@ -1652,8 +1467,7 @@ public class ServiceMigration {
 		}
 		if (validateToscaResourceNameExists.left().value()) {
 			log.debug("Setting tosca resource name to be {}", toscaResourceName);
-			((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition())
-					.setToscaResourceName(toscaResourceName);
+			((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).setToscaResourceName(toscaResourceName);
 			return Either.left(true);
 		} else {
 			// As agreed with Renana - cannot be fixed automatically
@@ -1673,22 +1487,17 @@ public class ServiceMigration {
 
 	private Either<Boolean, StorageOperationStatus> setVfToscaResourceName(ResourceMetadataData resource) {
 		String resourceName = resource.getMetadataDataDefinition().getName();
-		String resourceType = ((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType()
-				.name();
-		String toscaResourceName = CommonBeUtils.generateToscaResourceName(resourceType,
-				resource.getMetadataDataDefinition().getSystemName());
+		String resourceType = ((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).getResourceType().name();
+		String toscaResourceName = CommonBeUtils.generateToscaResourceName(resourceType, resource.getMetadataDataDefinition().getSystemName());
 		log.debug("Setting tosca resource name {} to VF {}", toscaResourceName, resourceName);
 		((ResourceMetadataDataDefinition) resource.getMetadataDataDefinition()).setToscaResourceName(toscaResourceName);
 
-		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resource,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resource, ResourceMetadataData.class);
 		if (updateNode.isRight()) {
-			log.error("DB error during while updating VF tosca resource name {}, error: {}",
-					resource.getMetadataDataDefinition().getName(), updateNode.right().value());
+			log.error("DB error during while updating VF tosca resource name {}, error: {}", resource.getMetadataDataDefinition().getName(), updateNode.right().value());
 			return Either.right(StorageOperationStatus.GENERAL_ERROR);
 		}
-		log.debug("Tosca resource name of VF {} was successfully updated",
-				resource.getMetadataDataDefinition().getName());
+		log.debug("Tosca resource name of VF {} was successfully updated", resource.getMetadataDataDefinition().getName());
 		return Either.left(true);
 	}
 

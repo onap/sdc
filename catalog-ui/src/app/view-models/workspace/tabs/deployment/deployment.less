@@ -1,0 +1,33 @@
+.deployment-view {
+
+    display: inline-block;
+    text-align: left;
+    align-items: left;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    .w-sdc-deployment-canvas {
+        .noselect;
+        .bg_c;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+
+        .view-mode{
+            background-color: #f8f8f8;
+            border:0;
+        }
+    }
+
+    .w-sdc-deployment-right-bar {
+
+        .noselect;
+        bottom: 0;
+        position: absolute;
+        right: 0px;
+        transition: right 0.2s;
+        z-index: 10000;
+        top:  @action_nav_height;
+    }
+}

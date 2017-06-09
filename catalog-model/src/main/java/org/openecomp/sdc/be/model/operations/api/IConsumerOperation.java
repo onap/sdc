@@ -32,9 +32,7 @@ public interface IConsumerOperation {
 	 * @param consumerData
 	 *            the object we want to store
 	 * @param inTransaction
-	 *            inTransaction is the operation part of a transaction, in case
-	 *            the value is false the action will be committed in the end of
-	 *            the method
+	 *            inTransaction is the operation part of a transaction, in case the value is false the action will be committed in the end of the method
 	 * @return the updated object returned from the graph
 	 */
 	Either<ConsumerData, StorageOperationStatus> updateCredentials(ConsumerData consumerData, boolean inTransaction);
@@ -52,12 +50,9 @@ public interface IConsumerOperation {
 	 * the method deletes the node with the given unique id
 	 * 
 	 * @param consumerName
-	 *            the unique id by witch we will look up the credential we want
-	 *            to delete
+	 *            the unique id by witch we will look up the credential we want to delete
 	 * @param inTransaction
-	 *            inTransaction is the operation part of a transaction, in case
-	 *            the value is false the action will be committed in the end of
-	 *            the method
+	 *            inTransaction is the operation part of a transaction, in case the value is false the action will be committed in the end of the method
 	 * @return the deleted object returned from the graph
 	 */
 	Either<ConsumerData, StorageOperationStatus> deleteCredentials(String consumerName, boolean inTransaction);
@@ -66,28 +61,24 @@ public interface IConsumerOperation {
 	 * the method deletes the node with the given unique id
 	 * 
 	 * @param consumerName
-	 *            the unique id by witch we will look up the credential we want
-	 *            to delete
+	 *            the unique id by witch we will look up the credential we want to delete
 	 * @return the deleted object returned from the graph
 	 */
 	Either<ConsumerData, StorageOperationStatus> deleteCredentials(String consumerName);
 
 	/**
-	 * the method creates a new nod in the grape representing the supplied
-	 * credential object
+	 * the method creates a new nod in the grape representing the supplied credential object
 	 * 
 	 * @param consumerData
 	 *            the object we want to store
 	 * @param inTransaction
-	 *            is the operation part of a transaction, in case the value is
-	 *            false the action will be committed in the end of the method
+	 *            is the operation part of a transaction, in case the value is false the action will be committed in the end of the method
 	 * @return the newly stored object returned from the graph
 	 */
 	Either<ConsumerData, StorageOperationStatus> createCredentials(ConsumerData consumerData, boolean inTransaction);
 
 	/**
-	 * the method creates a new nod in the grape representing the supplied
-	 * credential object
+	 * the method creates a new nod in the grape representing the supplied credential object
 	 * 
 	 * @param consumerData
 	 *            the object we want to store

@@ -1,0 +1,23 @@
+<!-- Description Popover -->
+<div >
+    <span data-tests-id='popover-x-button' data-ng-click='closeDescriptionPopover()' class='tlv-sprite tlv-x-btn close-popover-btn'></span>
+    <div class="w-sdc-form-item" ng-form="descriptionForm" data-ng-class="{error:(descriptionForm.$dirty && descriptionForm.$invalid)}">
+        <textarea class="i-sdc-form-textarea {{$index}}" data-ng-class="{'view-mode': isViewMode()}"
+                  data-ng-maxlength="256"
+                  maxlength="256"
+                  data-ng-required="true"
+                  name="description"
+                  data-ng-model="artifact.description"
+                  data-ng-model-options="{ debounce: 200 }"
+                  data-ng-pattern="getValidationPattern('string')"
+                  ng-readonly="isViewMode()"
+                  data-tests-id="description">
+                                    </textarea>
+
+        <div class="input-error" data-ng-show="descriptionForm.$dirty && descriptionForm.$invalid">
+            <span ng-show="descriptionForm.$error.required" translate="ADD_ARTIFACT_ERROR_DESCRIPTION_REQUIRED"></span>
+            <span ng-show="descriptionForm.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
+            <span ng-show="descriptionForm.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+        </div>
+    </div>
+</div>

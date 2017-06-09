@@ -25,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,9 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -47,22 +50,30 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.impl.AuditingDao;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
@@ -93,7 +104,6 @@ public class ServiceBusinessLogicTest {
 	final ServletContext servletContext = Mockito.mock(ServletContext.class);
 	IAuditingManager iAuditingManager = null;
 	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-	final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
 	WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
 	WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
 	ServiceBusinessLogic bl = new ServiceBusinessLogic();
@@ -104,15 +114,18 @@ public class ServiceBusinessLogicTest {
 	AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
 	ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
 	GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
-	TitanGenericDao mockTitanDao = Mockito.mock(TitanGenericDao.class);
-
+	TitanDao mockTitanDao = Mockito.mock(TitanDao.class);
+	ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
 	CacheMangerOperation cacheManager = Mockito.mock(CacheMangerOperation.class);
 
 	User user = null;
 	Service serviceResponse = null;
+	Resource genericService = null;
+	
 	private static final String CERTIFIED_VERSION = "1.0";
 	private static final String UNCERTIFIED_VERSION = "0.2";
 	private static final String COMPONNET_ID = "myUniqueId";
+	private static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
 	private static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_CERTIFIED_VERSION = new HashMap<AuditingFieldsKeysEnum, Object>();
 	private static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_UNCERTIFIED_VERSION_CURR = new HashMap<AuditingFieldsKeysEnum, Object>();
 	private static Map<AuditingFieldsKeysEnum, Object> FILTER_MAP_UNCERTIFIED_VERSION_PREV = new HashMap<AuditingFieldsKeysEnum, Object>();
@@ -125,12 +138,11 @@ public class ServiceBusinessLogicTest {
 	public void setup() {
 
 		ExternalConfiguration.setAppName("catalog-be");
-
 		// Init Configuration
 		String appConfigDir = "src/test/resources/config/catalog-be";
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
+	
 		// Elements
 		mockElementDao = new ElementOperationMock();
 
@@ -146,7 +158,7 @@ public class ServiceBusinessLogicTest {
 
 		// Servlet Context attributes
 		when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-		when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(serviceOperation);
+		when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
 		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
 		when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -159,24 +171,26 @@ public class ServiceBusinessLogicTest {
 
 		// createService
 		serviceResponse = createServiceObject(true);
-		Either<Service, StorageOperationStatus> eitherCreate = Either.left(serviceResponse);
-		when(serviceOperation.createService(Mockito.any(Service.class))).thenReturn(eitherCreate);
-		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(true);
-		when(serviceOperation.validateServiceNameExists("Service")).thenReturn(eitherCount);
-		Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(false);
-		when(serviceOperation.validateServiceNameExists("alreadyExist")).thenReturn(eitherCountExist);
+		Either<Component, StorageOperationStatus> eitherCreate = Either.left(serviceResponse);
+		when(toscaOperationFacade.createToscaComponent(Mockito.any(Component.class))).thenReturn(eitherCreate);
+		Either<Boolean, StorageOperationStatus> eitherCount = Either.left(false);
+		when(toscaOperationFacade.validateComponentNameExists("Service", null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCount);
+		Either<Boolean, StorageOperationStatus> eitherCountExist = Either.left(true);
+		when(toscaOperationFacade.validateComponentNameExists("alreadyExist", null, ComponentTypeEnum.SERVICE)).thenReturn(eitherCountExist);
 
-		when(serviceOperation.validateComponentNameExists("alreadyExist")).thenReturn(eitherCountExist);
-		when(serviceOperation.validateComponentNameExists("Service")).thenReturn(eitherCount);
-
+		genericService = setupGenericServiceMock();
+		Either<Resource, StorageOperationStatus> findLatestGeneric = Either.left(genericService);
+		when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
+		
+		
 		bl = new ServiceBusinessLogic();
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
-		bl.setServiceOperation(serviceOperation);
 		bl.setArtifactBl(artifactBl);
 		bl.setGraphLockOperation(graphLockOperation);
 		bl.setTitanGenericDao(mockTitanDao);
-
+		bl.setToscaOperationFacade(toscaOperationFacade);
+		
 		componentsUtils.Init();
 		componentsUtils.setAuditingManager(auditingManager);
 		bl.setComponentsUtils(componentsUtils);
@@ -266,16 +280,16 @@ public class ServiceBusinessLogicTest {
 		testInvalidTag();
 		testServiceTagNotExist();
 		testServiceTagEmpty();
-		// 1610OS Support - Because of changes in the validation in the ui these tests will fail. need to fix them
-		//testContactIdTooLong();
-		//testContactIdWrongFormatCreate();
+		
+		testContactIdTooLong();
+		testContactIdWrongFormatCreate();
+		testInvalidProjectCode();
+		testProjectCodeTooLong();
+		testProjectCodeTooShort();
+		
 		testResourceContactIdMissing();
 		testServiceCategoryExist();
 		testServiceBadCategoryCreate();
-		// 1610OS Support - Because of changes in the validation in the ui these tests will fail. need to fix them
-		//testInvalidProjectCode();
-		//testProjectCodeTooLong();
-		//testProjectCodeTooShort();
 		testMissingProjectCode();
 	}
 
@@ -541,8 +555,8 @@ public class ServiceBusinessLogicTest {
 	// Service contactId - start
 	private void testContactIdTooLong() {
 		Service serviceContactId = createServiceObject(false);
-		// 7 chars instead of 6
-		String contactIdTooLong = "yrt1234";
+		// 59 chars instead of 50
+		String contactIdTooLong = "thisNameIsVeryLongAndExeccedsTheNormalLengthForContactId";
 		serviceContactId.setContactId(contactIdTooLong);
 
 		Either<Service, ResponseFormat> createResponse = bl.createService(serviceContactId, user);
@@ -552,8 +566,8 @@ public class ServiceBusinessLogicTest {
 
 	private void testContactIdWrongFormatCreate() {
 		Service serviceContactId = createServiceObject(false);
-		// 3 letters and 3 digits
-		String contactIdTooLong = "yrt134";
+		// 3 letters and 3 digits and special characters
+		String contactIdTooLong = "yrt134!!!";
 		serviceContactId.setContactId(contactIdTooLong);
 
 		Either<Service, ResponseFormat> createResponse = bl.createService(serviceContactId, user);
@@ -634,8 +648,8 @@ public class ServiceBusinessLogicTest {
 		Either<List<ResourceAdminEvent>, ActionStatus> emptyEventList = Either.left(emptyList);
 		Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), Mockito.eq(requestAction))).thenReturn(emptyEventList);
 
-		Either<Service, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
-		Mockito.when(serviceOperation.getService(did)).thenReturn(notFound);
+		Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
+		Mockito.when(toscaOperationFacade.getToscaElement(did)).thenReturn(notFound);
 
 		Either<Service, ResponseFormat> markDeployed = bl.markDistributionAsDeployed(did, did, user);
 		assertTrue(markDeployed.isRight());
@@ -659,10 +673,11 @@ public class ServiceBusinessLogicTest {
 	}
 
 	// Service category - stop
+	// Service projectCode - start
 	private void testInvalidProjectCode() {
 
 		Service serviceExist = createServiceObject(false);
-		serviceExist.setProjectCode("koko");
+		serviceExist.setProjectCode("koko!!");
 
 		Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
 		assertTrue(createResponse.isRight());
@@ -673,7 +688,8 @@ public class ServiceBusinessLogicTest {
 	private void testProjectCodeTooLong() {
 
 		Service serviceExist = createServiceObject(false);
-		serviceExist.setProjectCode("5555555555555");
+		String tooLongProjectCode = "thisNameIsVeryLongAndExeccedsTheNormalLengthForProjectCode"; 
+		serviceExist.setProjectCode(tooLongProjectCode);
 
 		Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
 		assertTrue(createResponse.isRight());
@@ -684,7 +700,7 @@ public class ServiceBusinessLogicTest {
 	private void testProjectCodeTooShort() {
 
 		Service serviceExist = createServiceObject(false);
-		serviceExist.setProjectCode("555");
+		serviceExist.setProjectCode("333");
 
 		Either<Service, ResponseFormat> createResponse = bl.createService(serviceExist, user);
 		assertTrue(createResponse.isRight());
@@ -703,21 +719,22 @@ public class ServiceBusinessLogicTest {
 		assertResponse(createResponse, ActionStatus.MISSING_PROJECT_CODE);
 	}
 
+//	@Test
+//	public void testDeleteMarkedServicesNoServices() {
+//		List<String> ids = new ArrayList<String>();
+//		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
+//		when(toscaOperationFacade.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
+//
+//		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
+//		assertTrue(deleteMarkedResources.isLeft());
+//		assertTrue(deleteMarkedResources.left().value().isEmpty());
+//
+//		Mockito.verify(artifactBl, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
+//
+//	}
+
 	@Test
-	public void testDeleteMarkedServicesNoServices() {
-		List<String> ids = new ArrayList<String>();
-		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
-		when(serviceOperation.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
-
-		Either<List<String>, ResponseFormat> deleteMarkedResources = bl.deleteMarkedComponents();
-		assertTrue(deleteMarkedResources.isLeft());
-		assertTrue(deleteMarkedResources.left().value().isEmpty());
-
-		Mockito.verify(artifactBl, Mockito.times(0)).deleteAllComponentArtifactsIfNotOnGraph(Mockito.anyList());
-
-	}
-
-	@Test
+	@Ignore
 	public void testDeleteMarkedServices() {
 		List<String> ids = new ArrayList<String>();
 		String resourceInUse = "123";
@@ -725,20 +742,20 @@ public class ServiceBusinessLogicTest {
 		String resourceFree = "456";
 		ids.add(resourceFree);
 		Either<List<String>, StorageOperationStatus> eitherNoResources = Either.left(ids);
-		when(serviceOperation.getAllComponentsMarkedForDeletion()).thenReturn(eitherNoResources);
+		when(toscaOperationFacade.getAllComponentsMarkedForDeletion(ComponentTypeEnum.RESOURCE)).thenReturn(eitherNoResources);
 
 		Either<Boolean, StorageOperationStatus> resourceInUseResponse = Either.left(true);
 		Either<Boolean, StorageOperationStatus> resourceFreeResponse = Either.left(false);
 
 		List<ArtifactDefinition> artifacts = new ArrayList<ArtifactDefinition>();
 		Either<List<ArtifactDefinition>, StorageOperationStatus> getArtifactsResponse = Either.left(artifacts);
-		when(serviceOperation.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Service, true)).thenReturn(getArtifactsResponse);
+//		when(toscaOperationFacade.getComponentArtifactsForDelete(resourceFree, NodeTypeEnum.Service, true)).thenReturn(getArtifactsResponse);
 
-		when(serviceOperation.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
-		when(serviceOperation.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
+		when(toscaOperationFacade.isComponentInUse(resourceFree)).thenReturn(resourceFreeResponse);
+		when(toscaOperationFacade.isComponentInUse(resourceInUse)).thenReturn(resourceInUseResponse);
 
 		Either<Component, StorageOperationStatus> eitherDelete = Either.left(new Resource());
-		when(serviceOperation.deleteComponent(resourceFree, true)).thenReturn(eitherDelete);
+		when(toscaOperationFacade.deleteToscaComponent(resourceFree)).thenReturn(eitherDelete);
 
 		when(artifactBl.deleteAllComponentArtifactsIfNotOnGraph(artifacts)).thenReturn(StorageOperationStatus.OK);
 
@@ -767,7 +784,6 @@ public class ServiceBusinessLogicTest {
 		service.setTags(tgs);
 		// service.setVendorName("Motorola");
 		// service.setVendorRelease("1.0.0");
-		// service.setContactId("ya5467");
 		service.setIcon("MyIcon");
 		// service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		service.setContactId("aa1234");
@@ -779,8 +795,6 @@ public class ServiceBusinessLogicTest {
 			service.setCreatorUserId(user.getUserId());
 			service.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
 		}
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		log.debug("{}", gson.toJson(service));
 		return service;
 	}
 
@@ -921,11 +935,100 @@ public class ServiceBusinessLogicTest {
 		Either<List<ResourceAdminEvent>, ActionStatus> eitherRequest = Either.left(requestResults);
 		Mockito.when(auditingDao.getDistributionRequest(Mockito.anyString(), Mockito.eq(requestAction))).thenReturn(eitherRequest);
 
-		Either<Service, StorageOperationStatus> eitherService = Either.left(createServiceObject(true));
-		Mockito.when(serviceOperation.getService(Mockito.anyString())).thenReturn(eitherService);
+		Either<Component, StorageOperationStatus> eitherService = Either.left(createServiceObject(true));
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
 		List<DistributionDeployEvent> emptyList = new ArrayList<DistributionDeployEvent>();
 		Either<List<DistributionDeployEvent>, ActionStatus> emptyEventList = Either.left(emptyList);
 		Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq("DResult"), Mockito.anyString())).thenReturn(emptyEventList);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public void testFindGroupInstanceOnRelatedComponentInstance() {
+		
+		Class<ServiceBusinessLogic> targetClass = ServiceBusinessLogic.class;
+		String methodName = "findGroupInstanceOnRelatedComponentInstance";
+		Object invalidId = "invalidId";
+		
+		Component service = createNewService();
+		List<ComponentInstance> componentInstances = service.getComponentInstances();
+		
+		Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat> findGroupInstanceRes;
+		Object[] argObjects = {service, componentInstances.get(1).getUniqueId(), componentInstances.get(1).getGroupInstances().get(1).getUniqueId()};
+		Class[] argClasses = {Component.class, String.class,String.class};
+	    try {
+	    	Method method = targetClass.getDeclaredMethod(methodName, argClasses);
+	    	method.setAccessible(true);
+	    	
+	    	findGroupInstanceRes = (Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjects);
+	    	assertTrue(findGroupInstanceRes != null);
+	    	assertTrue(findGroupInstanceRes.left().value().getKey().getUniqueId().equals(componentInstances.get(1).getUniqueId()));
+	    	assertTrue(findGroupInstanceRes.left().value().getValue().getUniqueId().equals(componentInstances.get(1).getGroupInstances().get(1).getUniqueId()));
+	    	
+			Object[] argObjectsInvalidCiId = {service, invalidId , componentInstances.get(1).getGroupInstances().get(1).getUniqueId()};
+			
+			findGroupInstanceRes =	(Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidCiId);
+	    	assertTrue(findGroupInstanceRes != null);
+	    	assertTrue(findGroupInstanceRes.isRight());
+	    	assertTrue(findGroupInstanceRes.right().value().getMessageId().equals("SVC4593"));
+	    	
+			Object[] argObjectsInvalidGiId = {service, componentInstances.get(1).getUniqueId() , invalidId};
+			
+			findGroupInstanceRes =	(Either<ImmutablePair<ComponentInstance, GroupInstance>, ResponseFormat>) method.invoke(bl, argObjectsInvalidGiId);
+	    	assertTrue(findGroupInstanceRes != null);
+	    	assertTrue(findGroupInstanceRes.isRight());
+	    	assertTrue(findGroupInstanceRes.right().value().getMessageId().equals("SVC4653"));
+	    }
+	    catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	}
+
+	private Component createNewService() {
+		
+		Service service = new Service();
+		int listSize = 3;
+		service.setName("serviceName");
+		service.setUniqueId("serviceUniqueId");
+		List<ComponentInstance> componentInstances = new ArrayList<>();
+		ComponentInstance ci;
+		for(int i= 0; i<listSize; ++i){
+			ci = new ComponentInstance();
+			ci.setName("ciName" + i);
+			ci.setUniqueId("ciId" + i);
+			List<GroupInstance>  groupInstances= new ArrayList<>();
+			GroupInstance gi;
+			for(int j = 0; j<listSize; ++j){
+				gi = new GroupInstance();
+				gi.setName(ci.getName( )+ "giName" + j);
+				gi.setUniqueId(ci.getName() + "giId" + j);
+				groupInstances.add(gi);
+			}
+			ci.setGroupInstances(groupInstances);
+			componentInstances.add(ci);
+		}
+		service.setComponentInstances(componentInstances);
+		return service;
+	}
+	
+
+	@Test
+	public void testDerivedFromGeneric() {
+		Service service = createServiceObject(true);
+		when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
+		Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+		assertTrue(createResponse.isLeft());
+		service = createResponse.left().value();
+		assertTrue(service.getDerivedFromGenericType().equals(genericService.getToscaResourceName()));
+		assertTrue(service.getDerivedFromGenericVersion().equals(genericService.getVersion()));
+	}
+
+	
+	private Resource setupGenericServiceMock(){
+		Resource genericService = new Resource();
+		genericService.setVersion("1.0");
+		genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
+		return genericService;
 	}
 }

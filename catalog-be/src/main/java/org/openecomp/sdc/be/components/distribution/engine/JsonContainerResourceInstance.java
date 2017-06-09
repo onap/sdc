@@ -25,7 +25,7 @@ import java.util.List;
 import org.openecomp.sdc.be.model.ComponentInstance;
 
 public class JsonContainerResourceInstance {
-	private String resourceInstanceName, resourceName, resourceVersion, resoucreType, resourceUUID, resourceInvariantUUID;
+	private String resourceInstanceName, resourceName, resourceVersion, resoucreType, resourceUUID, resourceInvariantUUID, resourceCustomizationUUID, category, subcategory;
 	private List<ArtifactInfoImpl> artifacts;
 
 	public JsonContainerResourceInstance(ComponentInstance resourceInstance, String resourceType, List<ArtifactInfoImpl> artifacts) {
@@ -36,17 +36,7 @@ public class JsonContainerResourceInstance {
 		this.resoucreType = resourceType;
 		this.resourceUUID = resourceInstance.getComponentUid();
 		this.artifacts = artifacts;
-	}
-
-	public JsonContainerResourceInstance(ComponentInstance resourceInstance, String resourceInvariantUUID, String resourceType, List<ArtifactInfoImpl> artifacts) {
-		super();
-		this.resourceInstanceName = resourceInstance.getName();
-		this.resourceName = resourceInstance.getComponentName();
-		this.resourceVersion = resourceInstance.getComponentVersion();
-		this.resoucreType = resourceType;
-		this.resourceUUID = resourceInstance.getComponentUid();
-		this.resourceInvariantUUID = resourceInvariantUUID;
-		this.artifacts = artifacts;
+		this.resourceCustomizationUUID = resourceInstance.getCustomizationUUID();
 	}
 
 	public String getResourceInstanceName() {
@@ -105,4 +95,27 @@ public class JsonContainerResourceInstance {
 		this.resourceInvariantUUID = resourceInvariantUUID;
 	}
 
+	public String getResourceCustomizationUUID() {
+		return resourceCustomizationUUID;
+	}
+
+	public void setResourceCustomizationUUID(String customizationUUID) {
+		this.resourceCustomizationUUID = customizationUUID;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getSubcategory() {
+		return subcategory;
+	}
+
+	public void setSubcategory(String subcategory) {
+		this.subcategory = subcategory;
+	}
 }

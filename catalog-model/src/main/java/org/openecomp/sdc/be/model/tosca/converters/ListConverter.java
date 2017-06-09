@@ -112,6 +112,8 @@ public class ListConverter implements PropertyValueConverter {
 			ArrayList<String> newList = new ArrayList<String>();
 
 			JsonArray jo = (JsonArray) jsonParser.parse(value);
+			if(ToscaPropertyType.JSON == innerToscaType)
+				return Either.left(value);
 			int size = jo.size();
 			for (int i = 0; i < size; i++) {
 				JsonElement currentValue = jo.get(i);
@@ -166,7 +168,7 @@ public class ListConverter implements PropertyValueConverter {
 			}
 
 		} catch (JsonParseException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
 			return Either.right(false);
 		}
@@ -199,7 +201,7 @@ public class ListConverter implements PropertyValueConverter {
 					ImmutablePair<JsonElement, Boolean> validateAndUpdate = dataTypeValidatorConverter
 							.validateAndUpdate(element, dataTypeDefinition, allDataTypes);
 					if (validateAndUpdate.right.booleanValue() == false) {
-						log.debug("Cannot parse value {} from type {} in list position {}", currentValue, innerType, i);
+						log.debug("Cannot parse value {} from type {} in list position {}",currentValue,innerType,i);
 						return Either.right(false);
 					}
 					JsonElement newValue = validateAndUpdate.left;

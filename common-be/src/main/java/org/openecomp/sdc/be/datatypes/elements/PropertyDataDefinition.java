@@ -21,8 +21,17 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-public class PropertyDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+import fj.data.Either;
+
+
+public class PropertyDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -34,7 +43,7 @@ public class PropertyDataDefinition implements Serializable {
 	// "boolean", "string", "float", "integer", "version" })
 	private String type;
 
-	private Boolean required;
+	private Boolean required = Boolean.FALSE;
 
 	protected boolean definition = false;
 
@@ -46,18 +55,81 @@ public class PropertyDataDefinition implements Serializable {
 
 	private boolean password;
 
+	private String name;
+
+	private String value;
+
+	private String label;
+	private Boolean hidden = Boolean.FALSE;;
+	private Boolean immutable = Boolean.FALSE;
+	
+	private String inputPath;
+	
+
+
+	/**
+	 * The resource id which this property belongs to
+	 */
+	private String parentUniqueId;
+
+
+	private List<GetInputValueDataDefinition> getInputValues;
+	
 	public PropertyDataDefinition() {
+		super();
+	}
+
+	public PropertyDataDefinition(Map<String, Object> pr) {
+		super(pr);
 
 	}
 
 	public PropertyDataDefinition(PropertyDataDefinition p) {
-		this.uniqueId = p.uniqueId;
-		this.required = p.required;
-		this.defaultValue = p.defaultValue;
-		this.description = p.description;
-		this.schema = p.schema;
-		this.password = p.password;
-		this.type = p.type;
+
+		super();
+		this.setUniqueId(p.getUniqueId());
+		this.setRequired(p.isRequired());
+		this.setDefaultValue(p.getDefaultValue());
+		this.setDescription(p.getDescription());
+		this.setSchema(p.getSchema());
+		this.setPassword(p.isPassword());
+		this.setType(p.getType());
+		this.setName(p.getName());
+		this.setValue(p.getValue());
+		this.setRequired(p.isRequired());
+		this.setHidden(p.isHidden());
+		this.setLabel(p.getLabel());
+		this.setImmutable(p.isImmutable());
+		this.setParentUniqueId(p.getParentUniqueId());
+		this.setOwnerId(p.getOwnerId());
+		this.setGetInputValues(p.getInputValues);
+		this.setInputPath(p.getInputPath());
+
+	}
+	
+	public String getInputPath() {
+		return inputPath;
+	}
+
+	public void setInputPath(String inputPath) {
+		this.inputPath = inputPath;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	// @Override
@@ -125,11 +197,50 @@ public class PropertyDataDefinition implements Serializable {
 		this.schema = entrySchema;
 	}
 
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public Boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
+	}
+
+	public Boolean isImmutable() {
+		return immutable;
+	}
+
+	public void setImmutable(Boolean immutable) {
+		this.immutable = immutable;
+	}
+	
+	
+	public String getParentUniqueId() {
+		return getOwnerId();
+	}
+
+	public void setParentUniqueId(String parentUniqueId) {
+		setOwnerId(parentUniqueId);
+	}
+
+
+	public List<GetInputValueDataDefinition> getGetInputValues() {
+		return getInputValues;
+	}
+
+	public void setGetInputValues(List<GetInputValueDataDefinition> getInputValues) {
+		this.getInputValues = getInputValues;
+	}
 	@Override
 	public String toString() {
-		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required
-				+ ", defaultValue=" + defaultValue + ", description=" + description + ", entrySchema=" + schema
-				+ ", password=" + password + "]";
+		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", defaultValue=" + defaultValue + ", description=" + description + ", entrySchema=" + schema + ", parentUniqueId=" + parentUniqueId + ", password=" + password + "]";
 	}
 
 	@Override
@@ -144,6 +255,7 @@ public class PropertyDataDefinition implements Serializable {
 		result = prime * result + ((schema == null) ? 0 : schema.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
+		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
 		return result;
 	}
 
@@ -185,6 +297,11 @@ public class PropertyDataDefinition implements Serializable {
 				return false;
 		} else if (!type.equals(other.type))
 			return false;
+		if (parentUniqueId == null) {
+			if (other.parentUniqueId != null)
+				return false;
+		} else if (!parentUniqueId.equals(other.parentUniqueId))
+			return false;
 		if (uniqueId == null) {
 			if (other.uniqueId != null)
 				return false;
@@ -192,4 +309,57 @@ public class PropertyDataDefinition implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public Object getToscaPresentationValue(JsonPresentationFields field) {
+		switch (field) {
+		case NAME:
+			return name;
+		case UNIQUE_ID:
+			return uniqueId;
+		case PASSWORD:
+			return password;
+		case TYPE:
+			return type;
+		case DEFINITION:
+			return definition;
+		case VALUE:
+			return value;
+		case DEFAULT_VALUE:
+			return defaultValue;
+		default:
+			return super.getToscaPresentationValue(field);
+		}
+	}
+
+	protected <T extends PropertyDataDefinition> T overrideDataDefinition(T other, boolean allowDefaultValueOverride){
+		if(this.getType().equals(other.getType())){
+			other.setOwnerId(getOwnerId());
+			if(allowDefaultValueOverride)
+				other.setDefaultValue(getDefaultValue());
+			return other;
+		}
+		return null;
+	}
+	
+	
+	//return Either.right(propertyName) if an illegal merge was attempted (overriding data type is forbidden)
+	public static <T extends PropertyDataDefinition> Either<Map<String, T>, String> mergeProperties(Map<String, T> derivedProps, Map<String, T> importedProps, boolean allowDefaultValueOverride){
+		for(T property : importedProps.values()){
+			derivedProps.merge(property.getName(), property, (derivedProp, importedProp) -> derivedProp.overrideDataDefinition(importedProp, allowDefaultValueOverride));
+		    //validate merge success
+		    if(!derivedProps.containsKey(property.getName()))
+		    	return Either.right(property.getName());
+		}
+		return Either.left(derivedProps);
+	}
+	
+	
+		
+	public static <T extends PropertyDataDefinition> Map<String, T> listToMapByName(List<T> propertiesList) {
+		return propertiesList.stream()
+		.collect(Collectors.toMap(p -> p.getName(), p -> p));
+	}
+
+
 }

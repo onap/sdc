@@ -33,14 +33,11 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 	 */
 	private static final long serialVersionUID = 6721465693884621223L;
 
-	private String icon;
-
-	private String componentName;
-	private String componentVersion;
-	private String toscaComponentName;
 	private Map<String, List<CapabilityDefinition>> capabilities;
 	private Map<String, List<RequirementDefinition>> requirements;
 	private Map<String, ArtifactDefinition> deploymentArtifacts;
+	private Map<String, ArtifactDefinition> artifacts;
+	private List<GroupInstance> groupInstances;
 
 	public ComponentInstance() {
 		super();
@@ -48,38 +45,6 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 
 	public ComponentInstance(ComponentInstanceDataDefinition r) {
 		super(r);
-	}
-
-	public String getIcon() {
-		return icon;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-
-	public String getComponentName() {
-		return componentName;
-	}
-
-	public void setComponentName(String resourceName) {
-		this.componentName = resourceName;
-	}
-
-	public String getComponentVersion() {
-		return componentVersion;
-	}
-
-	public String getToscaComponentName() {
-		return toscaComponentName;
-	}
-
-	public void setToscaComponentName(String toscaComponentName) {
-		this.toscaComponentName = toscaComponentName;
-	}
-
-	public void setComponentVersion(String resourceVersion) {
-		this.componentVersion = resourceVersion;
 	}
 
 	public Map<String, List<CapabilityDefinition>> getCapabilities() {
@@ -105,5 +70,21 @@ public class ComponentInstance extends ComponentInstanceDataDefinition implement
 	public void setDeploymentArtifacts(Map<String, ArtifactDefinition> deploymentArtifacts) {
 		this.deploymentArtifacts = deploymentArtifacts;
 	}
+	
+	public Map<String, ArtifactDefinition> getArtifacts() {
+		return artifacts;
+	}
 
+	public void setArtifacts(Map<String, ArtifactDefinition> artifacts) {
+		this.artifacts = artifacts;
+	}
+
+	public List<GroupInstance> getGroupInstances() {
+		return groupInstances;
+	}
+
+	public void setGroupInstances(List<GroupInstance> groupInstances) {
+		this.groupInstances = groupInstances;
+	}
+	
 }

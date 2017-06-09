@@ -1,0 +1,125 @@
+<sdc-modal modal="modalInstanceInput" type="classic" class="sdc-edit-input-container" buttons="footerButtons"  header="Update Input" show-close-button="true">
+
+    <div class="sdc-edit-input-form-container" >
+        <form novalidate class="w-sdc-form two-columns" name="forms.editForm" >
+
+            <div class="w-sdc-form-columns-wrapper">
+
+                <div class="w-sdc-form-column">
+
+                    <!-- Name -->
+                    <div class="i-sdc-form-item">
+                        <label class="i-sdc-form-label">Name</label>
+                        <input class="i-sdc-form-input"
+                               data-tests-id="inputName"
+                               data-ng-maxlength="50"
+                               data-ng-disabled="true"
+                               maxlength="50"
+                               data-ng-model="inputEditModel.editInput.name"
+                               type="text"
+                               name="inputName"
+                               autofocus />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="i-sdc-form-item">
+                        <label class="i-sdc-form-label">Description</label>
+                        <textarea  class="i-sdc-form-textarea"
+                                   data-ng-disabled="true"
+                                   name="description"
+                                   data-ng-model="inputEditModel.editInput.description"
+                                   data-tests-id="description"></textarea>
+                    </div>
+
+
+                </div>
+
+                <div class="w-sdc-form-column">
+                        <!-- Type -->
+                    <div class="i-sdc-form-item">
+                        <label class="i-sdc-form-label">Type</label>
+                        <input class="i-sdc-form-input"
+                               data-tests-id="type"
+                               data-ng-disabled="true"
+                               data-ng-model="inputEditModel.editInput.type"
+                               type="text"
+                               name="type"/>
+                    </div>
+                    <!-- schema -->
+                    <div class="i-sdc-form-item"
+                         data-ng-if="showSchema()">
+                        <label class="i-sdc-form-label">Entry Schema</label>
+                        <input class="i-sdc-form-input"
+                               data-tests-id="schema"
+                               data-ng-disabled="true"
+                               data-ng-model="inputEditModel.editInput.schema.property.type"
+                               type="text"
+                               name="schema"/>
+                    </div>
+                    <!-- Default value -->
+                    <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid)}">
+                        <label class="i-sdc-form-label">Default Value</label>
+                        <div data-ng-switch="inputEditModel.editInput.type">
+                            <div ng-switch-when="map">
+                                <type-map value-obj-ref="myValue"
+                                          schema-property="inputEditModel.editInput.schema.property"
+                                          parent-form-obj="forms.editForm"
+                                          fields-prefix-name="'input-value-'"
+                                          read-only="true"
+                                          default-value=""
+                                          types="[]"
+                                          max-length="maxLength"></type-map>
+                            </div>
+                            <div ng-switch-when="list">
+                                <type-list value-obj-ref="myValue"
+                                           schema-property="inputEditModel.editInput.schema.property"
+                                           parent-form-obj="forms.editForm"
+                                           fields-prefix-name="'input-value-'"
+                                           read-only="true"
+                                           default-value=""
+                                           types="[]"
+                                           max-length="maxLength"></type-list>
+                            </div>
+                            <div ng-switch-default>
+                                <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid)}">
+                                    <input class="i-sdc-form-input"
+                                           data-tests-id="defaultvalue"
+                                           ng-if="inputEditModel.editInput.type != 'boolean'"
+                                           data-ng-maxlength="maxLength"
+                                           data-ng-disabled="true"
+                                           maxlength="{{maxLength}}"
+                                           data-ng-model="inputEditModel.editInput.defaultValue"
+                                           type="text"
+                                           name="value"
+                                           data-ng-pattern="getValidationPattern(input.type)"
+                                           data-ng-model-options="{ debounce: 200 }"
+                                           data-ng-change="('json'==inputEditModel.editInput.type && forms.editForm.value.$setValidity('pattern', validateJson(inputEditModel.editInput.defaultValue)))
+                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==inputEditModel.editInput.type && forms.editForm.value.$setValidity('pattern', validateIntRange(inputEditModel.editInput.defaultValue)) || onValueChange()))"
+                                           autofocus />
+                                    <select class="i-sdc-form-select"
+                                            data-tests-id="booleantype"
+                                            ng-if="inputEditModel.editInput.type == 'boolean'"
+                                            data-ng-disabled="true"
+                                            name="value"
+                                            data-ng-model="inputEditModel.editInput.defaultValue">
+                                        <option value="true">true</option>
+                                        <option value="false">false</option>
+                                    </select>
+
+                                    <div class="input-error" data-ng-show="forms.editForm.value.$dirty && forms.editForm.value.$invalid">
+                                        <span ng-show="forms.editForm.value.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
+                                        <span ng-show="forms.editForm.value.$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+
+</sdc-modal>

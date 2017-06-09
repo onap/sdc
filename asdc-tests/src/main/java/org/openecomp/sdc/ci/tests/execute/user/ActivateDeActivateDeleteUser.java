@@ -430,7 +430,7 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 			mapAllUsersOnResponse.remove(sdncAdminUser.getUserId());
 			logger.debug("map Of all Admin users exclude one : {}", mapAllUsersOnResponse);
 
-			// deActivate all Admin users from the userIdAllAdminList list
+			// deActivate all Admin users from the UserIdAllAdminList list
 			for (Entry<String, User> entry : mapAllUsersOnResponse.entrySet()) {
 				UserRestUtils.deActivateUser(entry.getValue(), sdncAdminUser);
 			}
@@ -651,133 +651,6 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 
 	}
 
-	// test check the service accessibility via catalog view, service was
-	// created by user which was deActivated
-
-	// @Test
-	// public void serviceAccessibility() throws Exception{
-	//
-	// User sdncUserDetails = getDefaultUserDetails();
-	//// fill new service details
-	// ServiceReqDetails serviceDetails = ElementFactory.getDefaultService();
-	// String serviceBaseVersion = "0.1";
-	//
-	// try{
-	// //Delete service
-	//// ServiceRestUtils.deleteService_allVersions(serviceDetails,
-	// sdncAdminUser);
-	// UserRestUtils.deleteUser(sdncUserDetails, sdncAdminUser, true);
-	//
-	// DbUtils.cleanAllAudits();
-	// RestResponse createUserResponse =
-	// UserRestUtils.createUser(sdncUserDetails, sdncAdminUser);
-	// validateSuccessCreateUserResponse(sdncUserDetails, createUserResponse);
-	//
-	//// ------------------------Start create
-	// service---------------------------------------------------------------------------------
-	// RestResponse restResponse =
-	// ServiceRestUtils.createService(serviceDetails, sdncUserDetails);
-	//
-	// assertNotNull("check response object is not null after create service",
-	// restResponse);
-	// assertNotNull("check error code exists in response after create service",
-	// restResponse.getErrorCode());
-	// assertEquals("Check response code after create service", 201,
-	// restResponse.getErrorCode().intValue());
-	//
-	//// validate create service response vs actual
-	//
-	// Service service =
-	// ServiceRestUtils.convertServiceResponseToJavaObject(restResponse.getResponse());
-	// UserValidationUtils.validateServiceResponseMetaData(serviceDetails,service,sdncUserDetails,
-	// (LifecycleStateEnum)null);
-	//
-	//// validate get service response vs actual
-	// restResponse = ServiceRestUtils.getService(serviceDetails.getUniqueId(),
-	// sdncUserDetails);
-	// service =
-	// ServiceRestUtils.convertServiceResponseToJavaObject(restResponse.getResponse());
-	// UserValidationUtils.validateServiceResponseMetaData(serviceDetails,service,sdncUserDetails,
-	// (LifecycleStateEnum)null);
-	//
-	// //validate audit
-	//
-	// ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject =
-	// ServiceRestUtils.constructFieldsForAuditValidation(serviceDetails,
-	// serviceBaseVersion, sdncUserDetails);
-	//
-	// String auditAction="Create";
-	// expectedResourceAuditJavaObject.setAction(auditAction);
-	// expectedResourceAuditJavaObject.setPrevState("");
-	// expectedResourceAuditJavaObject.setPrevVersion("");
-	// expectedResourceAuditJavaObject.setCurrState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
-	// expectedResourceAuditJavaObject.setStatus("201");
-	// expectedResourceAuditJavaObject.setDesc("OK");
-	//
-	// AuditValidationUtils.validateAudit(expectedResourceAuditJavaObject,
-	// auditAction, null, false);
-	//
-	//// ------------------------End create
-	// service---------------------------------------------------------------------------------
-	//
-	//// clean audit before authorization test
-	// DbUtils.cleanAllAudits();
-	//
-	//// deActivate created user
-	// RestResponse deActivateUserResponse =
-	// UserRestUtils.deActivateUser(sdncUserDetails,sdncAdminUser);
-	// sdncUserDetails.setStatus(UserStatusEnum.INACTIVE);
-	// validateSuccessDeActivateUserResponse(sdncUserDetails,
-	// deActivateUserResponse);
-	//
-	// UserValidationUtils.validateDeleteUserAuditMessage(sdncUserDetails,
-	// sdncAdminUser, "200", UserResponseMessageEnum.SUCCESS_MESSAGE.getValue(),
-	// UserValidationUtils.getAddUserAuditMessage("DeleteUser"));
-	//
-	// ErrorInfo errorInfo =
-	// ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.USER_INACTIVE.name());
-	// RestResponse getUserResponse = UserRestUtils.getUser(sdncUserDetails,
-	// sdncAdminUser);
-	//
-	// assertEquals("Check response code after deActive user",
-	// errorInfo.getCode(), getUserResponse.getErrorCode());
-	//
-	// List<String> variables = Arrays.asList(sdncUserDetails.getUserId());
-	// ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.USER_INACTIVE.name(),
-	// variables, getUserResponse.getResponse());
-	//
-	// //checking if created service is accessible
-	// DbUtils.cleanAllAudits();
-	//
-	// RestResponse getCatalogDataResponse =
-	// CatalogRestUtils.getCatalog(sdncAdminUser.getUserId());
-	//
-	// //validate response
-	//
-	// assertNotNull("check response object is not null after user login",
-	// getCatalogDataResponse);
-	// assertNotNull("check error code exists in response after user login",
-	// getCatalogDataResponse.getErrorCode());
-	// assertEquals("Check response code after deActive user", 200,
-	// getCatalogDataResponse.getErrorCode().intValue());
-	//
-	//// expected service list
-	// List<String> serviceExpectedUniqIdList= new ArrayList<String>();
-	// serviceExpectedUniqIdList.add(serviceDetails.getUniqueId());
-	// logger.debug("serviceExpectedUniqIdList: {}", serviceExpectedUniqIdList);
-	//
-	// compareServiceUniqIdList(getCatalogDataResponse.getResponse(),
-	// serviceExpectedUniqIdList, true);
-	//
-	//
-	// }finally{
-	//// ServiceRestUtils.deleteService_allVersions(serviceDetails,
-	// sdncAdminUser);
-	// UserRestUtils.deleteUser(sdncUserDetails, sdncAdminUser, true);
-	// }
-	//
-	// }
-
 	public void compareServiceUniqIdList(String response, List<String> expectedList, boolean flag) {
 
 		JsonElement jelement = new JsonParser().parse(response);
@@ -811,14 +684,14 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 			resourceReqDetailsListOnResponse.add(json);
 		}
 
-		logger.debug("ResourceReqDetails list on response: {}", resourceReqDetailsListOnResponse);
+		logger.debug("ResourceReqDetails list on response: {}",resourceReqDetailsListOnResponse);
 
 		List<String> resourceActualUniqIdList = new ArrayList<String>();
 		for (ResourceReqDetails resource : resourceReqDetailsListOnResponse) {
 			resourceActualUniqIdList.add(resource.getUniqueId());
 		}
-		logger.debug("resourceActualUniqIdList on response: {}", resourceActualUniqIdList);
-		logger.debug("resourceExpectedUniqIdList on response: {}", expectedList);
+		logger.debug("resourceActualUniqIdList on response: {}",resourceActualUniqIdList);
+		logger.debug("resourceExpectedUniqIdList on response: {}",expectedList);
 
 		if (flag) {
 			assertTrue("actual list does not contain expected list",
@@ -828,5 +701,56 @@ public class ActivateDeActivateDeleteUser extends ComponentBaseTest {
 					resourceActualUniqIdList.containsAll(expectedList));
 		}
 	}
+
+	// public User getDefaultUserDetails(){
+	//
+	// String userFirstName = "Kot";
+	// String userLastName = "May";
+	// String role = UserRoleEnum.ADMIN.name();
+	// User sdncUserDetails = new User(userFirstName, userLastName,
+	// httpCspUserId, email, role,null);
+	//
+	// return sdncUserDetails;
+	// }
+	//
+	// public void validateSuccessCreateUserResponse(User sdncUserDetails,
+	// RestResponse createUserResponse) throws Exception{
+	//
+	// assertNotNull("check response object is not null after create user",
+	// createUserResponse);
+	// assertNotNull("check error code exists in response after create user",
+	// createUserResponse.getErrorCode());
+	// assertEquals("Check response code after create user",
+	// HttpStatus.SC_CREATED, createUserResponse.getErrorCode().intValue());
+	//
+	// UserRestUtils.validateUserDetailsOnResponse(sdncUserDetails,
+	// createUserResponse.getResponse());
+	// UserRestUtils.validateAddUserAuditMessage(sdncUserDetails, sdncAdminUser,
+	// String.valueOf(HttpStatus.SC_CREATED),
+	// UserResponseMessageEnum.SUCCESS_MESSAGE.getValue(),
+	// UserRestUtils.getAddUserAuditMessage("AddUser"));
+	// RestResponse getUserResponse = UserRestUtils.getUser(sdncUserDetails,
+	// sdncAdminUser);
+	// UserRestUtils.validateUserDetailsOnResponse(sdncUserDetails,
+	// getUserResponse.getResponse());
+	//
+	// }
+	//
+	// public void validateSuccessDeActivateUserResponse(User sdncUserDetails,
+	// RestResponse deActivateUserResponse) throws Exception{
+	//
+	// assertNotNull("check response object is not null after deActive user",
+	// deActivateUserResponse);
+	// assertNotNull("check error code exists in response after deActive user",
+	// deActivateUserResponse.getErrorCode());
+	// assertEquals("Check response code after deActive user", 200,
+	// deActivateUserResponse.getErrorCode().intValue());
+	//
+	// UserRestUtils.validateUserDetailsOnResponse(sdncUserDetails,
+	// deActivateUserResponse.getResponse());
+	// UserRestUtils.validateDeleteUserAuditMessage(sdncUserDetails,
+	// sdncAdminUser, "200", UserResponseMessageEnum.SUCCESS_MESSAGE.getValue(),
+	// UserRestUtils.getAddUserAuditMessage("DeleteUser"));
+	//
 
 }

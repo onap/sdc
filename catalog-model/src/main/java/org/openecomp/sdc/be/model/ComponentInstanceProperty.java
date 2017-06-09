@@ -23,10 +23,11 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.List;
 
+
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
-public class ComponentInstanceProperty extends PropertyDefinition
-		implements IComponentInstanceConnectedElement, Serializable {
+public class ComponentInstanceProperty extends PropertyDefinition implements IComponentInstanceConnectedElement, Serializable {
 
 	/**
 	 * 
@@ -36,7 +37,7 @@ public class ComponentInstanceProperty extends PropertyDefinition
 	/**
 	 * Value of property
 	 */
-	private String value;
+	
 
 	/**
 	 * The unique id of the property value on graph
@@ -47,26 +48,47 @@ public class ComponentInstanceProperty extends PropertyDefinition
 
 	private List<PropertyRule> rules = null;
 
-	private List<GetInputValueInfo> getInputValues;
+	
+	
+	private String componentInstanceName;
+	
+	private String componentInstanceId;
+	
+	public String getComponentInstanceName() {
+		return componentInstanceName;
+	}
+
+	public void setComponentInstanceName(String componentInstanceName) {
+		this.componentInstanceName = componentInstanceName;
+	}
+
+	public String getComponentInstanceId() {
+		return componentInstanceId;
+	}
+
+	public void setComponentInstanceId(String componentInstanceId) {
+		this.componentInstanceId = componentInstanceId;
+	}
 
 	public ComponentInstanceProperty() {
 		super();
+	}
+	public ComponentInstanceProperty(PropertyDataDefinition pd) {
+		super(pd);
+	}
+	
+	public ComponentInstanceProperty(PropertyDefinition pd) {
+		super(pd);
 	}
 
 	public ComponentInstanceProperty(PropertyDefinition pd, String value, String valueUniqueUid) {
 		super(pd);
 
-		this.value = value;
+		this.setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
+	
 
 	public String getValueUniqueUid() {
 		return valueUniqueUid;
@@ -76,13 +98,6 @@ public class ComponentInstanceProperty extends PropertyDefinition
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
-	public boolean isDefinition() {
-		return definition;
-	}
-
-	public void setDefinition(boolean definition) {
-		this.definition = definition;
-	}
 
 	public List<String> getPath() {
 		return path;
@@ -100,18 +115,10 @@ public class ComponentInstanceProperty extends PropertyDefinition
 		this.rules = rules;
 	}
 
-	public List<GetInputValueInfo> getGetInputValues() {
-		return getInputValues;
-	}
-
-	public void setGetInputValues(List<GetInputValueInfo> getInputValues) {
-		this.getInputValues = getInputValues;
-	}
-
+	
 	@Override
 	public String toString() {
-		return "ComponentInstanceProperty [ " + super.toString() + " , value=" + value + ", valueUniqueUid = "
-				+ valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
+		return "ComponentInstanceProperty [ " + super.toString() + " , value=" + getValue() + ", valueUniqueUid = " + valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
 	}
 
 }

@@ -26,13 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.ITableDescription;
-import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescription.UAEFieldsDescription;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 import com.datastax.driver.core.DataType;
-import com.datastax.driver.mapping.annotations.Column;
 
 public class AuthEventTableDescription implements ITableDescription {
 	@Override
@@ -71,11 +68,14 @@ public class AuthEventTableDescription implements ITableDescription {
 	}
 
 	enum AEFieldsDescription {
-
-		URL("url", DataType.varchar(), false), REQUEST_ID("request_id", DataType.varchar(), true), USER("user",
-				DataType.varchar(), false), AUTH_STATUS("auth_status", DataType.varchar(), false), REALM("realm",
-						DataType.varchar(), false), ACTION("action", DataType.varchar(), true), STATUS("status",
-								DataType.varchar(), false), DESC("description", DataType.varchar(), false);
+		URL("url", DataType.varchar(), false), 
+		REQUEST_ID("request_id", DataType.varchar(), true), 
+		USER("user", DataType.varchar(), false), 
+		AUTH_STATUS("auth_status", DataType.varchar(), false), 
+		REALM("realm", DataType.varchar(), false), 
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESC("description", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

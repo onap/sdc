@@ -23,8 +23,12 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 
 /**
  * Definition of the operations that can be performed on (instances of) a Node
@@ -39,28 +43,21 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
 	 */
 	private static final long serialVersionUID = 8220887972866354746L;
 
-	/**
-	 * Defines an operation available to manage particular aspects of the Node
-	 * Type.
-	 */
-	private Map<String, Operation> operations = new HashMap<String, Operation>();
+	
 
 	private boolean definition;
 
 	public InterfaceDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InterfaceDefinition(String type, String description, Map<String, Operation> operations) {
 		super(type, description);
-		this.operations = operations;
-
+		setOperationsMap(operations);
 	}
 
 	public InterfaceDefinition(InterfaceDataDefinition p) {
 		super(p);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -72,18 +69,20 @@ public class InterfaceDefinition extends InterfaceDataDefinition implements IOpe
 	public void setDefinition(boolean definition) {
 		this.definition = definition;
 	}
-
-	public Map<String, Operation> getOperations() {
-		return operations;
+	@JsonIgnore
+	public Map<String, Operation> getOperationsMap() {
+		Map<String, Operation> convertedOperation = getOperations().entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> new Operation(e.getValue())));
+		return convertedOperation;
 	}
-
-	public void setOperations(Map<String, Operation> operations) {
-		this.operations = operations;
+	@JsonIgnore
+	public void setOperationsMap(Map<String, Operation> operations) {
+		Map<String, OperationDataDefinition> convertedOperation = operations.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> new OperationDataDefinition(e.getValue())));
+		setOperations(convertedOperation);
 	}
 
 	@Override
 	public String toString() {
-		return "InterfaceDefinition [operations=" + operations + ", definition=" + definition + "]";
+		return "InterfaceDefinition [definition=" + definition + "]";
 	}
 
 }

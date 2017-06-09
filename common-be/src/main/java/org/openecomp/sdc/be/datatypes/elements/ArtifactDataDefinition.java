@@ -20,397 +20,387 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
-import java.io.Serializable;
+//import com.google.gson.reflect.TypeToken;
 
-public class ArtifactDataDefinition implements Serializable {
-
+public class ArtifactDataDefinition extends ToscaDataDefinition implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1691343090754083941L;
 
-	/**
-	 * The unique id of the artifact
-	 */
-	private String uniqueId;
-
-	/**
-	 * Tosca logical name
-	 */
-	// private String logicalName;
-
-	/** This attribute specifies the type of this artifact. */
-	private String artifactType;
-
-	/** Specifies the reference of the artifact. uri to the SWIFT */
-	private String artifactRef;
-
-	/** Specifies the display name of the artifact. */
-	private String artifactName;
-
-	/**
-	 * Non TOSCA compliant property
-	 */
-	private String artifactRepository;
-
-	/**
-	 * Checksum value of the uploaded artifact file retrieved from "Content-MD5"?
-	 * header of the HTTP POST/PUT request. Should be updated each time when the
-	 * artifact file is updated.
-	 */
-	private String artifactChecksum;
-
-	/**
-	 * artifact creator
-	 */
-	private String userIdCreator;
-
-	/**
-	 * USER ID of the last resource (artifact) updater
-	 */
-	private String userIdLastUpdater;
-
-	/**
-	 * Full name of artifact creator
-	 */
-	private String creatorFullName;
-
-	/**
-	 * Full name of the last resource (artifact) updater
-	 */
-	private String updaterFullName;
-
-	/**
-	 * Timestamp of the resource (artifact) creation
-	 */
-	private Long creationDate;
-
-	/**
-	 * Timestamp of the last resource (artifact) creation
-	 */
-	private Long lastUpdateDate;
-
-	/**
-	 * Id of artifact data in ES
-	 */
-	private String esId;
-
-	/**
-	 * Logical artifact name. Used by TOSCA
-	 */
-	private String artifactLabel;
-
-	private String artifactCreator;
-
-	private String description;
-
-	private Boolean mandatory = Boolean.FALSE;
-
-	private String artifactDisplayName;
-
-	private String apiUrl;
-
-	private Boolean serviceApi = Boolean.FALSE;
 	
-	/**
-	 * Flag that set to TRUE if generated from AI&I Artifact generator to
-	 * distinguish between manually uploaded and generated artifacts
-	 */
-	private Boolean generated = Boolean.FALSE;
-	
-	private ArtifactGroupTypeEnum artifactGroupType;
-	private Integer timeout;
-	private String artifactVersion;
-	private String artifactUUID;
-	private Long payloadUpdateDate;
-	private Long heatParamsUpdateDate;
-
-	private List<String> requiredArtifacts;
 
 	public ArtifactDataDefinition() {
-		artifactVersion = "0";
+		super();
+		setArtifactVersion("0");
 	}
+	
+	public ArtifactDataDefinition(Map<String, Object> art) {
+		super(art);
+		setArtifactVersion("0");
+	}
+	
+	
 
-	public ArtifactDataDefinition(ArtifactDataDefinition a) {
-		this.uniqueId = a.uniqueId;
-		this.artifactType = a.artifactType;
-		this.artifactRef = a.artifactRef;
-		this.artifactName = a.artifactName;
-		this.artifactRepository = a.artifactRepository;
-		this.artifactChecksum = a.artifactChecksum;
-		this.userIdCreator = a.userIdCreator;
-		this.userIdLastUpdater = a.userIdLastUpdater;
-		this.creatorFullName = a.creatorFullName;
-		this.updaterFullName = a.updaterFullName;
-		this.creationDate = a.creationDate;
-		this.lastUpdateDate = a.lastUpdateDate;
-		this.description = a.description;
-		this.esId = a.esId;
-		this.artifactLabel = a.artifactLabel;
-		this.artifactCreator = a.artifactCreator;
-		this.mandatory = a.mandatory;
-		this.artifactDisplayName = a.artifactDisplayName;
-		this.apiUrl = a.apiUrl;
-		this.serviceApi = a.serviceApi;
-		this.artifactGroupType = a.artifactGroupType;
-		this.timeout = a.timeout;
-		this.artifactVersion = a.artifactVersion;
-		this.artifactUUID = a.artifactUUID;
-		this.payloadUpdateDate = a.payloadUpdateDate;
-		this.heatParamsUpdateDate = a.heatParamsUpdateDate;
+	public ArtifactDataDefinition(ArtifactDataDefinition a ) {
+		super();
+		this.setUniqueId(a.getUniqueId());
+		this.setArtifactType(a.getArtifactType());
+		this.setArtifactRef( a.getArtifactRef());
+		this.setArtifactName( a.getArtifactName());
+		this.setArtifactRepository( a.getArtifactRepository());
+		this.setArtifactChecksum( a.getArtifactChecksum());
+		this.setUserIdCreator(  a.getUserIdCreator());
+		this.setUserIdLastUpdater(  a.getUserIdLastUpdater());
+		this.setCreatorFullName(  a.getCreatorFullName());
+		this.setUpdaterFullName( a.getUpdaterFullName());
+		this.setCreationDate (  a.getCreationDate());
+		this.setLastUpdateDate ( a.getLastUpdateDate());
+		this.setDescription (  a.getDescription());
+		this.setEsId (  a.getEsId());
+		this.setArtifactLabel( a.getArtifactLabel());
+		this.setArtifactCreator( a.getArtifactCreator());
+		this.setMandatory ( a.getMandatory());
+		this.setArtifactDisplayName( a.getArtifactDisplayName());
+		this.setApiUrl(  a.getApiUrl());
+		this.setServiceApi (  a.getServiceApi());
+		this.setArtifactGroupType (  a.getArtifactGroupType());
+		this.setTimeout ( a.getTimeout());
+		this.setArtifactVersion(  a.getArtifactVersion());
+		this.setArtifactUUID (  a.getArtifactUUID());
+		this.setPayloadUpdateDate (  a.getPayloadUpdateDate());
+		this.setHeatParamsUpdateDate (  a.getHeatParamsUpdateDate());
 		this.setGenerated(a.getGenerated());
-		if (a.requiredArtifacts != null)
-			this.requiredArtifacts = new ArrayList<>(a.getRequiredArtifacts());
+		this.setDuplicated(a.getDuplicated());
+		if (a.getRequiredArtifacts() != null)
+			this.setRequiredArtifacts(new ArrayList<>(a.getRequiredArtifacts()));
+		if (a.getHeatParameters() != null)
+			this.setHeatParameters(new ArrayList<>(a.getHeatParameters()));
+		this.setGeneratedFromId( a.getGeneratedFromId());
+
+
 	}
 
 	public String getArtifactName() {
-		return artifactName != null ? artifactName : artifactRef;
+		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+		
 	}
 
 	public String getArtifactType() {
-		return artifactType;
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE);
 	}
 
-	public void setArtifactType(String artifactType) {
-		this.artifactType = artifactType;
+	public void setArtifactType(String artifactType) {	
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE, artifactType);
+		
 	}
 
-	public String getArtifactRef() {
-		return artifactRef;
+	public String getArtifactRef() {		
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_REF);	
+		
 	}
 
 	public void setArtifactRef(String artifactRef) {
-		this.artifactRef = artifactRef;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_REF, artifactRef);
 	}
 
-	public String getArtifactRepository() {
-		return artifactRepository;
+	public String getArtifactRepository() {		
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_REPOSITORY);	
+		
 	}
 
 	public void setArtifactRepository(String artifactRepository) {
-		this.artifactRepository = artifactRepository;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_REPOSITORY, artifactRepository);
 	}
 
 	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
+		setToscaPresentationValue(JsonPresentationFields.NAME, artifactName);
+		
 	}
 
-	public String getArtifactChecksum() {
-		return artifactChecksum;
+	public String getArtifactChecksum() {		
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_CHECKSUM);		
 	}
 
 	public void setArtifactChecksum(String artifactChecksum) {
-		this.artifactChecksum = artifactChecksum;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_CHECKSUM, artifactChecksum);		
 	}
 
 	public String getUserIdCreator() {
-		return userIdCreator;
+	
+		return (String) getToscaPresentationValue(JsonPresentationFields.USER_ID_CREATOR);
 	}
 
 	public void setUserIdCreator(String userIdCreator) {
-		this.userIdCreator = userIdCreator;
+		setToscaPresentationValue(JsonPresentationFields.USER_ID_CREATOR, userIdCreator);	
 	}
 
 	public String getUserIdLastUpdater() {
-		return userIdLastUpdater;
+		return  (String) getToscaPresentationValue(JsonPresentationFields.USER_ID_LAST_UPDATER);
 	}
 
 	public void setUserIdLastUpdater(String userIdLastUpdater) {
-		this.userIdLastUpdater = userIdLastUpdater;
+		setToscaPresentationValue(JsonPresentationFields.USER_ID_LAST_UPDATER, userIdLastUpdater);
 	}
 
 	public String getCreatorFullName() {
-		return creatorFullName;
+		return (String) getToscaPresentationValue(JsonPresentationFields.CREATOR_FULL_NAME);
 	}
 
 	public void setCreatorFullName(String creatorFullName) {
-		this.creatorFullName = creatorFullName;
+		setToscaPresentationValue(JsonPresentationFields.CREATOR_FULL_NAME, creatorFullName);
 	}
 
-	public String getUpdaterFullName() {
-		return updaterFullName;
+	public String getUpdaterFullName() {	
+		return (String) getToscaPresentationValue(JsonPresentationFields.UPDATER_FULL_NAME);
 	}
 
 	public void setUpdaterFullName(String updaterFullName) {
-		this.updaterFullName = updaterFullName;
+		setToscaPresentationValue(JsonPresentationFields.UPDATER_FULL_NAME, updaterFullName);
 	}
 
 	public Long getCreationDate() {
-		return creationDate;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_DATE);
 	}
 
 	public void setCreationDate(Long creationDate) {
-		this.creationDate = creationDate;
+		setToscaPresentationValue(JsonPresentationFields.CREATION_DATE, creationDate);
 	}
 
-	public Long getLastUpdateDate() {
-		return lastUpdateDate;
+	public Long getLastUpdateDate() {		
+		return (Long) getToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE);	
 	}
 
 	public void setLastUpdateDate(Long lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
+		setToscaPresentationValue(JsonPresentationFields.LAST_UPDATE_DATE, lastUpdateDate);
 	}
 
 	public String getUniqueId() {
-		return uniqueId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
 	}
 
 	public String getArtifactLabel() {
-		return artifactLabel;
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL);
 	}
 
 	public void setArtifactLabel(String artifactLabel) {
-		this.artifactLabel = artifactLabel;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL, artifactLabel);
 	}
 
 	public String getEsId() {
-		return esId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.ES_ID);
 	}
 
 	public void setEsId(String esId) {
-		this.esId = esId;
+		setToscaPresentationValue(JsonPresentationFields.ES_ID, esId);
 	}
 
 	public String getArtifactCreator() {
-		return artifactCreator;
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_CREATOR);
 	}
 
 	public void setArtifactCreator(String artifactCreator) {
-		this.artifactCreator = artifactCreator;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_CREATOR, artifactCreator);
 	}
 
-	public Boolean getMandatory() {
-		return mandatory;
+	public Boolean getMandatory() {		
+		 Boolean isMandatory =  (Boolean) getToscaPresentationValue(JsonPresentationFields.IS_ABSTRACT);
+		 return isMandatory == null? Boolean.FALSE: isMandatory;
 	}
 
 	public void setMandatory(Boolean mandatory) {
-		this.mandatory = mandatory;
+		setToscaPresentationValue(JsonPresentationFields.IS_ABSTRACT, mandatory);
 	}
 
-	public String getArtifactDisplayName() {
-		return artifactDisplayName;
+	public String getArtifactDisplayName() {		
+		return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_DISPLAY_NAME);		
 	}
 
 	public void setArtifactDisplayName(String artifactDisplayName) {
-		this.artifactDisplayName = artifactDisplayName;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_DISPLAY_NAME, artifactDisplayName);
 	}
 
-	public String getApiUrl() {
-		return apiUrl;
+	public String getApiUrl() {		
+		return (String) getToscaPresentationValue(JsonPresentationFields.API_URL);		
 	}
 
 	public void setApiUrl(String apiUrl) {
-		this.apiUrl = apiUrl;
+		setToscaPresentationValue(JsonPresentationFields.API_URL, apiUrl);
 	}
 
 	public Boolean getServiceApi() {
-		return serviceApi;
+		Boolean serviceApi = (Boolean) getToscaPresentationValue(JsonPresentationFields.SERVICE_API);	
+		return serviceApi == null? Boolean.FALSE: serviceApi;
 	}
 
 	public void setServiceApi(Boolean serviceApi) {
-		this.serviceApi = serviceApi;
+		setToscaPresentationValue(JsonPresentationFields.SERVICE_API, serviceApi);
 	}
 
 	public ArtifactGroupTypeEnum getArtifactGroupType() {
+		ArtifactGroupTypeEnum artifactGroupType = null;
+		String groupType = (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_GROUP_TYPE);	
+		if (groupType != null && !groupType.isEmpty()) {
+
+			artifactGroupType = ArtifactGroupTypeEnum.findType(groupType);
+		}
 		return artifactGroupType;
 	}
 
 	public void setArtifactGroupType(ArtifactGroupTypeEnum artifactGroupType) {
-		this.artifactGroupType = artifactGroupType;
+		if(artifactGroupType != null)
+			setToscaPresentationValue(JsonPresentationFields.ARTIFACT_GROUP_TYPE, artifactGroupType.getType());
 	}
 
-	public Integer getTimeout() {
-		return timeout;
+	public Integer getTimeout() {		
+		return (Integer) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_TIMEOUT);
 	}
 
 	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_TIMEOUT, timeout);
 	}
 
-	public String getArtifactVersion() {
-		return artifactVersion;
+	public String getArtifactVersion() {		
+		return  (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_VERSION);
 	}
 
 	public void setArtifactVersion(String artifactVersion) {
-		this.artifactVersion = artifactVersion;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_VERSION, artifactVersion);
 	}
 
 	public String getArtifactUUID() {
-		return artifactUUID;
+		return  (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_UUID);
 	}
 
 	public void setArtifactUUID(String artifactUUID) {
-		this.artifactUUID = artifactUUID;
+		setToscaPresentationValue(JsonPresentationFields.ARTIFACT_UUID, artifactUUID);
 	}
 
-	public Long getPayloadUpdateDate() {
-		return payloadUpdateDate;
+	public Long getPayloadUpdateDate() {		
+		return (Long) getToscaPresentationValue(JsonPresentationFields.PAYLOAD_UPDATE_DATE);
 	}
 
 	public void setPayloadUpdateDate(Long payloadUpdateDate) {
-		this.payloadUpdateDate = payloadUpdateDate;
+		setToscaPresentationValue(JsonPresentationFields.PAYLOAD_UPDATE_DATE, payloadUpdateDate);
 	}
 
 	public Long getHeatParamsUpdateDate() {
-		return heatParamsUpdateDate;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.HEAT_PARAMS_UPDATE_DATE);
 	}
 
 	public void setHeatParamsUpdateDate(Long heatParamsUpdateDate) {
-		this.heatParamsUpdateDate = heatParamsUpdateDate;
+		setToscaPresentationValue(JsonPresentationFields.HEAT_PARAMS_UPDATE_DATE, heatParamsUpdateDate);
 	}
 
 	public List<String> getRequiredArtifacts() {
-		return requiredArtifacts;
+		return (List<String>) getToscaPresentationValue(JsonPresentationFields.REQUIRED_ARTIFACTS);
 	}
 
 	public void setRequiredArtifacts(List<String> requiredArtifacts) {
-		this.requiredArtifacts = requiredArtifacts;
+		setToscaPresentationValue(JsonPresentationFields.REQUIRED_ARTIFACTS, requiredArtifacts);
 	}
 	
-	public Boolean getGenerated() {
-		return generated;
+	public Boolean getGenerated() {	
+		Boolean generated = (Boolean) getToscaPresentationValue(JsonPresentationFields.GENERATED);
+		return 	generated == null ? Boolean.FALSE: generated;
 	}
 
 	public void setGenerated(Boolean generated) {
-		this.generated = generated;
+		setToscaPresentationValue(JsonPresentationFields.GENERATED, generated);
 	}
+	
+	public Boolean getDuplicated() {	
+		Boolean duplicated = (Boolean) getToscaPresentationValue(JsonPresentationFields.DUPLICATED);
+		return 	duplicated == null ? Boolean.FALSE: duplicated;
+	}
+
+	public void setDuplicated(Boolean duplicated) {
+		setToscaPresentationValue(JsonPresentationFields.DUPLICATED, duplicated);
+	}
+	
+	public List<HeatParameterDataDefinition> getHeatParameters() {
+		 return (List<HeatParameterDataDefinition>) getToscaPresentationValue(JsonPresentationFields.HEAT_PARAMETERS);
+	}
+
+	public void setHeatParameters(List<HeatParameterDataDefinition> properties) {
+		setToscaPresentationValue(JsonPresentationFields.HEAT_PARAMETERS, properties);
+	}
+
+	public String getGeneratedFromId() {
+		return  (String) getToscaPresentationValue(JsonPresentationFields.GENERATED_FROM_ID);
+	}
+
+	public void setGeneratedFromId(String generatedFromId) {
+		setToscaPresentationValue(JsonPresentationFields.GENERATED_FROM_ID, generatedFromId);
+	}
+	
 
 	@Override
 	public String toString() {
-		return "ArtifactDataDefinition [uniqueId=" + uniqueId + ", artifactType=" + artifactType + ", artifactRef="
-				+ artifactRef + ", artifactName=" + artifactName + ", artifactRepository=" + artifactRepository
-				+ ", artifactChecksum=" + artifactChecksum + ", userIdCreator=" + userIdCreator + ", userIdLastUpdater="
-				+ userIdLastUpdater + ", creatorFullName=" + creatorFullName + ", updaterFullName=" + updaterFullName
-				+ ", creationDate=" + creationDate + ", lastUpdateDate=" + lastUpdateDate + ", esId=" + esId
-				+ ", artifactLabel=" + artifactLabel + ", artifactCreator=" + artifactCreator + ", description="
-				+ description + ", mandatory=" + mandatory + ", artifactDisplayName=" + artifactDisplayName
-				+ ", apiUrl=" + apiUrl + ", serviceApi=" + serviceApi + ", artifactGroupType=" + artifactGroupType
-				+ ", timeout=" + timeout + ", artifactVersion=" + artifactVersion + ", artifactUUID=" + artifactUUID
-				+ ", payloadUpdateDate=" + payloadUpdateDate + ", heatParamsUpdateDate=" + heatParamsUpdateDate
-				+ ", requiredArtifacts=" + requiredArtifacts + "]";
+		return "ArtifactDataDefinition [uniqueId=" + getUniqueId() + ", artifactType=" + getArtifactType() + ", artifactRef=" + getArtifactRef() + ", artifactName=" + getArtifactName() + ", artifactRepository=" + getArtifactRepository() + ", artifactChecksum="
+				+  getArtifactChecksum() + ", userIdCreator=" + getUserIdCreator() + ", userIdLastUpdater=" + getUserIdLastUpdater() + ", creatorFullName=" + getCreatorFullName() + ", updaterFullName=" + getUpdaterFullName() + ", creationDate=" + getCreationDate()
+				+ ", lastUpdateDate=" +  getLastUpdateDate() + ", esId=" +  getEsId() + ", artifactLabel=" + getArtifactLabel() + ", artifactCreator=" + getArtifactCreator() + ", description=" + getDescription() + ", mandatory=" + getMandatory() + ", artifactDisplayName="
+				+  getArtifactDisplayName() + ", apiUrl=" +  getApiUrl() + ", serviceApi=" +  getServiceApi() + ", artifactGroupType=" + getArtifactGroupType() + ", timeout=" + getTimeout() + ", artifactVersion=" + getArtifactVersion() + ", artifactUUID=" + getArtifactUUID()
+				+ ", payloadUpdateDate=" +  getPayloadUpdateDate() + ", heatParamsUpdateDate=" +  getHeatParamsUpdateDate() + ", requiredArtifacts=" + getRequiredArtifacts() + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		
+		String apiUrl =  getApiUrl();
+		String artifactChecksum =  getArtifactChecksum();
+		String artifactCreator =  getArtifactCreator();
+		String artifactDisplayName =  getArtifactDisplayName();
+		ArtifactGroupTypeEnum artifactGroupType =  getArtifactGroupType();
+		String artifactLabel =  getArtifactLabel();		
+		String artifactName =  getArtifactName();
+		String artifactRef =  getArtifactRef();
+		String artifactRepository =  getArtifactRepository();
+		String artifactType =  getArtifactType();
+		
+		String artifactUUID =  getArtifactUUID();
+		String artifactVersion =  getArtifactVersion();
+		String userIdCreator =  getUserIdCreator();
+		String userIdLastUpdater =  getUserIdLastUpdater();
+		Long creationDate =  getCreationDate();
+		
+		String creatorFullName =  getCreatorFullName();
+		String description =  getDescription();
+		String esId =  getEsId();
+		Long heatParamsUpdateDate =  getHeatParamsUpdateDate();
+		Long lastUpdateDate =  getLastUpdateDate();
+		Boolean mandatory =  getMandatory();
+		
+		Long payloadUpdateDate =  getPayloadUpdateDate();
+		List<String> requiredArtifacts =  getRequiredArtifacts();
+		Boolean serviceApi =  getServiceApi();
+		Integer timeout =  getTimeout();
+		String uniqueId =  getUniqueId();
+		String updaterFullName =  getUpdaterFullName();
+				
 		result = prime * result + ((apiUrl == null) ? 0 : apiUrl.hashCode());
 		result = prime * result + ((artifactChecksum == null) ? 0 : artifactChecksum.hashCode());
 		result = prime * result + ((artifactCreator == null) ? 0 : artifactCreator.hashCode());
@@ -450,137 +440,137 @@ public class ArtifactDataDefinition implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ArtifactDataDefinition other = (ArtifactDataDefinition) obj;
-		if (apiUrl == null) {
-			if (other.apiUrl != null)
+		if (getApiUrl() == null) {
+			if (other.getApiUrl() != null)
 				return false;
-		} else if (!apiUrl.equals(other.apiUrl))
+		} else if (!getApiUrl().equals(other.getApiUrl()))
 			return false;
-		if (artifactChecksum == null) {
-			if (other.artifactChecksum != null)
+		if (getArtifactChecksum() == null) {
+			if (other.getArtifactChecksum() != null)
 				return false;
-		} else if (!artifactChecksum.equals(other.artifactChecksum))
+		} else if (!getArtifactChecksum().equals(other.getArtifactChecksum()))
 			return false;
-		if (artifactCreator == null) {
-			if (other.artifactCreator != null)
+		if (getArtifactCreator() == null) {
+			if (other.getArtifactCreator() != null)
 				return false;
-		} else if (!artifactCreator.equals(other.artifactCreator))
+		} else if (!getArtifactCreator().equals(other.getArtifactCreator()))
 			return false;
-		if (artifactDisplayName == null) {
-			if (other.artifactDisplayName != null)
+		if (getArtifactDisplayName() == null) {
+			if (other.getArtifactDisplayName() != null)
 				return false;
-		} else if (!artifactDisplayName.equals(other.artifactDisplayName))
+		} else if (!getArtifactDisplayName().equals(other.getArtifactDisplayName()))
 			return false;
-		if (artifactGroupType != other.artifactGroupType)
+		if (getArtifactGroupType() != other.getArtifactGroupType())
 			return false;
-		if (artifactLabel == null) {
-			if (other.artifactLabel != null)
+		if (getArtifactLabel() == null) {
+			if (other.getArtifactLabel() != null)
 				return false;
-		} else if (!artifactLabel.equals(other.artifactLabel))
+		} else if (!getArtifactLabel().equals(other.getArtifactLabel()))
 			return false;
-		if (artifactName == null) {
-			if (other.artifactName != null)
+		if (getArtifactName() == null) {
+			if (other.getArtifactName() != null)
 				return false;
-		} else if (!artifactName.equals(other.artifactName))
+		} else if (!getArtifactName().equals(other.getArtifactName()))
 			return false;
-		if (artifactRef == null) {
-			if (other.artifactRef != null)
+		if (getArtifactRef() == null) {
+			if (other.getArtifactRef() != null)
 				return false;
-		} else if (!artifactRef.equals(other.artifactRef))
+		} else if (!getArtifactRef().equals(other.getArtifactRef()))
 			return false;
-		if (artifactRepository == null) {
-			if (other.artifactRepository != null)
+		if (getArtifactRepository() == null) {
+			if (other.getArtifactRepository() != null)
 				return false;
-		} else if (!artifactRepository.equals(other.artifactRepository))
+		} else if (!getArtifactRepository().equals(other.getArtifactRepository()))
 			return false;
-		if (artifactType == null) {
-			if (other.artifactType != null)
+		if (getArtifactType() == null) {
+			if (other.getArtifactType() != null)
 				return false;
-		} else if (!artifactType.equals(other.artifactType))
+		} else if (!getArtifactType().equals(other.getArtifactType()))
 			return false;
-		if (artifactUUID == null) {
-			if (other.artifactUUID != null)
+		if (getArtifactUUID() == null) {
+			if (other.getArtifactUUID() != null)
 				return false;
-		} else if (!artifactUUID.equals(other.artifactUUID))
+		} else if (!getArtifactUUID().equals(other.getArtifactUUID()))
 			return false;
-		if (artifactVersion == null) {
-			if (other.artifactVersion != null)
+		if (getArtifactVersion() == null) {
+			if (other.getArtifactVersion() != null)
 				return false;
-		} else if (!artifactVersion.equals(other.artifactVersion))
+		} else if (!getArtifactVersion().equals(other.getArtifactVersion()))
 			return false;
-		if (userIdCreator == null) {
-			if (other.userIdCreator != null)
+		if (getUserIdCreator() == null) {
+			if (other.getUserIdCreator() != null)
 				return false;
-		} else if (!userIdCreator.equals(other.userIdCreator))
+		} else if (!getUserIdCreator().equals(other.getUserIdCreator()))
 			return false;
-		if (userIdLastUpdater == null) {
-			if (other.userIdLastUpdater != null)
+		if (getUserIdLastUpdater() == null) {
+			if (other.getUserIdLastUpdater() != null)
 				return false;
-		} else if (!userIdLastUpdater.equals(other.userIdLastUpdater))
+		} else if (!getUserIdLastUpdater().equals(other.getUserIdLastUpdater()))
 			return false;
-		if (creationDate == null) {
-			if (other.creationDate != null)
+		if (getCreationDate() == null) {
+			if (other.getCreationDate() != null)
 				return false;
-		} else if (!creationDate.equals(other.creationDate))
+		} else if (!getCreationDate().equals(other.getCreationDate()))
 			return false;
-		if (creatorFullName == null) {
-			if (other.creatorFullName != null)
+		if (getCreatorFullName() == null) {
+			if (other.getCreatorFullName() != null)
 				return false;
-		} else if (!creatorFullName.equals(other.creatorFullName))
+		} else if (!getCreatorFullName().equals(other.getCreatorFullName()))
 			return false;
-		if (description == null) {
-			if (other.description != null)
+		if (getDescription() == null) {
+			if (other.getDescription() != null)
 				return false;
-		} else if (!description.equals(other.description))
+		} else if (!getDescription().equals(other.getDescription()))
 			return false;
-		if (esId == null) {
-			if (other.esId != null)
+		if (getEsId() == null) {
+			if (other.getEsId() != null)
 				return false;
-		} else if (!esId.equals(other.esId))
+		} else if (!getEsId().equals(other.getEsId()))
 			return false;
-		if (heatParamsUpdateDate == null) {
-			if (other.heatParamsUpdateDate != null)
+		if (getHeatParamsUpdateDate() == null) {
+			if (other.getHeatParamsUpdateDate() != null)
 				return false;
-		} else if (!heatParamsUpdateDate.equals(other.heatParamsUpdateDate))
+		} else if (!getHeatParamsUpdateDate().equals(other.getHeatParamsUpdateDate()))
 			return false;
-		if (lastUpdateDate == null) {
-			if (other.lastUpdateDate != null)
+		if (getLastUpdateDate() == null) {
+			if (other.getLastUpdateDate() != null)
 				return false;
-		} else if (!lastUpdateDate.equals(other.lastUpdateDate))
+		} else if (!getLastUpdateDate().equals(other.getLastUpdateDate()))
 			return false;
-		if (mandatory == null) {
-			if (other.mandatory != null)
+		if (getMandatory() == null) {
+			if (other.getMandatory() != null)
 				return false;
-		} else if (!mandatory.equals(other.mandatory))
+		} else if (!getMandatory().equals(other.getMandatory()))
 			return false;
-		if (payloadUpdateDate == null) {
-			if (other.payloadUpdateDate != null)
+		if (getPayloadUpdateDate() == null) {
+			if (other.getPayloadUpdateDate() != null)
 				return false;
-		} else if (!payloadUpdateDate.equals(other.payloadUpdateDate))
+		} else if (!getPayloadUpdateDate().equals(other.getPayloadUpdateDate()))
 			return false;
-		if (requiredArtifacts == null) {
-			if (other.requiredArtifacts != null)
+		if (getRequiredArtifacts() == null) {
+			if (other.getRequiredArtifacts() != null)
 				return false;
-		} else if (!requiredArtifacts.equals(other.requiredArtifacts))
+		} else if (!getRequiredArtifacts().equals(other.getRequiredArtifacts()))
 			return false;
-		if (serviceApi == null) {
-			if (other.serviceApi != null)
+		if (getServiceApi() == null) {
+			if (other.getServiceApi() != null)
 				return false;
-		} else if (!serviceApi.equals(other.serviceApi))
+		} else if (!getServiceApi().equals(other.getServiceApi()))
 			return false;
-		if (timeout == null) {
-			if (other.timeout != null)
+		if (getTimeout() == null) {
+			if (other.getTimeout() != null)
 				return false;
-		} else if (!timeout.equals(other.timeout))
+		} else if (!getTimeout().equals(other.getTimeout()))
 			return false;
-		if (uniqueId == null) {
-			if (other.uniqueId != null)
+		if (getUniqueId() == null) {
+			if (other.getUniqueId() != null)
 				return false;
-		} else if (!uniqueId.equals(other.uniqueId))
+		} else if (!getUniqueId().equals(other.getUniqueId()))
 			return false;
-		if (updaterFullName == null) {
-			if (other.updaterFullName != null)
+		if (getUpdaterFullName() == null) {
+			if (other.getUpdaterFullName() != null)
 				return false;
-		} else if (!updaterFullName.equals(other.updaterFullName))
+		} else if (!getUpdaterFullName().equals(other.getUpdaterFullName()))
 			return false;
 		return true;
 	}

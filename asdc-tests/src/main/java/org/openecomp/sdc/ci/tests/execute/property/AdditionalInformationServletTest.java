@@ -35,8 +35,8 @@ import java.util.Map;
 import org.json.simple.parser.JSONParser;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.Resource;
@@ -1459,7 +1459,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		assertEquals("check returned id", fromJson.getUniqueId(), updatedJson.getUniqueId());
 
 		fromJson.setKey(updatedKey);
-		fromJson.setValue("");
+		fromJson.setValue("\uC2B5");
 
 		updatedProperty = updateServiceAdditionalInformation(serviceId, fromJson, user, fromJson.getUniqueId());
 		assertNotNull("check response object is not null after update additional information", updatedProperty);
@@ -1990,7 +1990,7 @@ public class AdditionalInformationServletTest extends ComponentBaseTest {
 		assertEquals("Check response code after create resource", 201, createResourceResponse.getErrorCode().intValue());
 
 		String key = "AAA  AAA";
-		String value = "";
+		String value = "\uC2B5";
 
 		AdditionalInfoParameterInfo additionalInfoParameterInfo = new AdditionalInfoParameterInfo(null, key, value);
 

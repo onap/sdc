@@ -23,13 +23,16 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 /**
  * Represents AttributeDataDefinition
  * 
  * @author mshitrit
  *
  */
-public class AttributeDataDefinition implements Serializable {
+public class AttributeDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -182,5 +185,25 @@ public class AttributeDataDefinition implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	@Override
+	public Object getToscaPresentationValue(JsonPresentationFields field) {
+		switch (field) {
+		case NAME:
+			return name;
+		case UNIQUE_ID:
+			return uniqueId;		
+		case TYPE:
+			return type;
+		case DESCRIPTION:
+			return description;
+		case VALUE:
+			return value;
+		case DEFAULT_VALUE:
+			return defaultValue;
+		default:
+			return super.getToscaPresentationValue(field);
+		}
 	}
 }

@@ -29,5 +29,6 @@ public interface IToscaMetadata {
 	public void setUUID(String uUID);
 
 	public void setVersion(String version);
-
+	
+	public void setCustomizationUUID(String customizationUUID);
 }

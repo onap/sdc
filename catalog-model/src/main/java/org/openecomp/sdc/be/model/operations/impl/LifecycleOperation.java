@@ -116,15 +116,12 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<User, StorageOperationStatus> getComponentOwner(String resourceId, NodeTypeEnum nodeType,
-			boolean inTransaction) {
+	public Either<User, StorageOperationStatus> getComponentOwner(String resourceId, NodeTypeEnum nodeType, boolean inTransaction) {
 
 		Either<User, StorageOperationStatus> result = Either.right(StorageOperationStatus.GENERAL_ERROR);
 		try {
 
-			Either<ImmutablePair<UserData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getParentNode(
-					UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.STATE, NodeTypeEnum.User,
-					UserData.class);
+			Either<ImmutablePair<UserData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(nodeType), resourceId, GraphEdgeLabels.STATE, NodeTypeEnum.User, UserData.class);
 
 			if (parentNode.isRight()) {
 				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(parentNode.right().value()));
@@ -144,8 +141,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> checkoutComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User currentOwner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> checkoutComponent(NodeTypeEnum nodeType, Component component, User modifier, User currentOwner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 
 		try {
@@ -153,17 +149,14 @@ public class LifecycleOperation implements ILifecycleOperation {
 			if (!component.getLifecycleState().equals(LifecycleStateEnum.CERTIFIED)) {
 				component.setHighestVersion(false);
 				ComponentOperation componentOperation = getComponentOperation(nodeType);
-				Either<? extends Component, StorageOperationStatus> updateComponent = componentOperation
-						.updateComponent(component, inTransaction, titanGenericDao, component.getClass(), nodeType);
+				Either<? extends Component, StorageOperationStatus> updateComponent = componentOperation.updateComponent(component, inTransaction, titanGenericDao, component.getClass(), nodeType);
 				if (updateComponent.isRight()) {
 					StorageOperationStatus error = updateComponent.right().value();
-					log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-							LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, error);
+					log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, error);
 					return Either.right(error);
 				}
 
-				StorageOperationStatus changeStateToLastState = changeStateRelation(nodeType, component.getUniqueId(),
-						currentOwner, GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
+				StorageOperationStatus changeStateToLastState = changeStateRelation(nodeType, component.getUniqueId(), currentOwner, GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
 				if (!changeStateToLastState.equals(StorageOperationStatus.OK)) {
 					result = Either.right(changeStateToLastState);
 					return result;
@@ -173,8 +166,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			// clone the component
 			result = cloneComponentForCheckout(component, nodeType, modifier);
 			if (result.isRight()) {
-				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-						LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, result.right().value());
+				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, result.right().value());
 				return result;
 			}
 
@@ -193,8 +185,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return result;
 	}
 
-	private Either<? extends Component, StorageOperationStatus> cloneComponentForCertified(Component component,
-			User modifier, Integer majorVersion) {
+	private Either<? extends Component, StorageOperationStatus> cloneComponentForCertified(Component component, User modifier, Integer majorVersion) {
 
 		// set new version
 		String certifiedVersion = (majorVersion + 1) + VERSION_DELIMETER + "0";
@@ -205,15 +196,13 @@ public class LifecycleOperation implements ILifecycleOperation {
 		component.setHighestVersion(true);
 
 		ComponentOperation componentOperation = getComponentOperation(component.getComponentType().getNodeType());
-		Either<? extends Component, StorageOperationStatus> cloneComponentResult = componentOperation
-				.cloneComponent(component, certifiedVersion, LifecycleStateEnum.CERTIFIED, true);
+		Either<? extends Component, StorageOperationStatus> cloneComponentResult = componentOperation.cloneComponent(component, certifiedVersion, LifecycleStateEnum.CERTIFIED, true);
 
 		return cloneComponentResult;
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> undoCheckout(NodeTypeEnum nodeType, Component component,
-			User modifier, User currentOwner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> undoCheckout(NodeTypeEnum nodeType, Component component, User modifier, User currentOwner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 		ComponentOperation componentOperation = getComponentOperation(nodeType);
 
@@ -226,8 +215,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			String previousVersion = versionParts[0] + VERSION_DELIMETER + minorVersion;
 
 			if (!previousVersion.equals("0.0")) {
-				Either<? extends Component, StorageOperationStatus> updateOldResourceResult = updateOldComponentBeforeUndoCheckout(
-						componentOperation, prevComponent, component, previousVersion, nodeType, true);
+				Either<? extends Component, StorageOperationStatus> updateOldResourceResult = updateOldComponentBeforeUndoCheckout(componentOperation, prevComponent, component, previousVersion, nodeType, true);
 				if (updateOldResourceResult.isRight()) {
 					result = updateOldResourceResult;
 					return result;
@@ -236,8 +224,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			}
 
 			// delete the component
-			Either<? extends Component, StorageOperationStatus> deleteResourceResult = componentOperation
-					.deleteComponent(component.getUniqueId(), true);
+			Either<? extends Component, StorageOperationStatus> deleteResourceResult = componentOperation.deleteComponent(component.getUniqueId(), true);
 			if (deleteResourceResult.isRight()) {
 				result = deleteResourceResult;
 				return result;
@@ -262,23 +249,19 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> checkinComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> checkinComponent(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 		try {
-			StorageOperationStatus updateCheckinInGraph = updateCheckinInGraph(nodeType, component.getUniqueId(),
-					component.getLifecycleState(), modifier, owner);
+			StorageOperationStatus updateCheckinInGraph = updateCheckinInGraph(nodeType, component.getUniqueId(), component.getLifecycleState(), modifier, owner);
 			if (!updateCheckinInGraph.equals(StorageOperationStatus.OK)) {
-				log.error("failed to update state of resource {}. status={}", component.getUniqueId(),
-						updateCheckinInGraph);
+				log.error("failed to update state of resource {}. status={}", component.getUniqueId(), updateCheckinInGraph);
 				return Either.right(updateCheckinInGraph);
 			}
 			LifecycleStateEnum state = LifecycleStateEnum.NOT_CERTIFIED_CHECKIN;
 			ComponentParametersView componentParametersView = buildFilterForFetchComponentAfterChangeState();
 			result = updateComponentMD(component, modifier, state, nodeType, componentParametersView);
 			if (result.isRight()) {
-				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-						state, result.right().value());
+				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), state, result.right().value());
 			}
 			return result;
 
@@ -306,8 +289,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return componentParametersView;
 	}
 
-	private StorageOperationStatus updateCheckinInGraph(NodeTypeEnum componentType, String componentId,
-			LifecycleStateEnum state, User modifier, User owner) {
+	private StorageOperationStatus updateCheckinInGraph(NodeTypeEnum componentType, String componentId, LifecycleStateEnum state, User modifier, User owner) {
 
 		// check if we cancel rfc
 		if (state.equals(LifecycleStateEnum.READY_FOR_CERTIFICATION)) {
@@ -316,8 +298,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 			UniqueIdData resourceData = new UniqueIdData(componentType, componentId);
-			Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao
-					.deleteIncomingRelationByCriteria(resourceData, GraphEdgeLabels.LAST_STATE, props);
+			Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(resourceData, GraphEdgeLabels.LAST_STATE, props);
 			if (deleteResult.isRight()) {
 				log.debug("failed to update last state relation");
 				return StorageOperationStatus.INCONSISTENCY;
@@ -325,8 +306,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 
 		// remove CHECKOUT relation
-		StorageOperationStatus removeUserToResourceRelation = removeUserToResourceRelation(componentType,
-				owner.getUserId(), componentId, GraphEdgeLabels.STATE);
+		StorageOperationStatus removeUserToResourceRelation = removeUserToResourceRelation(componentType, owner.getUserId(), componentId, GraphEdgeLabels.STATE);
 		if (!removeUserToResourceRelation.equals(StorageOperationStatus.OK)) {
 			return removeUserToResourceRelation;
 		}
@@ -334,8 +314,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// create CHECKIN relation
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		StorageOperationStatus createUserToResourceRelation = createUserToResourceRelation(componentType,
-				modifier.getUserId(), componentId, GraphEdgeLabels.STATE, props);
+		StorageOperationStatus createUserToResourceRelation = createUserToResourceRelation(componentType, modifier.getUserId(), componentId, GraphEdgeLabels.STATE, props);
 		if (!createUserToResourceRelation.equals(StorageOperationStatus.OK)) {
 			return createUserToResourceRelation;
 		}
@@ -344,15 +323,12 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> requestCertificationComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> requestCertificationComponent(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 		try {
-			StorageOperationStatus updateRfcOnGraph = updateRfcOnGraph(nodeType, component.getUniqueId(),
-					component.getLifecycleState(), modifier, owner);
+			StorageOperationStatus updateRfcOnGraph = updateRfcOnGraph(nodeType, component.getUniqueId(), component.getLifecycleState(), modifier, owner);
 			if (!updateRfcOnGraph.equals(StorageOperationStatus.OK)) {
-				log.error("failed to update state of resource {}. status={}", component.getUniqueId(),
-						updateRfcOnGraph);
+				log.error("failed to update state of resource {}. status={}", component.getUniqueId(), updateRfcOnGraph);
 				return Either.right(updateRfcOnGraph);
 			}
 
@@ -362,8 +338,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 			result = updateComponentMD(component, modifier, state, nodeType, componentParametersView);
 			if (result.isRight()) {
-				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-						state, result.right().value());
+				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), state, result.right().value());
 				return result;
 			}
 			return result;
@@ -381,15 +356,13 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 	}
 
-	private StorageOperationStatus updateRfcOnGraph(NodeTypeEnum componentType, String componentId,
-			LifecycleStateEnum state, User modifier, User owner) {
+	private StorageOperationStatus updateRfcOnGraph(NodeTypeEnum componentType, String componentId, LifecycleStateEnum state, User modifier, User owner) {
 
 		if (state.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT)) {
 			// if this is atomic checkin + RFC: create checkin relation
 
 			// remove CHECKOUT relation
-			StorageOperationStatus relationStatus = removeUserToResourceRelation(componentType, owner.getUserId(),
-					componentId, GraphEdgeLabels.STATE);
+			StorageOperationStatus relationStatus = removeUserToResourceRelation(componentType, owner.getUserId(), componentId, GraphEdgeLabels.STATE);
 			if (!relationStatus.equals(StorageOperationStatus.OK)) {
 				return relationStatus;
 			}
@@ -397,14 +370,12 @@ public class LifecycleOperation implements ILifecycleOperation {
 			// create CHECKIN relation
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-			relationStatus = createUserToResourceRelation(componentType, modifier.getUserId(), componentId,
-					GraphEdgeLabels.LAST_STATE, props);
+			relationStatus = createUserToResourceRelation(componentType, modifier.getUserId(), componentId, GraphEdgeLabels.LAST_STATE, props);
 			if (!relationStatus.equals(StorageOperationStatus.OK)) {
 				return relationStatus;
 			}
 		} else {
-			StorageOperationStatus changeStatus = changeRelationLabel(componentType, componentId, owner,
-					GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
+			StorageOperationStatus changeStatus = changeRelationLabel(componentType, componentId, owner, GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
 			if (!changeStatus.equals(StorageOperationStatus.OK)) {
 				return changeStatus;
 			}
@@ -413,21 +384,18 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// create RFC relation
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
-		StorageOperationStatus changeRelationLabel = createUserToResourceRelation(componentType, modifier.getUserId(),
-				componentId, GraphEdgeLabels.STATE, props);
+		StorageOperationStatus changeRelationLabel = createUserToResourceRelation(componentType, modifier.getUserId(), componentId, GraphEdgeLabels.STATE, props);
 		if (!changeRelationLabel.equals(StorageOperationStatus.OK)) {
 			return changeRelationLabel;
 		}
 		return StorageOperationStatus.OK;
 	}
 
-	private StorageOperationStatus changeRelationLabel(NodeTypeEnum componentType, String componentId, User owner,
-			GraphEdgeLabels prevLabel, GraphEdgeLabels toLabel) {
+	private StorageOperationStatus changeRelationLabel(NodeTypeEnum componentType, String componentId, User owner, GraphEdgeLabels prevLabel, GraphEdgeLabels toLabel) {
 		UniqueIdData resourceV = new UniqueIdData(componentType, componentId);
 		UserData userV = new UserData();
 		userV.setUserId(owner.getUserId());
-		Either<GraphRelation, TitanOperationStatus> replaceRelationLabelResult = titanGenericDao
-				.replaceRelationLabel(userV, resourceV, prevLabel, toLabel);
+		Either<GraphRelation, TitanOperationStatus> replaceRelationLabelResult = titanGenericDao.replaceRelationLabel(userV, resourceV, prevLabel, toLabel);
 		if (replaceRelationLabelResult.isRight()) {
 			log.error("failed to replace label from last state to state");
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(replaceRelationLabelResult.right().value());
@@ -436,12 +404,10 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> startComponentCertification(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> startComponentCertification(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 		try {
-			StorageOperationStatus updateOnGraph = updateStartCertificationOnGraph(nodeType, component.getUniqueId(),
-					modifier, owner);
+			StorageOperationStatus updateOnGraph = updateStartCertificationOnGraph(nodeType, component.getUniqueId(), modifier, owner);
 			if (!updateOnGraph.equals(StorageOperationStatus.OK)) {
 				log.error("failed to update state of resource {}. status={}", component.getUniqueId(), updateOnGraph);
 				return Either.right(updateOnGraph);
@@ -452,8 +418,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 			result = updateComponentMD(component, modifier, state, nodeType, componentParametersView);
 			if (result.isRight()) {
-				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-						state, result.right().value());
+				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), state, result.right().value());
 			}
 			return result;
 
@@ -470,10 +435,8 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 	}
 
-	private StorageOperationStatus updateStartCertificationOnGraph(NodeTypeEnum componentType, String componentId,
-			User modifier, User owner) {
-		StorageOperationStatus changeRelationLabel = changeRelationLabel(componentType, componentId, owner,
-				GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
+	private StorageOperationStatus updateStartCertificationOnGraph(NodeTypeEnum componentType, String componentId, User modifier, User owner) {
+		StorageOperationStatus changeRelationLabel = changeRelationLabel(componentType, componentId, owner, GraphEdgeLabels.STATE, GraphEdgeLabels.LAST_STATE);
 		if (!changeRelationLabel.equals(StorageOperationStatus.OK)) {
 			return changeRelationLabel;
 		}
@@ -481,8 +444,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		StorageOperationStatus createUserToResourceRelation = createUserToResourceRelation(componentType,
-				modifier.getUserId(), componentId, GraphEdgeLabels.STATE, props);
+		StorageOperationStatus createUserToResourceRelation = createUserToResourceRelation(componentType, modifier.getUserId(), componentId, GraphEdgeLabels.STATE, props);
 		if (!createUserToResourceRelation.equals(StorageOperationStatus.OK)) {
 			return createUserToResourceRelation;
 		}
@@ -490,8 +452,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> certifyComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User currentOwner, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> certifyComponent(NodeTypeEnum nodeType, Component component, User modifier, User currentOwner, boolean inTransaction) {
 		Either<? extends Component, StorageOperationStatus> result = null;
 
 		try {
@@ -509,8 +470,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			}
 
 			// clone the resource
-			Either<? extends Component, StorageOperationStatus> createResourceResult = Either
-					.right(StorageOperationStatus.GENERAL_ERROR);
+			Either<? extends Component, StorageOperationStatus> createResourceResult = Either.right(StorageOperationStatus.GENERAL_ERROR);
 			switch (nodeType) {
 			case Service:
 			case Resource:
@@ -531,8 +491,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			Component certifiedResource = createResourceResult.left().value();
 
 			// add rfc relation to preserve follower information
-			StorageOperationStatus addRfcRelation = addRfcRelationToCertfiedComponent(nodeType, resourceIdBeforeCertify,
-					certifiedResource.getUniqueId());
+			StorageOperationStatus addRfcRelation = addRfcRelationToCertfiedComponent(nodeType, resourceIdBeforeCertify, certifiedResource.getUniqueId());
 			if (!addRfcRelation.equals(StorageOperationStatus.OK)) {
 				result = Either.right(addRfcRelation);
 				return result;
@@ -556,15 +515,13 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<Boolean, StorageOperationStatus> deleteOldComponentVersions(NodeTypeEnum nodeType,
-			String componentName, String uuid, boolean inTransaction) {
+	public Either<Boolean, StorageOperationStatus> deleteOldComponentVersions(NodeTypeEnum nodeType, String componentName, String uuid, boolean inTransaction) {
 
 		Either<Boolean, StorageOperationStatus> result = null;
 		ComponentOperation componentOperation = getComponentOperation(nodeType);
 
 		try {
-			Either<List<Component>, StorageOperationStatus> oldVersionsToDelete = getComponentTempVersions(nodeType,
-					uuid);
+			Either<List<Component>, StorageOperationStatus> oldVersionsToDelete = getComponentTempVersions(nodeType, uuid);
 
 			if (oldVersionsToDelete.isRight()) {
 				result = Either.right(oldVersionsToDelete.right().value());
@@ -573,8 +530,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 			for (Component resourceToDelete : oldVersionsToDelete.left().value()) {
 
-				Either<Component, StorageOperationStatus> updateResource = componentOperation
-						.markComponentToDelete(resourceToDelete, inTransaction);
+				Either<Component, StorageOperationStatus> updateResource = componentOperation.markComponentToDelete(resourceToDelete, inTransaction);
 				if (updateResource.isRight()) {
 					result = Either.right(updateResource.right().value());
 					return result;
@@ -596,26 +552,22 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 	}
 
-	private StorageOperationStatus addRfcRelationToCertfiedComponent(NodeTypeEnum componentType,
-			String resourceIdBeforeCertify, String uniqueId) {
+	private StorageOperationStatus addRfcRelationToCertfiedComponent(NodeTypeEnum componentType, String resourceIdBeforeCertify, String uniqueId) {
 
 		// get user of certification request
 		UniqueIdData componentV = new UniqueIdData(componentType, resourceIdBeforeCertify);
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
-		Either<GraphRelation, TitanOperationStatus> rfcRelationResponse = titanGenericDao
-				.getIncomingRelationByCriteria(componentV, GraphEdgeLabels.LAST_STATE, props);
+		Either<GraphRelation, TitanOperationStatus> rfcRelationResponse = titanGenericDao.getIncomingRelationByCriteria(componentV, GraphEdgeLabels.LAST_STATE, props);
 		if (rfcRelationResponse.isRight()) {
 			TitanOperationStatus status = rfcRelationResponse.right().value();
 			log.error("failed to find rfc relation for component {}. status=", resourceIdBeforeCertify, status);
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 		}
 		GraphRelation rfcRelation = rfcRelationResponse.left().value();
-		rfcRelation.setTo(
-				new RelationEndPoint(componentType, GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId));
+		rfcRelation.setTo(new RelationEndPoint(componentType, GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId));
 
-		Either<GraphRelation, TitanOperationStatus> createRelationResponse = titanGenericDao
-				.createRelation(rfcRelation);
+		Either<GraphRelation, TitanOperationStatus> createRelationResponse = titanGenericDao.createRelation(rfcRelation);
 		if (createRelationResponse.isRight()) {
 			TitanOperationStatus status = createRelationResponse.right().value();
 			log.error("failed to create rfc relation for component {}. status=", uniqueId, status);
@@ -635,9 +587,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			additionalQueryParams = new HashMap<String, Object>();
 			additionalQueryParams.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), resourceType.name());
 		}
-		Either<? extends Component, StorageOperationStatus> getLastCertifiedResponse = componentOperation
-				.getComponentByNameAndVersion(component.getName(), majorVersion + VERSION_DELIMETER + "0",
-						additionalQueryParams, true);
+		Either<? extends Component, StorageOperationStatus> getLastCertifiedResponse = componentOperation.getComponentByNameAndVersion(component.getName(), majorVersion + VERSION_DELIMETER + "0", additionalQueryParams, true);
 
 		if (getLastCertifiedResponse.isRight()) {
 			log.error("failed to update last certified resource. status={}", getLastCertifiedResponse.right().value());
@@ -646,8 +596,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		Component lastCertified = getLastCertifiedResponse.left().value();
 		lastCertified.setHighestVersion(false);
-		Either<Component, StorageOperationStatus> updateResource = componentOperation.updateComponent(lastCertified,
-				true);
+		Either<Component, StorageOperationStatus> updateResource = componentOperation.updateComponent(lastCertified, true);
 		if (updateResource.isRight()) {
 			log.error("failed to update last certified resource. status={}", updateResource.right().value());
 			return updateResource.right().value();
@@ -655,8 +604,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	private Either<Component, StorageOperationStatus> cloneComponentForCheckout(Component component,
-			NodeTypeEnum nodeType, User modifier) {
+	private Either<Component, StorageOperationStatus> cloneComponentForCheckout(Component component, NodeTypeEnum nodeType, User modifier) {
 
 		ComponentOperation componentOperation = getComponentOperation(nodeType);
 		String prevId = component.getUniqueId();
@@ -686,8 +634,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			additionalQueryParams.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), resourceType.name());
 		}
 		String name = component.getComponentMetadataDefinition().getMetadataDataDefinition().getName();
-		Either<Component, StorageOperationStatus> alreadyExistResult = componentOperation
-				.getComponentByNameAndVersion(name, version, additionalQueryParams, true);
+		Either<Component, StorageOperationStatus> alreadyExistResult = componentOperation.getComponentByNameAndVersion(name, version, additionalQueryParams, true);
 		if (alreadyExistResult.isLeft()) {
 			log.debug("Component with name {} and version {} already exist", name, version);
 			return Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS);
@@ -696,14 +643,11 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		StorageOperationStatus storageOperationStatus = alreadyExistResult.right().value();
 		if (storageOperationStatus != StorageOperationStatus.NOT_FOUND) {
-			log.debug(
-					"Unexpected error when checking if component with name {} and version {} already exist, error: {}",
-					name, version, storageOperationStatus);
+			log.debug("Unexpected error when checking if component with name {} and version {} already exist, error: {}", name, version, storageOperationStatus);
 			return Either.right(storageOperationStatus);
 		}
 
-		Either<Component, StorageOperationStatus> cloneComponentResponse = componentOperation.cloneComponent(component,
-				version, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, true);
+		Either<Component, StorageOperationStatus> cloneComponentResponse = componentOperation.cloneComponent(component, version, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, true);
 
 		return cloneComponentResponse;
 	}
@@ -720,8 +664,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return Either.left(newVersion);
 	}
 
-	private StorageOperationStatus setRelationForCancelCertification(LifecycleStateEnum nextState,
-			NodeTypeEnum componentType, String componentId) {
+	private StorageOperationStatus setRelationForCancelCertification(LifecycleStateEnum nextState, NodeTypeEnum componentType, String componentId) {
 
 		StorageOperationStatus result = StorageOperationStatus.GENERAL_ERROR;
 		Map<String, Object> props = new HashMap<String, Object>();
@@ -730,8 +673,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// delete relation CERTIFICATION_IN_PROGRESS
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao
-				.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.STATE, props);
+		Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.STATE, props);
 		if (deleteResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
@@ -741,8 +683,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// delete relation READY_FOR_CERTIFICATION (LAST_STATE)
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), nextState);
 
-		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE,
-				props);
+		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE, props);
 		if (deleteResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
@@ -753,8 +694,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// create relation READY_FOR_CERTIFICATION (STATE)
 		UserData user = new UserData();
 		user.setUserId((String) origRelation.getFrom().getIdValue());
-		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(user,
-				componentData, GraphEdgeLabels.STATE, origRelation.toGraphMap());
+		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(user, componentData, GraphEdgeLabels.STATE, origRelation.toGraphMap());
 
 		if (createRelationResult.isRight()) {
 			log.error("failed to update last state relation. status={}", createRelationResult.right().value());
@@ -764,8 +704,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	private StorageOperationStatus setRelationForFailCertification(LifecycleStateEnum nextState,
-			NodeTypeEnum componentType, String componentId) {
+	private StorageOperationStatus setRelationForFailCertification(LifecycleStateEnum nextState, NodeTypeEnum componentType, String componentId) {
 
 		StorageOperationStatus result = null;
 		Map<String, Object> props = new HashMap<String, Object>();
@@ -774,8 +713,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// delete relation CERTIFICATION_IN_PROGRESS
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao
-				.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.STATE, props);
+		Either<GraphRelation, TitanOperationStatus> deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.STATE, props);
 		if (deleteResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
@@ -785,8 +723,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		// delete relation READY_FOR_CERTIFICATION
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
 
-		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE,
-				props);
+		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE, props);
 		if (deleteResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
@@ -795,8 +732,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		// delete relation NOT_CERTIFIED_CHECKIN (in order to change to STATE)
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
-		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE,
-				props);
+		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_STATE, props);
 		if (deleteResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
@@ -807,14 +743,31 @@ public class LifecycleOperation implements ILifecycleOperation {
 		GraphRelation origRelation = deleteResult.left().value();
 		UserData user = new UserData();
 		user.setUserId((String) origRelation.getFrom().getIdValue());
-		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(user,
-				componentData, GraphEdgeLabels.STATE, origRelation.toGraphMap());
+		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(user, componentData, GraphEdgeLabels.STATE, origRelation.toGraphMap());
 
 		if (createRelationResult.isRight()) {
 			log.debug("failed to update last state relation");
 			result = StorageOperationStatus.INCONSISTENCY;
 			return result;
 		}
+		
+		// delete relation LAST_MODIFIER (in order to change tester to designer)
+		deleteResult = titanGenericDao.deleteIncomingRelationByCriteria(componentData, GraphEdgeLabels.LAST_MODIFIER, null);
+		if (deleteResult.isRight()) {
+			log.debug("failed to update last modifier relation");
+			result = StorageOperationStatus.INCONSISTENCY;
+			return result;
+		}
+		
+		// create new LAST_MODIFIER relation
+		origRelation = deleteResult.left().value();
+		createRelationResult = titanGenericDao.createRelation(user, componentData, GraphEdgeLabels.LAST_MODIFIER, origRelation.toGraphMap());
+		if (createRelationResult.isRight()) {
+			log.debug("failed to update last state relation");
+			result = StorageOperationStatus.INCONSISTENCY;
+			return result;
+		}
+		
 		return StorageOperationStatus.OK;
 	}
 
@@ -826,9 +779,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 	 * @param nextState
 	 * @return
 	 */
-	private Either<Component, StorageOperationStatus> updateComponentMD(Component component, User modifier,
-			LifecycleStateEnum nextState, NodeTypeEnum nodeType,
-			ComponentParametersView returnedComponentParametersViewFilter) {
+	private Either<Component, StorageOperationStatus> updateComponentMD(Component component, User modifier, LifecycleStateEnum nextState, NodeTypeEnum nodeType, ComponentParametersView returnedComponentParametersViewFilter) {
 
 		if (returnedComponentParametersViewFilter == null) {
 			returnedComponentParametersViewFilter = new ComponentParametersView();
@@ -849,34 +800,28 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 		log.debug("updateComponentMD::getAndUpdateMetadata start");
 		// get service MD
-		Either<ComponentMetadataData, TitanOperationStatus> componentDataResult = titanGenericDao.getNode(
-				UniqueIdBuilder.getKeyByNodeType(nodeType), component.getUniqueId(), ComponentMetadataData.class);
+		Either<ComponentMetadataData, TitanOperationStatus> componentDataResult = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(nodeType), component.getUniqueId(), ComponentMetadataData.class);
 		if (componentDataResult.isRight()) {
 			log.debug("failed to get service data from graph");
-			return Either
-					.right(DaoStatusConverter.convertTitanStatusToStorageStatus(componentDataResult.right().value()));
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(componentDataResult.right().value()));
 		}
 
 		// set state on resource
 		ComponentMetadataData componentData = componentDataResult.left().value();
 		componentData.getMetadataDataDefinition().setState(nextState.name());
 		component.setLifecycleState(nextState);
-		Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentData,
-				ComponentMetadataData.class);
+		Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentData, ComponentMetadataData.class);
 		log.debug("updateComponentMD::getAndUpdateMetadata end");
 		if (updateNode.isRight()) {
-			log.error("Failed to update component " + component.getUniqueId() + ". status is "
-					+ updateNode.right().value());
+			log.error("Failed to update component {}. status is {}", component.getUniqueId(), updateNode.right().value());
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
 			return result;
 		}
 		log.debug("updateComponentMD::getAndUpdateMetadata start");
-		Either<Object, StorageOperationStatus> serviceAfterChange = componentOperation
-				.getComponent(component.getUniqueId(), returnedComponentParametersViewFilter, true);
+		Either<Object, StorageOperationStatus> serviceAfterChange = componentOperation.getComponent(component.getUniqueId(), returnedComponentParametersViewFilter, true);
 		log.debug("updateComponentMD::getAndUpdateMetadata end");
 		if (serviceAfterChange.isRight()) {
-			log.error("Failed to get component " + component.getUniqueId() + " after change. status is "
-					+ updateNode.right().value());
+			log.error("Failed to get component {} after change. status is {}", component.getUniqueId(), updateNode.right().value());
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
 			return result;
 		}
@@ -891,8 +836,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 	 * @param nextState
 	 * @return
 	 */
-	private Either<Resource, StorageOperationStatus> updateResourceMD(Resource resource, User modifier,
-			LifecycleStateEnum nextState) {
+	private Either<Resource, StorageOperationStatus> updateResourceMD(Resource resource, User modifier, LifecycleStateEnum nextState) {
 
 		Either<Resource, StorageOperationStatus> result;
 		resource.setLastUpdateDate(null);
@@ -904,33 +848,27 @@ public class LifecycleOperation implements ILifecycleOperation {
 			return result;
 		}
 		// get resource MD
-		Either<ResourceMetadataData, TitanOperationStatus> resourceDataResult = titanGenericDao.getNode(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId(),
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> resourceDataResult = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId(), ResourceMetadataData.class);
 		if (resourceDataResult.isRight()) {
 			log.debug("failed to get resource data from graph");
-			return Either
-					.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resourceDataResult.right().value()));
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resourceDataResult.right().value()));
 		}
 
 		// set state on resource
 		ResourceMetadataData resourceData = resourceDataResult.left().value();
 		resourceData.getMetadataDataDefinition().setState(nextState.name());
 		resource.setLifecycleState(nextState);
-		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resourceData,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(resourceData, ResourceMetadataData.class);
 
 		if (updateNode.isRight()) {
-			log.error("Failed to update resource " + resource.getUniqueId() + ". status is "
-					+ updateNode.right().value());
+			log.error("Failed to update resource {}. status is {}", resource.getUniqueId(), updateNode.right().value());
 			result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
 			return result;
 		}
 		return Either.left(resource);
 	}
 
-	private Either<List<Component>, StorageOperationStatus> getComponentTempVersions(NodeTypeEnum nodeType,
-			String uuid) {
+	private Either<List<Component>, StorageOperationStatus> getComponentTempVersions(NodeTypeEnum nodeType, String uuid) {
 
 		Either<List<Component>, StorageOperationStatus> result = Either.right(StorageOperationStatus.GENERAL_ERROR);
 		List<Component> componentList = new ArrayList<Component>();
@@ -941,8 +879,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		createOldVersionsCriteria(nodeType, uuid, hasProps, hasNotProps);
 
-		Either<List<ComponentMetadataData>, TitanOperationStatus> getByCriteria = titanGenericDao
-				.getByCriteria(nodeType, hasProps, hasNotProps, ComponentMetadataData.class);
+		Either<List<ComponentMetadataData>, TitanOperationStatus> getByCriteria = titanGenericDao.getByCriteria(nodeType, hasProps, hasNotProps, ComponentMetadataData.class);
 
 		if (getByCriteria.isRight()) {
 			log.error("failed to get old versions for component, type:{}, id: {}", nodeType, uuid);
@@ -952,8 +889,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		List<ComponentMetadataData> oldVersionComponents = getByCriteria.left().value();
 		for (ComponentMetadataData component : oldVersionComponents) {
-			Either<Component, StorageOperationStatus> resourceRes = componentOperation
-					.getComponent(component.getMetadataDataDefinition().getUniqueId(), true);
+			Either<Component, StorageOperationStatus> resourceRes = componentOperation.getComponent(component.getMetadataDataDefinition().getUniqueId(), true);
 			if (resourceRes.isRight()) {
 				result = Either.right(resourceRes.right().value());
 				return result;
@@ -965,17 +901,31 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return result;
 	}
 
-	private void createOldVersionsCriteria(NodeTypeEnum nodeType, String uuid, Map<String, Object> hasProps,
-			Map<String, Object> hasNotProps) {
+	/*
+	 * private Either<List<Service>, StorageOperationStatus> getServiceTempVersions(NodeTypeEnum nodeType, String uuid) {
+	 * 
+	 * Either<List<Service>, StorageOperationStatus> result = Either.right(StorageOperationStatus.GENERAL_ERROR); List<Service> resourceList = new ArrayList<Service>();
+	 * 
+	 * Map<String, Object> hasProps = new HashMap<String, Object>(); Map<String, Object> hasNotProps = new HashMap<String, Object>();
+	 * 
+	 * createOldVersionsCriteria(nodeType, uuid, hasProps, hasNotProps);
+	 * 
+	 * Either<List<ServiceMetadataData>, TitanOperationStatus> getByCriteria = titanGenericDao.getByCriteria(NodeTypeEnum.Service, hasProps, hasNotProps, ServiceMetadataData.class);
+	 * 
+	 * if (getByCriteria.isRight()) { log.error("failed to get old versions for {}", uuid); result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus( getByCriteria.right().value())); return result; }
+	 * 
+	 * List<ServiceMetadataData> oldVersionResources = getByCriteria.left().value(); for (ServiceMetadataData resource : oldVersionResources) { Either<Service, StorageOperationStatus> resourceRes = serviceOperation.getService((String)
+	 * resource.getUniqueId(), true); if (resourceRes.isRight()) { result = Either.right(resourceRes.right().value()); return result; } else { resourceList.add(resourceRes.left().value()); } } result = Either.left(resourceList); return result; }
+	 */
+	private void createOldVersionsCriteria(NodeTypeEnum nodeType, String uuid, Map<String, Object> hasProps, Map<String, Object> hasNotProps) {
 
 		hasProps.put(GraphPropertiesDictionary.UUID.getProperty(), uuid);
 		hasProps.put(GraphPropertiesDictionary.LABEL.getProperty(), nodeType.name().toLowerCase());
 		hasNotProps.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
 	}
 
-	private Either<? extends Component, StorageOperationStatus> updateOldComponentBeforeUndoCheckout(
-			ComponentOperation componentOperation, Component prevComponent, Component currentComponent,
-			String previousVersion, NodeTypeEnum nodeType, boolean inTransaction) {
+	private Either<? extends Component, StorageOperationStatus> updateOldComponentBeforeUndoCheckout(ComponentOperation componentOperation, Component prevComponent, Component currentComponent, String previousVersion, NodeTypeEnum nodeType,
+			boolean inTransaction) {
 
 		log.debug("update previous version of component");
 		Map<String, Object> additionalQueryParams = new HashMap<String, Object>();
@@ -985,31 +935,25 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 			additionalQueryParams.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), resourceType.name());
 		}
-		ComponentMetadataDataDefinition metadataDataDefinition = currentComponent.getComponentMetadataDefinition()
-				.getMetadataDataDefinition();
-		Either<? extends Component, StorageOperationStatus> getOlderCompResult = componentOperation
-				.getComponentByNameAndVersion(metadataDataDefinition.getName(), previousVersion, additionalQueryParams,
-						true);
+		ComponentMetadataDataDefinition metadataDataDefinition = currentComponent.getComponentMetadataDefinition().getMetadataDataDefinition();
+		Either<? extends Component, StorageOperationStatus> getOlderCompResult = componentOperation.getComponentByNameAndVersion(metadataDataDefinition.getName(), previousVersion, additionalQueryParams, true);
 
 		// if previous version exist - set it as current version
 		if (getOlderCompResult.isRight()) {
 			if (StorageOperationStatus.NOT_FOUND.equals(getOlderCompResult.right().value())) {
-				log.debug("No components by name and version : {} {}", metadataDataDefinition.getName(), previousVersion);
+				log.debug("No components by name and version: {} - {}", metadataDataDefinition.getName(), previousVersion);
 				log.debug("Name may have changed, since the version isn't certified  try to fetch by UUID {}", metadataDataDefinition.getUUID());
 				additionalQueryParams.clear();
-				additionalQueryParams.put(GraphPropertiesDictionary.UUID.getProperty(),
-						metadataDataDefinition.getUUID());
+				additionalQueryParams.put(GraphPropertiesDictionary.UUID.getProperty(), metadataDataDefinition.getUUID());
 				additionalQueryParams.put(GraphPropertiesDictionary.VERSION.getProperty(), previousVersion);
 
-				Either<List<ComponentMetadataData>, TitanOperationStatus> byUUID = titanGenericDao
-						.getByCriteria(nodeType, additionalQueryParams, ComponentMetadataData.class);
+				Either<List<ComponentMetadataData>, TitanOperationStatus> byUUID = titanGenericDao.getByCriteria(nodeType, additionalQueryParams, ComponentMetadataData.class);
 				if (byUUID.isRight()) {
 					log.debug("Failed to fetch by UUID {}", metadataDataDefinition.getUUID());
 					return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byUUID.right().value()));
 				}
 				String prevVersionId = (String) byUUID.left().value().get(0).getUniqueId();
-				Either<? extends Component, StorageOperationStatus> component = componentOperation
-						.getComponent(prevVersionId, inTransaction);
+				Either<? extends Component, StorageOperationStatus> component = componentOperation.getComponent(prevVersionId, inTransaction);
 				if (component.isRight()) {
 					log.debug("Failed to fetch previous component by ID {}", prevVersionId);
 					return Either.right(component.right().value());
@@ -1029,8 +973,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 		}
 
 		prevComponent.setHighestVersion(true);
-		Either<Component, StorageOperationStatus> updateCompResult = componentOperation.updateComponent(prevComponent,
-				inTransaction);
+		Either<Component, StorageOperationStatus> updateCompResult = componentOperation.updateComponent(prevComponent, inTransaction);
 		if (updateCompResult.isRight()) {
 			log.debug("failed to update prev version of component");
 			return updateCompResult;
@@ -1038,8 +981,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 
 		User user = new User();
 		user.setUserId(prevComponent.getLastUpdaterUserId());
-		StorageOperationStatus changeStateRelation = changeStateRelation(nodeType, prevComponent.getUniqueId(), user,
-				GraphEdgeLabels.LAST_STATE, GraphEdgeLabels.STATE);
+		StorageOperationStatus changeStateRelation = changeStateRelation(nodeType, prevComponent.getUniqueId(), user, GraphEdgeLabels.LAST_STATE, GraphEdgeLabels.STATE);
 		if (!changeStateRelation.equals(StorageOperationStatus.OK)) {
 			return Either.right(changeStateRelation);
 		}
@@ -1047,13 +989,11 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return Either.left(prevComponent);
 	}
 
-	private StorageOperationStatus changeStateRelation(NodeTypeEnum nodeType, String componentId, User currentOwner,
-			GraphEdgeLabels from, GraphEdgeLabels to) {
+	private StorageOperationStatus changeStateRelation(NodeTypeEnum nodeType, String componentId, User currentOwner, GraphEdgeLabels from, GraphEdgeLabels to) {
 		UniqueIdData componentData = new UniqueIdData(nodeType, componentId);
 		UserData userData = new UserData();
 		userData.setUserId(currentOwner.getUserId());
-		Either<GraphRelation, TitanOperationStatus> replaceRelationLabelResult = titanGenericDao
-				.replaceRelationLabel(userData, componentData, from, to);
+		Either<GraphRelation, TitanOperationStatus> replaceRelationLabelResult = titanGenericDao.replaceRelationLabel(userData, componentData, from, to);
 		if (replaceRelationLabelResult.isRight()) {
 			TitanOperationStatus titanStatus = replaceRelationLabelResult.right().value();
 			log.error("failed to replace label from {} to {}. status = {}", from, to, titanStatus);
@@ -1066,15 +1006,13 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	private StorageOperationStatus removeUserToResourceRelation(NodeTypeEnum componentType, String idFrom, String idTo,
-			GraphEdgeLabels label) {
+	private StorageOperationStatus removeUserToResourceRelation(NodeTypeEnum componentType, String idFrom, String idTo, GraphEdgeLabels label) {
 
 		UniqueIdData componentV = new UniqueIdData(componentType, idTo);
 		UserData userV = new UserData();
 		userV.setUserId(idFrom);
 		// delete relation
-		Either<GraphRelation, TitanOperationStatus> deleteRelationResult = titanGenericDao.deleteRelation(userV,
-				componentV, label);
+		Either<GraphRelation, TitanOperationStatus> deleteRelationResult = titanGenericDao.deleteRelation(userV, componentV, label);
 		if (deleteRelationResult.isRight()) {
 			log.error("failed to delete relation. status={}", deleteRelationResult.right().value());
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteRelationResult.right().value());
@@ -1082,15 +1020,13 @@ public class LifecycleOperation implements ILifecycleOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	private StorageOperationStatus createUserToResourceRelation(NodeTypeEnum componentType, String idFrom, String idTo,
-			GraphEdgeLabels label, Map<String, Object> props) {
+	private StorageOperationStatus createUserToResourceRelation(NodeTypeEnum componentType, String idFrom, String idTo, GraphEdgeLabels label, Map<String, Object> props) {
 
 		UniqueIdData componentV = new UniqueIdData(componentType, idTo);
 		UserData userV = new UserData();
 		userV.setUserId(idFrom);
 		// create relation
-		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(userV,
-				componentV, label, props);
+		Either<GraphRelation, TitanOperationStatus> createRelationResult = titanGenericDao.createRelation(userV, componentV, label, props);
 		if (createRelationResult.isRight()) {
 			log.error("failed to create relation. status={}", createRelationResult.right().value());
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(createRelationResult.right().value());
@@ -1099,8 +1035,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 	}
 
 	@Override
-	public Either<? extends Component, StorageOperationStatus> cancelOrFailCertification(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, LifecycleStateEnum nextState, boolean inTransaction) {
+	public Either<? extends Component, StorageOperationStatus> cancelOrFailCertification(NodeTypeEnum nodeType, Component component, User modifier, User owner, LifecycleStateEnum nextState, boolean inTransaction) {
 
 		Either<? extends Component, StorageOperationStatus> result = Either.right(StorageOperationStatus.GENERAL_ERROR);
 		try {
@@ -1108,8 +1043,7 @@ public class LifecycleOperation implements ILifecycleOperation {
 			ComponentParametersView componentParametersView = buildFilterForFetchComponentAfterChangeState();
 			result = updateComponentMD(component, modifier, nextState, nodeType, componentParametersView);
 			if (result.isRight()) {
-				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(),
-						nextState, result.right().value());
+				log.debug("Couldn't set lifecycle for component {} to state {}, error: {}", component.getUniqueId(), nextState, result.right().value());
 				return result;
 			}
 			StorageOperationStatus status = StorageOperationStatus.OK;

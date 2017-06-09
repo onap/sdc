@@ -30,7 +30,9 @@ public class ArtifactMetadata {
 	private String artifactUUID;
 	private String artifactVersion;
 	private String generatedFromUUID;
-
+	private String artifactLabel;
+	private String artifactGroupType;
+	
 	public String getArtifactName() {
 		return artifactName;
 	}
@@ -101,6 +103,22 @@ public class ArtifactMetadata {
 
 	public void setGeneratedFromUUID(String generatedFromUUID) {
 		this.generatedFromUUID = generatedFromUUID;
+	}
+
+	public String getArtifactLabel() {
+		return artifactLabel;
+	}
+
+	public void setArtifactLabel(String artifactLabel) {
+		this.artifactLabel = artifactLabel;
+	}
+
+	public String getArtifactGroupType() {
+		return artifactGroupType;
+	}
+
+	public void setArtifactGroupType(String artifactGroupType) {
+		this.artifactGroupType = artifactGroupType;
 	}
 
 }

@@ -1,0 +1,49 @@
+<div class="workspace-tosca-artifact">
+    <div class="table-container-flex">
+        <div class="table" data-ng-class="{'view-mode': isViewMode()}">
+            <div class="head flex-container">
+                <div class="table-header head-row hand flex-item" ng-repeat="header in tableHeadersList track by $index" data-ng-click="sort(header.property)">{{header.title}}
+                    <span data-ng-show="sortBy === header.property" class="table-header-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"> </span>
+                </div>
+                <div class="table-no-text-header head-row flex-item"></div>
+            </div>
+            <div class="body">
+                <perfect-scrollbar suppress-scroll-x="true" scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <div data-ng-if="showNoArtifactMessage()" class="no-row-text" data-ng-class="{'disabled': isDisableMode()}">
+                        There are no TOSCA artifacts to display
+                    </div>
+                    <div data-ng-repeat-start="artifact in artifacts| orderBy:sortBy:reverse track by $index"
+                         class="flex-container data-row" data-tests-id="{{artifact.artifactDisplayName}}"
+                         data-ng-class="{'selected': artifact.selected}">
+
+                        <div class="table-col-general flex-item"  data-ng-click="artifact.selected = !artifact.selected" data-tests-id="name-{{$index}}">
+                            <span class="sprite table-arrow" data-ng-class="{'opened': artifact.selected}"></span>
+                            {{artifact.artifactDisplayName}}
+                        </div>
+
+                        <div class="table-col-general flex-item"  data-ng-click="artifact.selected = !artifact.selected" data-tests-id="type-{{$index}}">
+                            {{artifact.artifactType}}
+                        </div>
+
+                        <div class="table-col-general flex-item"  data-ng-click="artifact.selected = !artifact.selected" data-tests-id="version-{{$index}}">
+                            {{artifact.artifactVersion}}
+                        </div>
+
+                        <div class="table-btn-col flex-item download-icon-container">
+                            <button class="table-download-btn tosca" download-artifact  data-tests-id="download-{{artifact.artifactDisplayName}}"
+                                    data-ng-if="artifact.artifactName" component="component" artifact="artifact" show-loader="true"></button>
+                        </div>
+                    </div>
+                    <div data-ng-repeat-end="" data-ng-if="artifact.selected" class="item-opened"  data-tests-id="details-{{$index}}">
+                        <div><span class="details-title">Label:</span> {{artifact.artifactLabel}}</div>
+                        <div><span class="details-title">UUID:</span> {{artifact.uniqueId}}</div>
+                        <div><span class="details-title">Description:</span> {{artifact.description}}</div>
+
+
+                    </div>
+
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+</div>

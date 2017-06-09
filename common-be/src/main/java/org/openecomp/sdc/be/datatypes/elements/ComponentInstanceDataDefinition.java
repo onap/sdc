@@ -23,17 +23,22 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.io.Serializable;
 
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public class ComponentInstanceDataDefinition implements Serializable {
+public class ComponentInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 7215033872921497743L;
 
+	private String icon;
+	
 	private String uniqueId;
 
 	private String name;
+	
 	private String normalizedName;
 
 	private String componentUid;
@@ -51,12 +56,17 @@ public class ComponentInstanceDataDefinition implements Serializable {
 	private Integer attributeValueCounter;
 	private Integer inputValueCounter = 1;
 	private OriginTypeEnum originType;
-
+	private String customizationUUID;
+	private String componentName;
+	private String componentVersion;
+	private String toscaComponentName;
+	
 	public ComponentInstanceDataDefinition() {
 		super();
 	}
 
 	public ComponentInstanceDataDefinition(ComponentInstanceDataDefinition dataDefinition) {
+		this.icon = dataDefinition.icon;
 		this.uniqueId = dataDefinition.uniqueId;
 		this.name = dataDefinition.name;
 		this.componentUid = dataDefinition.componentUid;
@@ -68,9 +78,19 @@ public class ComponentInstanceDataDefinition implements Serializable {
 		this.propertyValueCounter = dataDefinition.propertyValueCounter;
 		this.normalizedName = dataDefinition.normalizedName;
 		this.originType = dataDefinition.originType;
-
+		this.customizationUUID = dataDefinition.customizationUUID;
+		this.componentName = dataDefinition.componentName;
+		this.componentVersion = dataDefinition.componentVersion;
+		this.toscaComponentName = dataDefinition.toscaComponentName;
+	}
+	
+	public String getIcon() {
+		return icon;
 	}
 
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
 	public String getUniqueId() {
 		return uniqueId;
 	}
@@ -159,15 +179,6 @@ public class ComponentInstanceDataDefinition implements Serializable {
 		this.originType = originType;
 	}
 
-	@Override
-	public String toString() {
-		return "ComponentInstanceDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", normalizedName="
-				+ normalizedName + ", componentUid=" + componentUid + ", creationTime=" + creationTime
-				+ ", modificationTime=" + modificationTime + ", description=" + description + ", posX=" + posX
-				+ ", posY=" + posY + ", propertyValueCounter=" + propertyValueCounter + ", originType=" + originType
-				+ "]";
-	}
-
 	public Integer getAttributeValueCounter() {
 		return attributeValueCounter;
 	}
@@ -182,6 +193,45 @@ public class ComponentInstanceDataDefinition implements Serializable {
 
 	public void setInputValueCounter(Integer inputValueCounter) {
 		this.inputValueCounter = inputValueCounter;
+	}
+
+	public String getCustomizationUUID() {
+		return customizationUUID;
+	}
+
+	public void setCustomizationUUID(String customizationUUID) {
+		this.customizationUUID = customizationUUID;
+	}
+
+	public String getComponentName() {
+		return componentName;
+	}
+
+	public void setComponentName(String resourceName) {
+		this.componentName = resourceName;
+	}
+
+	public String getComponentVersion() {
+		return componentVersion;
+	}
+
+	public String getToscaComponentName() {
+		return toscaComponentName;
+	}
+
+	public void setToscaComponentName(String toscaComponentName) {
+		this.toscaComponentName = toscaComponentName;
+	}
+
+	public void setComponentVersion(String resourceVersion) {
+		this.componentVersion = resourceVersion;
+	}
+
+	@Override
+	public String toString() {
+		return "ComponentInstanceDataDefinition [icon=" + icon + ", uniqueId=" + uniqueId + ", name=" + name + ", normalizedName=" + normalizedName + ", componentUid=" + componentUid + ", creationTime=" + creationTime + ", modificationTime="
+				+ modificationTime + ", description=" + description + ", posX=" + posX + ", posY=" + posY + ", propertyValueCounter=" + propertyValueCounter + ", attributeValueCounter=" + attributeValueCounter + ", inputValueCounter="
+				+ inputValueCounter + ", originType=" + originType + ", customizationUUID=" + customizationUUID + ", componentName=" + componentName + ", componentVersion=" + componentVersion + ", toscaComponentName=" + toscaComponentName + "]";
 	}
 
 }

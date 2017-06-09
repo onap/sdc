@@ -4,185 +4,49 @@
 
 	<groupId>org.openecomp.sdc.be</groupId>
 	<artifactId>common-be</artifactId>
-	
+
 	<parent>
 		<groupId>org.openecomp.sdc</groupId>
 		<artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 
-
-	<properties>
-		<aspectj.version>1.7.4</aspectj.version>
-		<hibernate-validator.version>5.3.4.Final</hibernate-validator.version>
-		<groovy.version>2.3.5</groovy.version>
-		<lucene.version>4.10.2</lucene.version>
-		<mockito.version>1.9.0</mockito.version>
-		<regex.version>3.0.3</regex.version>
-		<codehaus.jackson.core>1.9.2</codehaus.jackson.core>
-	</properties>
-
-
 	<dependencies>
-
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.9.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${lang3.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- yaml to object converter -->
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.14</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.3.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>2.0-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
+	
 		<!-- Common of SD&C -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-messaging</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-expression</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>common-app-api</artifactId>
-			<version>${common-app-api.version}</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+			
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>${logback.version}</version>
+            <version>${logback.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
+            <version>${slf4j-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
-  			<artifactId>jackson-core-asl</artifactId>
- 			<version>${codehaus.jackson.core}</version>
- 			<scope>provided</scope>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${codehaus.jackson.core}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -191,17 +55,23 @@
 			<version>${guava.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
-		<!-- TEST  -->
+		<dependency>
+			<groupId>org.functionaljava</groupId>
+			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- TEST -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
-		
 	</dependencies>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -243,4 +113,28 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>Fortify</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.fortify.ps.maven.plugin</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>4.30</version>
+						<configuration>
+							<source>1.8</source>
+							<buildId>${project.parent.artifactId}</buildId>
+							<toplevelArtifactId>${project.parent.artifactId}</toplevelArtifactId>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

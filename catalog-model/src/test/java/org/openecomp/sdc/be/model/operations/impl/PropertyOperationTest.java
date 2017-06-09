@@ -61,9 +61,9 @@ import fj.data.Either;
 
 public class PropertyOperationTest extends ModelTestBase {
 
-	PropertyOperation propertyOperation = new PropertyOperation();
-
 	TitanGenericDao titanGenericDao = Mockito.mock(TitanGenericDao.class);
+	
+	PropertyOperation propertyOperation = new PropertyOperation(titanGenericDao);
 
 	@Before
 	public void setup() {
@@ -74,46 +74,28 @@ public class PropertyOperationTest extends ModelTestBase {
 	/*
 	 * @Test public void addPropertyToResourceTest() {
 	 * 
-	 * String propName = "myProp"; PropertyDefinition property =
-	 * buildPropertyDefinition(); List<PropertyConstraint> constraints =
-	 * buildConstraints(); property.setConstraints(constraints);
+	 * String propName = "myProp"; PropertyDefinition property = buildPropertyDefinition(); List<PropertyConstraint> constraints = buildConstraints(); property.setConstraints(constraints);
 	 * 
-	 * PropertyData propertyData = new PropertyData(property,
-	 * propertyOperation.convertConstraintsToString(constraints));
+	 * PropertyData propertyData = new PropertyData(property, propertyOperation.convertConstraintsToString(constraints));
 	 * 
-	 * Either<PropertyData, TitanOperationStatus> either =
-	 * Either.left(propertyData);
-	 * //when(propertyDao.create((GraphNeighbourTable)anyObject(),
-	 * eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either);
-	 * GraphRelation graphRelation = new GraphRelation(); Either<GraphRelation,
-	 * TitanOperationStatus> relationResult = Either.left(graphRelation);
+	 * Either<PropertyData, TitanOperationStatus> either = Either.left(propertyData); //when(propertyDao.create((GraphNeighbourTable)anyObject(), eq(PropertyData.class), eq(NodeTypeEnum.Property))).thenReturn(either); GraphRelation graphRelation =
+	 * new GraphRelation(); Either<GraphRelation, TitanOperationStatus> relationResult = Either.left(graphRelation);
 	 * 
-	 * when(titanGenericDao.createNode((PropertyData)anyObject(),
-	 * eq(PropertyData.class))).thenReturn(either);
-	 * when(titanGenericDao.createRelation((GraphNode)anyObject(),
-	 * (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
+	 * when(titanGenericDao.createNode((PropertyData)anyObject(), eq(PropertyData.class))).thenReturn(either); when(titanGenericDao.createRelation((GraphNode)anyObject(), (GraphNode)anyObject(), eq(GraphEdgeLabels.PROPERTY),
 	 * anyMap())).thenReturn(relationResult);
 	 * 
-	 * Either<PropertyDefinition, StorageOperationStatus> result =
-	 * propertyOperation.addPropertyToResource(propName, property,
-	 * NodeTypeEnum.Resource, "my-resource.1.0");
+	 * Either<PropertyDefinition, StorageOperationStatus> result = propertyOperation.addPropertyToResource(propName, property, NodeTypeEnum.Resource, "my-resource.1.0");
 	 * 
-	 * assertTrue(result.isLeft()); System.out.println(result.left().value());
-	 * PropertyDefinition propertyDefinition = result.left().value();
+	 * assertTrue(result.isLeft()); System.out.println(result.left().value()); PropertyDefinition propertyDefinition = result.left().value();
 	 * 
-	 * List<PropertyConstraint> originalConstraints = property.getConstraints();
-	 * List<PropertyConstraint> propertyConstraintsResult =
-	 * propertyDefinition.getConstraints();
-	 * assertEquals(propertyConstraintsResult.size(),
-	 * originalConstraints.size());
+	 * List<PropertyConstraint> originalConstraints = property.getConstraints(); List<PropertyConstraint> propertyConstraintsResult = propertyDefinition.getConstraints(); assertEquals(propertyConstraintsResult.size(), originalConstraints.size());
 	 * 
 	 * }
 	 */
 	private PropertyDefinition buildPropertyDefinition() {
 		PropertyDefinition property = new PropertyDefinition();
 		property.setDefaultValue("10");
-		property.setDescription(
-				"Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
+		property.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
 		property.setType(ToscaType.INTEGER.name().toLowerCase());
 		return property;
 	}
@@ -179,8 +161,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		List<String> convertedStringConstraints = propertyOperation.convertConstraintsToString(constraints);
 		assertEquals("constraints size", constraints.size(), convertedStringConstraints.size());
 
-		List<PropertyConstraint> convertedConstraints = propertyOperation
-				.convertConstraints(convertedStringConstraints);
+		List<PropertyConstraint> convertedConstraints = propertyOperation.convertConstraints(convertedStringConstraints);
 		assertEquals("check size of constraints", constraints.size(), convertedConstraints.size());
 
 		Set<String> constraintsClasses = new HashSet<String>();
@@ -189,8 +170,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		}
 
 		for (PropertyConstraint propertyConstraint : convertedConstraints) {
-			assertTrue("check all classes generated",
-					constraintsClasses.contains(propertyConstraint.getClass().getName()));
+			assertTrue("check all classes generated", constraintsClasses.contains(propertyConstraint.getClass().getName()));
 		}
 	}
 
@@ -322,8 +302,7 @@ public class PropertyOperationTest extends ModelTestBase {
 
 		assertEquals("check value", "v1node1", instanceProperty.getValue());
 		assertEquals("check default value", "v1node3", instanceProperty.getDefaultValue());
-		assertEquals("check valid unique id", instanceProperty1.getValueUniqueUid(),
-				instanceProperty.getValueUniqueUid());
+		assertEquals("check valid unique id", instanceProperty1.getValueUniqueUid(), instanceProperty.getValueUniqueUid());
 
 	}
 

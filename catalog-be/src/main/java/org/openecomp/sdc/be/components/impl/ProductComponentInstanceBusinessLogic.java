@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
 
@@ -43,17 +42,9 @@ public class ProductComponentInstanceBusinessLogic extends ComponentInstanceBusi
 	}
 
 	@Override
-	protected ComponentOperation getContainerComponentOperation() {
-		return productOperation;
-	}
-
-	@Override
-	protected ComponentOperation getCompInstOriginComponentOperation() {
-		return serviceOperation;
-	}
-
-	@Override
 	protected ComponentTypeEnum getComponentTypeOfComponentInstance() {
+		// TODO Auto-generated method stub
 		return ComponentTypeEnum.SERVICE_INSTANCE;
 	}
+
 }

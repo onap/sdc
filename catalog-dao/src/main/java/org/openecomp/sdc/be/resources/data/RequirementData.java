@@ -25,12 +25,10 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 public class RequirementData extends GraphNode {
-	public final static String MIN_OCCURRENCES = "1";
-	public final static String MAX_OCCURRENCES = "UNBOUNDED";
-	public final static String MAX_DEFAULT_OCCURRENCES = "1";
 
 	private String uniqueId;
 
@@ -41,8 +39,8 @@ public class RequirementData extends GraphNode {
 	private Long modificationTime;
 
 	private String relationshipType;
-	private String minOccurrences = MIN_OCCURRENCES;
-	private String maxOccurrences = MAX_DEFAULT_OCCURRENCES;
+	private String minOccurrences = RequirementDataDefinition.MIN_OCCURRENCES;
+	private String maxOccurrences = RequirementDataDefinition.MAX_DEFAULT_OCCURRENCES;
 
 	public RequirementData() {
 		super(NodeTypeEnum.Requirement);

@@ -62,15 +62,13 @@ public class ConfigFileChangeListener extends FileChangeListener {
 
 							Class<? extends BasicConfiguration> configClass = configurationListener.getType();
 
-							BasicConfiguration basicConfiguration = yamlToObjectConverter
-									.convert(pFile.getAbsolutePath(), configClass);
+							BasicConfiguration basicConfiguration = yamlToObjectConverter.convert(pFile.getAbsolutePath(), configClass);
 
 							if (basicConfiguration == null) {
-								log.warn(
-										"Cannot update the listeners for file Change since the file content is invalid");
+								log.warn("Cannot update the listeners for file Change since the file content is invalid");
 								continue;
 							}
-							log.debug("Loaded configuration after converting is " + basicConfiguration);
+							log.debug("Loaded configuration after converting is {}", basicConfiguration);
 							// System.out.println("New configuration is " +
 							// basicConfiguration);
 
@@ -80,7 +78,7 @@ public class ConfigFileChangeListener extends FileChangeListener {
 					}
 				} else {
 
-					log.warn("Cannot calculate id from file " + pFile.getName());
+					log.warn("Cannot calculate id from file {}", pFile.getName());
 				}
 			}
 

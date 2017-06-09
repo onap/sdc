@@ -84,7 +84,7 @@ public class ListValidator implements PropertyTypeValidator {
 				innerValidator = ToscaPropertyType.JSON.getValidator();
 				break;
 			default:
-				log.debug("inner Tosca Type is unknown: {}", innerToscaType);
+				log.debug("inner Tosca Type is unknown. {}", innerToscaType);
 				return false;
 			}
 
@@ -92,12 +92,14 @@ public class ListValidator implements PropertyTypeValidator {
 			log.debug("inner Tosca Type is: {}", innerType);
 
 			boolean isValid = validateComplexInnerType(value, innerType, allDataTypes);
-			log.debug("Finish to validate value {} of list with inner type {}. result is: {}", value, innerType, isValid);
+			log.debug("Finish to validate value {} of list with inner type {}. result is {}",value,innerType,isValid);
 			return isValid;
 		}
 
 		try {
 			JsonArray jo = (JsonArray) jsonParser.parse(value);
+			if(ToscaPropertyType.JSON == innerToscaType)
+				return true;
 			int size = jo.size();
 			for (int i = 0; i < size; i++) {
 				JsonElement currentValue = jo.get(i);
@@ -111,7 +113,7 @@ public class ListValidator implements PropertyTypeValidator {
 			return true;
 
 		} catch (JsonSyntaxException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Validator");
 		}
 
@@ -144,7 +146,7 @@ public class ListValidator implements PropertyTypeValidator {
 					boolean isValid = dataTypeValidatorConverter.isValid(element, innerDataTypeDefinition,
 							allDataTypes);
 					if (isValid == false) {
-						log.debug("Cannot parse value {} from type {} in list parameter", currentValue, innerType);
+						log.debug("Cannot parse value {} from type {} in list parameter",currentValue,innerType);
 						return false;
 					}
 				}

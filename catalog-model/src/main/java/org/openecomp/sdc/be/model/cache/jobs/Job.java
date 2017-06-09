@@ -55,28 +55,9 @@ public abstract class Job<E> {
 
 	public abstract E doWork();
 
-	protected IComponentOperation getOperationByType(NodeTypeEnum nodeTypeEnum) {
-		IComponentOperation operation = null;
-		switch (nodeTypeEnum) {
-		case Product:
-			operation = daoInfo.getProductOperation();
-			break;
-		case Service:
-			operation = daoInfo.getServiceOperation();
-			break;
-		case Resource:
-			operation = daoInfo.getResourceOperation();
-			break;
-		default:
-			log.error("unexpected NodeType received no matching operation found.");
-		}
-		return operation;
-	}
-
 	protected Either<ComponentMetadataData, StorageOperationStatus> getComponentMetaData(String componentId,
 			NodeTypeEnum nodeTypeEnum) {
-		Either<ComponentMetadataData, StorageOperationStatus> metaDataRes = getOperationByType(nodeTypeEnum)
-				.getComponentByLabelAndId(componentId, nodeTypeEnum, ComponentMetadataData.class);
+		Either<ComponentMetadataData, StorageOperationStatus> metaDataRes = daoInfo.getToscaOperationFacade().getComponentMetadata(componentId);
 		if (metaDataRes.isRight()) {
 			// in case we cant find the component on graph exit
 			if (StorageOperationStatus.NOT_FOUND.equals(metaDataRes.right().value())) {

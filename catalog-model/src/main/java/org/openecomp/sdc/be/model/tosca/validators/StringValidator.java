@@ -31,23 +31,19 @@ import org.slf4j.LoggerFactory;
 
 public class StringValidator implements PropertyTypeValidator {
 
-	public static final int DEFAULT_STRING_MAXIMUM_LENGTH = 100;
+	public static final int DEFAULT_STRING_MAXIMUM_LENGTH = 2500;
 
-	public static int STRING_MAXIMUM_LENGTH = DEFAULT_STRING_MAXIMUM_LENGTH;
+	private static int STRING_MAXIMUM_LENGTH = DEFAULT_STRING_MAXIMUM_LENGTH;
 
 	private static Logger log = LoggerFactory.getLogger(StringValidator.class.getName());
 
 	private static StringValidator stringValidator = new StringValidator();
 
-	public static StringValidator getInstance() {
-		return stringValidator;
-	}
-
 	private StringValidator() {
 		if (ConfigurationManager.getConfigurationManager() != null) {
 			ToscaValidatorsConfig toscaValidators = ConfigurationManager.getConfigurationManager().getConfiguration()
 					.getToscaValidators();
-			log.debug("toscaValidators={}", toscaValidators);
+			log.debug("toscaValidators= {}", toscaValidators);
 			if (toscaValidators != null) {
 				Integer stringMaxLength = toscaValidators.getStringMaxLength();
 				if (stringMaxLength != null) {
@@ -55,6 +51,10 @@ public class StringValidator implements PropertyTypeValidator {
 				}
 			}
 		}
+	}
+
+	public static StringValidator getInstance() {
+		return stringValidator;
 	}
 
 	@Override
@@ -65,14 +65,14 @@ public class StringValidator implements PropertyTypeValidator {
 		}
 
 		if (value.length() > STRING_MAXIMUM_LENGTH) {
-			log.debug("parameter String length {} is higher the configured({})", value.length(), STRING_MAXIMUM_LENGTH);
+			log.debug("parameter String length {} is higher than configured({})", value.length(), STRING_MAXIMUM_LENGTH);
 			return false;
 		}
 		String coverted = ValidationUtils.removeNoneUtf8Chars(value);
 		boolean isValid = ValidationUtils.validateIsAscii(coverted);
 
-		if (false == isValid) {
-			log.debug("parameter String value {} is not ascii string.", (value != null ? value.substring(0, Math.min(value.length(), 20)) : null));
+		if (false == isValid && log.isDebugEnabled()) {
+			log.debug("parameter String value {} is not an ascii string.", value.substring(0, Math.min(value.length(), 20)));
 		}
 
 		return isValid;

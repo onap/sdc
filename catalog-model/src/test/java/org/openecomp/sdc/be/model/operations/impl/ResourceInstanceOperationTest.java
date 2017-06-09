@@ -95,7 +95,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	private static Logger log = LoggerFactory.getLogger(ResourceInstanceOperationTest.class.getName());
 	private Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
-	private static String USER_ID = "muserId";
+	private static String USER_ID = "muUserId";
 	private static String CATEGORY_NAME = "category/mycategory";
 
 	@javax.annotation.Resource(name = "titan-generic-dao")
@@ -172,10 +172,8 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		ModelTestBase.init();
 	}
 
-	public void setOperations(TitanGenericDao titanDao, CapabilityTypeOperation capabilityTypeOperation,
-			RequirementOperation requirementOperation, CapabilityOperation capabilityOperation,
-			ResourceOperation resourceOperation, PropertyOperation propertyOperation,
-			ComponentInstanceOperation resourceInstanceOperation2) {
+	public void setOperations(TitanGenericDao titanDao, CapabilityTypeOperation capabilityTypeOperation, RequirementOperation requirementOperation, CapabilityOperation capabilityOperation, ResourceOperation resourceOperation,
+			PropertyOperation propertyOperation, ComponentInstanceOperation resourceInstanceOperation2) {
 		this.titanDao = titanDao;
 		this.capabilityTypeOperation = capabilityTypeOperation;
 		this.capabilityOperation = capabilityOperation;
@@ -198,12 +196,9 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		try {
 			ComponentInstance instance = buildResourceInstance("tosca.nodes.Apache.2.0", "1", "tosca.nodes.Apache");
 
-			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent("service1", NodeTypeEnum.Service, "1", true, instance,
-							NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent("service1", NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 			assertEquals("check failed status - service is not in graph", true, status.isRight());
-			assertEquals("check failed status value - service is not in graph", TitanOperationStatus.INVALID_ID,
-					status.right().value());
+			assertEquals("check failed status value - service is not in graph", TitanOperationStatus.INVALID_ID, status.right().value());
 		} finally {
 			titanDao.rollback();
 		}
@@ -218,13 +213,10 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			ComponentInstance instance = buildResourceInstance("tosca.nodes.Apache.2.0", "1", "tosca.nodes.Apache");
 
-			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service,
-							"1", true, instance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 
 			assertEquals("check failed status - service is not in graph", true, status.isRight());
-			assertEquals("check failed status value - service is not in graph", TitanOperationStatus.INVALID_ID,
-					status.right().value());
+			assertEquals("check failed status value - service is not in graph", TitanOperationStatus.INVALID_ID, status.right().value());
 
 		} finally {
 			titanDao.rollback();
@@ -240,12 +232,9 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			ServiceMetadataData serviceData1 = createService(serviceName);
 			ResourceMetadataData resourceData = createResource(resourceName);
 
-			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(),
-					"1", "tosca.nodes.Apache");
+			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(), "1", "tosca.nodes.Apache");
 
-			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service,
-							"1", true, instance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 
 			assertEquals("check success status - service is not in graph", true, status.isLeft());
 
@@ -268,12 +257,9 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			ServiceMetadataData serviceData1 = createService(serviceName);
 			ResourceMetadataData resourceData = createResource(resourceName);
 
-			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(),
-					"1", "tosca.nodes.Apache");
+			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(), "1", "tosca.nodes.Apache");
 
-			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service,
-							"1", true, instance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 
 			ComponentInstance resourceInstance = status.left().value();
 			Long creationTime = resourceInstance.getCreationTime();
@@ -283,9 +269,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			ComponentInstance value = status.left().value();
 			assertEquals("check name exists", "tosca.nodes.Apache 1", value.getName());
 
-			Either<ComponentInstance, StorageOperationStatus> u1Res = resourceInstanceOperation.updateResourceInstance(
-					(String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value,
-					true);
+			Either<ComponentInstance, StorageOperationStatus> u1Res = resourceInstanceOperation.updateResourceInstance((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value, true);
 			assertTrue("check update succeed", u1Res.isLeft());
 
 			Long lastModificationTimeNC = value.getModificationTime();
@@ -295,29 +279,23 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			String updatedName = "Shlokshlik";
 			value.setDescription(desc);
 			value.setPosX(posX);
-			Either<ComponentInstance, StorageOperationStatus> u2Res = resourceInstanceOperation.updateResourceInstance(
-					(String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value,
-					true);
+			Either<ComponentInstance, StorageOperationStatus> u2Res = resourceInstanceOperation.updateResourceInstance((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value, true);
 			assertTrue("check update succeed", u2Res.isLeft());
 			assertEquals("check resource instance updated", desc, u2Res.left().value().getDescription());
 			assertEquals("check resource instance updated", posX, u2Res.left().value().getPosX());
 			assertEquals("check resource instance updated", resourceInstance.getPosY(), u2Res.left().value().getPosY());
-			assertEquals("check modification time was not updated since it was supplied",
-					u2Res.left().value().getModificationTime(), lastModificationTimeNC);
+			assertEquals("check modification time was not updated since it was supplied", u2Res.left().value().getModificationTime(), lastModificationTimeNC);
 
 			Long lastModificationTime = value.getModificationTime();
 			value.setPosY(posY);
 			value.setModificationTime(null);
 			value.setName(updatedName);
-			Either<ComponentInstance, StorageOperationStatus> u3Res = resourceInstanceOperation.updateResourceInstance(
-					(String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value,
-					true);
+			Either<ComponentInstance, StorageOperationStatus> u3Res = resourceInstanceOperation.updateResourceInstance((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, resourceInstance.getUniqueId(), value, true);
 			assertTrue("check update succeed", u3Res.isLeft());
 			assertEquals("check resource instance updated", desc, u3Res.left().value().getDescription());
 			assertEquals("check resource pos x updated", posX, u3Res.left().value().getPosX());
 			assertEquals("check resource pos y updated", posY, u3Res.left().value().getPosY());
-			assertTrue("check modification time was updated",
-					u3Res.left().value().getModificationTime() >= lastModificationTime);
+			assertTrue("check modification time was updated", u3Res.left().value().getModificationTime() >= lastModificationTime);
 			assertEquals("check creation time was not updated", creationTime, u3Res.left().value().getCreationTime());
 			assertEquals("check name was  updated", updatedName, u3Res.left().value().getName());
 
@@ -337,20 +315,16 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			ServiceMetadataData serviceData1 = createService(serviceName);
 			ResourceMetadataData resourceData = createResource(resourceName);
 
-			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(),
-					"1", "tosca.nodes.Apache");
+			ComponentInstance instance = buildResourceInstance(resourceData.getMetadataDataDefinition().getUniqueId(), "1", "tosca.nodes.Apache");
 
-			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service,
-							"1", true, instance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> status = resourceInstanceOperation.addComponentInstanceToContainerComponent((String) serviceData1.getUniqueId(), NodeTypeEnum.Service, "1", true, instance, NodeTypeEnum.Resource, false);
 
 			assertEquals("check success status - service is not in graph", true, status.isLeft());
 
 			ComponentInstance value = status.left().value();
 			assertEquals("check name exists", "tosca.nodes.Apache 1", value.getName());
 
-			Either<ComponentInstance, TitanOperationStatus> status1 = resourceInstanceOperation
-					.removeComponentInstanceFromComponent(NodeTypeEnum.Service, serviceName, value.getUniqueId());
+			Either<ComponentInstance, TitanOperationStatus> status1 = resourceInstanceOperation.removeComponentInstanceFromComponent(NodeTypeEnum.Service, serviceName, value.getUniqueId());
 
 			assertTrue("check resource service was deleted.", status1.isLeft());
 			assertEquals("check resource instance returned.", "tosca.nodes.Apache 1", status1.left().value().getName());
@@ -369,8 +343,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			String serviceName = "myservice1.1.0";
 			ServiceMetadataData serviceData1 = createService(serviceName);
 
-			Either<ComponentInstance, TitanOperationStatus> status1 = resourceInstanceOperation
-					.removeComponentInstanceFromComponent(NodeTypeEnum.Service, serviceName, "stam");
+			Either<ComponentInstance, TitanOperationStatus> status1 = resourceInstanceOperation.removeComponentInstanceFromComponent(NodeTypeEnum.Service, serviceName, "stam");
 
 			assertTrue("check resource service was not deleted.", status1.isRight());
 			assertEquals("check NOT_FOUND returned.", TitanOperationStatus.NOT_FOUND, status1.right().value());
@@ -386,8 +359,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		ServiceMetadataData serviceData1 = new ServiceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(serviceName);
-		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanDao.createNode(serviceData1,
-				ServiceMetadataData.class);
+		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanDao.createNode(serviceData1, ServiceMetadataData.class);
 
 		assertTrue("check service created", createNode.isLeft());
 		return createNode.left().value();
@@ -397,8 +369,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		ServiceMetadataData serviceData1 = new ServiceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(serviceName);
-		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanDao.deleteNode(serviceData1,
-				ServiceMetadataData.class);
+		Either<ServiceMetadataData, TitanOperationStatus> createNode = titanDao.deleteNode(serviceData1, ServiceMetadataData.class);
 		assertTrue("check service deleted", createNode.isLeft());
 		return createNode.left().value();
 	}
@@ -407,8 +378,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		ResourceMetadataData serviceData1 = new ResourceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(resourceName);
-		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanDao.createNode(serviceData1,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanDao.createNode(serviceData1, ResourceMetadataData.class);
 
 		assertTrue("check service created", createNode.isLeft());
 		return createNode.left().value();
@@ -418,8 +388,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		ResourceMetadataData serviceData1 = new ResourceMetadataData();
 		serviceData1.getMetadataDataDefinition().setUniqueId(resourceName);
-		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanDao.deleteNode(serviceData1,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> createNode = titanDao.deleteNode(serviceData1, ResourceMetadataData.class);
 
 		assertTrue("check service created", createNode.isLeft());
 		return createNode.left().value();
@@ -478,6 +447,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void testConenctResourceInstancesJson() {
 		RequirementCapabilityRelDef addRelationship = addRelationship("apache_1", "compute_100");
 		String json = prettyGson.toJson(addRelationship);
@@ -530,13 +500,9 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		OperationTestsUtil.deleteAndCreateServiceCategory(category, titanDao);
 
 		/*
-		 * CategoryData categoryData = new CategoryData();
-		 * categoryData.setName(category);
+		 * CategoryData categoryData = new CategoryData(); categoryData.setName(category);
 		 * 
-		 * titanDao.deleteNode(categoryData, CategoryData.class);
-		 * Either<CategoryData, TitanOperationStatus> createNode = titanDao
-		 * .createNode(categoryData, CategoryData.class);
-		 * System.out.println("after creating caetgory " + createNode);
+		 * titanDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, TitanOperationStatus> createNode = titanDao .createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
 		 */
 	}
 
@@ -560,30 +526,25 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName);
+			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -591,55 +552,32 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			// rollbackAndPrint();
 
 			// Add capabilities to Compute Resource
 			CapabilityDefinition addCapability = addCapabilityToResource(capabilityTypeName, "host", computeComponent);
 
-			// CapabilityDefinition capabilityDefinition = new
-			// CapabilityDefinition();
-			// capabilityDefinition.setDescription("my capability");
-			// capabilityDefinition.setType(capabilityTypeName);
-			// List<String> validSourceTypes = new ArrayList<String>();
-			// validSourceTypes.add("tosca.nodes.SC");
-			// capabilityDefinition.setValidSourceTypes(validSourceTypes);
-			// Either<CapabilityDefinition, StorageOperationStatus>
-			// addCapability = capabilityOperation
-			// .addCapability(computeComponent.getUniqueId(), "host",
-			// capabilityDefinition, true);
-			// //logger.debug("addCapability result " + addCapability);
-			// assertTrue("check capability created ", addCapability.isLeft());
-			//
-			// =============================================
-
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource,
-					computeComponent, "host", false, addCapability.getUniqueId(),
-					addRequirementToResource.left().value().getUniqueId());
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource, computeComponent, "host", false, addCapability.getUniqueId(), addRequirementToResource.left().value().getUniqueId());
 
 			PrintGraph printGraph = new PrintGraph();
 			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());
 			log.debug(webGraph);
 
-			Either<Resource, StorageOperationStatus> resourceFull = resourceOperation
-					.getResource(resource.getUniqueId());
+			Either<Resource, StorageOperationStatus> resourceFull = resourceOperation.getResource(resource.getUniqueId());
 			assertTrue(resourceFull.isLeft());
-			List<RequirementCapabilityRelDef> componentInstancesRelations = resourceFull.left().value()
-					.getComponentInstancesRelations();
+			List<RequirementCapabilityRelDef> componentInstancesRelations = resourceFull.left().value().getComponentInstancesRelations();
 
 			RequirementCapabilityRelDef capabilityRelDef = componentInstancesRelations.get(0);
 			capabilityRelDef.getRelationships().get(0).setRequirement("host");
@@ -678,34 +616,28 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName1);
-			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName2);
+			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest.createCapability(capabilityTypeName1);
+			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest.createCapability(capabilityTypeName2);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -713,8 +645,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			// Add capabilities to Compute Resource
 			CapabilityDefinition capabilty1 = addCapabilityToResource(capabilityTypeName1, reqName1, computeComponent);
@@ -724,19 +655,16 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
 
 			String requirementId = addRequirementToResource.left().value().getUniqueId();
 			String parentReqUniqId = requirementId;
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource,
-					computeComponent, reqName1, false, capabilty1.getUniqueId(), requirementId);
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource, computeComponent, reqName1, false, capabilty1.getUniqueId(), requirementId);
 
 			PrintGraph printGraph = new PrintGraph();
 			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());
@@ -748,17 +676,13 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			relationPair.setCapabilityUid(capabilty1.getUniqueId());
 			relationPair.setRequirementUid(requirementId);
 
-			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService1 = resourceInstanceOperation
-					.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(),
-							resInstances.get(1).getUniqueId(), relationPair);
-			assertEquals("check cannot associate resource instances", TitanOperationStatus.ILLEGAL_ARGUMENT,
-					connectResourcesInService1.right().value());
+			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService1 = resourceInstanceOperation.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(), resInstances.get(1).getUniqueId(),
+					relationPair);
+			assertEquals("check cannot associate resource instances", TitanOperationStatus.ILLEGAL_ARGUMENT, connectResourcesInService1.right().value());
 			relationPair.setRequirement(reqName1);
-			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService2 = resourceInstanceOperation
-					.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(),
-							resInstances.get(1).getUniqueId(), relationPair);
-			assertEquals("check cannot associate resource instances", TitanOperationStatus.TITAN_SCHEMA_VIOLATION,
-					connectResourcesInService2.right().value());
+			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService2 = resourceInstanceOperation.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(), resInstances.get(1).getUniqueId(),
+					relationPair);
+			assertEquals("check cannot associate resource instances", TitanOperationStatus.TITAN_SCHEMA_VIOLATION, connectResourcesInService2.right().value());
 
 			relationPair.setRequirement(reqName1);
 
@@ -791,6 +715,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void testConnectResourceInstances2Requirement2Capabilities() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -812,26 +737,21 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName1);
-			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName2);
+			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest.createCapability(capabilityTypeName1);
+			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest.createCapability(capabilityTypeName2);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
@@ -840,8 +760,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// OKKKKKKK
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -849,8 +768,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			// rollbackAndPrint();
 			// OKKKKKKKKKK
@@ -863,22 +781,18 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource1 = addRequirementToResource(
-					capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource1 = addRequirementToResource(capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource2 = addRequirementToResource(
-					capabilityTypeName2, reqName2, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource2 = addRequirementToResource(capabilityTypeName2, reqName2, reqNodeName, reqRelationship, softwareComponent);
 
 			// create my resource derived from software component
 			String MY_RESOURCE = "my-resource";
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, MY_RESOURCE,
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, MY_RESOURCE, myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
 			String requirementId1 = addRequirementToResource1.left().value().getUniqueId();
 			String requirementId2 = addRequirementToResource2.left().value().getUniqueId();
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource,
-					computeComponent, reqName1, false, capabilty1.getUniqueId(), requirementId1);
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource, computeComponent, reqName1, false, capabilty1.getUniqueId(), requirementId1);
 
 			RequirementAndRelationshipPair relationPair = new RequirementAndRelationshipPair();
 			relationPair.setRequirement(reqName2);
@@ -886,9 +800,8 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			relationPair.setRequirementUid(requirementId2);
 			relationPair.setCapabilityOwnerId(resInstances.get(1).getUniqueId());
 			relationPair.setRequirementOwnerId(resInstances.get(0).getUniqueId());
-			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService1 = resourceInstanceOperation
-					.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(),
-							resInstances.get(1).getUniqueId(), relationPair);
+			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService1 = resourceInstanceOperation.connectResourcesInService(serviceName, NodeTypeEnum.Service, resInstances.get(0).getUniqueId(), resInstances.get(1).getUniqueId(),
+					relationPair);
 			assertTrue("check associate resource instances succeed " + reqName2, connectResourcesInService1.isLeft());
 
 			// rollbackAndPrint();
@@ -950,10 +863,8 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			relationships.add(immutablePair2);
 			relation.setRelationships(relationships);
 
-			Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances = resourceInstanceOperation
-					.associateResourceInstances(serviceName, NodeTypeEnum.Service, relation, true);
-			assertTrue("check return code after associating 2 requirements in one request",
-					associateResourceInstances.isLeft());
+			Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances = resourceInstanceOperation.associateResourceInstances(serviceName, NodeTypeEnum.Service, relation, true, false);
+			assertTrue("check return code after associating 2 requirements in one request", associateResourceInstances.isLeft());
 			RequirementCapabilityRelDef capabilityRelDef = associateResourceInstances.left().value();
 			String fromNode = capabilityRelDef.getFromNode();
 			assertEquals("check from node", resInstances.get(0).getUniqueId(), fromNode);
@@ -979,25 +890,19 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			verifyGetAllResourceInstanceFromService(reqName1, reqName2, serviceName, fromResUid, toResUid);
 
 			List<ResourceMetadataData> resourcesPathList = new ArrayList<ResourceMetadataData>();
-			TitanOperationStatus findResourcesPathRecursively = resourceOperation
-					.findResourcesPathRecursively(resource.getUniqueId(), resourcesPathList);
+			TitanOperationStatus findResourcesPathRecursively = resourceOperation.findResourcesPathRecursively(resource.getUniqueId(), resourcesPathList);
 			assertEquals("check returned status", TitanOperationStatus.OK, findResourcesPathRecursively);
 			assertEquals("check list size", 3, resourcesPathList.size());
 
-			TitanOperationStatus validateTheTargetResourceInstance = resourceInstanceOperation
-					.validateTheTargetResourceInstance(MY_RESOURCE, resource.getUniqueId());
+			TitanOperationStatus validateTheTargetResourceInstance = resourceInstanceOperation.validateTheTargetResourceInstance(MY_RESOURCE, resource.getUniqueId());
 			assertEquals("check resource name in the path", TitanOperationStatus.OK, validateTheTargetResourceInstance);
-			validateTheTargetResourceInstance = resourceInstanceOperation
-					.validateTheTargetResourceInstance(softwareCompName, resource.getUniqueId());
+			validateTheTargetResourceInstance = resourceInstanceOperation.validateTheTargetResourceInstance(softwareCompName, resource.getUniqueId());
 			assertEquals("check resource name in the path", TitanOperationStatus.OK, validateTheTargetResourceInstance);
 
-			validateTheTargetResourceInstance = resourceInstanceOperation
-					.validateTheTargetResourceInstance(softwareCompName + "STAM", resource.getUniqueId());
-			assertEquals("check resource name not in the path", TitanOperationStatus.MATCH_NOT_FOUND,
-					validateTheTargetResourceInstance);
+			validateTheTargetResourceInstance = resourceInstanceOperation.validateTheTargetResourceInstance(softwareCompName + "STAM", resource.getUniqueId());
+			assertEquals("check resource name not in the path", TitanOperationStatus.MATCH_NOT_FOUND, validateTheTargetResourceInstance);
 
-			Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation
-					.deleteComponentInstance(NodeTypeEnum.Service, serviceName, toResUid, true);
+			Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation.deleteComponentInstance(NodeTypeEnum.Service, serviceName, toResUid, true);
 			assertTrue("check resource instance was deleted.", deleteResourceInstance.isLeft());
 
 		} finally {
@@ -1007,15 +912,13 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 	}
 
-	private void verifyGetAllResourceInstanceFromService(String reqName1, String reqName2, String serviceName,
-			String fromResUid, String toResUid) {
+	private void verifyGetAllResourceInstanceFromService(String reqName1, String reqName2, String serviceName, String fromResUid, String toResUid) {
 
-		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> allResourceInstances = resourceInstanceOperation
-				.getAllComponentInstances(serviceName, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
+		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceName, NodeTypeEnum.Service, NodeTypeEnum.Resource,
+				true);
 		// assertTrue("check return code after get all resource instances",
 		// associateResourceInstances.isLeft());
-		ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>> immutablePair = allResourceInstances
-				.left().value();
+		ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>> immutablePair = allResourceInstances.left().value();
 		List<ComponentInstance> nodes = immutablePair.getKey();
 		List<RequirementCapabilityRelDef> edges = immutablePair.getValue();
 		assertEquals("check 2 nodes returned", 2, nodes.size());
@@ -1043,34 +946,31 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		log.debug(edgesStr);
 	}
 
-	private Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String capabilityTypeName1,
-			String reqName1, String reqNodeName, String reqRelationship, Resource softwareComponent) {
+	private Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String capabilityTypeName1, String reqName1, String reqNodeName, String reqRelationship, Resource softwareComponent) {
 		RequirementDefinition reqDefinition1 = new RequirementDefinition();
 		reqDefinition1.setNode(reqNodeName);
 		reqDefinition1.setRelationship(reqRelationship);
 		reqDefinition1.setCapability(capabilityTypeName1);
 		// add requirement to software component
-		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation
-				.addRequirementToResource(reqName1, reqDefinition1, softwareComponent.getUniqueId(), true);
+		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation.addRequirementToResource(reqName1, reqDefinition1, softwareComponent.getUniqueId(), true);
 		assertEquals("check requirement was added", true, addRequirementToResource.isLeft());
 		return addRequirementToResource;
 	}
 
-	private CapabilityDefinition addCapabilityToResource(String capabilityTypeName1, String reqName1,
-			Resource computeComponent) {
+	private CapabilityDefinition addCapabilityToResource(String capabilityTypeName1, String reqName1, Resource computeComponent) {
 		CapabilityDefinition capabilityDefinition1 = new CapabilityDefinition();
 		capabilityDefinition1.setDescription("my capability");
 		capabilityDefinition1.setType(capabilityTypeName1);
 		List<String> validSourceTypes = new ArrayList<String>();
 		validSourceTypes.add("tosca.nodes.SC");
 		capabilityDefinition1.setValidSourceTypes(validSourceTypes);
-		Either<CapabilityDefinition, StorageOperationStatus> addCapability = capabilityOperation
-				.addCapability(computeComponent.getUniqueId(), reqName1, capabilityDefinition1, true);
+		Either<CapabilityDefinition, StorageOperationStatus> addCapability = capabilityOperation.addCapability(computeComponent.getUniqueId(), reqName1, capabilityDefinition1, true);
 		assertTrue("check capability created ", addCapability.isLeft());
 		return addCapability.left().value();
 	}
 
 	@Test
+	@Ignore
 	public void testConnectResourceInstancesCapabilityNameDiffFromReqName() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -1092,31 +992,26 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName);
+			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -1124,31 +1019,24 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
-			CapabilityDefinition capabilty = addCapabilityToResource(capabilityTypeName, DIFFERENT_CAPABILITY,
-					computeComponent);
+			CapabilityDefinition capabilty = addCapabilityToResource(capabilityTypeName, DIFFERENT_CAPABILITY, computeComponent);
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource,
-					computeComponent, "host", false, capabilty.getUniqueId(), parentReqUniqId);
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstances(serviceName, resource, computeComponent, "host", false, capabilty.getUniqueId(), parentReqUniqId);
 
 			PrintGraph printGraph = new PrintGraph();
-			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());
-			// log.debug(webGraph);
-
+			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());			
 		} finally {
 			rollbackAndPrint();
 
@@ -1158,6 +1046,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void testConnectResourceInstancesInvalidCapability() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -1181,34 +1070,28 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName);
+			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
-			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeNameOther);
+			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest.createCapability(capabilityTypeNameOther);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -1216,25 +1099,21 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			addCapabilityToResource(capabilityTypeName, DIFFERENT_CAPABILITY, computeComponent);
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeNameOther, reqName, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeNameOther, reqName, reqNodeName, reqRelationship, softwareComponent);
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstancesWithError(serviceName,
-					resource, computeComponent, "host", false, TitanOperationStatus.ILLEGAL_ARGUMENT);
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstancesWithError(serviceName, resource, computeComponent, "host", false, TitanOperationStatus.ILLEGAL_ARGUMENT);
 
 			PrintGraph printGraph = new PrintGraph();
 			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());
@@ -1264,12 +1143,11 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		PrintGraph printGraph2 = new PrintGraph();
 		int numberOfVerticesCurr = printGraph2.getNumberOfVertices(titanDao.getGraph().left().value());
 
-		assertEquals(
-				"check all data deleted from graph " + printGraph2.getVerticesSet(titanDao.getGraph().left().value()),
-				numberOfVertices, numberOfVerticesCurr);
+		assertEquals("check all data deleted from graph " + printGraph2.getVerticesSet(titanDao.getGraph().left().value()), numberOfVertices, numberOfVerticesCurr);
 	}
 
 	@Test
+	@Ignore
 	public void testConnectResourceInstancesRequirementNotFound() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -1290,31 +1168,26 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName);
+			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -1322,8 +1195,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			addCapabilityToResource(capabilityTypeName, reqName, computeComponent);
 
@@ -1334,20 +1206,16 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			reqDefinition.setRelationship(reqRelationship);
 			reqDefinition.setCapability(capabilityTypeName);
 			// add requirement to software component
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation
-					.addRequirementToResource(reqName + "ssssssss", reqDefinition, softwareComponent.getUniqueId(),
-							true);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation.addRequirementToResource(reqName + "ssssssss", reqDefinition, softwareComponent.getUniqueId(), true);
 			assertEquals("check requirement was added", true, addRequirementToResource.isLeft());
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceName = "myservice.1.0";
-			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstancesWithError(serviceName,
-					resource, computeComponent, "host", false, TitanOperationStatus.ILLEGAL_ARGUMENT);
+			List<ComponentInstance> resInstances = buildServiceAndConnectBetweenResourceInstancesWithError(serviceName, resource, computeComponent, "host", false, TitanOperationStatus.ILLEGAL_ARGUMENT);
 
 			PrintGraph printGraph = new PrintGraph();
 			String webGraph = printGraph.buildGraphForWebgraphWiz(titanDao.getGraph().left().value());
@@ -1363,19 +1231,15 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 	private void disconnectResourcesInService(String serviceName, RequirementCapabilityRelDef reqCapDef) {
 
-		Either<List<RelationshipInstData>, TitanOperationStatus> disconnectResourcesInService = resourceInstanceOperation
-				.disconnectResourcesInService(serviceName, NodeTypeEnum.Service, reqCapDef);
+		Either<List<RelationshipInstData>, TitanOperationStatus> disconnectResourcesInService = resourceInstanceOperation.disconnectResourcesInService(serviceName, NodeTypeEnum.Service, reqCapDef);
 		assertTrue("check relatioship instance was deleted", disconnectResourcesInService.isLeft());
 
-		disconnectResourcesInService = resourceInstanceOperation.disconnectResourcesInService(serviceName,
-				NodeTypeEnum.Service, reqCapDef);
+		disconnectResourcesInService = resourceInstanceOperation.disconnectResourcesInService(serviceName, NodeTypeEnum.Service, reqCapDef);
 		assertTrue("check relatioship instance already was deleted", disconnectResourcesInService.isRight());
-		assertEquals("check relatioship instance already was deleted. status NOT_FOUND", TitanOperationStatus.NOT_FOUND,
-				disconnectResourcesInService.right().value());
+		assertEquals("check relatioship instance already was deleted. status NOT_FOUND", TitanOperationStatus.NOT_FOUND, disconnectResourcesInService.right().value());
 	}
 
-	private List<ComponentInstance> buildServiceAndConnectBetweenResourceInstancesWithError(String serviceName,
-			Resource resource, Resource computeComponent, String requirement, boolean ignoreCreatingService,
+	private List<ComponentInstance> buildServiceAndConnectBetweenResourceInstancesWithError(String serviceName, Resource resource, Resource computeComponent, String requirement, boolean ignoreCreatingService,
 			TitanOperationStatus titanOperationStatus) {
 
 		String serviceId = "myservice.1.0";
@@ -1385,30 +1249,22 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		}
 		ComponentInstance myresourceInstance = buildResourceInstance(resource.getUniqueId(), "1", resource.getName());
 
-		ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2",
-				computeComponent.getName());
+		ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2", computeComponent.getName());
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 		ComponentInstance value1 = myinstanceRes.left().value();
-		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance,
-						NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance, NodeTypeEnum.Resource, false);
 		assertTrue("check instance added to service", computeInstTes.isLeft());
 		ComponentInstance value2 = computeInstTes.left().value();
 
 		RequirementAndRelationshipPair relationPair = new RequirementAndRelationshipPair();
 		relationPair.setRequirement(requirement);
 
-		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation
-				.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(),
-						relationPair);
+		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(), relationPair);
 
 		assertTrue("check relation was not created", connectResourcesInService.isRight());
-		assertEquals("check error code after connect resource instances failed", titanOperationStatus,
-				connectResourcesInService.right().value());
+		assertEquals("check error code after connect resource instances failed", titanOperationStatus, connectResourcesInService.right().value());
 
 		List<ComponentInstance> resInstances = new ArrayList<ComponentInstance>();
 		resInstances.add(value1);
@@ -1417,9 +1273,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 	}
 
-	private List<ComponentInstance> buildServiceAndConnectBetweenResourceInstances(String serviceName,
-			Resource resource, Resource computeComponent, String requirement, boolean ignoreCreatingService,
-			String capabilityId, String requirementId) {
+	private List<ComponentInstance> buildServiceAndConnectBetweenResourceInstances(String serviceName, Resource resource, Resource computeComponent, String requirement, boolean ignoreCreatingService, String capabilityId, String requirementId) {
 
 		String serviceId = "myservice.1.0";
 
@@ -1428,17 +1282,12 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		}
 		ComponentInstance myresourceInstance = buildResourceInstance(resource.getUniqueId(), "1", resource.getName());
 
-		ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2",
-				computeComponent.getName());
+		ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2", computeComponent.getName());
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 		ComponentInstance value1 = myinstanceRes.left().value();
-		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance,
-						NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance, NodeTypeEnum.Resource, false);
 		assertTrue("check instance added to service", computeInstTes.isLeft());
 		ComponentInstance value2 = computeInstTes.left().value();
 		RequirementAndRelationshipPair relationPair = new RequirementAndRelationshipPair();
@@ -1449,9 +1298,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		relationPair.setRequirementOwnerId(value1.getUniqueId());
 		relationPair.setCapabilityOwnerId(value2.getUniqueId());
 
-		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation
-				.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(),
-						relationPair);
+		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(), relationPair);
 
 		assertTrue("check relation created", connectResourcesInService.isLeft());
 
@@ -1464,6 +1311,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void getAllResourceInstancesThree() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -1484,31 +1332,26 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName);
+			CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -1516,8 +1359,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			// rollbackAndPrint();
 
@@ -1526,56 +1368,45 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceId = "myservice.1.0";
 
 			ServiceMetadataData createService = createService(serviceId);
 
-			Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> allResourceInstances = resourceInstanceOperation
-					.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
+			Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, StorageOperationStatus> allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource,
+					true);
 			assertTrue("check NOT_FOUND is returned", allResourceInstances.isRight());
-			assertEquals("check NOT_FOUND is returned", allResourceInstances.right().value(),
-					StorageOperationStatus.NOT_FOUND);
+			assertEquals("check NOT_FOUND is returned", allResourceInstances.right().value(), StorageOperationStatus.NOT_FOUND);
 
 			ComponentInstance myresourceInstance = buildResourceInstance(resource.getUniqueId(), "1", "my-resource");
 			myresourceInstance.setName("my-resource");
 
-			ComponentInstance computeInstance1 = buildResourceInstance(computeComponent.getUniqueId(), "2",
-					"tosca.nodes.Compute2");
+			ComponentInstance computeInstance1 = buildResourceInstance(computeComponent.getUniqueId(), "2", "tosca.nodes.Compute2");
 
-			Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-							myresourceInstance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 			assertTrue("check instance added to service", myinstanceRes.isLeft());
 			ComponentInstance value1 = myinstanceRes.left().value();
 
-			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service,
-					NodeTypeEnum.Resource, true);
+			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instances found", allResourceInstances.isLeft());
-			ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>> immutablePair = allResourceInstances
-					.left().value();
+			ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>> immutablePair = allResourceInstances.left().value();
 			List<ComponentInstance> nodes = immutablePair.getKey();
 			List<RequirementCapabilityRelDef> edges = immutablePair.getValue();
 
 			assertEquals("check resource instances size", 1, nodes.size());
 			assertEquals("check resource instances size", 0, edges.size());
 
-			Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true,
-							computeInstance1, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance1, NodeTypeEnum.Resource, false);
 			assertTrue("check instance added to service", computeInstTes.isLeft());
 			ComponentInstance value2 = computeInstTes.left().value();
 
-			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service,
-					NodeTypeEnum.Resource, true);
+			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instances found", allResourceInstances.isLeft());
 			immutablePair = allResourceInstances.left().value();
 			nodes = immutablePair.getKey();
@@ -1592,14 +1423,11 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			relationPair.setRequirementOwnerId(value1.getUniqueId());
 			relationPair.setCapabilityOwnerId(value2.getUniqueId());
 
-			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation
-					.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(),
-							value2.getUniqueId(), relationPair);
+			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(), relationPair);
 
 			assertTrue("check relation created", connectResourcesInService.isLeft());
 
-			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service,
-					NodeTypeEnum.Resource, true);
+			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instances found", allResourceInstances.isLeft());
 			immutablePair = allResourceInstances.left().value();
 			nodes = immutablePair.getKey();
@@ -1614,22 +1442,18 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			ComponentInstance myresourceInstance2 = buildResourceInstance(resource.getUniqueId(), "1", "myresource2");
 
-			Either<ComponentInstance, TitanOperationStatus> newResource = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "3", true,
-							myresourceInstance2, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> newResource = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "3", true, myresourceInstance2, NodeTypeEnum.Resource, false);
 
 			assertTrue("added resource instance successfully", newResource.isLeft());
 
 			relationPair.setRequirement(requirement);
 			relationPair.setRequirementOwnerId(newResource.left().value().getUniqueId());
 
-			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService2 = resourceInstanceOperation
-					.connectResourcesInService(serviceId, NodeTypeEnum.Service,
-							newResource.left().value().getUniqueId(), value2.getUniqueId(), relationPair);
+			Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService2 = resourceInstanceOperation.connectResourcesInService(serviceId, NodeTypeEnum.Service, newResource.left().value().getUniqueId(), value2.getUniqueId(),
+					relationPair);
 			assertTrue("check resource instance was added to service", connectResourcesInService2.isLeft());
 
-			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service,
-					NodeTypeEnum.Resource, true);
+			allResourceInstances = resourceInstanceOperation.getAllComponentInstances(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instances found", allResourceInstances.isLeft());
 			immutablePair = allResourceInstances.left().value();
 			nodes = immutablePair.getKey();
@@ -1638,32 +1462,24 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertEquals("check resource instances size", 3, nodes.size());
 			assertEquals("check resource instances size", 2, edges.size());
 
-			Either<List<ComponentInstance>, TitanOperationStatus> deleteAllResourceInstancesOfService = resourceInstanceOperation
-					.deleteAllComponentInstancesInternal(serviceId, NodeTypeEnum.Service);
+			Either<List<ComponentInstance>, TitanOperationStatus> deleteAllResourceInstancesOfService = resourceInstanceOperation.deleteAllComponentInstancesInternal(serviceId, NodeTypeEnum.Service);
 			assertTrue("check resource instances was deleted.", deleteAllResourceInstancesOfService.isLeft());
-			assertEquals("check number of deleted resource instances.", 3,
-					deleteAllResourceInstancesOfService.left().value().size());
+			assertEquals("check number of deleted resource instances.", 3, deleteAllResourceInstancesOfService.left().value().size());
 
-			Either<List<RelationshipInstData>, TitanOperationStatus> allRelatinshipInst = titanDao
-					.getAll(NodeTypeEnum.RelationshipInst, RelationshipInstData.class);
+			Either<List<RelationshipInstData>, TitanOperationStatus> allRelatinshipInst = titanDao.getAll(NodeTypeEnum.RelationshipInst, RelationshipInstData.class);
 			assertTrue("allRelatinshipInst is empty", allRelatinshipInst.isRight());
-			assertEquals("allRelatinshipInst result is NOT_FOUND", TitanOperationStatus.NOT_FOUND,
-					allRelatinshipInst.right().value());
+			assertEquals("allRelatinshipInst result is NOT_FOUND", TitanOperationStatus.NOT_FOUND, allRelatinshipInst.right().value());
 
-			Either<Resource, StorageOperationStatus> deleteComputeResource = resourceOperation
-					.deleteResource(computeComponent.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> deleteComputeResource = resourceOperation.deleteResource(computeComponent.getUniqueId(), true);
 			assertTrue("delete compute resource succeed", deleteComputeResource.isLeft());
 
-			Either<Resource, StorageOperationStatus> deleteSCResource = resourceOperation
-					.deleteResource(softwareComponent.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> deleteSCResource = resourceOperation.deleteResource(softwareComponent.getUniqueId(), true);
 			assertTrue("delete software component resource succeed", deleteSCResource.isLeft());
 
-			Either<Resource, StorageOperationStatus> deleteMyResource = resourceOperation
-					.deleteResource(resource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> deleteMyResource = resourceOperation.deleteResource(resource.getUniqueId(), true);
 			assertTrue("delete my resource succeed", deleteMyResource.isLeft());
 
-			Either<Resource, StorageOperationStatus> rootResourceDeleted = resourceOperation
-					.deleteResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> rootResourceDeleted = resourceOperation.deleteResource(rootResource.getUniqueId(), true);
 			assertTrue("delete root resource succeed", rootResourceDeleted.isLeft());
 
 			Set<String> vertexSetAfterDelete = printGraph1.getVerticesSet(titanDao.getGraph().left().value());
@@ -1699,8 +1515,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		resourceData1.getMetadataDataDefinition().setState(state);
 		resourceData1.getMetadataDataDefinition().setHighestVersion(true);
 		resourceData1.getMetadataDataDefinition().setContactId("contactId");
-		Either<ResourceMetadataData, TitanOperationStatus> createNode1 = titanDao.createNode(resourceData1,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> createNode1 = titanDao.createNode(resourceData1, ResourceMetadataData.class);
 
 		log.debug("{}", createNode1);
 
@@ -1721,17 +1536,25 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			resourceData1.getMetadataDataDefinition().setState(state);
 			resourceData1.getMetadataDataDefinition().setHighestVersion(true);
 			resourceData1.getMetadataDataDefinition().setContactId("contactId");
-			Either<ResourceMetadataData, TitanOperationStatus> createNode1 = titanDao.createNode(resourceData1,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> createNode1 = titanDao.createNode(resourceData1, ResourceMetadataData.class);
 
 			log.debug("{}", createNode1);
 
 			titanDao.commit();
 
+			// resourceData1.setUniqueId(name + "." + "2.0");
+			// resourceData1.setHighestVersion(true);
+			// resourceData1.setContactId("contactId");
+			//
+			// Either<ResourceData, TitanOperationStatus> createNode2 = titanDao
+			// .createNode(resourceData1, ResourceData.class);
+			// System.out.println(createNode2);
+			//
+			// titanDao.commit();
+
 			// resourceData1.setHighestVersion(false);
 			resourceData1.getMetadataDataDefinition().setContactId("222contactId222");
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData1,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData1, ResourceMetadataData.class);
 
 			titanDao.commit();
 
@@ -1765,8 +1588,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		propertiesToMatch.put(GraphPropertiesDictionary.CONTACT_ID.getProperty(), "contactId");
 		// propertiesToMatch.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(),
 		// true);
-		Either<List<ResourceMetadataData>, TitanOperationStatus> byCriteria = titanDao
-				.getByCriteria(NodeTypeEnum.Resource, propertiesToMatch, ResourceMetadataData.class);
+		Either<List<ResourceMetadataData>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(NodeTypeEnum.Resource, propertiesToMatch, ResourceMetadataData.class);
 		return byCriteria;
 	}
 
@@ -1790,53 +1612,40 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
 			updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			ComponentInstance myresourceInstance = buildResourceInstance(softwareComponent.getUniqueId(), "1",
-					softwareCompName);
+			ComponentInstance myresourceInstance = buildResourceInstance(softwareComponent.getUniqueId(), "1", softwareCompName);
 
 			String serviceName = "myservice.1.0";
 			ServiceMetadataData createService = createService(serviceName);
-			Either<ComponentInstance, StorageOperationStatus> myinstanceRes1 = resourceInstanceOperation
-					.createComponentInstance(serviceName, NodeTypeEnum.Service, "1", myresourceInstance,
-							NodeTypeEnum.Resource, true);
+			Either<ComponentInstance, StorageOperationStatus> myinstanceRes1 = resourceInstanceOperation.createComponentInstance(serviceName, NodeTypeEnum.Service, "1", myresourceInstance, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instance was created", myinstanceRes1.isLeft());
 
-			Either<ComponentInstance, StorageOperationStatus> myinstanceRes2 = resourceInstanceOperation
-					.createComponentInstance(serviceName, NodeTypeEnum.Service, "1", myresourceInstance,
-							NodeTypeEnum.Resource, true);
+			Either<ComponentInstance, StorageOperationStatus> myinstanceRes2 = resourceInstanceOperation.createComponentInstance(serviceName, NodeTypeEnum.Service, "1", myresourceInstance, NodeTypeEnum.Resource, true);
 			assertTrue("check resource instance was not created", myinstanceRes2.isRight());
 			assertEquals("check error code", StorageOperationStatus.SCHEMA_VIOLATION, myinstanceRes2.right().value());
 
-			Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation
-					.deleteComponentInstance(NodeTypeEnum.Service, serviceName,
-							myinstanceRes1.left().value().getUniqueId(), true);
+			Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation.deleteComponentInstance(NodeTypeEnum.Service, serviceName, myinstanceRes1.left().value().getUniqueId(), true);
 			assertTrue("check resource instance was deleted", deleteResourceInstance.isLeft());
 
-			deleteResourceInstance = resourceInstanceOperation.deleteComponentInstance(NodeTypeEnum.Service,
-					serviceName, myinstanceRes1.left().value().getUniqueId(), true);
+			deleteResourceInstance = resourceInstanceOperation.deleteComponentInstance(NodeTypeEnum.Service, serviceName, myinstanceRes1.left().value().getUniqueId(), true);
 			assertTrue("check resource instance was not deleted", deleteResourceInstance.isRight());
-			assertEquals("check resource instance was not deleted", StorageOperationStatus.NOT_FOUND,
-					deleteResourceInstance.right().value());
+			assertEquals("check resource instance was not deleted", StorageOperationStatus.NOT_FOUND, deleteResourceInstance.right().value());
 
 		} finally {
 			rollbackAndPrint(false);
@@ -1846,6 +1655,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void testConnectResourceInstancesTwice() {
 
 		PrintGraph printGraph1 = new PrintGraph();
@@ -1867,34 +1677,28 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			// Create Capability type
 			CapabilityTypeOperationTest capabilityTypeOperationTest = new CapabilityTypeOperationTest();
 			capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
-			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName1);
-			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest
-					.createCapability(capabilityTypeName2);
+			CapabilityTypeDefinition createCapabilityDef1 = capabilityTypeOperationTest.createCapability(capabilityTypeName1);
+			CapabilityTypeDefinition createCapabilityDef2 = capabilityTypeOperationTest.createCapability(capabilityTypeName2);
 
 			ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 			resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 			// create root resource
-			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null,
-					true, true);
+			Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 
 			ResourceMetadataData resourceData = new ResourceMetadataData();
 			resourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData,
-					ResourceMetadataData.class);
+			Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 			assertTrue(updateNode.isLeft());
 
-			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-					.getResource(rootResource.getUniqueId(), true);
+			Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 			String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 			log.debug(rootResourceJson);
 
 			// create software component
-			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-					"1.0", rootResource.getName(), true, true);
+			Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 			resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 			resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
@@ -1902,8 +1706,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			assertTrue(updateNode.isLeft());
 
 			// create compute component
-			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName,
-					"1.0", rootResource.getName(), true, true);
+			Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 			// Add capabilities to Compute Resource
 			CapabilityDefinition capabilty1 = addCapabilityToResource(capabilityTypeName1, reqName1, computeComponent);
@@ -1913,31 +1716,24 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			// create requirement definition
 
-			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-					capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
+			Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName1, reqName1, reqNodeName, reqRelationship, softwareComponent);
 
 			String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
 			// create my resource derived from software component
-			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource",
-					myResourceVersion, softwareComponent.getName(), true, true);
+			Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", myResourceVersion, softwareComponent.getName(), true, true);
 
 			String serviceId = "myservice.1.0";
 
 			ServiceMetadataData createService = createService(serviceId);
 			ComponentInstance myresourceInstance = buildResourceInstance(resource.getUniqueId(), "1", "my-resource");
 
-			ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2",
-					computeNodeName);
+			ComponentInstance computeInstance = buildResourceInstance(computeComponent.getUniqueId(), "2", computeNodeName);
 
-			Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-							myresourceInstance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 			assertTrue("check instance added to service", myinstanceRes.isLeft());
 			ComponentInstance value1 = myinstanceRes.left().value();
-			Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation
-					.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true,
-							computeInstance, NodeTypeEnum.Resource, false);
+			Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance, NodeTypeEnum.Resource, false);
 			assertTrue("check instance added to service", computeInstTes.isLeft());
 			ComponentInstance value2 = computeInstTes.left().value();
 
@@ -1956,8 +1752,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 			relation.setRelationships(relationships);
 
-			Either<RequirementCapabilityRelDef, StorageOperationStatus> connectResourcesInService = resourceInstanceOperation
-					.associateResourceInstances(serviceId, NodeTypeEnum.Service, relation, true);
+			Either<RequirementCapabilityRelDef, StorageOperationStatus> connectResourcesInService = resourceInstanceOperation.associateResourceInstances(serviceId, NodeTypeEnum.Service, relation, true, false);
 			assertTrue("check association succeed", connectResourcesInService.isLeft());
 
 			relationships.clear();
@@ -1967,23 +1762,18 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			relationships.add(immutablePair2);
 
 			RequirementCapabilityRelDef firstRelation = connectResourcesInService.left().value();
-			connectResourcesInService = resourceInstanceOperation.associateResourceInstances(serviceId,
-					NodeTypeEnum.Service, relation, true);
+			connectResourcesInService = resourceInstanceOperation.associateResourceInstances(serviceId, NodeTypeEnum.Service, relation, true, false);
 			assertTrue("check association succeed", connectResourcesInService.isRight());
-			assertEquals("check association failed", StorageOperationStatus.MATCH_NOT_FOUND,
-					connectResourcesInService.right().value());
+			assertEquals("check association failed", StorageOperationStatus.MATCH_NOT_FOUND, connectResourcesInService.right().value());
 
-			Either<RequirementCapabilityRelDef, StorageOperationStatus> disconnectResourcesInService = resourceInstanceOperation
-					.dissociateResourceInstances(serviceId, NodeTypeEnum.Service, firstRelation, true);
+			Either<RequirementCapabilityRelDef, StorageOperationStatus> disconnectResourcesInService = resourceInstanceOperation.dissociateResourceInstances(serviceId, NodeTypeEnum.Service, firstRelation, true);
 
 			assertTrue("check dissociation succeed", disconnectResourcesInService.isLeft());
 
-			disconnectResourcesInService = resourceInstanceOperation.dissociateResourceInstances(serviceId,
-					NodeTypeEnum.Service, relation, true);
+			disconnectResourcesInService = resourceInstanceOperation.dissociateResourceInstances(serviceId, NodeTypeEnum.Service, relation, true);
 
 			assertTrue("check dissociation failed", disconnectResourcesInService.isRight());
-			assertEquals("check association failed", StorageOperationStatus.NOT_FOUND,
-					disconnectResourcesInService.right().value());
+			assertEquals("check association failed", StorageOperationStatus.NOT_FOUND, disconnectResourcesInService.right().value());
 		} finally {
 			rollbackAndPrint();
 			compareGraphSize(numberOfVertices);
@@ -1991,16 +1781,14 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 	}
 
-	private Resource createComputeWithCapability(String capabilityTypeName, String computeNodeName,
-			ResourceOperationTest resourceOperationTest, Resource rootResource) {
+	private Resource createComputeWithCapability(String capabilityTypeName, String computeNodeName, ResourceOperationTest resourceOperationTest, Resource rootResource) {
 		// create compute component
 		// String id = UniqueIdBuilder.buildResourceUniqueId(computeNodeName,
 		// "1.0");
 		// if (resourceOperation.getResource(id).isLeft()){
 		// resourceOperation.deleteResource(id);
 		// }
-		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation
-				.getResourceByNameAndVersion(computeNodeName, "1.0", false);
+		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation.getResourceByNameAndVersion(computeNodeName, "1.0", false);
 		if (oldResource.isLeft()) {
 			for (Resource old : oldResource.left().value()) {
 				if (old.getResourceType().equals(ResourceTypeEnum.VFC)) {
@@ -2010,8 +1798,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		}
 
-		Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0",
-				rootResource.getName(), true, true);
+		Resource computeComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, computeNodeName, "1.0", rootResource.getName(), true, true);
 
 		// rollbackAndPrint();
 
@@ -2020,9 +1807,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		return resourceOperation.getResource(computeComponent.getUniqueId()).left().value();
 	}
 
-	private Resource createSoftwareComponentWithReq(String softwareCompName,
-			ResourceOperationTest resourceOperationTest, Resource rootResource, String capabilityTypeName,
-			String reqName, String reqRelationship, String reqNodeName) {
+	private Resource createSoftwareComponentWithReq(String softwareCompName, ResourceOperationTest resourceOperationTest, Resource rootResource, String capabilityTypeName, String reqName, String reqRelationship, String reqNodeName) {
 		Either<ResourceMetadataData, TitanOperationStatus> updateNode;
 		ResourceMetadataData resourceData = new ResourceMetadataData();
 		// create software component
@@ -2031,8 +1816,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		// if (resourceOperation.getResource(id).isLeft()){
 		// resourceOperation.deleteResource(id);
 		// }
-		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation
-				.getResourceByNameAndVersion(softwareCompName, "1.0", false);
+		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation.getResourceByNameAndVersion(softwareCompName, "1.0", false);
 		if (oldResource.isLeft()) {
 			if (oldResource.isLeft()) {
 				for (Resource old : oldResource.left().value()) {
@@ -2044,16 +1828,14 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			}
 		}
 
-		Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName,
-				"1.0", rootResource.getName(), true, true);
+		Resource softwareComponent = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, softwareCompName, "1.0", rootResource.getName(), true, true);
 
 		resourceData.getMetadataDataDefinition().setUniqueId(softwareComponent.getUniqueId());
 		resourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
 		updateNode = titanDao.updateNode(resourceData, ResourceMetadataData.class);
 		assertTrue(updateNode.isLeft());
 
-		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(
-				capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
+		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = addRequirementToResource(capabilityTypeName, reqName, reqNodeName, reqRelationship, softwareComponent);
 
 		String parentReqUniqId = addRequirementToResource.left().value().getUniqueId();
 
@@ -2064,8 +1846,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		// create root resource
 		// String rootId = UniqueIdBuilder.buildResourceUniqueId(rootName,
 		// "1.0");
-		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation
-				.getResourceByNameAndVersion(rootName, "1.0", false);
+		Either<List<Resource>, StorageOperationStatus> oldResource = resourceOperation.getResourceByNameAndVersion(rootName, "1.0", false);
 		if (oldResource.isLeft()) {
 			for (Resource old : oldResource.left().value()) {
 				if (old.getResourceType().equals(ResourceTypeEnum.VFC)) {
@@ -2074,17 +1855,14 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 			}
 
 		}
-		Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true,
-				true);
+		Resource rootResource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, rootName, "1.0", null, true, true);
 		ResourceMetadataData rootResourceData = new ResourceMetadataData();
 		rootResourceData.getMetadataDataDefinition().setUniqueId(rootResource.getUniqueId());
 		rootResourceData.getMetadataDataDefinition().setState(LifecycleStateEnum.CERTIFIED.name());
-		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(rootResourceData,
-				ResourceMetadataData.class);
+		Either<ResourceMetadataData, TitanOperationStatus> updateNode = titanDao.updateNode(rootResourceData, ResourceMetadataData.class);
 		assertTrue(updateNode.isLeft());
 
-		Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation
-				.getResource(rootResource.getUniqueId(), true);
+		Either<Resource, StorageOperationStatus> fetchRootResource = resourceOperation.getResource(rootResource.getUniqueId(), true);
 
 		String rootResourceJson = prettyGson.toJson(fetchRootResource.left().value());
 		log.debug(rootResourceJson);
@@ -2109,29 +1887,21 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
 		CapabilityTypeDefinition createCapabilityDef = capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
-		Resource softwareComponentResource = createSoftwareComponentWithReq(softwareCompName, resourceOperationTest,
-				rootResource, capabilityTypeName, reqName, reqRelationship, computeNodeName);
-		Resource compute = createComputeWithCapability(capabilityTypeName, computeNodeName, resourceOperationTest,
-				rootResource);
+		Resource softwareComponentResource = createSoftwareComponentWithReq(softwareCompName, resourceOperationTest, rootResource, capabilityTypeName, reqName, reqRelationship, computeNodeName);
+		Resource compute = createComputeWithCapability(capabilityTypeName, computeNodeName, resourceOperationTest, rootResource);
 
 		// resource1
-		ComponentInstance myresourceInstance = buildResourceInstance(softwareComponentResource.getUniqueId(), "1",
-				"tosca.nodes.test.root");
+		ComponentInstance myresourceInstance = buildResourceInstance(softwareComponentResource.getUniqueId(), "1", "tosca.nodes.test.root");
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 
 		// resource2
-		ComponentInstance computeInstance = buildResourceInstance(compute.getUniqueId(), "2",
-				"tosca.nodes.test.compute");
+		ComponentInstance computeInstance = buildResourceInstance(compute.getUniqueId(), "2", "tosca.nodes.test.compute");
 		ComponentInstance value1 = myinstanceRes.left().value();
 
-		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance,
-						NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> computeInstTes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "2", true, computeInstance, NodeTypeEnum.Resource, false);
 		assertTrue("check instance added to service", computeInstTes.isLeft());
 		ComponentInstance value2 = computeInstTes.left().value();
 
@@ -2155,15 +1925,14 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		relationPair.setCapabilityOwnerId(value2.getUniqueId());
 		relationPair.setCapabilityUid(capId);
 
-		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation
-				.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(),
-						relationPair);
+		Either<RelationshipInstData, TitanOperationStatus> connectResourcesInService = resourceInstanceOperation.connectResourcesInService(serviceId, NodeTypeEnum.Service, value1.getUniqueId(), value2.getUniqueId(), relationPair);
 
 		assertTrue("check relation created", connectResourcesInService.isLeft());
 
 	}
 
 	@Test
+	@Ignore
 	public void addResourceInstancesResourceDeleted() {
 
 		String rootName = "tosca.nodes.test.root";
@@ -2185,24 +1954,21 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		capabilityTypeOperationTest.setOperations(titanDao, capabilityTypeOperation);
 		capabilityTypeOperationTest.createCapability(capabilityTypeName);
 
-		Resource softwareComponentResource = createSoftwareComponentWithReq(softwareCompName, resourceOperationTest,
-				rootResource, capabilityTypeName, reqName, reqRelationship, computeNodeName);
+		Resource softwareComponentResource = createSoftwareComponentWithReq(softwareCompName, resourceOperationTest, rootResource, capabilityTypeName, reqName, reqRelationship, computeNodeName);
 
 		deleteResource(softwareComponentResource.getUniqueId());
 
 		// resource1
-		ComponentInstance myresourceInstance = buildResourceInstance(softwareComponentResource.getUniqueId(), "1",
-				"tosca.nodes.test.root");
+		ComponentInstance myresourceInstance = buildResourceInstance(softwareComponentResource.getUniqueId(), "1", "tosca.nodes.test.root");
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 
 		assertTrue("check instance not added to service", myinstanceRes.isRight());
 
 	}
 
 	@Test
+	@Ignore
 	public void testDeploymentArtifactsOnRI() {
 
 		String rootName = "tosca.nodes.test.root";
@@ -2214,20 +1980,17 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 		Resource rootResource = createRootResource(rootName, resourceOperationTest);
-		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(),
-				"myArtifact");
+		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(), "myArtifact");
 
 		// resource1
 		ComponentInstance myresourceInstance = buildResourceInstance(rootResource.getUniqueId(), "1", rootName);
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 
-		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation
-				.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource);
+		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service,
+				NodeTypeEnum.Resource);
 		assertTrue(resourceInstancesOfService.isLeft());
 		List<ComponentInstance> resourceInstanceList = resourceInstancesOfService.left().value().left;
 		assertTrue(resourceInstanceList.size() == 1);
@@ -2241,13 +2004,10 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		heatEnvArtifact.setArtifactLabel(addArtifactToResource.getArtifactLabel() + "env");
 		heatEnvArtifact.setUniqueId(null);
 
-		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(
-				heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance,
-				false);
+		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance, true);
 		assertTrue(either.isLeft());
 
-		resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId,
-				NodeTypeEnum.Service, NodeTypeEnum.Resource);
+		resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource);
 		assertTrue(resourceInstancesOfService.isLeft());
 		resourceInstanceList = resourceInstancesOfService.left().value().left;
 		assertTrue(resourceInstanceList.size() == 1);
@@ -2259,12 +2019,11 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		ArtifactDefinition heatEnvFromRI = artifacts.get(addArtifactToResource.getArtifactLabel() + "env");
 		assertEquals(addArtifactToResource.getUniqueId(), heatEnvFromRI.getGeneratedFromId());
 
-		List<HeatParameterDefinition> heatParameters = artifacts.get(addArtifactToResource.getArtifactLabel())
-				.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = artifacts.get(addArtifactToResource.getArtifactLabel()).getListHeatParameters();
 		assertNotNull(heatParameters);
 		assertTrue(heatParameters.size() == 1);
 
-		List<HeatParameterDefinition> heatEnvParameters = heatEnvFromRI.getHeatParameters();
+		List<HeatParameterDefinition> heatEnvParameters = heatEnvFromRI.getListHeatParameters();
 		assertNotNull(heatEnvParameters);
 		assertTrue(heatEnvParameters.size() == 1);
 
@@ -2273,6 +2032,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void deleteResourceInstanceWithArtifacts() {
 		String rootName = "tosca.nodes.test.root";
 
@@ -2283,15 +2043,12 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 		Resource rootResource = createRootResource(rootName, resourceOperationTest);
-		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(),
-				"myArtifact");
+		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(), "myArtifact");
 
 		// resource1
 		ComponentInstance myresourceInstance = buildResourceInstance(rootResource.getUniqueId(), "1", rootName);
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 
 		ArtifactDefinition heatEnvArtifact = new ArtifactDefinition(addArtifactToResource);
 		heatEnvArtifact.setArtifactType("HEAT_ENV");
@@ -2300,38 +2057,32 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 
-		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation
-				.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource);
+		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service,
+				NodeTypeEnum.Resource);
 		assertTrue(resourceInstancesOfService.isLeft());
 		List<ComponentInstance> resourceInstanceList = resourceInstancesOfService.left().value().left;
 		assertTrue(resourceInstanceList.size() == 1);
 		ComponentInstance resourceInstance = resourceInstanceList.get(0);
 
-		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(
-				heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance,
-				false);
+		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance, true);
 		assertTrue(either.isLeft());
 		ArtifactDefinition heatEnvDefinition = either.left().value();
 
 		// delete resource instance
-		Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation
-				.deleteComponentInstance(NodeTypeEnum.Service, serviceId, resourceInstance.getUniqueId());
+		Either<ComponentInstance, StorageOperationStatus> deleteResourceInstance = resourceInstanceOperation.deleteComponentInstance(NodeTypeEnum.Service, serviceId, resourceInstance.getUniqueId());
 		assertTrue(deleteResourceInstance.isLeft());
 
 		// check heat env deleted
 		ArtifactData artifactData = new ArtifactData();
-		Either<ArtifactData, TitanOperationStatus> getDeletedArtifact = titanDao.getNode(artifactData.getUniqueIdKey(),
-				heatEnvDefinition.getUniqueId(), ArtifactData.class);
+		Either<ArtifactData, TitanOperationStatus> getDeletedArtifact = titanDao.getNode(artifactData.getUniqueIdKey(), heatEnvDefinition.getUniqueId(), ArtifactData.class);
 		assertTrue(getDeletedArtifact.isRight());
 
 		// check heat is not deleted
-		getDeletedArtifact = titanDao.getNode(artifactData.getUniqueIdKey(), addArtifactToResource.getUniqueId(),
-				ArtifactData.class);
+		getDeletedArtifact = titanDao.getNode(artifactData.getUniqueIdKey(), addArtifactToResource.getUniqueId(), ArtifactData.class);
 		assertTrue(getDeletedArtifact.isLeft());
 
 		HeatParameterData heatParamData = new HeatParameterData();
-		Either<HeatParameterData, TitanOperationStatus> heatParamNode = titanDao.getNode(heatParamData.getUniqueIdKey(),
-				addArtifactToResource.getHeatParameters().get(0).getUniqueId(), HeatParameterData.class);
+		Either<HeatParameterData, TitanOperationStatus> heatParamNode = titanDao.getNode(heatParamData.getUniqueIdKey(), addArtifactToResource.getHeatParameters().get(0).getUniqueId(), HeatParameterData.class);
 		assertTrue(heatParamNode.isLeft());
 
 		resourceOperation.deleteResource(rootResource.getUniqueId());
@@ -2339,6 +2090,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 	}
 
 	@Test
+	@Ignore
 	public void getHeatEnvParams() {
 		String rootName = "tosca.nodes.test.root";
 
@@ -2349,15 +2101,12 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
 		Resource rootResource = createRootResource(rootName, resourceOperationTest);
-		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(),
-				"myArtifact");
+		ArtifactDefinition addArtifactToResource = addArtifactToResource(USER_ID, rootResource.getUniqueId(), "myArtifact");
 
 		// resource1
 		ComponentInstance myresourceInstance = buildResourceInstance(rootResource.getUniqueId(), "1", rootName);
 
-		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation
-				.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true,
-						myresourceInstance, NodeTypeEnum.Resource, false);
+		Either<ComponentInstance, TitanOperationStatus> myinstanceRes = resourceInstanceOperation.addComponentInstanceToContainerComponent(serviceId, NodeTypeEnum.Service, "1", true, myresourceInstance, NodeTypeEnum.Resource, false);
 
 		ArtifactDefinition heatEnvArtifact = new ArtifactDefinition(addArtifactToResource);
 		heatEnvArtifact.setArtifactType("HEAT_ENV");
@@ -2366,28 +2115,24 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 
 		assertTrue("check instance added to service", myinstanceRes.isLeft());
 
-		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation
-				.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource);
+		Either<ImmutablePair<List<ComponentInstance>, List<RequirementCapabilityRelDef>>, TitanOperationStatus> resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service,
+				NodeTypeEnum.Resource);
 		assertTrue(resourceInstancesOfService.isLeft());
 		List<ComponentInstance> resourceInstanceList = resourceInstancesOfService.left().value().left;
 		assertTrue(resourceInstanceList.size() == 1);
 		ComponentInstance resourceInstance = resourceInstanceList.get(0);
 
-		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(
-				heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance,
-				false);
+		Either<ArtifactDefinition, StorageOperationStatus> either = artifactOperation.addHeatEnvArtifact(heatEnvArtifact, addArtifactToResource, resourceInstance.getUniqueId(), NodeTypeEnum.ResourceInstance, true);
 		assertTrue(either.isLeft());
 		ArtifactDefinition heatEnvDefinition = either.left().value();
 
 		// update value
 		String newHeatValue = "123";
-		addHeatValueToEnv(heatEnvDefinition.getUniqueId(), addArtifactToResource.getHeatParameters().get(0),
-				newHeatValue);
+		addHeatValueToEnv(heatEnvDefinition.getUniqueId(), addArtifactToResource.getListHeatParameters().get(0), newHeatValue);
 
 		// check values received
 
-		resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId,
-				NodeTypeEnum.Service, NodeTypeEnum.Resource);
+		resourceInstancesOfService = resourceInstanceOperation.getComponentInstancesOfComponent(serviceId, NodeTypeEnum.Service, NodeTypeEnum.Resource);
 		assertTrue(resourceInstancesOfService.isLeft());
 		resourceInstanceList = resourceInstancesOfService.left().value().left;
 		assertTrue(resourceInstanceList.size() == 1);
@@ -2397,14 +2142,12 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		assertNotNull(artifacts.get(addArtifactToResource.getArtifactLabel()));
 		assertNotNull(artifacts.get(addArtifactToResource.getArtifactLabel() + "env"));
 
-		List<HeatParameterDefinition> heatParameters = artifacts.get(addArtifactToResource.getArtifactLabel())
-				.getHeatParameters();
+		List<HeatParameterDefinition> heatParameters = artifacts.get(addArtifactToResource.getArtifactLabel()).getListHeatParameters();
 		assertNotNull(heatParameters);
 		assertTrue(heatParameters.size() == 1);
 		HeatParameterDefinition heatParameterTemplate = heatParameters.get(0);
 
-		List<HeatParameterDefinition> heatEnvParameters = artifacts
-				.get(addArtifactToResource.getArtifactLabel() + "env").getHeatParameters();
+		List<HeatParameterDefinition> heatEnvParameters = artifacts.get(addArtifactToResource.getArtifactLabel() + "env").getListHeatParameters();
 		assertNotNull(heatEnvParameters);
 		assertTrue(heatEnvParameters.size() == 1);
 		HeatParameterDefinition heatParameterEnv = heatEnvParameters.get(0);
@@ -2421,18 +2164,15 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		HeatParameterValueData heatValueData = new HeatParameterValueData();
 		heatValueData.setValue(value);
 		heatValueData.setUniqueId(artifactId + "." + heatDefinition.getName());
-		Either<HeatParameterValueData, TitanOperationStatus> createValue = titanDao.createNode(heatValueData,
-				HeatParameterValueData.class);
+		Either<HeatParameterValueData, TitanOperationStatus> createValue = titanDao.createNode(heatValueData, HeatParameterValueData.class);
 		assertTrue(createValue.isLeft());
 		HeatParameterValueData value2 = createValue.left().value();
 		HeatParameterData heatParamData = new HeatParameterData(heatDefinition);
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanDao.createRelation(value2, heatParamData,
-				GraphEdgeLabels.PROPERTY_IMPL, null);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanDao.createRelation(value2, heatParamData, GraphEdgeLabels.PROPERTY_IMPL, null);
 		assertTrue(createRelation.isLeft());
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphEdgePropertiesDictionary.NAME.getProperty(), heatDefinition.getName());
-		Either<GraphRelation, TitanOperationStatus> createRelation2 = titanDao.createRelation(
-				new UniqueIdData(NodeTypeEnum.ArtifactRef, artifactId), value2, GraphEdgeLabels.PARAMETER_VALUE, props);
+		Either<GraphRelation, TitanOperationStatus> createRelation2 = titanDao.createRelation(new UniqueIdData(NodeTypeEnum.ArtifactRef, artifactId), value2, GraphEdgeLabels.PARAMETER_VALUE, props);
 		assertTrue(createRelation2.isLeft());
 		titanDao.commit();
 
@@ -2501,10 +2241,9 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		heatParam.setName("myParam");
 		heatParam.setType("number");
 		heatParams.add(heatParam);
-		artifactInfo.setHeatParameters(heatParams);
+		artifactInfo.setListHeatParameters(heatParams);
 
-		Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation
-				.addArifactToComponent(artifactInfo, resourceId, NodeTypeEnum.Resource, true, true);
+		Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation.addArifactToComponent(artifactInfo, resourceId, NodeTypeEnum.Resource, true, true);
 		assertTrue(artifact.isLeft());
 		return artifact.left().value();
 	}

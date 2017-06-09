@@ -239,9 +239,9 @@ public class AttributeOperation extends AbstractOperation implements IAttributeO
 			List<ComponentInstanceAttribute> buildAttInstanceFromResource = attributes.stream().map(attDef -> new ComponentInstanceAttribute(attDef, false, null)).collect(Collectors.toList());
 
 			// Set Value to be default value in case it is empty
-			Consumer<ComponentInstanceAttribute> valueSetter = data -> {
-				if (StringUtils.isEmpty(data.getValue())) {
-					data.setValue(data.getDefaultValue());
+			Consumer<ComponentInstanceAttribute> valueSetter = att -> {
+				if (StringUtils.isEmpty(att.getValue())) {
+					att.setValue(att.getDefaultValue());
 				}
 			};
 			buildAttInstanceFromResource.stream().forEach(valueSetter);
@@ -438,7 +438,7 @@ public class AttributeOperation extends AbstractOperation implements IAttributeO
 		Either<AttributeData, TitanOperationStatus> eitherResult;
 		StorageOperationStatus validateAndUpdateAttribute = propertyOperation.validateAndUpdateProperty(attribute, dataTypes);
 		if (validateAndUpdateAttribute != StorageOperationStatus.OK) {
-			log.error("Attribute " + attribute + " is invalid. Status is " + validateAndUpdateAttribute);
+			log.error("Attribute {} is invalid. Status is {}", attribute, validateAndUpdateAttribute);
 			eitherResult = Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
 		} else {
 			eitherResult = addAttributeToNodeType(attribute, NodeTypeEnum.Resource, resourceId);

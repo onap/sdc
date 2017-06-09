@@ -22,23 +22,15 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -66,6 +58,7 @@ import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -80,8 +73,10 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition.PropertyNames;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -93,6 +88,7 @@ import org.openecomp.sdc.be.model.operations.api.ICapabilityOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IRequirementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.api.ToscaDefinitionPathCalculator;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 import org.openecomp.sdc.be.resources.data.CapabilityData;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
@@ -168,6 +164,9 @@ public abstract class ComponentOperation {
 	@Autowired
 	private ComponentCache componentCache;
 
+	@Autowired
+	private ToscaDefinitionPathCalculator toscaDefinitionPathCalculator;
+
 	private static Pattern uuidNewVersion = Pattern.compile("^\\d{1,}.1");
 
 	protected Gson prettyJson = new GsonBuilder().setPrettyPrinting().create();
@@ -193,18 +192,18 @@ public abstract class ComponentOperation {
 		return Either.left(tagsToCreate);
 
 	}
-
+ 
 	protected StorageOperationStatus createTagNodesOnGraph(List<TagData> tagsToCreate) {
 		StorageOperationStatus result = StorageOperationStatus.OK;
 		// In order to avoid duplicate tags
 		tagsToCreate = ImmutableSet.copyOf(tagsToCreate).asList();
 		if (tagsToCreate != null && false == tagsToCreate.isEmpty()) {
 			for (TagData tagData : tagsToCreate) {
-				log.debug("Before creating tag {}", tagData);
+				log.debug("Before creating tag {}" , tagData);
 				Either<TagData, TitanOperationStatus> createTagResult = titanGenericDao.createNode(tagData, TagData.class);
 				if (createTagResult.isRight()) {
 					TitanOperationStatus status = createTagResult.right().value();
-					log.error("Cannot create {} in the graph. Status is {}", tagData, status);
+					log.error("Cannot create {} in the graph. status is {}", tagData, status);
 					result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
 
 				}
@@ -216,7 +215,7 @@ public abstract class ComponentOperation {
 
 	public Either<Component, StorageOperationStatus> getLatestComponentByUuid(NodeTypeEnum nodeType, String uuid) {
 		Either<Component, StorageOperationStatus> getComponentResult = null;
-		Either<ComponentMetadataData, StorageOperationStatus> latestComponentMetadataRes = getLatestComponentMetadataByUuid(nodeType, uuid);
+		Either<ComponentMetadataData, StorageOperationStatus> latestComponentMetadataRes = getLatestComponentMetadataByUuid(nodeType, uuid, false);
 		if (latestComponentMetadataRes.isRight()) {
 			getComponentResult = Either.right(latestComponentMetadataRes.right().value());
 		}
@@ -234,7 +233,7 @@ public abstract class ComponentOperation {
 		return getComponentResult;
 	}
 
-	public Either<ComponentMetadataData, StorageOperationStatus> getLatestComponentMetadataByUuid(NodeTypeEnum nodeType, String uuid) {
+	public Either<ComponentMetadataData, StorageOperationStatus> getLatestComponentMetadataByUuid(NodeTypeEnum nodeType, String uuid, boolean inTransaction) {
 
 		Either<ComponentMetadataData, StorageOperationStatus> getComponentResult = null;
 		List<ComponentMetadataData> latestVersionList = null;
@@ -243,24 +242,31 @@ public abstract class ComponentOperation {
 		Map<String, Object> propertiesToMatch = new HashMap<String, Object>();
 		propertiesToMatch.put(GraphPropertiesDictionary.UUID.getProperty(), uuid);
 		propertiesToMatch.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
-
-		Either<List<ComponentMetadataData>, TitanOperationStatus> getComponentEither = titanGenericDao.getByCriteria(nodeType, propertiesToMatch, ComponentMetadataData.class);
-		if (getComponentEither.isRight()) {
-			log.debug("Couldn't fetch metadata for component with type {} and uuid {}, error: {}", nodeType, uuid, getComponentEither.right().value());
-			getComponentResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getComponentEither.right().value()));
-
-		}
-		if (getComponentResult == null) {
-			latestVersionList = getComponentEither.left().value();
-			if (latestVersionList.isEmpty()) {
-				log.debug("Component with type {} and uuid {} was not found", nodeType, uuid);
-				getComponentResult = Either.right(StorageOperationStatus.NOT_FOUND);
+		try{
+			Either<List<ComponentMetadataData>, TitanOperationStatus> getComponentEither = titanGenericDao.getByCriteria(nodeType, propertiesToMatch, ComponentMetadataData.class);
+			if (getComponentEither.isRight()) {
+				log.debug("Couldn't fetch metadata for component with type {} and uuid {}, error: {}", nodeType, uuid, getComponentEither.right().value());
+				getComponentResult = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getComponentEither.right().value()));
+	
 			}
-		}
-		if (getComponentResult == null) {
-			latestVersion = latestVersionList.size() == 1 ? latestVersionList.get(0)
-					: latestVersionList.stream().max((c1, c2) -> Double.compare(Double.parseDouble(c1.getMetadataDataDefinition().getVersion()), Double.parseDouble(c2.getMetadataDataDefinition().getVersion()))).get();
-			getComponentResult = Either.left(latestVersion);
+			if (getComponentResult == null) {
+				latestVersionList = getComponentEither.left().value();
+				if (latestVersionList.isEmpty()) {
+					log.debug("Component with type {} and uuid {} was not found", nodeType, uuid);
+					getComponentResult = Either.right(StorageOperationStatus.NOT_FOUND);
+				}
+			}
+			if (getComponentResult == null) {
+				latestVersion = latestVersionList.size() == 1 ? latestVersionList.get(0)
+						: latestVersionList.stream().max((c1, c2) -> Double.compare(Double.parseDouble(c1.getMetadataDataDefinition().getVersion()), Double.parseDouble(c2.getMetadataDataDefinition().getVersion()))).get();
+				getComponentResult = Either.left(latestVersion);
+			}
+		} catch (Exception e){
+			log.debug("Failed to get latest component metadata with type {} by uuid {}. ", nodeType.getName(), uuid, e);
+		}finally {
+			if (!inTransaction) {
+				titanGenericDao.commit();
+			}
 		}
 		return getComponentResult;
 	}
@@ -283,32 +289,6 @@ public abstract class ComponentOperation {
 		T serviceData = serviceDataList.get(0);
 		return Either.left(serviceData);
 	}
-
-	// protected <T extends GraphNode> Either<T, StorageOperationStatus>
-	// getComponentByLabelAndId_tx(String uniqueId, NodeTypeEnum nodeType,
-	// Class<T> clazz) {
-	//
-	// Map<String, Object> propertiesToMatch = new HashMap<String, Object>();
-	// propertiesToMatch.put(UniqueIdBuilder.getKeyByNodeType(nodeType),
-	// uniqueId);
-	// Either<List<T>, TitanOperationStatus> getResponse =
-	// titanGenericDao.getByCriteria_tx(nodeType, propertiesToMatch, clazz);
-	// if (getResponse.isRight()) {
-	// log.debug("Couldn't fetch component with type {} and unique id {}, error:
-	// {}", nodeType, uniqueId, getResponse.right().value());
-	// return
-	// Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(getResponse.right().value()));
-	//
-	// }
-	// List<T> serviceDataList = getResponse.left().value();
-	// if (serviceDataList.isEmpty()) {
-	// log.debug("Component with type {} and unique id {} was not found",
-	// nodeType, uniqueId);
-	// return Either.right(StorageOperationStatus.NOT_FOUND);
-	// }
-	// T serviceData = serviceDataList.get(0);
-	// return Either.left(serviceData);
-	// }
 
 	/**
 	 * 
@@ -415,28 +395,28 @@ public abstract class ComponentOperation {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.STATE.getProperty(), componentData.getMetadataDataDefinition().getState());
 		Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.createRelation(updater, componentData, GraphEdgeLabels.STATE, props);
-		log.debug("After associating user {} to component {}. Edge type is {}", updater, componentData.getUniqueId(), GraphEdgeLabels.STATE);
+		log.debug("After associating user {} to component {}. Edge type is {}" , updater, componentData.getUniqueId(),  GraphEdgeLabels.STATE);
 		if (result.isRight()) {
 			return result.right().value();
 		}
 
 		result = titanGenericDao.createRelation(updater, componentData, GraphEdgeLabels.LAST_MODIFIER, null);
-		log.debug("After associating user {} to component {}. Edge type is {}", updater, componentData.getUniqueId(), GraphEdgeLabels.LAST_MODIFIER);
+		log.debug("After associating user {} to component {}. Edge type is {}",  updater,  componentData.getUniqueId(), GraphEdgeLabels.LAST_MODIFIER);
 		if (result.isRight()) {
-			log.error("Failed to associate user " + updater + " to component " + componentData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.LAST_MODIFIER);
+			log.error("Failed to associate user {} to component {}. Edge type is {}", updater, componentData.getUniqueId(), GraphEdgeLabels.LAST_MODIFIER);
 			return result.right().value();
 		}
 
 		result = titanGenericDao.createRelation(userData, componentData, GraphEdgeLabels.CREATOR, null);
-		log.debug("After associating user {} to component {}. Edge type is {}", userData, componentData.getUniqueId(), GraphEdgeLabels.CREATOR);
+		log.debug("After associating user {} to component {}. Edge type is {}" , userData, componentData.getUniqueId(), GraphEdgeLabels.CREATOR);
 		if (result.isRight()) {
-			log.error("Failed to associate user " + userData + " to component " + componentData.getUniqueId() + ". Edge type is " + GraphEdgeLabels.CREATOR);
+			log.error("Failed to associate user {} to component {}. Edge type is {}", userData, componentData.getUniqueId(), GraphEdgeLabels.CREATOR);
 			return result.right().value();
 		}
 
 		if (derivedResources != null) {
 			for (ResourceMetadataData derivedResource : derivedResources) {
-				log.debug("After associating component {} to parent component {}. Egde type is {}", componentData.getUniqueId(), derivedResource.getUniqueId(), GraphEdgeLabels.DERIVED_FROM);
+				log.debug("After associating component {} to parent component {}. Edge type is {}" ,componentData.getUniqueId(), derivedResource.getUniqueId(), GraphEdgeLabels.DERIVED_FROM);
 				result = titanGenericDao.createRelation(componentData, derivedResource, GraphEdgeLabels.DERIVED_FROM, null);
 				if (result.isRight()) {
 					log.error("Failed to associate user {} to component {}. Edge type is {}", userData, componentData.getUniqueId(), GraphEdgeLabels.CREATOR);
@@ -464,11 +444,7 @@ public abstract class ComponentOperation {
 
 				ArtifactDefinition artifactDefinition = entry.getValue();
 				Either<ArtifactDefinition, StorageOperationStatus> addArifactToResource = Either.left(artifactDefinition);
-				// if ((artifactDefinition.getUniqueId() != null) &&
-				// !artifactDefinition.getUniqueId().isEmpty()) {
 				addArifactToResource = artifactOperation.addArifactToComponent(artifactDefinition, (String) componentData.getUniqueId(), nodeType, false, true);
-				// }
-
 				if (addArifactToResource.isRight()) {
 					return addArifactToResource.right().value();
 				}
@@ -497,43 +473,16 @@ public abstract class ComponentOperation {
 				for (ResourceMetadataData resourceData : resourceList) {
 					builder.append(resourceData.getUniqueId() + "|");
 				}
-				log.debug("resources  with property name: {} exists in graph. Found {}", name, builder.toString());
+				log.debug("resources  with property name:{} exists in graph. found {}",name, builder.toString());
 			}
 			return Either.left(false);
 		} else {
-			log.debug("resources  with property name:" + name + " does not exists in graph");
+			log.debug("resources  with property name:{} does not exists in graph", name);
 			return Either.left(true);
 		}
 
 	}
-
-	protected Either<Boolean, StorageOperationStatus> validateToscaResourceNameUniqueness(String name, TitanGenericDao titanGenericDao) {
-		Map<String, Object> properties = new HashMap<>();
-
-		properties.put(GraphPropertiesDictionary.TOSCA_RESOURCE_NAME.getProperty(), name);
-
-		Either<List<ResourceMetadataData>, TitanOperationStatus> resources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, properties, ResourceMetadataData.class);
-		if (resources.isRight() && resources.right().value() != TitanOperationStatus.NOT_FOUND) {
-			log.debug("failed to get resources from graph with property name:" + name);
-			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value()));
-		}
-		List<ResourceMetadataData> resourceList = (resources.isLeft() ? resources.left().value() : null);
-		if (resourceList != null && resourceList.size() > 0) {
-			if (log.isDebugEnabled()) {
-				StringBuilder builder = new StringBuilder();
-				for (ResourceMetadataData resourceData : resourceList) {
-					builder.append(resourceData.getUniqueId() + "|");
-				}
-				log.debug("resources  with property name:" + name + " exists in graph. found " + builder.toString());
-			}
-			return Either.left(false);
-		} else {
-			log.debug("resources  with property name: {} dows not exists in the graph", name);
-			return Either.left(true);
-		}
-
-	}
-
+	
 	protected Either<Boolean, StorageOperationStatus> validateServiceNameUniqueness(String name, TitanGenericDao titanGenericDao) {
 		Map<String, Object> properties = new HashMap<>();
 		String normalizedName = ValidationUtils.normaliseComponentName(name);
@@ -541,7 +490,7 @@ public abstract class ComponentOperation {
 
 		Either<List<ServiceMetadataData>, TitanOperationStatus> services = titanGenericDao.getByCriteria(NodeTypeEnum.Service, properties, ServiceMetadataData.class);
 		if (services.isRight() && services.right().value() != TitanOperationStatus.NOT_FOUND) {
-			log.debug("failed to get services from graph with property name: {}", name);
+			log.debug("failed to get services from graph with property name: {}" , name);
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(services.right().value()));
 		}
 		List<ServiceMetadataData> serviceList = (services.isLeft() ? services.left().value() : null);
@@ -551,14 +500,41 @@ public abstract class ComponentOperation {
 				for (ServiceMetadataData serviceData : serviceList) {
 					builder.append(serviceData.getUniqueId() + "|");
 				}
-				log.debug("Service with property name: {} exists in graph. Found {}", name, builder.toString());
+				log.debug("Service with property name:{} exists in graph. found {}" , name, builder.toString());
 			}
 
 			return Either.left(false);
 		} else {
-			log.debug("Service  with property name: {} dows not exists in graph", name);
+			log.debug("Service  with property name:{} does not exists in graph", name);
 			return Either.left(true);
 		}
+	}
+	
+	protected Either<Boolean, StorageOperationStatus> validateToscaResourceNameUniqueness(String name, TitanGenericDao titanGenericDao) {
+		Map<String, Object> properties = new HashMap<>();
+
+		properties.put(GraphPropertiesDictionary.TOSCA_RESOURCE_NAME.getProperty(), name);
+
+		Either<List<ResourceMetadataData>, TitanOperationStatus> resources = titanGenericDao.getByCriteria(NodeTypeEnum.Resource, properties, ResourceMetadataData.class);
+		if (resources.isRight() && resources.right().value() != TitanOperationStatus.NOT_FOUND) {
+			log.debug("failed to get resources from graph with property name: {}" , name);
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(resources.right().value()));
+		}
+		List<ResourceMetadataData> resourceList = (resources.isLeft() ? resources.left().value() : null);
+		if (resourceList != null && resourceList.size() > 0) {
+			if (log.isDebugEnabled()) {
+				StringBuilder builder = new StringBuilder();
+				for (ResourceMetadataData resourceData : resourceList) {
+					builder.append(resourceData.getUniqueId() + "|");
+				}
+				log.debug("resources  with property name:{} exists in graph. found {}" , name, builder.toString());
+			}
+			return Either.left(false);
+		} else {
+			log.debug("resources  with property name:{} does not exists in graph", name);
+			return Either.left(true);
+		}
+
 	}
 
 	protected Either<Boolean, StorageOperationStatus> validateComponentNameUniqueness(String name, TitanGenericDao titanGenericDao, NodeTypeEnum type) {
@@ -568,7 +544,7 @@ public abstract class ComponentOperation {
 
 		Either<List<ComponentMetadataData>, TitanOperationStatus> components = titanGenericDao.getByCriteria(type, properties, ComponentMetadataData.class);
 		if (components.isRight() && components.right().value() != TitanOperationStatus.NOT_FOUND) {
-			log.debug("failed to get components from graph with property name: {}", name);
+			log.debug("failed to get components from graph with property name: {}" , name);
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(components.right().value()));
 		}
 		List<ComponentMetadataData> componentList = (components.isLeft() ? components.left().value() : null);
@@ -578,57 +554,15 @@ public abstract class ComponentOperation {
 				for (ComponentMetadataData componentData : componentList) {
 					builder.append(componentData.getUniqueId() + "|");
 				}
-				log.debug("Component with property name: {} exists in graph. Found {}", name, builder.toString());
+				log.debug("Component with property name:{} exists in graph. found {}" , name, builder.toString());
 			}
 
 			return Either.left(false);
 		} else {
-			log.debug("Component with property name: {} does not exists in graph", name);
+			log.debug("Component with property name:{} does not exists in graph", name);
 			return Either.left(true);
 		}
 	}
-
-	// protected TitanOperationStatus setComponentCategoryFromGraph(String
-	// uniqueId, Component component, TitanGenericDao titanGenericDao,
-	// NodeTypeEnum categoryType) {
-	//
-	// Either<List<ImmutablePair<CategoryData, GraphEdge>>,
-	// TitanOperationStatus> parentNode =
-	// titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource),
-	// uniqueId, GraphEdgeLabels.CATEGORY, categoryType,
-	// CategoryData.class);
-	// if (parentNode.isRight()) {
-	// return parentNode.right().value();
-	// }
-	//
-	// List<ImmutablePair<CategoryData, GraphEdge>> listValue =
-	// parentNode.left().value();
-	// log.debug("Result after looking for category nodes pointed by resource "
-	// + uniqueId + ". status is " + listValue);
-	// if (listValue.size() > 1) {
-	// log.error("Multiple edges foud between resource " + uniqueId + " to
-	// category nodes.");
-	// }
-	// ImmutablePair<CategoryData, GraphEdge> value = listValue.get(0);
-	// log.debug("Found parent node {}", value);
-	//
-	// CategoryData categoryData = value.getKey();
-	// String categoryStr = null;
-	// if
-	// (NodeTypeEnum.ResourceCategory.name().equalsIgnoreCase(categoryData.getLabel()))
-	// {
-	// StringBuilder sb = new StringBuilder();
-	// sb.append(((ResourceCategoryData) categoryData).getCategoryName());
-	// sb.append("/");
-	// sb.append(categoryData.getName());
-	// categoryStr = sb.toString();
-	// } else {
-	// categoryStr = categoryData.getName();
-	// }
-	//
-	// component.setCategory(categoryStr);
-	// return TitanOperationStatus.OK;
-	// }
 
 	protected StorageOperationStatus setArtifactFromGraph(String uniqueId, Component component, NodeTypeEnum type, IArtifactOperation artifactOperation) {
 		StorageOperationStatus result = StorageOperationStatus.OK;
@@ -686,15 +620,16 @@ public abstract class ComponentOperation {
 		return component;
 	}
 
-	private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> collectComponents(TitanGraph graph, NodeTypeEnum neededType, String categoryUid, NodeTypeEnum categoryType, Class<S> clazz) {
+	private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> collectComponents(TitanGraph graph, NodeTypeEnum neededType, String categoryUid, NodeTypeEnum categoryType, Class<S> clazz, ResourceTypeEnum resourceType) {
 		List<T> components = new ArrayList<>();
 		Either<List<ImmutablePair<S, GraphEdge>>, TitanOperationStatus> parentNodes = titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(categoryType), categoryUid, GraphEdgeLabels.CATEGORY, neededType, clazz);
 		if (parentNodes.isLeft()) {
 			for (ImmutablePair<S, GraphEdge> component : parentNodes.left().value()) {
 				ComponentMetadataDataDefinition componentData = component.getLeft().getMetadataDataDefinition();
 				Boolean isHighest = componentData.isHighestVersion();
-				Boolean isComplex = neededType == NodeTypeEnum.Resource ? ResourceTypeEnum.VF.equals(((ResourceMetadataDataDefinition) componentData).getResourceType()) : true;
-				if (isHighest && isComplex) {
+				boolean isMatchingResourceType = isMatchingByResourceType(neededType, resourceType, componentData);
+				
+				if (isHighest && isMatchingResourceType) {
 					Either<T, StorageOperationStatus> result = getLightComponent(componentData.getUniqueId(), true);
 					if (result.isRight()) {
 						return Either.right(result.right().value());
@@ -706,15 +641,31 @@ public abstract class ComponentOperation {
 		return Either.left(components);
 	}
 
+	private boolean isMatchingByResourceType(NodeTypeEnum componentType, ResourceTypeEnum resourceType,
+			ComponentMetadataDataDefinition componentData) {
+
+		boolean isMatching;
+		if (componentType == NodeTypeEnum.Resource) {
+			if (resourceType == null) {
+				isMatching = true;
+			} else {
+				isMatching = resourceType == ((ResourceMetadataDataDefinition)componentData).getResourceType();
+			}
+		} else {
+			isMatching = true;
+		}
+		return isMatching;
+	}
+
 	protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryUid(String categoryUid, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
-			Class<S> clazz) {
+			Class<S> clazz, ResourceTypeEnum resourceType) {
 		try {
 			Either<TitanGraph, TitanOperationStatus> graph = titanGenericDao.getGraph();
 			if (graph.isRight()) {
 				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
 
 			}
-			return collectComponents(graph.left().value(), neededType, categoryUid, categoryType, clazz);
+			return collectComponents(graph.left().value(), neededType, categoryUid, categoryType, clazz, resourceType);
 
 		} finally {
 			if (false == inTransaction) {
@@ -724,12 +675,12 @@ public abstract class ComponentOperation {
 	}
 
 	protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryName(String categoryName, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
-			Class<S> clazz) {
+			Class<S> clazz, ResourceTypeEnum resourceType) {
 		List<T> components = new ArrayList<>();
 		try {
 			Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
 			Map<String, Object> props = new HashMap<String, Object>();
-			props.put(GraphPropertiesDictionary.NAME.getProperty(), categoryName);
+			props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
 			Either<List<GraphNode>, TitanOperationStatus> getCategory = titanGenericDao.getByCriteria(categoryType, props, categoryClazz);
 			if (getCategory.isRight()) {
 				return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
@@ -740,7 +691,7 @@ public abstract class ComponentOperation {
 
 			}
 			for (GraphNode category : getCategory.left().value()) {
-				Either<List<T>, StorageOperationStatus> result = collectComponents(graph.left().value(), neededType, (String) category.getUniqueId(), categoryType, clazz);
+				Either<List<T>, StorageOperationStatus> result = collectComponents(graph.left().value(), neededType, (String) category.getUniqueId(), categoryType, clazz, resourceType);
 				if (result.isRight()) {
 					return result;
 				}
@@ -784,7 +735,6 @@ public abstract class ComponentOperation {
 			} else {
 				// for Designer retrieve specific user
 				String key = UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.User);
-				// users = graph.left().value().getVertices(key, userId);
 				users = graph.left().value().query().has(key, userId).vertices();
 			}
 			Iterator<TitanVertex> userIterator = users.iterator();
@@ -852,7 +802,7 @@ public abstract class ComponentOperation {
 			String stateStr = edge.value(GraphEdgePropertiesDictionary.STATE.getProperty());
 			LifecycleStateEnum state = LifecycleStateEnum.findState(stateStr);
 			if (state == null) {
-				log.debug("not supported STATE for element {}", stateStr);
+				log.debug("not supported STATE for element  {}" , stateStr);
 				continue;
 			}
 			if (lifecycleStates != null && lifecycleStates.contains(state)) {
@@ -902,7 +852,7 @@ public abstract class ComponentOperation {
 		if (id != null) {
 			Either<T, StorageOperationStatus> component = getLightComponent(id, inTransaction);
 			if (component.isRight()) {
-				log.debug("Failed to get component for id = {} error: {} skip resource", id, component.right().value());
+				log.debug("Failed to get component for id =  {}  error : {} skip resource", id, component.right().value());
 			} else {
 				components.add(component.left().value());
 			}
@@ -929,8 +879,11 @@ public abstract class ComponentOperation {
 	}
 
 	private Either<ArtifactData, StorageOperationStatus> generateAndUpdateToscaFileName(String componentType, String componentName, String componentId, NodeTypeEnum type, ArtifactDefinition artifactInfo) {
-		Map<String, Object> getConfig = (Map<String, Object>) ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts().entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel()))
-				.findAny().get().getValue();
+		Map<String, Object> getConfig = (Map<String, Object>) ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts().entrySet().stream()
+				.filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel()))
+				.findAny()
+				.get()
+				.getValue();
 		artifactInfo.setArtifactName(componentType + "-" + componentName + getConfig.get("artifactName"));
 		return artifactOperation.updateToscaArtifactNameOnGraph(artifactInfo, artifactInfo.getUniqueId(), type, componentId);
 	}
@@ -961,7 +914,7 @@ public abstract class ComponentOperation {
 		Either<CategoryData, StorageOperationStatus> categoryResult = elementOperation.getNewCategoryData(newCategory.getName(), NodeTypeEnum.ServiceNewCategory, CategoryData.class);
 		if (categoryResult.isRight()) {
 			StorageOperationStatus status = categoryResult.right().value();
-			log.error("Cannot find category " + newCategory.getName() + " in the graph. status is " + status);
+			log.error("Cannot find category {} in the graph. status is {}", newCategory.getName(), status);
 			return status;
 		}
 
@@ -1007,9 +960,6 @@ public abstract class ComponentOperation {
 	public abstract <T> Either<T, StorageOperationStatus> getComponent(String id, boolean inTransaction);
 
 	public abstract <T> Either<T, StorageOperationStatus> getComponent(String id, ComponentParametersView componentParametersView, boolean inTrasnaction);
-
-	// public abstract <T> Either<T, StorageOperationStatus>
-	// getComponent_tx(String id, boolean inTransaction);
 
 	protected abstract <T> Either<T, StorageOperationStatus> getComponentByNameAndVersion(String name, String version, Map<String, Object> additionalParams, boolean inTransaction);
 
@@ -1129,7 +1079,7 @@ public abstract class ComponentOperation {
 			log.debug("No nodes in graph for criteria : from type = {} and properties = {}", type, props);
 			return Either.left(result);
 		} catch (Exception e) {
-			log.debug("Failed get by criteria for type = {} and properties = {}. {}", type, props, e);
+			log.debug("Failed get by criteria for type = {} and properties = {}", type, props, e);
 			return Either.right(TitanGraphClient.handleTitanException(e));
 		}
 	}
@@ -1190,7 +1140,7 @@ public abstract class ComponentOperation {
 				// inTransaction);
 				Either<T, StorageOperationStatus> component = getLightComponent((String) componentData.getUniqueId(), inTransaction);
 				if (component.isRight()) {
-					log.debug("Failed to get component for id = {} error : {} skip resource", componentData.getUniqueId(), component.right().value());
+					log.debug("Failed to get component for id =  {}  error : {} skip resource", componentData.getUniqueId(), component.right().value());
 					// return Either.right(service.right().value());
 				} else {
 					result.add(component.left().value());
@@ -1304,6 +1254,7 @@ public abstract class ComponentOperation {
 				for (ProductMetadataData data : componentsP) {
 					versionMap.put(data.getMetadataDataDefinition().getVersion(), (String) data.getUniqueId());
 				}
+				break;
 			default:
 				break;
 			}
@@ -1334,7 +1285,7 @@ public abstract class ComponentOperation {
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
 		}
 
-		log.trace("After adding additional information to component {}. Result is {}", componentId, status.left().value());
+		log.trace("After adding additional information to component {}. Result is {}" , componentId ,status.left().value());
 
 		return StorageOperationStatus.OK;
 
@@ -1619,7 +1570,7 @@ public abstract class ComponentOperation {
 							// }
 
 							valueUid = valuedProperty.getValueUniqueUid();
-							log.trace("Found value {} under resource instance whice override the default value {}", value, defaultValue);
+							log.trace("Found value {} under resource instance which override the default value {}" , value, defaultValue);
 						}
 						ComponentInstanceProperty resourceInstanceProperty = new ComponentInstanceProperty(propertyDefinition, value, valueUid);
 
@@ -1681,7 +1632,7 @@ public abstract class ComponentOperation {
 
 				StorageOperationStatus updateComponent;
 				if (updateNode.isRight()) {
-					log.debug("Failed to update component {}. Status is {}", componentMetaData.getUniqueId(), updateNode.right().value());
+					log.debug("Failed to update component {}. status is {}", componentMetaData.getUniqueId(), updateNode.right().value());
 					updateComponent = DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value());
 					result = Either.right(updateComponent);
 					return result;
@@ -1706,14 +1657,13 @@ public abstract class ComponentOperation {
 	}
 
 	private Either<List<RequirementDefinition>, TitanOperationStatus> convertReqDataListToReqDefList(ComponentInstance componentInstance, List<ImmutablePair<RequirementData, GraphEdge>> requirementData) {
-		ConvertDataToDef<RequirementDefinition, RequirementData> convertor = (data, edge) -> convertReqDataToReqDef(data, edge);
+		ConvertDataToDef<RequirementDefinition, RequirementData> convertor = (instance, data, edge) -> convertReqDataToReqDef(instance, data, edge);
 		AddOwnerData<RequirementDefinition> dataAdder = (reqDef, compInstance) -> addOwnerDataReq(reqDef, compInstance);
-
 		return convertDataToDefinition(componentInstance, requirementData, convertor, dataAdder);
 	}
 
 	private Either<List<CapabilityDefinition>, TitanOperationStatus> convertCapDataListToCapDefList(ComponentInstance componentInstance, List<ImmutablePair<CapabilityData, GraphEdge>> capabilityData) {
-		ConvertDataToDef<CapabilityDefinition, CapabilityData> convertor = (data, edge) -> convertCapDataToCapDef(data, edge);
+		ConvertDataToDef<CapabilityDefinition, CapabilityData> convertor = (instance, data, edge) -> convertCapDataToCapDef(instance, data, edge);
 		AddOwnerData<CapabilityDefinition> dataAdder = (capDef, compInstance) -> addOwnerDataCap(capDef, compInstance);
 		Either<List<CapabilityDefinition>, TitanOperationStatus> convertationResult = convertDataToDefinition(componentInstance, capabilityData, convertor, dataAdder);
 		if (convertationResult.isLeft()) {
@@ -1722,7 +1672,7 @@ public abstract class ComponentOperation {
 		return convertationResult;
 	}
 
-	private Either<CapabilityDefinition, TitanOperationStatus> convertCapDataToCapDef(CapabilityData data, GraphEdge edge) {
+	private Either<CapabilityDefinition, TitanOperationStatus> convertCapDataToCapDef(ComponentInstance componentInstance, CapabilityData data, GraphEdge edge) {
 		Either<CapabilityDefinition, TitanOperationStatus> eitherDef = capabilityOperation.getCapabilityByCapabilityData(data);
 
 		if (eitherDef.isLeft()) {
@@ -1735,6 +1685,7 @@ public abstract class ComponentOperation {
 				capabilityOperation.getCapabilitySourcesList(source, sourcesList);
 				capDef.setName(name);
 				capDef.setCapabilitySources(sourcesList);
+				capDef.setPath(toscaDefinitionPathCalculator.calculateToscaDefinitionPath(componentInstance, edge));
 
 				String requiredOccurrences = (String) properties.get(GraphEdgePropertiesDictionary.REQUIRED_OCCURRENCES.getProperty());
 				if (requiredOccurrences != null) {
@@ -1751,7 +1702,7 @@ public abstract class ComponentOperation {
 		return eitherDef;
 	}
 
-	private Either<RequirementDefinition, TitanOperationStatus> convertReqDataToReqDef(RequirementData data, GraphEdge edge) {
+	private Either<RequirementDefinition, TitanOperationStatus> convertReqDataToReqDef(ComponentInstance componentInstance, RequirementData data, GraphEdge edge) {
 		Either<RequirementDefinition, TitanOperationStatus> eitherDef = requirementOperation.getRequirement(data.getUniqueId());
 
 		if (eitherDef.isLeft()) {
@@ -1764,6 +1715,7 @@ public abstract class ComponentOperation {
 				if (requiredOccurrences != null) {
 					requirementDef.setMinOccurrences(requiredOccurrences);
 				}
+				requirementDef.setPath(toscaDefinitionPathCalculator.calculateToscaDefinitionPath(componentInstance, edge));
 				String leftOccurrences = (String) properties.get(GraphEdgePropertiesDictionary.LEFT_OCCURRENCES.getProperty());
 				if (leftOccurrences != null) {
 					requirementDef.setMaxOccurrences(leftOccurrences);
@@ -1777,7 +1729,7 @@ public abstract class ComponentOperation {
 	private <Def, Data> Either<List<Def>, TitanOperationStatus> convertDataToDefinition(ComponentInstance componentInstance, List<ImmutablePair<Data, GraphEdge>> requirementData, ConvertDataToDef<Def, Data> convertor, AddOwnerData<Def> dataAdder) {
 		Either<List<Def>, TitanOperationStatus> eitherResult;
 		// Convert Data To Definition
-		Stream<Either<Def, TitanOperationStatus>> reqDefStream = requirementData.stream().map(e -> convertor.convert(e.left, e.right));
+		Stream<Either<Def, TitanOperationStatus>> reqDefStream = requirementData.stream().map(e -> convertor.convert(componentInstance, e.left, e.right));
 
 		// Collect But Stop After First Error
 		List<Either<Def, TitanOperationStatus>> filteredReqDefList = StreamUtils.takeWhilePlusOne(reqDefStream, p -> p.isLeft()).collect(Collectors.toList());
@@ -1796,7 +1748,7 @@ public abstract class ComponentOperation {
 	}
 
 	interface ConvertDataToDef<Def, Data> {
-		Either<Def, TitanOperationStatus> convert(Data d, GraphEdge edge);
+		Either<Def, TitanOperationStatus> convert(ComponentInstance compInstance, Data d, GraphEdge edge);
 	}
 
 	interface AddOwnerData<Def> {
@@ -1979,7 +1931,7 @@ public abstract class ComponentOperation {
 		NodeTypeEnum label = NodeTypeEnum.getByName(metadataData.getLabel());
 		switch (label) {
 		case Resource:
-			pair = new ImmutablePair<String, String>(metadataData.getMetadataDataDefinition().getName(), ((ResourceMetadataDataDefinition) metadataData.getMetadataDataDefinition()).getResourceType().getValue());
+			pair = new ImmutablePair<String, String>(metadataData.getMetadataDataDefinition().getName(), ((ResourceMetadataDataDefinition) metadataData.getMetadataDataDefinition()).getResourceType().name());
 			break;
 		default:
 			pair = new ImmutablePair<String, String>(metadataData.getMetadataDataDefinition().getName(), metadataData.getLabel());
@@ -2004,13 +1956,14 @@ public abstract class ComponentOperation {
 					switch (internalComponentType.toLowerCase()) {
 					case "vf":
 						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VF.name()));
-						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VL.name()));
+//						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VL.name()));
 						// hasNotPpropertiesToMatch.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(),
 						// ResourceTypeEnum.VF.name());
 						break;
 					case "service":
 						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VFC.name()));
-						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VL.name()));
+						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VFCMT.name()));
+//						properties.add(new ImmutableTriple<>(QueryType.HAS_NOT, GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(), ResourceTypeEnum.VL.name()));
 						// hasNotPpropertiesToMatch.put(GraphPropertiesDictionary.RESOURCE_TYPE.getProperty(),
 						// ResourceTypeEnum.VFC.name());
 						break;
@@ -2104,11 +2057,7 @@ public abstract class ComponentOperation {
 					manager.addJob(new Job() {
 						@Override
 						public Either<Component, StorageOperationStatus> doWork() {
-							// long start = System.currentTimeMillis();
 							Either<Component, StorageOperationStatus> component = getComponent(componentUid, componentParametersView, false);
-							// long stop = System.currentTimeMillis();
-							// log.info("********** Time calculation in ms:
-							// getComponent single {}", (stop-start));
 							return component;
 						}
 					});
@@ -2205,10 +2154,7 @@ public abstract class ComponentOperation {
 	}
 
 	<T> Either<T, StorageOperationStatus> getLightComponent(String id, NodeTypeEnum nodeType, boolean inTransaction) {
-		Either<Component, StorageOperationStatus> metadataComponent = getMetadataComponent(id, nodeType, inTransaction);
-		if (metadataComponent.isRight()) {
 
-		}
 		T component = null;
 		try {
 			log.debug("Starting to build light component of type {}, id {}", nodeType, id);
@@ -2333,7 +2279,7 @@ public abstract class ComponentOperation {
 		return Either.left(instanceCounter);
 	}
 
-	protected TitanOperationStatus setComponentInstancesPropertiesFromGraph(String uniqueId, Component component) {
+	protected TitanOperationStatus setComponentInstancesPropertiesFromGraph(Component component) {
 
 		List<ComponentInstance> resourceInstances = component.getComponentInstances();
 
@@ -2390,7 +2336,7 @@ public abstract class ComponentOperation {
 
 		return TitanOperationStatus.OK;
 	}
-
+	
 	protected TitanOperationStatus setComponentInstancesInputsFromGraph(String uniqueId, Component component) {
 
 		Map<String, List<ComponentInstanceInput>> resourceInstancesInputs = new HashMap<>();
@@ -2546,8 +2492,7 @@ public abstract class ComponentOperation {
 		Instant start = Instant.now();
 		Either<List<ComponentInstance>, StorageOperationStatus> resourceInstancesOfService = componentInstanceOperation.getAllComponentInstancesMetadataOnly(componentId, nodeType);
 		Instant end = Instant.now();
-		log.debug("TOTAL TIME BL GET INSTANCES: {}", Duration.between(start, end)); // prints
-																					// PT1M3.553S
+		log.debug("TOTAL TIME BL GET INSTANCES: {}", Duration.between(start, end));
 		return resourceInstancesOfService;
 	}
 
@@ -2648,12 +2593,7 @@ public abstract class ComponentOperation {
 						break;
 					}
 					if (clazz1 != null) {
-						// long startGetAllVersions =
-						// System.currentTimeMillis();
 						Either<Map<String, String>, TitanOperationStatus> versionList = getVersionList(componentTypeEnum.getNodeType(), cachedComponent.getVersion(), cachedComponent.getUUID(), cachedComponent.getSystemName(), clazz1);
-						// log.debug("Fetch all versions for component {} took
-						// {} ms", cachedComponent.getUniqueId(),
-						// System.currentTimeMillis() - startGetAllVersions);
 						if (versionList.isRight()) {
 							return Either.right(ActionStatus.GENERAL_ERROR);
 						}
@@ -2732,7 +2672,7 @@ public abstract class ComponentOperation {
 
 			if (counterStatus.isRight()) {
 
-				log.error("Cannot find componentInstanceCounter for component {} in the graph. Status is {}", componentData.getUniqueId(), counterStatus);
+				log.error("Cannot find componentInstanceCounter for component {} in the graph. status is {}", componentData.getUniqueId(), counterStatus);
 				// result = sendError(status,
 				// StorageOperationStatus.USER_NOT_FOUND);
 				return result;
@@ -2742,7 +2682,7 @@ public abstract class ComponentOperation {
 
 			String modifierUserId = component.getLastUpdaterUserId();
 			if (modifierUserId == null || modifierUserId.isEmpty()) {
-				log.error("userId is missing in the request.");
+				log.error("UserId is missing in the request.");
 				result = Either.right(StorageOperationStatus.BAD_REQUEST);
 				return result;
 			}
@@ -2750,7 +2690,7 @@ public abstract class ComponentOperation {
 
 			if (findUser.isRight()) {
 				TitanOperationStatus status = findUser.right().value();
-				log.error("Cannot find user {} in the graph. Status is {}", modifierUserId, status);
+				log.error("Cannot find user {} in the graph. status is {}", modifierUserId, status);
 				// result = sendError(status,
 				// StorageOperationStatus.USER_NOT_FOUND);
 				return result;
@@ -2780,7 +2720,7 @@ public abstract class ComponentOperation {
 			} else {
 				log.debug("Going to update the last modifier user of the resource from {} to {}", currentModifier, modifierUserId);
 				StorageOperationStatus status = moveLastModifierEdge(component, componentData, modifierUserData, type);
-				log.debug("Finish to update the last modifier user of the resource from {} to {}. Status is {}", currentModifier, modifierUserId, status);
+				log.debug("Finish to update the last modifier user of the resource from {} to {}. status is {}", currentModifier, modifierUserId, status);
 				if (status != StorageOperationStatus.OK) {
 					result = Either.right(status);
 					return result;
@@ -2811,7 +2751,7 @@ public abstract class ComponentOperation {
 						Either<TagData, TitanOperationStatus> createTagResult = titanGenericDao.createNode(tagData, TagData.class);
 						if (createTagResult.isRight()) {
 							TitanOperationStatus status = createTagResult.right().value();
-							log.error("Cannot find tag {} in the graph. Status is {}", tagData, status);
+							log.error("Cannot find tag {} in the graph. status is {}", tagData, status);
 							result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 							return result;
 						}
@@ -2823,7 +2763,7 @@ public abstract class ComponentOperation {
 			Either<ComponentMetadataData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(componentData, ComponentMetadataData.class);
 
 			if (updateNode.isRight()) {
-				log.error("Failed to update resource {}. Status is {}", component.getUniqueId(), updateNode.right().value());
+				log.error("Failed to update resource {}. status is {}", component.getUniqueId(), updateNode.right().value());
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
 				return result;
 			}
@@ -2834,7 +2774,8 @@ public abstract class ComponentOperation {
 			// DE230195 in case resource name changed update TOSCA artifacts
 			// file names accordingly
 			String newSystemName = updatedResourceData.getMetadataDataDefinition().getSystemName();
-			if (newSystemName != null && !newSystemName.equals(currentComponent.getSystemName())) {
+			String prevSystemName = currentComponent.getSystemName();
+			if (newSystemName != null && !newSystemName.equals(prevSystemName)) {
 				Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
 				if (toscaArtifacts != null) {
 					for (Entry<String, ArtifactDefinition> artifact : toscaArtifacts.entrySet()) {
@@ -2846,8 +2787,15 @@ public abstract class ComponentOperation {
 						}
 					}
 				}
-
+				//TODO call to new Artifact operation in order to update list of artifacts 
+				
+		     //US833308 VLI in service - specific network_role property value logic
+				if (ComponentTypeEnum.SERVICE == component.getComponentType()) {
+					//update method logs success/error and returns boolean (true if nothing fails)
+					updateServiceNameInVLIsNetworkRolePropertyValues(component, prevSystemName, newSystemName);
+				}
 			}
+			
 
 			if (component.getComponentType().equals(ComponentTypeEnum.RESOURCE)) {
 				updateDerived(component, currentComponent, componentData, component.getClass());
@@ -2863,13 +2811,7 @@ public abstract class ComponentOperation {
 			T updatedResourceValue = updatedResource.left().value();
 			result = Either.left(updatedResourceValue);
 
-			if (log.isDebugEnabled()) {
-				// String json = prettyJson.toJson(result.left().value());
-				// log.debug("Resource retrieved after update is {}", json);
-			}
-
 			return result;
-
 		} finally {
 
 			if (false == inTransaction) {
@@ -2882,5 +2824,140 @@ public abstract class ComponentOperation {
 				}
 			}
 		}
+	}
+	
+	private boolean updateServiceNameInVLIsNetworkRolePropertyValues (Component component, String prevSystemName, String newSystemName) {
+		// find VLIs in service
+		boolean res = true;
+		if(null == component.getComponentInstances() || component.getComponentInstances().isEmpty()){
+			return res;
+		}
+		
+		List <ComponentInstance> vlInstances = 
+				component.getComponentInstances().stream()
+				.filter(p -> OriginTypeEnum.VL == p.getOriginType())
+				.collect(Collectors.toList());
+		if (!vlInstances.isEmpty()) {
+			for (ComponentInstance vlInstance : vlInstances){
+				// find network_role property 
+				Optional <ComponentInstanceProperty> networkRoleProperty = component.getComponentInstancesProperties().get(vlInstance.getUniqueId()).stream()
+						.filter(p -> PropertyNames.NETWORK_ROLE.getPropertyName().equalsIgnoreCase(p.getName()))
+						.findAny();	
+				res = res && updateNetworkRolePropertyValue(prevSystemName, newSystemName, vlInstance, networkRoleProperty);		
+			}	
+		}
+		return res;	
+	}
+
+	private boolean updateNetworkRolePropertyValue(String prevSystemName, String newSystemName, ComponentInstance vlInstance, Optional<ComponentInstanceProperty> networkRoleProperty) {
+		if (networkRoleProperty.isPresent() && !StringUtils.isEmpty(networkRoleProperty.get().getValue()) ) {
+			ComponentInstanceProperty property = networkRoleProperty.get();
+			String updatedValue = property.getValue().replaceFirst(prevSystemName, newSystemName);
+			property.setValue(updatedValue);
+			StorageOperationStatus updateCustomizationUUID;
+			//disregard property value rule 
+			property.setRules(null);
+			Either<ComponentInstanceProperty, StorageOperationStatus> result = componentInstanceOperation.updatePropertyValueInResourceInstance(property, vlInstance.getUniqueId(), true);
+			if (result.isLeft()) {
+				log.debug("Property value {} was updated on graph.", property.getValueUniqueUid());
+				updateCustomizationUUID = componentInstanceOperation.updateCustomizationUUID(vlInstance.getUniqueId());
+			} else {
+				updateCustomizationUUID = StorageOperationStatus.EXEUCTION_FAILED;
+				log.debug("Failed to update property value: {} in resource instance {}", updatedValue, vlInstance.getUniqueId());
+			}
+			return result.isLeft() && StorageOperationStatus.OK == updateCustomizationUUID;
+		}
+		return true;
+	}
+
+	public Either<ComponentMetadataData, StorageOperationStatus> updateComponentLastUpdateDateAndLastModifierOnGraph( Component component, User modifier, NodeTypeEnum componentType, boolean inTransaction) {
+		
+		log.debug("Going to update last update date and last modifier info of component {}. ", component.getName());
+		Either<ComponentMetadataData, StorageOperationStatus> result = null;
+		try{
+			String modifierUserId = modifier.getUserId();
+			ComponentMetadataData componentData = getMetaDataFromComponent(component);
+			String currentUser = component.getLastUpdaterUserId();
+			UserData modifierUserData = new UserData();
+			modifierUserData.setUserId(modifierUserId);
+			if (currentUser.equals(modifierUserId)) {
+				log.debug("Graph last modifier edge should not be changed since the modifier is the same as the last modifier.");
+			} else {
+				log.debug("Going to update the last modifier user of the component from {} to {}", currentUser, modifierUserId);
+				StorageOperationStatus status = moveLastModifierEdge(component, componentData, modifierUserData, componentType);
+				log.debug("Finish to update the last modifier user of the resource from {} to {}. status is {}", currentUser, modifierUserId, status);
+				if (status != StorageOperationStatus.OK) {
+					result = Either.right(status);
+				}
+			}
+			Either<ComponentMetadataData, TitanOperationStatus> updateNode = null;
+			if(result == null){
+				log.debug("Going to update the component {} with new last update date. ", component.getName());
+				componentData.getMetadataDataDefinition().setLastUpdateDate(System.currentTimeMillis());
+				updateNode = titanGenericDao.updateNode(componentData, ComponentMetadataData.class);
+				if (updateNode.isRight()) {
+					log.error("Failed to update component {}. status is {}", component.getUniqueId(), updateNode.right().value());
+					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
+				}
+			}
+			if(result == null){
+				result = Either.left(updateNode.left().value());
+			}
+		}catch(Exception e){
+			log.error("Exception occured during  update last update date and last modifier info of component {}. The message is {}. ", component.getName(), e.getMessage());
+		}finally {
+			if(!inTransaction){
+				if (result == null || result.isRight()) {
+					log.error("Going to execute rollback on graph.");
+					titanGenericDao.rollback();
+				} else {
+					log.debug("Going to execute commit on graph.");
+					titanGenericDao.commit();
+				}
+			}
+		}
+		return result;
+	}
+	/**
+	 * updates component lastUpdateDate on graph node
+	 * @param component
+	 * @param componentType
+	 * @param lastUpdateDate
+	 * @param inTransaction
+	 * @return
+	 */
+	public Either<ComponentMetadataData, StorageOperationStatus> updateComponentLastUpdateDateOnGraph( Component component, NodeTypeEnum componentType, Long lastUpdateDate, boolean inTransaction) {
+		
+		log.debug("Going to update last update date of component {}. ", component.getName());
+		Either<ComponentMetadataData, StorageOperationStatus> result = null;
+		try{
+			ComponentMetadataData componentData = getMetaDataFromComponent(component);
+			Either<ComponentMetadataData, TitanOperationStatus> updateNode = null;
+			if(result == null){
+				log.debug("Going to update the component {} with new last update date. ", component.getName());
+				componentData.getMetadataDataDefinition().setLastUpdateDate(lastUpdateDate);
+				updateNode = titanGenericDao.updateNode(componentData, ComponentMetadataData.class);
+				if (updateNode.isRight()) {
+					log.error("Failed to update component {}. status is {}", component.getUniqueId(), updateNode.right().value());
+					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateNode.right().value()));
+				}
+			}
+			if(result == null){
+				result = Either.left(updateNode.left().value());
+			}
+		}catch(Exception e){
+			log.error("Exception occured during  update last update date of component {}. The message is {}. ", component.getName(), e.getMessage());
+		}finally {
+			if(!inTransaction){
+				if (result == null || result.isRight()) {
+					log.error("Going to execute rollback on graph.");
+					titanGenericDao.rollback();
+				} else {
+					log.debug("Going to execute commit on graph.");
+					titanGenericDao.commit();
+				}
+			}
+		}
+		return result;
 	}
 }

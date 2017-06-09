@@ -1,0 +1,8 @@
+<div class="checkbox-container {{checkboxStyle}}">
+    <div class="checkbox-animation" [@checkEffect]="checked"></div>
+    <label class="checkbox-label" >
+        <input type="checkbox" class="checkbox-hidden" [ngModel]="checked" (ngModelChange)="toggleState($event)" [disabled]="disabled" />
+        <div class="checkbox-icon"></div>
+        <span *ngIf="label" class="checkbox-label-content">{{label}}</span>
+    </label>
+</div>

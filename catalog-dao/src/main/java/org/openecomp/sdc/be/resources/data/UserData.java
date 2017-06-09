@@ -197,7 +197,7 @@ public class UserData extends GraphNode {
 	@Override
 	public Map<String, Object> toGraphMap() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		addIfExists(map, GraphPropertiesDictionary.USER_ID, userId);
+		addIfExists(map, GraphPropertiesDictionary.USERID, userId);
 		addIfExists(map, GraphPropertiesDictionary.EMAIL, email);
 		addIfExists(map, GraphPropertiesDictionary.FIRST_NAME, firstName);
 		addIfExists(map, GraphPropertiesDictionary.LAST_NAME, lastName);
@@ -209,7 +209,7 @@ public class UserData extends GraphNode {
 
 	@Override
 	public String getUniqueIdKey() {
-		return GraphPropertiesDictionary.USER_ID.getProperty();
+		return GraphPropertiesDictionary.USERID.getProperty();
 	}
 
 	@Override

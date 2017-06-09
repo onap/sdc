@@ -1,4 +1,4 @@
-FROM jetty:9.3.15-jre8
+FROM jetty:9.3-jre8
 
 RUN apt-get -y update
 RUN apt-get -y install apt-utils
@@ -16,12 +16,10 @@ RUN pip install pycurl
 # install chef-solo
 RUN curl -L https://omnitruck.chef.io/install.sh | bash
 
-ADD onboarding-be-__SDC-RELEASE__.war          ${JETTY_BASE}/webapps/
-ADD catalog-be-__SDC-RELEASE__.war             ${JETTY_BASE}/webapps/
+ADD onboarding-be-*.war                        ${JETTY_BASE}/webapps/
+ADD catalog-be-*.war                           ${JETTY_BASE}/webapps/
 RUN chown -R jetty:jetty                       ${JETTY_BASE}/webapps
 
 COPY startup.sh /root/
-
 RUN chmod 770 /root/startup.sh
-
 ENTRYPOINT [ "/root/startup.sh" ]

@@ -1,0 +1,41 @@
+<div class="default-value-section i-sdc-form-item">
+    <label class="i-sdc-form-label">Default Value</label>
+    <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid)}">
+        <input class="i-sdc-form-input"
+               data-tests-id="defaultvalue"
+               ng-if="!((property.simpleType||property.type) == 'boolean')"
+               data-ng-maxlength="maxLength"
+               data-ng-disabled="property.readonly && !isPropertyValueOwner()"
+               maxlength="100"
+               data-ng-model="property.value"
+               type="text"
+               name="value"
+               data-ng-pattern="getValidationPattern(property.type)"
+               data-ng-model-options="{ debounce: 200 }"
+               data-ng-change="onValueChange()"
+               />
+        <select class="i-sdc-form-select"
+                data-tests-id="booleantype"
+                ng-if="(property.simpleType||property.type) == 'boolean'"
+                data-ng-disabled="property.readonly && !isPropertyValueOwner()"
+                name="value"
+                data-ng-model="property.value">
+            <option value="true">true</option>
+            <option value="false">false</option>
+        </select>
+
+        <div class="input-error" data-ng-show="forms.editForm.value.$dirty && forms.editForm.value.$invalid">
+            <span ng-show="forms.editForm.value.$error.required" translate="VALIDATION_ERROR_REQUIRED"
+                  translate-values="{'field': 'Property' }"></span>
+            <span ng-show="forms.editForm.value.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH"
+                  translate-values="{'max': '{{maxLength}}' }"></span>
+            <span ng-show="forms.editForm.value.$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+            <span ng-show="forms.editForm.value.$error.minValidation" translate="MIN_VALIDATION_ERROR"></span>
+            <span ng-show="forms.editForm.value.$error.maxValidation" translate="MAX_VALIDATION_ERROR"></span>
+            <span ng-show="forms.editForm.value.$error.minOrMaxValidation" translate="MIN_MAX_VALIDATION"></span>
+            <span ng-show="forms.editForm.value.$error.minValidationVfLevel" translate="MIN_VALIDATION_VF_LEVE_ERROR"></span>
+            <span ng-show="forms.editForm.value.$error.maxValidationVfLevel" translate="MAX_VALIDATION_VF_LEVE_ERROR"></span>
+
+        </div>
+    </div>
+</div>

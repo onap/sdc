@@ -69,13 +69,16 @@ public class DistribStatusEventTableDesc implements ITableDescription {
 	}
 
 	enum DSEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESCRIPTION(
-				"description", DataType.varchar(),
-				false), DID("did", DataType.varchar(), true), CONSUMER_ID("consumer_id", DataType.varchar(),
-						false), REQUEST_ID("request_id", DataType.varchar(), false), RESOURCE_URL("resoure_URL",
-								DataType.varchar(), false), SERVICE_INST_ID("service_instance_id", DataType.varchar(),
-										false), TOPIC_NAME("topic_name", DataType.varchar(),
-												false), STATUS_TIME("status_time", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESCRIPTION("description", DataType.varchar(), false),
+		DID("did", DataType.varchar(), true), 
+		CONSUMER_ID("consumer_id", DataType.varchar(), false), 
+		REQUEST_ID("request_id", DataType.varchar(), false), 
+		RESOURCE_URL("resoure_URL", DataType.varchar(), false), 
+		SERVICE_INST_ID("service_instance_id", DataType.varchar(), false), 
+		TOPIC_NAME("topic_name", DataType.varchar(), false), 
+		STATUS_TIME("status_time", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

@@ -67,23 +67,26 @@ public class TestExternalConfiguration {
 		ExternalConfiguration.setConfigDir("src/test/resources/config");
 		ExternalConfiguration.listenForChanges();
 
-		configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName());
+		configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+				ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName());
 
 	}
 
 	@Test
 	public void testReadConfigurationFile() {
 
-		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class, new FileChangeCallback() {
+		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class,
+				new FileChangeCallback() {
 
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
-				log.debug("In reconfigure of {}", obj);
-			}
+					public void reconfigure(BasicConfiguration obj) {
+						// TODO Auto-generated method stub
+						log.debug("In reconfigure of {}", obj);
+					}
 
-		});
+				});
 
-		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class, configurationListener);
+		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class,
+				configurationListener);
 
 		assertTrue(testConfiguration != null);
 		log.debug("{}", testConfiguration);
@@ -96,16 +99,18 @@ public class TestExternalConfiguration {
 	@Test
 	public void testNotExistConfigurationFile() {
 
-		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class, new FileChangeCallback() {
+		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class,
+				new FileChangeCallback() {
 
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
-				log.debug("In reconfigure of {}", obj);
-			}
+					public void reconfigure(BasicConfiguration obj) {
+						// TODO Auto-generated method stub
+						log.debug("In reconfigure of {}", obj);
+					}
 
-		});
+				});
 
-		TestNotExistConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestNotExistConfiguration.class, configurationListener);
+		TestNotExistConfiguration testConfiguration = configurationSource
+				.getAndWatchConfiguration(TestNotExistConfiguration.class, configurationListener);
 
 		assertTrue(testConfiguration == null);
 
@@ -114,21 +119,23 @@ public class TestExternalConfiguration {
 	@Test
 	public void testUpdateConfigurationFile() {
 
-		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class, new FileChangeCallback() {
+		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class,
+				new FileChangeCallback() {
 
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
-				log.debug("In reconfigure of {}", obj);
-				// assertEquals(((TestConfiguration)obj).getBeSslPort(),
-				// 8444);
+					public void reconfigure(BasicConfiguration obj) {
+						// TODO Auto-generated method stub
+						log.debug("In reconfigure of {}", obj);
+						// assertEquals(((TestConfiguration)obj).getBeSslPort(),
+						// 8444);
 
-				// assertTrue(((TestConfiguration)obj).getBeSslPort() ==
-				// 8444);
-			}
+						// assertTrue(((TestConfiguration)obj).getBeSslPort() ==
+						// 8444);
+					}
 
-		});
+				});
 
-		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class, configurationListener);
+		TestConfiguration testConfiguration = configurationSource.getAndWatchConfiguration(TestConfiguration.class,
+				configurationListener);
 
 		assertTrue(testConfiguration != null);
 		log.debug("{}", testConfiguration);
@@ -141,13 +148,13 @@ public class TestExternalConfiguration {
 	}
 
 	private void updateFileContent() {
-		File file = new File(ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName() + File.separator + "test-configuration.yaml");
+		File file = new File(ExternalConfiguration.getConfigDir() + File.separator + ExternalConfiguration.getAppName()
+				+ File.separator + "test-configuration.yaml");
 		replaceFile(file);
 
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -181,7 +188,6 @@ public class TestExternalConfiguration {
 				try {
 					br.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -189,7 +195,6 @@ public class TestExternalConfiguration {
 				try {
 					fr.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -197,7 +202,6 @@ public class TestExternalConfiguration {
 				try {
 					out.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -205,7 +209,6 @@ public class TestExternalConfiguration {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -215,16 +218,18 @@ public class TestExternalConfiguration {
 	@Test
 	public void testReadDistributionEngineConfigurationFile() {
 
-		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class, new FileChangeCallback() {
+		ConfigurationListener configurationListener = new ConfigurationListener(TestConfiguration.class,
+				new FileChangeCallback() {
 
-			public void reconfigure(BasicConfiguration obj) {
-				// TODO Auto-generated method stub
-				log.debug("In reconfigure of ", obj);
-			}
+					public void reconfigure(BasicConfiguration obj) {
+						// TODO Auto-generated method stub
+						log.debug("In reconfigure of ", obj);
+					}
 
-		});
+				});
 
-		DistributionEngineConfiguration deConfiguration = configurationSource.getAndWatchConfiguration(DistributionEngineConfiguration.class, configurationListener);
+		DistributionEngineConfiguration deConfiguration = configurationSource
+				.getAndWatchConfiguration(DistributionEngineConfiguration.class, configurationListener);
 
 		assertTrue(deConfiguration != null);
 		log.debug("{}", deConfiguration);

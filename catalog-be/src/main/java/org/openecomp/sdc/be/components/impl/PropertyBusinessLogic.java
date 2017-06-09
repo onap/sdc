@@ -20,39 +20,59 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
+import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
+import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
 import fj.data.Either;
 
@@ -63,11 +83,15 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
 	private static Logger log = LoggerFactory.getLogger(PropertyBusinessLogic.class.getName());
 
+	private static final String EMPTY_VALUE = null;
+	
+	private DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
+	
 	@javax.annotation.Resource
 	private IResourceOperation resourceOperation = null;
 
-	@javax.annotation.Resource
-	private PropertyOperation propertyOperation = null;
+	@Autowired
+	private ToscaOperationFacade toscaOperationFacade;
 
 	@javax.annotation.Resource
 	private ComponentsUtils componentsUtils;
@@ -114,7 +138,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
 		try {
 			// Get the resource from DB
-			Either<Resource, StorageOperationStatus> status = getResource(resourceId);
+			Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 			if (status.isRight()) {
 				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 				return result;
@@ -132,8 +156,8 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			List<PropertyDefinition> resourceProperties = resource.getProperties();
 
 			if (resourceProperties != null) {
-				if (propertyOperation.isPropertyExist(resourceProperties, resourceId, propertyName)) {
-					result = Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, ""));
+				if (isPropertyExist(resourceProperties, resourceId, propertyName, newPropertyDefinition.getType())) {
+					result = Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, propertyName));
 					return result;
 				}
 			}
@@ -177,13 +201,13 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			// add the new property to resource on graph
 			// need to get StorageOpaerationStatus and convert to ActionStatus
 			// from componentsUtils
-			Either<PropertyData, StorageOperationStatus> either = propertyOperation.addProperty(propertyName, newPropertyDefinition, resourceId);
+			Either<PropertyDefinition, StorageOperationStatus> either = toscaOperationFacade.addPropertyToResource(propertyName, newPropertyDefinition, resource);
 			if (either.isRight()) {
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
 				return result;
 			}
 
-			PropertyDefinition createdPropertyDefinition = propertyOperation.convertPropertyDataToPropertyDefinition(either.left().value(), propertyName, resourceId);
+			PropertyDefinition createdPropertyDefinition = either.left().value();
 			EntryData<String, PropertyDefinition> property = new EntryData<String, PropertyDefinition>(propertyName, createdPropertyDefinition);
 			result = Either.left(property);
 			return result;
@@ -202,7 +226,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 	 * @param resourceId
 	 * @param propertyId
 	 * @param userId
-	 *            TODO
 	 * @return
 	 */
 	public Either<Entry<String, PropertyDefinition>, ResponseFormat> getProperty(String resourceId, String propertyId, String userId) {
@@ -213,7 +236,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 		}
 
 		// Get the resource from DB
-		Either<Resource, StorageOperationStatus> status = getResource(resourceId);
+		Either<Resource, StorageOperationStatus> status =  toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 		}
@@ -244,9 +267,9 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return
 	 */
-	public Either<EntryData<String, PropertyDefinition>, ResponseFormat> deleteProperty(String resourceId, String propertyId, String userId) {
+	public Either<Entry<String, PropertyDefinition>, ResponseFormat> deleteProperty(String resourceId, String propertyId, String userId) {
 
-		Either<EntryData<String, PropertyDefinition>, ResponseFormat> result = null;
+		Either<Entry<String, PropertyDefinition>, ResponseFormat> result = null;
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Property", false);
 		if (resp.isRight()) {
@@ -263,12 +286,12 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 		try {
 
 			// Get the resource from DB
-			Either<Resource, StorageOperationStatus> status = getResource(resourceId);
-			if (status.isRight()) {
+			Either<Resource, StorageOperationStatus> getResourceRes = toscaOperationFacade.getToscaElement(resourceId);
+			if (getResourceRes.isRight()) {
 				result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 				return result;
 			}
-			Resource resource = status.left().value();
+			Resource resource = getResourceRes.left().value();
 
 			// verify that resource is checked-out and the user is the last
 			// updater
@@ -283,21 +306,14 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 				result = Either.right(statusGetProperty.right().value());
 				return result;
 			}
-			String propertyName = statusGetProperty.left().value().getKey();
 
-			// delete property of resource from graph
-			// TODO: need to get StorageOperationStatus
-			Either<PropertyData, StorageOperationStatus> either = propertyOperation.deleteProperty(propertyId);
-			// Either<PropertyData, StorageOperationStatus> either =
-			// propertyOperation.deletePropertyFromGraph(propertyId);
-			if (either.isRight()) {
-				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
+			StorageOperationStatus status = toscaOperationFacade.deletePropertyOfResource(resource, statusGetProperty.left().value().getKey());
+			if (status != StorageOperationStatus.OK) {
+				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), resource.getName()));
 				return result;
 			}
 			// propertyOperation.getTitanGenericDao().commit();
-			PropertyDefinition createdPropertyDefinition = propertyOperation.convertPropertyDataToPropertyDefinition(either.left().value(), propertyName, resourceId);
-			EntryData<String, PropertyDefinition> property = new EntryData<String, PropertyDefinition>(propertyName, createdPropertyDefinition);
-			result = Either.left(property);
+			result = Either.left(statusGetProperty.left().value());
 			return result;
 
 		} finally {
@@ -320,14 +336,12 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 
 		Either<EntryData<String, PropertyDefinition>, ResponseFormat> result = null;
 
-		// Get the resource from DB
-		Either<Resource, StorageOperationStatus> status = getResource(resourceId);
+		Either<Resource, StorageOperationStatus> status = toscaOperationFacade.getToscaElement(resourceId);
 		if (status.isRight()) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, ""));
 		}
 		Resource resource = status.left().value();
 
-		// verify that resource is checked-out and the user is the last updater
 		if (!ComponentValidationUtils.canWorkOnResource(resource, userId)) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
 		}
@@ -340,8 +354,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 		}
 
 		try {
-
-			// verify property exist in resource
 			Either<Entry<String, PropertyDefinition>, ResponseFormat> statusGetProperty = getProperty(resourceId, propertyId, userId);
 			if (statusGetProperty.isRight()) {
 				result = Either.right(statusGetProperty.right().value());
@@ -355,37 +367,222 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 				return result;
 			}
 			Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
-			// validate property default values
+
 			Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newPropertyDefinition, dataTypes);
 			if (defaultValuesValidation.isRight()) {
 				result = Either.right(defaultValuesValidation.right().value());
 				return result;
 			}
 
-			// add the new property to resource on graph
-			// TODO: convert TitanOperationStatus to Storgae...
-			Either<PropertyData, StorageOperationStatus> either = propertyOperation.updateProperty(propertyId, newPropertyDefinition, dataTypes);
-			// Either<PropertyData, StorageOperationStatus> either =
-			// propertyOperation.updatePropertyFromGraph(propertyId,
-			// newPropertyDefinition);
+			Either<PropertyDefinition, StorageOperationStatus> either = handleProperty(propertyId, newPropertyDefinition, dataTypes);
 			if (either.isRight()) {
 				log.debug("Problem while updating property with id {}. Reason - {}", propertyId, either.right().value());
 				result = Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
 				return result;
-				// return Either.right(ActionStatus.GENERAL_ERROR);
 			}
 
-			PropertyDefinition createdPropertyDefinition = propertyOperation.convertPropertyDataToPropertyDefinition(either.left().value(), propertyName, resourceId);
-			EntryData<String, PropertyDefinition> property = new EntryData<String, PropertyDefinition>(propertyName, createdPropertyDefinition);
+
+			either = toscaOperationFacade.updatePropertyOfResource(resource, newPropertyDefinition);
+			if (either.isRight()) {
+				result = Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
+				return result;
+			}
+			
+			EntryData<String, PropertyDefinition> property = new EntryData<String, PropertyDefinition>(propertyName, either.left().value());
 			result = Either.left(property);
 			return result;
 
 		} finally {
 			commitOrRollback(result);
-			// unlock component
 			graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
 		}
 
 	}
+	
+	private boolean isPropertyExist(List<PropertyDefinition> properties, String resourceUid, String propertyName, String propertyType) {
+		boolean result = false;
+		if (!CollectionUtils.isEmpty(properties)) {
+			for (PropertyDefinition propertyDefinition : properties) {
+	
+				if ( propertyDefinition.getName().equals(propertyName) &&
+						(propertyDefinition.getParentUniqueId().equals(resourceUid) || !propertyDefinition.getType().equals(propertyType)) ) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
 
+	private PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
+		log.debug("The object returned after create property is {}", propertyDataResult);
+		PropertyDefinition propertyDefResult = new PropertyDefinition(propertyDataResult.getPropertyDataDefinition());
+		propertyDefResult.setConstraints(convertConstraints(propertyDataResult.getConstraints()));
+		propertyDefResult.setName(propertyName);
+		propertyDefResult.setParentUniqueId(resourceId);
+		return propertyDefResult;
+	}
+	
+	private List<PropertyConstraint> convertConstraints(List<String> constraints) {
+
+		if (constraints == null || constraints.size() == 0) {
+			return null;
+		}
+
+		List<PropertyConstraint> list = new ArrayList<PropertyConstraint>();
+		Type constraintType = new TypeToken<PropertyConstraint>() {
+		}.getType();
+
+		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
+
+		for (String constraintJson : constraints) {
+			PropertyConstraint propertyConstraint = gson.fromJson(constraintJson, constraintType);
+			list.add(propertyConstraint);
+		}
+
+		return list;
+	}
+	
+	private Either<PropertyDefinition, StorageOperationStatus> handleProperty(String propertyId, PropertyDefinition newPropertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
+
+		StorageOperationStatus validateAndUpdateProperty = validateAndUpdateProperty(newPropertyDefinition, dataTypes);
+		if (validateAndUpdateProperty != StorageOperationStatus.OK) {
+			return Either.right(validateAndUpdateProperty);
+		}
+
+		return Either.left(newPropertyDefinition);
+	}
+	
+	private StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes) {
+
+		log.trace("Going to validate property type and value. {}", propertyDefinition);
+
+		String propertyType = propertyDefinition.getType();
+		String value = propertyDefinition.getDefaultValue();
+
+		ToscaPropertyType type = getType(propertyType);
+
+		if (type == null) {
+
+			DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
+			if (dataTypeDefinition == null) {
+				log.debug("The type {} of property cannot be found.", propertyType);
+				return StorageOperationStatus.INVALID_TYPE;
+			}
+
+			StorageOperationStatus status = validateAndUpdateComplexValue(propertyDefinition, propertyType, value, dataTypeDefinition, dataTypes);
+
+			return status;
+
+		}
+		String innerType = null;
+
+		Either<String, TitanOperationStatus> checkInnerType = getInnerType(type, () -> propertyDefinition.getSchema());
+		if (checkInnerType.isRight()) {
+			return StorageOperationStatus.INVALID_TYPE;
+		}
+		innerType = checkInnerType.left().value();
+
+		log.trace("After validating property type {}", propertyType);
+
+		boolean isValidProperty = isValidValue(type, value, innerType, dataTypes);
+		if (false == isValidProperty) {
+			log.info("The value {} of property from type {} is invalid", value, type);
+			return StorageOperationStatus.INVALID_VALUE;
+		}
+
+		PropertyValueConverter converter = type.getConverter();
+
+		if (isEmptyValue(value)) {
+			log.debug("Default value was not sent for property {}. Set default value to {}", propertyDefinition.getName(), EMPTY_VALUE);
+			propertyDefinition.setDefaultValue(EMPTY_VALUE);
+		} else if (false == isEmptyValue(value)) {
+			String convertedValue = converter.convert(value, innerType, dataTypes);
+			propertyDefinition.setDefaultValue(convertedValue);
+		}
+		return StorageOperationStatus.OK;
+	}
+	
+	protected StorageOperationStatus validateAndUpdateComplexValue(IComplexDefaultValue propertyDefinition, String propertyType,
+
+			String value, DataTypeDefinition dataTypeDefinition, Map<String, DataTypeDefinition> dataTypes) {
+		
+		ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
+
+		if (validateResult.right.booleanValue() == false) {
+			log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
+			return StorageOperationStatus.INVALID_VALUE;
+		}
+
+		JsonElement jsonElement = validateResult.left;
+
+		log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , (jsonElement != null ? jsonElement.toString() : null));
+
+		updateValue(propertyDefinition, jsonElement);
+
+		return StorageOperationStatus.OK;
+	}
+	
+	protected void updateValue(IComplexDefaultValue propertyDefinition, JsonElement jsonElement) {
+
+		propertyDefinition.setDefaultValue(getValueFromJsonElement(jsonElement));
+
+	}
+	
+	protected String getValueFromJsonElement(JsonElement jsonElement) {
+		String value = null;
+
+		if (jsonElement == null || jsonElement.isJsonNull()) {
+			value = EMPTY_VALUE;
+		} else {
+			if (jsonElement.toString().isEmpty()) {
+				value = "";
+			} else {
+				value = jsonElement.toString();
+			}
+		}
+
+		return value;
+	}
+	
+	protected Either<String, TitanOperationStatus> getInnerType(ToscaPropertyType type, Supplier<SchemaDefinition> schemeGen) {
+		String innerType = null;
+		if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+
+			SchemaDefinition def = schemeGen.get();// propDataDef.getSchema();
+			if (def == null) {
+				log.debug("Schema doesn't exists for property of type {}", type);
+				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+			}
+			PropertyDataDefinition propDef = def.getProperty();
+			if (propDef == null) {
+				log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
+				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
+			}
+			innerType = propDef.getType();
+		}
+		return Either.left(innerType);
+	}
+	protected boolean isValidValue(ToscaPropertyType type, String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
+		if (isEmptyValue(value)) {
+			return true;
+		}
+
+		PropertyTypeValidator validator = type.getValidator();
+
+		boolean isValid = validator.isValid(value, innerType, dataTypes);
+		if (true == isValid) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public boolean isEmptyValue(String value) {
+		if (value == null) {
+			return true;
+		}
+		return false;
+	}
 }

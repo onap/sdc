@@ -67,12 +67,10 @@ public class RestClientServiceExeption extends Exception {
 	 * 
 	 * @param response
 	 *
-	 *            public RSClientServiceExeption(ClientResponse response) {
-	 *            super(); this.response = response; }
+	 *            public RSClientServiceExeption(ClientResponse response) { super(); this.response = response; }
 	 * 
 	 *            public ClientResponse getResponse() { return response; }
 	 * 
-	 *            public void setResponse(ClientResponse response) {
-	 *            this.response = response; }
+	 *            public void setResponse(ClientResponse response) { this.response = response; }
 	 */
 }

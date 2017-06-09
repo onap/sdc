@@ -23,103 +23,102 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.io.Serializable;
 import java.util.List;
 
-public class CapabilityTypeDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class CapabilityTypeDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3242123405337612089L;
 
-	private String uniqueId;
 
-	private String description;
-
-	/** Identifies the type of the capability. */
-	private String type;
-
-	private List<String> validSourceTypes;
-
-	private String version;
-
-	private Long creationTime;
-
-	private Long modificationTime;
 
 	// private String derivedFrom;
 
 	public CapabilityTypeDataDefinition(CapabilityTypeDataDefinition cdt) {
 		super();
-		this.uniqueId = cdt.getUniqueId();
-		this.description = cdt.getDescription();
-		this.type = cdt.getType();
-		this.validSourceTypes = cdt.getValidSourceTypes();
-		this.version = cdt.getVersion();
-		this.creationTime = cdt.getCreationTime();
-		this.modificationTime = cdt.getModificationTime();
+		this.setUniqueId(cdt.getUniqueId());
+		this.setDescription ( cdt.getDescription());
+		this.setType(cdt.getType());
+		this.setValidSourceTypes( cdt.getValidSourceTypes());
+		this.setVersion( cdt.getVersion());
+		this.setCreationTime (cdt.getCreationTime());
+		this.setModificationTime (cdt.getModificationTime());		
+		
 	}
 
 	public CapabilityTypeDataDefinition() {
-
+		super();
 	}
 
 	public String getUniqueId() {
-		return uniqueId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
 	}
 
 	public String getType() {
-		return type;
+		return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		setToscaPresentationValue(JsonPresentationFields.TYPE, type);
 	}
 
 	public List<String> getValidSourceTypes() {
-		return validSourceTypes;
+		return (List<String> ) getToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPE);
 	}
 
 	public void setValidSourceTypes(List<String> validSourceTypes) {
-		this.validSourceTypes = validSourceTypes;
+		setToscaPresentationValue(JsonPresentationFields.VALID_SOURCE_TYPE, validSourceTypes);
 	}
 
 	public String getVersion() {
-		return version;
+		return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
 	}
 
 	public void setVersion(String version) {
-		this.version = version;
+		setToscaPresentationValue(JsonPresentationFields.VERSION, version);
 	}
 
 	public Long getCreationTime() {
-		return creationTime;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_TIME);
 	}
 
 	public void setCreationTime(Long creationTime) {
-		this.creationTime = creationTime;
+		setToscaPresentationValue(JsonPresentationFields.CREATION_TIME, creationTime);
 	}
 
 	public Long getModificationTime() {
-		return modificationTime;
+		return (Long) getToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME);
 	}
 
 	public void setModificationTime(Long modificationTime) {
-		this.modificationTime = modificationTime;
+		setToscaPresentationValue(JsonPresentationFields.MODIFICATION_TIME, modificationTime);
 	}
 
 	@Override
 	public String toString() {
+		String uniqueId = getUniqueId();
+		String description = getDescription();
+		String type = getType();
+		List<String> validSourceTypes = getValidSourceTypes();
+		String version = getVersion();
+		Long creationTime = getCreationTime();
+		Long modificationTime = getModificationTime();
+		
 		return "CapabilityTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type
 				+ ", validSourceTypes=" + validSourceTypes + ", version=" + version + ", creationTime=" + creationTime
 				+ ", modificationTime=" + modificationTime + "]";

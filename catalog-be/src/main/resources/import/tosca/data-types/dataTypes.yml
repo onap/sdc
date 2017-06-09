@@ -13,15 +13,15 @@ boolean:
 float:
   derived_from: tosca.datatypes.Root
 
-json:
-  derived_from: tosca.datatypes.Root  
-
 list:
   derived_from: tosca.datatypes.Root
 
 map:
   derived_from: tosca.datatypes.Root
 
+json:
+  derived_from: tosca.datatypes.Root
+  
 tosca.datatypes.Credential: 
   derived_from: tosca.datatypes.Root
   properties: 
@@ -107,7 +107,7 @@ tosca.datatypes.network.PortSpec:
       constraints:
         - in_range: [ 1, 65535 ]
 
-
+###################new Data Types Onboarding Integration##########################
 
 org.openecomp.datatypes.heat.network.AddressPair:
   derived_from: tosca.datatypes.Root
@@ -123,6 +123,7 @@ org.openecomp.datatypes.heat.network.AddressPair:
       description: IP address
       required: false
       status: SUPPORTED
+
 org.openecomp.datatypes.heat.network.subnet.HostRoute:
   derived_from: tosca.datatypes.Root
   description: Host route info for the subnet
@@ -309,6 +310,7 @@ org.openecomp.datatypes.heat.novaServer.network.PortExtraProperties:
       status: SUPPORTED
       entry_schema:
         type: string
+
 org.openecomp.datatypes.heat.novaServer.network.AddressInfo:
   derived_from: tosca.datatypes.network.NetworkInfo
   description: Network addresses with corresponding port id
@@ -318,6 +320,7 @@ org.openecomp.datatypes.heat.novaServer.network.AddressInfo:
       description: Port id
       required: false
       status: SUPPORTED
+
 org.openecomp.datatypes.heat.neutron.port.FixedIps:
   derived_from: tosca.datatypes.Root
   description: subnet/ip_address
@@ -332,6 +335,7 @@ org.openecomp.datatypes.heat.neutron.port.FixedIps:
       description: IP address desired in the subnet for this port
       required: false
       status: SUPPORTED
+
 org.openecomp.datatypes.heat.FileInfo:
   derived_from: tosca.datatypes.Root
   description: Heat File Info
@@ -352,6 +356,7 @@ org.openecomp.datatypes.heat.FileInfo:
         - env
         - volume
         - network
+
 org.openecomp.datatypes.heat.contrail.network.rule.PortPairs:
     derived_from: tosca.datatypes.Root
     description: source and destination port pairs
@@ -366,6 +371,7 @@ org.openecomp.datatypes.heat.contrail.network.rule.PortPairs:
         description: End port
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrail.network.rule.Rule:
     derived_from: tosca.datatypes.Root
     description: policy rule
@@ -413,6 +419,7 @@ org.openecomp.datatypes.heat.contrail.network.rule.Rule:
         description: Direction
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrail.network.rule.RuleList:
     derived_from: tosca.datatypes.Root
     description: list of policy rules
@@ -423,7 +430,8 @@ org.openecomp.datatypes.heat.contrail.network.rule.RuleList:
         required: false
         status: SUPPORTED
         entry_schema:
-          type: corg.openecomp.datatypes.heat.contrail.network.rule.Rule
+          type: org.openecomp.datatypes.heat.contrail.network.rule.Rule
+
 org.openecomp.datatypes.heat.contrail.network.rule.VirtualNetwork:
     derived_from: tosca.datatypes.Root
     description: source and destination addresses
@@ -507,6 +515,7 @@ org.openecomp.datatypes.heat.network.neutron.SecurityRules.Rule:
         - in_range:
           - 0
           - 65535
+
 org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
     derived_from: tosca.datatypes.Root
     description: Substitution Filter
@@ -542,6 +551,7 @@ org.openecomp.datatypes.heat.substitution.SubstitutionFiltering:
         required: false
         default: true
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence:
     derived_from: tosca.datatypes.Root
     description: network policy refs data sequence
@@ -556,6 +566,7 @@ org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefDataSequence:
         description: Network Policy ref data sequence Minor
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData:
     derived_from: tosca.datatypes.Root
     description: network policy refs data
@@ -565,6 +576,7 @@ org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.RefData:
         description: Network Policy ref data sequence
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet:
     derived_from: tosca.datatypes.Root
     description: Network Ipam Ref Data Subnet
@@ -579,6 +591,7 @@ org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet
         description: Network ipam refs data ipam subnets ip prefix
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList:
     derived_from: tosca.datatypes.Root
     description: Network Ipam Ref Data Subnet List
@@ -593,6 +606,7 @@ org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnet
         description: Network ipam refs data ipam subnets addr from start
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData:
     derived_from: tosca.datatypes.Root
     description: Network Ipam Ref Data
@@ -604,6 +618,7 @@ org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.IpamRefData:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.contrailV2.virtual.network.rule.ref.data.IpamSubnetList
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork:
     derived_from: tosca.datatypes.Root
     description: source addresses
@@ -613,6 +628,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.SrcVirtualNetwork:
         description: Source addresses Virtual network
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork:
     derived_from: tosca.datatypes.Root
     description: destination addresses
@@ -622,6 +638,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.DstVirtualNetwork:
         description: Destination addresses Virtual network
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs:
     derived_from: tosca.datatypes.Root
     description: destination port pairs
@@ -636,6 +653,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.DstPortPairs:
         description: End port
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs:
     derived_from: tosca.datatypes.Root
     description: source port pairs
@@ -650,6 +668,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.SrcPortPairs:
         description: End port
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
     derived_from: tosca.datatypes.Root
     description: Action List
@@ -666,22 +685,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
         status: SUPPORTED
         entry_schema:
           type: string
-org.openecomp.datatypes.heat.contrailV2.network.rule.ActionList:
-    derived_from: tosca.datatypes.Root
-    description: Action List
-    properties:
-      network_policy_entries_policy_rule_action_list_simple_action:
-        type: string
-        description: Simple Action
-        required: false
-        status: SUPPORTED
-      network_policy_entries_policy_rule_action_list_apply_service:
-        type: list
-        description: Apply Service
-        required: false
-        status: SUPPORTED
-        entry_schema:
-          type: string
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.Rule:
     derived_from: tosca.datatypes.Root
     description: policy rule
@@ -729,6 +733,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.Rule:
         description: Action list
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList:
     derived_from: tosca.datatypes.Root
     description: list of policy rules
@@ -740,6 +745,7 @@ org.openecomp.datatypes.heat.contrailV2.network.rule.RuleList:
         status: SUPPORTED
         entry_schema:
           type: org.openecomp.datatypes.heat.contrailV2.network.rule.Rule
+
 org.openecomp.datatypes.heat.network.contrail.port.StaticRoute:
     derived_from: tosca.datatypes.Root
     description: static route
@@ -759,6 +765,7 @@ org.openecomp.datatypes.heat.network.contrail.port.StaticRoute:
         description: Next hop type
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.network.contrail.AddressPair:
     derived_from: tosca.datatypes.Root
     description: Address Pair
@@ -782,6 +789,7 @@ org.openecomp.datatypes.heat.network.contrail.AddressPair:
         description: Mac address
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.network.contrail.InterfaceData:
     derived_from: tosca.datatypes.Root
     description: Interface Data
@@ -810,6 +818,7 @@ org.openecomp.datatypes.heat.network.contrail.InterfaceData:
         description: IP for this interface
         required: false
         status: SUPPORTED
+
 org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties:
     derived_from: tosca.datatypes.Root
     description: Virtual Machine Interface Properties.
@@ -819,3 +828,359 @@ org.openecomp.datatypes.heat.contrailV2.virtual.machine.interface.Properties:
         description: Service Interface Type.
         required: false
         status: SUPPORTED
+
+org.openecomp.datatypes.Root:
+  derived_from: tosca.datatypes.Root
+  description: >
+    The ECOMP root Data Type all other Data Types derive from
+  properties:
+    supplemental_data:
+      type: map
+      entry_schema:
+        description: > 
+           A placeholder for missing properties that would be included in future ecomp model versions.
+           fromat <key>:<value>
+        type: string
+
+org.openecomp.datatypes.AssignmentRequirements:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    is_required:
+      description: |
+        "true" indicates that assignment is required
+      type: boolean
+      default: false
+      required: true
+    count:
+      description: number of assignments required
+      type: integer
+      required: false    
+      
+org.openecomp.datatypes.network.SubnetAssignments:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    ip_network_address_plan:
+      type: string
+      required: false
+      description: Reference to EIPAM, VLAN or other address plan ID used to assign subnets to this network 
+    dhcp_enabled:
+      type: boolean
+      required: false
+      description: \"true\" indicates the network has 1 or more policies
+    ip_version:
+      type: integer
+      constraints:
+        - valid_values: [4,6]
+      required: true
+      description: The IP version of the subnet
+    cidr_mask:
+      type: integer
+      required: true
+      description: The default subnet CIDR mask 
+    min_subnets_count:
+      type: integer
+      default: 1
+      required: true
+      description: Quantity of subnets that must be initially assigned
+
+org.openecomp.datatypes.network.IPv4SubnetAssignments:
+  derived_from: org.openecomp.datatypes.network.SubnetAssignments
+  properties:
+    use_ipv4:
+      type: boolean
+      required: true
+      description: Indicates IPv4 subnet assignments
+
+org.openecomp.datatypes.network.IPv6SubnetAssignments:
+  derived_from: org.openecomp.datatypes.network.SubnetAssignments
+  properties:
+    use_ipv6:
+      type: boolean
+      required: true
+      description: Indicates IPv6 subnet assignments
+
+org.openecomp.datatypes.network.NetworkAssignments:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    ecomp_generated_network_assignment:
+      type: boolean
+      required: true
+      default: false
+      description: >
+        \"true\" indicates that the network assignments will be auto-generated by ECOMP
+        \"false\" indicates operator-supplied Network assignments file upload is required (e.g. VID will present prompt to operator to upload operator-supplied Network assignments file).
+    is_shared_network:
+      type: boolean
+      required: true
+      description: \"true\" means this network is shared by multiple Openstack tenants
+    is_external_network:
+      type: boolean
+      required: true
+      default: false
+      description: >
+        \"true\" means this Contrail external network
+    ipv4_subnet_default_assignment:
+      type: org.openecomp.datatypes.network.IPv4SubnetAssignments
+      required: true
+      description: IPv4 defualt subnet assignments
+    ipv6_subnet_default_assignment:
+      type: org.openecomp.datatypes.network.IPv6SubnetAssignments
+      required: true
+      description: IPv6 defualt subnet assignments
+
+org.openecomp.datatypes.network.ProviderNetwork:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    is_provider_network:
+      type: boolean
+      required: true
+      description: \"true\" indicates that this a Neutron provider type of network 
+    physical_network_name:
+      type: string
+      required: false
+      constraints:
+        - valid_values: ["Physnet41", "Physnet42", "Physnet43", "Physnet44", "Physnet21", "Physnet22"]
+      description: >
+        Identifies the NUMA processor cluster to which this physical network interface belongs.
+        NUMA instance correlates to the first digit of the Physical Network Name suffix (e.g. \"01\" = NUMA 0, \"11\" = NUMA 1)
+    numa:
+      type: string
+      required: false
+      constraints:
+        - valid_values: ["NUMA 0", "NUMA 1"]
+      description: >
+        PNIC instance within the NUMA processor cluster
+        PNIC Instance correlates to the second digit of the Physical Network Name suffix (e.g. "01" = PNIC 1, "02" = "PNIC 2)
+    pnic_instance:
+      type: integer
+      required: false
+      description: PNIC instance within the NUMA processor cluster
+
+org.openecomp.datatypes.network.NetworkFlows:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    is_network_policy:
+      type: boolean
+      required: false
+      default: false
+      description: \"true\" indicates the network has 1 or more policies
+    network_policy:
+      type: string
+      required: false
+      description: "Identifies the specific Cloud network policy that must be applied to this network (source: from Policy Manager)."
+    is_bound_to_vpn:
+      type: boolean
+      required: false
+      default: false
+      description: \"true\" indicates the network has 1 or more vpn bindings
+    vpn_binding:
+      type: string
+      required: false
+      description: "Identifies the specific VPN Binding entry in A&AI that must be applied when creating this network (source: A&AI)"
+
+org.openecomp.datatypes.network.VlanRequirements:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    vlan_range_plan:
+      type: string
+      required: true
+      description: reference to a vlan range plan
+    vlan_type:
+      type: string
+      required: true
+      constraints:
+        - valid_values: ["c-tag", "s-tag"]
+      description: identifies the vlan type (e.g., c-tag)
+    vlan_count:
+      type: integer
+      required: true
+      description: identifies the number of vlan tags to assign to the CP from the plan
+
+org.openecomp.datatypes.network.IpRequirements:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    ip_version:
+      type: integer
+      required: true
+      constraints:
+        - valid_values:
+          - 4
+          - 6
+    ip_count:
+      description: identifies the number of ip address to assign to the CP from the plan
+      type: integer
+      required: false
+    floating_ip_count:
+      type: integer
+      required: false
+    subnet_role:
+      type: string
+      required: false
+    assingment_method:
+      type: string
+      required: true
+      constraints:
+        - valid_values:
+          - fixed
+          - dhcp
+    dhcp_enabled:
+      type: boolean
+      required: false
+    ip_count_required:
+      description: identifies the number of ip address to assign to the CP from the plan
+      type: org.openecomp.datatypes.AssignmentRequirements
+      required: false
+    floating_ip_count_required:
+      type: org.openecomp.datatypes.AssignmentRequirements
+      required: false 
+
+org.openecomp.datatypes.network.MacAssignments:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    mac_range_plan:
+      type: string
+      required: true
+      description: reference to a MAC address range plan
+    mac_count:
+      type: integer
+      required: true
+      description: identifies the number of MAC addresses to assign to the CP from the plan
+
+org.openecomp.datatypes.EcompHoming:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    ecomp_selected_instance_node_target:
+      type: boolean
+      required: true
+      default: false
+      description: >
+        \"true\" indicates that the target deployment node for this instance will be auto-selected by ECOMP
+        \"false\" indicates operator-supplied instance target deployment node required (e.g. VID will present a prompt to operator and collect the
+        operator-selected target node for the deployment of this Network instance).
+    homing_policy:
+      type: string
+      required: false
+      description: Referenc to a service level homing policy that ECOMP will use for instance deployment target node
+    instance_node_target:
+      type: string
+      required: false
+      description: Instance target deployment node
+
+org.openecomp.datatypes.EcompNaming:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    ecomp_generated_naming:
+      type: boolean
+      required: true
+      default: true
+      description: >
+        \"true\" indicates that the name for the instance will be auto-generated by ECOMP.
+        \"false\" indicates operator-supplied name required (e.g. VID will present prompt to operator and collect the operator-supplied instance name).
+    naming_policy:
+      type: string
+      required: false
+      description: Referenc to naming policy that ECOMP will use when the name is auto-generated
+
+org.openecomp.datatypes.network.MacRequirements:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+    mac_range_plan:
+      description: reference to a MAC address range plan
+      type: string
+      required: false
+    mac_count:
+      description: identifies the number of MAC addresses to assign to the CP from the plan
+      type: integer
+      required: false
+    mac_count_required:
+      description: identifies the number of MAC addresses to assign to the CP from the plan
+      type: org.openecomp.datatypes.AssignmentRequirements
+
+org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp:
+  derived_from: tosca.datatypes.Root
+  description: Virtual Machine Sub Interface Address Pair IP.
+  properties:
+    ip_prefix:
+      type: string
+      description: IP Prefix.
+      required: false
+      status: SUPPORTED
+    ip_prefix_len:
+      type: integer
+      description: IP Prefix Len.
+      required: false
+      status: SUPPORTED
+
+org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.MacAddress:
+  derived_from: tosca.datatypes.Root
+  description: Virtual Machine Sub Interface Mac Address.
+  properties:
+    mac_address:
+      type: list
+      description: Mac Addresses List.
+      required: false
+      status: SUPPORTED
+      entry_schema:
+        type: string
+
+org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.Properties:
+  derived_from: tosca.datatypes.Root
+  description: Virtual Machine Sub Interface VLAN Properties.
+  properties:
+    sub_interface_vlan_tag:
+      type: string
+      description: Sub Interface VLAN Tag.
+      required: false
+      status: SUPPORTED
+
+org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPair:
+  derived_from: tosca.datatypes.Root
+  description: Virtual Machine Sub Interface Address Pair.
+  properties:
+    address_mode:
+      type: string
+      description: Address Mode.
+      required: false
+      status: SUPPORTED
+    ip:
+      type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairIp
+      description: IP.
+      required: false
+      status: SUPPORTED
+    mac:
+      type: string
+      description: Mac.
+      required: false
+      status: SUPPORTED
+
+org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPairs:
+  derived_from: tosca.datatypes.Root
+  description: Virtual Machine Sub Interface Address Pairs.
+  properties:
+    allowed_address_pair:
+      type: list
+      description: Addresses pair List.
+      required: false
+      status: SUPPORTED
+      entry_schema:
+        type: org.openecomp.datatypes.heat.contrailV2.virtual.machine.subInterface.AddressPair
+
+org.openecomp.datatypes.Naming:
+  derived_from: org.openecomp.datatypes.Root
+  properties:
+      ecomp_generated_naming:
+        description: |
+          "true" indicates that the name for the instance will be auto-generated by ECOMP. "false" indicates operator-supplied name required (e.g. VID will present prompt to operator and collect the operator-supplied instance name).
+        type: boolean
+        default: true
+        required: true
+      naming_policy:
+        description: Reference to naming policy that ECOMP will use when the name is auto-generated
+        type: string
+        required: false
+      instance_name:
+        description: indicates operator-supplied name required (e.g. VID will present prompt to operator and collect the operator-supplied instance name).
+        type: string
+        required: false
+
+

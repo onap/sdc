@@ -35,10 +35,6 @@ import com.jcabi.aspects.Loggable;
 @Loggable(prepend = true, value = Loggable.TRACE, trim = false)
 @Path("/healthCheck")
 public class FeHealthCheckServlet extends BasicServlet {
-
-	// private static Logger log =
-	// LoggerFactory.getLogger(FeHealthCheckServlet.class.getName());
-
 	@GET
 	public Response getFEandBeHealthCheck(@Context final HttpServletRequest request) {
 		ServletContext context = request.getSession().getServletContext();

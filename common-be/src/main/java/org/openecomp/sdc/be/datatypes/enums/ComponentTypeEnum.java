@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.datatypes.enums;
 
 public enum ComponentTypeEnum {
-	RESOURCE("Resource"), SERVICE("Service"), RESOURCE_INSTANCE("Resource Instance"), PRODUCT("Product"), SERVICE_INSTANCE("Service Instance");
+	RESOURCE("Resource"), 
+	SERVICE("Service"), 
+	RESOURCE_INSTANCE("Resource Instance"),
+	PRODUCT("Product"), 
+	SERVICE_INSTANCE("Service Instance");
 
 	private String value;
 

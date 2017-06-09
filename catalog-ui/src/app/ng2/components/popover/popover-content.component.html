@@ -1,0 +1,24 @@
+<div #popoverDiv class="popover {{ effectivePlacement }}"
+     [style.top]="top + 'px'"
+     [style.left]="left + 'px'"
+     [class.in]="isIn"
+     [class.fade]="animation"
+     style="display: block"
+     role="popover"
+     [ngClass]="{'hide-arrow':hideArrow}">
+    <div [hidden]="!closeOnMouseOutside" class="virtual-area"></div>
+    <div class="arrow" *ngIf="!hideArrow"></div>
+    <div class="popover-header">
+        <span class="title">{{ title }}</span>
+        <span class="close-button" (click)="popover.hide()"></span>
+    </div>
+    <ng-content></ng-content>
+    <div class="popover-footer">
+        <button *ngFor="let buttonName of buttonsNames"
+                class="tlv-btn {{buttons[buttonName].cssClass}}"
+                [disabled] = "buttons[buttonName].getDisabled && buttons[buttonName].getDisabled()"
+                (click) = "buttons[buttonName].callback()">{{buttons[buttonName].text}}</button>
+    </div>
+</div>
+
+

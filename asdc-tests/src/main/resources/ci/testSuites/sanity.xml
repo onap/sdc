@@ -2,10 +2,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Sanity" configfailurepolicy="continue" verbose="2">
 
-   <listeners>
-        <listener class-name="org.openecomp.sdc.ci.tests.run.ExtentReporterNG" />
-    </listeners>
-
 	<test name="sanityE2Eflows">
 		<classes>
 			<class name="org.openecomp.sdc.ci.tests.sanity.CrudE2E" />
@@ -68,8 +64,6 @@
 					<include name="addHeatArtifactToResourceAndCertify" />
 				</methods>
 			</class>
-
-		
 
 			<class name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateArtResponse" />
 			
@@ -268,14 +262,8 @@
 				name="org.openecomp.sdc.ci.tests.execute.imports.ImportToscaCapabilitiesWithProperties">
 				<methods>
 					<include name="importNodeTypeWithCapabilityWithPropertiesFromYmlSucceed" />
-					<!--
-					This test require the onboarding simulator. 
-					<include name="importResourceWithCapabilityWithPropertiesOverridingCapTypePropertiesSucceed" /> 
-					-->
+					<include name="importResourceWithCapabilityWithPropertiesOverridingCapTypePropertiesSucceed" />
 				</methods>
-			</class>
-			<class
-				name="org.openecomp.sdc.ci.tests.execute.imports.CsarUtilsTest">
 			</class>
 		</classes>
 	</test> <!-- Test -->

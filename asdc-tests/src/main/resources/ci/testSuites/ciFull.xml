@@ -177,7 +177,7 @@
 					<exclude name="dissociateOnceAgainTest" />
 					<exclude name="dissociateRelationNotFoundTest" />
 					<exclude name="dissoicateRelationWhileInstanceNotFound" />
-					<exclude name="dissoicateWithEmptyUserIdsHeaderTest" />
+					<exclude name="dissoicateWithEmptyUserIdHeaderTest" />
 					<exclude name="relationDeletedAfterDeletingResourceInstanceTest" />
 				</methods>
 			</class>

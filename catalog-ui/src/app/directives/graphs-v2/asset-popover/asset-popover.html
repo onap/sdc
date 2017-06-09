@@ -1,0 +1,11 @@
+<div class="assetPopover" ng-class="assetPopoverObj.menuSide" ng-style="{left: assetPopoverObj.menuPosition.x, top: assetPopoverObj.menuPosition.y}">
+    <div class="display-name-tooltip" >{{assetPopoverObj.displayName}}</div>
+
+    <div class="assetMenu">
+        <!--<div class="sprite-new expand-asset-icon" uib-tooltip="Open" tooltip-class="uib-custom-tooltip" tooltip-placement="{{tooltipSide}}"></div>-->
+        <div class="sprite-new view-info-icon" uib-tooltip="Information" tooltip-class="uib-custom-tooltip" tooltip-placement="{{assetPopoverObj.menuSide}}"></div>
+        <div class="sprite-new cp-icon" uib-tooltip="Connection Points" tooltip-class="uib-custom-tooltip" tooltip-placement="{{assetPopoverObj.menuSide}}"></div>
+        <div class="sprite-new vl-icon" uib-tooltip="Links" tooltip-class="uib-custom-tooltip" tooltip-placement="{{assetPopoverObj.menuSide}}"></div>
+        <div class="sprite-new trash-icon" uib-tooltip="Delete" tooltip-class="uib-custom-tooltip" tooltip-placement="{{assetPopoverObj.menuSide}}" ng-click="deleteAsset()" data-ng-class="{'disabled-icon': assetPopoverObj.isViewOnly}"></div>
+    </div>
+</div>

@@ -95,10 +95,9 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	protected CapabilityTypeDefinition convertCTDataToCTDefinition(CapabilityTypeData capabilityTypeData) {
-		log.debug("The object returned after create capability is " + capabilityTypeData);
+		log.debug("The object returned after create capability is {}", capabilityTypeData);
 
-		CapabilityTypeDefinition capabilityTypeDefResult = new CapabilityTypeDefinition(
-				capabilityTypeData.getCapabilityTypeDataDefinition());
+		CapabilityTypeDefinition capabilityTypeDefResult = new CapabilityTypeDefinition(capabilityTypeData.getCapabilityTypeDataDefinition());
 
 		return capabilityTypeDefResult;
 	}
@@ -117,14 +116,12 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName,
-			RequirementDefinition reqDefinition, String resourceId) {
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName, RequirementDefinition reqDefinition, String resourceId) {
 
 		return addRequirementToResource(reqName, reqDefinition, resourceId, false);
 	}
 
-	private Either<GraphRelation, TitanOperationStatus> associateRequirementToRelationshipType(RequirementData reqData,
-			RequirementDefinition reqDefinition) {
+	private Either<GraphRelation, TitanOperationStatus> associateRequirementToRelationshipType(RequirementData reqData, RequirementDefinition reqDefinition) {
 
 		String relationship = reqDefinition.getRelationship();
 
@@ -133,8 +130,7 @@ public class RequirementOperation implements IRequirementOperation {
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		UniqueIdData uniqueIdData = new UniqueIdData(NodeTypeEnum.RelationshipType, relationship);
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqData,
-				uniqueIdData, GraphEdgeLabels.RELATIONSHIP_TYPE, null);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqData, uniqueIdData, GraphEdgeLabels.RELATIONSHIP_TYPE, null);
 
 		return createRelation;
 
@@ -147,32 +143,26 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param reqDefinition
 	 * @return
 	 */
-	private Either<GraphRelation, TitanOperationStatus> associateRequirementToCapabilityType(RequirementData reqData,
-			RequirementDefinition reqDefinition) {
+	private Either<GraphRelation, TitanOperationStatus> associateRequirementToCapabilityType(RequirementData reqData, RequirementDefinition reqDefinition) {
 
 		String capability = reqDefinition.getCapability();
 
 		UniqueIdData uniqueIdData = new UniqueIdData(NodeTypeEnum.CapabilityType, capability);
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqData,
-				uniqueIdData, GraphEdgeLabels.CAPABILITY_TYPE, null);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqData, uniqueIdData, GraphEdgeLabels.CAPABILITY_TYPE, null);
 
-		log.debug("After associating requirementData " + reqData + " to capability " + capability + ". status is "
-				+ createRelation);
+		log.debug("After associating requirementData {} to capability {}. status is {}", reqData, capability, createRelation);
 
 		return createRelation;
 	}
 
-	private TitanOperationStatus associateRequirementToCapabilityType(TitanVertex reqData,
-			RequirementDefinition reqDefinition) {
+	private TitanOperationStatus associateRequirementToCapabilityType(TitanVertex reqData, RequirementDefinition reqDefinition) {
 
 		String capability = reqDefinition.getCapability();
 
 		UniqueIdData uniqueIdData = new UniqueIdData(NodeTypeEnum.CapabilityType, capability);
-		TitanOperationStatus createRelation = titanGenericDao.createEdge(reqData, uniqueIdData,
-				GraphEdgeLabels.CAPABILITY_TYPE, null);
+		TitanOperationStatus createRelation = titanGenericDao.createEdge(reqData, uniqueIdData, GraphEdgeLabels.CAPABILITY_TYPE, null);
 
-		log.debug("After associating requirementData {} to capability {}. status is {}" + reqData, capability,
-				createRelation);
+		log.debug("After associating requirementData {} to capability {}. status is {}", reqData, capability, createRelation);
 
 		return createRelation;
 	}
@@ -185,18 +175,14 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param capabilityName
 	 * @return
 	 */
-	private Either<GraphRelation, TitanOperationStatus> associateRequirementImplToCapabilityInst(
-			RequirementImplData reqImplData, CapabilityInstData capabilityInstData, String capabilityName) {
+	private Either<GraphRelation, TitanOperationStatus> associateRequirementImplToCapabilityInst(RequirementImplData reqImplData, CapabilityInstData capabilityInstData, String capabilityName) {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), capabilityName);
 
-		log.debug(
-				"Before associating requirement impl " + reqImplData + " to capability instance " + capabilityInstData);
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqImplData,
-				capabilityInstData, GraphEdgeLabels.CAPABILITY_INST, props);
-		log.debug("After associating requirement impl " + reqImplData + " to capability instance " + capabilityInstData
-				+ ".status is " + createRelation);
+		log.debug("Before associating requirement impl {} to capability instance {}", reqImplData, capabilityInstData);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(reqImplData, capabilityInstData, GraphEdgeLabels.CAPABILITY_INST, props);
+		log.debug("After associating requirement impl {} to capability instance {}.status is {}", reqImplData, capabilityInstData, createRelation);
 
 		return createRelation;
 
@@ -210,8 +196,7 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param reqDefinition
 	 * @return
 	 */
-	private Either<RequirementData, TitanOperationStatus> addRequirementData(String resourceId, String reqName,
-			RequirementDefinition reqDefinition) {
+	private Either<RequirementData, TitanOperationStatus> addRequirementData(String resourceId, String reqName, RequirementDefinition reqDefinition) {
 
 		ResourceMetadataData resourceData = new ResourceMetadataData();
 		resourceData.getMetadataDataDefinition().setUniqueId(resourceId);
@@ -219,19 +204,16 @@ public class RequirementOperation implements IRequirementOperation {
 		RequirementData requirementData = buildRequirementData(resourceId, reqName, reqDefinition);
 
 		log.debug("Before adding requirement data to graph {}", requirementData);
-		Either<RequirementData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(requirementData,
-				RequirementData.class);
+		Either<RequirementData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(requirementData, RequirementData.class);
 
 		log.debug("After adding requirement to graph {}", requirementData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add requirement " + reqName + " [ " + requirementData + " ] " + " to graph. status is "
-					+ operationStatus);
+			log.error("Failed to add requirement {} [{}]  to graph. status is {}", reqName,  requirementData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
-		TitanOperationStatus status = associateResourceDataToRequirementData(resourceId, reqName, resourceData,
-				requirementData);
+		TitanOperationStatus status = associateResourceDataToRequirementData(resourceId, reqName, resourceData, requirementData);
 		if (status != TitanOperationStatus.OK) {
 			return Either.right(status);
 		}
@@ -240,8 +222,7 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	private Either<TitanVertex, TitanOperationStatus> addRequirementData(TitanVertex vertex, String resourceId,
-			String reqName, RequirementDefinition reqDefinition) {
+	private Either<TitanVertex, TitanOperationStatus> addRequirementData(TitanVertex vertex, String resourceId, String reqName, RequirementDefinition reqDefinition) {
 
 		RequirementData requirementData = buildRequirementData(resourceId, reqName, reqDefinition);
 
@@ -251,13 +232,11 @@ public class RequirementOperation implements IRequirementOperation {
 		log.debug("After adding requirement to graph {}", requirementData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add requirement " + reqName + " [ " + requirementData + " ] " + " to graph. status is "
-					+ operationStatus);
+			log.error("Failed to add requirement {} [{}]  to graph. status is {}", reqName,  requirementData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
-		TitanOperationStatus status = associateResourceDataToRequirementData(resourceId, reqName, vertex,
-				createNodeResult.left().value());
+		TitanOperationStatus status = associateResourceDataToRequirementData(resourceId, reqName, vertex, createNodeResult.left().value());
 		if (!status.equals(TitanOperationStatus.OK)) {
 			return Either.right(status);
 		}
@@ -265,8 +244,7 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	/**
-	 * Asssociate resource node to requirement node with REQUIREMENT label and
-	 * requirement name as property on the edge.
+	 * Asssociate resource node to requirement node with REQUIREMENT label and requirement name as property on the edge.
 	 * 
 	 * @param resourceId
 	 * @param reqName
@@ -274,39 +252,32 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param requirementData
 	 * @return
 	 */
-	private TitanOperationStatus associateResourceDataToRequirementData(String resourceId, String reqName,
-			ResourceMetadataData resourceData, RequirementData requirementData) {
+	private TitanOperationStatus associateResourceDataToRequirementData(String resourceId, String reqName, ResourceMetadataData resourceData, RequirementData requirementData) {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), reqName);
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resourceData,
-				requirementData, GraphEdgeLabels.REQUIREMENT, props);
-		log.debug("After creatin edge between resource " + resourceId + " to requirement " + requirementData);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resourceData, requirementData, GraphEdgeLabels.REQUIREMENT, props);
+		log.debug("After creatin edge between resource {} to requirement {}", resourceId, requirementData);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			log.error("Failed to associate resource " + resourceId + " to requirement " + reqName + "[ "
-					+ requirementData + "] in graph. status is " + operationStatus);
+			log.error("Failed to associate resource {} to requirement {} [ {} ] in graph. status is {}", resourceId, reqName, requirementData, operationStatus);
 		}
 		return TitanOperationStatus.OK;
 	}
 
-	private TitanOperationStatus associateResourceDataToRequirementData(String resourceId, String reqName,
-			TitanVertex resourceVertex, TitanVertex requirementVertex) {
+	private TitanOperationStatus associateResourceDataToRequirementData(String resourceId, String reqName, TitanVertex resourceVertex, TitanVertex requirementVertex) {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), reqName);
-		TitanOperationStatus createRelResult = titanGenericDao.createEdge(resourceVertex, requirementVertex,
-				GraphEdgeLabels.REQUIREMENT, props);
+		TitanOperationStatus createRelResult = titanGenericDao.createEdge(resourceVertex, requirementVertex, GraphEdgeLabels.REQUIREMENT, props);
 		log.debug("After creatin edge between resource {} to requirement {}", resourceId, requirementVertex);
 		if (!createRelResult.equals(TitanOperationStatus.OK)) {
-			log.error("Failed to associate resource {} to requirement {} in graph. status is " + resourceId, reqName,
-					createRelResult);
+			log.error("Failed to associate resource {} to requirement {} in graph. status is {}", resourceId, reqName, createRelResult);
 		}
 		return TitanOperationStatus.OK;
 	}
 
-	private RequirementData buildRequirementData(String resourceId, String reqName,
-			RequirementDefinition reqDefinition) {
+	private RequirementData buildRequirementData(String resourceId, String reqName, RequirementDefinition reqDefinition) {
 
 		RequirementData requirementData = new RequirementData();
 		requirementData.setNode(reqDefinition.getNode());
@@ -322,8 +293,7 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	/**
-	 * build requirement impl node associate it to resource, requirement &
-	 * implementation resource
+	 * build requirement impl node associate it to resource, requirement & implementation resource
 	 * 
 	 * [RESOURCE] --> [REQUIREMENT IMPL] --> [ RESOURCE IMPL ] | V [REQUIREMENT]
 	 * 
@@ -334,47 +304,37 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param reqImplDefinition
 	 * @return
 	 */
-	private Either<RequirementImplData, TitanOperationStatus> addRequirementImplData(NodeTypeEnum resourceLabel,
-			String resourceId, String reqName, String requirementUid, RequirementImplDef reqImplDefinition) {
+	private Either<RequirementImplData, TitanOperationStatus> addRequirementImplData(NodeTypeEnum resourceLabel, String resourceId, String reqName, String requirementUid, RequirementImplDef reqImplDefinition) {
 
 		RequirementImplData requirementImplData = buildRequirementImplData(resourceId, reqName, reqImplDefinition);
 
-		log.debug("Before adding requirement impl data to graph " + requirementImplData);
-		Either<RequirementImplData, TitanOperationStatus> createNodeResult = titanGenericDao
-				.createNode(requirementImplData, RequirementImplData.class);
-		log.debug("After adding requirement to graph " + requirementImplData + ". status is " + createNodeResult);
+		log.debug("Before adding requirement impl data to graph {}", requirementImplData);
+		Either<RequirementImplData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(requirementImplData, RequirementImplData.class);
+		log.debug("After adding requirement to graph {}. status is {}", requirementImplData, createNodeResult);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add requirement " + reqName + " [ " + requirementImplData + " ] "
-					+ " to graph. status is " + operationStatus);
+			log.error("Failed to add requirement {} [ {} ] to graph. status is {}", reqName, requirementImplData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
-		Either<GraphRelation, TitanOperationStatus> createRelResult = associateReqImplRoResource(resourceLabel,
-				resourceId, reqName, requirementImplData);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = associateReqImplRoResource(resourceLabel, resourceId, reqName, requirementImplData);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			log.error("Failed to associate resource " + resourceId + " to requirement impl " + requirementImplData
-					+ "[ " + requirementImplData + "] in graph. status is " + operationStatus);
+			log.error("Failed to associate resource {} to requirement impl {} [ {} ] in graph. status is {}", resourceId, requirementImplData,  requirementImplData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
-		Either<GraphRelation, TitanOperationStatus> associateToResourceImpl = associateReqImplToImplResource(
-				requirementImplData, reqImplDefinition.getNodeId());
+		Either<GraphRelation, TitanOperationStatus> associateToResourceImpl = associateReqImplToImplResource(requirementImplData, reqImplDefinition.getNodeId());
 		if (associateToResourceImpl.isRight()) {
 			TitanOperationStatus operationStatus = associateToResourceImpl.right().value();
-			log.error("Failed to associate requirement impl " + requirementImplData + " to resource impl "
-					+ reqImplDefinition.getNodeId() + "[ " + requirementImplData + "] in graph. status is "
-					+ operationStatus);
+			log.error("Failed to associate requirement impl {} to resource impl {} [ {} ] in graph. status is {}", requirementImplData, reqImplDefinition.getNodeId(), requirementImplData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
-		Either<GraphRelation, TitanOperationStatus> associateToRequirement = associateReqImplToRequirement(
-				requirementImplData, requirementUid);
+		Either<GraphRelation, TitanOperationStatus> associateToRequirement = associateReqImplToRequirement(requirementImplData, requirementUid);
 		if (associateToRequirement.isRight()) {
 			TitanOperationStatus operationStatus = associateToRequirement.right().value();
-			log.error("Failed to associate requirement impl " + requirementImplData + " to requirement " + reqName
-					+ " in graph. status is " + operationStatus);
+			log.error("Failed to associate requirement impl {} to requirement {} in graph. status is {}", requirementImplData, reqName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -382,8 +342,7 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	private RequirementImplData buildRequirementImplData(String resourceId, String reqName,
-			RequirementImplDef reqImplDefinition) {
+	private RequirementImplData buildRequirementImplData(String resourceId, String reqName, RequirementImplDef reqImplDefinition) {
 		String reqImplUid = UniqueIdBuilder.buildRequirementImplUid(resourceId, reqName);
 		RequirementImplData requirementImplData = new RequirementImplData();
 		requirementImplData.setName(reqName);
@@ -400,53 +359,43 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	/**
-	 * associate requirement impl node to the source requirement. The source
-	 * requirement maybe belongs to one of parents.
+	 * associate requirement impl node to the source requirement. The source requirement maybe belongs to one of parents.
 	 * 
 	 * @param requirementImplData
 	 * @param requirementUid
 	 * @return
 	 */
-	private Either<GraphRelation, TitanOperationStatus> associateReqImplToRequirement(
-			RequirementImplData requirementImplData, String requirementUid) {
+	private Either<GraphRelation, TitanOperationStatus> associateReqImplToRequirement(RequirementImplData requirementImplData, String requirementUid) {
 
 		UniqueIdData to = new UniqueIdData(NodeTypeEnum.Requirement, requirementUid);
-		log.debug("Before creating edge between requirement impl " + requirementImplData + " to requirement "
-				+ requirementUid);
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao
-				.createRelation(requirementImplData, to, GraphEdgeLabels.IMPLEMENTATION_OF, null);
-		log.debug("Before creating edge between requirement impl " + requirementImplData + " to requirement "
-				+ requirementUid + ". status is " + createRelResult);
+		log.debug("Before creating edge between requirement impl {} to requirement {}", requirementImplData, requirementUid);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(requirementImplData, to, GraphEdgeLabels.IMPLEMENTATION_OF, null);
+		log.debug("Before creating edge between requirement impl {} to requirement {}. status is {}", requirementImplData, requirementUid, createRelResult);
 
 		return createRelResult;
 	}
 
 	/**
-	 * Associate requirement impl node to the node which supply this
-	 * requirement.
+	 * Associate requirement impl node to the node which supply this requirement.
 	 * 
 	 * @param requirementImplData
 	 * @param nodeId
 	 * @return
 	 */
-	private Either<GraphRelation, TitanOperationStatus> associateReqImplToImplResource(
-			RequirementImplData requirementImplData, String nodeId) {
+	private Either<GraphRelation, TitanOperationStatus> associateReqImplToImplResource(RequirementImplData requirementImplData, String nodeId) {
 
 		UniqueIdData nodeImpl = new UniqueIdData(NodeTypeEnum.Resource, nodeId);
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), nodeId);
-		log.debug("Before creating edge between requirement impl " + requirementImplData + " to node impl " + nodeId);
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao
-				.createRelation(requirementImplData, nodeImpl, GraphEdgeLabels.NODE_IMPL, props);
-		log.debug("After creating edge between requirement " + requirementImplData + " to node impl " + nodeId
-				+ ". status is " + createRelResult);
+		log.debug("Before creating edge between requirement impl {} to node impl {}", requirementImplData, nodeId);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(requirementImplData, nodeImpl, GraphEdgeLabels.NODE_IMPL, props);
+		log.debug("After creating edge between requirement {} to node impl {}. status is {}", requirementImplData, nodeId, createRelResult);
 
 		return createRelResult;
 	}
 
 	/**
-	 * create an edge between the requirement impl node to the implementation
-	 * resource.
+	 * create an edge between the requirement impl node to the implementation resource.
 	 * 
 	 * @param resourceLabel
 	 * @param resourceId
@@ -454,18 +403,14 @@ public class RequirementOperation implements IRequirementOperation {
 	 * @param requirementImplData
 	 * @return
 	 */
-	private Either<GraphRelation, TitanOperationStatus> associateReqImplRoResource(NodeTypeEnum resourceLabel,
-			String resourceId, String reqName, RequirementImplData requirementImplData) {
+	private Either<GraphRelation, TitanOperationStatus> associateReqImplRoResource(NodeTypeEnum resourceLabel, String resourceId, String reqName, RequirementImplData requirementImplData) {
 
 		UniqueIdData resource = new UniqueIdData(resourceLabel, resourceId);
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), reqName);
-		log.debug(
-				"Before creating edge between resource " + resourceId + " to requirement impl " + requirementImplData);
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resource,
-				requirementImplData, GraphEdgeLabels.REQUIREMENT_IMPL, props);
-		log.debug("After creating edge between to requirement impl " + requirementImplData + " to resource " + resource
-				+ ". status is " + createRelResult);
+		log.debug("Before creating edge between resource {} to requirement impl {}", resourceId, requirementImplData);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resource, requirementImplData, GraphEdgeLabels.REQUIREMENT_IMPL, props);
+		log.debug("After creating edge between to requirement impl {} to resource {}. status is {}", requirementImplData, resource, createRelResult);
 
 		return createRelResult;
 	}
@@ -476,65 +421,46 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName,
-			RequirementDefinition reqDefinition, String resourceId, boolean inTransaction) {
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource(String reqName, RequirementDefinition reqDefinition, String resourceId, boolean inTransaction) {
 
 		Either<RequirementDefinition, StorageOperationStatus> result = null;
 		try {
 
-			log.debug("Going to add requirement " + reqName + " to resource " + resourceId
-					+ ". requirement definition is " + reqDefinition);
+			log.debug("Going to add requirement {} to resource {}. requirement definition is {}", reqName, resourceId, reqDefinition);
 
 			validateNodeExists(reqDefinition.getNode());
 
 			// 1. add requirement node in graph and associate it to the resource
 			log.debug("Going to add requirement node in graph and associate it to the resource");
-			Either<RequirementData, TitanOperationStatus> addRequirementData = addRequirementData(resourceId, reqName,
-					reqDefinition);
+			Either<RequirementData, TitanOperationStatus> addRequirementData = addRequirementData(resourceId, reqName, reqDefinition);
 			if (addRequirementData.isRight()) {
-				log.error("Failed to add requirement " + reqName + " node to graph. status is " + addRequirementData);
-				result = Either.right(
-						DaoStatusConverter.convertTitanStatusToStorageStatus(addRequirementData.right().value()));
+				log.error("Failed to add requirement {} node to graph. status is {}", reqName, addRequirementData);
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addRequirementData.right().value()));
 				return result;
 			}
 
 			RequirementData requirementData = addRequirementData.left().value();
 
 			log.debug("Going to associate the requirement to the appriopriate capability type");
-			Either<GraphRelation, TitanOperationStatus> associateReqToCapabilityType = associateRequirementToCapabilityType(
-					requirementData, reqDefinition);
+			Either<GraphRelation, TitanOperationStatus> associateReqToCapabilityType = associateRequirementToCapabilityType(requirementData, reqDefinition);
 			if (associateReqToCapabilityType.isRight()) {
-				log.error("Failed to associate requirement data node " + requirementData
-						+ " to the capability type node " + reqDefinition.getCapability());
-				result = Either.right(DaoStatusConverter
-						.convertTitanStatusToStorageStatus(associateReqToCapabilityType.right().value()));
+				log.error("Failed to associate requirement data node {} to the capability type node {}", requirementData, reqDefinition.getCapability());
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(associateReqToCapabilityType.right().value()));
 				return result;
 			}
 
 			// TODO: esofer associate requirement to the relationship type
 			/*
-			 * Either<GraphRelation, TitanOperationStatus>
-			 * associateReqToRelshipType =
-			 * associateRequirementToRelationshipType( requirementData,
-			 * reqDefinition);
+			 * Either<GraphRelation, TitanOperationStatus> associateReqToRelshipType = associateRequirementToRelationshipType( requirementData, reqDefinition);
 			 * 
-			 * if (associateReqToRelshipType.isRight() &&
-			 * associateReqToRelshipType.right().value() !=
-			 * TitanOperationStatus.NOT_FOUND) {
-			 * log.error("Failed to associate requirement data node " +
-			 * requirementData + " to the relationship type node " +
-			 * reqDefinition.getRelationship()); result = Either
-			 * .right(TitanStatusConverter
-			 * .convertTitanStatusToStorageStatus(associateReqToRelshipType
-			 * .right().value())); return result; }
+			 * if (associateReqToRelshipType.isRight() && associateReqToRelshipType.right().value() != TitanOperationStatus.NOT_FOUND) { log.error("Failed to associate requirement data node " + requirementData + " to the relationship type node " +
+			 * reqDefinition.getRelationship()); result = Either .right(TitanStatusConverter .convertTitanStatusToStorageStatus(associateReqToRelshipType .right().value())); return result; }
 			 */
 
-			log.debug("Going to fetch the requirement " + reqName + " from graph");
-			Either<RequirementDefinition, TitanOperationStatus> requirementDefinitionRes = getRequirement(
-					requirementData.getUniqueId());
+			log.debug("Going to fetch the requirement {} from graph", reqName);
+			Either<RequirementDefinition, TitanOperationStatus> requirementDefinitionRes = getRequirement(requirementData.getUniqueId());
 			if (requirementDefinitionRes.isRight()) {
-				result = Either.right(
-						DaoStatusConverter.convertTitanStatusToStorageStatus(requirementDefinitionRes.right().value()));
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(requirementDefinitionRes.right().value()));
 				return result;
 			}
 
@@ -557,34 +483,28 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public StorageOperationStatus addRequirementToResource(TitanVertex metadataVertex, String reqName,
-			RequirementDefinition reqDefinition, String resourceId, boolean inTransaction) {
+	public StorageOperationStatus addRequirementToResource(TitanVertex metadataVertex, String reqName, RequirementDefinition reqDefinition, String resourceId, boolean inTransaction) {
 
 		StorageOperationStatus result = StorageOperationStatus.OK;
 		try {
 
-			log.debug("Going to add requirement {} to resource . requirement definition is ", reqName, resourceId,
-					reqDefinition);
+			log.debug("Going to add requirement {} to resource . requirement definition is ", reqName, resourceId, reqDefinition);
 
 			validateNodeExists(reqDefinition.getNode());
 
 			// 1. add requirement node in graph and associate it to the resource
 			log.debug("Going to add requirement node in graph and associate it to the resource");
-			Either<TitanVertex, TitanOperationStatus> addRequirementData = addRequirementData(metadataVertex,
-					resourceId, reqName, reqDefinition);
+			Either<TitanVertex, TitanOperationStatus> addRequirementData = addRequirementData(metadataVertex, resourceId, reqName, reqDefinition);
 			if (addRequirementData.isRight()) {
-				log.error("Failed to add requirement {} node to graph. status is {}", reqName,
-						addRequirementData.right().value());
+				log.error("Failed to add requirement {} node to graph. status is {}", reqName, addRequirementData.right().value());
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(addRequirementData.right().value());
 				return result;
 			}
 
 			log.debug("Going to associate the requirement to the appriopriate capability type");
-			TitanOperationStatus associateReqToCapabilityType = associateRequirementToCapabilityType(
-					addRequirementData.left().value(), reqDefinition);
+			TitanOperationStatus associateReqToCapabilityType = associateRequirementToCapabilityType(addRequirementData.left().value(), reqDefinition);
 			if (!associateReqToCapabilityType.equals(TitanOperationStatus.OK)) {
-				log.error("Failed to associate requirement data node {} to the capability type node {}" + reqDefinition,
-						reqDefinition.getCapability());
+				log.error("Failed to associate requirement data node {} to the capability type node {}", reqDefinition.getCapability(), reqDefinition);
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(associateReqToCapabilityType);
 				return result;
 			}
@@ -614,22 +534,19 @@ public class RequirementOperation implements IRequirementOperation {
 	public Either<RequirementDefinition, TitanOperationStatus> getRequirement(String uniqueId) {
 
 		log.debug("Going to fetch the requirement {} from graph.", uniqueId);
-		Either<RequirementData, TitanOperationStatus> reqDataResult = titanGenericDao
-				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), uniqueId, RequirementData.class);
+		Either<RequirementData, TitanOperationStatus> reqDataResult = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), uniqueId, RequirementData.class);
 
 		if (reqDataResult.isRight()) {
-			log.error("Failed to find requirement node in graph " + uniqueId + ". status is " + reqDataResult);
+			log.error("Failed to find requirement node in graph {}. status is {}", uniqueId, reqDataResult);
 			return Either.right(reqDataResult.right().value());
 		}
 
 		log.debug("Going to fetch the capability type associate to requirement {}", uniqueId);
-		Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> capabilityTypeRes = titanGenericDao
-				.getChild(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId, GraphEdgeLabels.CAPABILITY_TYPE,
-						NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
+		Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> capabilityTypeRes = titanGenericDao.getChild(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId, GraphEdgeLabels.CAPABILITY_TYPE, NodeTypeEnum.CapabilityType,
+				CapabilityTypeData.class);
 
 		if (capabilityTypeRes.isRight()) {
-			log.error("Cannot find the capability of a given requirement " + uniqueId + ". status is "
-					+ capabilityTypeRes);
+			log.error("Cannot find the capability of a given requirement {}. status is {}", uniqueId, capabilityTypeRes);
 			return Either.right(capabilityTypeRes.right().value());
 		}
 
@@ -639,37 +556,23 @@ public class RequirementOperation implements IRequirementOperation {
 
 		// TODO: esofer add relationship as edge
 		/*
-		 * Either<List<ImmutablePair<RelationshipTypeData, GraphEdge>>,
-		 * TitanOperationStatus> relationshipRes = titanGenericDao
-		 * .getChildrenNodes( GraphPropertiesDictionary.UNIQUE_ID.getProperty(),
-		 * uniqueId, GraphEdgeLabels.RELATIONSHIP_TYPE,
+		 * Either<List<ImmutablePair<RelationshipTypeData, GraphEdge>>, TitanOperationStatus> relationshipRes = titanGenericDao .getChildrenNodes( GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId, GraphEdgeLabels.RELATIONSHIP_TYPE,
 		 * NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
 		 * 
-		 * if (relationshipRes.isRight() && relationshipRes.right().value() !=
-		 * TitanOperationStatus.NOT_FOUND) {
-		 * log.error("Cannot find the capability of a given requirement " +
-		 * uniqueId + ". status is " + capabilityTypesRes); return
-		 * Either.right(relationshipRes.right().value()); }
+		 * if (relationshipRes.isRight() && relationshipRes.right().value() != TitanOperationStatus.NOT_FOUND) { 
+		 *  return Either.right(relationshipRes.right().value()); }
 		 * 
-		 * String relationshipType = null; if (relationshipRes.isLeft()) {
-		 * List<ImmutablePair<RelationshipTypeData, GraphEdge>> rstPairs =
-		 * relationshipRes .left().value(); if (rstPairs == null || true ==
-		 * rstPairs.isEmpty()) { log.error(
-		 * "Cannot find the capability of a given requirement " + uniqueId);
-		 * return Either.right(TitanOperationStatus.NOT_FOUND); }
+		 * String relationshipType = null; if (relationshipRes.isLeft()) { List<ImmutablePair<RelationshipTypeData, GraphEdge>> rstPairs = relationshipRes .left().value(); if (rstPairs == null || true == rstPairs.isEmpty()) { log.error(
+		 * "Cannot find the capability of a given requirement " + uniqueId); return Either.right(TitanOperationStatus.NOT_FOUND); }
 		 * 
-		 * ImmutablePair<RelationshipTypeData, GraphEdge> relationship =
-		 * rstPairs .get(0); relationshipType = relationship.getKey().getType();
-		 * }
+		 * ImmutablePair<RelationshipTypeData, GraphEdge> relationship = rstPairs .get(0); relationshipType = relationship.getKey().getType(); }
 		 */
 
 		log.debug("Going to fetch the capability type associate to requirement {}", uniqueId);
-		Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao
-				.getParentNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId, GraphEdgeLabels.REQUIREMENT,
-						NodeTypeEnum.Resource, ResourceMetadataData.class);
+		Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getParentNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), uniqueId, GraphEdgeLabels.REQUIREMENT, NodeTypeEnum.Resource,
+				ResourceMetadataData.class);
 		if (parentNode.isRight()) {
-			log.error("Cannot find the parent resource for a given requirement " + uniqueId + ". status is "
-					+ parentNode.right().value());
+			log.error("Cannot find the parent resource for a given requirement {}. status is {}", uniqueId, parentNode.right().value());
 			return Either.right(parentNode.right().value());
 		}
 
@@ -689,15 +592,13 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName,
-			String resourceId) {
+	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName, String resourceId) {
 
 		return getRequirementOfResource(reqName, resourceId, false);
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName,
-			String resourceId, boolean inTransaction) {
+	public Either<RequirementDefinition, StorageOperationStatus> getRequirementOfResource(String reqName, String resourceId, boolean inTransaction) {
 
 		Either<RequirementDefinition, StorageOperationStatus> result = null;
 
@@ -706,9 +607,8 @@ public class RequirementOperation implements IRequirementOperation {
 			Either<RequirementDefinition, TitanOperationStatus> requirementRes = getRequirement(reqUniqueId);
 
 			if (requirementRes.isRight()) {
-				log.debug("Failed to retrieve requirement " + reqName + " associated to resource " + resourceId);
-				result = Either
-						.right(DaoStatusConverter.convertTitanStatusToStorageStatus(requirementRes.right().value()));
+				log.debug("Failed to retrieve requirement {} associated to resource {}", reqName, resourceId);
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(requirementRes.right().value()));
 			} else {
 				result = Either.left(requirementRes.left().value());
 			}
@@ -730,16 +630,14 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName,
-			RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId) {
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName, RequirementImplDef reqDefinition, String resourceId, String parentReqUniqueId) {
 
 		return addRequirementImplToResource(reqName, reqDefinition, resourceId, parentReqUniqueId, false);
 
 	}
 
 	@Override
-	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName,
-			RequirementImplDef reqImplDefinition, String resourceId, String parentReqUniqueId, boolean inTransaction) {
+	public Either<RequirementDefinition, StorageOperationStatus> addRequirementImplToResource(String reqName, RequirementImplDef reqImplDefinition, String resourceId, String parentReqUniqueId, boolean inTransaction) {
 
 		Either<RequirementDefinition, StorageOperationStatus> result = null;
 
@@ -748,11 +646,10 @@ public class RequirementOperation implements IRequirementOperation {
 			// find the requirement defined at the resource itself or under one
 			// of its parents
 			Either<RequirementDefinition, TitanOperationStatus> findReq = getRequirement(parentReqUniqueId);
-			log.debug("After looking for requirement " + parentReqUniqueId + ". status is " + findReq);
+			log.debug("After looking for requirement {}. status is {}", parentReqUniqueId, findReq);
 			if (findReq.isRight()) {
 				TitanOperationStatus status = findReq.right().value();
-				log.error("The requirment " + parentReqUniqueId + " was not found in the graph. status is "
-						+ findReq.right().value());
+				log.error("The requirment {} was not found in the graph. status is {}", parentReqUniqueId, findReq.right().value());
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -765,27 +662,22 @@ public class RequirementOperation implements IRequirementOperation {
 
 			checkNodeIdImplementsRequirementNode(nodeIdImpl, reqNode);
 
-			Either<RequirementImplData, TitanOperationStatus> addRequirementImplData = addRequirementImplData(
-					NodeTypeEnum.Resource, resourceId, reqName, parentReqUniqueId, reqImplDefinition);
+			Either<RequirementImplData, TitanOperationStatus> addRequirementImplData = addRequirementImplData(NodeTypeEnum.Resource, resourceId, reqName, parentReqUniqueId, reqImplDefinition);
 
 			if (addRequirementImplData.isRight()) {
 				TitanOperationStatus status = addRequirementImplData.right().value();
-				log.error("Failed to add requirement data impl node in the graph. status is "
-						+ addRequirementImplData.right().value());
+				log.error("Failed to add requirement data impl node in the graph. status is {}", addRequirementImplData.right().value());
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
 			RequirementImplData requirementImplData = addRequirementImplData.left().value();
 
-			log.debug("Add the properties of the capabilities of the target node " + nodeIdImpl
-					+ " to the requirement impl node " + requirementImplData.getUniqueId() + " in graph.");
-			Map<String, CapabiltyInstance> requirementPropertiesPerCapability = reqImplDefinition
-					.getRequirementProperties();
-			TitanOperationStatus addPropsResult = addCapabilityPropertiesToReqImpl(requirementImplData, reqCapability,
-					nodeIdImpl, requirementPropertiesPerCapability);
+			log.debug("Add the properties of the capabilities of the target node {} to the requirement impl node {} in graph.", nodeIdImpl, requirementImplData.getUniqueId());
+			Map<String, CapabiltyInstance> requirementPropertiesPerCapability = reqImplDefinition.getRequirementProperties();
+			TitanOperationStatus addPropsResult = addCapabilityPropertiesToReqImpl(requirementImplData, reqCapability, nodeIdImpl, requirementPropertiesPerCapability);
 
 			if (addPropsResult != TitanOperationStatus.OK) {
-				log.error("Failed to add capabilities properties to Requirement impl " + requirementImplData);
+				log.error("Failed to add capabilities properties to Requirement impl {}", requirementImplData);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addPropsResult));
 				return result;
 			}
@@ -807,15 +699,13 @@ public class RequirementOperation implements IRequirementOperation {
 		return result;
 	}
 
-	private Either<RequirementImplDef, TitanOperationStatus> getRequirementImplOfResource(String reqName,
-			String resourceId) {
+	private Either<RequirementImplDef, TitanOperationStatus> getRequirementImplOfResource(String reqName, String resourceId) {
 
 		RequirementImplDef requirementImplDef = new RequirementImplDef();
 
-		Either<List<ImmutablePair<RequirementImplData, GraphEdge>>, TitanOperationStatus> reqImplNodesRes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId,
-						GraphEdgeLabels.REQUIREMENT_IMPL, NodeTypeEnum.RequirementImpl, RequirementImplData.class);
-		log.debug("After looking for requirement impl edge of resource " + resourceId);
+		Either<List<ImmutablePair<RequirementImplData, GraphEdge>>, TitanOperationStatus> reqImplNodesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.REQUIREMENT_IMPL,
+				NodeTypeEnum.RequirementImpl, RequirementImplData.class);
+		log.debug("After looking for requirement impl edge of resource {}", resourceId);
 		if (reqImplNodesRes.isRight()) {
 			TitanOperationStatus status = reqImplNodesRes.right().value();
 			return Either.right(status);
@@ -832,15 +722,12 @@ public class RequirementOperation implements IRequirementOperation {
 
 				requirementImplDef.setUniqueId(requirementImplData.getUniqueId());
 
-				Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> nodeImplRes = titanGenericDao
-						.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RequirementImpl),
-								requirementImplData.getUniqueId(), GraphEdgeLabels.NODE_IMPL, NodeTypeEnum.Resource,
-								ResourceMetadataData.class);
+				Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> nodeImplRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RequirementImpl), requirementImplData.getUniqueId(),
+						GraphEdgeLabels.NODE_IMPL, NodeTypeEnum.Resource, ResourceMetadataData.class);
 
 				if (nodeImplRes.isRight()) {
 					TitanOperationStatus status = nodeImplRes.right().value();
-					log.debug("No implementation resource was found under requirement impl "
-							+ requirementImplData.getUniqueId() + ". status is " + status);
+					log.debug("No implementation resource was found under requirement impl {}. status is {}", requirementImplData.getUniqueId(), status);
 
 					return Either.right(status);
 				}
@@ -854,14 +741,11 @@ public class RequirementOperation implements IRequirementOperation {
 					requirementImplDef.setPoint(point);
 				}
 
-				Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> capaInstDataRes = titanGenericDao
-						.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RequirementImpl),
-								requirementImplData.getUniqueId(), GraphEdgeLabels.CAPABILITY_INST,
-								NodeTypeEnum.CapabilityInst, CapabilityInstData.class);
+				Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> capaInstDataRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RequirementImpl), requirementImplData.getUniqueId(),
+						GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst, CapabilityInstData.class);
 				if (capaInstDataRes.isRight()) {
 					TitanOperationStatus status = capaInstDataRes.right().value();
-					log.debug("No capability instance was found under requirement impl "
-							+ requirementImplData.getUniqueId() + ". status is " + status);
+					log.debug("No capability instance was found under requirement impl {}. status is {}", requirementImplData.getUniqueId(), status);
 
 					return Either.right(status);
 				}
@@ -874,14 +758,12 @@ public class RequirementOperation implements IRequirementOperation {
 					GraphEdge edge = capabilityInst.getValue();
 					Map<String, Object> properties = edge.getProperties();
 					if (properties == null) {
-						log.error("Cannot find the property " + GraphPropertiesDictionary.NAME.getProperty()
-								+ " on the edge " + edge);
+						log.error("Cannot find the property {} on the edge {}", GraphPropertiesDictionary.NAME.getProperty(), edge);
 						return Either.right(TitanOperationStatus.INVALID_ELEMENT);
 					}
 					String capabilityName = (String) properties.get(GraphPropertiesDictionary.NAME.getProperty());
 					if (capabilityName == null) {
-						log.error("Cannot find the property " + GraphPropertiesDictionary.NAME.getProperty()
-								+ " on the edge " + edge);
+						log.error("Cannot find the property {} on the edge {}", GraphPropertiesDictionary.NAME.getProperty(), edge);
 						return Either.right(TitanOperationStatus.INVALID_ELEMENT);
 					}
 
@@ -896,30 +778,25 @@ public class RequirementOperation implements IRequirementOperation {
 					// capabiltyInstance.setProperties(actualValues);
 					requirementProperties.put(capabilityName, capabiltyInstance);
 
-					Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> propertyValueNodesRes = titanGenericDao
-							.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst),
-									capabilityInstData.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE,
-									NodeTypeEnum.PropertyValue, PropertyValueData.class);
+					Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> propertyValueNodesRes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityInst),
+							capabilityInstData.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue, PropertyValueData.class);
 
 					if (propertyValueNodesRes.isRight()) {
 						TitanOperationStatus status = propertyValueNodesRes.right().value();
 						if (status != TitanOperationStatus.NOT_FOUND) {
-							log.error("Failed to find the property values of capability instance " + capabilityInstData
-									+ ". status is " + status);
+							log.error("Failed to find the property values of capability instance {}. status is {}", capabilityInstData, status);
 							return Either.right(status);
 						}
 					} else {
-						List<ImmutablePair<PropertyValueData, GraphEdge>> propertyValueNodes = propertyValueNodesRes
-								.left().value();
+						List<ImmutablePair<PropertyValueData, GraphEdge>> propertyValueNodes = propertyValueNodesRes.left().value();
 
 						if (propertyValueNodes != null) {
 
 							Map<String, String> actualValues = new HashMap<String, String>();
-							TitanOperationStatus fillPropertiesResult = fillPropertiesMapFromNodes(propertyValueNodes,
-									actualValues);
+							TitanOperationStatus fillPropertiesResult = fillPropertiesMapFromNodes(propertyValueNodes, actualValues);
 
 							if (fillPropertiesResult != TitanOperationStatus.OK) {
-								log.error("Failed to fetch properties of capability " + capabilityName);
+								log.error("Failed to fetch properties of capability {}", capabilityName);
 								return Either.right(fillPropertiesResult);
 							}
 
@@ -940,7 +817,7 @@ public class RequirementOperation implements IRequirementOperation {
 		}
 
 		if (false == found) {
-			log.debug("Cannot find requirement impl under resource " + resourceId);
+			log.debug("Cannot find requirement impl under resource {}", resourceId);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 
@@ -965,22 +842,19 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	private TitanOperationStatus fillPropertiesMapFromNodes(
-			List<ImmutablePair<PropertyValueData, GraphEdge>> propertyValueNodes, Map<String, String> actualValues) {
+	private TitanOperationStatus fillPropertiesMapFromNodes(List<ImmutablePair<PropertyValueData, GraphEdge>> propertyValueNodes, Map<String, String> actualValues) {
 		if (propertyValueNodes != null) {
 			for (ImmutablePair<PropertyValueData, GraphEdge> propertyValuePair : propertyValueNodes) {
 				PropertyValueData propertyValueData = propertyValuePair.getKey();
 				GraphEdge propertyValueEdge = propertyValuePair.getValue();
 				Map<String, Object> propertyEdgeProps = propertyValueEdge.getProperties();
 				if (propertyEdgeProps == null) {
-					log.error("Cannot find the property " + GraphPropertiesDictionary.NAME.getProperty()
-							+ " on the edge " + propertyValueEdge);
+					log.error("Cannot find the property {} on the edge {}", GraphPropertiesDictionary.NAME.getProperty(), propertyValueEdge);
 					return TitanOperationStatus.INVALID_ELEMENT;
 				}
 				String paramName = (String) propertyEdgeProps.get(GraphPropertiesDictionary.NAME.getProperty());
 				if (paramName == null) {
-					log.error("Cannot find the property " + GraphPropertiesDictionary.NAME.getProperty()
-							+ " on the edge " + propertyValueEdge);
+					log.error("Cannot find the property {} on the edge {}", GraphPropertiesDictionary.NAME.getProperty(), propertyValueEdge);
 					return TitanOperationStatus.INVALID_ELEMENT;
 				}
 				actualValues.put(paramName, propertyValueData.getValue());
@@ -989,18 +863,16 @@ public class RequirementOperation implements IRequirementOperation {
 		return TitanOperationStatus.OK;
 	}
 
-	private TitanOperationStatus addCapabilityPropertiesToReqImpl(RequirementImplData reqImplData, String reqCapability,
-			String nodeIdImpl, Map<String, CapabiltyInstance> propertiesValuePerCapability) {
+	private TitanOperationStatus addCapabilityPropertiesToReqImpl(RequirementImplData reqImplData, String reqCapability, String nodeIdImpl, Map<String, CapabiltyInstance> propertiesValuePerCapability) {
 
 		TitanOperationStatus result = null;
 
-		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> allCapabilities = capabilityOperation
-				.getAllCapabilitiesPairs(nodeIdImpl);
-		log.trace("Atter looking for the capabilities of resource " + nodeIdImpl + ". result is " + allCapabilities);
+		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> allCapabilities = capabilityOperation.getAllCapabilitiesPairs(nodeIdImpl);
+		log.trace("Atter looking for the capabilities of resource {}. result is {}", nodeIdImpl, allCapabilities);
 		if (allCapabilities.isRight()) {
 			TitanOperationStatus status = allCapabilities.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find capabilities of resource " + nodeIdImpl + ". status is " + status);
+				log.error("Failed to find capabilities of resource {}. status is {}", nodeIdImpl, status);
 				return status;
 			}
 		} else {
@@ -1014,37 +886,32 @@ public class RequirementOperation implements IRequirementOperation {
 
 				GraphEdge graphEdge = entry.getValue();
 
-				Either<String, TitanOperationStatus> capabilityNameResult = findCapabilityName(capabilityData,
-						graphEdge);
+				Either<String, TitanOperationStatus> capabilityNameResult = findCapabilityName(capabilityData, graphEdge);
 
 				if (capabilityNameResult.isRight()) {
 					TitanOperationStatus status = capabilityNameResult.right().value();
-					log.error(
-							"Failed to find capability name from the edge associated to capability " + capabilityData);
+					log.error("Failed to find capability name from the edge associated to capability {}", capabilityData);
 					return status;
 				}
 
 				String capabilityName = capabilityNameResult.left().value();
-				log.debug("Going to set properties of capability " + capabilityName);
+				log.debug("Going to set properties of capability {}", capabilityName);
 				String cabilityDataUid = capabilityData.getUniqueId();
 
-				Either<CapabilityTypeData, TitanOperationStatus> ctDataResult = capabilityOperation
-						.getCapabilityTypeOfCapability(cabilityDataUid);
+				Either<CapabilityTypeData, TitanOperationStatus> ctDataResult = capabilityOperation.getCapabilityTypeOfCapability(cabilityDataUid);
 
 				if (ctDataResult.isRight()) {
-					log.error("Cannot find capability type of capbility " + cabilityDataUid + ". status is "
-							+ ctDataResult);
+					log.error("Cannot find capability type of capbility {}. status is {}", cabilityDataUid, ctDataResult);
 					TitanOperationStatus status = ctDataResult.right().value();
 					return status;
 				}
 
 				CapabilityTypeData capabilityTypeData = ctDataResult.left().value();
 
-				Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus = findPropertiesOfCapability(
-						capabilityTypeData);
+				Either<Map<String, PropertyDefinition>, TitanOperationStatus> propertiesStatus = findPropertiesOfCapability(capabilityTypeData);
 				if (propertiesStatus.isRight()) {
 					TitanOperationStatus status = propertiesStatus.right().value();
-					log.error("Failed to fetch properties definitions from capability. status is " + status);
+					log.error("Failed to fetch properties definitions from capability. status is {}", status);
 					return status;
 				}
 
@@ -1055,43 +922,35 @@ public class RequirementOperation implements IRequirementOperation {
 					capabiltyInstance = propertiesValuePerCapability.get(capabilityName);
 				}
 
-				Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceNode = createCapabilityInstanceNode(
-						capabilityName, reqImplData);
+				Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceNode = createCapabilityInstanceNode(capabilityName, reqImplData);
 				if (createCapabilityInstanceNode.isRight()) {
 					TitanOperationStatus status = createCapabilityInstanceNode.right().value();
-					log.error("Failed to create capability instance node (" + capabilityName + ") in graph. status is "
-							+ status);
+					log.error("Failed to create capability instance node ({}) in graph. status is {}", capabilityName, status);
 
 					return status;
 				}
 				CapabilityInstData capabilityInstData = createCapabilityInstanceNode.left().value();
 
-				Either<List<GraphRelation>, TitanOperationStatus> instanceProperties = addPropertiesToCapabilityInstance(
-						properties, capabiltyInstance, capabilityInstData);
+				Either<List<GraphRelation>, TitanOperationStatus> instanceProperties = addPropertiesToCapabilityInstance(properties, capabiltyInstance, capabilityInstData);
 
 				if (instanceProperties.isRight()) {
 					TitanOperationStatus status = instanceProperties.right().value();
-					log.debug("Failed to add properties to capability instance. status is " + status);
+					log.debug("Failed to add properties to capability instance. status is {}", status);
 					return status;
 				}
 
-				Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToCapabilityType = associateCapabilityInstToCapabilityType(
-						capabilityInstData, capabilityTypeData);
+				Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToCapabilityType = associateCapabilityInstToCapabilityType(capabilityInstData, capabilityTypeData);
 				if (associateCapabilityInstToCapabilityType.isRight()) {
 					TitanOperationStatus status = associateCapabilityInstToCapabilityType.right().value();
-					log.error("Failed to associate capability instance " + capabilityInstData
-							+ " to capability type node " + capabilityTypeData + " in graph. status is " + status);
+					log.error("Failed to associate capability instance {} to capability type node {} in graph. status is {}", capabilityInstData, capabilityTypeData, status);
 
 					return status;
 				}
 
-				Either<GraphRelation, TitanOperationStatus> associateCapabilityInst = associateRequirementImplToCapabilityInst(
-						reqImplData, capabilityInstData, capabilityName);
+				Either<GraphRelation, TitanOperationStatus> associateCapabilityInst = associateRequirementImplToCapabilityInst(reqImplData, capabilityInstData, capabilityName);
 				if (associateCapabilityInst.isRight()) {
 					TitanOperationStatus status = associateCapabilityInst.right().value();
-					log.error("Failed to associate requirement impl " + reqImplData + " to capability instance node "
-							+ capabilityInstData + " of capability " + capabilityName + ") in graph. status is "
-							+ status);
+					log.error("Failed to associate requirement impl {} to capability instance node {} of capability {}) in graph. status is {}", reqImplData, capabilityInstData, capabilityName, status);
 
 					return status;
 				}
@@ -1102,16 +961,13 @@ public class RequirementOperation implements IRequirementOperation {
 		return result;
 	}
 
-	private Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfCapability(
-			CapabilityTypeData capabilityTypeData) {
+	private Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfCapability(CapabilityTypeData capabilityTypeData) {
 		String capabilityTypeUid = capabilityTypeData.getUniqueId();
 
-		Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypeResult = capabilityTypeOperation
-				.getCapabilityTypeByUid(capabilityTypeUid);
+		Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypeResult = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeUid);
 
 		if (capabilityTypeResult.isRight()) {
-			log.error("Failed to find capabilityType " + capabilityTypeUid + " in the graph. status is "
-					+ capabilityTypeResult);
+			log.error("Failed to find capabilityType {} in the graph. status is {}", capabilityTypeUid, capabilityTypeResult);
 			return Either.right(capabilityTypeResult.right().value());
 		}
 
@@ -1121,44 +977,37 @@ public class RequirementOperation implements IRequirementOperation {
 		return Either.left(properties);
 	}
 
-	private Either<String, TitanOperationStatus> findCapabilityName(CapabilityData capabilityData,
-			GraphEdge graphEdge) {
+	private Either<String, TitanOperationStatus> findCapabilityName(CapabilityData capabilityData, GraphEdge graphEdge) {
 		Map<String, Object> edgeProps = graphEdge.getProperties();
 		String capabilityName = (String) edgeProps.get(GraphPropertiesDictionary.NAME.getProperty());
 
 		if (capabilityName == null) {
-			log.debug("Cannot find the name of the capability associated to node " + capabilityData);
+			log.debug("Cannot find the name of the capability associated to node {}", capabilityData);
 			return Either.right(TitanOperationStatus.NOT_FOUND);
 		}
 		return Either.left(capabilityName);
 	}
 
-	private Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToCapabilityType(
-			CapabilityInstData capabilityInstData, CapabilityTypeData capabilityTypeData) {
+	private Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToCapabilityType(CapabilityInstData capabilityInstData, CapabilityTypeData capabilityTypeData) {
 
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(capabilityInstData,
-				capabilityTypeData, GraphEdgeLabels.INSTANCE_OF, null);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(capabilityInstData, capabilityTypeData, GraphEdgeLabels.INSTANCE_OF, null);
 
 		return createRelation;
 
 	}
 
 	/**
-	 * add property value node with default value of override value and
-	 * associate it to the capability instance node
+	 * add property value node with default value of override value and associate it to the capability instance node
 	 * 
 	 * @param properties
 	 *            - properties definition. old also default value
 	 * @param capabilityInstance
 	 *            - hold also properties new value(if exists)
 	 * @param capabilityInstData
-	 *            - the graph node which we associate the properties value node
-	 *            to.
+	 *            - the graph node which we associate the properties value node to.
 	 * @return
 	 */
-	private Either<List<GraphRelation>, TitanOperationStatus> addPropertiesToCapabilityInstance(
-			Map<String, PropertyDefinition> properties, CapabiltyInstance capabilityInstance,
-			CapabilityInstData capabilityInstData) {
+	private Either<List<GraphRelation>, TitanOperationStatus> addPropertiesToCapabilityInstance(Map<String, PropertyDefinition> properties, CapabiltyInstance capabilityInstance, CapabilityInstData capabilityInstData) {
 
 		List<GraphRelation> relationsResult = new ArrayList<GraphRelation>();
 
@@ -1171,31 +1020,24 @@ public class RequirementOperation implements IRequirementOperation {
 
 				String propertyValue = setPropertyValue(capabilityInstance, paramName, propertyDefinition);
 
-				PropertyValueData propertyValueData = buildPropertyValueData(capabilityInstData.getUniqueId(),
-						paramName, propertyValue);
+				PropertyValueData propertyValueData = buildPropertyValueData(capabilityInstData.getUniqueId(), paramName, propertyValue);
 
-				log.debug("Before creating property value data node " + propertyValueData + " in graph.");
-				Either<PropertyValueData, TitanOperationStatus> createNode = titanGenericDao
-						.createNode(propertyValueData, PropertyValueData.class);
-				log.debug("Before creating property value data node " + propertyValueData + " in graph. status is "
-						+ createNode);
+				log.debug("Before creating property value data node {} in graph.", propertyValueData);
+				Either<PropertyValueData, TitanOperationStatus> createNode = titanGenericDao.createNode(propertyValueData, PropertyValueData.class);
+				log.debug("Before creating property value data node {} in graph. status is {}", propertyValueData, createNode);
 				if (createNode.isRight()) {
 					TitanOperationStatus status = createNode.right().value();
-					log.error("Failed to create property value node in graph " + propertyValueData + ". status is "
-							+ status);
+					log.error("Failed to create property value node in graph {}. status is {}", propertyValueData, status);
 					return Either.right(status);
 				}
 
 				PropertyValueData propertyValueDataCreated = createNode.left().value();
 
-				Either<GraphRelation, TitanOperationStatus> createRelation = associateCapabilityInstToPropertyValue(
-						capabilityInstData, paramName, propertyValueDataCreated);
+				Either<GraphRelation, TitanOperationStatus> createRelation = associateCapabilityInstToPropertyValue(capabilityInstData, paramName, propertyValueDataCreated);
 
 				if (createRelation.isRight()) {
 					TitanOperationStatus status = createNode.right().value();
-					log.error("Failed to create relation between capability instance "
-							+ capabilityInstData.getUniqueId() + " to property value "
-							+ propertyValueDataCreated.getUniqueId() + " in graph. status is " + status);
+					log.error("Failed to create relation between capability instance {} to property value {} in graph. status is {}", capabilityInstData.getUniqueId(), propertyValueDataCreated.getUniqueId(), status);
 					return Either.right(status);
 				}
 
@@ -1207,23 +1049,18 @@ public class RequirementOperation implements IRequirementOperation {
 		return Either.left(relationsResult);
 	}
 
-	private Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToPropertyValue(
-			CapabilityInstData capabilityInstData, String paramName, PropertyValueData propertyValueDataCreated) {
+	private Either<GraphRelation, TitanOperationStatus> associateCapabilityInstToPropertyValue(CapabilityInstData capabilityInstData, String paramName, PropertyValueData propertyValueDataCreated) {
 
 		Map<String, Object> edgeProps = new HashMap<String, Object>();
 		edgeProps.put(GraphPropertiesDictionary.NAME.getProperty(), paramName);
-		log.debug("Begin creating relation between capability instance " + capabilityInstData + " to property value "
-				+ propertyValueDataCreated + " in graph.");
-		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(capabilityInstData,
-				propertyValueDataCreated, GraphEdgeLabels.PROPERTY_VALUE, edgeProps);
-		log.debug("After creating relation between capability instance " + capabilityInstData + " to property value "
-				+ propertyValueDataCreated + " in graph. status is " + createRelation);
+		log.debug("Begin creating relation between capability instance {} to property value {} in graph.", capabilityInstData, propertyValueDataCreated);
+		Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(capabilityInstData, propertyValueDataCreated, GraphEdgeLabels.PROPERTY_VALUE, edgeProps);
+		log.debug("After creating relation between capability instance {} to property value {} in graph. status is {}", capabilityInstData, propertyValueDataCreated, createRelation);
 
 		return createRelation;
 	}
 
-	private String setPropertyValue(CapabiltyInstance capabilityInstance, String paramName,
-			PropertyDefinition propertyDefinition) {
+	private String setPropertyValue(CapabiltyInstance capabilityInstance, String paramName, PropertyDefinition propertyDefinition) {
 		String propertyValue = NA;
 		if (propertyDefinition.getDefaultValue() != null) {
 			propertyValue = propertyDefinition.getDefaultValue();
@@ -1245,8 +1082,7 @@ public class RequirementOperation implements IRequirementOperation {
 		return paramName + EQUAL_SIGN + paramValue;
 	}
 
-	private PropertyValueData buildPropertyValueData(String capabilityInstDataUid, String paramName,
-			String propertyValue) {
+	private PropertyValueData buildPropertyValueData(String capabilityInstDataUid, String paramName, String propertyValue) {
 		PropertyValueData propertyValueData = new PropertyValueData();
 		propertyValueData.setValue(propertyValue);
 		String uid = UniqueIdBuilder.buildPropertyValueUniqueId(capabilityInstDataUid, paramName);
@@ -1257,8 +1093,7 @@ public class RequirementOperation implements IRequirementOperation {
 		return propertyValueData;
 	}
 
-	private Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceNode(String capabilityName,
-			RequirementImplData reqImplData) {
+	private Either<CapabilityInstData, TitanOperationStatus> createCapabilityInstanceNode(String capabilityName, RequirementImplData reqImplData) {
 
 		CapabilityInstData capabilityInstData = new CapabilityInstData();
 		String uniqueId = UniqueIdBuilder.buildCapabilityInstanceUid(reqImplData.getUniqueId(), capabilityName);
@@ -1269,11 +1104,9 @@ public class RequirementOperation implements IRequirementOperation {
 		capabilityInstData.setCreationTime(creationDate);
 		capabilityInstData.setModificationTime(creationDate);
 
-		log.debug("Before creating capability instance node in graph " + capabilityInstData);
-		Either<CapabilityInstData, TitanOperationStatus> createNode = titanGenericDao.createNode(capabilityInstData,
-				CapabilityInstData.class);
-		log.debug(
-				"After creating capability instance node in graph " + capabilityInstData + ". status is " + createNode);
+		log.debug("Before creating capability instance node in graph {}", capabilityInstData);
+		Either<CapabilityInstData, TitanOperationStatus> createNode = titanGenericDao.createNode(capabilityInstData, CapabilityInstData.class);
+		log.debug("After creating capability instance node in graph {}. status is {}", capabilityInstData, createNode);
 
 		return createNode;
 	}
@@ -1283,14 +1116,12 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	private void checkImplNodeContainsReqCapability(String reqCapability,
-			List<ImmutablePair<CapabilityData, GraphEdge>> capabilitiesValue) {
+	private void checkImplNodeContainsReqCapability(String reqCapability, List<ImmutablePair<CapabilityData, GraphEdge>> capabilitiesValue) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public Either<Map<String, List<RequirementDefinition>>, StorageOperationStatus> getAllRequirementsOfResourceOnly(
-			String resourceId, boolean inTransaction) {
+	public Either<Map<String, List<RequirementDefinition>>, StorageOperationStatus> getAllRequirementsOfResourceOnly(String resourceId, boolean inTransaction) {
 
 		Either<Map<String, List<RequirementDefinition>>, StorageOperationStatus> result = null;
 
@@ -1298,11 +1129,10 @@ public class RequirementOperation implements IRequirementOperation {
 
 			Map<String, RequirementDefinition> requirements = new HashMap<String, RequirementDefinition>();
 			Set<String> caseInsensitiveReqNames = new HashSet<>();
-			TitanOperationStatus status = findAllRequirementsNonRecursive(resourceId, requirements,
-					caseInsensitiveReqNames);
+			TitanOperationStatus status = findAllRequirementsNonRecursive(resourceId, requirements, caseInsensitiveReqNames);
 
 			if (status != TitanOperationStatus.OK) {
-				log.error("Failed to get all requirements of resource " + resourceId + ". status is " + status);
+				log.error("Failed to get all requirements of resource {}. status is  {}", resourceId, status);
 				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 			} else {
 				// TODO handle requirementImpl
@@ -1332,7 +1162,7 @@ public class RequirementOperation implements IRequirementOperation {
 
 		TitanOperationStatus status = findAllRequirementsRecursively(resourceId, requirements, caseInsensitiveReqNames);
 		if (status != TitanOperationStatus.OK) {
-			log.error("Failed to get all requirements of resource " + resourceId + ". status is " + status);
+			log.error("Failed to get all requirements of resource {}. status is  {}", resourceId, status);
 			return Either.right(status);
 		} else {
 			log.debug("The requirements returned for resource {} are {}", resourceId, requirements);
@@ -1340,17 +1170,14 @@ public class RequirementOperation implements IRequirementOperation {
 			if (requirements != null) {
 				for (Entry<String, RequirementDefinition> entry : requirements.entrySet()) {
 					String reqName = entry.getKey();
-					Either<RequirementImplDef, TitanOperationStatus> reqImplRes = this
-							.getRequirementImplOfResource(reqName, resourceId);
+					Either<RequirementImplDef, TitanOperationStatus> reqImplRes = this.getRequirementImplOfResource(reqName, resourceId);
 					if (reqImplRes.isRight()) {
 
 						TitanOperationStatus reqImplResStatus = reqImplRes.right().value();
 						if (reqImplResStatus == TitanOperationStatus.NOT_FOUND) {
-							log.debug("Cannot find implementation of requirement {} under resource {}", reqName,
-									resourceId);
+							log.debug("Cannot find implementation of requirement {} under resource {}", reqName, resourceId);
 						} else {
-							log.error("Cannot find implementation of requirement {} under resource {}", reqName,
-									resourceId);
+							log.error("Cannot find implementation of requirement {} under resource {}", reqName, resourceId);
 							return Either.right(reqImplResStatus);
 						}
 					} else {
@@ -1361,8 +1188,7 @@ public class RequirementOperation implements IRequirementOperation {
 					}
 				}
 			}
-			log.debug("The requirements returned for resource {} after fetching requirement impl are {}", resourceId,
-					requirements);
+			log.debug("The requirements returned for resource {} after fetching requirement impl are {}", resourceId, requirements);
 
 			result = Either.left(requirements);
 
@@ -1372,15 +1198,13 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	@Override
-	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(
-			String resourceId, boolean inTransaction) {
+	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(String resourceId, boolean inTransaction) {
 
 		Either<Map<String, RequirementDefinition>, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<Map<String, RequirementDefinition>, TitanOperationStatus> internalResult = getResourceRequirements(
-					resourceId);
+			Either<Map<String, RequirementDefinition>, TitanOperationStatus> internalResult = getResourceRequirements(resourceId);
 			if (internalResult.isRight()) {
 				TitanOperationStatus status = internalResult.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
@@ -1394,67 +1218,8 @@ public class RequirementOperation implements IRequirementOperation {
 
 			result = Either.left(value);
 			return result;
-
-			// Map<String, RequirementDefinition> requirements = new
-			// HashMap<String, RequirementDefinition>();
-			// TitanOperationStatus status = findAllRequirementsRecursively(
-			// resourceId, requirements);
-			// if (status != TitanOperationStatus.OK) {
-			// log.error("Failed to get all requirements of resource "
-			// + resourceId + ". status is " + status);
-			// return Either.right(TitanStatusConverter
-			// .convertTitanStatusToStorageStatus(status));
-			// } else {
-			// log.debug("The requirements returned for resource "
-			// + resourceId + " are " + requirements);
-			//
-			// if (requirements != null) {
-			// for (Entry<String, RequirementDefinition> entry : requirements
-			// .entrySet()) {
-			// String reqName = entry.getKey();
-			// Either<RequirementImplDef, TitanOperationStatus> reqImplRes =
-			// this
-			// .getRequirementImplOfResource(reqName,
-			// resourceId);
-			// if (reqImplRes.isRight()) {
-			//
-			// TitanOperationStatus reqImplResStatus = reqImplRes
-			// .right().value();
-			// if (reqImplResStatus == TitanOperationStatus.NOT_FOUND) {
-			// log.warn("Cannot find implementation of requirement "
-			// + reqName
-			// + " under resource "
-			// + resourceId);
-			// } else {
-			// log.error("Cannot find implementation of requirement "
-			// + reqName
-			// + " under resource "
-			// + resourceId);
-			// return Either
-			// .right(TitanStatusConverter
-			// .convertTitanStatusToStorageStatus(reqImplResStatus));
-			// }
-			// } else {
-			// RequirementDefinition requirementDefinition = entry
-			// .getValue();
-			// RequirementImplDef requirementImplDef = reqImplRes
-			// .left().value();
-			// requirementDefinition
-			// .setRequirementImpl(requirementImplDef);
-			// }
-			// }
-			// }
-			// log.debug("The requirements returned for resource "
-			// + resourceId + " after fetching requirement impl are "
-			// + requirements);
-			//
-			// result = Either.left(requirements);
-			//
-			// return result;
-			// }
-
 		} finally {
-			if (false == inTransaction) {
+			if (!inTransaction) {
 				if (result == null || result.isRight()) {
 					log.error("Going to execute rollback on graph.");
 					titanGenericDao.rollback();
@@ -1467,26 +1232,21 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(
-			String resourceId) {
+	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> getAllResourceRequirements(String resourceId) {
 
 		return getAllResourceRequirements(resourceId, false);
 
 	}
 
-	public TitanOperationStatus findAllRequirementsRecursively(String resourceId,
-			Map<String, RequirementDefinition> requirements, Set<String> caseInsensitiveReqNames) {
+	public TitanOperationStatus findAllRequirementsRecursively(String resourceId, Map<String, RequirementDefinition> requirements, Set<String> caseInsensitiveReqNames) {
 
-		TitanOperationStatus nonRecursiveResult = findAllRequirementsNonRecursive(resourceId, requirements,
-				caseInsensitiveReqNames);
-		if (!nonRecursiveResult.equals(TitanOperationStatus.OK)
-				&& !nonRecursiveResult.equals(TitanOperationStatus.NOT_FOUND)) {
+		TitanOperationStatus nonRecursiveResult = findAllRequirementsNonRecursive(resourceId, requirements, caseInsensitiveReqNames);
+		if (!nonRecursiveResult.equals(TitanOperationStatus.OK) && !nonRecursiveResult.equals(TitanOperationStatus.NOT_FOUND)) {
 			return nonRecursiveResult;
 		}
 
-		Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao
-				.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId,
-						GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource, ResourceMetadataData.class);
+		Either<ImmutablePair<ResourceMetadataData, GraphEdge>, TitanOperationStatus> parentNodes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource,
+				ResourceMetadataData.class);
 
 		if (parentNodes.isRight()) {
 			TitanOperationStatus parentNodesStatus = parentNodes.right().value();
@@ -1494,15 +1254,13 @@ public class RequirementOperation implements IRequirementOperation {
 				log.debug("Finish to lookup for parnet requirements");
 				return TitanOperationStatus.OK;
 			} else {
-				log.error("Failed to find parent requirements of resource {} . status is {}", resourceId,
-						parentNodesStatus);
+				log.error("Failed to find parent requirements of resource {} . status is {}", resourceId, parentNodesStatus);
 				return parentNodesStatus;
 			}
 		}
 		ImmutablePair<ResourceMetadataData, GraphEdge> parnetNodePair = parentNodes.left().value();
 		String parentUniqueId = parnetNodePair.getKey().getMetadataDataDefinition().getUniqueId();
-		TitanOperationStatus addParentReqStatus = findAllRequirementsRecursively(parentUniqueId, requirements,
-				caseInsensitiveReqNames);
+		TitanOperationStatus addParentReqStatus = findAllRequirementsRecursively(parentUniqueId, requirements, caseInsensitiveReqNames);
 
 		if (addParentReqStatus != TitanOperationStatus.OK) {
 			log.error("Failed to fetch all requirements of resource {}", parentUniqueId);
@@ -1512,11 +1270,9 @@ public class RequirementOperation implements IRequirementOperation {
 		return TitanOperationStatus.OK;
 	}
 
-	private TitanOperationStatus findAllRequirementsNonRecursive(String resourceId,
-			Map<String, RequirementDefinition> requirements, Set<String> caseInsensitiveReqNames) {
-		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> requirementNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId,
-						GraphEdgeLabels.REQUIREMENT, NodeTypeEnum.Requirement, RequirementData.class);
+	private TitanOperationStatus findAllRequirementsNonRecursive(String resourceId, Map<String, RequirementDefinition> requirements, Set<String> caseInsensitiveReqNames) {
+		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> requirementNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.REQUIREMENT,
+				NodeTypeEnum.Requirement, RequirementData.class);
 
 		if (requirementNodes.isRight()) {
 			TitanOperationStatus status = requirementNodes.right().value();
@@ -1533,18 +1289,17 @@ public class RequirementOperation implements IRequirementOperation {
 					if (edgeProps != null) {
 						reqName = (String) edgeProps.get(GraphPropertiesDictionary.NAME.getProperty());
 						if (reqName == null) {
-							log.error("The requirement name is missing on the edge of requirement  " + reqUniqueId);
+							log.error("The requirement name is missing on the edge of requirement {}", reqUniqueId);
 							return TitanOperationStatus.INVALID_ELEMENT;
 						}
 					} else {
-						log.error("The requirement name is missing on the edge of requirement  " + reqUniqueId);
+						log.error("The requirement name is missing on the edge of requirement {}", reqUniqueId);
 						return TitanOperationStatus.INVALID_ELEMENT;
 					}
-					Either<RequirementDefinition, TitanOperationStatus> requirementDefRes = this
-							.getRequirement(reqUniqueId);
+					Either<RequirementDefinition, TitanOperationStatus> requirementDefRes = this.getRequirement(reqUniqueId);
 					if (requirementDefRes.isRight()) {
 						TitanOperationStatus status = requirementDefRes.right().value();
-						log.error("Failed to get requirement properties of requirement " + reqUniqueId);
+						log.error("Failed to get requirement properties of requirement {}", reqUniqueId);
 						return status;
 					}
 
@@ -1552,9 +1307,7 @@ public class RequirementOperation implements IRequirementOperation {
 					requirementDefinition.setName(reqName);
 					// US631462
 					if (caseInsensitiveReqNames.contains(reqName.toLowerCase())) {
-						log.debug(
-								"The requirement {} was already defined in derived resource (case insensitive). Ignore {} from resource {}",
-								reqName, reqName, resourceId);
+						log.debug("The requirement {} was already defined in derived resource (case insensitive). Ignore {} from resource {}", reqName, reqName, resourceId);
 					} else {
 						requirements.put(reqName, requirementDefinition);
 						caseInsensitiveReqNames.add(reqName.toLowerCase());
@@ -1567,12 +1320,10 @@ public class RequirementOperation implements IRequirementOperation {
 	}
 
 	public StorageOperationStatus deleteRequirementFromGraph(String requirementId) {
-		log.debug("Before deleting requirement from graph " + requirementId);
-		Either<RequirementData, TitanOperationStatus> deleteNodeStatus = titanGenericDao.deleteNode(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirementId, RequirementData.class);
+		log.debug("Before deleting requirement from graph {}", requirementId);
+		Either<RequirementData, TitanOperationStatus> deleteNodeStatus = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirementId, RequirementData.class);
 		if (deleteNodeStatus.isRight()) {
-			log.error("failed to delete requirement with id {}. status={}", requirementId,
-					deleteNodeStatus.right().value());
+			log.error("failed to delete requirement with id {}. status={}", requirementId, deleteNodeStatus.right().value());
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteNodeStatus.right().value());
 		}
 		return StorageOperationStatus.OK;
@@ -1584,18 +1335,16 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> deleteAllRequirements(String resourceId,
-			boolean inTransaction) {
+	public Either<Map<String, RequirementDefinition>, StorageOperationStatus> deleteAllRequirements(String resourceId, boolean inTransaction) {
 
 		Either<Map<String, RequirementDefinition>, StorageOperationStatus> result = null;
 
 		try {
-			Either<Map<String, RequirementDefinition>, TitanOperationStatus> deleteAllRes = deleteAllRequirementsOfResource(
-					resourceId);
+			Either<Map<String, RequirementDefinition>, TitanOperationStatus> deleteAllRes = deleteAllRequirementsOfResource(resourceId);
 			if (deleteAllRes.isRight()) {
 				TitanOperationStatus status = deleteAllRes.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to delete requirements of resource " + resourceId + ". status is " + status);
+					log.error("Failed to delete requirements of resource {}. status is {}", resourceId, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
@@ -1620,13 +1369,11 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	public Either<Map<String, RequirementDefinition>, TitanOperationStatus> deleteAllRequirementsOfResource(
-			String resourceId) {
+	public Either<Map<String, RequirementDefinition>, TitanOperationStatus> deleteAllRequirementsOfResource(String resourceId) {
 
 		Map<String, RequirementDefinition> requirements = new HashMap<String, RequirementDefinition>();
 		Set<String> caseInsensitiveReqNames = new HashSet<>();
-		TitanOperationStatus requirementsRes = findAllRequirementsNonRecursive(resourceId, requirements,
-				caseInsensitiveReqNames);
+		TitanOperationStatus requirementsRes = findAllRequirementsNonRecursive(resourceId, requirements, caseInsensitiveReqNames);
 		if (requirementsRes != TitanOperationStatus.OK) {
 			return Either.right(requirementsRes);
 		}
@@ -1640,11 +1387,10 @@ public class RequirementOperation implements IRequirementOperation {
 
 			String requirementUid = requirementDefinition.getUniqueId();
 
-			Either<RequirementData, TitanOperationStatus> deleteNodeRes = titanGenericDao.deleteNode(
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirementUid, RequirementData.class);
+			Either<RequirementData, TitanOperationStatus> deleteNodeRes = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Requirement), requirementUid, RequirementData.class);
 			if (deleteNodeRes.isRight()) {
 				TitanOperationStatus status = deleteNodeRes.right().value();
-				log.error("Failed to delete requirement " + requirementUid + " of resource " + resourceId);
+				log.error("Failed to delete requirement {} of resource ", requirementUid, resourceId);
 				return Either.right(status);
 			}
 		}
@@ -1653,8 +1399,7 @@ public class RequirementOperation implements IRequirementOperation {
 
 	}
 
-	public Map<String, List<RequirementDefinition>> convertRequirementMap(
-			Map<String, RequirementDefinition> requirementMap, String ownerId, String ownerName) {
+	public Map<String, List<RequirementDefinition>> convertRequirementMap(Map<String, RequirementDefinition> requirementMap, String ownerId, String ownerName) {
 
 		Map<String, List<RequirementDefinition>> typeToRequirementMap = new HashMap<String, List<RequirementDefinition>>();
 		requirementMap.forEach((reqName, requirement) -> {

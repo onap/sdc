@@ -186,35 +186,6 @@ public class ComponentCassandraDao extends CassandraDao {
 	}
 
 	/**
-	 * ---------for use in JUnit only--------------- the method deletes all the
-	 * tables in the audit keyspace
-	 * 
-	 * @return the status of the last failed operation or ok if all the deletes
-	 *         were successful
-	 */
-	// public CassandraOperationStatus
-	// deleteAllPartialComponents(ComponentTypeEnum componentTypeEnum) {
-	// logger.info("cleaning all partial components of " + componentTypeEnum);
-	//
-	// String tableName = getTableName(componentTypeEnum);
-	// if (tableName == null) {
-	// BeEcompErrorManager.getInstance().logInvalidInputError("DeletePartialComponentData",
-	// "input type not found " + componentTypeEnum, ErrorSeverity.INFO);
-	// return CassandraOperationStatus.NOT_FOUND;
-	// }
-	// String query = "truncate " + AuditingTypesConstants.COMPONENT_KEYSPACE +
-	// "." + tableName;
-	// try {
-	// session.execute(query);
-	// } catch (Exception e) {
-	// logger.debug("Failed to clean partial components", e);
-	// return CassandraOperationStatus.GENERAL_ERROR;
-	// }
-	// logger.info("cleaning all partial components finished succsesfully.");
-	// return CassandraOperationStatus.OK;
-	// }
-
-	/**
 	 * the method checks if the given table is empty in the artifact keyspace
 	 * 
 	 * @param tableName

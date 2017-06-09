@@ -32,15 +32,24 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 public class ComponentInstanceData extends GraphNode {
 
 	ComponentInstanceDataDefinition componentInstDataDefinition;
+	protected Integer groupInstanceCounter;
 
 	public ComponentInstanceData() {
 		super(NodeTypeEnum.ResourceInstance);
 		this.componentInstDataDefinition = new ComponentInstanceDataDefinition();
+		this.groupInstanceCounter = 0;
 	}
 
 	public ComponentInstanceData(ComponentInstanceDataDefinition componentInstDataDefinition) {
 		super(NodeTypeEnum.ResourceInstance);
 		this.componentInstDataDefinition = componentInstDataDefinition;
+		this.groupInstanceCounter = 0;
+	}
+	
+	public ComponentInstanceData(ComponentInstanceDataDefinition componentInstDataDefinition, Integer groupInstanceCounter) {
+		super(NodeTypeEnum.ResourceInstance);
+		this.componentInstDataDefinition = componentInstDataDefinition;
+		this.groupInstanceCounter = groupInstanceCounter;
 	}
 
 	public ComponentInstanceData(Map<String, Object> properties) {
@@ -59,6 +68,8 @@ public class ComponentInstanceData extends GraphNode {
 		componentInstDataDefinition.setAttributeValueCounter((Integer) properties.get(GraphPropertiesDictionary.ATTRIBUTE_COUNTER.getProperty()));
 		componentInstDataDefinition.setNormalizedName((String) properties.get(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty()));
 		componentInstDataDefinition.setOriginType(OriginTypeEnum.findByValue((String) properties.get(GraphPropertiesDictionary.ORIGIN_TYPE.getProperty())));
+		componentInstDataDefinition.setCustomizationUUID((String) properties.get(GraphPropertiesDictionary.CUSTOMIZATION_UUID.getProperty()));
+		groupInstanceCounter = (Integer) properties.get(GraphPropertiesDictionary.INSTANCE_COUNTER.getProperty());
 	}
 
 	@Override
@@ -76,10 +87,12 @@ public class ComponentInstanceData extends GraphNode {
 		addIfExists(map, GraphPropertiesDictionary.NAME, componentInstDataDefinition.getName());
 		addIfExists(map, GraphPropertiesDictionary.PROPERTY_COUNTER, componentInstDataDefinition.getPropertyValueCounter());
 		addIfExists(map, GraphPropertiesDictionary.ATTRIBUTE_COUNTER, componentInstDataDefinition.getAttributeValueCounter());
+		addIfExists(map, GraphPropertiesDictionary.INSTANCE_COUNTER, groupInstanceCounter);
 		addIfExists(map, GraphPropertiesDictionary.NORMALIZED_NAME, componentInstDataDefinition.getNormalizedName());
 		if (componentInstDataDefinition.getOriginType() != null) {
 			addIfExists(map, GraphPropertiesDictionary.ORIGIN_TYPE, componentInstDataDefinition.getOriginType().getValue());
 		}
+		addIfExists(map, GraphPropertiesDictionary.CUSTOMIZATION_UUID, componentInstDataDefinition.getCustomizationUUID());
 
 		return map;
 	}
@@ -109,6 +122,18 @@ public class ComponentInstanceData extends GraphNode {
 	@Override
 	public String toString() {
 		return "ComponentInstanceData [componentInstDataDefinition=" + componentInstDataDefinition + "]";
+	}
+
+	public Integer getGroupInstanceCounter() {
+		return groupInstanceCounter;
+	}
+
+	public void setGroupInstanceCounter(Integer componentInstanceCounter) {
+		this.groupInstanceCounter = componentInstanceCounter;
+	}
+
+	public Integer increaseAndGetGroupInstanceCounter() {
+		return ++groupInstanceCounter;
 	}
 
 }

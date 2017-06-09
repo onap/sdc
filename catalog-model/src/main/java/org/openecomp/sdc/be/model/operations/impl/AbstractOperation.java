@@ -198,7 +198,7 @@ public abstract class AbstractOperation {
 			if (ctResult.isRight()) {
 				TitanOperationStatus status = ctResult.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to retrieve information on element uniqueId:" + uniqueId + ". status is " + status);
+					log.error("Failed to retrieve information on element uniqueId: {}. status is {}", uniqueId, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(ctResult.right().value()));
 				return result;
@@ -314,13 +314,13 @@ public abstract class AbstractOperation {
 		ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
 
 		if (validateResult.right.booleanValue() == false) {
-			log.debug("The value {} of property from type {} is invalid", value, propertyType);
+			log.debug("The value {} of property from type {} is invalid", propertyType, propertyType);
 			return StorageOperationStatus.INVALID_VALUE;
 		}
 
 		JsonElement jsonElement = validateResult.left;
 
-		log.trace("Going to update value in property definition {} {}", propertyDefinition.getName(), (jsonElement != null ? jsonElement.toString() : null));
+		log.trace("Going to update value in property definition {} {}" , propertyDefinition.getName() , (jsonElement != null ? jsonElement.toString() : null));
 
 		updateValue(propertyDefinition, jsonElement);
 
@@ -360,7 +360,7 @@ public abstract class AbstractOperation {
 			}
 			PropertyDataDefinition propDef = def.getProperty();
 			if (propDef == null) {
-				log.debug("Property in Schema Definition inside property of type {} doesn't exists", type);
+				log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
 				return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT);
 			}
 			innerType = propDef.getType();

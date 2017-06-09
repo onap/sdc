@@ -1,0 +1,73 @@
+<div class="sdc-ecomp-header-wrapper">
+
+    <div class="sdc-ecomp-header">
+
+        <div class="sdc-ecomp-logo-wrapper">
+            <a class="sdc-ecomp-header-title" data-ng-if="clickableLogo==='true'" data-ui-sref="dashboard" translate="PROJECT_TITLE"><span class="sdc-ecomp-logo"></span></a>
+            <a class="sdc-ecomp-header-title" data-ng-if="clickableLogo==='false'"><span class="sdc-ecomp-logo"  translate="PROJECT_TITLE"></span></a>
+            <div class="sdc-ecomp-header-version"> v.{{version}}</div>
+        </div>
+
+        <div class="sdc-ecomp-menu">
+
+            <!-- Top level menu -->
+            <ul class="sdc-ecomp-menu-top-level">
+                <li class="sdc-ecomp-menu-top-level-item"
+                    ng-repeat="item in megaMenuDataObject"
+                    data-ng-if="item.children && item.children.length>0"
+                    >
+                    <span class="selected" data-ng-if="item.menuId === selectedTopMenu.menuId"></span>
+                    <a href data-ng-click="firstMenuLevelClick(item.menuId)">{{item.text}}</a>
+
+                    <!-- Second level menu -->
+                    <div class="sdc-ecomp-menu-second-level" data-ng-if="item.menuId === selectedTopMenu.menuId" data-ng-mouseleave="subMenuLeaveAction(item.menuId)">
+                        <ul>
+                            <li class="sdc-ecomp-menu-second-level-item"
+                                ng-repeat="subItem in selectedTopMenu.children | orderBy : 'column'"
+                                aria-label="{{subItem.text}}"
+                                data-ng-class="{'sdc-ecomp-menu-item-hover': menuItemHover===true}"
+                                ng-mouseover="subMenuEnterAction(subItem.menuId)"
+                                ng-mouseenter="menuItemHover=true"
+                                ng-mouseleave="menuItemHover=false">
+
+                                <!--<i ng-if="subItem.text=='Favorites'" id="favorite-star" class="icon-star favorites-icon-active"></i>-->
+
+                                <a href title="{{subItem.text}}" data-ng-click="memuItemClick(subItem)">{{subItem.text}}</a>
+
+                                <!-- Third and Four menu panel -->
+                                <ul class="sdc-ecomp-menu-third-level" data-ng-if="subItem.menuId === selectedSubMenu.menuId && (selectedSubMenu.children && selectedSubMenu.children.length>0)">
+                                    <li class="sdc-ecomp-menu-third-level-item"
+                                        ng-repeat="thirdItem in selectedSubMenu.children | orderBy : 'column'"
+                                        aria-label="{{thirdItem.text}}">
+                                        <a class="sdc-ecomp-menu-third-level-title" href title="{{thirdItem.text}}" data-ng-click="memuItemClick(thirdItem)">{{thirdItem.text}}</a>
+                                        <span class="sdc-ecomp-menu-four-level-seperator"></span>
+                                        <ul class="sdc-ecomp-menu-four-level">
+                                            <li class="sdc-ecomp-menu-four-level-item" data-ng-repeat="fourItem in thirdItem.children | orderBy : 'column'">
+                                                <a href title="{{fourItem.text}}" data-ng-click="memuItemClick(fourItem)">{{fourItem.text}}</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                </li>
+
+            </ul>
+
+        </div>
+        <div class="sdc-ecomp-user-wrapper">
+            <span class="sdc-ecomp-user-icon"></span>
+            <div class="sdc-ecomp-user-details">
+                <div class="sdc-ecomp-user-details-name-role">
+                    <div sdc-smart-tooltip class="sdc-ecomp-user-details-name" data-ng-bind="user.getName()"></div>
+                    <div class="sdc-ecomp-user-details-role" data-ng-bind="user.getRoleToView()"></div>
+                </div>
+                <div class="sdc-ecomp-user-details-last-login" data-ng-show="user.getLastLogin()!==''">Last Login: {{user.getLastLogin() | date: 'MMM dd &nbsp; hh:mm a' : 'UTC'}}&nbsp;UTC</div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -21,8 +21,11 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.Map;
 
-public class OperationDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class OperationDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -43,22 +46,29 @@ public class OperationDataDefinition implements Serializable {
 
 	/** Description of the operation. */
 	private String description;
+	/** Implementation artifact for the interface. */
+	private ArtifactDataDefinition implementation;
 
+	/**
+	 * This OPTIONAL property contains a list of one or more input parameter
+	 * definitions.
+	 */
+	// @JsonDeserialize(contentUsing = OperationParameterDeserializer.class)
+	private Map<String, PropertyDataDefinition> inputs;
 	public OperationDataDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public OperationDataDefinition(String description) {
 		super();
 		this.description = description;
-
 	}
 
 	public OperationDataDefinition(OperationDataDefinition p) {
 		this.uniqueId = p.uniqueId;
 		this.description = p.description;
-
+		this.implementation = p.implementation;
+		this.inputs = p.inputs;
 	}
 
 	public String getUniqueId() {
@@ -92,5 +102,19 @@ public class OperationDataDefinition implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public ArtifactDataDefinition getImplementation() {
+		return implementation;
+	}
 
+	public void setImplementation(ArtifactDataDefinition implementation) {
+		this.implementation = implementation;
+	}
+
+	public Map<String, PropertyDataDefinition> getInputs() {
+		return inputs;
+	}
+
+	public void setInputs(Map<String, PropertyDataDefinition> inputs) {
+		this.inputs = inputs;
+	}
 }

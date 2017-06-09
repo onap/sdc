@@ -1,0 +1,153 @@
+'use strict';
+import {ValidationUtils} from "app/utils";
+import {ArtifactModel, HeatParameterModel, Component} from "app/models";
+
+export interface IEnvParametersFormViewModelScope extends ng.IScope {
+    isLoading:boolean;
+    type:string;
+    heatParameters:Array<HeatParameterModel>;
+    forms:any;
+    artifactResource:ArtifactModel;
+    buttons:Array<any>;
+    envParametersModal:ng.ui.bootstrap.IModalServiceInstance;
+    tableHeadersList:Array<any>;
+    selectedParameter:HeatParameterModel;
+    templatePopover:string;
+
+    getValidationPattern(type:string):RegExp;
+    isInstance():boolean;
+    validateJson(json:string):boolean;
+    close():void;
+    save():void;
+    openDescPopover(selectedParam:HeatParameterModel):void;
+    closeDescriptionPopover():void;
+}
+
+export class EnvParametersFormViewModel {
+
+    static '$inject' = [
+        '$scope',
+        '$templateCache',
+        '$state',
+        '$uibModalInstance',
+        'artifact',
+        'ValidationUtils',
+        'component'
+    ];
+
+    constructor(private $scope:IEnvParametersFormViewModelScope,
+                private $templateCache:ng.ITemplateCacheService,
+                private $state:any,
+                private $uibModalInstance:ng.ui.bootstrap.IModalServiceInstance,
+                private artifact:ArtifactModel,
+                private ValidationUtils:ValidationUtils,
+                private component:Component) {
+
+
+        this.initScope();
+    }
+
+    private updateInstanceHeat = ():void => {
+        let success = (responseArtifact:ArtifactModel):void => {
+            this.$scope.isLoading = false;
+            this.$uibModalInstance.close();
+        };
+
+        let error = ():void => {
+            this.$scope.isLoading = false;
+            console.info('Failed to load save artifact');
+        };
+
+        this.component.addOrUpdateInstanceArtifact(this.$scope.artifactResource).then(success, error);
+    };
+
+    private initScope = ():void => {
+        this.$scope.forms = {};
+        this.$scope.envParametersModal = this.$uibModalInstance;
+        this.$scope.artifactResource = this.artifact;
+        this.$scope.heatParameters = angular.copy(this.artifact.heatParameters);
+
+        this.$scope.tableHeadersList = [
+            {title: "Parameter", property: "name"},
+            {title: "Default Value", property: "defaultValue", info: "DEFAULT_VALUE_INFO"},
+            {title: "Current Value", property: "currentValue", info: "CURRENT_VALUE_INFO"}
+        ];
+
+        this.$templateCache.put("env-parametr-description-popover.html", require('app/view-models/forms/env-parameters-form/env-parametr-description-popover.html'));
+        this.$scope.templatePopover = "env-parametr-description-popover.html";
+
+        this.$scope.getValidationPattern = (validationType:string, parameterType?:string):RegExp => {
+            return this.ValidationUtils.getValidationPattern(validationType, parameterType);
+        };
+
+        this.$scope.validateJson = (json:string):boolean => {
+            if (!json) {
+                return true;
+            }
+            return this.ValidationUtils.validateJson(json);
+        };
+
+        this.$scope.isInstance = ():boolean => {
+            return !!this.component.selectedInstance;
+        };
+
+        this.$scope.save = ():void => {
+            this.$scope.buttons[0].disabled = true;//prevent double click (DE246266)
+            this.$scope.isLoading = true;
+            this.artifact.heatParameters = this.$scope.heatParameters;
+            this.artifact.heatParameters.forEach((parameter:any):void => {
+                /* if ("" === parameter.currentValue) {
+                 parameter.currentValue = null;
+                 }else */
+                if (!parameter.currentValue && parameter.defaultValue) {
+                    parameter.currentValue = parameter.defaultValue;
+                }
+            });
+
+            if (this.$scope.isInstance()) {
+                this.updateInstanceHeat();
+                return;
+            }
+
+            let success = (responseArtifact:ArtifactModel):void => {
+                this.$scope.isLoading = false;
+                this.$uibModalInstance.close();
+
+            };
+
+            let error = ():void => {
+                this.$scope.isLoading = false;
+                console.info('Failed to load save artifact');
+            };
+
+            this.component.addOrUpdateArtifact(this.$scope.artifactResource).then(success, error);
+        };
+
+        this.$scope.close = ():void => {
+            //this.artifact.heatParameters.forEach((parameter:any):void => {
+            //    if (!parameter.currentValue && parameter.defaultValue) {
+            //        parameter.currentValue = parameter.defaultValue;
+            //    }
+            //});
+            this.$uibModalInstance.dismiss();
+        };
+
+        this.$scope.openDescPopover = (selectedParam:HeatParameterModel):void => {
+            this.$scope.selectedParameter = selectedParam;
+        };
+
+        this.$scope.closeDescriptionPopover = ():void => {
+            this.$scope.selectedParameter = null;
+        };
+
+        this.$scope.buttons = [
+            {'name': 'Save', 'css': 'blue', 'callback': this.$scope.save},
+            {'name': 'Cancel', 'css': 'grey', 'callback': this.$scope.close}
+        ];
+
+        this.$scope.$watch("forms.editForm.$invalid", (newVal, oldVal) => {
+            this.$scope.buttons[0].disabled = this.$scope.forms.editForm.$invalid;
+        });
+
+    };
+}

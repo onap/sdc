@@ -1,0 +1,33 @@
+.first-level{
+    background-color: @tlv_color_u;
+    padding:8px 20px 8px 8px !important;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0px -1px 0px 0px rgba(255, 255, 255, 0.7);
+    height: 40px;
+}
+
+.second-level{
+    background-color: @tlv_color_t;
+    padding:4px 20px 4px 37px !important;
+    border-bottom: 1px solid @main_color_o;
+    height: 30px;
+}
+
+.expand-collapse-title-icon,.expand-collapse-title-text{
+    vertical-align: middle;
+}
+
+.expanded{
+    .first-level,.second-level{
+        background-color:  @tlv_color_v;
+        border-left: solid @main_color_a 4px;
+        box-shadow: 0 0px 3px -1px rgba(0,0,0,0.3);
+        margin-bottom: 2px;
+    }
+    .first-level{
+        padding-left: 4px !important;
+    }
+    .second-level{
+        padding-left: 33px !important;
+    }
+}

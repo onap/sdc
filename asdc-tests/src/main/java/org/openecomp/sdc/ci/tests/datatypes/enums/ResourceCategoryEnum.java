@@ -27,8 +27,9 @@ public enum ResourceCategoryEnum {
 	APPLICATION_L4_APP_SERVER("Application L4+", "Application Server"), APPLICATION_L4_WEB_SERVERS("Application L4+", "Web Server"), APPLICATION_L4_CALL_CONTROL("Application L4+","Call Control"), 
 	APPLICATION_L4_MEDIA_SERVER("Application L4+", "Media Servers"), APPLICATION_L4_LOAD_BALANCER("Application L4+", "Load Balancer"), APPLICATION_L4_DATABASE("Application L4+","Database"), 
 	APPLICATION_L4_FIREWALL("Application L4+", "Firewall"), GENERIC_INFRASTRUCTURE("Generic", "Infrastructure"), GENERIC_ABSTRACT("Generic", "Abstract"), GENERIC_NETWORK_ELEMENTS("Generic","Network Elements"), 
-	GENERIC_DATABASE("Generic", "Database"), NETWORK_CONNECTIVITY_CON_POINT("Network Connectivity", "Connection Points"), NETWORK_CONNECTIVITY_VIRTUAL_LINK("Network Connectivity","Virtual Links");
-
+	GENERIC_DATABASE("Generic", "Database"), NETWORK_CONNECTIVITY_CON_POINT("Network Connectivity", "Connection Points"), NETWORK_CONNECTIVITY_VIRTUAL_LINK("Network Connectivity","Virtual Links"),
+	TEMPLATE_MONITORING_TEMPLATE("Template", "Monitoring Template"), ALLOTTED_RESOURCE("Allotted Resource", "Allotted Resource");
+	
 	private String category;
 	private String subCategory;
 

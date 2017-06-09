@@ -39,9 +39,9 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
@@ -75,9 +75,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Additional information created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
 			@ApiResponse(code = 409, message = "Additional information key already exist") })
 	public Response createResourceAdditionalInformationLabel(@ApiParam(value = "resource id to update with new property", required = true) @PathParam("resourceId") final String resourceId,
-			@ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+			@ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
 
-		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userId, data);
+		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userUserId, data);
 
 	}
 
@@ -89,9 +89,9 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Additional information created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
 			@ApiResponse(code = 409, message = "Additional information key already exist") })
 	public Response createServiceAdditionalInformationLabel(@ApiParam(value = "service id to update with new property", required = true) @PathParam("serviceId") final String serviceId,
-			@ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+			@ApiParam(value = "Additional information key value to be created", required = true) String data, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userUserId) {
 
-		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, request, userId, data);
+		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, request, userUserId, data);
 
 	}
 
@@ -240,7 +240,7 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 
 			if (either.isRight()) {
 				ResponseFormat responseFormat = either.right().value();
-				log.info("Failed to create additional information {}. REason - {}", additionalInfoParameterInfo, responseFormat);
+				log.info("Failed to create additional information {}. Reason - {}", additionalInfoParameterInfo, responseFormat);
 				return buildErrorResponse(responseFormat);
 			}
 

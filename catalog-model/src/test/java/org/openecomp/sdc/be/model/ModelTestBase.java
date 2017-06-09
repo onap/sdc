@@ -33,8 +33,7 @@ public class ModelTestBase {
 	public static void init() {
 		if (ConfigurationManager.getConfigurationManager() == null) {
 			String appConfigDir = "src/test/resources/config";
-			ConfigurationSource configurationSource = new FSConfigurationSource(
-					ExternalConfiguration.getChangeListener(), appConfigDir);
+			ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 			configurationManager = new ConfigurationManager(configurationSource);
 
 			Configuration configuration = new Configuration();

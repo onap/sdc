@@ -40,10 +40,8 @@ import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ProductOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
 import org.openecomp.sdc.be.resources.data.ComponentCacheData;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
 import org.openecomp.sdc.common.util.SerializationUtils;
@@ -66,21 +64,15 @@ public class PopulateComponentCache {
 
 	@Autowired
 	protected ComponentCassandraDao componentCassandraDao;
-
+	
 	@Autowired
-	protected ResourceOperation resourceOperation;
-
-	@Autowired
-	protected ServiceOperation serviceOperation;
-
-	@Autowired
-	protected ProductOperation productOperation;
+	ToscaOperationFacade toscaOperationFacade;
 
 	@Autowired
 	protected ComponentCache componentCache;
 
 	private void exit(String stage, int i) {
-		log.error("Failed on " + stage);
+		log.error("Failed on {}", stage);
 		System.exit(i);
 
 	}
@@ -91,15 +83,16 @@ public class PopulateComponentCache {
 		populateCache(ComponentTypeEnum.PRODUCT);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateCache(ComponentTypeEnum componentTypeEnum) {
 
 		List<String> list = new ArrayList<>();
-		Either<TitanGraph, TitanOperationStatus> graph = resourceOperation.getTitanGenericDao().getGraph();
+		Either<TitanGraph, TitanOperationStatus> graph = toscaOperationFacade.getTitanDao().getGraph();
 		TitanGraph titanGraph = graph.left().value();
-		Iterable vertices = titanGraph.query()
+		Iterable<TitanVertex> vertices = titanGraph.query()
 				.has(GraphPropertiesDictionary.LABEL.getProperty(), componentTypeEnum.name().toLowerCase()).vertices();
 
-		Iterator iterator = vertices.iterator();
+		Iterator<TitanVertex> iterator = vertices.iterator();
 		while (iterator.hasNext()) {
 			TitanVertex vertex = (TitanVertex) iterator.next();
 
@@ -129,36 +122,11 @@ public class PopulateComponentCache {
 			///////////////////////////////////////////////////////////////////////////////////// there.
 			/////////////////////////////////////////////////////////////////////////////////////
 			Component component = null;
-			switch (componentTypeEnum) {
-			case RESOURCE:
-				Either<Resource, StorageOperationStatus> resourceRes = resourceOperation.getComponent(componentUid,
-						false);
-				if (resourceRes.isRight()) {
-					exit("get resource", 1);
-				}
-				component = resourceRes.left().value();
-				break;
-			case SERVICE:
-				Either<Service, StorageOperationStatus> serviceRes = serviceOperation.getComponent(componentUid, false);
-				if (serviceRes.isRight()) {
-					exit("get service", 1);
-				}
-				component = serviceRes.left().value();
-				break;
-			case PRODUCT:
-				Either<Product, StorageOperationStatus> productRes = productOperation.getComponent(componentUid, false);
-				if (productRes.isRight()) {
-					exit("get product", 1);
-				}
-				component = productRes.left().value();
-				break;
-			default:
-				break;
-			}
-
-			if (component == null) {
+			Either<Resource, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaElement(componentUid);
+			if (getComponentRes.isRight()) {
 				exit("get component", 1);
 			}
+			component = getComponentRes.left().value();
 
 			long time2 = System.currentTimeMillis();
 			// System.out.println("fetch resource " + resource.getName());
@@ -198,7 +166,7 @@ public class PopulateComponentCache {
 			 * info("After adding component {} to cassandra. Insert time is {} ms."
 			 * , componentUid, averageInsertTimeInMilli);
 			 * 
-			 * } catch (IOException e) { // TODO Auto-generated catch block
+			 * } catch (IOException e) {
 			 * e.printStackTrace(); }
 			 */
 
@@ -260,11 +228,11 @@ public class PopulateComponentCache {
 			}
 		}
 		long fullSearchEnd2 = System.currentTimeMillis();
-		log.info("esofer time wait to threads finish " + ((fullSearchEnd2 - fullSearchStart2)) + " ms");
+		log.info("esofer time wait to threads finish {} ms",((fullSearchEnd2 - fullSearchStart2)));
 		// }
 		long fullSearchEnd = System.currentTimeMillis();
 
-		log.info("esofer full desrialize time " + ((fullSearchEnd - fullSearchStart)) + " ms");
+		log.info("esofer full desrialize time {} ms",((fullSearchEnd - fullSearchStart)));
 		System.out.println("esofer full desrialize time " + ((fullSearchEnd - fullSearchStart)) + " ms");
 	}
 

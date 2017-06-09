@@ -92,9 +92,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		log.debug("modifier id is {}", userId);
-		log.debug("data is {}", data);
+		log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
 
 		try {
 			Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
@@ -103,7 +101,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
 			buildAttributeFromString(data, attributesWrapper, errorWrapper);
 			if (errorWrapper.isEmpty()) {
-				AttributeBusinessLogic businessLogic = getBusinessLogic(context, () -> AttributeBusinessLogic.class);
+				AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
 				Either<AttributeDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
 				if (createAttribute.isRight()) {
 					errorWrapper.setInnerElement(createAttribute.right().value());
@@ -173,7 +171,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 			buildAttributeFromString(data, attributesWrapper, errorWrapper);
 
 			if (errorWrapper.isEmpty()) {
-				AttributeBusinessLogic businessLogic = getBusinessLogic(context, () -> AttributeBusinessLogic.class);
+				AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
 				Either<AttributeDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
 				// update property
 				if (eitherUpdateAttribute.isRight()) {
@@ -233,7 +231,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 		try {
 
 			// delete the property
-			AttributeBusinessLogic businessLogic = getBusinessLogic(context, () -> AttributeBusinessLogic.class);
+			AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
 			Either<AttributeDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
 			if (eitherAttribute.isRight()) {
 				log.debug("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());

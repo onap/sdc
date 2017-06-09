@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -75,15 +76,19 @@ public class ImportRestUtils extends BaseRestUtils {
 	}
 
 	@SuppressWarnings("unused")
-	private static Integer importNormativeResource(NormativeTypesEnum resource, UserRoleEnum userRole) throws IOException {
+	private static Integer importNormativeResource(NormativeTypesEnum resource, UserRoleEnum userRole)
+			throws IOException {
 		Config config = Utils.getConfig();
 		CloseableHttpResponse response = null;
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
 
 		mpBuilder.addPart("resourceZip", new FileBody(getTestZipFile(resource.getFolderName())));
-		mpBuilder.addPart("resourceMetadata", new StringBody(getTestJsonStringOfFile(resource.getFolderName(), resource.getFolderName() + ".json"), ContentType.APPLICATION_JSON));
+		mpBuilder.addPart("resourceMetadata",
+				new StringBody(getTestJsonStringOfFile(resource.getFolderName(), resource.getFolderName() + ".json"),
+						ContentType.APPLICATION_JSON));
 
-		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(), config.getCatalogBePort());
+		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(),
+				config.getCatalogBePort());
 
 		CloseableHttpClient client = HttpClients.createDefault();
 		try {
@@ -98,16 +103,61 @@ public class ImportRestUtils extends BaseRestUtils {
 
 		}
 	}
-	
-	public static RestResponse importResourceByName(ResourceReqDetails resourceDetails, User importer) throws Exception {
+
+	/*
+	 * public static RestResponse importResourceByName(String resourceName, User
+	 * user) throws IOException { Config config = Utils.getConfig();
+	 * CloseableHttpResponse response = null; MultipartEntityBuilder mpBuilder =
+	 * MultipartEntityBuilder.create();
+	 * 
+	 * mpBuilder.addPart("resourceZip", new
+	 * FileBody(getTestZipFile(resourceName)));
+	 * mpBuilder.addPart("resourceMetadata", new
+	 * StringBody(getTestJsonStringOfFile(resourceName, resourceName + ".json"),
+	 * ContentType.APPLICATION_JSON));
+	 * 
+	 * String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE,
+	 * config.getCatalogBeHost(), config.getCatalogBePort());
+	 * 
+	 * CloseableHttpClient client = HttpClients.createDefault(); try { HttpPost
+	 * httpPost = new HttpPost(url); RestResponse restResponse = new
+	 * RestResponse(); httpPost.addHeader("USER_ID", user.getUserId());
+	 * httpPost.setEntity(mpBuilder.build()); response =
+	 * client.execute(httpPost); HttpEntity entity = response.getEntity();
+	 * String responseBody = null; if (entity != null) { InputStream instream =
+	 * entity.getContent(); StringWriter writer = new StringWriter();
+	 * IOUtils.copy(instream, writer); responseBody = writer.toString(); try {
+	 * 
+	 * } finally { instream.close(); } }
+	 * 
+	 * restResponse.setErrorCode(response.getStatusLine().getStatusCode());
+	 * restResponse.setResponse(responseBody); if (restResponse.getErrorCode()
+	 * == STATUS_CODE_CREATED ){
+	 * 
+	 * }
+	 * 
+	 * return restResponse;
+	 * 
+	 * } finally { closeResponse(response); closeHttpClient(client);
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
+
+	public static RestResponse importResourceByName(ResourceReqDetails resourceDetails, User importer)
+			throws Exception {
 		Config config = Utils.getConfig();
 		CloseableHttpResponse response = null;
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
 
 		mpBuilder.addPart("resourceZip", new FileBody(getTestZipFile(resourceDetails.getName())));
-		mpBuilder.addPart("resourceMetadata", new StringBody(getTestJsonStringOfFile(resourceDetails.getName(), resourceDetails.getName() + ".json"), ContentType.APPLICATION_JSON));
+		mpBuilder.addPart("resourceMetadata",
+				new StringBody(getTestJsonStringOfFile(resourceDetails.getName(), resourceDetails.getName() + ".json"),
+						ContentType.APPLICATION_JSON));
 
-		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(), config.getCatalogBePort());
+		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(),
+				config.getCatalogBePort());
 
 		CloseableHttpClient client = HttpClients.createDefault();
 		try {
@@ -157,7 +207,8 @@ public class ImportRestUtils extends BaseRestUtils {
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
 
 		mpBuilder.addPart("resourceZip", new FileBody(getTestZipFile(resourceName)));
-		mpBuilder.addPart("resourceMetadata", new StringBody(getTestJsonStringOfFile(resourceName, resourceName + ".json"), ContentType.APPLICATION_JSON));
+		mpBuilder.addPart("resourceMetadata", new StringBody(
+				getTestJsonStringOfFile(resourceName, resourceName + ".json"), ContentType.APPLICATION_JSON));
 		HttpEntity requestEntity = mpBuilder.build();
 		String url = String.format(Urls.IMPORT_USER_RESOURCE, config.getCatalogBeHost(), config.getCatalogBePort());
 		Map<String, String> headers = new HashMap<String, String>();
@@ -166,30 +217,37 @@ public class ImportRestUtils extends BaseRestUtils {
 		return HttpRequest.sendHttpPostWithEntity(requestEntity, url, headers);
 	}
 
-	public static RestResponse importNormativeResourceByName(String resourceName, UserRoleEnum userRole) throws IOException {
+	public static RestResponse importNormativeResourceByName(String resourceName, UserRoleEnum userRole)
+			throws IOException {
 		Config config = Utils.getConfig();
 
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
 
 		mpBuilder.addPart("resourceZip", new FileBody(getTestZipFile(resourceName)));
-		mpBuilder.addPart("resourceMetadata", new StringBody(getTestJsonStringOfFile(resourceName, resourceName + ".json"), ContentType.APPLICATION_JSON));
+		mpBuilder.addPart("resourceMetadata", new StringBody(
+				getTestJsonStringOfFile(resourceName, resourceName + ".json"), ContentType.APPLICATION_JSON));
 		HttpEntity requestEntity = mpBuilder.build();
-		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(), config.getCatalogBePort());
+		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(),
+				config.getCatalogBePort());
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put("USER_ID", userRole.getUserId());
 
 		return HttpRequest.sendHttpPostWithEntity(requestEntity, url, headers);
 	}
 
-	public static RestResponse importTestResource(ImportTestTypesEnum resource, UserRoleEnum userRole) throws IOException {
+	public static RestResponse importTestResource(ImportTestTypesEnum resource, UserRoleEnum userRole)
+			throws IOException {
 		Config config = Utils.getConfig();
 		CloseableHttpResponse response = null;
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();
 
 		mpBuilder.addPart("resourceZip", new FileBody(getTestZipFile(resource.getFolderName())));
-		mpBuilder.addPart("resourceMetadata", new StringBody(getTestJsonStringOfFile(resource.getFolderName(), resource.getFolderName() + ".json"), ContentType.APPLICATION_JSON));
+		mpBuilder.addPart("resourceMetadata",
+				new StringBody(getTestJsonStringOfFile(resource.getFolderName(), resource.getFolderName() + ".json"),
+						ContentType.APPLICATION_JSON));
 
-		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(), config.getCatalogBePort());
+		String url = String.format(Urls.IMPORT_RESOURCE_NORMATIVE, config.getCatalogBeHost(),
+				config.getCatalogBePort());
 
 		CloseableHttpClient client = HttpClients.createDefault();
 		try {
@@ -223,16 +281,20 @@ public class ImportRestUtils extends BaseRestUtils {
 		}
 	}
 
-	public static Boolean removeNormativeTypeResource(NormativeTypesEnum current) throws FileNotFoundException, IOException, ClientProtocolException {
-		User user = new User(UserRoleEnum.ADMIN.getFirstName(), UserRoleEnum.ADMIN.getLastName(), UserRoleEnum.ADMIN.getUserId(), null, null, null);
-		RestResponse deleteResponse = ResourceRestUtils.deleteResourceByNameAndVersion(user, current.getNormativeName(), "1.0");
+	public static Boolean removeNormativeTypeResource(NormativeTypesEnum current)
+			throws FileNotFoundException, IOException, ClientProtocolException {
+		User user = new User(UserRoleEnum.ADMIN.getFirstName(), UserRoleEnum.ADMIN.getLastName(),
+				UserRoleEnum.ADMIN.getUserId(), null, null, null);
+		RestResponse deleteResponse = ResourceRestUtils.deleteResourceByNameAndVersion(user, current.getNormativeName(),
+				"1.0");
 		if (deleteResponse.getErrorCode() == 200) {
 			return true;
 		}
 		return false;
 	}
 
-	public static void validateImportTestTypesResp(ImportTestTypesEnum currResource, RestResponse restResponse) throws IOException, JSONException {
+	public static void validateImportTestTypesResp(ImportTestTypesEnum currResource, RestResponse restResponse)
+			throws IOException, JSONException {
 
 		// assertTrue( status != ResourceUtils.STATUS_CODE_IMPORT_SUCCESS );
 
@@ -243,9 +305,11 @@ public class ImportRestUtils extends BaseRestUtils {
 		assertEquals("Check response code after create service", errorInfo.getCode(), restResponse.getErrorCode());
 
 		// validate create service response vs actual
-		List<String> variables = (currResource.getErrorParams() != null ? currResource.getErrorParams() : new ArrayList<String>());
+		List<String> variables = (currResource.getErrorParams() != null ? currResource.getErrorParams()
+				: new ArrayList<String>());
 		if (restResponse.getErrorCode() != 200) {
-			ErrorValidationUtils.checkBodyResponseOnError(currResource.getActionStatus().name(), variables, restResponse.getResponse());
+			ErrorValidationUtils.checkBodyResponseOnError(currResource.getActionStatus().name(), variables,
+					restResponse.getResponse());
 		}
 	}
 
@@ -253,7 +317,8 @@ public class ImportRestUtils extends BaseRestUtils {
 		// String sourceDir = "src/test/resources/CI/importResourceTests";
 		Config config = Utils.getConfig();
 		String sourceDir = config.getImportResourceTestsConfigDir();
-		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + folderName, fileName);
+		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + folderName,
+				fileName);
 		byte[] fileContent = Files.readAllBytes(filePath);
 		String content = new String(fileContent);
 		return content;
@@ -262,7 +327,8 @@ public class ImportRestUtils extends BaseRestUtils {
 	private static File getTestZipFile(String elementName) throws IOException {
 		Config config = Utils.getConfig();
 		String sourceDir = config.getImportResourceTestsConfigDir();
-		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + elementName, "normative-types-new-" + elementName + ".zip");
+		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + elementName,
+				"normative-types-new-" + elementName + ".zip");
 		return filePath.toFile();
 	}
 
@@ -289,18 +355,11 @@ public class ImportRestUtils extends BaseRestUtils {
 	public static RestResponseAsByteArray getCsar(String csarUid, User sdncModifierDetails) throws Exception {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_CSAR_USING_SIMULATOR, config.getCatalogBeHost(), config.getCatalogBePort(), csarUid);
+		String url = String.format(Urls.GET_CSAR_USING_SIMULATOR, config.getCatalogBeHost(), config.getCatalogBePort(),
+				csarUid);
 
 		String userId = sdncModifierDetails.getUserId();
-
 		Map<String, String> headersMap = prepareHeadersMap(userId);
-
-		// Gson gson = new Gson();
-		// String userBodyJson = gson.toJson(resourceDetails);
-		HttpRequest http = new HttpRequest();
-		// System.out.println(url);
-		// System.out.println(userBodyJson);
-
 		HttpRestClient httpRestClient = new HttpRestClient();
 
 		for (Map.Entry<String, String> mapEntry : headersMap.entrySet()) {
@@ -318,11 +377,13 @@ public class ImportRestUtils extends BaseRestUtils {
 		Config config = Utils.getConfig();
 		String sourceDir = config.getImportResourceTestsConfigDir();
 		sourceDir += File.separator + ".." + File.separator + "importTypesTest" + File.separator;
-		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + elementName, elementName + ".zip");
+		java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir + File.separator + elementName,
+				elementName + ".zip");
 		return filePath.toFile();
 	}
 
-	public static RestResponse importNewGroupTypeByName(String groupTypeName, UserRoleEnum userRole) throws IOException {
+	public static RestResponse importNewGroupTypeByName(String groupTypeName, UserRoleEnum userRole)
+			throws IOException {
 		Config config = Utils.getConfig();
 
 		MultipartEntityBuilder mpBuilder = MultipartEntityBuilder.create();

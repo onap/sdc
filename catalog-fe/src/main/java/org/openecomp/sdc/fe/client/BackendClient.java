@@ -151,7 +151,7 @@ public class BackendClient {
 				}
 				backendHttpClient.close();
 			} catch (IOException e) {
-				log.error("failed to close httpClient: " + e.getMessage());
+				log.error("failed to close httpClient: {}", e.getMessage());
 			}
 
 		}
@@ -168,7 +168,7 @@ public class BackendClient {
 			if (headerValue != null) {
 				httpPost.setHeader(headerName, headerValue);
 			} else {
-				log.error("missing required header " + headerName);
+				log.error("missing required header {}", headerName);
 				return allHeadersAreSet;
 			}
 		}

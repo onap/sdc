@@ -37,8 +37,7 @@ public interface IProductOperation extends IComponentOperation {
 
 	public Either<Product, StorageOperationStatus> deleteProduct(String productId, boolean inTransaction);
 
-	public Either<List<Product>, StorageOperationStatus> getFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
+	public Either<List<Product>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
 
 	public void rollback();
 

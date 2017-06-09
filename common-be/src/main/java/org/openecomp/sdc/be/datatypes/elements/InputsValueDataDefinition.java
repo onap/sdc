@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-public class InputsValueDataDefinition {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class InputsValueDataDefinition extends ToscaDataDefinition {
 	private String name;
 	private String value;
 	private String uniqueId;
@@ -33,7 +35,6 @@ public class InputsValueDataDefinition {
 
 	public InputsValueDataDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getUniqueId() {

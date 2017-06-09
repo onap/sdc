@@ -13,7 +13,6 @@
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
 			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter, org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter</param-value>
-			<!-- <param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter</param-value> -->
 		</init-param>
 
 		<load-on-startup>1</load-on-startup>
@@ -46,9 +45,6 @@
 		</init-param>
 		<init-param>
 			<param-name>jersey.config.server.provider.classnames</param-name>
-<!-- 			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter,org.openecomp.sdc.be.filters.BasicAuthenticationFilter, org.openecomp.sdc.be.filters.ComponentsAvailabilityFilter</param-value> -->
-			
-			<!-- Closed till the feature done and basic authentication defined with M Lando -->
 			<param-value>com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;org.glassfish.jersey.media.multipart.MultiPartFeature,org.openecomp.sdc.be.filters.BeServletFilter,org.openecomp.sdc.be.filters.BasicAuthenticationFilter</param-value>
 		</init-param>
 
@@ -58,6 +54,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>jerseyDistribution</servlet-name>
+		<url-pattern>/sdc/*</url-pattern>
 		<url-pattern>/asdc/*</url-pattern>
 	</servlet-mapping>
 
@@ -78,7 +75,20 @@
 		<async-supported>true</async-supported>
 	</servlet>
 	
-	<!-- ECOMP Portal -->	
+	<!-- ECOMP Portal -->
+	<servlet>
+		<servlet-name>ECOMPServlet</servlet-name>
+		<servlet-class>org.openecomp.portalsdk.core.onboarding.crossapi.PortalRestAPIProxy</servlet-class>
+		<load-on-startup>3</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<!-- Removed, the servlet mapping will be taken from annotation -->
+<!-- 	<servlet-mapping>
+		<servlet-name>ECOMPServlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping> -->
+	
 	<servlet>
 		<servlet-name>ViewStatusMessages</servlet-name>
 		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>

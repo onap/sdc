@@ -23,8 +23,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 import java.io.Serializable;
 import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public class PropertyRule implements Serializable {
+public class PropertyRule extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 

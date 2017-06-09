@@ -29,6 +29,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openecomp.portalsdk.core.onboarding.ueb.UebException;
+import org.openecomp.portalsdk.core.onboarding.ueb.UebManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -42,9 +44,6 @@ import org.openecomp.sdc.common.listener.AppContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
-
-import org.openecomp.portalsdk.core.onboarding.ueb.UebException;
-import org.openecomp.portalsdk.core.onboarding.ueb.UebManager;
 
 public class BEAppContextListener extends AppContextListener implements ServletContextListener {
 
@@ -68,7 +67,7 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 		DownloadArtifactLogic downloadArtifactLogic = new DownloadArtifactLogic();
 		context.getServletContext().setAttribute(Constants.DOWNLOAD_ARTIFACT_LOGIC_ATTR, downloadArtifactLogic);
 
-		context.getServletContext().setAttribute(Constants.SDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
+		context.getServletContext().setAttribute(Constants.ASDC_RELEASE_VERSION_ATTR, getVersionFromManifest(context));
 
 		// Monitoring service
 		BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
@@ -115,7 +114,7 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 		try {
 			Manifest mf = new Manifest(inputStream);
 			Attributes atts = mf.getMainAttributes();
-			version = atts.getValue(Constants.SDC_RELEASE_VERSION_ATTR);
+			version = atts.getValue(Constants.ASDC_RELEASE_VERSION_ATTR);
 			if (version == null || version.isEmpty()) {
 				log.warn("failed to read ASDC version from MANIFEST.");
 			} else {

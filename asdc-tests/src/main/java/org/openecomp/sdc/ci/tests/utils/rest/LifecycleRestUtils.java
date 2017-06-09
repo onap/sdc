@@ -99,7 +99,40 @@ public class LifecycleRestUtils extends BaseRestUtils {
 		}
 		return LifeCycleStatesEnumResourceResponse;
 	}
+	
+	public static RestResponse changeExternalResourceState(String uuid, User sdncModifierDetails, LifeCycleStatesEnum lifeCycleStatesEnum) throws IOException {
+		String url = String.format(Urls.CHANGE_RESOURCE_LIFECYCLE_STATE_EXTERNAL_API, "localhost", "8080", uuid, lifeCycleStatesEnum);
+		String userId = sdncModifierDetails.getUserId();
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), "no-cache");
+		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), "Basic dGVzdDoxMjM0NTY=");
+		headersMap.put("X-ECOMP-InstanceID", "test");
+		return sendPost(url, createLifecycleCommentJson(COMMENT), userId, acceptHeaderData,headersMap);
+	}
 
+	public static RestResponse changeExternalServiceState(ServiceReqDetails serviceDetails, User sdncModifierDetails, LifeCycleStatesEnum lifeCycleStatesEnum) throws IOException {
+		String url = String.format(Urls.CHANGE_SERVICE_LIFECYCLE_STATE_EXTERNAL_API, "localhost", "8080", serviceDetails.getUUID(), lifeCycleStatesEnum);
+		String userId = sdncModifierDetails.getUserId();
+		Map<String, String> headersMap = new HashMap<>();
+		headersMap.put(HttpHeaderEnum.CACHE_CONTROL.getValue(), "no-cache");
+		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), "Basic dGVzdDoxMjM0NTY=");
+		headersMap.put("X-ECOMP-InstanceID", "test");
+		RestResponse lifeCycleStatesEnumServiceResponse = sendPost(url, createLifecycleCommentJson(COMMENT), userId, acceptHeaderData,headersMap);
+		
+		if (lifeCycleStatesEnumServiceResponse.getErrorCode() == STATUS_CODE_SUCCESS) {
+			String serviceUniqueId = ResponseParser
+					.getValueFromJsonResponse(lifeCycleStatesEnumServiceResponse.getResponse(), "uniqueId");
+			serviceDetails.setUniqueId(serviceUniqueId);
+			String serviceVersion = ResponseParser
+					.getValueFromJsonResponse(lifeCycleStatesEnumServiceResponse.getResponse(), "version");
+			serviceDetails.setVersion(serviceVersion);
+			String stateFromJsonResponse = ResponseParser
+					.getValueFromJsonResponse(lifeCycleStatesEnumServiceResponse.getResponse(), "lifecycleState");
+			serviceDetails.setLifecycleState(LifecycleStateEnum.valueOf(stateFromJsonResponse));
+		}
+		return lifeCycleStatesEnumServiceResponse;
+	}
+	
 	public static RestResponse changeServiceState(ServiceReqDetails serviceDetails, User sdncModifierDetails,
 			String version, LifeCycleStatesEnum LifeCycleStatesEnum) throws Exception {
 		{
@@ -302,20 +335,37 @@ public class LifecycleRestUtils extends BaseRestUtils {
 	public static RestResponse changeDistributionStatus(ServiceReqDetails serviceDetails, String version, User user,
 			String userRemarks, DistributionStatusEnum reqDistributionStatus) throws Exception {
 		String uniqueId = serviceDetails.getUniqueId();
-		if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTION_APPROVED) {
-			return sendApproveDistribution(user, uniqueId, userRemarks);
-		} else if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTION_REJECTED) {
-			return rejectDistribution(user, userRemarks, uniqueId);
-		} else if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTED) {
-			Config config = Utils.getConfig();
-			// String url =
-			// String.format("http://%s:%s/sdc2/rest/v1/catalog/services/%s/tempUrlToBeDeleted",
-			// config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId);
-			String url = String.format(Urls.ACTIVATE_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(),
-					uniqueId, "PROD");
-			return sendDistrState(user, userRemarks, url);
-		} else
-			return null;
+		Config config = Utils.getConfig();
+		String environmentName = "PROD-Andreys-Only";
+//		String environmentName = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration().getEnvironments().get(0);
+		DistributionStatusEnum distributionStatusEnum = DistributionStatusEnum.findState(reqDistributionStatus.getValue());
+		switch(distributionStatusEnum){
+			case DISTRIBUTION_APPROVED:
+				return sendApproveDistribution(user, uniqueId, userRemarks);
+			case DISTRIBUTED:
+				String url = String.format(Urls.ACTIVATE_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId, environmentName);
+				return sendDistrState(user, userRemarks, url);
+			case DISTRIBUTION_REJECTED:
+				return rejectDistribution(user, userRemarks, uniqueId);
+			default:
+				return null;	
+			
+		}
+		
+//		if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTION_APPROVED) {
+//			return sendApproveDistribution(user, uniqueId, userRemarks);
+//		} else if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTION_REJECTED) {
+//			return rejectDistribution(user, userRemarks, uniqueId);
+//		} else if (reqDistributionStatus == DistributionStatusEnum.DISTRIBUTED) {
+//			Config config = Utils.getConfig();
+//			// String url =
+//			// String.format("http://%s:%s/sdc2/rest/v1/catalog/services/%s/tempUrlToBeDeleted",
+//			// config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId);
+//			String url = String.format(Urls.ACTIVATE_DISTRIBUTION, config.getCatalogBeHost(), config.getCatalogBePort(),
+//					uniqueId, "PROD");
+//			return sendDistrState(user, userRemarks, url);
+//		} else
+//			return null;
 
 	}
 
@@ -349,9 +399,9 @@ public class LifecycleRestUtils extends BaseRestUtils {
 
 		HttpRequest httpRequest = new HttpRequest();
 		logger.debug(url);
-		logger.debug("Send POST request to create service: {}", url);
-		logger.debug("Service body: {}", serviceBodyJson);
-		logger.debug("Service headers: {}", headersMap);
+		logger.debug("Send POST request to create service: {}",url);
+		logger.debug("Service body: {}",serviceBodyJson);
+		logger.debug("Service headers: {}",headersMap);
 		RestResponse rejectDistributionResponse = httpRequest.httpSendPost(url, serviceBodyJson, headersMap);
 
 		return rejectDistributionResponse;

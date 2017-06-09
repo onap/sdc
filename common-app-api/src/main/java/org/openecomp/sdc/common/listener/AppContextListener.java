@@ -62,7 +62,8 @@ public class AppContextListener implements ServletContextListener {
 
 		String appConfigDir = configHome + File.separator + appName;
 		// ChangeListener changeListener = new ChangeListener();
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
+				appConfigDir);
 
 		context.getServletContext().setAttribute(Constants.CONFIGURATION_SOURCE_ATTR, configurationSource);
 
@@ -78,7 +79,8 @@ public class AppContextListener implements ServletContextListener {
 		ExternalConfiguration.stopListenForFileChanges();
 	}
 
-	private String setAndGetAttributeInContext(ServletContextEvent context, Map<String, String> manifestAttr, String attr) {
+	private String setAndGetAttributeInContext(ServletContextEvent context, Map<String, String> manifestAttr,
+			String attr) {
 
 		String name = manifestAttr.get(attr);
 		if (name != null) {
@@ -116,7 +118,6 @@ public class AppContextListener implements ServletContextListener {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

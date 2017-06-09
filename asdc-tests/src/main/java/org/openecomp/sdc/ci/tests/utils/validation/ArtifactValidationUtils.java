@@ -44,7 +44,9 @@ import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class ArtifactValidationUtils {
@@ -118,10 +120,7 @@ public class ArtifactValidationUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		ESArtifactData esArtifactObject = mapper.readValue(jsourceElement.toString(), ESArtifactData.class);
 
-		// logger.debug("got artifact details from ElasticSearch as json");
-
 		return esArtifactObject;
-
 	}
 
 	public static void validateArtifactReqVsResp(ArtifactReqDetails expectedArtifactDetails,
@@ -207,7 +206,6 @@ public class ArtifactValidationUtils {
 		String sourceDir = config.getResourceConfigDir();
 		String testResourcesPath = sourceDir + File.separator + folderName;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		// logger.debug("listFileName: {}", listFileName.get(positionInlist));
 		String payload = FileUtils.loadPayloadFile(listFileName, ext, true);
 		heatArtifactDetails.setPayload(payload);
 		heatArtifactDetails.setArtifactName(listFileName.get(positionInlist) + "." + ext);
@@ -217,7 +215,6 @@ public class ArtifactValidationUtils {
 	public static ArtifactReqDetails replaceDefaultArtWithArtFromList(ArtifactReqDetails heatArtifactDetails,
 			String heatExtension, String folderName, int positionInlist) throws IOException, Exception {
 		List<String> listOfArtifactFromFolder = getListOfArtifactFromFolder(folderName);
-		// logger.debug("listFileName: {}", listOfArtifactFromFolder.get(positionInlist));
 		String payload = FileUtils.loadPayloadFileFromListUsingPosition(listOfArtifactFromFolder, heatExtension, true,
 				positionInlist);
 		heatArtifactDetails.setPayload(payload);

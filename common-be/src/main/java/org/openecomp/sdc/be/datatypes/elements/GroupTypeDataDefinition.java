@@ -24,7 +24,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class GroupTypeDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class GroupTypeDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 

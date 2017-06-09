@@ -1,0 +1,134 @@
+<div class="workspace-inputs">
+    <div class="table-container-flex">
+        <div class="w-sdc-inputs-search pull-left hideme">
+            <input type="text" class="w-sdc-inputs-search-input" placeholder="Search"/>
+            <div class="search-icon-container">
+                <span class="w-sdc-search-icon inputs-search-icon magnification-white"></span>
+            </div>
+        </div>
+        <div class="table">
+            <div class="table-header">Resource instance inputs</div>
+            <div class="body">
+                <div class="table-loader" ng-class="{'tlv-loader large loader': isLoading}"></div>
+                <perfect-scrollbar scroll-y-margin-offset="0" class="scrollbar-container">
+
+                    <expand-collapse expanded-selector=".vf-instance-list.{{$index}}"
+                                     class="expand-collapse-table-row"
+                                     load-data-function="instance.originType=='VF' ? loadInstanceInputs(instance):loadInstanceProperties(instance)"
+                                     is-close-on-init="true"
+                                     data-ng-repeat-start="instance in vfInstancesList track by $index">
+                        <div class="flex-container data-row">
+                            <div class="expand-collapse-inputs-table-icon"></div>
+                            <div class="table-col-general flex-item text" data-tests-id="inputs-vf-instance-{{$index}}">
+                                <span class="title-text">{{instance.name}}</span>
+                            </div>
+                        </div>
+                    </expand-collapse>
+
+                    <div data-ng-repeat-end="" class="vf-instance-list {{$index}}">
+                        <div data-ng-if="instance.originType=='VF'">
+
+                            <expand-collapse expanded-selector=".input-list.{{$parent.$index}}-{{$index}}"
+                                             class="expand-collapse-table-row"
+                                             load-data-function="loadInputPropertiesForInstance(instance.uniqueId, input)"
+                                             is-close-on-init="true"
+                                             data-ng-repeat-start="input in instance.inputs track by $index">
+                                <input-row input="input"
+                                           is-view-only='isViewOnly'
+                                           instance-id='instance.uniqueId'
+                                           instance-name='instance.name'
+                                           instance-inputs-map="instanceInputsMap"
+                                           on-checkbox-clicked="checkArrowState()"></input-row>
+                            </expand-collapse>
+
+                            <div data-ng-repeat-end="" class="input-list {{$parent.$index}}-{{$index}}">
+                                <div class="empty-row" ng-if="input.properties.length===0">No properties to display
+                                </div>
+                                <div ng-repeat="property in input.properties track by $index">
+                                    <property-row property="property" instance-name="instance.name"></property-row>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-ng-if="instance.originType!='VF'">
+                            <div class="empty-row" data-tests-id="empty-row" ng-if="instance.properties.length===0"> No
+                                properties to display
+                            </div>
+                            <div ng-repeat="property in instance.properties track by $index">
+                                <property-row instance-properties-map="instancePropertiesMap" property="property"
+                                              on-name-clicked="openSelectPropertyDataTypeViewModel(instance.uniqueId,property)"
+                                              on-checkbox-clicked="checkArrowState()"
+                                              instance-name="instance.name"
+                                              instance-id='instance.uniqueId'></property-row>
+                            </div>
+                        </div>
+                    </div>
+
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+
+    <div class="inputs-button-container pull-left">
+        <div ng-click="onArrowPressed()" ng-class="{disabled: isArrowDisabled || isViewOnly}" data-ng-disabled="isArrowDisabled || isViewOnly" class="right-arrow-btn" data-tests-id="add-inputs-to-service-button"></div>
+    </div>
+
+    <div class="table-container-flex">
+        <div class="w-sdc-inputs-search pull-left">
+            <input type="text" class="w-sdc-inputs-search-input" data-ng-model="search.filterTerm" placeholder="Search"
+                   data-ng-model-options="{debounce: 200}"/>
+            <div class="search-icon-container">
+                <span class="w-sdc-search-icon inputs-search-icon magnification-white"></span>
+            </div>
+        </div>
+        <div class="table">
+            <div class="body">
+                <div class="table-header">Service inputs</div>
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <expand-collapse expanded-selector=".service-inputs.{{$index}}"
+                                     class="expand-collapse-table-row"
+                                     load-data-function="loadInputInputs(serviceInput)"
+                                     is-close-on-init="true"
+                                     data-ng-repeat-start="serviceInput in component.inputs | filter:search track by $index ">
+                        <input-row input="serviceInput" is-view-only='isViewOnly' instance-name='serviceInput.name'
+                                   delete-input='deleteInput(serviceInput)'
+                                   data-tests-id="service-input-{{$index}}"
+                                   class="service-input-row"
+                                   on-name-clicked="openEditValueModal(serviceInput)"
+                                   ng-class="serviceInput.isNew ? 'new-input': ''"
+                        ></input-row>
+                    </expand-collapse>
+
+                    <div data-ng-repeat-end="" class="service-inputs {{$index}}">
+                        <div ng-if="serviceInput.inputs.length > 0">
+                            <expand-collapse expanded-selector=".input-inputs-list.{{$parent.$index}}-{{$index}}"
+                                             class="expand-collapse-table-row"
+                                             load-data-function="loadInputPropertiesForInstance(input.componentInstanceId, input)"
+                                             is-close-on-init="true"
+                                             data-ng-repeat-start="input in serviceInput.inputs track by $index">
+                                <input-row input="input"
+                                           is-view-only='isViewOnly'
+                                           instance-name='input.componentInstanceName'></input-row>
+                            </expand-collapse>
+
+                            <div data-ng-repeat-end="" class="input-inputs-list {{$parent.$index}}-{{$index}}">
+                                <div class="empty-row" ng-if="input.properties.length===0">No properties to display
+                                </div>
+                                <div ng-repeat="property in input.properties track by $index">
+                                    <property-row property="property" instance-name="property.name" is-clickable="false"></property-row>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="serviceInput.properties.length > 0">
+                            <div class="empty-row" ng-if="serviceInput.properties.length===0">No properties to display</div>
+                            <div ng-repeat="property in serviceInput.properties track by $index">
+                                <property-row property="property" instance-name="property.name" is-clickable="false"></property-row>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+</div>

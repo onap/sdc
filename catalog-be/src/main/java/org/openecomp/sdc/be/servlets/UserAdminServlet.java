@@ -108,7 +108,7 @@ public class UserAdminServlet extends BeGenericServlet {
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get User");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get User");
-			log.debug("get user failed with unexpected error: {}", e);
+			log.debug("get user failed with unexpected error: {}", e.getMessage(), e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
@@ -140,7 +140,7 @@ public class UserAdminServlet extends BeGenericServlet {
 	 * 
 	 * @ApiResponse(code = 409, message = "User already exists"),
 	 * 
-	 * @ApiResponse(code = 500, message = "Internal Server Error") }) public Response updateUser(@ApiParam(value="userId of user to get", required=true) @PathParam("userId") final String UserIdUpdateUser,
+	 * @ApiResponse(code = 500, message = "Internal Server Error") }) public Response updateUser(@ApiParam(value="userId of user to get", required=true) @PathParam("userId") final String userIdUpdateUser,
 	 * 
 	 * @Context final HttpServletRequest request,
 	 * 
@@ -157,7 +157,7 @@ public class UserAdminServlet extends BeGenericServlet {
 	 * Response response = null;
 	 * 
 	 * try { UserAdminBuisinessLogic businessLogic = getUserAdminManager(context); User updateInfoUser = getComponentsUtils().convertJsonToObject(data, modifier, User.class, AuditingActionEnum.UPDATE_USER).left().value(); Either<User, ResponseFormat>
-	 * updateUserResponse = null;// businessLogic.updateUser(modifier, UserIdUpdateUser, updateInfoUser);
+	 * updateUserResponse = null;// businessLogic.updateUser(modifier, userIdUpdateUser, updateInfoUser);
 	 * 
 	 * if (updateUserResponse.isRight()) { log.debug("failed to update user metadata"); response = buildErrorResponse(updateUserResponse.right().value()); return response; } response =
 	 * buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), updateUserResponse.left().value()); return response;
@@ -216,7 +216,7 @@ public class UserAdminServlet extends BeGenericServlet {
 	@ApiOperation(value = "update user role", notes = "Update user role", response = User.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Update user OK"), @ApiResponse(code = 400, message = "Invalid Content."), @ApiResponse(code = 403, message = "Missing information/Restricted operation"),
 			@ApiResponse(code = 404, message = "User not found"), @ApiResponse(code = 405, message = "Method Not Allowed"), @ApiResponse(code = 409, message = "User already exists"), @ApiResponse(code = 500, message = "Internal Server Error") })
-	public Response updateUserRole(@ApiParam(value = "userId of user to get", required = true) @PathParam("userId") final String UserIdUpdateUser, @Context final HttpServletRequest request,
+	public Response updateUserRole(@ApiParam(value = "userId of user to get", required = true) @PathParam("userId") final String userIdUpdateUser, @Context final HttpServletRequest request,
 			@ApiParam(value = "json describe the update role", required = true) String data, @HeaderParam(value = Constants.USER_ID_HEADER) String modifierUserId) {
 
 		ServletContext context = request.getSession().getServletContext();
@@ -234,7 +234,7 @@ public class UserAdminServlet extends BeGenericServlet {
 		try {
 			UserBusinessLogic businessLogic = getUserAdminManager(context);
 			User updateInfoUser = getComponentsUtils().convertJsonToObject(data, modifier, User.class, AuditingActionEnum.UPDATE_USER).left().value();
-			Either<User, ResponseFormat> updateUserResponse = businessLogic.updateUserRole(modifier, UserIdUpdateUser, updateInfoUser.getRole());
+			Either<User, ResponseFormat> updateUserResponse = businessLogic.updateUserRole(modifier, userIdUpdateUser, updateInfoUser.getRole());
 
 			if (updateUserResponse.isRight()) {
 				log.debug("failed to update user role");
@@ -402,13 +402,12 @@ public class UserAdminServlet extends BeGenericServlet {
 	@ApiOperation(value = "Retrieve the list of all active ASDC users or only group of users having specific roles.", httpMethod = "GET", notes = "Returns list of users with the specified roles, or all of users in the case of empty 'roles' header", response = User.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Returns users Ok"), @ApiResponse(code = 204, message = "No provisioned ASDC users of requested role"), @ApiResponse(code = 403, message = "Restricted Access"),
 			@ApiResponse(code = 400, message = "Missing content"), @ApiResponse(code = 500, message = "Internal Server Error") })
-	public Response getUsersList(@Context final HttpServletRequest request, @ApiParam(value = "Any active user's USER_ID") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
+	public Response getUsersList(@Context final HttpServletRequest request, @ApiParam(value = "Any active user's USER_ID ") @HeaderParam(Constants.USER_ID_HEADER) final String userId,
 			@ApiParam(value = "TESTER,DESIGNER,PRODUCT_STRATEGIST,OPS,PRODUCT_MANAGER,GOVERNOR, ADMIN OR all users by not typing anything") @QueryParam("roles") final String roles) {
 
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		log.debug("modifier id is {}", userId);
+		log.debug("Start handle request of {} modifier id is {}", url, userId);
 
 		List<String> rolesList = new ArrayList<>();
 		if (roles != null && !roles.trim().isEmpty()) {
@@ -450,11 +449,10 @@ public class UserAdminServlet extends BeGenericServlet {
 
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {} modifier id is {}", url, userIdHeader);
 
 		User modifier = new User();
 		modifier.setUserId(userIdHeader);
-		log.debug("modifier id is {}", userIdHeader);
 
 		Response response = null;
 		try {

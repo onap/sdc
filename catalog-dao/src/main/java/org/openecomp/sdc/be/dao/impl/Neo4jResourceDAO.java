@@ -66,64 +66,6 @@ public class Neo4jResourceDAO extends BasicDao implements IResourceDAO {
 		super.setNeo4jClient(neo4jClient);
 	}
 
-	// public Either<ResourceData, Neo4jOperationStatus> createResourceData(
-	// GraphNeighbourTable graphNeighbourTable) {
-	//
-	// if (graphNeighbourTable != null) {
-	//
-	// String resourceId = findResourceDataIdFromNodes(graphNeighbourTable
-	// .getNodes());
-	// if (resourceId == null || resourceId.isEmpty()) {
-	// logger.error("Cannot find resource id in the graph table");
-	// return Either.right(Neo4jOperationStatus.BAD_REQUEST);
-	// }
-	//
-	// Either<BatchBuilder, Neo4jOperationStatus> bbResult = graphBatchBuilder
-	// .buildBatchBuilderFromTable(graphNeighbourTable);
-	//
-	// if (bbResult.isLeft()) {
-	//
-	// BatchBuilder batchBuilder = bbResult.left().value();
-	// //Neo4jOperationStatus neo4jOperationStatus =
-	// neo4jClient.execute(batchBuilder);
-	// Either<List<List<Neo4jElement>>, Neo4jOperationStatus> executeResult =
-	// neo4jClient.execute(batchBuilder);
-	//
-	// if (executeResult.isRight()) {
-	// return Either.right(executeResult.right().value());
-	// }
-	//
-	// ResourceData resourceData = null;
-	// List<List<Neo4jElement>> listOfResults = executeResult.left().value();
-	// if (listOfResults != null) {
-	// for (List<Neo4jElement> listOfElements : listOfResults) {
-	// if (listOfElements != null && false == listOfElements.isEmpty()) {
-	// for (Neo4jElement element : listOfElements) {
-	// logger.debug("element {} was returned after running batch operation {}", element, batchBuilder);
-	// if (element instanceof Neo4jNode) {
-	// Neo4jNode neo4jNode = (Neo4jNode) element;
-	// if (NodeTypeEnum.getByName(neo4jNode.getLabel()) ==
-	// NodeTypeEnum.Resource) {
-	// resourceData = (ResourceData)neo4jNode;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	//
-	// return Either.left(resourceData);
-	//
-	// } else {
-	// return Either.right(bbResult.right().value());
-	// }
-	//
-	// } else {
-	// logger.error("The table sent in order to create resource is empty.");
-	// return Either.right(Neo4jOperationStatus.BAD_REQUEST);
-	// }
-	// }
-
 	private String findResourceDataIdFromNodes(List<GraphNode> nodes) {
 
 		if (nodes != null) {
@@ -237,6 +179,51 @@ public class Neo4jResourceDAO extends BasicDao implements IResourceDAO {
 		}
 		return Either.right(null);
 
+		/*
+		 * MatchFilter filter = new MatchFilter(); if(propertiesToMatch !=
+		 * null){ for (Entry<String,Object> propertie :
+		 * propertiesToMatch.entrySet()){ filter.addToMatch(propertie.getKey(),
+		 * propertie.getValue()); } } Either<List<GraphElement>,
+		 * Neo4jOperationStatus> status =
+		 * neo4jClient.getByFilter(GraphElementTypeEnum.Node,
+		 * NodeTypeEnum.Resource.getName(), filter); if (status.isRight()) {
+		 * return Either.right(status.right().value()); } else {
+		 * List<GraphElement> value = status.left().value(); if (value == null
+		 * || value.isEmpty()) { return
+		 * Either.right(Neo4jOperationStatus.NOT_FOUND); } else {
+		 * List<ResourceData> result=new ArrayList<>(); for(GraphElement element
+		 * : value ){ result.add((ResourceData)element); } return
+		 * Either.left(result); } }
+		 */
 	}
+
+	// @Override
+	// public ActionStatus updateUserData(UserData userData) {
+	// UpdateFilter filter = new UpdateFilter();
+	// filter.addToMatch("userId", userData.getUserId());
+	// filter.setToUpdate(userData.toMap());
+	// Neo4jOperationStatus status =
+	// neo4jClient.updateElement(Neo4JElementTypeEnum.Node,
+	// NodeTypeEnum.User.getName(), filter);
+	// if (status.equals(Neo4jOperationStatus.OK)) {
+	// return ActionStatus.OK;
+	// } else {
+	// return ActionStatus.GENERAL_ERROR;
+	// }
+	// }
+	//
+	// @Override
+	// public ActionStatus deleteUserData(String id) {
+	// MatchFilter filter = new MatchFilter();
+	// filter.addToMatch("userId", id);
+	// Neo4jOperationStatus status =
+	// neo4jClient.deleteElement(Neo4JElementTypeEnum.Node,
+	// NodeTypeEnum.User.getName(), filter);
+	// if (status.equals(Neo4jOperationStatus.OK)) {
+	// return ActionStatus.OK;
+	// } else {
+	// return ActionStatus.GENERAL_ERROR;
+	// }
+	// }
 
 }

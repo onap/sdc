@@ -1,0 +1,107 @@
+<div class="sdc-general-tab hierarchy-tab" ng-class="">
+    <loader data-display="isLoading" relative="true" size="medium"></loader>
+    <div class="sdc-general-tab-title" data-tests-id="tab-header" translate="DEPLOYMENT_TAB_TITLE"></div>
+
+    <div class="resizable-container">
+        <div  data-ng-if="!component.isService()"class="resizable-section">
+
+            <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true"
+                               class="general-tab-scrollbar-container">
+                <div class="sdc-general-tab-sub-title" data-tests-id="tab-sub-header">{{component.name}}</div>
+                <expand-collapse expanded-selector=".hierarchy-module-member-list.{{$index}}"
+                                 class="general-tab-expand-collapse" is-close-on-init="true"
+                                 data-tests-id="hierarchy-module-{{$index}}"
+                                 data-ng-repeat-start="module in component.groups">
+                    <div class="expand-collapse-title first-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index}" data-ng-click="onModuleSelected(module.uniqueId, $index)">
+                        <div class="expand-collapse-title-icon"></div>
+                        <span class="expand-collapse-title-text" data-ng-bind="module.name" tooltips
+                              tooltip-content="{{module.name}}"></span>
+
+                    </div>
+                </expand-collapse>
+
+                <div data-ng-repeat-end="" class="hierarchy-module-member-list {{$index}}">
+                    <div ng-repeat="(memberName, value) in ::module.members track by $index">
+                        <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{memberName}}">{{memberName}}</div>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+        <div  data-ng-if="component.isService()"class="resizable-section">
+            <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true"
+                               class="general-tab-scrollbar-container">
+                <expand-collapse expanded-selector=".hierarchy-modules-list.{{$index}}"
+                                 class="general-tab-expand-collapse" is-close-on-init="true"
+                                 data-tests-id="hierarchy-instance-{{$index}}"
+
+                                 data-ng-repeat-start="instance in component.componentInstances">
+                    <div class="expand-collapse-title first-level" data-tests-id="hierarchy-instance-{{$index}}-title">
+                        <div class="expand-collapse-title-icon"></div>
+                        <span class="expand-collapse-title-text" data-ng-bind="instance.name" tooltips
+                              tooltip-content="{{instance.name}}"></span>
+
+                    </div>
+                </expand-collapse>
+                <!--TODO: Rachel :  -->
+                <div data-ng-repeat-end="" class="hierarchy-modules-list {{$index}}">
+                    <expand-collapse expanded-selector=".outer-index-{{$parent.$index}}.hierarchy-module-member-list.{{$index}}"
+                                     class="general-tab-expand-collapse" is-close-on-init="true"
+                                     data-tests-id="hierarchy-module-{{$index}}"
+                                     data-ng-repeat-start="module in instance.groupInstances">
+                        <div class="expand-collapse-title second-level" data-tests-id="hierarchy-module-{{$index}}-title" ng-class="{'selected': selectedIndex === $index && selectedInstanceId === instance.uniqueId}" data-ng-click="onModuleSelected(module.uniqueId, $index, instance.uniqueId)">
+                            <div class="expand-collapse-title-icon"></div>
+                        <span class="expand-collapse-title-text" data-ng-bind="module.name" tooltips tooltip-content="{{module.name}}"></span>
+
+                        </div>
+                    </expand-collapse>
+
+                    <div data-ng-repeat-end="" class="outer-index-{{$parent.$index}} hierarchy-module-member-list {{$index}}">
+                        <div ng-repeat="(memberName, value) in ::module.members track by $index">
+                            <div class="expand-collapse-sub-title"  tooltips tooltip-content="{{memberName}}">{{memberName}}</div>
+                        </div>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+
+        <div  resizable r-directions="['top']" r-flex="true" ng-if="selectedModule" class="resizable-section module-data-container" data-tests-id="selected-module-data">
+            <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true"
+                               class="general-tab-scrollbar-container">
+                <div class="module-data">
+                    <div>
+                        <div class="module-name module-text-overflow" data-tests-id="selected-module-name" tooltips tooltip-content="{{selectedModule.name}}">{{selectedModule.name}}</div>
+                        <div class="edit-name-container" data-ng-if="!component.isService()">
+                            <edit-name-popover header="Edit Module Name" direction="auto top" module="selectedModule" on-save="updateHeatName()" ng-class="{'disabled': isViewOnly}" class="sdc-edit-icon" data-tests-id="edit-name-popover-icon"></edit-name-popover>
+                        </div>
+                    </div>
+                    <div class="" data-tests-id="selected-module-group-uuid" tooltips tooltip-content="{{selectedModule.groupUUID}}"><span class="bold">Module ID:</span><br><span class="small-font">{{selectedModule.groupUUID}}</span></div>
+                    <div class="" data-tests-id="selected-module-group-customization-uuid" data-ng-if="component.isService() && isViewOnly" tooltips tooltip-content="{{selectedModule.customizationUUID}}"><span class="bold">Customization ID:</span ><br><span class="small-font">{{selectedModule.customizationUUID}}</span></div>
+                    <div class=""  data-tests-id="selected-module-group-invariant-uuid" tooltips tooltip-content="{{selectedModule.invariantUUID}}"><span class="bold">Invariant UUID:</span><span class="small-font">{{selectedModule.invariantUUID}}</span></div>
+                    <div data-tests-id="selected-module-version"><span class="bold">Version:</span> {{selectedModule.version}}</div>
+                    <div data-tests-id="selected-module-is-base"><span class="bold">IsBase:</span> {{selectedModule.isBase}}</div>
+
+                </div>
+                <expand-collapse-list-header title="Properties" expand-collapse-list-data="expandCollapsePropertiesList"></expand-collapse-list-header>
+                <div ng-repeat="property in selectedModule.properties | filter: expandCollapsePropertiesList.filter | orderBy:expandCollapsePropertiesList.orderByField  track by $index" data-ng-if="expandCollapsePropertiesList.expandCollapse">
+                    <div class="list-item property-data" data-ng-class="{'last':$last}">
+                        <div class="property-name  module-text-overflow" data-tests-id="selected-module-property-name">
+                            <span tooltips tooltip-content="{{property.name}}"
+                                  data-ng-class="{'hand': !isViewOnly}"
+                                  data-ng-click="!isViewOnly && openEditPropertyModal(property)">{{property.name}}</span>
+                        </div>
+                        <div class="module-text-overflow property-info" data-tests-id="selected-module-property-type"> Type: {{property.type}}</div>
+                        <div class="module-text-overflow property-info" data-tests-id="selected-module-property-schema-type">Value: {{property.value}}</div>
+                    </div>
+                </div>
+                <expand-collapse-list-header title="Artifacts" expand-collapse-list-data="expandCollapseArtifactsList"></expand-collapse-list-header>
+                <div ng-repeat="artifact in selectedModule.artifacts| filter: expandCollapseArtifactsList.filter | orderBy:expandCollapseArtifactsList.orderByField  track by $index" data-ng-if="expandCollapseArtifactsList.expandCollapse">
+                    <div class="list-item artifact-data" data-ng-class="{'last':$last}">
+                        <div class="artifact-name  module-text-overflow" data-tests-id="selected-module-artifact-name" tooltips tooltip-content="{{artifact.artifactName}}">{{artifact.artifactName}}</div>
+                        <div class="module-text-overflow" tooltips data-tests-id="selected-module-artifact-uuid" tooltip-content="{{artifact.artifactUUID}}">UUID: {{artifact.artifactUUID}}</div>
+                        <div data-tests-id="selected-module-artifact-version">Version: {{artifact.artifactVersion}}</div>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+        </div>
+    </div>
+</div>

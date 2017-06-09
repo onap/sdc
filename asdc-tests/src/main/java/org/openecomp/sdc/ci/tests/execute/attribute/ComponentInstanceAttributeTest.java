@@ -59,23 +59,34 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 	public void testUpdateAttributeOnResourceInstance() {
 		// Prepare VF with vfc instance with Attributes
 		String testResourcesPath = config.getResourceConfigDir() + File.separator + "importToscaResourceByCreateUrl";
-		final Resource vfcWithAttributes = AtomicOperationUtils.importResource(testResourcesPath, "CPWithAttributes.yml").left().value();
-		swallowException(() -> AtomicOperationUtils.changeComponentState(vfcWithAttributes, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, false));
-		Resource vf = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, false).left().value();
-		ComponentInstance vfcInstance = AtomicOperationUtils.addComponentInstanceToComponentContainer(vfcWithAttributes, vf).left().value();
+		final Resource vfcWithAttributes = AtomicOperationUtils
+				.importResource(testResourcesPath, "CPWithAttributes.yml").left().value();
+		swallowException(() -> AtomicOperationUtils.changeComponentState(vfcWithAttributes, UserRoleEnum.DESIGNER,
+				LifeCycleStatesEnum.CHECKIN, false));
+		Resource vf = AtomicOperationUtils.createResourceByType(ResourceTypeEnum.VF, UserRoleEnum.DESIGNER, false)
+				.left().value();
+		ComponentInstance vfcInstance = AtomicOperationUtils
+				.addComponentInstanceToComponentContainer(vfcWithAttributes, vf).left().value();
 
 		// util method to get the specific attribute from the vf
-		Function<Resource, ComponentInstanceAttribute> attributeGetter = resourceVf -> resourceVf.getComponentInstancesAttributes().values().iterator().next().stream().filter(att -> att.getName().equals("private_address")).findAny().get();
+		Function<Resource, ComponentInstanceAttribute> attributeGetter = resourceVf -> resourceVf
+				.getComponentInstancesAttributes().values().iterator().next().stream()
+				.filter(att -> att.getName().equals("private_address")).findAny().get();
 		// update attribute on vfc instance
-		final Resource vfWithInsatncePreUpdate = swallowException(() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
+		final Resource vfWithInsatncePreUpdate = swallowException(
+				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceAttribute attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
 		final String newAttValue = "NewValue";
 		attributeOfRI.setValue(newAttValue);
 		String body = gson.toJson(attributeOfRI);
-		String url = String.format(Urls.UPDATE_ATTRIBUTE_ON_RESOURCE_INSTANCE, config.getCatalogBeHost(), config.getCatalogBePort(), ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE), vf.getUniqueId(), vfcInstance.getUniqueId());
-		swallowException(() -> BaseRestUtils.sendPost(url, body, UserRoleEnum.DESIGNER.getUserId(), BaseRestUtils.acceptHeaderData));
+		String url = String.format(Urls.UPDATE_ATTRIBUTE_ON_RESOURCE_INSTANCE, config.getCatalogBeHost(),
+				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(ComponentTypeEnum.RESOURCE),
+				vf.getUniqueId(), vfcInstance.getUniqueId());
+		swallowException(() -> BaseRestUtils.sendPost(url, body, UserRoleEnum.DESIGNER.getUserId(),
+				BaseRestUtils.acceptHeaderData));
 		// Retrieve updated vf and verify attribute was updated
-		final Resource vfWithInsatncePostUpdate = swallowException(() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
+		final Resource vfWithInsatncePostUpdate = swallowException(
+				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
 		ComponentInstanceAttribute updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
 		assertEquals(updatedAttribute.getValue(), newAttValue);
 

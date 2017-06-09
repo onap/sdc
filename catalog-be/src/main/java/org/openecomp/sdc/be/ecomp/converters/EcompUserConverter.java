@@ -24,12 +24,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.openecomp.portalsdk.core.restful.domain.EcompRole;
+import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
-
-import org.openecomp.portalsdk.core.restful.domain.EcompRole;
-import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 
 import fj.data.Either;
 
@@ -37,13 +36,6 @@ public final class EcompUserConverter {
 
 	private EcompUserConverter() {
 	}
-
-	// private static final EcompUserConverter instance = new
-	// EcompUserConverter();
-
-	/*
-	 * public static EcompUserConverter getInsatnce() { return instance; }
-	 */
 
 	public static Either<EcompUser, String> convertUserToEcompUser(User asdcUser) {
 		EcompUser convertedUser = new EcompUser();

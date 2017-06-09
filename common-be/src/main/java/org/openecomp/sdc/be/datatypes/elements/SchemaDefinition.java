@@ -21,34 +21,44 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Schema allows to create new types that can be used along TOSCA definitions.
  */
-public class SchemaDefinition implements Serializable {
+public class SchemaDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7117891081909380577L;
-
+	
 	private String derivedFrom;
 	private List<String> constraints;
 	private Map<String, PropertyDataDefinition> properties;
 
 	private PropertyDataDefinition property;
 
+	
+
 	public SchemaDefinition() {
+		super();
 
 	}
 
 	public SchemaDefinition(String derivedFrom, List<String> constraints,
 			Map<String, PropertyDataDefinition> properties) {
-		this.derivedFrom = derivedFrom;
-		this.constraints = constraints;
-		this.properties = properties;
+		super();
+		
+		this.setDerivedFrom(derivedFrom);
+		this.setConstraints( constraints);
+		this.setProperties( properties);
+		
 	}
 
 	public String getDerivedFrom() {

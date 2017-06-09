@@ -22,6 +22,8 @@ package org.openecomp.sdc.ci.tests.utils.rest;
 
 import java.io.IOException;
 
+import com.google.gson.Gson;
+
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
@@ -30,12 +32,12 @@ import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
+import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
 
 public class ProductRestUtils extends BaseRestUtils {
 	private static Gson gson = new Gson();
@@ -46,8 +48,8 @@ public class ProductRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.CREATE_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort());
 		String serviceBodyJson = gson.toJson(product);
 
-		logger.debug("Send POST request to create service: {}", url);
-		logger.debug("Service body: {}", serviceBodyJson);
+		logger.debug("Send POST request to create service: {}",url);
+		logger.debug("Service body: {}",serviceBodyJson);
 
 		RestResponse res = sendPost(url, serviceBodyJson, user.getUserId(), acceptHeaderData);
 		if (res.getErrorCode() == STATUS_CODE_CREATED) {
@@ -76,8 +78,8 @@ public class ProductRestUtils extends BaseRestUtils {
 				product.getUniqueId());
 		String serviceBodyJson = gson.toJson(product);
 
-		logger.debug("Send POST request to create service: {}", url);
-		logger.debug("Service body: {}", serviceBodyJson);
+		logger.debug("Send POST request to create service: {}",url);
+		logger.debug("Service body: {}",serviceBodyJson);
 
 		RestResponse res = sendPut(url, serviceBodyJson, user.getUserId(), acceptHeaderData);
 		if (res.getErrorCode() == STATUS_CODE_CREATED) {
@@ -116,11 +118,20 @@ public class ProductRestUtils extends BaseRestUtils {
 		return sendDelete(url, userId);
 	}
 
+	public static RestResponse getProduct(String productId) throws Exception {
+
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.GET_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort(), productId);
+		logger.debug("Send GET request to get product: {}",url);
+
+		return sendGet(url, ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER).getUserId());
+	}
+
 	public static RestResponse getProduct(String productId, String userId) throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_PRODUCT, config.getCatalogBeHost(), config.getCatalogBePort(), productId);
-		logger.debug("Send GET request to get product: {}", url);
+		logger.debug("Send GET request to get product: {}",url);
 
 		return sendGet(url, userId);
 	}
@@ -128,7 +139,7 @@ public class ProductRestUtils extends BaseRestUtils {
 	public static RestResponse getFollowed(String userId) throws Exception {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_FOLLWED_LIST, config.getCatalogBeHost(), config.getCatalogBePort());
-		logger.debug("Send GET request to get user followed page: {}", url);
+		logger.debug("Send GET request to get user followed page: {}",url);
 		return sendGet(url, userId);
 
 	}
@@ -164,7 +175,7 @@ public class ProductRestUtils extends BaseRestUtils {
 			ComponentTypeEnum componentType) throws IOException {
 		Config config = Utils.getConfig();
 		String resourceUid = ("{\"componentUid\":\"" + serviceUniqueId + "\"}");
-		String url = String.format(Urls.CHANGE__RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
+		String url = String.format(Urls.CHANGE_RESOURCE_INSTANCE_VERSION, config.getCatalogBeHost(),
 				config.getCatalogBePort(), ComponentTypeEnum.findParamByType(componentType), componentUniqueId,
 				serviceInstanceToReplaceUniqueId);
 		RestResponse changeResourceInstanceVersion = sendPost(url, resourceUid, sdncModifierDetails.getUserId(),
@@ -178,7 +189,7 @@ public class ProductRestUtils extends BaseRestUtils {
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.GET_PRODUCT_BY_NAME_AND_VERSION, config.getCatalogBeHost(),
 				config.getCatalogBePort(), productName, productVersion);
-		logger.debug("Send GET request to get product by name and version: {}", url);
+		logger.debug("Send GET request to get product by name and version: {}",url);
 		return sendGet(url, userId);
 	}
 

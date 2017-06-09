@@ -48,11 +48,11 @@ public interface IUserAdminOperation {
 
 	public Either<List<User>, ActionStatus> getAllUsersWithRole(String role, String status);
 
-	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user,
-			Map<String, Object> properties);
+	Either<List<User>, ActionStatus> getAllUsers();
+
+	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user, Map<String, Object> properties);
 
 	public Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> getUserDataWithFunctionalMenu(String userId);
 
-	public Either<FunctionalMenuInfo, TitanOperationStatus> createOrUpdateFunctionalMenu(String userId,
-			String newFunctionalMenu);
+	public Either<FunctionalMenuInfo, TitanOperationStatus> createOrUpdateFunctionalMenu(String userId, String newFunctionalMenu);
 }

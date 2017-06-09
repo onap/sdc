@@ -1,0 +1,14 @@
+<label class="tlv-checkbox" ng-class="{'disabled' : disabled}">
+    <input  id="{{elemId}}"
+            name="{{elemId}}"
+            class="tlv-checkbox-i"
+            type="checkbox"
+            checked=""
+            ng-disabled="disabled"
+            checklist-model="sdcChecklistModel"
+            checklist-value="sdcChecklistValue"
+            checklist-change="sdcChecklistChange()"
+        />
+
+    <span sdc-smart-tooltip class="tlv-checkbox-label" data-tests-id="{{elemId}}">{{text}}</span>
+</label>

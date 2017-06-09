@@ -110,7 +110,7 @@ public class EcompErrorLogUtil {
 					logEcompError("logEcompError", mismatchErrorEnum, false, ecompErrorEnum.name().toString());
 					return;
 				} else {
-					log.info("Failed to log the error code " + mismatchErrorEnum);
+					log.info("Failed to log the error code {}", mismatchErrorEnum);
 					return;
 				}
 			}

@@ -34,11 +34,11 @@ import org.openecomp.sdc.be.model.Component;
 
 public class ToscaUtils {
 
-	public static boolean isNodeType(Component component) {
+	public static boolean isAtomicType(Component component) {
 		ComponentTypeEnum componentType = component.getComponentType();
 		if (ComponentTypeEnum.RESOURCE.equals(componentType)) {
 			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
-			if (ResourceTypeEnum.CP.equals(resourceType) || ResourceTypeEnum.VL.equals(resourceType) || ResourceTypeEnum.VFC.equals(resourceType)) {
+			if (ResourceTypeEnum.CP == resourceType || ResourceTypeEnum.VL == resourceType || ResourceTypeEnum.VFC == resourceType || ResourceTypeEnum.VFCMT == resourceType || ResourceTypeEnum.ABSTRACT == resourceType) {
 				return true;
 			}
 		}

@@ -119,7 +119,7 @@ public class CommonImportManager {
 			}
 
 		} catch (Exception e) {
-			log.debug("Failed to yaml file {} {}", elementTypesYml, e);
+			log.debug("Failed to yaml file {}", elementTypesYml, e);
 			return Either.right(ActionStatus.INVALID_YAML_FILE);
 		}
 		return Either.left(elementTypes);
@@ -133,7 +133,7 @@ public class CommonImportManager {
 
 	}
 
-	enum ElementTypeEnum {
+	public enum ElementTypeEnum {
 		PolicyType, GroupType, DataType, CapabilityType, InterfaceLifecycleType
 	};
 
@@ -204,7 +204,7 @@ public class CommonImportManager {
 				Either<ActionStatus, ResponseFormat> validateElementType = validator.apply(elementType);
 				if (validateElementType.isRight()) {
 					ResponseFormat responseFormat = validateElementType.right().value();
-					log.debug("Failed in validation of element type {}. Response is {}", elementType, responseFormat.getFormattedMessage());
+					log.debug("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
 					eitherResult = Either.right(responseFormat);
 					break;
 				}

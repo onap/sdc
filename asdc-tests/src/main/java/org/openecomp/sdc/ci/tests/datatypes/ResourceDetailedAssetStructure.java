@@ -24,8 +24,6 @@ import java.util.List;
 
 public class ResourceDetailedAssetStructure extends ResourceAssetStructure {
 
-	private String lastUpdaterFullName;
-	private String toscaResourceName;
 	private List<ResourceInstanceAssetStructure> resources;
 	private List<ArtifactAssetStructure> artifacts;
 
@@ -40,22 +38,6 @@ public class ResourceDetailedAssetStructure extends ResourceAssetStructure {
 		this.toscaResourceName = toscaResourceName;
 		this.resources = resources;
 		this.artifacts = artifacts;
-	}
-
-	public String getLastUpdaterFullName() {
-		return lastUpdaterFullName;
-	}
-
-	public void setLastUpdaterFullName(String lastUpdaterFullName) {
-		this.lastUpdaterFullName = lastUpdaterFullName;
-	}
-
-	public String getToscaResourceName() {
-		return toscaResourceName;
-	}
-
-	public void setToscaResourceName(String toscaResourceName) {
-		this.toscaResourceName = toscaResourceName;
 	}
 
 	public List<ResourceInstanceAssetStructure> getResources() {

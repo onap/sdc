@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.ci.tests.execute.TODO;
 
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.Test;
+import org.testng.AssertJUnit;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,11 +36,8 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
-import org.openecomp.sdc.ci.tests.utils.DbUtils.TitanState;
 import org.openecomp.sdc.ci.tests.utils.Utils;
-import org.testng.AssertJUnit;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.Test;
+import org.openecomp.sdc.ci.tests.utils.DbUtils.TitanState;
 
 import fj.data.Either;
 

@@ -29,17 +29,27 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.CategoryTypeEnum;
 import org.openecomp.sdc.be.datamodel.utils.NodeTypeConvertUtils;
+import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactType;
 import org.openecomp.sdc.be.model.Component;
@@ -48,6 +58,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.PropertyScope;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.Tag;
 import org.openecomp.sdc.be.model.User;
@@ -56,14 +67,24 @@ import org.openecomp.sdc.be.model.category.GroupingDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
+import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
+import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.resources.data.category.CategoryData;
+import org.openecomp.sdc.be.resources.data.category.SubCategoryData;
+import org.openecomp.sdc.be.ui.model.UiCategories;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.thinkaurelius.titan.core.TitanGraph;
 
 import fj.data.Either;
 
@@ -198,10 +219,8 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleFollowedCertifiedServices(Set<DistributionStatusEnum> distStatus) {
-		Map<String, Object> propertiesToMatch = new HashMap<>();
-		propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
 
-		Either<Set<Service>, StorageOperationStatus> services = serviceOperation.getCertifiedServicesWithDistStatus(propertiesToMatch, distStatus, false);
+		Either<List<Service>, StorageOperationStatus> services = toscaOperationFacade.getCertifiedServicesWithDistStatus(distStatus);
 		if (services.isLeft()) {
 			Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
 			List<Service> list = new ArrayList<>();
@@ -216,43 +235,37 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleTester(String userId) {
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
-		Either<List<Resource>, StorageOperationStatus> resources = resourceOperation.getTesterFollowed(userId, lifecycleStates, false);
+		lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
+		Either<Map<String, List<? extends Component>>, ResponseFormat> result = getFollowedResourcesAndServices(null, lifecycleStates, null);
 
-		if (resources.isLeft()) {
-			Either<List<Service>, StorageOperationStatus> services = serviceOperation.getTesterFollowed(userId, lifecycleStates, false);
-			if (services.isLeft()) {
-				Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
-				result.put("services", services.left().value());
-				result.put("resources", resources.left().value());
-				return Either.left(result);
-			} else {
-				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
-			}
-		} else {
-			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resources.right().value())));
-		}
+		return result;
 	}
 
 	private Either<Map<String, List<? extends Component>>, ResponseFormat> getFollowedResourcesAndServices(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
-		Either<List<Resource>, StorageOperationStatus> resources = resourceOperation.getFollowed(userId, lifecycleStates, lastStateStates, false);
 
-		if (resources.isLeft()) {
-			Either<List<Service>, StorageOperationStatus> services = serviceOperation.getFollowed(userId, lifecycleStates, lastStateStates, false);
-			if (services.isLeft()) {
-				Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
-				result.put("services", services.left().value());
-				result.put("resources", resources.left().value());
-				return Either.left(result);
+		try {
+			Either<List<Resource>, StorageOperationStatus> resources = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.RESOURCE);
+
+			if (resources.isLeft()) {
+				Either<List<Service>, StorageOperationStatus> services = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
+				if (services.isLeft()) {
+					Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
+					result.put("services", services.left().value());
+					result.put("resources", resources.left().value());
+					return Either.left(result);
+				} else {
+					return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
+				}
 			} else {
-				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resources.right().value())));
 			}
-		} else {
-			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resources.right().value())));
+		} finally {
+			titanDao.commit();
 		}
 	}
 
 	private Either<Map<String, List<? extends Component>>, ResponseFormat> getFollowedProducts(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
-		Either<List<Product>, StorageOperationStatus> products = productOperation.getFollowed(userId, lifecycleStates, lastStateStates, false);
+		Either<List<Product>, StorageOperationStatus> products = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.PRODUCT);
 		if (products.isLeft()) {
 			Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
 			result.put("products", products.left().value());
@@ -393,10 +406,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		String origSubCategoryName = subCategoryName;
 
 		User user = new User();
-		/*
-		 * if (userId == null) { user.setUserId("UNKNOWN"); ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION); handleCategoryAuditing(responseFormat, user, parentCategoryName, origSubCategoryName,
-		 * auditingAction, componentType); return Either.right(responseFormat); }
-		 */
 		Either<User, ResponseFormat> validateUser = validateUserExists(userId, "createSubCategory", false);
 		if (validateUser.isRight()) {
 			log.debug("Validation of user failed, userId {}", userId);
@@ -720,6 +729,49 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		componentsUtils.auditGetCategoryHierarchy(auditingAction, user, componentType, responseFormat);
 		return Either.left(categories);
 	}
+	
+	public Either<UiCategories, ResponseFormat> getAllCategories(String userId) {
+		AuditingActionEnum auditingAction = AuditingActionEnum.GET_CATEGORY_HIERARCHY;
+		ResponseFormat responseFormat;
+		UiCategories categories = new UiCategories();
+		
+		Either<User, ResponseFormat> userResponse = validateUserExists(userId, "get all categories", false);
+
+		if (userResponse.isRight()) {
+			return Either.right(userResponse.right().value());
+		}
+		User user = userResponse.left().value();
+		
+		//GET resource categories
+		Either<List<CategoryDefinition>, ActionStatus> getResourceCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ResourceNewCategory, false);
+		if (getResourceCategoriesByType.isRight()) {
+			responseFormat = componentsUtils.getResponseFormat(getResourceCategoriesByType.right().value());
+			componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.RESOURCE.getValue(), responseFormat);
+			return Either.right(responseFormat);
+		}
+		categories.setResourceCategories(getResourceCategoriesByType.left().value());
+		
+		//GET service categories
+		Either<List<CategoryDefinition>, ActionStatus> getServiceCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ServiceNewCategory, false);
+		if (getServiceCategoriesByType.isRight()) {
+			responseFormat = componentsUtils.getResponseFormat(getServiceCategoriesByType.right().value());
+			componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.SERVICE.getValue(), responseFormat);
+			return Either.right(responseFormat);
+		}
+		categories.setServiceCategories(getServiceCategoriesByType.left().value());
+		
+		//GET product categories
+		Either<List<CategoryDefinition>, ActionStatus> getProductCategoriesByType = elementOperation.getAllCategories(NodeTypeEnum.ProductCategory, false);
+		if (getProductCategoriesByType.isRight()) {
+			responseFormat = componentsUtils.getResponseFormat(getProductCategoriesByType.right().value());
+			componentsUtils.auditGetCategoryHierarchy(auditingAction, user, ComponentTypeEnum.PRODUCT.getValue(), responseFormat);
+			return Either.right(responseFormat);
+		}
+		
+		categories.setProductCategories(getProductCategoriesByType.left().value());
+		return Either.left(categories);
+		
+	}
 
 	public Either<CategoryDefinition, ResponseFormat> deleteCategory(String categoryId, String componentTypeParamName, String userId) {
 
@@ -800,7 +852,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 
 		// validate user exists
 		if (userId == null) {
-			log.debug("User id is null");
+			log.debug("UserId is null");
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.MISSING_INFORMATION));
 		}
 
@@ -938,19 +990,17 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 		Map<String, List<? extends Component>> resMap = new HashMap<>();
 
-		Either<List<Resource>, StorageOperationStatus> resResources = resourceOperation.getResourceCatalogData(false);
+		Either<List<Resource>, StorageOperationStatus> resResources = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.RESOURCE);
 		if (resResources.isLeft()) {
-			Either<List<Service>, StorageOperationStatus> resServices = serviceOperation.getServiceCatalogData(false);
+			Either<List<Service>, StorageOperationStatus> resServices = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE);
 			if (resServices.isLeft()) {
-				Either<List<Product>, StorageOperationStatus> resProducts = productOperation.getProductCatalogData(false);
-				if (resProducts.isLeft()) {
-					resMap.put("resources", resResources.left().value());
-					resMap.put("services", resServices.left().value());
-					resMap.put("products", resProducts.left().value());
-					return Either.left(resMap);
-				} else {
-					return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resProducts.right().value())));
-				}
+				// Either<List<Product>, StorageOperationStatus> resProducts = productOperation.getProductCatalogData(false);
+				// if (resProducts.isLeft()) {
+				resMap.put("resources", resResources.left().value());
+				resMap.put("services", resServices.left().value());
+				resMap.put("products", new ArrayList<>());
+				
+				return Either.left(resMap);
 			} else {
 				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resServices.right().value())));
 			}
@@ -971,11 +1021,14 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 
 		if (filters == null || filters.isEmpty()) {
-			return getCatalogComponentsByAssetType(assetTypeEnum);
+			Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum);
+			if(componentsList.isRight()) {
+				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentsList.right().value())));
+			}
+			return Either.left(componentsList.left().value());
 		}
 
-		ComponentOperation componentOperation = getComponentOperation(assetTypeEnum);
-		Either<List<Component>, StorageOperationStatus> result = componentOperation.getFilteredComponents(filters, false);
+		Either<List<Component>, StorageOperationStatus> result = getFilteredComponents(filters, assetTypeEnum, false);
 
 		if (result.isRight()) {// category hierarchy mismatch or
 								// category/subCategory/distributionStatus not
@@ -990,46 +1043,51 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return Either.left(result.left().value());
 	}
 
-	public Either<List<? extends Component>, ResponseFormat> getCatalogComponentsByAssetType(ComponentTypeEnum assetTypeEnum) {
-
-		if (assetTypeEnum == null) {
-			log.debug("getCatalogComponentsByAssetType: Corresponding ComponentTypeEnum not found");
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+	private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType, boolean inTransaction) {
+		Either<List<Component>, StorageOperationStatus> assetResult = null;
+		if(assetType == ComponentTypeEnum.RESOURCE){
+			 
+			assetResult = getFilteredResouces(filters, inTransaction);
+			
+		} else if (assetType == ComponentTypeEnum.SERVICE){
+			
+			assetResult = getFilteredServices(filters, inTransaction);
 		}
-
-		switch (assetTypeEnum) {
-		case RESOURCE:
-
-			Either<List<Resource>, StorageOperationStatus> resourceCatalogData = resourceOperation.getResourceCatalogDataVFLatestCertifiedAndNonCertified(false);
-			if (resourceCatalogData.isLeft()) {
-				log.debug("getCatalogComponentsByAssetType: Resource fetching successful");
-				return Either.left(resourceCatalogData.left().value());
-			} else {
-				log.debug("getCatalogComponentsByAssetType: Resource fetching failed");
-				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceCatalogData.right().value())));
-			}
-
-		case SERVICE:
-			Either<List<Service>, StorageOperationStatus> serviceCatalogData = serviceOperation.getServiceCatalogDataLatestCertifiedAndNotCertified(false);
-			if (serviceCatalogData.isLeft()) {
-				log.debug("getCatalogComponentsByAssetType: Service fetching successful");
-				return Either.left(serviceCatalogData.left().value());
-			} else {
-				log.debug("getCatalogComponentsByAssetType: Service fetching failed");
-				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceCatalogData.right().value())));
-			}
-			/*
-			 * case PRODUCT: Either<List<Product>, StorageOperationStatus> resCatalogData = productOperation.getProductCatalogData(false); if(resCatalogData.isLeft()){ log. debug("getCatalogComponentsByAssetType: Product fetching successful" );
-			 * return Either.left(resCatalogData.left().value()); }else { log. debug("getCatalogComponentsByAssetType: Product fetching failed" ); return Either.right(componentsUtils .getResponseFormat(componentsUtils.convertFromStorageResponse(
-			 * resCatalogData.right().value()))); }
-			 */
-		default:
-			log.debug("Invalid Asset Type");
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
-		}
+		return assetResult;
 	}
 
-	// TODO new story Tal
+	private <T> Either<List<T>, StorageOperationStatus> getFilteredServices(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
+		
+		Either<List<T>, StorageOperationStatus> components = null;
+
+		String categoryName = filters.get(FilterKeyEnum.CATEGORY);
+		String distributionStatus = filters.get(FilterKeyEnum.DISTRIBUTION_STATUS);
+		DistributionStatusEnum distEnum = DistributionStatusEnum.findState(distributionStatus);
+		if (distributionStatus != null && distEnum == null) {
+			filters.remove(FilterKeyEnum.CATEGORY);
+			return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
+		}
+
+		if (categoryName != null) { // primary filter
+			components = fetchByCategoryOrSubCategoryName(categoryName, NodeTypeEnum.ServiceNewCategory, GraphEdgeLabels.CATEGORY.getProperty(), NodeTypeEnum.Service, inTransaction, ServiceMetadataData.class, null);
+			if (components.isLeft() && distEnum != null) {// secondary filter
+				Predicate<T> statusFilter = p -> ((Service) p).getDistributionStatus().equals(distEnum);
+				return Either.left(components.left().value().stream().filter(statusFilter).collect(Collectors.toList()));
+			}
+			filters.remove(FilterKeyEnum.DISTRIBUTION_STATUS);
+			return components;
+		}
+
+		Set<DistributionStatusEnum> distStatusSet = new HashSet<>();
+		distStatusSet.add(distEnum);
+		Either<List<Service>, StorageOperationStatus> servicesWithDistStatus = toscaOperationFacade.getServicesWithDistStatus(distStatusSet, null);
+		if (servicesWithDistStatus.isRight()) { // not found == empty list
+			return Either.left(new ArrayList<>());
+		}
+		
+		return Either.left((List<T>)servicesWithDistStatus.left().value());
+	}
+
 	public Either<List<? extends Component>, ResponseFormat> getCatalogComponentsByUuidAndAssetType(String assetType, String uuid) {
 
 		if (assetType == null || assetType == null) {
@@ -1044,40 +1102,15 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
 		}
 
-		switch (assetTypeEnum) {
-
-		case RESOURCE:
-			Either<List<Resource>, StorageOperationStatus> resourceListByUuid = resourceOperation.getLatestResourceByUuid(uuid, false);
-
-			if (resourceListByUuid.isLeft()) {
-				log.debug("getCatalogComponentsByUuidAndAssetType: Resource fetching successful");
-				return Either.left(resourceListByUuid.left().value());
-			}
-
-			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(resourceListByUuid.right().value());
-			log.debug("getCatalogComponentsByUuidAndAssetType: Resource fetching failed");
-			return Either.right(componentsUtils.getResponseFormat(actionStatus));
-
-		case SERVICE:
-			Either<List<Service>, StorageOperationStatus> serviceCatalogData = serviceOperation.getLatestServiceByUuid(uuid, false);
-
-			if (serviceCatalogData.isLeft()) {
-				log.debug("getCatalogComponentsByUuidAndAssetType: Service fetching successful");
-				return Either.left(serviceCatalogData.left().value());
-			}
-
+		Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade.getComponentListByUuid(uuid, null);
+		if(componentsListByUuid.isRight()) {
 			log.debug("getCatalogComponentsByUuidAndAssetType: Service fetching failed");
-			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(serviceCatalogData.right().value())));
-		// case Product is for future US
-		/*
-		 * case PRODUCT: Either<List<Product>, StorageOperationStatus> resCatalogData = productOperation.getProductCatalogData(false); if(resCatalogData.isLeft()){ log. debug("getCatalogComponentsByAssetType: Product fetching successful" ); return
-		 * Either.left(resCatalogData.left().value()); }else { log. debug("getCatalogComponentsByAssetType: Product fetching failed" ); return Either.right(componentsUtils .getResponseFormat(componentsUtils.convertFromStorageResponse(
-		 * resCatalogData.right().value()))); }
-		 */
-		default:
-			log.debug("Invalid Asset Type");
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(componentsListByUuid.right().value(), ComponentTypeEnum.SERVICE);
+			return Either.right(componentsUtils.getResponseFormat(actionStatus, uuid));
 		}
+		
+		log.debug("getCatalogComponentsByUuidAndAssetType: " + assetTypeEnum.getValue() + "Service fetching successful");
+		return Either.left(componentsListByUuid.left().value());
 	}
 
 	public List<String> getAllComponentTypesParamNames() {
@@ -1120,6 +1153,229 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 			params.add(filters.get(FilterKeyEnum.CATEGORY));
 		}
 		return params;
+	}
+	
+	public Either<List<Component>, StorageOperationStatus> getFilteredResouces(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
+
+		String subCategoryName = filters.get(FilterKeyEnum.SUB_CATEGORY);
+		String categoryName = filters.get(FilterKeyEnum.CATEGORY);
+		ResourceTypeEnum resourceType = ResourceTypeEnum.getType( filters.get(FilterKeyEnum.RESOURCE_TYPE));
+		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> subcategories = null;
+		Optional<ImmutablePair<SubCategoryData, GraphEdge>> subCategoryData;
+
+		if (categoryName != null) {
+			subcategories = getAllSubCategories(categoryName);
+			if (subcategories.isRight()) {
+				filters.remove(FilterKeyEnum.SUB_CATEGORY);
+				return Either.right(subcategories.right().value());
+			}
+		}
+		if (subCategoryName != null) { // primary filter
+			if (categoryName != null) {
+				subCategoryData = validateCategoryHierarcy(subcategories.left().value(), subCategoryName);
+				if (!subCategoryData.isPresent()) {
+					return Either.right(StorageOperationStatus.MATCH_NOT_FOUND);
+				}
+				return fetchByCategoryOrSubCategoryUid((String) subCategoryData.get().getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction,
+						ResourceMetadataData.class, resourceType);
+			}
+
+			return fetchByCategoryOrSubCategoryName(subCategoryName, NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource, inTransaction, ResourceMetadataData.class, resourceType);
+		}
+		if(subcategories != null){
+			return fetchByMainCategory(subcategories.left().value(), inTransaction, resourceType);
+		}
+		return fetchByResourceType(filters.get(FilterKeyEnum.RESOURCE_TYPE), inTransaction);
+	}
+	
+	private Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, StorageOperationStatus> getAllSubCategories(String categoryName) {
+		Either<CategoryData, StorageOperationStatus> categoryResult = elementOperation.getNewCategoryData(categoryName, NodeTypeEnum.ResourceNewCategory, CategoryData.class);
+		if (categoryResult.isRight()) {
+			return Either.right(categoryResult.right().value());
+		}
+		CategoryData categoryData = categoryResult.left().value();
+
+		Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
+				GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
+		if (childrenNodes.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(childrenNodes.right().value()));
+		}
+		return Either.left(childrenNodes.left().value());
+	}
+	
+	private Optional<ImmutablePair<SubCategoryData, GraphEdge>> validateCategoryHierarcy(List<ImmutablePair<SubCategoryData, GraphEdge>> childNodes, String subCategoryName) {
+		Predicate<ImmutablePair<SubCategoryData, GraphEdge>> matchName = p -> p.getLeft().getSubCategoryDataDefinition().getName().equals(subCategoryName);
+		return childNodes.stream().filter(matchName).findAny();
+	}
+	
+	protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryUid(String categoryUid, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
+			Class<S> clazz, ResourceTypeEnum resourceType) {
+		try {
+			Either<TitanGraph, TitanOperationStatus> graph = titanDao.getGraph();
+			if (graph.isRight()) {
+				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
+
+			}
+			return collectComponents(graph.left().value(), neededType, categoryUid, categoryType, clazz, resourceType);
+
+		} finally {
+			if (false == inTransaction) {
+				titanDao.commit();
+			}
+		}
+	}
+	
+	protected <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> fetchByCategoryOrSubCategoryName(String categoryName, NodeTypeEnum categoryType, String categoryLabel, NodeTypeEnum neededType, boolean inTransaction,
+			Class<S> clazz, ResourceTypeEnum resourceType) {
+		List<T> components = new ArrayList<>();
+		try {
+			Class categoryClazz = categoryType == NodeTypeEnum.ServiceNewCategory ? CategoryData.class : SubCategoryData.class;
+			Map<String, Object> props = new HashMap<String, Object>();
+			props.put(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
+			Either<List<GraphNode>, TitanOperationStatus> getCategory = titanGenericDao.getByCriteria(categoryType, props, categoryClazz);
+			if (getCategory.isRight()) {
+				return Either.right(StorageOperationStatus.CATEGORY_NOT_FOUND);
+			}
+			Either<TitanGraph, TitanOperationStatus> graph = titanDao.getGraph();
+			if (graph.isRight()) {
+				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graph.right().value()));
+
+			}
+			for (GraphNode category : getCategory.left().value()) {
+				Either<List<T>, StorageOperationStatus> result = collectComponents(graph.left().value(), neededType, (String) category.getUniqueId(), categoryType, clazz, resourceType);
+				if (result.isRight()) {
+					return result;
+				}
+				components.addAll(result.left().value());
+			}
+
+			return Either.left(components);
+		} finally {
+			if (false == inTransaction) {
+				titanDao.commit();
+			}
+		}
+	}
+	
+	private <T, S extends ComponentMetadataData> Either<List<T>, StorageOperationStatus> collectComponents(TitanGraph graph, NodeTypeEnum neededType, String categoryUid, NodeTypeEnum categoryType, Class<S> clazz, ResourceTypeEnum resourceType) {
+		List<T> components = new ArrayList<>();
+		Either<List<ImmutablePair<S, GraphEdge>>, TitanOperationStatus> parentNodes = titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(categoryType), categoryUid, GraphEdgeLabels.CATEGORY, neededType, clazz);
+		if (parentNodes.isLeft()) {
+			for (ImmutablePair<S, GraphEdge> component : parentNodes.left().value()) {
+				ComponentMetadataDataDefinition componentData = component.getLeft().getMetadataDataDefinition();
+				Boolean isHighest = componentData.isHighestVersion();
+				boolean isMatchingResourceType = isMatchingByResourceType(neededType, resourceType, componentData);
+				
+				if (isHighest && isMatchingResourceType) {
+					Either<T, StorageOperationStatus> result = (Either<T, StorageOperationStatus>) toscaOperationFacade.getToscaElement(componentData.getUniqueId(), JsonParseFlagEnum.ParseMetadata);
+					if (result.isRight()) {
+						return Either.right(result.right().value());
+					}
+					components.add(result.left().value());
+				}
+			}
+		}
+		return Either.left(components);
+	}
+	
+	private boolean isMatchingByResourceType(NodeTypeEnum componentType, ResourceTypeEnum resourceType,
+			ComponentMetadataDataDefinition componentData) {
+
+		boolean isMatching;
+		if (componentType == NodeTypeEnum.Resource) {
+			if (resourceType == null) {
+				isMatching = true;
+			} else {
+				isMatching = resourceType == ((ResourceMetadataDataDefinition)componentData).getResourceType();
+			}
+		} else {
+			isMatching = true;
+		}
+		return isMatching;
+	}
+	
+	private <T> Either<List<T>, StorageOperationStatus> fetchByMainCategory(List<ImmutablePair<SubCategoryData, GraphEdge>> subcategories, boolean inTransaction, ResourceTypeEnum resourceType) {
+		List<T> components = new ArrayList<>();
+
+		for (ImmutablePair<SubCategoryData, GraphEdge> subCategory : subcategories) {
+			Either<List<T>, StorageOperationStatus> fetched = fetchByCategoryOrSubCategoryUid((String) subCategory.getLeft().getUniqueId(), NodeTypeEnum.ResourceSubcategory, GraphEdgeLabels.SUB_CATEGORY.getProperty(), NodeTypeEnum.Resource,
+					inTransaction, ResourceMetadataData.class, resourceType);
+			if (fetched.isRight()) {
+				// return fetched;
+				continue;
+			}
+			components.addAll(fetched.left().value());
+		}
+		return Either.left(components);
+	}
+	
+	private  Either<List<Component>, StorageOperationStatus> fetchByResourceType(String resourceType, boolean inTransaction) {
+		List<Component> components = null;
+		StorageOperationStatus status;
+		Wrapper<StorageOperationStatus> statusWrapper = new Wrapper<>();
+		Either<List<Component>, StorageOperationStatus> result;
+		try {
+
+			Either<List<Component>, StorageOperationStatus> getResources = toscaOperationFacade.fetchByResourceType(resourceType); //titanGenericDao.getByCriteria(nodeType, props, clazz);
+			if (getResources.isRight()) {
+				status = getResources.right().value();
+				if(status != StorageOperationStatus.NOT_FOUND){
+					statusWrapper.setInnerElement(getResources.right().value());
+				}else{
+					components = new ArrayList<>();
+				}
+			} else{
+				components = getResources.left().value();
+			}
+			if(!statusWrapper.isEmpty()){
+				result = Either.right(statusWrapper.getInnerElement());
+			}else{
+				result = Either.left(components);
+			}
+			return result;
+		} finally {
+			if (!inTransaction) {
+				titanDao.commit();
+			}
+		}
+	}
+	
+	Component convertComponentMetadataDataToComponent(ComponentMetadataData componentMetadataData) {
+		return convertResourceDataToResource((ResourceMetadataData) componentMetadataData);
+	}
+	private Resource convertResourceDataToResource(ResourceMetadataData resourceData) {
+
+		ResourceMetadataDefinition resourceMetadataDataDefinition = new ResourceMetadataDefinition((ResourceMetadataDataDefinition) resourceData.getMetadataDataDefinition());
+
+		Resource resource = new Resource(resourceMetadataDataDefinition);
+
+		return resource;
+	}
+	private <T> Either<List<T>, StorageOperationStatus> fetchByDistributionStatus(String status, boolean inTransaction) {
+		Map<String, Object> props = new HashMap<String, Object>();
+		props.put(GraphPropertiesDictionary.DISTRIBUTION_STATUS.getProperty(), status);
+		props.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
+		return (Either<List<T>, StorageOperationStatus>) (Either<?, StorageOperationStatus>) getServiceListByCriteria(props, inTransaction);
+	}
+	
+	private Either<List<Service>, StorageOperationStatus> getServiceListByCriteria(Map<String, Object> props, boolean inTransaction) {
+		props.put(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Service.getName());
+		Either<List<ServiceMetadataData>, TitanOperationStatus> byCriteria = titanGenericDao.getByCriteria(NodeTypeEnum.Service, props, ServiceMetadataData.class);
+
+		if (byCriteria.isRight()) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value()));
+		}
+		List<Service> services = new ArrayList<Service>();
+		List<ServiceMetadataData> servicesDataList = byCriteria.left().value();
+		for (ServiceMetadataData data : servicesDataList) {
+			Either<Component, StorageOperationStatus> service = toscaOperationFacade.getToscaElement(data.getMetadataDataDefinition().getUniqueId());
+			if (service.isLeft()) {
+				services.add((Service)service.left().value());
+			} else {
+				log.debug("Failed to fetch resource for name = {}  and id = {}",data.getMetadataDataDefinition().getName(),data.getUniqueId());
+			}
+		}
+		return Either.left(services);
 	}
 
 }

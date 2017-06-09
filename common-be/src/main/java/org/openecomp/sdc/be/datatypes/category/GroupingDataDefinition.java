@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.datatypes.category;
 
 import java.io.Serializable;
 
-public class GroupingDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class GroupingDataDefinition extends ToscaDataDefinition implements Serializable {
 	/**
 	 * 
 	 */

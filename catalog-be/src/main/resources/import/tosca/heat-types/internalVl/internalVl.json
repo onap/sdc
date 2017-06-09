@@ -1,0 +1,21 @@
+{
+  "payloadName": "internalVl.yml",
+  "contactId": "jh0003",
+  "name": "InternalVL",
+  "description": "The AT&T internal (VF-level) Virtual Link",
+  "resourceIconPath": "network",
+  "resourceType": "VL",
+  "categories": [
+  {
+    "name": "Network Connectivity",
+    "subcategories": [
+     {
+        "name": "Virtual Links"
+      }
+    ]
+  }
+],  
+ "tags": [
+    "InternalVL"
+  ]
+}

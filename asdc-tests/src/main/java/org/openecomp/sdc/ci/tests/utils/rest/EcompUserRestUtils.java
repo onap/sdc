@@ -42,8 +42,8 @@ import com.google.gson.Gson;
 public class EcompUserRestUtils extends BaseRestUtils {
 
 	static Gson gson = new Gson();
+	private static Logger logger = LoggerFactory.getLogger(UserRestUtils.class.getName());
 
-	static Logger logger = LoggerFactory.getLogger(UserRestUtils.class.getName());
 	static String contentTypeHeaderData = "application/json";
 	static String acceptHeaderDate = "application/json";
 	static String ecompUsername = "12345";
@@ -69,9 +69,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.ECOMP_PUSH_USER, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		logger.debug("Send POST request to create user: {}", url);
-		logger.debug("User body: {}", userBodyJson);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send POST request to create user: {}",url);
+		logger.debug("User body: {}",userBodyJson);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendPushUserResponse = http.httpSendPost(url, userBodyJson, headersMap);
 
@@ -95,9 +95,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.ECOMP_EDIT_USER, config.getCatalogBeHost(), config.getCatalogBePort(), loginId);
 
-		logger.debug("Send POST request to edit user: {}", url);
-		logger.debug("User body: {}", userBodyJson);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send POST request to edit user: {}",url);
+		logger.debug("User body: {}",userBodyJson);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendEditUserResponse = http.httpSendPost(url, userBodyJson, headersMap);
 
@@ -119,8 +119,8 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.ECOMP_GET_USER, config.getCatalogBeHost(), config.getCatalogBePort(), loginId);
 
-		logger.debug("Send GET request to get user: {}", url);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send GET request to get user: {}",url);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendGetUserRequest = http.httpSendGet(url, headersMap);
 
@@ -139,8 +139,8 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		HttpRequest http = new HttpRequest();
 		String url = String.format(Urls.ECOMP_GET_ALL_USERS, config.getCatalogBeHost(), config.getCatalogBePort());
 
-		logger.debug("Send POST request to get all users: {}", url);
-		logger.debug("User headers: {}" , headersMap);
+		logger.debug("Send POST request to get all users: {}",url);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendGetAllUsersRequest = http.httpSendGet(url, headersMap);
 
@@ -160,8 +160,8 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.ECOMP_GET_ALL_AVAILABLE_ROLES, config.getCatalogBeHost(),
 				config.getCatalogBePort());
 
-		logger.debug("Send GET request to get all available roles: {}", url);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send GET request to get all available roles: {}",url);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendUpdateUserRequest = http.httpSendGet(url, headersMap);
 
@@ -186,9 +186,9 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.ECOMP_PUSH_USER_ROLES, config.getCatalogBeHost(), config.getCatalogBePort(),
 				loginId);
 
-		logger.debug("Send POST request to push user role: {}", url);
-		logger.debug("Roles body: {}", roleBodyJson);
-		logger.debug("Request headers: {}", headersMap);
+		logger.debug("Send POST request to push user role: {}",url);
+		logger.debug("Roles body: {}",roleBodyJson);
+		logger.debug("Request headers: {}",headersMap);
 
 		RestResponse sendpushUserRolesResponse = http.httpSendPost(url, roleBodyJson, headersMap);
 
@@ -211,8 +211,8 @@ public class EcompUserRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.ECOMP_GET_USER_ROLES, config.getCatalogBeHost(), config.getCatalogBePort(),
 				loginId);
 
-		logger.debug("Send GET request to get user roles: {}", url);
-		logger.debug("User headers: {}", headersMap);
+		logger.debug("Send GET request to get user roles: {}",url);
+		logger.debug("User headers: {}",headersMap);
 
 		RestResponse sendGetUserRolesRequest = http.httpSendGet(url, headersMap);
 
@@ -239,7 +239,6 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	 * System.out.println("\n-----------------------------\n Testing pushUser");
 	 * System.out.println(pushUser(ecompUser));
 	 * System.out.println("\n-----------------------------\n Testing editUser");
-	 * // System.out.println(editUser("tt0001", ecompUser));
 	 * System.out.println("\n-----------------------------\n Testing getUser");
 	 * // System.out.println(getUser(ecompUser.getLoginId())); System.out.
 	 * println("\n-----------------------------\n Testing getAllUsers"); //
@@ -247,9 +246,7 @@ public class EcompUserRestUtils extends BaseRestUtils {
 	 * println("\n-----------------------------\n Testing getAllAvailableRoles"
 	 * ); // System.out.println(getAllAvailableRoles().toString()); System.out.
 	 * println("\n-----------------------------\n Testing pushUserRoles"); //
-	 * System.out.println(pushUserRoles("tt0001", listOfRoles)); System.out.
 	 * println("\n-----------------------------\n Testing getUserRoles"); //
-	 * System.out.println(getUserRoles("tt0001")); } catch (IOException e) { //
 	 * TODO Auto-generated catch block e.printStackTrace(); } }
 	 */
 }

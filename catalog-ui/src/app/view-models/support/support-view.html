@@ -1,0 +1,31 @@
+<div class="full-height" >
+  <loader data-display="isLoading"></loader>
+  <div class="w-sdc-header">
+    <div class="w-sdc-header-logo">
+      <div class="w-sdc-header-logo-icon sprite logo"></div>
+      <a class="w-sdc-header-logo-link" data-ui-sref="dashboard"  translate="PROJECT_TITLE"></a>
+      <div class="w-sdc-header-version"> v.{{version}}</div>
+    </div>
+    <div class="i-sdc-header-caption">Support</div>
+    <user-header-details ></user-header-details>
+  </div>
+  <div class="w-sdc-main-container">
+    <div  class="w-sdc-left-sidebar">
+      <div class="w-sdc-left-sidebar-in-progress" >
+        <div class="i-sdc-left-sidebar-item category-title" data-ng-class="{'selectedLink':selectedLeftBarGroupLink === inProgressEnumVal}"  data-ng-click="setSelectedEntitiesByEntityGroup(inProgressEnumVal)" >In Design ({{numOfCheckOutEntities+numOfCheckInEntities}})</div>
+        <div class="i-sdc-left-sidebar-item" data-ng-class="{'selectedLink':selectedLeftBarStateLink===notCertifiedCheckOutEnumVal}"  data-ng-click="setSelectedEntitiesByEntityGroupAndEntityState(inProgressEnumVal, notCertifiedCheckOutEnumVal)" >Checked Out ({{numOfCheckOutEntities}})</div>
+        <div class="i-sdc-left-sidebar-item" data-ng-class="{'selectedLink':selectedLeftBarStateLink===notCertifiedCheckInEnumVal}" data-ng-click="setSelectedEntitiesByEntityGroupAndEntityState(inProgressEnumVal, notCertifiedCheckInEnumVal)" >Checked In ({{numOfCheckInEntities}})</div>
+      </div>
+      <div class="w-sdc-left-sidebar-following" >
+        <div class="i-sdc-left-sidebar-item category-title" data-ng-class="{'selectedLink':selectedLeftBarGroupLink===followingEnumVal}"  data-ng-click="setSelectedEntitiesByEntityGroup(followingEnumVal)" >Completed Design ({{numOfReadyForCertificationEntities+numOfCertificationInProgressEntities+numOfCertifiedEntities}})</div>
+        <div class="i-sdc-left-sidebar-item" data-ng-class="{'selectedLink':selectedLeftBarStateLink===readyForCertificationEnumVal}" data-ng-click="setSelectedEntitiesByEntityGroupAndEntityState(followingEnumVal, readyForCertificationEnumVal)" >Ready For Certification ({{numOfReadyForCertificationEntities}})</div>
+        <div class="i-sdc-left-sidebar-item" data-ng-class="{'selectedLink':selectedLeftBarStateLink===certificationInProgressEnumVal}"  data-ng-click="setSelectedEntitiesByEntityGroupAndEntityState(followingEnumVal, certificationInProgressEnumVal)" >Certification In Progress ({{numOfCertificationInProgressEntities}})</div>
+        <div class="i-sdc-left-sidebar-item" data-ng-class="{'selectedLink':selectedLeftBarStateLink===certifiedEnumVal}"  data-ng-click="setSelectedEntitiesByEntityGroupAndEntityState(followingEnumVal, certifiedEnumVal)" >Certified ({{numOfCertifiedEntities}})</div>
+      </div>
+      <div  class="w-sdc-left-sidebar-nav">
+        <div class="i-sdc-left-sidebar-nav-item catalog" data-ui-sref="catalog">Catalog</div>
+        <div class="i-sdc-left-sidebar-nav-item support"  data-ui-sref="support">Support</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -69,10 +69,13 @@ public class DistribDownloadEventTableDesc implements ITableDescription {
 	}
 
 	enum DSEFieldsDescription {
-		REQUEST_ID("request_Id", DataType.varchar(), false), SERVICE_INST_ID("service_Instance_Id", DataType.varchar(),
-				false), ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(),
-						false), DESCRIPTION("description", DataType.varchar(), false), CONSUMER_ID("consumer_Id",
-								DataType.varchar(), false), RESOURCE_URL("resource_URL", DataType.varchar(), false);
+		REQUEST_ID("request_Id", DataType.varchar(), false), 
+		SERVICE_INST_ID("service_Instance_Id", DataType.varchar(),false), 
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESCRIPTION("description", DataType.varchar(), false), 
+		CONSUMER_ID("consumer_Id", DataType.varchar(), false), 
+		RESOURCE_URL("resource_URL", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

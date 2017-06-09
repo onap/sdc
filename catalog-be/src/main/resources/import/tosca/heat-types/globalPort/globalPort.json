@@ -1,0 +1,15 @@
+{
+	"payloadName": "globalPort.yml",
+	"contactId": "jh0003",
+	"name": "GlobalPort",
+	"description": "Represents a global logical port with monitoring capabilities.",
+	"resourceIconPath": "port",
+	"resourceType": "CP",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Abstract"
+		}]
+	}],
+	"tags": ["GlobalPort"]
+}

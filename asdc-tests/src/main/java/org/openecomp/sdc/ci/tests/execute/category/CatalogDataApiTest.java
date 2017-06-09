@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.lf5.util.ResourceUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

@@ -22,14 +22,21 @@ package org.openecomp.sdc.be.datatypes.components;
 
 import java.io.Serializable;
 
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
 public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefinition implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7661001892509435120L;
+	public static final String EMPTY_STR = "";
 
 	private String distributionStatus;
+
+	private Boolean ecompGeneratedNaming = true;
+
+	private String namingPolicy = EMPTY_STR;
 
 	public ServiceMetadataDataDefinition() {
 		super();
@@ -47,10 +54,27 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		this.distributionStatus = distributionStatus;
 	}
 
+	public Boolean isEcompGeneratedNaming() {
+		return ecompGeneratedNaming;
+	}
+
+	public void setEcompGeneratedNaming(Boolean ecompGeneratedNaming) {
+		this.ecompGeneratedNaming = ecompGeneratedNaming;
+	}
+
+	public String getNamingPolicy() {
+		return namingPolicy;
+	}
+
+	public void setNamingPolicy(String namingPolicy) {
+		this.namingPolicy = namingPolicy;
+	}
+
 	@Override
 	public String toString() {
-		return "ServiceMetadataDataDefinition [ distributionStatus=" + distributionStatus + ", parent="
-				+ super.toString() + "]";
+		return "ServiceMetadataDataDefinition [ distributionStatus=" + distributionStatus
+				 + ", ecompGeneratedNaming=" + ecompGeneratedNaming + ", namingPolicy=" + namingPolicy
+				 + ", parent=" + super.toString() + "]";
 	}
 
 	@Override
@@ -58,6 +82,8 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((distributionStatus == null) ? 0 : distributionStatus.hashCode());
+		result = prime * result + ((ecompGeneratedNaming == null) ? 0 : ecompGeneratedNaming.hashCode());
+		result = prime * result + ((namingPolicy == null) ? 0 : namingPolicy.hashCode());
 		return result;
 	}
 
@@ -80,6 +106,16 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
 			if (other.distributionStatus != null)
 				return false;
 		} else if (!distributionStatus.equals(other.distributionStatus))
+			return false;
+		if (ecompGeneratedNaming == null) {
+			if (other.ecompGeneratedNaming != null)
+				return false;
+		} else if (!ecompGeneratedNaming.equals(other.ecompGeneratedNaming))
+			return false;
+		if (namingPolicy == null) {
+			if (other.namingPolicy != null)
+				return false;
+		} else if (!namingPolicy.equals(other.namingPolicy))
 			return false;
 		return super.equals(obj);
 	}

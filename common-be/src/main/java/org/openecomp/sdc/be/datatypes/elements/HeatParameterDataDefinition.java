@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
 
-public class HeatParameterDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class HeatParameterDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 

@@ -21,46 +21,26 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.Point;
-import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
-import org.openecomp.sdc.be.model.tosca.ToscaType;
-import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
-import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
-import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.UserData;
-import org.openecomp.sdc.exception.DeleteReferencedObjectException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -76,9 +56,7 @@ import fj.data.Either;
 @ContextConfiguration("classpath:application-context-test.xml")
 public class AdditionalInformationOperationTest extends ModelTestBase {
 
-	private Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-
-	private static String USER_ID = "muuserid";
+	private static String USER_ID = "muUserId";
 	private static String CATEGORY_NAME = "category/mycategory";
 
 	@javax.annotation.Resource(name = "titan-generic-dao")
@@ -136,8 +114,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 
 		int before = getNumberOfVerticesOnGraph();
 
-		Resource newResource = createResource(USER_ID, CATEGORY_NAME, "testCreateAndDeleteResource", "0.1", null, false,
-				true);
+		Resource newResource = createResource(USER_ID, CATEGORY_NAME, "testCreateAndDeleteResource", "0.1", null, false, true);
 		String resourceId = newResource.getUniqueId();
 
 		Either<Resource, StorageOperationStatus> deleteResource = resourceOperation.deleteResource(resourceId);
@@ -148,8 +125,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 		assertEquals("check number of vertices not changed", before, after);
 	}
 
-	private Resource buildResourceMetadata(String userId, String category, String resourceName,
-			String resourceVersion) {
+	private Resource buildResourceMetadata(String userId, String category, String resourceName, String resourceVersion) {
 
 		Resource resource = new Resource();
 		resource.setName(resourceName);
@@ -189,8 +165,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 		OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
 	}
 
-	public Resource createResource(String userId, String category, String resourceName, String resourceVersion,
-			String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
+	public Resource createResource(String userId, String category, String resourceName, String resourceVersion, String parentResourceName, boolean isAbstract, boolean isHighestVersion) {
 
 		List<String> derivedFrom = new ArrayList<String>();
 		if (parentResourceName != null) {
@@ -206,8 +181,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
 		assertTrue(result.isLeft());
 		Resource resultResource = result.left().value();
 
-		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT,
-				resultResource.getLifecycleState());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultResource.getLifecycleState());
 
 		return resultResource;
 

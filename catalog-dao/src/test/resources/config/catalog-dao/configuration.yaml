@@ -7,8 +7,8 @@ identificationHeaderFields:
 
 
 # catalog backend hostname
-beFqdn: 172.20.43.124:8080
-
+beFqdn: 0.0.0.0
+# sdccatalog.att.com
 
 # catalog backend http port
 beHttpPort: 8080
@@ -48,7 +48,7 @@ neo4j:
     maxHttpPerRoute: 20
 
 cassandraConfig:
-    cassandraHosts: ['mtanjv9sdcg44']
+    cassandraHosts: ['000000000']
     localDataCenter:
     reconnectTimeout : 30000
     authenticate: false
@@ -81,23 +81,23 @@ elasticSearch:
         creationPeriod: month
 
 switchoverDetector:
-    gBeFqdn: AIO-BE.ecomp.idns.cip
-    gFeFqdn: AIO-FE.ecomp.idns.cip
-    beVip: 1.2.3.4
-    feVip: 1.2.3.4
+    gBeFqdn: AIO-BE.ecomp.idns
+    gFeFqdn: AIO-FE.ecomp.idns
+    beVip: 0.0.0.0
+    feVip: 0.0.0.0
     beResolveAttempts: 3
     feResolveAttempts: 3
     enabled: false
     interval: 60
     changePriorityUser: ecompasdc
     changePriorityPassword: ecompasdc123
-    publishNetworkUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
+    publishNetworkUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/update_network?user=root"
     publishNetworkBody: '{"note":"publish network"}'
     groups:
-      beSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip?user=root",
-               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.cip","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.cip","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
-      feSet: { changePriorityUrl: "http://cora.web/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip?user=root",
-               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.cip","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.cip"}'}
+      beSet: { changePriorityUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com?user=root",
+               changePriorityBody: '{"name":"AIO-BE.ecomp.idns.com","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-BE.ecomp.idns.com","no_ad_redirection":false,"v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_be","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_be"],"failover_policy":["FAILALL"]},"comment":"AIO BE G-fqdn","intended_app_proto":"DNS"}'}
+      feSet: { changePriorityUrl: "http://xxx.com/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com?user=root",
+               changePriorityBody: '{"comment":"AIO G-fqdn","name":"AIO-FE.ecomp.idns.com","v4groups":{"failover_groups":["/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_mg_fe","/crt/CipDomain.ECOMP-ASDC-DEVST/config/groups/group_bs_fe"],"failover_policy":["FAILALL"]},"no_ad_redirection":false,"intended_app_proto":"DNS","uri":"/crt/CipDomain.ECOMP-ASDC-DEVST/config/sites/AIO-FE.ecomp.idns.com"}'}
 
 applicationL1Cache:
     datatypes:

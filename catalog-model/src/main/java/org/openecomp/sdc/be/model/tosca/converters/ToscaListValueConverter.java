@@ -109,13 +109,14 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
 			asJsonArray.forEach(e -> {
 				Object convertedValue = null;
 				if (isScalarF) {
-					log.debug("try to convert scalar value {}", e.getAsString());
-					if (e.getAsString() == null) {
+					String jsonAsString = e.toString();
+					log.debug("try to convert scalar value {}", jsonAsString);
+					if ( jsonAsString == null) {
 						convertedValue = null;
 					} else {
-						JsonElement singleElement = jsonParser.parse(e.getAsString());
+						JsonElement singleElement = jsonParser.parse(jsonAsString);
 						if (singleElement.isJsonPrimitive()) {
-							convertedValue = innerConverterFinal.convertToToscaValue(e.getAsString(), innerType,
+							convertedValue = innerConverterFinal.convertToToscaValue(jsonAsString, innerType,
 									dataTypes);
 						} else {
 							convertedValue = handleComplexJsonValue(singleElement);
@@ -128,16 +129,14 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
 					DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
 					Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
 					Map<String, Object> toscaObjectPresentation = new HashMap<>();
-					// log.debug("try to convert datatype value {}",
-					// e.getAsString());
-
+					
 					for (Entry<String, JsonElement> entry : entrySet) {
 						String propName = entry.getKey();
 
 						JsonElement elementValue = entry.getValue();
 						PropertyDefinition propertyDefinition = allProperties.get(propName);
 						if (propertyDefinition == null) {
-							log.debug("The property {} was not found under data type {}", propName, dataTypeDefinition.getName());
+							log.debug("The property {} was not found under data type {}",propName,dataTypeDefinition.getName());
 							continue;
 							// return null;
 						}
@@ -173,7 +172,7 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
 		} catch (
 
 		JsonParseException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
 			return null;
 		}

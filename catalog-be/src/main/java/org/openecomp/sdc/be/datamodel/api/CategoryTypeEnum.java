@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 public enum CategoryTypeEnum implements Serializable {
 
-	CATEGORY("category"), SUBCATEGORY("sub-category"), GROUPING("grouping");
+	CATEGORY("category"), SUBCATEGORY("subcategory"), GROUPING("grouping");
 
 	private String value;
 

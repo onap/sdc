@@ -130,7 +130,7 @@ public class Neo4jClient {
 	public Either<List<List<GraphElement>>, Neo4jOperationStatus> execute(BatchBuilder builder) {
 
 		String json = cypherTranslator.translate(builder);
-		logger.debug("Try to execute cypher request [ {} ]", json);
+		logger.debug("Try to execute cypher request [{}]", json);
 
 		Either<String, Neo4jOperationStatus> result = sendPostCypher(json);
 		if (result.isRight()) {
@@ -149,7 +149,7 @@ public class Neo4jClient {
 
 	public Either<List<List<GraphElement>>, Neo4jOperationStatus> executeGet(RecursiveFilter filter) {
 		String json = cypherTranslator.translateGet(filter);
-		logger.debug("Try to execute cypher request [ {} ]", json);
+		logger.debug("Try to execute cypher request [{}]", json);
 
 		Either<String, Neo4jOperationStatus> result = sendPostCypher(json);
 		if (result.isRight()) {
@@ -264,7 +264,7 @@ public class Neo4jClient {
 			String filterStr = CypherTranslator.prepareFilterBody(filter);
 			requestJson = requestJson.replace("$filter$", filterStr);
 		}
-		logger.debug("Try to perform request [ {} ]", requestJson);
+		logger.debug("Try to perform request []", requestJson);
 
 		Either<String, Neo4jOperationStatus> status = sendPostCypher(requestJson);
 		if (status.isRight()) {
@@ -320,7 +320,7 @@ public class Neo4jClient {
 		String props = preparePropertiesInStatement(toUpdate.getToUpdate());
 		requestJson = requestJson.replace("$props$", props);
 
-		logger.debug("Try to perform request [ {} ]", requestJson);
+		logger.debug("Try to perform request [{}]", requestJson);
 
 		Either<String, Neo4jOperationStatus> result = sendPostCypher(requestJson);
 		if (result.isRight()) {
@@ -493,7 +493,7 @@ public class Neo4jClient {
 			GraphNode node = (GraphNode) element;
 			String json = prepareCreateNodeBody(node);
 
-			logger.debug("Try to save Node [ {} ]", json);
+			logger.debug("Try to save Node [{}] on graph", json);
 
 			status = sendPostCypher(json);
 
@@ -528,10 +528,10 @@ public class Neo4jClient {
 			int status = response.getStatusLine().getStatusCode();
 			String responseString;
 			responseString = new BasicResponseHandler().handleResponse(response);
-			logger.debug("response [ {} ]", responseString);
+			logger.debug("response [{}]", responseString);
 
 			if (status == 200 || status == 201) {
-				logger.debug("cypher request [ {} ]", json);
+				logger.debug("cypher request [{}] was succeeded", json);
 				Neo4jOperationStatus responseStatus = checkResponse(responseString);
 				if (Neo4jOperationStatus.OK.equals(responseStatus)) {
 					return Either.left(responseString);
@@ -539,22 +539,22 @@ public class Neo4jClient {
 					return Either.right(responseStatus);
 				}
 			} else {
-				logger.debug("cypher request [ {} ] was failed: [ {} ]", json, responseString);
+				logger.debug("cypher request [{}] was failed : [{}]", json, responseString);
 				return Either.right(Neo4jOperationStatus.GENERAL_ERROR);
 			}
 
 		} catch (HttpResponseException e) {
-			logger.debug("failed to perform cypher request [ {} ], {}", json, e);
+			logger.debug("failed to perform cypher request [{}]", json, e);
 			if (e.getStatusCode() == 401) {
 				return Either.right(Neo4jOperationStatus.NOT_AUTHORIZED);
 			} else {
 				return Either.right(Neo4jOperationStatus.GENERAL_ERROR);
 			}
 		} catch (ClientProtocolException e) {
-			logger.debug("failed to perform cypher request [ {} ] {}", json, e);
+			logger.debug("failed to perform cypher request [{}]", json, e);
 			return Either.right(Neo4jOperationStatus.HTTP_PROTOCOL_ERROR);
 		} catch (IOException e) {
-			logger.debug("failed to perform cypher request [ {} ] {}", json, e);
+			logger.debug("failed to perform cypher request [{}]", json, e);
 			return Either.right(Neo4jOperationStatus.NOT_CONNECTED);
 		} finally {
 			releaseResource(response);
@@ -722,7 +722,7 @@ public class Neo4jClient {
 			response = httpClient.execute(get, context);
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != 200) {
-				logger.error("failed to get indexes requeste returned " + statusCode);
+				logger.error("failed to get indexes requeste returned {}", statusCode);
 				return Either.right(Neo4jOperationStatus.GENERAL_ERROR);
 			} else {
 				Map<String, List<String>> labels = getLeablesFromJson(response);
@@ -793,14 +793,13 @@ public class Neo4jClient {
 				response = httpClient.execute(post, context);
 				int statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode != 200) {
-					logger.error("failed to create index for label [" + label + "] with properties:" + propertyNames
-							+ " requeste returned " + statusCode);
+					logger.error("failed to create index for label [{}] with properties:{} requeste returned {}",label,propertyNames,statusCode);
 					result = Neo4jOperationStatus.GENERAL_ERROR;
 				} else {
-					logger.debug("index for label [ {} ] with properties {} created", label, propertyNames);
+					logger.debug("index for label [{}] with properties: {} created", label, propertyNames);
 				}
 			} catch (Exception e) {
-				logger.debug("failed to create index for label [ {} ] with properties {}", label, propertyNames);
+				logger.debug("failed to create index for label [{}] with properties: {}", label, propertyNames);
 				result = Neo4jOperationStatus.GENERAL_ERROR;
 			} finally {
 
@@ -811,7 +810,7 @@ public class Neo4jClient {
 		}
 
 		else {
-			logger.debug("no index was created for label: {}, the received propertyNames list: {} is invalid", label, propertyNames);
+			logger.debug("no index was created for label :{} the recived propertyNames list: {} is invalide",label,propertyNames);
 			return Neo4jOperationStatus.WRONG_INPUT;
 		}
 
@@ -850,14 +849,14 @@ public class Neo4jClient {
 
 				int statusCode = response.getStatusLine().getStatusCode();
 				if (statusCode != 200) {
-					logger.error("failed to create uniqueness constraint  for label [" + label + "] on properties:"
-							+ propertyNames + ". request returned " + statusCode);
+					logger.error("failed to create uniqueness constraint  for label [{}] on properties:{}. request returned ",
+							label,propertyNames,statusCode);
 					result = Neo4jOperationStatus.GENERAL_ERROR;
 				} else {
-					logger.debug("uniqueness constraint for label [ {} ] on properties {} created", label, propertyNames);
+					logger.debug("uniqueness constraint for label [{}] on properties:{} created",label,propertyNames);
 				}
 			} catch (Exception e) {
-				logger.error("failed to create uniqueness constraint [ {} ] with properties {}, error: {}",label, propertyNames, e);
+				logger.error("failed to create uniqueness constraint [{}] with properties:{}",label,propertyNames,e);
 				result = Neo4jOperationStatus.GENERAL_ERROR;
 			} finally {
 				releaseResource(response);
@@ -866,7 +865,7 @@ public class Neo4jClient {
 		}
 
 		else {
-			logger.debug("no index was created for label: {} the received propertyNames list: {} is invalid", label, propertyNames);
+			logger.debug("no index was created for label :{} the recived propertyNames list: {} is invalide",label,propertyNames);
 			return Neo4jOperationStatus.WRONG_INPUT;
 		}
 
@@ -886,11 +885,11 @@ public class Neo4jClient {
 			throw new RuntimeException(" delete on type " + type + " is not yet supported");
 		}
 
-		logger.debug("Try to perform request [ {} ]", requestJson);
+		logger.debug("Try to perform request [{}]", requestJson);
 
 		Either<String, Neo4jOperationStatus> status = sendPostCypher(requestJson);
 		if (status.isRight()) {
-			logger.error(" delete request failed with {}", status.right());
+			logger.error(" delete request failed with: {}", status.right());
 			return Neo4jOperationStatus.GENERAL_ERROR;
 		} else {
 			return Neo4jOperationStatus.OK;

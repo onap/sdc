@@ -30,6 +30,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,6 +39,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -52,6 +55,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +74,7 @@ import fj.data.Either;
 @Path("/v1/catalog")
 @Api(value = "Input Catalog", description = "Input Servlet")
 @Singleton
-public class InputsServlet extends BeGenericServlet {
+public class InputsServlet extends AbstractValidationsServlet {
 
 	private static Logger log = LoggerFactory.getLogger(ProductServlet.class.getName());
 
@@ -102,22 +106,80 @@ public class InputsServlet extends BeGenericServlet {
 
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Component Instance Inputs" + componentType);
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Inputs" + componentType);
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Inputs " + componentType);
 			log.debug("getInputs failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 			return response;
 
 		}
 	}
+	
+
+	@POST
+	@Path("/{containerComponentType}/{componentId}/update/inputs")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update resource  inputs", httpMethod = "POST", notes = "Returns updated input", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Input updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response updateComponentInputs(
+			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("containerComponentType") final String containerComponentType,
+			@PathParam("componentId") final String componentId, 
+			@ApiParam(value = "json describe the input", required = true) String data, @Context final HttpServletRequest request) {
+
+
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}", url);
+		String userId = request.getHeader(Constants.USER_ID_HEADER);
+
+		try {
+			User modifier = new User();
+			modifier.setUserId(userId);
+			log.debug("modifier id is {}", userId);
+
+			Either<InputDefinition, ResponseFormat> inputEither = getComponentsUtils().convertJsonToObjectUsingObjectMapper(data, modifier, InputDefinition.class, AuditingActionEnum.UPDATE_RESOURCE_METADATA, ComponentTypeEnum.SERVICE);;
+			if(inputEither.isRight()){
+				log.debug("Failed to convert data to input definition. Status is {}", inputEither.right().value());
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+			}
+			InputDefinition input = inputEither.left().value();
+
+			log.debug("Start handle request of updateResourceInstanceProperty. Received property is {}", input);
+
+			ServletContext context = request.getSession().getServletContext();
+			ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(containerComponentType);
+			
+			InputsBusinessLogic businessLogic = getInputBL(context);
+			if (businessLogic == null) {
+				log.debug("Unsupported component type {}", containerComponentType);
+				return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR));
+			}
+
+			Either<InputDefinition, ResponseFormat> actionResponse = businessLogic.updateInputValue(componentType, componentId, input, userId, true, false);
+
+			if (actionResponse.isRight()) {
+				return buildErrorResponse(actionResponse.right().value());
+			}
+
+			InputDefinition resourceInstanceProperty = actionResponse.left().value();
+			ObjectMapper mapper = new ObjectMapper();
+			String result = mapper.writeValueAsString(resourceInstanceProperty);
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+
+		} catch (Exception e) {
+			log.error("create and associate RI failed with exception: {}", e.getMessage(), e);
+			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+	}
+
 
 	@GET
-	@Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComonentUid}/inputs")
+	@Path("/{componentType}/{componentId}/componentInstances/{instanceId}/{originComponentUid}/inputs")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Get Inputs only", httpMethod = "GET", notes = "Returns Inputs list", response = Resource.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
 	public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
-			@PathParam("originComonentUid") final String originComonentUid, @Context final HttpServletRequest request, @QueryParam("fromName") String fromName, @QueryParam("amount") int amount,
+			@PathParam("originComponentUid") final String originComonentUid, @Context final HttpServletRequest request, @QueryParam("fromName") String fromName, @QueryParam("amount") int amount,
 			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
 		ServletContext context = request.getSession().getServletContext();
@@ -128,7 +190,7 @@ public class InputsServlet extends BeGenericServlet {
 		try {
 			InputsBusinessLogic businessLogic = getInputBL(context);
 
-			Either<List<InputDefinition>, ResponseFormat> inputsResponse = businessLogic.getInputs(userId, originComonentUid, fromName, amount);
+			Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = businessLogic.getComponentInstanceInputs(userId, componentId, instanceId, fromName, amount);
 			if (inputsResponse.isRight()) {
 				log.debug("failed to get component instance inputs {}", componentType);
 				return buildErrorResponse(inputsResponse.right().value());
@@ -138,7 +200,7 @@ public class InputsServlet extends BeGenericServlet {
 
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Component Instance Inputs" + componentType);
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Inputs" + componentType);
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Inputs " + componentType);
 			log.debug("getInputs failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 			return response;
@@ -157,13 +219,13 @@ public class InputsServlet extends BeGenericServlet {
 
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("(get) Start handle request of {}", url);
+		log.debug("(GET) Start handle request of {}", url);
 		Response response = null;
 
 		try {
 			InputsBusinessLogic businessLogic = getInputBL(context);
 
-			Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = businessLogic.getComponentInstancePropertiesByInputId(userId, instanceId, inputId);
+			Either<List<ComponentInstanceProperty>, ResponseFormat> inputPropertiesRes = businessLogic.getComponentInstancePropertiesByInputId(userId, componentId, instanceId, inputId);
 			if (inputPropertiesRes.isRight()) {
 				log.debug("failed to get properties of input: {}, with instance id: {}", inputId, instanceId);
 				return buildErrorResponse(inputPropertiesRes.right().value());
@@ -199,6 +261,43 @@ public class InputsServlet extends BeGenericServlet {
 			InputsBusinessLogic businessLogic = getInputBL(context);
 
 			Either<List<ComponentInstanceInput>, ResponseFormat> inputsRes = businessLogic.getInputsForComponentInput(userId, componentId, inputId);
+			
+			if (inputsRes.isRight()) {
+				log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
+				return buildErrorResponse(inputsRes.right().value());
+			}
+			Object properties = RepresentationUtils.toRepresentation(inputsRes.left().value());
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), properties);
+
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get inputs by input id {}, for component {} ", inputId, componentId);
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get inputs by input id: " + inputId + " for component with id: " + componentId);
+			log.debug("getInputsForComponentInput failed with exception", e);
+			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+			return response;
+
+		}
+	}
+	
+	@GET
+	@Path("/{componentType}/{componentId}/inputs/{inputId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Get inputs", httpMethod = "GET", notes = "Returns inputs list", response = Resource.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
+	public Response getInputsAndPropertiesForComponentInput(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("inputId") final String inputId, @Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+		ServletContext context = request.getSession().getServletContext();
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("(get) Start handle request of {}", url);
+		Response response = null;
+
+		try {
+			InputsBusinessLogic businessLogic = getInputBL(context);
+
+			Either<InputDefinition, ResponseFormat> inputsRes = businessLogic.getInputsAndPropertiesForComponentInput(userId, componentId, inputId, false);
+			
 			if (inputsRes.isRight()) {
 				log.debug("failed to get inputs of input: {}, with instance id: {}", inputId, componentId);
 				return buildErrorResponse(inputsRes.right().value());
@@ -270,6 +369,8 @@ public class InputsServlet extends BeGenericServlet {
 		}
 	}
 	
+
+	
 	@DELETE
 	@Path("/{componentType}/{componentId}/delete/{inputId}/input")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -291,14 +392,13 @@ public class InputsServlet extends BeGenericServlet {
 
 		try {
 			InputsBusinessLogic businessLogic = getInputBL(context);
-			Either<InputDefinition, ResponseFormat> deleteInput = businessLogic.deleteInput(componentType, componentId, userId, inputId, true);
+			Either<InputDefinition, ResponseFormat> deleteInput = businessLogic.deleteInput(componentType, componentId, userId, inputId);
 			if (deleteInput.isRight()){
 				ResponseFormat deleteResponseFormat = deleteInput.right().value();
 				response = buildErrorResponse(deleteResponseFormat);
 				return response;
 			}		
-			InputDefinition inputDefinition = deleteInput.left().value();
-			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), inputDefinition);
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteInput.left().value());
 		} catch (Exception e){
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete input for service {} with id: {}", componentId, inputId);
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
@@ -308,7 +408,46 @@ public class InputsServlet extends BeGenericServlet {
 
 		}
 	}
+	
+	
+	
+	/*@PUT
+	@Path("/{componentType}/{componentId}/edit/{inputId}/input")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Delete input from service", httpMethod = "DELETE", notes = "Delete service input", response = Resource.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Input deleted"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Input not found") })
+	public Response editInputValue (
+			@PathParam("componentType") final String componentType,
+			@PathParam("componentId") final String componentId,
+			@PathParam("inputId") final String inputId,
+            @Context final HttpServletRequest request,
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
+		ServletContext context = request.getSession().getServletContext();
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("(get) Start handle request of {}", url);
+		Response response = null;
+
+		try {
+			InputsBusinessLogic businessLogic = getInputBL(context);
+			Either<InputDefinition, ResponseFormat> deleteInput = businessLogic.deleteInput(componentType, componentId, userId, inputId);
+			if (deleteInput.isRight()){
+				ResponseFormat deleteResponseFormat = deleteInput.right().value();
+				response = buildErrorResponse(deleteResponseFormat);
+				return response;
+			}		
+			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), deleteInput.left().value());
+		} catch (Exception e){
+			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete input for service {} with id: {}", componentId, inputId);
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete input for service + " + componentId + " + with id: " + inputId);
+			log.debug("Delete input failed with exception", e);
+			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+			return response;
+
+		}
+	}*/
+	
 	protected InputsBusinessLogic getInputBL(ServletContext context) {
 
 		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);

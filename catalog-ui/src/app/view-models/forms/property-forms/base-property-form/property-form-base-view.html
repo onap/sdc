@@ -1,0 +1,132 @@
+<sdc-modal modal="modalPropertyFormBase" type="classic" class="sdc-edit-property-container" buttons="footerButtons" header="{{isNew ? 'Add' : 'Update' }} Property" show-close-button="true" data-tests-id="sdc-edit-property-container">
+    <loader data-display="isLoading" relative="false" size="medium"></loader>
+    <div class="sdc-modal-top-bar" data-ng-if="!isNew">
+        <div class="sdc-modal-top-bar-buttons">
+            <span ng-click="delete(property)" data-ng-class="{'disabled' : isDeleteDisable}" class="sprite-new delete-btn" data-tests-id="delete_property"  sdc-smart-tooltip="">Delete</span>
+            <span class="delimiter"></span>
+            <span data-ng-click="getPrev()" data-ng-class="{'disabled' : !currentPropertyIndex ||  forms.editForm.$invalid || isArrowsDisabled}" class="sprite-new left-arrow" data-tests-id="get-prev" sdc-smart-tooltip="">Previous</span>
+            <span data-ng-click="getNext()" data-ng-class="{'disabled' : isLastProperty ||  forms.editForm.$invalid || isArrowsDisabled}" class="sprite-new right-arrow" data-tests-id="get-next" sdc-smart-tooltip="">Next</span>
+        </div>
+    </div>
+
+    <div class="sdc-edit-property-form-container" >
+        <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+            <form class="w-sdc-form two-columns" name="forms.editForm" >
+
+                <div class="w-sdc-form-columns-wrapper">
+
+                    <div class="w-sdc-form-column">
+
+                        <!-- Name -->
+                        <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.propertyName.$dirty && forms.editForm.propertyName.$invalid)}">
+                            <label class="i-sdc-form-label" ng-class="{'required': !isService}">Name</label>
+                            <input class="i-sdc-form-input"
+                                   data-tests-id="propertyName"
+                                   data-ng-maxlength="50"
+                                   data-ng-disabled="isNameDisable"
+                                   maxlength="50"
+                                   data-ng-model="property.name"
+                                   type="text"
+                                   name="propertyName"
+                                   data-ng-pattern="propertyNameValidationPattern"
+                                   data-required
+                                   data-ng-model-options="{ debounce: 200 }"
+                                   autofocus />
+
+                            <div class="input-error" data-ng-show="forms.editForm.propertyName.$dirty && forms.editForm.propertyName.$invalid">
+                                <span ng-show="forms.editForm.propertyName.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Property name' }"></span>
+                                <span ng-show="forms.editForm.propertyName.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '50' }"></span>
+                                <span ng-show="forms.editForm.propertyName.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-sdc-form-column">
+                        <div class="w-sdc-form-columns-wrapper">
+                            <div class="w-sdc-form-column">
+                                <!-- Type -->
+                                <div class="i-sdc-form-item"  data-ng-class="{error:(forms.editForm.type.$dirty && forms.editForm.type.$invalid)}">
+                                    <label class="i-sdc-form-label" ng-class="{'required': !isService}">Type</label>
+                                    <select class="i-sdc-form-select"
+                                            data-tests-id="propertyType"
+                                            data-required
+                                            data-ng-disabled="isTypeSelectorDisable"
+                                            name="type"
+                                            data-ng-change="onTypeChange()"
+                                            data-ng-model="property.type">
+                                        <option value="">Choose Type</option>
+                                        <option data-ng-repeat="type in types"
+                                                value="{{type}}">{{type}}</option>
+                                        <option data-ng-repeat="type in nonPrimitiveTypes"
+                                                value="{{type}}">{{type.replace("org.openecomp.datatypes.heat.","")}}</option>
+                                    </select>
+
+                                    <div class="input-error" data-ng-show="forms.editForm.type.$dirty && forms.editForm.type.$invalid">
+                                        <span ng-show="forms.editForm.type.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Type' }"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-sdc-form-column" data-ng-if="showSchema()">
+                                <!-- Entry Schema -->
+                                <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.schemaType.$dirty && forms.editForm.schemaType.$invalid)}">
+                                    <label class="i-sdc-form-label required">Entry Schema</label>
+                                    <select class="i-sdc-form-select"
+                                            data-required
+                                            data-tests-id="schema-type"
+                                            data-ng-disabled="isPropertyValueOwner() || property.readonly"
+                                            name="schemaType"
+                                            data-ng-change="onSchemaTypeChange()"
+                                            data-ng-model="property.schema.property.type">
+                                        <option value="">Choose Schema Type</option>
+                                        <option data-ng-repeat="type in simpleTypes"
+                                                value="{{type}}">{{type}}</option>
+                                        <option data-ng-repeat="type in nonPrimitiveTypes"
+                                                value="{{type}}">{{type.replace("org.openecomp.datatypes.heat.","")}}</option>
+                                    </select>
+
+                                    <div class="input-error" data-ng-show="forms.editForm.schemaType.$dirty && forms.editForm.schemaType.$invalid">
+                                        <span ng-show="forms.editForm.schemaType.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Entry schema' }"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Constraints by type -->
+                        <div class="i-sdc-form-item" data-ng-if="false">
+                            <label class="i-sdc-form-label required">Constraints by type</label>
+                            <div>
+                                Should be constraints by type(TBD)
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- Description -->
+                <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.description.$dirty && forms.editForm.description.$invalid)}">
+                    <label class="i-sdc-form-label">Description</label>
+                            <textarea  class="i-sdc-form-textarea"
+                                       data-ng-maxlength="256"
+                                       data-ng-disabled="isDescriptionDisable"
+                                       maxlength="256"
+                                       data-ng-pattern="commentValidationPattern"
+                                       name="description"
+                                       data-ng-model="property.description"
+                                       data-ng-model-options="{ debounce: 200 }"
+                                       data-tests-id="description"
+                            ></textarea>
+
+                    <div class="input-error" data-ng-show="forms.editForm.description.$dirty && forms.editForm.description.$invalid">
+                        <span ng-show="forms.editForm.description.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '256' }"></span>
+                        <span ng-show="forms.editForm.description.$error.pattern" translate="VALIDATION_ERROR_SPECIAL_CHARS_NOT_ALLOWED"></span>
+                        <span ng-show="forms.editForm.description.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Description' }"></span>
+                    </div>
+                </div>
+                <!-- Default value - insert in dynamic template url -->
+                <ng-include src="innerViewSrcUrl"></ng-include>
+                <span  class="w-sdc-form-note"  data-ng-show="forms.editForm.$invalid && false" translate="LABEL_ALL_FIELDS_ARE_MANDATORY"></span>
+            </form>
+        </perfect-scrollbar>
+    </div>
+
+</sdc-modal>

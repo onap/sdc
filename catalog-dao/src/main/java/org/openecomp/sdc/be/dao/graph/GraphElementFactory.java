@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.GraphNodeLock;
 import org.openecomp.sdc.be.resources.data.GroupData;
+import org.openecomp.sdc.be.resources.data.GroupInstanceData;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
 import org.openecomp.sdc.be.resources.data.HeatParameterData;
 import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
@@ -252,6 +253,9 @@ public class GraphElementFactory {
 				break;
 			case PolicyType:
 				element = clazz.cast(new PolicyTypeData(properties));
+				break;
+			case GroupInstance:
+				element = clazz.cast(new GroupInstanceData(properties));
 				break;
 			default:
 				break;

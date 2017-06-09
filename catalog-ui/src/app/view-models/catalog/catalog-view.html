@@ -1,0 +1,199 @@
+<div class="sdc-catalog-container">
+
+    <loader data-display="gui.isLoading"></loader>
+<!--
+    <ecomp-header menu-data="menuItems" version="{{version}}"></ecomp-header>
+-->
+
+    <div class="w-sdc-main-container">
+
+        <!-- LEFT SIDE -->
+        <perfect-scrollbar scroll-y-margin-offset="0" class="sdc-catalog-body-container w-sdc-left-sidebar" include-padding="true">
+            <div class="sdc-catalog-leftbar-container">
+
+                <div class="sdc-catalog-type-filter-container">
+                    <div
+                        class="i-sdc-designer-leftbar-section-title pointer"
+                        data-ng-click="sectionClick('type')"
+                        data-ng-class="{'expanded': expandedSection.indexOf('type') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="typeFilterTitle">Type</span>
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <ul class="list-unstyled i-sdc-designer-leftbar-section-content-ul">
+                            <li class="i-sdc-designer-leftbar-section-content-ul-li" data-ng-repeat="type in checkboxes.componentTypes">
+
+                                <sdc-checkbox elem-id="checkbox-{{type | lowercase | clearWhiteSpaces}}"
+                                              sdc-checklist-model="checkboxesFilter.selectedComponentTypes"
+                                              sdc-checklist-value="type"
+                                              data-ng-click="gui.onComponentTypeClick(type)"
+                                              text="{{type}}"></sdc-checkbox>
+
+                                <ul class="list-unstyled i-sdc-catalog-subcategories-checkbox" data-ng-if="type==='Resource'">
+                                    <li data-ng-repeat="subType in checkboxes.resourceSubTypes">
+
+                                        <sdc-checkbox elem-id="checkbox-{{subType | lowercase | clearWhiteSpaces}}"
+                                                      sdc-checklist-model="checkboxesFilter.selectedResourceSubTypes"
+                                                      sdc-checklist-value="subType"
+                                                      data-ng-click="gui.onResourceSubTypesClick()"
+                                                      text="{{subType}}"></sdc-checkbox>
+
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sdc-catalog-categories-filter-container">
+                    <div
+                        class="i-sdc-designer-leftbar-section-title pointer"
+                        data-ng-click="sectionClick('category')"
+                        data-ng-class="{'expanded': expandedSection.indexOf('category') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="categoriesFilterTitle">Categories</span>
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <!-- CATEGORY CHECKBOX -->
+                        <ul class="list-unstyled i-sdc-designer-leftbar-section-content-ul">
+                            <li class="i-sdc-designer-leftbar-section-content-ul-li"
+                                data-ng-repeat="category in categories | categoryTypeFilter:checkboxesFilter.selectedComponentTypes:checkboxesFilter.selectedResourceSubTypes | orderBy: category">
+
+                                <sdc-checkbox elem-id="checkbox-{{category.uniqueId | lowercase | clearWhiteSpaces}}"
+                                              sdc-checklist-model="checkboxesFilter.selectedCategoriesModel"
+                                              sdc-checklist-value="category.uniqueId"
+                                              data-tests-id="{{category.uniqueId}}"
+                                              data-ng-click="gui.onCategoryClick(category)"
+                                              text="{{category.name}}"></sdc-checkbox>
+
+                                <!-- SUB CATEGORY CHECKBOX -->
+                                <ul class="list-unstyled i-sdc-catalog-subcategories-checkbox" data-ng-if="category.subcategories && category.subcategories.length>0">
+                                    <li ng-repeat="subcategory in category.subcategories track by subcategory.uniqueId | orderBy:'name'">
+
+                                        <sdc-checkbox elem-id="checkbox-{{subcategory.uniqueId | lowercase | clearWhiteSpaces}}"
+                                                      sdc-checklist-model="checkboxesFilter.selectedCategoriesModel"
+                                                      sdc-checklist-value="subcategory.uniqueId"
+                                                      data-tests-id="{{subcategory.uniqueId}}"
+                                                      data-ng-click="gui.onSubcategoryClick($parent.category, subcategory)"
+                                                      text="{{subcategory.name}}"></sdc-checkbox>
+
+                                        <!-- GROUPING CHECKBOX -->
+                                        <ul class=" list-unstyled i-sdc-catalog-grouping-checkbox" data-ng-if="subcategory.groupings && subcategory.groupings.length>0">
+                                            <li ng-repeat="grouping in subcategory.groupings track by grouping.uniqueId | orderBy:'name'">
+
+                                                <sdc-checkbox elem-id="checkbox-{{grouping.uniqueId | lowercase | clearWhiteSpaces}}"
+                                                              sdc-checklist-model="checkboxesFilter.selectedCategoriesModel"
+                                                              sdc-checklist-value="grouping.uniqueId"
+                                                              data-ng-click="gui.onGroupClick($parent.subcategory)"
+                                                              text="{{grouping.name}}"></sdc-checkbox>
+
+                                            </li>
+                                        </ul>
+                                    </li><!-- Close subcategory -->
+                                </ul><!-- Close subcategories -->
+                            </li><!-- Close main category -->
+                        </ul><!-- Close main categories -->
+
+                    </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="sdc-catalog-status-filter-container">
+                    <div
+                        class="i-sdc-designer-leftbar-section-title pointer"
+                        data-ng-click="sectionClick('status')"
+                        data-ng-class="{'expanded': expandedSection.indexOf('status') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text" data-tests-id="statusFilterTitle">Status</span>
+                    </div>
+
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <ul class="list-unstyled i-sdc-designer-leftbar-section-content-ul">
+                            <!--li data-ng-repeat="(key, value) in confStatus" -->
+
+                            <li class="i-sdc-designer-leftbar-section-content-ul-li"
+                                data-ng-repeat="(key, state) in confStatus | catalogStatusFilter">
+
+                                <sdc-checkbox elem-id="checkbox-{{key | lowercase | clearWhiteSpaces}}"
+                                              sdc-checklist-model="checkboxesFilter.selectedStatuses"
+                                              sdc-checklist-value="state.values"
+                                              text="{{state.name}}"></sdc-checkbox>
+
+                                <div class="i-sdc-categories-list-item-icon"></div>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </perfect-scrollbar>
+
+        <!-- RIGHT SIDE -->
+        <perfect-scrollbar id="catalog-main-scroll" include-padding="true" class="w-sdc-main-right-container w-sdc-catalog-main">
+
+            <!-- HEADER -->
+            <div>
+                <div class="w-sdc-dashboard-catalog-header">
+                    {{getNumOfElements((catalogFilterdItems| filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search).length)}}
+                </div>
+                <div class="w-sdc-dashboard-catalog-header-right">
+                    <span class="w-sdc-dashboard-catalog-header-order" translate="SORT_CAPTION"></span>&nbsp;&nbsp;
+                    <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-last-update" data-ng-class="{'blue' : sortBy==='lastUpdateDate'}"
+                       ng-click="order('lastUpdateDate')" translate="SORT_BY_UPDATE_DATE"></a>&nbsp;
+                    <span data-ng-show="sortBy === 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"></span>
+                    &nbsp;|&nbsp;
+                    <a class="w-sdc-dashboard-catalog-sort" data-tests-id="sort-by-alphabetical" data-ng-class="{'blue' : sortBy!=='lastUpdateDate'}"
+                       ng-click="order('name | resourceName')" translate="SORT_ALPHABETICAL"></a>&nbsp;
+                    <span data-ng-show="sortBy !== 'lastUpdateDate'" class="w-sdc-catalog-sort-arrow" data-ng-class="{'down': reverse, 'up':!reverse}"></span>
+                </div>
+            </div>
+
+            <div infinite-scroll-disabled='isAllItemDisplay'  infinite-scroll="raiseNumberOfElementToDisplay()" infinite-scroll-container="'#catalog-main-scroll'" infinite-scroll-parent>
+
+                <div class='w-sdc-row-flex-items'>
+                    
+                    <!-- Tile new -->
+                    <div data-ng-init="component.filterTerm = component.name +  ' '  + component.description + ' ' + component.tags.toString() + ' ' + component.version"
+                        class="sdc-tile-catalog sdc-tile-fix-width"
+                        data-ng-repeat="component in catalogFilterdItems| filter:{resourceType:('!'+vfcmtType)} | entityFilter:checkboxesFilter | filter:search | orderBy:sortBy:reverse | limitTo:numberOfItemToDisplay"
+                        >
+
+                        <div class="sdc-tile-header">
+                            <div class='sdc-tile-header-type' data-ng-class="{'purple': component.isResource(), 'blue': !component.isResource()}">
+                                <div data-ng-if="component.isResource()" data-tests-id="asset-type">{{component.getComponentSubType()}}</div>
+                                <div data-ng-if="component.isService()">S</div>
+                            </div>
+                        </div>
+                        <div class='sdc-tile-content' data-ng-click="gui.isLoading || goToComponent(component)">
+                            <div class='sdc-tile-content-icon'>
+                                <div class="{{component.iconSprite}} {{component.icon}}"
+                                    data-ng-class="{'sprite-resource-icons': component.isResource(), 'sprite-services-icons': component.isService()}"
+                                    data-tests-id="{{component.name}}"></div>
+                            </div>
+                            <div class='sdc-tile-content-info'>
+                                <div class="sdc-tile-content-info-item-name" data-tests-id="{{component.name | resourceName}}" sdc-smart-tooltip>{{component.name | resourceName}}</div>
+                                <div class="sdc-tile-content-info-version-info">
+                                    <div class="sdc-tile-content-info-version-info-text" data-tests-id="{{component.name}}Version">V {{component.version}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='sdc-tile-footer'>
+                            <div class='sdc-tile-footer-text'>{{component.getStatus(sdcMenu)}}</div>
+                        </div>               
+
+                    </div>
+                    <!-- Tile new -->
+                    
+                </div>
+                
+            </div>
+        </perfect-scrollbar>
+
+    </div>
+
+    <top-nav top-lvl-selected-index="1" search-bind="search.filterTerm" version="{{version}}"></top-nav>
+
+    <ecomp-footer></ecomp-footer>
+
+</div>

@@ -73,12 +73,12 @@ docker run --detach --name sdc-es --env ENVNAME="${DEP_ENV}" --log-driver=json-f
 # cassandra
 echo "docker run sdc-cassandra..."
 docker pull ${NEXUS_DOCKER_REPO}/openecomp/sdc-cassandra:${RELEASE}
-docker run --detach --name sdc-cs --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${NEXUS_DOCKER_REPO}/openecomp/sdc-cassandra:${RELEASE}
+docker run --detach --name sdc-cs --env RELEASE="${RELEASE}" --env ENVNAME="${DEP_ENV}" --env HOST_IP=${IP} --log-driver=json-file --log-opt max-size=100m --log-opt max-file=10 --ulimit memlock=-1:-1 --ulimit nofile=4096:100000 --volume /etc/localtime:/etc/localtime:ro --volume /data/CS:/var/lib/cassandra --volume /data/environments:/root/chef-solo/environments --publish 9042:9042 --publish 9160:9160 ${NEXUS_DOCKER_REPO}/openecomp/sdc-cassandra:${RELEASE}
 
 
 echo "please wait while CS is starting..."
 echo ""
-c=25 # seconds to wait
+c=120 # seconds to wait
 REWRITE="\e[25D\e[1A\e[K"
 while [ $c -gt 0 ]; do
     c=$((c-1))

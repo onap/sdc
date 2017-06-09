@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.config;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,11 +62,14 @@ public class Configuration extends BasicConfiguration {
 
 	private Date released;
 	private String version = "1111";
+	private String toscaConformanceLevel = "3.0";
+	private String minToscaConformanceLevel = "3.0";
 	private List<String> protocols;
 	private Map<String, String> users;
 	private Map<String, Object> neo4j;
 	private ElasticSearchConfig elasticSearch;
 	private String titanCfgFile;
+	private String titanMigrationKeySpaceCfgFile;
 	private Boolean titanInMemoryGraph;
 	private Long titanLockTimeout;
 	private Long titanReconnectIntervalInSeconds;
@@ -73,7 +77,8 @@ public class Configuration extends BasicConfiguration {
 	private Long esReconnectIntervalInSeconds;
 	private Long uebHealthCheckReconnectIntervalInSeconds;
 	private Long uebHealthCheckReadTimeout;
-
+	private LinkedList<Map<String, Map<String, String>>> defaultImports;
+	
 	private List<String> resourceTypes;
 	private List<String> excludeResourceCategory;
 	private Map<String, Object> deploymentResourceArtifacts;
@@ -81,10 +86,11 @@ public class Configuration extends BasicConfiguration {
 	private Map<String, Object> toscaArtifacts;
 	private Map<String, Object> informationalResourceArtifacts;
 	private Map<String, Object> informationalServiceArtifacts;
-	private Map<String, DeploymentArtifactTypeConfig> resourceDeploymentArtifacts;
-	private Map<String, DeploymentArtifactTypeConfig> serviceDeploymentArtifacts;
-	private Map<String, DeploymentArtifactTypeConfig> resourceInstanceDeploymentArtifacts;
-	private Map<String, DeploymentArtifactTypeConfig> resourceInformationalDeployedArtifacts;
+	private Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts;
+	private Map<String, ArtifactTypeConfig> serviceDeploymentArtifacts;
+	private Map<String, ArtifactTypeConfig> resourceInstanceDeploymentArtifacts;
+	private Map<String, ArtifactTypeConfig> resourceInformationalArtifacts;
+	private Map<String, ArtifactTypeConfig> resourceInformationalDeployedArtifacts;
 	private Map<String, Object> serviceApiArtifacts;
 	private List<String> excludeServiceCategory;
 	private Map<String, Set<String>> requirementsToFulfillBeforeCert;
@@ -120,6 +126,18 @@ public class Configuration extends BasicConfiguration {
 	private ToscaValidatorsConfig toscaValidators;
 
 	private boolean disableAudit;
+	
+	private Map<String, VfModuleProperty> vfModuleProperties;
+	
+	private Map<String, String> genericAssetNodeTypes;
+
+	public Map<String, String> getGenericAssetNodeTypes() {
+		return genericAssetNodeTypes;
+	}
+
+	public void setGenericAssetNodeTypes(Map<String, String> genericAssetNodeTypes) {
+		this.genericAssetNodeTypes = genericAssetNodeTypes;
+	}
 
 	public SwitchoverDetectorConfig getSwitchoverDetector() {
 		return switchoverDetector;
@@ -259,6 +277,14 @@ public class Configuration extends BasicConfiguration {
 		this.titanCfgFile = titanCfgFile;
 	}
 
+	public String getTitanMigrationKeySpaceCfgFile() {
+		return titanMigrationKeySpaceCfgFile;
+	}
+
+	public void setTitanMigrationKeySpaceCfgFile(String titanMigrationKeySpaceCfgFile) {
+		this.titanMigrationKeySpaceCfgFile = titanMigrationKeySpaceCfgFile;
+	}
+
 	public Boolean getTitanInMemoryGraph() {
 		return titanInMemoryGraph;
 	}
@@ -359,28 +385,28 @@ public class Configuration extends BasicConfiguration {
 		this.serviceApiArtifacts = serviceApiArtifacts;
 	}
 
-	public Map<String, DeploymentArtifactTypeConfig> getServiceDeploymentArtifacts() {
+	public Map<String, ArtifactTypeConfig> getServiceDeploymentArtifacts() {
 		return serviceDeploymentArtifacts;
 	}
 
-	public void setServiceDeploymentArtifacts(Map<String, DeploymentArtifactTypeConfig> serviceDeploymentArtifacts) {
+	public void setServiceDeploymentArtifacts(Map<String, ArtifactTypeConfig> serviceDeploymentArtifacts) {
 		this.serviceDeploymentArtifacts = serviceDeploymentArtifacts;
 	}
 
-	public Map<String, DeploymentArtifactTypeConfig> getResourceDeploymentArtifacts() {
+	public Map<String, ArtifactTypeConfig> getResourceDeploymentArtifacts() {
 		return resourceDeploymentArtifacts;
 	}
 
-	public void setResourceDeploymentArtifacts(Map<String, DeploymentArtifactTypeConfig> resourceDeploymentArtifacts) {
+	public void setResourceDeploymentArtifacts(Map<String, ArtifactTypeConfig> resourceDeploymentArtifacts) {
 		this.resourceDeploymentArtifacts = resourceDeploymentArtifacts;
 	}
 
 	public void setResourceInstanceDeploymentArtifacts(
-			Map<String, DeploymentArtifactTypeConfig> resourceInstanceDeploymentArtifacts) {
+			Map<String, ArtifactTypeConfig> resourceInstanceDeploymentArtifacts) {
 		this.resourceInstanceDeploymentArtifacts = resourceInstanceDeploymentArtifacts;
 	}
 
-	public Map<String, DeploymentArtifactTypeConfig> getResourceInstanceDeploymentArtifacts() {
+	public Map<String, ArtifactTypeConfig> getResourceInstanceDeploymentArtifacts() {
 		return resourceInstanceDeploymentArtifacts;
 	}
 
@@ -779,7 +805,7 @@ public class Configuration extends BasicConfiguration {
 		}
 	}
 
-	public static class DeploymentArtifactTypeConfig {
+	public static class ArtifactTypeConfig {
 
 		List<String> acceptedTypes;
 		List<String> validForResourceTypes;
@@ -1149,12 +1175,12 @@ public class Configuration extends BasicConfiguration {
 		this.artifactsIndex = artifactsIndex;
 	}
 
-	public Map<String, DeploymentArtifactTypeConfig> getResourceInformationalDeployedArtifacts() {
+	public Map<String, ArtifactTypeConfig> getResourceInformationalDeployedArtifacts() {
 		return resourceInformationalDeployedArtifacts;
 	}
 
 	public void setResourceInformationalDeployedArtifacts(
-			Map<String, DeploymentArtifactTypeConfig> resourceInformationalDeployedArtifacts) {
+			Map<String, ArtifactTypeConfig> resourceInformationalDeployedArtifacts) {
 		this.resourceInformationalDeployedArtifacts = resourceInformationalDeployedArtifacts;
 	}
 
@@ -1230,4 +1256,60 @@ public class Configuration extends BasicConfiguration {
 		this.disableAudit = enableAudit;
 	}
 
+	public Map<String, ArtifactTypeConfig> getResourceInformationalArtifacts() {
+		return resourceInformationalArtifacts;
+	}
+
+	public void setResourceInformationalArtifacts(Map<String, ArtifactTypeConfig> resourceInformationalArtifacts) {
+		this.resourceInformationalArtifacts = resourceInformationalArtifacts;
+	}
+
+	public Map<String, VfModuleProperty> getVfModuleProperties() {
+		return vfModuleProperties;
+	}
+
+	public void setVfModuleProperties(Map<String, VfModuleProperty> vfModuleProperties) {
+		this.vfModuleProperties = vfModuleProperties;
+	}
+
+	public String getToscaConformanceLevel() {
+		return toscaConformanceLevel;
+	}
+
+	public void setToscaConformanceLevel(String toscaConformanceLevel) {
+		this.toscaConformanceLevel = toscaConformanceLevel;
+	}
+	
+	public String getMinToscaConformanceLevel() {
+		return minToscaConformanceLevel;
+	}
+
+	public void setMinToscaConformanceLevel(String toscaConformanceLevel) {
+		this.minToscaConformanceLevel = toscaConformanceLevel;
+	}
+
+	public static class VfModuleProperty {
+		private String forBaseModule;
+		private String forNonBaseModule;
+		public String getForBaseModule() {
+			return forBaseModule;
+		}
+		public void setForBaseModule(String forBaseModule) {
+			this.forBaseModule = forBaseModule;
+		}
+		public String getForNonBaseModule() {
+			return forNonBaseModule;
+		}
+		public void setForNonBaseModule(String forNonBaseModule) {
+			this.forNonBaseModule = forNonBaseModule;
+		}
+	}
+
+	public LinkedList<Map<String, Map<String, String>>> getDefaultImports() {
+		return defaultImports;
+	}
+
+	public void setDefaultImports(LinkedList<Map<String, Map<String, String>>> defaultImports) {
+		this.defaultImports = defaultImports;
+	}
 }

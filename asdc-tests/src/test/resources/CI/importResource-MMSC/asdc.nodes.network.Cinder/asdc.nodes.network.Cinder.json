@@ -2,7 +2,7 @@
   "payloadName": "asdc.nodes.network.Cinder.yml",
   "contactId": "jh0003",
   "name": "asdc.nodes.network.Cinder",
-  "description": "Represents access to cloud shared storae.",
+  "description": "Represents access to Cloud shared storae.",
   "resourceIconPath": "network",
   "category": "Generic/Network Elements",
   "tags": [

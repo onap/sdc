@@ -51,21 +51,17 @@ public interface IResourceOperation extends IComponentOperation {
 	public Either<Resource, StorageOperationStatus> getResource(String resourceId, boolean inTransaction);
 
 	/**
-	 * the method retrieves all the certified resources, the returned values are
-	 * only abstract or only none abstract according to the supplied parameters.
+	 * the method retrieves all the certified resources, the returned values are only abstract or only none abstract according to the supplied parameters.
 	 * 
 	 * @param getAbstract
-	 *            the value defines which resources to return only abstract or
-	 *            only none abstract
+	 *            the value defines which resources to return only abstract or only none abstract
 	 * @return
 	 */
 	public Either<List<Resource>, StorageOperationStatus> getAllCertifiedResources(boolean getAbstract);
 
-	public Either<List<Resource>, StorageOperationStatus> getAllCertifiedResources(boolean getAbstract,
-			Boolean isHighest);
+	public Either<List<Resource>, StorageOperationStatus> getAllCertifiedResources(boolean getAbstract, Boolean isHighest);
 
-	public Either<Boolean, StorageOperationStatus> validateResourceNameExists(String resourceName,
-			ResourceTypeEnum resourceType);
+	public Either<Boolean, StorageOperationStatus> validateResourceNameExists(String resourceName, ResourceTypeEnum resourceType);
 
 	public Either<Resource, StorageOperationStatus> deleteResource(String resourceId);
 
@@ -80,39 +76,31 @@ public interface IResourceOperation extends IComponentOperation {
 	// public Either<List<ArtifactDefinition>, StorageOperationStatus>
 	// getResourceArtifactsForDelete(Resource resource);
 
-	public Either<List<Resource>, StorageOperationStatus> getFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
+	public Either<List<Resource>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction);
 
-	public Either<Set<Resource>, StorageOperationStatus> getCatalogData(Map<String, Object> propertiesToMatch,
-			boolean inTransaction);
+	public Either<Set<Resource>, StorageOperationStatus> getCatalogData(Map<String, Object> propertiesToMatch, boolean inTransaction);
 
 	public Either<Resource, StorageOperationStatus> getLatestByName(String resourceName, boolean inTransaction);
 
-	public Either<Resource, StorageOperationStatus> overrideResource(Resource resource, Resource resourceSaved,
-			boolean inTransaction);
+	public Either<Resource, StorageOperationStatus> overrideResource(Resource resource, Resource resourceSaved, boolean inTransaction);
 
-	public Either<List<Resource>, StorageOperationStatus> getTesterFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, boolean inTransaction);
+	public Either<List<Resource>, StorageOperationStatus> getTesterFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, boolean inTransaction);
 
 	public Either<List<Resource>, StorageOperationStatus> getResourceListByUuid(String uuid, boolean inTransaction);
 
 	public Either<List<Resource>, StorageOperationStatus> getLatestResourceByUuid(String uuid, boolean inTransaction);
 
-	public Either<List<Resource>, StorageOperationStatus> getResourceListBySystemName(String systemName,
-			boolean inTransaction);
+	public Either<List<Resource>, StorageOperationStatus> getResourceListBySystemName(String systemName, boolean inTransaction);
 
 	public Either<List<Resource>, StorageOperationStatus> getResourceCatalogData(boolean inTransaction);
 
-	public Either<List<Resource>, StorageOperationStatus> getResourceCatalogDataVFLatestCertifiedAndNonCertified(
-			boolean inTransaction);
+	public Either<List<Resource>, StorageOperationStatus> getResourceCatalogDataVFLatestCertifiedAndNonCertified(boolean inTransaction);
 
-	public Either<List<Resource>, StorageOperationStatus> getResourceByNameAndVersion(String name, String version,
-			boolean inTransaction);
+	public Either<List<Resource>, StorageOperationStatus> getResourceByNameAndVersion(String name, String version, boolean inTransaction);
 
 	public Either<List<Resource>, StorageOperationStatus> getResourceByNameAndVersion(String name, String version);
 
-	public Either<Resource, StorageOperationStatus> getResourceBySystemNameAndVersion(String name, String version,
-			Map<String, Object> additionalParams, boolean inTransaction);
+	public Either<Resource, StorageOperationStatus> getResourceBySystemNameAndVersion(String name, String version, Map<String, Object> additionalParams, boolean inTransaction);
 
 	// public Either<List<Resource>, StorageOperationStatus>
 	// getAllNotCheckoutResources(boolean getAbstract);
@@ -124,8 +112,35 @@ public interface IResourceOperation extends IComponentOperation {
 
 	public Either<Boolean, StorageOperationStatus> isResourceInUse(String resourceToDelete);
 
-	public Either<Resource, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName,
-			boolean inTransaction);
+	public Either<Resource, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName, boolean inTransaction);
 
 	public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExists(String templateName);
+	
+	public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExtends(String templateNameCurrent, String templateNameExtends);
+
+	/**
+	 *
+	 * @param resource the resource to look for its derived resources
+	 * @return all resources which derives from the given resource
+	 */
+	Either<List<Resource>, StorageOperationStatus> getAllDerivedResources(Resource resource);
+
+	/**
+	 *
+	 * @return all root resources (i.e all normatives with tosca name {@code Resource.ROOT_RESOURCE}
+	 */
+	Either<List<Resource>, StorageOperationStatus> getRootResources();
+
+	/**
+	 *
+	 * @return all resources with type VF
+	 */
+	Either<List<Resource>, StorageOperationStatus> getVFResources();
+
+	/**
+	 *
+	 * @return all resources
+	 */
+	Either<List<Resource>, StorageOperationStatus> getAll();
+
 }

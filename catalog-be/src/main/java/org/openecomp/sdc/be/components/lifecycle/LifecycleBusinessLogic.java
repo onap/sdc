@@ -34,8 +34,11 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -43,14 +46,13 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICacheMangerOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.ProductOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
+import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.Constants;
@@ -76,13 +78,7 @@ public class LifecycleBusinessLogic {
 	private ArtifactsBusinessLogic artifactsBusinessLogic;
 
 	@Autowired
-	private ResourceOperation resourceOperation;
-
-	@Autowired
-	private ServiceOperation serviceOperation;
-
-	@Autowired
-	private ProductOperation productOperation;
+	private TitanDao titanDao;
 
 	@Autowired
 	private CapabilityOperation capabilityOperation;
@@ -93,7 +89,7 @@ public class LifecycleBusinessLogic {
 	private ComponentsUtils componentUtils;
 
 	@javax.annotation.Resource
-	private ILifecycleOperation lifecycleOperation;
+	private ToscaElementLifecycleOperation lifecycleOperation;
 	@javax.annotation.Resource
 	ArtifactsBusinessLogic artifactsManager;
 
@@ -114,6 +110,9 @@ public class LifecycleBusinessLogic {
 
 	@Autowired
 	ICacheMangerOperation cacheManagerOperation;
+	
+	@Autowired
+	ToscaOperationFacade toscaOperationFacade;
 
 	private Map<String, LifeCycleTransition> stateTransitions;
 	private static volatile boolean isInitialized = false;
@@ -134,29 +133,29 @@ public class LifecycleBusinessLogic {
 	private void initStateOperations() {
 		stateTransitions = new HashMap<String, LifeCycleTransition>();
 
-		LifeCycleTransition checkoutOp = new CheckoutTransition(componentUtils, lifecycleOperation);
+		LifeCycleTransition checkoutOp = new CheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		stateTransitions.put(checkoutOp.getName().name(), checkoutOp);
 
-		UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation);
+		UndoCheckoutTransition undoCheckoutOp = new UndoCheckoutTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		undoCheckoutOp.setArtifactsBusinessLogic(artifactsBusinessLogic);
 		stateTransitions.put(undoCheckoutOp.getName().name(), undoCheckoutOp);
 
-		LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation);
+		LifeCycleTransition checkinOp = new CheckinTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		stateTransitions.put(checkinOp.getName().name(), checkinOp);
 
-		LifeCycleTransition certificationRequest = new CertificationRequestTransition(componentUtils, lifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils);
+		LifeCycleTransition certificationRequest = new CertificationRequestTransition(componentUtils, lifecycleOperation, serviceDistributionArtifactsBuilder, serviceBusinessLogic, capabilityOperation, toscaExportUtils, toscaOperationFacade, titanDao);
 		stateTransitions.put(certificationRequest.getName().name(), certificationRequest);
 
-		LifeCycleTransition startCertification = new StartCertificationTransition(componentUtils, lifecycleOperation);
+		LifeCycleTransition startCertification = new StartCertificationTransition(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		stateTransitions.put(startCertification.getName().name(), startCertification);
 
-		LifeCycleTransition failCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.FAIL_CERTIFICATION, componentUtils, lifecycleOperation);
+		LifeCycleTransition failCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.FAIL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		stateTransitions.put(failCertification.getName().name(), failCertification);
 
-		LifeCycleTransition cancelCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CANCEL_CERTIFICATION, componentUtils, lifecycleOperation);
+		LifeCycleTransition cancelCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CANCEL_CERTIFICATION, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		stateTransitions.put(cancelCertification.getName().name(), cancelCertification);
 
-		CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation);
+		CertificationChangeTransition successCertification = new CertificationChangeTransition(LifeCycleTransitionEnum.CERTIFY, componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 		successCertification.setArtifactsManager(artifactsBusinessLogic);
 		stateTransitions.put(successCertification.getName().name(), successCertification);
 	}
@@ -172,132 +171,16 @@ public class LifecycleBusinessLogic {
 	// TODO: rhalili - should use changeComponentState when possible
 	public Either<Resource, ResponseFormat> changeState(String resourceId, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction, boolean needLock) {
 		return (Either<Resource, ResponseFormat>) changeComponentState(ComponentTypeEnum.RESOURCE, resourceId, modifier, transitionEnum, changeInfo, inTransaction, needLock);
-
-		// LifeCycleTransition lifeCycleTransition =
-		// stateTransitions.get(transitionEnum.name());
-		// if (lifeCycleTransition == null) {
-		// log.debug("state operation is not valid. operations allowed are: {}",
-		// LifeCycleTransitionEnum.valuesAsString());
-		// ResponseFormat error =
-		// componentUtils.getInvalidContentErrorAndAudit(modifier,
-		// AuditingActionEnum.CHECKOUT_RESOURCE);
-		// return Either.right(error);
-		// }
-		//
-		// Either<Resource, ResponseFormat> operationResult;
-		// Resource resource = null;
-		// boolean needToUnlockResource = false;
-		//
-		// log.debug("get resource from graph");
-		// ResponseFormat errorResponse;
-		// Either<Resource, ResponseFormat> eitherResourceResponse =
-		// getResourceForChange(resourceId, modifier, lifeCycleTransition);
-		// if (eitherResourceResponse.isRight()) {
-		// return eitherResourceResponse;
-		// }
-		// resource = eitherResourceResponse.left().value();
-		// String resourceCurrVersion = resource.getResourceVersion();
-		// LifecycleStateEnum resourceCurrState = resource.getLifecycleState();
-		//
-		// if (inTransaction == false) {
-		// // lock resource
-		// Either<Boolean, ResponseFormat> eitherLockResource =
-		// lockResource(resource);
-		// if (eitherLockResource.isRight()) {
-		// errorResponse = eitherLockResource.right().value();
-		// componentUtils.auditResource(errorResponse, modifier, resource,
-		// resourceCurrState.name(), resourceCurrVersion,
-		// lifeCycleTransition.getAuditingAction(), null);
-		// return Either.right(errorResponse);
-		// }
-		// needToUnlockResource = true;
-		// }
-		//
-		// try {
-		// Either<Boolean, ResponseFormat> resourceNotDeleted =
-		// validateResourceNotDeleted(modifier, lifeCycleTransition, resource,
-		// resourceCurrVersion);
-		// if (resourceNotDeleted.isRight()) {
-		// return Either.right(resourceNotDeleted.right().value());
-		// }
-		//
-		// Either<Boolean, ResponseFormat> validateHighestVersion =
-		// validateHighestVersion(modifier, lifeCycleTransition, resource,
-		// resourceCurrVersion);
-		// if (validateHighestVersion.isRight()) {
-		// return Either.right(validateHighestVersion.right().value());
-		// }
-		//
-		// Either<User, ResponseFormat> ownerResult =
-		// lifeCycleTransition.getResourceOwner(resource);
-		// if (ownerResult.isRight()) {
-		// return Either.right(ownerResult.right().value());
-		// }
-		// User owner = ownerResult.left().value();
-		// log.debug("owner of resource {} is {}", resource.getUniqueId(),
-		// owner.getUserId());
-		//
-		// LifecycleStateEnum oldState = resource.getLifecycleState();
-		//
-		// Either<String, ResponseFormat> commentValidationResult =
-		// validateComment(changeInfo, transitionEnum);
-		// if (commentValidationResult.isRight()) {
-		// errorResponse = commentValidationResult.right().value();
-		// EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new
-		// EnumMap<AuditingFieldsKeysEnum,
-		// Object>(AuditingFieldsKeysEnum.class);
-		// auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT,
-		// changeInfo.getUserRemarks());
-		// componentUtils.auditResource(errorResponse, modifier, resource,
-		// resourceCurrState.name(), resourceCurrVersion,
-		// lifeCycleTransition.getAuditingAction(), auditingFields);
-		// return Either.right(errorResponse);
-		// }
-		// changeInfo.setUserRemarks(commentValidationResult.left().value());
-		//
-		// Either<Boolean, ResponseFormat> stateValidationResult =
-		// lifeCycleTransition.validateResourceBeforeTransition(resource.getResourceName(),
-		// ComponentTypeEnum.RESOURCE, modifier, owner, oldState);
-		// if (stateValidationResult.isRight()) {
-		// errorResponse = stateValidationResult.right().value();
-		// componentUtils.auditResource(errorResponse, modifier, resource,
-		// resourceCurrState.name(), resourceCurrVersion,
-		// lifeCycleTransition.getAuditingAction(), null);
-		// return Either.right(errorResponse);
-		// }
-		//
-		// operationResult = lifeCycleTransition.changeStateOperation(resource,
-		// modifier, owner, inTransaction);
-		//
-		// if (operationResult.isRight()) {
-		// errorResponse = operationResult.right().value();
-		// log.debug("audit before sending response");
-		// componentUtils.auditResource(errorResponse, modifier, resource,
-		// resourceCurrState.name(), resourceCurrVersion,
-		// lifeCycleTransition.getAuditingAction(), null);
-		//
-		// return Either.right(errorResponse);
-		// }
-		// Resource resourceAfterOperation = operationResult.left().value();
-		// EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new
-		// EnumMap<AuditingFieldsKeysEnum,
-		// Object>(AuditingFieldsKeysEnum.class);
-		// auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT,
-		// changeInfo.getUserRemarks());
-		// componentUtils.auditResource(componentUtils.getResponseFormat(ActionStatus.OK),
-		// modifier, resourceAfterOperation, resourceCurrState.name(),
-		// resourceCurrVersion, lifeCycleTransition.getAuditingAction(),
-		// auditingFields);
-		// return operationResult;
-		//
-		// } finally {
-		// log.debug("unlock resource {}", resourceId);
-		// if (needToUnlockResource && resource != null) {
-		// resource.setUniqueId(resourceId);
-		// graphLockOperation.unlockResource(resource);
-		// }
-		// }
-
+	}
+	
+	private boolean isComponentVFCMT(Component component, ComponentTypeEnum componentType){
+		if (componentType.equals(ComponentTypeEnum.RESOURCE)){
+			ResourceTypeEnum resourceType = ((ResourceMetadataDataDefinition)component.getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
+			if (resourceType.equals(ResourceTypeEnum.VFCMT)){
+				return true;					
+			}
+		}	
+		return false;
 	}
 
 	public Either<? extends Component, ResponseFormat> changeComponentState(ComponentTypeEnum componentType, String componentId, User modifier, LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
@@ -309,12 +192,8 @@ public class LifecycleBusinessLogic {
 			ResponseFormat error = componentUtils.getInvalidContentErrorAndAudit(modifier, AuditingActionEnum.CHECKOUT_RESOURCE);
 			return Either.right(error);
 		}
-		ComponentBusinessLogic bl = getComponentBL(componentType);
-
-		Either<? extends Component, ResponseFormat> operationResult = null;
 		Component component = null;
-		// boolean needToUnlockResource = false;
-		log.debug("get resource from graph");
+		log.info("get resource from graph");
 		ResponseFormat errorResponse;
 
 		Either<? extends Component, ResponseFormat> eitherResourceResponse = getComponentForChange(componentType, componentId, modifier, lifeCycleTransition, changeInfo);
@@ -325,85 +204,48 @@ public class LifecycleBusinessLogic {
 		String resourceCurrVersion = component.getVersion();
 		LifecycleStateEnum resourceCurrState = component.getLifecycleState();
 
+		log.info("lock component {}", componentId);
 		// lock resource
 		if (inTransaction == false && needLock) {
 			Either<Boolean, ResponseFormat> eitherLockResource = lockComponent(componentType, component);
 			if (eitherLockResource.isRight()) {
 				errorResponse = eitherLockResource.right().value();
 				componentUtils.auditComponent(errorResponse, modifier, component, resourceCurrState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, null);
+				log.error("lock component {} failed", componentId);
 				return Either.right(errorResponse);
 			}
-			// needToUnlockResource = true;
 		}
+		log.info("after lock component {}", componentId);
 		try {
 			Either<String, ResponseFormat> commentValidationResult = validateComment(changeInfo, transitionEnum);
 			if (commentValidationResult.isRight()) {
 				errorResponse = commentValidationResult.right().value();
-				EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
+				EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
 				auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT, changeInfo.getUserRemarks());
 				componentUtils.auditComponent(errorResponse, modifier, component, resourceCurrState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, auditingFields);
 				return Either.right(errorResponse);
 			}
 			changeInfo.setUserRemarks(commentValidationResult.left().value());
-
+			log.info("after validate component");
 			Either<Boolean, ResponseFormat> validateHighestVersion = validateHighestVersion(modifier, lifeCycleTransition, component, resourceCurrVersion, componentType);
 			if (validateHighestVersion.isRight()) {
 				return Either.right(validateHighestVersion.right().value());
 			}
-
-			Either<User, ResponseFormat> ownerResult = lifeCycleTransition.getComponentOwner(component, componentType, inTransaction);
-			if (ownerResult.isRight()) {
-				return Either.right(ownerResult.right().value());
-			}
-			User owner = ownerResult.left().value();
-			log.debug("owner of resource {} is {}", component.getUniqueId(), owner.getUserId());
-
-			LifecycleStateEnum oldState = component.getLifecycleState();
-
-			Either<Boolean, ResponseFormat> stateValidationResult = lifeCycleTransition.validateBeforeTransition(component, componentType, modifier, owner, oldState, changeInfo);
-			if (stateValidationResult.isRight()) {
-				errorResponse = stateValidationResult.right().value();
-				EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-				auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT, changeInfo.getUserRemarks());
-				componentUtils.auditComponent(errorResponse, modifier, component, resourceCurrState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, auditingFields);
-				return Either.right(errorResponse);
-
+			log.info("after validate Highest Version");
+			if (isComponentVFCMT(component,componentType)){
+				Either<? extends Component, ResponseFormat> changeVFCMTStateResponse = changeVFCMTState(componentType, modifier, transitionEnum, changeInfo, inTransaction, component);
+				if (changeVFCMTStateResponse.isRight()){
+					return changeVFCMTStateResponse;
+				}
 			}
 
-			operationResult = lifeCycleTransition.changeState(componentType, component, bl, modifier, owner, false, inTransaction);
-
-			if (operationResult.isRight()) {
-				errorResponse = operationResult.right().value();
-				log.debug("audit before sending response");
-				componentUtils.auditComponentAdmin(errorResponse, modifier, component, resourceCurrState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType);
-
-				return Either.right(errorResponse);
-			}
-			Component resourceAfterOperation = operationResult.left().value();
-			EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT, changeInfo.getUserRemarks());
-			componentUtils.auditComponent(componentUtils.getResponseFormat(ActionStatus.OK), modifier, resourceAfterOperation, resourceCurrState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, auditingFields);
-			return operationResult;
-
+			return changeState(component, lifeCycleTransition, componentType, modifier, changeInfo, inTransaction);
 		} finally {
-			log.debug("unlock component {}", componentId);
+			log.info("unlock component {}", componentId);
 			if (inTransaction == false && needLock && component != null) {
 				component.setUniqueId(componentId);
 				NodeTypeEnum nodeType = componentType.getNodeType();
-
-				// Handle component change in the cache of the side affect of
-				// the operation
-				if (operationResult != null && operationResult.isLeft()) {
-					Component componentAfterOpertion = operationResult.left().value();
-					String uniqueId = componentAfterOpertion.getUniqueId();
-					if (false == componentId.equals(uniqueId)) {
-						log.debug("During change state, another component {} has been created/updated", uniqueId);
-						if (uniqueId != null) {
-							cacheManagerOperation.updateComponentInCache(uniqueId, componentAfterOpertion.getLastUpdateDate(), nodeType);
-						}
-					}
-				}
-
+						log.info("During change state, another component {} has been created/updated", componentId);
 				graphLockOperation.unlockComponent(componentId, nodeType);
 
 			}
@@ -411,24 +253,84 @@ public class LifecycleBusinessLogic {
 
 	}
 
+	/*
+	 * special case for certification of VFCMT - VFCMT can be certified by Designer or Tester right after checkin
+	 * in case the operation "submit for test" / "start testing" is done to "VFCMT" - please return error 400 
+	 */
+	private Either<? extends Component, ResponseFormat> changeVFCMTState(ComponentTypeEnum componentType, User modifier,
+			LifeCycleTransitionEnum transitionEnum, LifecycleChangeInfoWithAction changeInfo, boolean inTransaction,
+			Component component) {
+		LifecycleStateEnum oldState = component.getLifecycleState();
+		if (transitionEnum.equals(LifeCycleTransitionEnum.START_CERTIFICATION) || 
+				transitionEnum.equals(LifeCycleTransitionEnum.CERTIFICATION_REQUEST)){
+			return Either.right(componentUtils.getResponseFormat(
+					ActionStatus.RESOURCE_VFCMT_LIFECYCLE_STATE_NOT_VALID, transitionEnum.getDisplayName()));					
+		}	//certify is done directly from checkin 
+		else if (transitionEnum.equals(LifeCycleTransitionEnum.CERTIFY) && oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN)){
+			//we will call for submit for testing first and then for certify
+			Either<? extends Component, ResponseFormat> actionResponse = changeState(component, 
+					stateTransitions.get(LifeCycleTransitionEnum.CERTIFICATION_REQUEST.name()), 
+					componentType, modifier, changeInfo, inTransaction);
+			if (actionResponse.isRight()) {
+				return actionResponse;
+			}
+			actionResponse = changeState(component, 
+					stateTransitions.get(LifeCycleTransitionEnum.START_CERTIFICATION.name()), 
+					componentType, modifier, changeInfo, inTransaction);
+			if (actionResponse.isRight()) {
+				return actionResponse;
+			}						
+		}
+		return Either.left(null);
+	}
+	
+	private Either<? extends Component, ResponseFormat> changeState(Component component, LifeCycleTransition lifeCycleTransition, 
+			ComponentTypeEnum componentType, User modifier,	LifecycleChangeInfoWithAction changeInfo,boolean inTransaction){
+		ResponseFormat errorResponse;
+		
+		LifecycleStateEnum oldState = component.getLifecycleState();
+		String resourceCurrVersion = component.getVersion();
+		ComponentBusinessLogic bl = getComponentBL(componentType);
+		
+		Either<User, ResponseFormat> ownerResult = lifeCycleTransition.getComponentOwner(component, componentType, inTransaction);
+		if (ownerResult.isRight()) {
+			return Either.right(ownerResult.right().value());
+		}
+		User owner = ownerResult.left().value();
+		log.info("owner of resource {} is {}", component.getUniqueId(), owner.getUserId());
+
+		Either<Boolean, ResponseFormat> stateValidationResult = lifeCycleTransition.validateBeforeTransition(component, componentType, modifier, owner, oldState, changeInfo);
+		if (stateValidationResult.isRight()) {
+			log.error("Failed to validateBeforeTransition");
+			errorResponse = stateValidationResult.right().value();
+			EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<>(AuditingFieldsKeysEnum.class);
+			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT, changeInfo.getUserRemarks());
+			componentUtils.auditComponent(errorResponse, modifier, component, oldState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, auditingFields);
+			return Either.right(errorResponse);
+		}
+		
+		Either<? extends Component, ResponseFormat> operationResult = lifeCycleTransition.changeState(componentType, component, bl, modifier, owner, false, inTransaction);
+
+		if (operationResult.isRight()) {
+			errorResponse = operationResult.right().value();
+			log.info("audit before sending error response");
+			componentUtils.auditComponentAdmin(errorResponse, modifier, component, oldState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType);
+
+			return Either.right(errorResponse);
+		}
+		Component resourceAfterOperation = operationResult.left().value();
+		EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
+		auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_COMMENT, changeInfo.getUserRemarks());
+		componentUtils.auditComponent(componentUtils.getResponseFormat(ActionStatus.OK), modifier, resourceAfterOperation, oldState.name(), resourceCurrVersion, lifeCycleTransition.getAuditingAction(), componentType, auditingFields);
+		return operationResult;
+
+	}
+
 	private Either<? extends Component, ResponseFormat> getComponentForChange(ComponentTypeEnum componentType, String componentId, User modifier, LifeCycleTransition lifeCycleTransition, LifecycleChangeInfoWithAction changeInfo) {
 
-		Either<? extends Component, StorageOperationStatus> eitherResourceResponse = Either.right(StorageOperationStatus.GENERAL_ERROR);
-		switch (componentType) {
-		case SERVICE:
-			eitherResourceResponse = serviceOperation.getComponent(componentId, true);
-			break;
-		case PRODUCT:
-			eitherResourceResponse = productOperation.getComponent(componentId, true);
-			break;
-		case RESOURCE:
-			eitherResourceResponse = resourceOperation.getComponent(componentId, true);
-			break;
-		default:
-			break;
-		}
+		Either<? extends Component, StorageOperationStatus> eitherResourceResponse = toscaOperationFacade.getToscaElement(componentId);
 
-		ResponseFormat errorResponse = null;
+		ResponseFormat errorResponse;
 		if (eitherResourceResponse.isRight()) {
 			ActionStatus actionStatus = componentUtils.convertFromStorageResponse(eitherResourceResponse.right().value(), componentType);
 			errorResponse = componentUtils.getResponseFormat(actionStatus, Constants.EMPTY_STRING);
@@ -494,28 +396,6 @@ public class LifecycleBusinessLogic {
 
 	}
 
-	private Either<Resource, ResponseFormat> getResourceForChange(String resourceId, User modifier, LifeCycleTransition lifeCycleTransition) {
-		Either<Resource, StorageOperationStatus> eitherResourceResponse = resourceOperation.getResource(resourceId, true);
-
-		ResponseFormat errorResponse = null;
-		if (eitherResourceResponse.isRight()) {
-			ActionStatus actionStatus = componentUtils.convertFromStorageResponse(eitherResourceResponse.right().value());
-			errorResponse = componentUtils.getResponseFormatByResource(actionStatus, "");
-			log.debug("audit before sending response");
-			// For audit of not found, resourceName should be uniqueID according
-			// to Ella
-			EnumMap<AuditingFieldsKeysEnum, Object> auditingFields = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-			auditingFields.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, resourceId);
-			componentUtils.auditResource(errorResponse, modifier, null, "", "", lifeCycleTransition.getAuditingAction(), null);
-
-			return Either.right(errorResponse);
-		}
-		Resource resource = eitherResourceResponse.left().value();
-
-		return Either.left(resource);
-
-	}
-
 	private Either<String, ResponseFormat> validateComment(LifecycleChangeInfoWithAction changeInfo, LifeCycleTransitionEnum transitionEnum) {
 		String comment = changeInfo.getUserRemarks();
 		if (LifeCycleTransitionEnum.CANCEL_CERTIFICATION == transitionEnum || LifeCycleTransitionEnum.CERTIFY == transitionEnum || LifeCycleTransitionEnum.FAIL_CERTIFICATION == transitionEnum || LifeCycleTransitionEnum.CHECKIN == transitionEnum
@@ -548,25 +428,39 @@ public class LifecycleBusinessLogic {
 	private ComponentBusinessLogic getComponentBL(ComponentTypeEnum componentTypeEnum) {
 		ComponentBusinessLogic businessLogic;
 		switch (componentTypeEnum) {
-		case RESOURCE: {
-			businessLogic = this.resourceBusinessLogic;
-			break;
-		}
-		case SERVICE: {
-			businessLogic = this.serviceBusinessLogic;
-			break;
-		}
-		case PRODUCT: {
-			businessLogic = this.productBusinessLogic;
-			break;
-		}
-
-		default: {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "getComponentBL");
-			throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
-		}
+			case RESOURCE: {
+				businessLogic = this.resourceBusinessLogic;
+				break;
+			}
+			case SERVICE: {
+				businessLogic = this.serviceBusinessLogic;
+				break;
+			}
+			case PRODUCT: {
+				businessLogic = this.productBusinessLogic;
+				break;
+			}
+	
+			default: {
+				BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeSystemError, "getComponentBL");
+				throw new IllegalArgumentException("Illegal component type:" + componentTypeEnum.getValue());
+			}
 		}
 		return businessLogic;
+	}
+	
+	public Either<Component, ResponseFormat> getLatestComponentByUuid(ComponentTypeEnum componentTypeEnum, String uuid) {
+		
+		Either<Component, StorageOperationStatus> latestVersionEither = toscaOperationFacade.getLatestComponentByUuid(uuid);	
+		
+		if (latestVersionEither.isRight()) {
+			
+			return Either.right(componentUtils.getResponseFormat(componentUtils.convertFromStorageResponse(latestVersionEither.right().value(), componentTypeEnum), uuid));
+		}
+		
+		Component latestComponent = latestVersionEither.left().value();		
+		
+		return Either.left(latestComponent);
 	}
 
 }

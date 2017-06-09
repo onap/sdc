@@ -31,7 +31,7 @@ import org.yaml.snakeyaml.Yaml;
 
 public class Config {
 
-	private static String WINDOWS_CONFIG_FILE = "src/main/resources/ci/conf/sdc.yaml";
+	private static String WINDOWS_CONFIG_FILE = "src/main/resources/ci/conf/attsdc.yaml";
 
 	String catalogBeHost;
 	String esHost;
@@ -40,6 +40,8 @@ public class Config {
 	String neoPort;
 	String disributionClientHost;
 	String disributionClientPort;
+	Boolean isDistributionClientRunning;
+
 
 	String errorConfigurationFile;
 	String resourceConfigDir;
@@ -47,6 +49,7 @@ public class Config {
 	String importResourceConfigDir;
 	String importResourceTestsConfigDir;
 	String importTypesConfigDir;
+
 	String testSuites;
 
 	String catalogFeHost;
@@ -70,6 +73,7 @@ public class Config {
 	private String url;
 	private String remoteTestingMachineIP;
 	private String remoteTestingMachinePort;
+	private String webSealSimulatorUrl;
 	private boolean remoteTesting;
 
 	private String cassandraHost;
@@ -86,6 +90,7 @@ public class Config {
 
 	private static Yaml yaml = new Yaml();
 
+	
 	private Config() {
 		super();
 	}
@@ -168,6 +173,10 @@ public class Config {
 			}
 		}
 
+		// JsonReader jsonReader = new JsonReader(new FileReader(configFile));
+		// Config configAttOdlIt = new Gson().fromJson(jsonReader,
+		// Config.class);
+
 		return config;
 	}
 
@@ -175,7 +184,7 @@ public class Config {
 
 		int separator = Math.max(path.lastIndexOf("\\"), path.lastIndexOf("/"));
 		String dirPath = path.substring(0, separator + 1);
-		String packagesFile = dirPath + File.separator + "sdc-packages.yaml";
+		String packagesFile = dirPath + File.separator + "attsdc-packages.yaml";
 		File file = new File(packagesFile);
 		if (false == file.exists()) {
 			throw new RuntimeException("The config file " + packagesFile + " cannot be found.");
@@ -232,6 +241,14 @@ public class Config {
 		this.configurationFile = configurationFile;
 	}
 
+	public Boolean getIsDistributionClientRunning() {
+		return isDistributionClientRunning;
+	}
+
+	public void setIsDistributionClientRunning(Boolean isDistributionClientRunning) {
+		this.isDistributionClientRunning = isDistributionClientRunning;
+	}
+	
 	public String getCatalogBePort() {
 		return catalogBePort;
 	}
@@ -495,6 +512,14 @@ public class Config {
 				+ ", resourceCategoriesNotToDelete=" + resourceCategoriesNotToDelete + ", serviceCategoriesNotToDelete="
 				+ serviceCategoriesNotToDelete + ", stopOnClassFailure=" + stopOnClassFailure + ", outputFolder="
 				+ outputFolder + ", reportName=" + reportName + ", configurationFile=" + configurationFile + "]";
+	}
+
+	public String getWebSealSimulatorUrl() {
+		return webSealSimulatorUrl;
+	}
+
+	public void setWebSealSimulatorUrl(String webSealSimulatorUrl) {
+		this.webSealSimulatorUrl = webSealSimulatorUrl;
 	}
 
 	public boolean isRemoteTesting() {

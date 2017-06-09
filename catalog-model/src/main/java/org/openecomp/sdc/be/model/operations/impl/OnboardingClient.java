@@ -91,7 +91,6 @@ public class OnboardingClient {
 
 	}
 
-	// Mock returning a file from the file system until we have API from onboarding
 	public Either<Map<String, byte[]>, StorageOperationStatus> getMockCsar(String csarUuid) {
 		File dir = new File("/var/tmp/mockCsar");
 		FileFilter fileFilter = new WildcardFileFilter("*.csar");
@@ -169,7 +168,7 @@ public class OnboardingClient {
 	/**
 	 * Build the url for download CSAR
 	 * 
-	 * E.g., http://1.2.3.4:8181/onboarding-api/v1.0/vendor-software-products/packages/
+	 * E.g., http://0.0.0.0:8181/onboarding-api/v1.0/vendor-software-products/packages/
 	 * 
 	 * @return
 	 */

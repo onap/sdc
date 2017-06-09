@@ -70,10 +70,12 @@ public class ConsumerEventTableDefinition implements ITableDescription {
 	}
 
 	enum DEEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESCRIPTION(
-				"description", DataType.varchar(),
-				false), ECOMP_USER("ecomp_user", DataType.varchar(), false), MODIFIER("modifier", DataType.varchar(),
-						false), REQUEST_ID("request_id", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESCRIPTION("description", DataType.varchar(), false), 
+		ECOMP_USER("ecomp_user", DataType.varchar(), false), 
+		MODIFIER("modifier", DataType.varchar(), false), 
+		REQUEST_ID("request_id", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

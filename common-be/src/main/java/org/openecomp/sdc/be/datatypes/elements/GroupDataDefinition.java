@@ -21,89 +21,107 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class GroupDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+
+public class GroupDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1565606165279109427L;
 
-	private String name;
-
-	// the id is unique per group instance on graph.
-	private String uniqueId;
-
-	private String type;
-
-	// version should be changed when there is a change to the group's metadata
-	// or to the groups members
-	// (not necessarily when the VF version is changed). This field cannot be
-	// updated by user
-	private String version;
-
-	// this id is constant and does not changed (also not when changing
-	// version). This field cannot be updated by user
-	private String invariantUUID;
-
-	// the group UUID should be changed when one of the artifacts/component
-	// instances has been changed.
-	private String groupUUID;
-
-	private String description;
+	private String typeUid;
 
 	private Integer propertyValueCounter = 0;
 
 	public GroupDataDefinition() {
+		super();
 
 	}
+	
+	public GroupDataDefinition(Map<String, Object> gr) {
+		super(gr);
+		propertyValueCounter = 0;
+	}
+	
+	public GroupDataDefinition(GroupDataDefinition other) {
+		this.setName(other.getName());
+		this.setUniqueId(other.getUniqueId());
+		this.setType(other.getType());
+		this.setVersion(other.getVersion());
+		this.setInvariantUUID(other.getInvariantUUID());
+		this.setDescription(other.getDescription());
+		this.propertyValueCounter = other.propertyValueCounter;
+		this.setGroupUUID(other.getGroupUUID());
+		
+		if (other.getMembers() != null) {
+			this.setMembers(new HashMap<String, String>(other.getMembers()));
+		}
+		if (other.getArtifacts() != null) {
+			this.setArtifacts(new ArrayList<String>(other.getArtifacts()));
+		}
+
+		if (other.getArtifactsUuid() != null) {
+			this.setArtifactsUuid( new ArrayList<String>(other.getArtifactsUuid()));
+		}
+		this.setTypeUid(other.typeUid);
+		this.setProperties(other.getProperties());
+	}
+
 
 	public String getName() {
-		return name;
+		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		setToscaPresentationValue(JsonPresentationFields.NAME, name);
 	}
 
 	public String getUniqueId() {
-		return uniqueId;
+		return (String) getToscaPresentationValue(JsonPresentationFields.UNIQUE_ID);
 	}
 
 	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
+		setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
 	}
 
 	public String getType() {
-		return type;
+		return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
 	}
 
 	public void setType(String type) {
-		this.type = type;
+		setToscaPresentationValue(JsonPresentationFields.TYPE, type);
 	}
 
 	public String getVersion() {
-		return version;
+		return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
 	}
 
 	public void setVersion(String version) {
-		this.version = version;
+		setToscaPresentationValue(JsonPresentationFields.VERSION, version);
 	}
 
 	public String getInvariantUUID() {
-		return invariantUUID;
+		return (String) getToscaPresentationValue(JsonPresentationFields.INVARIANT_UUID);
 	}
 
 	public void setInvariantUUID(String invariantUUID) {
-		this.invariantUUID = invariantUUID;
+		setToscaPresentationValue(JsonPresentationFields.INVARIANT_UUID, invariantUUID);
 	}
 
 	public String getDescription() {
-		return description;
+		return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
 	}
 
 	public Integer getPropertyValueCounter() {
@@ -115,28 +133,63 @@ public class GroupDataDefinition implements Serializable {
 	}
 
 	public String getGroupUUID() {
-		return groupUUID;
+		return (String) getToscaPresentationValue(JsonPresentationFields.GROUP_UUID);
 	}
 
 	public void setGroupUUID(String groupUUID) {
-		this.groupUUID = groupUUID;
+		setToscaPresentationValue(JsonPresentationFields.GROUP_UUID, groupUUID);
 	}
 
-	public GroupDataDefinition(GroupDataDefinition other) {
-		this.name = other.name;
-		this.uniqueId = other.uniqueId;
-		this.type = other.type;
-		this.version = other.version;
-		this.invariantUUID = other.invariantUUID;
-		this.description = other.description;
-		this.propertyValueCounter = other.propertyValueCounter;
-		this.groupUUID = other.groupUUID;
+	public Map<String, String> getMembers() {
+		return (Map<String, String>) getToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER);
+	}
+
+	public void setMembers(Map<String, String> members) {
+		setToscaPresentationValue(JsonPresentationFields.GROUP_MEMBER, members);
+	}
+
+	public List<String> getArtifacts() {
+		return (List<String> ) getToscaPresentationValue(JsonPresentationFields.GROUP_ARTIFACTS);
+	}
+
+	public void setArtifacts(List<String> artifacts) {
+		setToscaPresentationValue(JsonPresentationFields.GROUP_ARTIFACTS, artifacts);
+	}
+
+	public List<String> getArtifactsUuid() {
+		return (List<String> ) getToscaPresentationValue(JsonPresentationFields.GROUP_ARTIFACTS_UUID);
+	}
+
+	public void setArtifactsUuid(List<String> artifactsUuid) {
+		setToscaPresentationValue(JsonPresentationFields.GROUP_ARTIFACTS_UUID, artifactsUuid);
+	}
+	
+	public List<PropertyDataDefinition> getProperties() {
+		return (List<PropertyDataDefinition> ) getToscaPresentationValue(JsonPresentationFields.GROUP_PROPERTIES);
+	}
+
+	public void setProperties(List<PropertyDataDefinition> properties) {
+		setToscaPresentationValue(JsonPresentationFields.GROUP_PROPERTIES, properties);
+	}
+	
+	public String getTypeUid() {
+		return typeUid;
+	}
+
+	public void setTypeUid(String typeUid) {
+		this.typeUid = typeUid;
 	}
 
 	@Override
 	public String toString() {
-		return "GroupDataDefinition [name=" + name + ", uniqueId=" + uniqueId + ", type=" + type + ", version="
-				+ version + ", invariantUUID=" + invariantUUID + ", description=" + description
-				+ ", propertyValueCounter=" + propertyValueCounter + ", groupUUID=" + groupUUID + "]";
+		return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation + ", getName()=" + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
+				+ getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()=" + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
+				+ getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
 	}
+
+	
+
+	
+
 }

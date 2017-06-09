@@ -83,14 +83,13 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
 			if (responseWrapper.isEmpty()) {
 				String url = request.getMethod() + " " + request.getRequestURI();
-				log.debug("Start handle request of {}", url);
-				log.debug("modifier id is {}", userId);
+				log.debug("Start handle request of {} | modifier id is {}", url, userId);
 
 				PropertyBusinessLogic businessLogic = getPropertyBL(context);
 				Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = businessLogic.getAllDataTypes();
 
 				if (allDataTypes.isRight()) {
-					log.info("Failed to get all dara types. Reason - ", allDataTypes.right().value());
+					log.info("Failed to get all dara types. Reason - {}", allDataTypes.right().value());
 					Response errorResponse = buildErrorResponse(allDataTypes.right().value());
 					responseWrapper.setInnerElement(errorResponse);
 

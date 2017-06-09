@@ -22,30 +22,10 @@ package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum RespJsonKeysEnum {
 
-	IS_ABSTRACT("abstract"), 
-	UNIQUE_ID("uniqueId"), 
-	RESOURCE_NAME("name"), 
-	RESOURCE_VERSION("version"), 
-	TAGS("tags"), 
-	LIFE_CYCLE_STATE("lifecycleState"), 
-	DERIVED_FROM("derivedFrom"), 
-	RESOURCE_DESC("description"), 
-	VENDOR_NAME("vendorName"), 
-	VENDOR_RELEASE("vendorRelease"), 
-	CONTACT_ID("contactId"), 
-	ICON("icon"), 
-	HIGHEST_VERSION("highestVersion"), 
-	CREATOR_USER_ID("creatorUserId"), 
-	CREATOR_FULL_NAME("creatorFullName"), 
-	LAST_UPDATER_ATT_UID("lastUpdaterUserId"), 
-	LAST_UPDATER_FULL_NAME("lastUpdaterFullName"), 
-	ARTIFACTS("artifacts"), 
-	DESCRIPTION("description"), 
-	UUID("uuid"), 
-	COST("cost"), 
-	LICENSE_TYPE("licenseType"), 
-	RESOURCE_TYPE("resourceType"), 
-	CATEGORIES("categories");
+	IS_ABSTRACT("abstract"), UNIQUE_ID("uniqueId"), RESOURCE_NAME("name"), RESOURCE_VERSION("version"), TAGS("tags"), LIFE_CYCLE_STATE("lifecycleState"), DERIVED_FROM("derivedFrom"), RESOURCE_DESC("description"), 
+	VENDOR_NAME("vendorName"), VENDOR_RELEASE("vendorRelease"), CONTACT_ID("contactId"), ICON("icon"), HIGHEST_VERSION("highestVersion"), CREATOR_USER_ID("creatorUserId"), CREATOR_FULL_NAME("creatorFullName"), 
+	LAST_UPDATER_USER_ID("lastUpdaterUserId"), LAST_UPDATER_FULL_NAME("lastUpdaterFullName"), ARTIFACTS("artifacts"), DESCRIPTION("description"), UUID("uuid"), COST("cost"), LICENSE_TYPE("licenseType"), 
+	RESOURCE_TYPE("resourceType"), CATEGORIES("categories");
 	
 	private String respJsonKeyName;
 

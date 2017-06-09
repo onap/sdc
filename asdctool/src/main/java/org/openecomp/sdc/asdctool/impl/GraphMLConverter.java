@@ -390,15 +390,9 @@ public class GraphMLConverter {
 						// ElementHelper.getProperties(edge));
 						Utils.setProperties(addEdge, Utils.getProperties(edge));
 
-						// log.info("fromVertex=" +
-						// ElementHelper.getProperties(vertexFrom));
-						log.info("fromVertex=" + Utils.getProperties(vertexFrom));
-						// log.info("toVertex=" +
-						// ElementHelper.getProperties(vertexTo));
-						log.info("toVertex=" + Utils.getProperties(vertexTo));
-						// log.info("edge=" + edge.getLabel() + " " +
-						// ElementHelper.getProperties(edge));
-						log.info("edge=" + edge.label() + " " + Utils.getProperties(edge));
+						log.info("fromVertex={}", Utils.getProperties(vertexFrom));
+						log.info("toVertex={}", Utils.getProperties(vertexTo));
+						log.info("edge={} {} ",edge.label(),Utils.getProperties(edge));
 
 						// GraphSONWriter.outputGraph(openGraph, outputFile);
 						GraphSONWriter create = GraphSONWriter.build().create();
@@ -410,15 +404,9 @@ public class GraphMLConverter {
 					} catch (Exception e) {
 						e.printStackTrace();
 
-						// log.error("fromVertex=" +
-						// ElementHelper.getProperties(vertexFrom));
-						log.error("fromVertex=" + Utils.getProperties(vertexFrom));
-						// log.error("toVertex=" +
-						// ElementHelper.getProperties(vertexTo));
-						log.error("toVertex=" + Utils.getProperties(vertexTo));
-						// log.error("edge=" + edge.getLabel() + " " +
-						// ElementHelper.getProperties(edge));
-						log.error("edge=" + edge.label() + " " + Utils.getProperties(edge));
+						log.error("fromVertex={}", Utils.getProperties(vertexFrom));
+						log.error("toVertex={}", Utils.getProperties(vertexTo));
+						log.error("edge={} {} ",edge.label(),Utils.getProperties(edge));
 
 						break;
 
@@ -455,20 +443,13 @@ public class GraphMLConverter {
 							TitanGraph openGraph = Utils.openGraph(conf);
 
 							TitanVertex addVertexFrom = openGraph.addVertex();
-							// ElementHelper.setProperties(addVertexFrom,
-							// ElementHelper.getProperties(vertex));
 							Utils.setProperties(addVertexFrom, Utils.getProperties(vertex));
 
-							// log.info("fromVertex=" +
-							// ElementHelper.getProperties(addVertexFrom));
-							log.info("fromVertex=" + Utils.getProperties(addVertexFrom));
+							log.info("fromVertex={}", Utils.getProperties(addVertexFrom));
 
-							// GraphSONWriter.outputGraph(openGraph,
-							// outputFile);
 							GraphSONWriter create = GraphSONWriter.build().create();
 							create.writeGraph(out, openGraph);
 
-							// openGraph.rollback();
 							openGraph.tx().rollback();
 
 						}
@@ -476,24 +457,13 @@ public class GraphMLConverter {
 					} catch (Exception e) {
 						e.printStackTrace();
 
-						// log.error("vertex=" +
-						// ElementHelper.getProperties(vertex));
-
 						GraphPropertiesDictionary[] values = GraphPropertiesDictionary.values();
 
-						// Object property1 =
-						// vertex.getProperty(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
 						Object property1 = vertex.value(GraphPropertiesDictionary.HEALTH_CHECK.getProperty());
 						System.out.println(property1);
 
-						// Object property2 = vertex.getProperty("healthcheck");
 						Object property2 = vertex.value("healthcheck");
 						System.out.println(property2);
-
-						// for (GraphPropertiesDictionary value : values) {
-						//
-						// System.out.println(property);
-						// }
 
 						break;
 

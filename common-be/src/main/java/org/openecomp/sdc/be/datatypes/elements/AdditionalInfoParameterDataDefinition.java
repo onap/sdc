@@ -21,8 +21,11 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class AdditionalInfoParameterDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -37,6 +40,8 @@ public class AdditionalInfoParameterDataDefinition implements Serializable {
 
 	private Integer lastCreatedCounter = 0;
 
+	private List<AdditionalInfoParameterInfo> parameters;
+
 	public AdditionalInfoParameterDataDefinition() {
 
 	}
@@ -46,6 +51,7 @@ public class AdditionalInfoParameterDataDefinition implements Serializable {
 		this.creationTime = p.creationTime;
 		this.modificationTime = p.modificationTime;
 		this.lastCreatedCounter = p.lastCreatedCounter;
+		this.parameters = p.parameters;
 	}
 
 	public String getUniqueId() {
@@ -79,7 +85,13 @@ public class AdditionalInfoParameterDataDefinition implements Serializable {
 	public void setLastCreatedCounter(Integer lastCreatedCounter) {
 		this.lastCreatedCounter = lastCreatedCounter;
 	}
+	public List<AdditionalInfoParameterInfo> getParameters() {
+		return parameters;
+	}
 
+	public void setParameters(List<AdditionalInfoParameterInfo> parameters) {
+		this.parameters = parameters;
+	}
 	@Override
 	public String toString() {
 		return "AdditionalInfoParameterDataDefinition [uniqueId=" + uniqueId + ", creationTime=" + creationTime

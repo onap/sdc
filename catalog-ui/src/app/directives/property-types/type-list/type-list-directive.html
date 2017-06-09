@@ -1,0 +1,56 @@
+<div>
+    <div data-ng-if="!isSchemaTypeDataType">
+        <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}">
+            <input class="i-sdc-form-input"
+                   data-tests-id="listNewItem{{fieldsPrefixName}}"
+                   ng-if="!((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
+                   data-ng-disabled="readOnly"
+                   data-ng-model="listNewItem.value"
+                   type="text"
+                   name="listNewItem{{fieldsPrefixName}}"
+                   data-ng-pattern="getValidationPattern((schemaProperty.simpleType||schemaProperty.type))"
+                   data-ng-model-options="{ debounce: 200 }"
+                   placeholder="Type a value and then click ADD"
+                   data-ng-maxlength="maxLength"
+                   maxlength="{{maxLength}}"
+                   sdc-keyboard-events="" key-enter="schemaProperty.type && !parentFormObj['listNewItem'+fieldsPrefixName].$invalid && listNewItem.value && addListItem"
+                   autofocus />
+            <select class="i-sdc-form-select"
+                    data-tests-id="listNewItem{{fieldsPrefixName}}"
+                    ng-if="(schemaProperty.simpleType||schemaProperty.type) == 'boolean'"
+                    data-ng-disabled="readOnly"
+                    name="listNewItem{{fieldsPrefixName}}"
+                    data-ng-model="listNewItem.value">
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+            <div class="input-error" data-ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid">
+                <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+                <span ng-show="parentFormObj['listNewItem'+fieldsPrefixName].$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
+            </div>
+        </div>
+        <div class="add-btn add-list-item" data-tests-id="add-list-item{{fieldsPrefixName}}"
+             data-ng-class="{'disabled': readOnly || !schemaProperty.type || parentFormObj['listNewItem'+fieldsPrefixName].$invalid || !listNewItem.value}" data-ng-click="addListItem()">Add</div>
+        <div class="list-value-items">
+                                    <span class="list-value-item" data-ng-repeat="value in valueObjRef track by $index">
+                                        {{value}}
+                                        <span ng-if="!readOnly" class="delete-list-item sprite-new small-x-button" data-ng-click="deleteListItem($index)"></span>
+                                    </span>
+        </div>
+    </div>
+    <div data-ng-if="isSchemaTypeDataType">
+        <div class="dt-list">
+            <div data-ng-repeat="value in valueObjRef track by $index" class="dt-list-item">
+                <span class="delete-dt-list-item" data-ng-click="deleteListItem($index)"></span>
+                <fields-structure value-obj-ref="valueObjRef[$index]"
+                                  type-name="schemaProperty.type"
+                                  parent-form-obj="parentFormObj"
+                                  fields-prefix-name="fieldsPrefixName+''+$index"
+                                  read-only="readOnly"></fields-structure>
+            </div>
+            <div class="add-btn add-list-item" data-tests-id="add-list-item"
+                       data-ng-class="{'disabled': readOnly}" data-ng-click="listNewItem.value='{}';addListItem();">Add</div>
+        </div>
+
+    </div>
+</div>

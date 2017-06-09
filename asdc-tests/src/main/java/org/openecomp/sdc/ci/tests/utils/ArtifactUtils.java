@@ -20,12 +20,17 @@
 
 package org.openecomp.sdc.ci.tests.utils;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 
 public class ArtifactUtils {
-
+	/**
+	 * Converts ArtifactReqDetails to ArtifactDefinition
+	 * @param artifactReq
+	 * @return
+	 */
 	public static ArtifactDefinition convertArtifactReqToDefinition(ArtifactReqDetails artifactReq) {
 		ArtifactDefinition artifact = new ArtifactDefinition();
 		artifact.setArtifactLabel(artifactReq.getArtifactLabel());
@@ -39,5 +44,23 @@ public class ArtifactUtils {
 		artifact.setEsId(artifactReq.getUniqueId());
 
 		return artifact;
+	}
+	/**
+	 * Converts ArtifactDefinition to ArtifactReqDetails
+	 * @param artifactDef
+	 * @return
+	 */
+	public static ArtifactReqDetails convertArtifactDefinitionToArtifactReqDetails( ArtifactDefinition artifactDef) {
+		ArtifactReqDetails artifactReq = new ArtifactReqDetails();
+		artifactReq.setArtifactLabel(artifactDef.getArtifactLabel());
+		artifactReq.setArtifactDisplayName(artifactDef.getArtifactDisplayName());
+		artifactReq.setArtifactGroupType(artifactDef.getArtifactGroupType().getType());
+		artifactReq.setArtifactType(artifactDef.getArtifactType().toUpperCase());
+		artifactReq.setArtifactName(artifactDef.getArtifactName());
+		artifactReq.setDescription(artifactDef.getDescription());
+		artifactReq.setUniqueId(artifactDef.getUniqueId());
+		artifactReq.setTimeout(artifactDef.getTimeout());
+		artifactReq.setPayload(Base64.encodeBase64String(artifactDef.getPayloadData()));
+		return artifactReq;
 	}
 }

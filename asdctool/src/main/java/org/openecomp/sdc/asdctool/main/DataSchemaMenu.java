@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.asdctool.main;
 
+import org.openecomp.sdc.asdctool.impl.TitanGraphInitializer;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -42,10 +43,9 @@ public class DataSchemaMenu {
 			usageAndExit();
 		}
 
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-				appConfigDir);
+		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
+		
 		try {
 
 			switch (operation.toLowerCase()) {
@@ -59,12 +59,13 @@ public class DataSchemaMenu {
 					System.exit(2);
 				}
 			case "create-titan-structures":
-				log.debug("Start create titan keyspace, tables and indexes");
-				if (SdcSchemaBuilder.createSchema()) {
-					log.debug("create cassandra keyspace, tables and indexes successfull");
+				log.debug("Start create titan keyspace");
+				String titanCfg = 2 == args.length? configurationManager.getConfiguration().getTitanCfgFile(): args[2];
+				if (TitanGraphInitializer.createGraph(titanCfg)) {
+					log.debug("create titan keyspace successfull");
 					System.exit(0);
 				} else {
-					log.debug("create cassandra keyspace, tables and indexes failed");
+					log.debug("create titan keyspace failed");
 					System.exit(2);
 				}
 			case "clean-cassndra":
@@ -93,5 +94,6 @@ public class DataSchemaMenu {
 
 	private static void DataSchemeUsage() {
 		System.out.println("Usage: create-cassandra-structures <configuration dir> ");
+		System.out.println("Usage: create-titan-structures <configuration dir> ");
 	}
 }

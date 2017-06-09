@@ -106,7 +106,7 @@ public class ServiceOperationTest extends ModelTestBase {
 	private LifecycleOperation lifecycleOperation;
 
 	private static Logger log = LoggerFactory.getLogger(ServiceOperation.class.getName());
-	private static String USER_ID = "muserId";
+	private static String USER_ID = "muUserId";
 	private static String CATEGORY_NAME = "category/mycategory";
 
 	@BeforeClass
@@ -184,8 +184,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		log.debug(" *** delete **");
 		log.debug("{}", serviceDelete.left().value());
 
-		Either<List<ArtifactData>, TitanOperationStatus> artifacts = titanDao.getByCriteria(NodeTypeEnum.ArtifactRef,
-				null, ArtifactData.class);
+		Either<List<ArtifactData>, TitanOperationStatus> artifacts = titanDao.getByCriteria(NodeTypeEnum.ArtifactRef, null, ArtifactData.class);
 		assertTrue(artifacts.isRight());
 		assertEquals(TitanOperationStatus.NOT_FOUND, artifacts.right().value());
 
@@ -203,10 +202,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		log.debug("{}", serviceAfterSave);
 		String uniqueId = serviceAfterSave.getUniqueId();
 
-		boolean canWorkOnComponent = ComponentValidationUtils.canWorkOnComponent(uniqueId, serviceOperation, userId);
-		assertTrue(canWorkOnComponent);
-
-		canWorkOnComponent = ComponentValidationUtils.canWorkOnComponent(serviceAfterSave, userId);
+		boolean canWorkOnComponent = ComponentValidationUtils.canWorkOnComponent(serviceAfterSave, userId);
 		assertTrue(canWorkOnComponent);
 
 		StorageOperationStatus lockComponent = graphLockOperation.lockComponent(uniqueId, NodeTypeEnum.Service);
@@ -228,17 +224,14 @@ public class ServiceOperationTest extends ModelTestBase {
 		log.debug(" *** create **");
 		log.debug("{}", serviceAfterSave);
 
-		Either<Integer, StorageOperationStatus> counter = serviceOperation
-				.increaseAndGetComponentInstanceCounter(serviceAfterSave.getUniqueId(), NodeTypeEnum.Service, false);
+		Either<Integer, StorageOperationStatus> counter = serviceOperation.increaseAndGetComponentInstanceCounter(serviceAfterSave.getUniqueId(), NodeTypeEnum.Service, false);
 		assertTrue(counter.isLeft());
 		assertEquals(new Integer(1), (Integer) counter.left().value());
 
-		counter = serviceOperation.increaseAndGetComponentInstanceCounter(serviceAfterSave.getUniqueId(),
-				NodeTypeEnum.Service, false);
+		counter = serviceOperation.increaseAndGetComponentInstanceCounter(serviceAfterSave.getUniqueId(), NodeTypeEnum.Service, false);
 		assertTrue(counter.isLeft());
 		assertEquals(new Integer(2), (Integer) counter.left().value());
-		Either<Service, StorageOperationStatus> serviceDelete = serviceOperation
-				.deleteService(serviceAfterSave.getUniqueId());
+		Either<Service, StorageOperationStatus> serviceDelete = serviceOperation.deleteService(serviceAfterSave.getUniqueId());
 	}
 
 	@Test
@@ -288,8 +281,7 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		Either<Service, StorageOperationStatus> serviceDelete = serviceOperation.deleteService(serviceId);
 
-		Either<List<ArtifactData>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(NodeTypeEnum.ArtifactRef,
-				null, ArtifactData.class);
+		Either<List<ArtifactData>, TitanOperationStatus> byCriteria = titanDao.getByCriteria(NodeTypeEnum.ArtifactRef, null, ArtifactData.class);
 		assertTrue(byCriteria.isRight());
 		assertEquals(TitanOperationStatus.NOT_FOUND, byCriteria.right().value());
 
@@ -312,13 +304,11 @@ public class ServiceOperationTest extends ModelTestBase {
 		artifactInfo.setCreatorFullName(fullName);
 		artifactInfo.setCreationDate(time);
 		artifactInfo.setLastUpdateDate(time);
-
 		artifactInfo.setUserIdLastUpdater(userId);
 		artifactInfo.setArtifactLabel(artifactName);
 		artifactInfo.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(serviceId, artifactInfo.getArtifactLabel()));
 
-		Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation
-				.addArifactToComponent(artifactInfo, serviceId, NodeTypeEnum.Service, true, true);
+		Either<ArtifactDefinition, StorageOperationStatus> artifact = artifactOperation.addArifactToComponent(artifactInfo, serviceId, NodeTypeEnum.Service, true, true);
 		assertTrue(artifact.isLeft());
 		return artifactInfo;
 	}
@@ -338,8 +328,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
 		lastStateStates.add(LifecycleStateEnum.CERTIFIED);
 
-		Either<List<Service>, StorageOperationStatus> followed = serviceOperation.getFollowed(userId, lifecycleStates,
-				lastStateStates, false);
+		Either<List<Service>, StorageOperationStatus> followed = serviceOperation.getFollowed(userId, lifecycleStates, lastStateStates, false);
 		assertTrue(followed.isLeft());
 		List<Service> list = followed.left().value();
 		assertEquals(1, list.size());
@@ -369,8 +358,7 @@ public class ServiceOperationTest extends ModelTestBase {
 
 	}
 
-	public Service createService(String userId, String category, String serviceName, String serviceVersion,
-			boolean isHighestVersion) {
+	public Service createService(String userId, String category, String serviceName, String serviceVersion, boolean isHighestVersion) {
 
 		Service service = buildServiceMetadata(userId, category, serviceName, serviceVersion);
 
@@ -385,8 +373,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		// assertEquals("check resource unique id",
 		// UniqueIdBuilder.buildServiceUniqueId(serviceName, serviceVersion),
 		// resultService.getUniqueId());
-		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT,
-				resultService.getLifecycleState());
+		assertEquals("check resource state", LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT, resultService.getLifecycleState());
 
 		return resultService;
 	}
@@ -395,11 +382,6 @@ public class ServiceOperationTest extends ModelTestBase {
 	public void testCloneFullService() {
 		// try{
 		String userId = USER_ID;
-		// Either<Service, StorageOperationStatus> deleteService =
-		// serviceOperation.deleteService(UniqueIdBuilder.buildServiceUniqueId("my-service",
-		// "1.0"), false);
-		// log.info("testCloneFullService - after delete service. result
-		// is="+deleteService);
 		Service origService = createService(userId, CATEGORY_NAME, "my-service", "1.0", true);
 
 		// add artifacts
@@ -408,12 +390,10 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		// add resource instances
 		ResourceInstanceOperationTest riTest = new ResourceInstanceOperationTest();
-		riTest.setOperations(titanDao, capabilityTypeOperation, requirementOperation, capabilityOperation,
-				resourceOperation, propertyOperation, resourceInstanceOperation);
+		riTest.setOperations(titanDao, capabilityTypeOperation, requirementOperation, capabilityOperation, resourceOperation, propertyOperation, resourceInstanceOperation);
 		riTest.addResourceInstancesAndRelation(origService.getUniqueId());
 
-		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(),
-				false);
+		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(), false);
 		assertTrue(service2.isLeft());
 		origService = service2.left().value();
 
@@ -423,16 +403,13 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		Service fullService = origService;
 
-		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0",
-				false);
+		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0", false);
 		assertTrue(createService.isLeft());
-		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation
-				.getServiceByNameAndVersion("my-service", "2.0", null, false);
+		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation.getServiceByNameAndVersion("my-service", "2.0", null, false);
 		assertTrue(serviceAfterCreate.isLeft());
 		fullService = serviceAfterCreate.left().value();
 
-		Either<Service, StorageOperationStatus> getOrigService = serviceOperation
-				.getServiceByNameAndVersion("my-service", "1.0", null, false);
+		Either<Service, StorageOperationStatus> getOrigService = serviceOperation.getServiceByNameAndVersion("my-service", "1.0", null, false);
 		assertTrue(getOrigService.isLeft());
 		origService = getOrigService.left().value();
 
@@ -440,8 +417,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		// fullService.getComponentMetadataDefinition());
 		assertEquals(origService.getArtifacts().size(), fullService.getArtifacts().size());
 		assertEquals(origService.getComponentInstances().size(), fullService.getComponentInstances().size());
-		assertEquals(origService.getComponentInstancesRelations().size(),
-				fullService.getComponentInstancesRelations().size());
+		assertEquals(origService.getComponentInstancesRelations().size(), fullService.getComponentInstancesRelations().size());
 
 		origService.setUniqueId(fullService.getUniqueId());
 		origService.setVersion(fullService.getVersion());
@@ -469,21 +445,14 @@ public class ServiceOperationTest extends ModelTestBase {
 
 	// @Test
 	public void testCloneServiceWithoutResourceInstances() {
-		// try{
 		String userId = USER_ID;
-		// Either<Service, StorageOperationStatus> deleteService =
-		// serviceOperation.deleteService(UniqueIdBuilder.buildServiceUniqueId("my-service",
-		// "1.0"), false);
-		// log.info("testCloneServiceWithoutResourceInstances - after delete
-		// service. result is="+deleteService);
 		Service origService = createService(userId, CATEGORY_NAME, "my-service", "1.0", true);
 
 		// add artifacts
 		addArtifactToService(userId, origService.getUniqueId(), "install_apache");
 		addArtifactToService(userId, origService.getUniqueId(), "start_apache");
 
-		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(),
-				false);
+		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(), false);
 		assertTrue(service2.isLeft());
 		origService = service2.left().value();
 
@@ -493,16 +462,13 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		Service fullService = origService;
 
-		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0",
-				false);
+		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0", false);
 		assertTrue(createService.isLeft());
-		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation
-				.getServiceByNameAndVersion("my-service", "2.0", null, false);
+		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation.getServiceByNameAndVersion("my-service", "2.0", null, false);
 		assertTrue(serviceAfterCreate.isLeft());
 		fullService = serviceAfterCreate.left().value();
 
-		Either<Service, StorageOperationStatus> getOrigService = serviceOperation
-				.getServiceByNameAndVersion("my-service", "1.0", null, false);
+		Either<Service, StorageOperationStatus> getOrigService = serviceOperation.getServiceByNameAndVersion("my-service", "1.0", null, false);
 		assertTrue(getOrigService.isLeft());
 		origService = getOrigService.left().value();
 
@@ -528,20 +494,15 @@ public class ServiceOperationTest extends ModelTestBase {
 
 	// @Test
 	public void testCloneServiceWithoutArtifacts() {
-		// try{
-
 		String userId = USER_ID;
-
 		Service origService = createService(userId, CATEGORY_NAME, "my-service", "1.0", true);
 
 		// add resource instances
 		ResourceInstanceOperationTest riTest = new ResourceInstanceOperationTest();
-		riTest.setOperations(titanDao, capabilityTypeOperation, requirementOperation, capabilityOperation,
-				resourceOperation, propertyOperation, resourceInstanceOperation);
+		riTest.setOperations(titanDao, capabilityTypeOperation, requirementOperation, capabilityOperation, resourceOperation, propertyOperation, resourceInstanceOperation);
 		riTest.addResourceInstancesAndRelation(origService.getUniqueId());
 
-		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(),
-				false);
+		Either<Service, StorageOperationStatus> service2 = serviceOperation.getService(origService.getUniqueId(), false);
 		assertTrue(service2.isLeft());
 		origService = service2.left().value();
 
@@ -551,23 +512,19 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		Service fullService = origService;
 
-		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0",
-				false);
+		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0", false);
 		assertTrue(createService.isLeft());
-		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation
-				.getServiceByNameAndVersion("my-service", "2.0", null, false);
+		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation.getServiceByNameAndVersion("my-service", "2.0", null, false);
 		assertTrue(serviceAfterCreate.isLeft());
 		fullService = serviceAfterCreate.left().value();
 
-		Either<Service, StorageOperationStatus> getOrigService = serviceOperation
-				.getServiceByNameAndVersion("my-service", "1.0", null, false);
+		Either<Service, StorageOperationStatus> getOrigService = serviceOperation.getServiceByNameAndVersion("my-service", "1.0", null, false);
 		assertTrue(getOrigService.isLeft());
 		origService = getOrigService.left().value();
 
 		assertEquals(origService.getArtifacts(), fullService.getArtifacts());
 		assertEquals(origService.getComponentInstances().size(), fullService.getComponentInstances().size());
-		assertEquals(origService.getComponentInstancesRelations().size(),
-				fullService.getComponentInstancesRelations().size());
+		assertEquals(origService.getComponentInstancesRelations().size(), fullService.getComponentInstancesRelations().size());
 
 		origService.setUniqueId(fullService.getUniqueId());
 		origService.setVersion(fullService.getVersion());
@@ -585,16 +542,9 @@ public class ServiceOperationTest extends ModelTestBase {
 
 	// @Test
 	public void testCloneServiceSimple() {
-		// try{
 		String userId = USER_ID;
 		String serviceName = "serviceToClone";
-		//
-		// Either<Service, StorageOperationStatus> deleteService =
-		// serviceOperation.deleteService(UniqueIdBuilder.buildServiceUniqueId(serviceName,
-		// "1.0"));
-		// log.info("testCloneServiceSimple - after delete service. result
-		// is="+deleteService);
-
+		
 		Service origService = createService(userId, CATEGORY_NAME, serviceName, "1.0", true);
 
 		Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
@@ -603,16 +553,13 @@ public class ServiceOperationTest extends ModelTestBase {
 
 		Service fullService = origService;
 
-		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0",
-				false);
+		Either<Service, StorageOperationStatus> createService = serviceOperation.cloneService(fullService, "2.0", false);
 		assertTrue(createService.isLeft());
-		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation
-				.getServiceByNameAndVersion(serviceName, "2.0", null, false);
+		Either<Service, StorageOperationStatus> serviceAfterCreate = serviceOperation.getServiceByNameAndVersion(serviceName, "2.0", null, false);
 		assertTrue(serviceAfterCreate.isLeft());
 		fullService = serviceAfterCreate.left().value();
 
-		Either<Service, StorageOperationStatus> getOrigService = serviceOperation
-				.getServiceByNameAndVersion(serviceName, "1.0", null, false);
+		Either<Service, StorageOperationStatus> getOrigService = serviceOperation.getServiceByNameAndVersion(serviceName, "1.0", null, false);
 		assertTrue(getOrigService.isLeft());
 		origService = getOrigService.left().value();
 
@@ -665,13 +612,9 @@ public class ServiceOperationTest extends ModelTestBase {
 		OperationTestsUtil.deleteAndCreateResourceCategory(names[0], names[1], titanDao);
 
 		/*
-		 * CategoryData categoryData = new CategoryData();
-		 * categoryData.setName(category);
+		 * CategoryData categoryData = new CategoryData(); categoryData.setName(category);
 		 * 
-		 * titanDao.deleteNode(categoryData, CategoryData.class);
-		 * Either<CategoryData, TitanOperationStatus> createNode =
-		 * titanDao.createNode(categoryData, CategoryData.class);
-		 * System.out.println("after creating caetgory " + createNode);
+		 * titanDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, TitanOperationStatus> createNode = titanDao.createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
 		 */
 
 	}
@@ -707,8 +650,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		Map<String, Object> propertiesToMatch = new HashMap<>();
 		propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
 
-		Either<Set<Service>, StorageOperationStatus> catalog = serviceOperation.getCatalogData(propertiesToMatch,
-				false);
+		Either<Set<Service>, StorageOperationStatus> catalog = serviceOperation.getCatalogData(propertiesToMatch, false);
 		assertTrue(catalog.isLeft());
 		Set<Service> catalogSet = catalog.left().value();
 		Set<String> idSet = new HashSet<>();
@@ -770,22 +712,19 @@ public class ServiceOperationTest extends ModelTestBase {
 		String serviceId3 = resultService3.getUniqueId();
 
 		// update 1 service to READY_FOR_CERTIFICATION
-		Either<? extends Component, StorageOperationStatus> certReqResponse = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certReqResponse = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
 		Service RFCService = (Service) certReqResponse.left().value();
 		assertEquals(RFCService.getLifecycleState(), LifecycleStateEnum.READY_FOR_CERTIFICATION);
 
 		// update 1 service to CERTIFICATION_IN_PROGRESS
-		Either<? extends Component, StorageOperationStatus> startCertificationResponse = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService2, testerUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResponse = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService2, testerUser, adminUser, false);
 		Service IPService = (Service) startCertificationResponse.left().value();
 		assertEquals(IPService.getLifecycleState(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 
-		Either<List<Service>, StorageOperationStatus> services = serviceOperation.getTesterFollowed(testerUserId,
-				lifecycleStates, false);
+		Either<List<Service>, StorageOperationStatus> services = serviceOperation.getTesterFollowed(testerUserId, lifecycleStates, false);
 
 		assertTrue(services.isLeft());
 		List<Service> result = services.left().value();
@@ -830,42 +769,31 @@ public class ServiceOperationTest extends ModelTestBase {
 		String serviceId4 = resultService4.getUniqueId();
 
 		// update 1 service to CERTIFIED dist status DISTRIBUTED
-		Either<? extends Component, StorageOperationStatus> reqCertificationResult = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
-		Either<? extends Component, StorageOperationStatus> startCertificationResult = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> reqCertificationResult = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResult = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
 		Service actualService = (Service) startCertificationResult.left().value();
 
-		Either<? extends Component, StorageOperationStatus> certResponse = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certResponse = lifecycleOperation.certifyComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
 		Service certifiedService = (Service) certResponse.left().value();
 		serviceOperation.updateDestributionStatus(resultService, adminUser, DistributionStatusEnum.DISTRIBUTED);
 
 		// update 1 service to CERTIFIED dist status DISTRIBUTION_APPROVED
-		Either<? extends Component, StorageOperationStatus> reqCertificationResult2 = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
-		Either<? extends Component, StorageOperationStatus> startCertificationResult2 = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> reqCertificationResult2 = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResult2 = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
 		Service actualService2 = (Service) startCertificationResult2.left().value();
 
-		Either<? extends Component, StorageOperationStatus> certResponse2 = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certResponse2 = lifecycleOperation.certifyComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
 		Service certifiedService2 = (Service) certResponse2.left().value();
-		serviceOperation.updateDestributionStatus(resultService2, adminUser,
-				DistributionStatusEnum.DISTRIBUTION_APPROVED);
+		serviceOperation.updateDestributionStatus(resultService2, adminUser, DistributionStatusEnum.DISTRIBUTION_APPROVED);
 
 		// update 1 service to CERTIFIED dist status DISTRIBUTION_REJECTED
-		Either<? extends Component, StorageOperationStatus> reqCertificationResult3 = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService3, adminUser, adminUser, false);
-		Either<? extends Component, StorageOperationStatus> startCertificationResult3 = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService3, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> reqCertificationResult3 = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService3, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResult3 = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService3, adminUser, adminUser, false);
 		Service actualService3 = (Service) startCertificationResult3.left().value();
 
-		Either<? extends Component, StorageOperationStatus> certResponse3 = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Service, actualService3, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certResponse3 = lifecycleOperation.certifyComponent(NodeTypeEnum.Service, actualService3, adminUser, adminUser, false);
 		Service certifiedService3 = (Service) certResponse3.left().value();
-		serviceOperation.updateDestributionStatus(certifiedService3, adminUser,
-				DistributionStatusEnum.DISTRIBUTION_REJECTED);
+		serviceOperation.updateDestributionStatus(certifiedService3, adminUser, DistributionStatusEnum.DISTRIBUTION_REJECTED);
 
 		Map<String, Object> propertiesToMatch = new HashMap<>();
 		propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
@@ -874,8 +802,7 @@ public class ServiceOperationTest extends ModelTestBase {
 		distStatus.add(DistributionStatusEnum.DISTRIBUTION_APPROVED);
 		distStatus.add(DistributionStatusEnum.DISTRIBUTED);
 
-		Either<Set<Service>, StorageOperationStatus> services = serviceOperation
-				.getCertifiedServicesWithDistStatus(propertiesToMatch, distStatus, false);
+		Either<Set<Service>, StorageOperationStatus> services = serviceOperation.getCertifiedServicesWithDistStatus(propertiesToMatch, distStatus, false);
 
 		assertTrue(services.isLeft());
 		Set<Service> result = services.left().value();
@@ -917,34 +844,27 @@ public class ServiceOperationTest extends ModelTestBase {
 		String serviceId3 = resultService3.getUniqueId();
 
 		// update 1 service to CERTIFIED + DISTRIBUTED
-		Either<? extends Component, StorageOperationStatus> reqCertificationResult = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
-		Either<? extends Component, StorageOperationStatus> startCertificationResult = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> reqCertificationResult = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResult = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService, adminUser, adminUser, false);
 		Service actualService = (Service) startCertificationResult.left().value();
 
-		Either<? extends Component, StorageOperationStatus> certResponse = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Service, actualService, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certResponse = lifecycleOperation.certifyComponent(NodeTypeEnum.Service, actualService, adminUser, adminUser, false);
 		Service certifiedService = (Service) certResponse.left().value();
 		serviceOperation.updateDestributionStatus(certifiedService, adminUser, DistributionStatusEnum.DISTRIBUTED);
 
 		// update 1 service to CERTIFIED dist status + DISTRIBUTION_REJECTED
-		Either<? extends Component, StorageOperationStatus> reqCertificationResult2 = lifecycleOperation
-				.requestCertificationComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
-		Either<? extends Component, StorageOperationStatus> startCertificationResult2 = lifecycleOperation
-				.startComponentCertification(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> reqCertificationResult2 = lifecycleOperation.requestCertificationComponent(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> startCertificationResult2 = lifecycleOperation.startComponentCertification(NodeTypeEnum.Service, resultService2, adminUser, adminUser, false);
 		Service actualService2 = (Service) startCertificationResult2.left().value();
 
-		Either<? extends Component, StorageOperationStatus> certResponse2 = lifecycleOperation
-				.certifyComponent(NodeTypeEnum.Service, actualService2, adminUser, adminUser, false);
+		Either<? extends Component, StorageOperationStatus> certResponse2 = lifecycleOperation.certifyComponent(NodeTypeEnum.Service, actualService2, adminUser, adminUser, false);
 		Service certifiedService2 = (Service) certResponse2.left().value();
 		serviceOperation.updateDestributionStatus(certifiedService2, adminUser, DistributionStatusEnum.DISTRIBUTED);
 
 		Map<String, Object> propertiesToMatch = new HashMap<>();
 		propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFIED.name());
 
-		Either<Set<Service>, StorageOperationStatus> services = serviceOperation
-				.getCertifiedServicesWithDistStatus(propertiesToMatch, null, false);
+		Either<Set<Service>, StorageOperationStatus> services = serviceOperation.getCertifiedServicesWithDistStatus(propertiesToMatch, null, false);
 
 		assertTrue(services.isLeft());
 		Set<Service> result = services.left().value();

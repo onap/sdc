@@ -1,0 +1,86 @@
+<div class="workspace-inputs">
+    <div class="table-container-flex">
+        <div class="w-sdc-inputs-search pull-left hideme">
+            <input type="text" class="w-sdc-inputs-search-input" placeholder="Search"/>
+            <div class="search-icon-container">
+                <span class="w-sdc-search-icon inputs-search-icon magnification-white"></span>
+            </div>
+        </div>
+        <div class="table">
+            <div class="table-header">VFC instances inputs</div>
+            <div class="body">
+                <div class="table-loader" ng-class="{'tlv-loader large loader': isLoading}"></div>
+                <perfect-scrollbar scroll-y-margin-offset="0" class="scrollbar-container">
+
+                    <expand-collapse expanded-selector=".vf-instance-list.{{$index}}"
+                                     class="expand-collapse-table-row"
+                                     load-data-function="getInputPropertiesForInstance(instance.uniqueId, instance)"
+                                     is-close-on-init="true"
+                                     data-ng-repeat-start="instance in vfInstancesList track by $index">
+                        <div class="flex-container data-row" data-tests-id="input-instance-{{$index}}">
+                            <div class="expand-collapse-inputs-table-icon"></div>
+                            <div class="table-col-general flex-item text">
+                                <span class="title-text">{{instance.name}}</span>
+                            </div>
+                        </div>
+
+                    </expand-collapse>
+
+                    <div data-ng-repeat-end="" class="vf-instance-list {{$index}}">
+                        <div class="empty-row" data-tests-id="empty-row" ng-if="instance.properties.length===0">No properties to display </div>
+                        <div ng-repeat="property in instance.properties track by $index">
+                            <property-row property="property" instance-name="instance.name" on-name-clicked="openEditPropertyModal(property)"></property-row>
+                        </div>
+
+                    </div>
+
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+
+    <div class="inputs-button-container pull-left">
+        <!--<div ng-click="onArrowPressed()" class="right-arrow-btn"></div>-->
+    </div>
+
+    <div class="table-container-flex">
+        <div class="w-sdc-inputs-search pull-left">
+            <input type="text" class="w-sdc-inputs-search-input" data-ng-model="search.filterTerm" placeholder="Search"
+                   data-ng-model-options="{debounce: 200}"/>
+            <div class="search-icon-container">
+                <span class="w-sdc-search-icon inputs-search-icon magnification-white"></span>
+            </div>
+        </div>
+        <div class="table">
+            <div class="body">
+                <div class="table-header">VF inputs</div>
+                <perfect-scrollbar scroll-y-margin-offset="0" include-padding="true" class="scrollbar-container">
+                    <expand-collapse expanded-selector=".resource-inputs.{{$index}}"
+                                     class="expand-collapse-table-row"
+                                     load-data-function="loadInputPropertiesForInstance(resourceInput.uniqueId, resourceInput)"
+                                     is-close-on-init="true"
+                                     data-ng-repeat-start="resourceInput in component.inputs | filter:search track by $index ">
+                        <div class="input-row service-input-row">
+                            <input-row input="resourceInput" is-view-only='isViewOnly'
+                                       instance-name='resourceInput.name'
+                                       data-tests-id="resource-input-{{$index}}"
+                                       class="service-input-row"
+                                       on-name-clicked="openEditValueModal(resourceInput)"
+                                       ng-class="resourceInput.isNew ? 'new-input': ''">
+
+                            </input-row>
+                        </div>
+                    </expand-collapse>
+
+                    <div data-ng-repeat-end="" class="input-inputs-list resource-inputs {{$index}}">
+                        <div class="empty-row" ng-if="resourceInput.properties.length===0">No properties to display </div>
+                        <div ng-repeat="property in resourceInput.properties track by $index">
+                            <property-row property="property" instance-name="property.name"></property-row>
+                        </div>
+                    </div>
+
+                </perfect-scrollbar>
+            </div>
+        </div>
+    </div>
+</div>

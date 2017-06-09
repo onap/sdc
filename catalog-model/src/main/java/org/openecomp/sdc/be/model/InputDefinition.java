@@ -25,57 +25,33 @@ import java.util.List;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 public class InputDefinition extends PropertyDefinition {
-	String label;
-	Boolean hidden;
-	Boolean immutable;
-	List<ComponentInstanceInput> inputsValue;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6920076037265309468L;
+
+	List<ComponentInstanceInput> inputs;
 	List<ComponentInstanceProperty> properties;
 
 	public InputDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InputDefinition(PropertyDataDefinition p) {
 		super(p);
-		// TODO Auto-generated constructor stub
 	}
 
 	public InputDefinition(PropertyDefinition pd) {
 		super(pd);
-		// TODO Auto-generated constructor stub
 	}
 
-	public Boolean isHidden() {
-		return hidden;
+	
+	public List<ComponentInstanceInput> getInputs() {
+		return inputs;
 	}
 
-	public void setHidden(Boolean hidden) {
-		this.hidden = hidden;
-	}
-
-	public Boolean isImmutable() {
-		return immutable;
-	}
-
-	public void setImmutable(Boolean immutable) {
-		this.immutable = immutable;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public List<ComponentInstanceInput> getInputsValue() {
-		return inputsValue;
-	}
-
-	public void setInputsValue(List<ComponentInstanceInput> inputsValue) {
-		this.inputsValue = inputsValue;
+	public void setInputs(List<ComponentInstanceInput> inputs) {
+		this.inputs = inputs;
 	}
 
 	public List<ComponentInstanceProperty> getProperties() {

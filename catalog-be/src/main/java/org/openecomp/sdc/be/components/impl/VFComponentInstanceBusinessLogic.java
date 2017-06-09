@@ -25,7 +25,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,16 +51,6 @@ public class VFComponentInstanceBusinessLogic extends ComponentInstanceBusinessL
 	@Override
 	protected NodeTypeEnum getNodeTypeOfComponentInstanceOrigin() {
 		return NodeTypeEnum.Resource;
-	}
-
-	@Override
-	protected ComponentOperation getContainerComponentOperation() {
-		return resourceOperation;
-	}
-
-	@Override
-	protected ComponentOperation getCompInstOriginComponentOperation() {
-		return resourceOperation;
 	}
 
 	@Override

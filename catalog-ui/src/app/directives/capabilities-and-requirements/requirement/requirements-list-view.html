@@ -1,0 +1,19 @@
+<div class="i-sdc-designer-sidebar-capabilities-requirements">
+    <div class="i-sdc-designer-sidebar-section-content-item-relations-group">
+        <div class="i-sdc-designer-sidebar-section-content-item-relations"
+             data-ng-repeat="requirement in requirements track by $index">
+            <div class="i-sdc-designer-sidebar-section-content-item-relations-details">
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{requirement.name}}&nbsp;</div>
+                <div class="i-sdc-designer-sidebar-section-content-item-relations-details-desc">{{requirement.node}}
+                    <div data-ng-if="getRelation(requirement) != null">
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-indent-box"></div>
+                        <div class="i-sdc-designer-sidebar-section-content-item-relations-details-child">
+                            <span class="i-sdc-designer-sidebar-section-content-item-relations-details-desc">{{getRelation(requirement).type}} <br/></span>
+                            <span class="i-sdc-designer-sidebar-section-content-item-relations-details-name">{{getRelation(requirement).requirementName}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

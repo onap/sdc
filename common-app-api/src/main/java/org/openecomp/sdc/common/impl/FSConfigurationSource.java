@@ -45,14 +45,11 @@ public class FSConfigurationSource implements ConfigurationSource {
 	}
 
 	/*
-	 * get and watch configuration changes. The file name we looking for is the
-	 * lower case of the class name separated by "-".
+	 * get and watch configuration changes. The file name we looking for is the lower case of the class name separated by "-".
 	 * 
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.openecomp.sdc.common.api.ConfigurationSource#getAndWatchConfiguration
-	 * (java.lang.Class, org.openecomp.sdc.common.api.ConfigurationListener)
+	 * @see org.openecomp.sdc.common.api.ConfigurationSource#getAndWatchConfiguration (java.lang.Class, org.openecomp.sdc.common.api.ConfigurationListener)
 	 */
 	public <T> T getAndWatchConfiguration(Class<T> className, ConfigurationListener configurationListener) {
 
@@ -80,9 +77,7 @@ public class FSConfigurationSource implements ConfigurationSource {
 	}
 
 	/**
-	 * convert camel case string to list of words separated by "-" where each
-	 * word is in lower case format. For example, MyClass will be calculated to
-	 * be my-class.yaml .
+	 * convert camel case string to list of words separated by "-" where each word is in lower case format. For example, MyClass will be calculated to be my-class.yaml .
 	 * 
 	 * @param className
 	 * @return file name based on the class name
@@ -112,8 +107,7 @@ public class FSConfigurationSource implements ConfigurationSource {
 		return builder.toString() + Constants.YAML_SUFFIX;
 
 		/*
-		 * } else { return className.getSimpleName().toLowerCase() +
-		 * Constants.YAML_SUFFIX; }
+		 * } else { return className.getSimpleName().toLowerCase() + Constants.YAML_SUFFIX; }
 		 */
 
 	}

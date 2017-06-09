@@ -181,7 +181,7 @@ public class MapConverter implements PropertyValueConverter {
 				log.debug("inner Tosca Type unknown : {}", innerToscaType);
 			}
 		} catch (JsonParseException e) {
-			log.debug("Failed to parse json : {}. {}", value, e);
+			log.debug("Failed to parse json : {}", value, e);
 			BeEcompErrorManager.getInstance().logBeInvalidJsonInput("Map Converter");
 			return Either.right(false);
 		}
@@ -227,7 +227,7 @@ public class MapConverter implements PropertyValueConverter {
 					ImmutablePair<JsonElement, Boolean> validateAndUpdate = dataTypeValidatorConverter
 							.validateAndUpdate(element, dataTypeDefinition, allDataTypes);
 					if (validateAndUpdate.right.booleanValue() == false) {
-						log.debug("Cannot parse value {} from type {} of key {}", currentValue, innerType, currentKey);
+						log.debug("Cannot parse value {} from type {} of key {}",currentValue,innerType,currentKey);
 						return Either.right(false);
 					}
 					JsonElement newValue = validateAndUpdate.left;

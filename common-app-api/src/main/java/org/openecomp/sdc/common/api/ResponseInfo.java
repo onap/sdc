@@ -26,12 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ResponseInfo {
 
 	public static enum ResponseStatusEnum {
-		SUCCESS("success"), 
-		LOGIN_FAILED("loginFailed"), 
-		INTERNAL_ERROR("internalError"), 
-		MISSING_HEADERS("required headers are missing"), 
-		TIMEOUT("timeout"), 
-		PARSING_ERROR("parsingFailed");
+		SUCCESS("success"), LOGIN_FAILED("loginFailed"), INTERNAL_ERROR("internalError"), MISSING_HEADERS("required headers are missing"), TIMEOUT("timeout"), PARSING_ERROR("parsingFailed");
 
 		ResponseStatusEnum(String status) {
 			this.statusDescription = status;

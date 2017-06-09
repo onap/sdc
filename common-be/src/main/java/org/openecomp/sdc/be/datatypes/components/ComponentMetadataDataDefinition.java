@@ -26,7 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ComponentMetadataDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -51,6 +54,8 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 
 	private List<String> tags;
 
+	private String conformanceLevel;
+
 	private String icon;
 
 	private String UUID;
@@ -74,6 +79,69 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 	private String importedToscaChecksum;
 
 	private String invariantUUID;
+
+	protected ComponentTypeEnum componentType;
+
+	// USER
+	private String creatorUserId;
+
+	private String creatorFullName;
+
+	private String lastUpdaterUserId;
+
+	private String lastUpdaterFullName;
+
+	public Boolean getIsHighestVersion() {
+		return isHighestVersion;
+	}
+
+	public void setIsHighestVersion(Boolean isHighestVersion) {
+		this.isHighestVersion = isHighestVersion;
+	}
+
+	public ComponentTypeEnum getComponentType() {
+		return componentType;
+	}
+
+	public void setComponentType(ComponentTypeEnum componentType) {
+		this.componentType = componentType;
+	}
+
+	public String getCreatorUserId() {
+		return creatorUserId;
+	}
+
+	public void setCreatorUserId(String creatorUserId) {
+		this.creatorUserId = creatorUserId;
+	}
+
+	public String getCreatorFullName() {
+		return creatorFullName;
+	}
+
+	public void setCreatorFullName(String creatorFullName) {
+		this.creatorFullName = creatorFullName;
+	}
+
+	public String getLastUpdaterUserId() {
+		return lastUpdaterUserId;
+	}
+
+	public void setLastUpdaterUserId(String lastUpdaterUserId) {
+		this.lastUpdaterUserId = lastUpdaterUserId;
+	}
+
+	public String getLastUpdaterFullName() {
+		return lastUpdaterFullName;
+	}
+
+	public void setLastUpdaterFullName(String lastUpdaterFullName) {
+		this.lastUpdaterFullName = lastUpdaterFullName;
+	}
+
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
 
 	public ComponentMetadataDataDefinition() {
 
@@ -101,6 +169,7 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 		this.csarVersion = other.csarVersion;
 		this.importedToscaChecksum = other.getImportedToscaChecksum();
 		this.invariantUUID = other.getInvariantUUID();
+
 	}
 
 	public String getUniqueId() {
@@ -270,16 +339,27 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 	public void setImportedToscaChecksum(String importedToscaChecksum) {
 		this.importedToscaChecksum = importedToscaChecksum;
 	}
+	
+	public String getConformanceLevel() {
+		return conformanceLevel;
+	}
+
+	public void setConformanceLevel(String conformanceLevel) {
+		this.conformanceLevel = conformanceLevel;
+	}
 
 	@Override
 	public String toString() {
 		return "ComponentMetadataDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", version=" + version
 				+ ", isHighestVersion=" + isHighestVersion + ", creationDate=" + creationDate + ", lastUpdateDate="
-				+ lastUpdateDate + ", description=" + description + ", state=" + state + ", tags=" + tags + ", icon="
-				+ icon + ", UUID=" + UUID + ", normalizedName=" + normalizedName + ", systemName=" + systemName
-				+ ", contactId=" + contactId + ", allVersions=" + allVersions + ", isDeleted=" + isDeleted
-				+ ", projectCode=" + projectCode + ", csarUUID=" + csarUUID + ", csarversion=" + csarVersion
-				+ ", importedToscaChecksum=" + importedToscaChecksum + ", invariantUUID=" + invariantUUID + "]";
+				+ lastUpdateDate + ", description=" + description + ", state=" + state + ", tags=" + tags
+				+ ", conformanceLevel=" + conformanceLevel + ", icon=" + icon + ", UUID=" + UUID + ", normalizedName="
+				+ normalizedName + ", systemName=" + systemName + ", contactId=" + contactId + ", allVersions="
+				+ allVersions + ", isDeleted=" + isDeleted + ", projectCode=" + projectCode + ", csarUUID=" + csarUUID
+				+ ", csarVersion=" + csarVersion + ", importedToscaChecksum=" + importedToscaChecksum
+				+ ", invariantUUID=" + invariantUUID + ", componentType=" + componentType + ", creatorUserId="
+				+ creatorUserId + ", creatorFullName=" + creatorFullName + ", lastUpdaterUserId=" + lastUpdaterUserId
+				+ ", lastUpdaterFullName=" + lastUpdaterFullName + "]";
 	}
 
 	@Override
@@ -288,25 +368,31 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 		int result = 1;
 		result = prime * result + ((UUID == null) ? 0 : UUID.hashCode());
 		result = prime * result + ((allVersions == null) ? 0 : allVersions.hashCode());
+		result = prime * result + ((componentType == null) ? 0 : componentType.hashCode());
+		result = prime * result + ((conformanceLevel == null) ? 0 : conformanceLevel.hashCode());
 		result = prime * result + ((contactId == null) ? 0 : contactId.hashCode());
 		result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
+		result = prime * result + ((creatorFullName == null) ? 0 : creatorFullName.hashCode());
+		result = prime * result + ((creatorUserId == null) ? 0 : creatorUserId.hashCode());
+		result = prime * result + ((csarUUID == null) ? 0 : csarUUID.hashCode());
+		result = prime * result + ((csarVersion == null) ? 0 : csarVersion.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((icon == null) ? 0 : icon.hashCode());
+		result = prime * result + ((importedToscaChecksum == null) ? 0 : importedToscaChecksum.hashCode());
+		result = prime * result + ((invariantUUID == null) ? 0 : invariantUUID.hashCode());
 		result = prime * result + ((isDeleted == null) ? 0 : isDeleted.hashCode());
 		result = prime * result + ((isHighestVersion == null) ? 0 : isHighestVersion.hashCode());
 		result = prime * result + ((lastUpdateDate == null) ? 0 : lastUpdateDate.hashCode());
+		result = prime * result + ((lastUpdaterFullName == null) ? 0 : lastUpdaterFullName.hashCode());
+		result = prime * result + ((lastUpdaterUserId == null) ? 0 : lastUpdaterUserId.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((normalizedName == null) ? 0 : normalizedName.hashCode());
+		result = prime * result + ((projectCode == null) ? 0 : projectCode.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((systemName == null) ? 0 : systemName.hashCode());
 		result = prime * result + ((tags == null) ? 0 : tags.hashCode());
 		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
-		result = prime * result + ((projectCode == null) ? 0 : projectCode.hashCode());
-		result = prime * result + ((csarUUID == null) ? 0 : csarUUID.hashCode());
-		result = prime * result + ((csarVersion == null) ? 0 : csarVersion.hashCode());
-		result = prime * result + ((importedToscaChecksum == null) ? 0 : importedToscaChecksum.hashCode());
-		result = prime * result + ((invariantUUID == null) ? 0 : invariantUUID.hashCode());
 		return result;
 	}
 
@@ -329,6 +415,13 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 				return false;
 		} else if (!allVersions.equals(other.allVersions))
 			return false;
+		if (componentType != other.componentType)
+			return false;
+		if (conformanceLevel == null) {
+			if (other.conformanceLevel != null)
+				return false;
+		} else if (!conformanceLevel.equals(other.conformanceLevel))
+			return false;
 		if (contactId == null) {
 			if (other.contactId != null)
 				return false;
@@ -339,6 +432,26 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 				return false;
 		} else if (!creationDate.equals(other.creationDate))
 			return false;
+		if (creatorFullName == null) {
+			if (other.creatorFullName != null)
+				return false;
+		} else if (!creatorFullName.equals(other.creatorFullName))
+			return false;
+		if (creatorUserId == null) {
+			if (other.creatorUserId != null)
+				return false;
+		} else if (!creatorUserId.equals(other.creatorUserId))
+			return false;
+		if (csarUUID == null) {
+			if (other.csarUUID != null)
+				return false;
+		} else if (!csarUUID.equals(other.csarUUID))
+			return false;
+		if (csarVersion == null) {
+			if (other.csarVersion != null)
+				return false;
+		} else if (!csarVersion.equals(other.csarVersion))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -348,6 +461,16 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 			if (other.icon != null)
 				return false;
 		} else if (!icon.equals(other.icon))
+			return false;
+		if (importedToscaChecksum == null) {
+			if (other.importedToscaChecksum != null)
+				return false;
+		} else if (!importedToscaChecksum.equals(other.importedToscaChecksum))
+			return false;
+		if (invariantUUID == null) {
+			if (other.invariantUUID != null)
+				return false;
+		} else if (!invariantUUID.equals(other.invariantUUID))
 			return false;
 		if (isDeleted == null) {
 			if (other.isDeleted != null)
@@ -364,6 +487,16 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 				return false;
 		} else if (!lastUpdateDate.equals(other.lastUpdateDate))
 			return false;
+		if (lastUpdaterFullName == null) {
+			if (other.lastUpdaterFullName != null)
+				return false;
+		} else if (!lastUpdaterFullName.equals(other.lastUpdaterFullName))
+			return false;
+		if (lastUpdaterUserId == null) {
+			if (other.lastUpdaterUserId != null)
+				return false;
+		} else if (!lastUpdaterUserId.equals(other.lastUpdaterUserId))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -373,6 +506,11 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 			if (other.normalizedName != null)
 				return false;
 		} else if (!normalizedName.equals(other.normalizedName))
+			return false;
+		if (projectCode == null) {
+			if (other.projectCode != null)
+				return false;
+		} else if (!projectCode.equals(other.projectCode))
 			return false;
 		if (state == null) {
 			if (other.state != null)
@@ -399,31 +537,7 @@ public abstract class ComponentMetadataDataDefinition implements Serializable {
 				return false;
 		} else if (!version.equals(other.version))
 			return false;
-		if (projectCode == null) {
-			if (other.projectCode != null)
-				return false;
-		} else if (!projectCode.equals(other.projectCode))
-			return false;
-		if (csarUUID == null) {
-			if (other.csarUUID != null)
-				return false;
-		} else if (!csarUUID.equals(other.csarUUID))
-			return false;
-		if (csarVersion == null) {
-			if (other.csarVersion != null)
-				return false;
-		} else if (!csarVersion.equals(other.csarVersion))
-			return false;
-		if (importedToscaChecksum == null) {
-			if (other.importedToscaChecksum != null)
-				return false;
-		} else if (!importedToscaChecksum.equals(other.importedToscaChecksum))
-			return false;
-		if (invariantUUID == null) {
-			if (other.invariantUUID != null)
-				return false;
-		} else if (!invariantUUID.equals(other.invariantUUID))
-			return false;
 		return true;
 	}
+
 }

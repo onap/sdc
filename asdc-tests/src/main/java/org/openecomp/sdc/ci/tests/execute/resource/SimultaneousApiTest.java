@@ -84,6 +84,28 @@ public class SimultaneousApiTest extends ComponentBaseTest {
 
 		}
 
+		// public void run_() {
+		// System.out.println("**** Thread started " + threadIndex);
+		// try {
+		// UserUtils userUtils = new UserUtils();
+		// User userDetails = new User(userFirstName, userLastName,
+		// httpCspUserId, email, role , 0L);
+		// RestResponse response =
+		// userUtils.createUserTowardsCatalogBe(userDetails,
+		// userUtils.getUserDetailesAdmin());
+		// System.out.println("**** Thread " + threadIndex + " create resource
+		// status " + response.getErrorCode() + " response " +
+		// response.getResponse());
+		//// assertEquals("**** create resource: " +
+		// createResource.getErrorCode() + " thread " + threadIndex, 201,
+		// status);
+		// } catch (Exception e) {
+		// System.out.println("**** Thread " + threadIndex + " exception " + e);
+		// }
+		// countDownLatch.countDown();
+		// System.out.println("**** Thread finished " + threadIndex);
+		//
+		// }
 	}
 
 	@Test

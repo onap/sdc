@@ -1,0 +1,117 @@
+
+.selectPropertyType {
+    .tlv-radio-label {
+        margin-top: -7px;
+    }
+}
+
+.data-type-fields-structure {
+    background-color: @tlv_color_v;
+    padding: 10px;
+    display: table-caption;
+    .open-close {
+        position: relative;
+        .open-close-button {
+            position: absolute;
+            top: 50%;
+            margin-top: -7px;
+            &.expand {
+                .sprite-new;
+                .expand-collapse-minus-icon;
+            }
+            &.collapse {
+                .sprite-new;
+                .expand-collapse-plus-icon;
+            }
+        }
+
+    }
+
+    .existInputContainer {
+        height: 30px;
+        width: 20px;
+        position: relative;
+    }
+    .existInput {
+        .sprite-new;
+        .sdc-success;
+        position: absolute;
+        top: 18px;
+        left: 3px;
+    }
+
+    .data-type-name {
+        .m_16_m;
+        margin-left: 22px;
+    }
+
+    .i-sdc-form-input:disabled{
+        .disabled;
+        &[type="text"]{
+            opacity: 1 !important;
+            background-color: @tlv_color_t;
+            color:black;
+        }
+    }
+
+    .property {
+        display: flex;
+        min-width: 365px;
+        min-height: 46px;
+        input[type="text"], select {
+            width: 170px;
+        }
+        .property-name {
+            float: left;
+            margin-top: 8px;
+        }
+        .primitive-value-field {
+            float: right;
+            margin-top: 8px;
+            margin-left: 10px;
+        }
+        .inner-structure {
+            display: -webkit-box;
+        }
+    }
+
+    [ng-switch-when="map"] {
+        margin-top: 8px;
+        margin-left: 10px;
+        .map-item {
+            border: solid 1px @main_color_o;
+            min-width: 401px;
+            min-height: 69px;
+            float: none !important;
+        }
+        .add-map-item {
+            width: auto;
+            float: none;
+            &:nth-child(1) {
+                position: relative;
+                top: 6px;
+            }
+            .add-btn {
+                float: none;
+            }
+        }
+
+    }
+
+    [ng-switch-when="list"] {
+        float: left;
+        margin-top: 8px;
+        margin-left: 10px;
+        min-width: 280px;
+        .dt-list-item {
+            border: solid 1px @main_color_o;
+        }
+        .list-value-items {
+            width: 280px;
+        }
+    }
+}
+
+
+
+

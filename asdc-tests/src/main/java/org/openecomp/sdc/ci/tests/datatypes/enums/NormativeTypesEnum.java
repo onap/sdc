@@ -21,20 +21,10 @@
 package org.openecomp.sdc.ci.tests.datatypes.enums;
 
 public enum NormativeTypesEnum {
-	ROOT("tosca.nodes.Root", "root"), 
-	COMPUTE("tosca.nodes.Compute", "compute"), 
-	BLOCK_STORAGE("tosca.nodes.BlockStorage", "blockStorage"), 
-	CONTAINER_APPLICATION("tosca.nodes.Container.Application", "containerApplication"), 
-	CONTAINER_RUNTIME("tosca.nodes.Container.Runtime", "containerRuntime"), 
-	DATABASE("tosca.nodes.Database", "database"), 
-	DBMS("tosca.nodes.DBMS", "DBMS"), 
-	LOAD_BALANCER("tosca.nodes.LoadBalancer", "loadBalancer"), 
-	OBJECT_STORAGE("tosca.nodes.ObjectStorage", "objectStorage"), 
-	NETWORK("tosca.nodes.network.Network", "network"), 
-	PORT("tosca.nodes.network.Port", "port"), 
-	SOFTWARE_COMPONENT("tosca.nodes.SoftwareComponent", "softwareComponent"),
-    WEB_APPLICATION("tosca.nodes.webapplication", "webApplication"),
-    WEB_SERVER("tosca.nodes.WebServer", "webServer");
+	ROOT("tosca.nodes.Root", "root"), COMPUTE("tosca.nodes.Compute", "compute"), BLOCK_STORAGE("tosca.nodes.BlockStorage", "blockStorage"), CONTAINER_APPLICATION("tosca.nodes.Container.Application", "containerApplication"), 
+	CONTAINER_RUNTIME("tosca.nodes.Container.Runtime","containerRuntime"), DATABASE("tosca.nodes.Database", "database"), DBMS("tosca.nodes.DBMS", "DBMS"), LOAD_BALANCER("tosca.nodes.LoadBalancer", "loadBalancer"), 
+	OBJECT_STORAGE("tosca.nodes.ObjectStorage", "objectStorage"), NETWORK("tosca.nodes.network.Network", "network"), PORT("tosca.nodes.network.Port", "port"), SOFTWARE_COMPONENT("tosca.nodes.SoftwareComponent", "softwareComponent"), 
+	WEB_APPLICATION("tosca.nodes.webapplication","webApplication"), WEB_SERVER("tosca.nodes.WebServer", "webServer");
 	
 	public String normativeName;
 	private String folderName;

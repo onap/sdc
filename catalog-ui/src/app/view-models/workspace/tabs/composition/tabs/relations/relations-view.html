@@ -1,0 +1,61 @@
+<perfect-scrollbar class="w-sdc-designer-sidebar-tab-content sdc-general-tab relations">
+    <div ng-if="!isCurrentDisplayComponentIsComplex()">
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.capabilities" class="w-sdc-designer-sidebar-section-title"> Capabilities
+                <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+            </expand-collapse>
+            <div class="w-sdc-designer-sidebar-section-content capabilities">
+                <capabilities-list capabilities="capabilities"></capabilities-list>
+            </div>
+        </div>
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.requirements" class="w-sdc-designer-sidebar-section-title"> Requirements
+                <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+            </expand-collapse>
+
+            <div class="w-sdc-designer-sidebar-section-content requirements">
+                <requirements-list component='currentComponent' requirements="requirements"></requirements-list>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="isCurrentDisplayComponentIsComplex()">
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.capabilities" class="w-sdc-designer-sidebar-section-title"> Capabilities
+                <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+            </expand-collapse>
+        </div>
+        <div class="w-sdc-designer-sidebar-section-content capabilities">
+            <expand-collapse expanded-selector=".capabilities-component-instances.{{$index}}" is-close-on-init="true" class="general-tab-expand-collapse"
+                data-ng-repeat-start="(key, instanceCapabilities) in capabilitiesInstancesMap track by $index">
+                <div class="expand-collapse-title second-level">
+                     <div class="expand-collapse-title-icon"></div>
+                     <span class="expand-collapse-title-text" data-ng-bind="key"></span>
+                </div>
+            </expand-collapse>
+
+            <div data-ng-repeat-end="" class="capabilities-component-instances {{$index}}">
+                <capabilities-list capabilities="instanceCapabilities"></capabilities-list>
+            </div>
+        </div>
+
+        <div class="w-sdc-designer-sidebar-section w-sdc-designer-sidebar-section-relations">
+            <expand-collapse expanded-selector=".w-sdc-designer-sidebar-section-content.requirements" class="w-sdc-designer-sidebar-section-title"> Requirements
+                <div class="w-sdc-designer-sidebar-section-title-icon"></div>
+            </expand-collapse>
+        </div>
+        <div class="w-sdc-designer-sidebar-section-content requirements">
+            <expand-collapse expanded-selector=".requirements-component-instances.{{$index}}" is-close-on-init="true" class="general-tab-expand-collapse"
+                             data-ng-repeat-start="(key, instanceRequirements) in requirementsInstancesMap track by $index">
+                <div class="expand-collapse-title second-level">
+                    <div class="expand-collapse-title-icon"></div>
+                    <span class="expand-collapse-title-text" data-ng-bind="key"></span>
+                </div>
+            </expand-collapse>
+
+            <div data-ng-repeat-end="" class="requirements-component-instances {{$index}}">
+                <requirements-list component='currentComponent' requirements="instanceRequirements"></requirements-list>
+            </div>
+        </div>
+    </div>
+</perfect-scrollbar>

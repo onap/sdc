@@ -22,7 +22,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
 
-public class DataTypeDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class DataTypeDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 

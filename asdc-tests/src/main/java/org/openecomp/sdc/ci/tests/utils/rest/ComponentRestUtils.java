@@ -59,4 +59,12 @@ public class ComponentRestUtils extends BaseRestUtils {
 		CapReqDef capReqDef = ResponseParser.parseToObject(getComponentReqCap.getResponse(), CapReqDef.class);
 		return capReqDef;
 	}
+	
+	public static RestResponse validateConformanceLevel(String uuid, String userId) throws Exception {
+		Config config = Utils.getConfig();
+		String url = String.format(Urls.VALIDATE_CONFORMANCE_LEVEL, config.getCatalogBeHost(), config.getCatalogBePort(), "services", uuid);
+
+		RestResponse res = sendGet(url, userId);
+		return res;
+	}
 }

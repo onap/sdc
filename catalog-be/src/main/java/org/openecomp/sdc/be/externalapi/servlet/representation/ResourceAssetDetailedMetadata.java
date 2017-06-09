@@ -28,6 +28,7 @@ public class ResourceAssetDetailedMetadata extends ResourceAssetMetadata {
 	private String toscaResourceName;
 	private List<ResourceInstanceMetadata> resources;
 	private List<ArtifactMetadata> artifacts;
+	private String description;
 
 	public String getLastUpdaterFullName() {
 		return lastUpdaterFullName;
@@ -60,4 +61,13 @@ public class ResourceAssetDetailedMetadata extends ResourceAssetMetadata {
 	public void setArtifacts(List<ArtifactMetadata> artifactMetaList) {
 		this.artifacts = artifactMetaList;
 	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 }

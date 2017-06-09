@@ -40,11 +40,21 @@ public class GeneralUtility {
 		}
 		return isSuccessfull;
 	}
-
+	
+	/**
+	 * Use with care, usage is not advised!!!
+	 * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
+	 * The methods contained in other common libraries do the same.
+	 */
 	public static boolean isBase64Encoded(byte[] data) {
 		return Base64.isBase64(data);
 	}
-
+	
+	/**
+	 *Use with care, usage is not advised!!!
+	 * The method only checks if String does not contain special characters + length divided by 4 with no remainder.
+	 * The methods contained in other common libraries do the same.
+	 */
 	public static boolean isBase64Encoded(String str) {
 		boolean isEncoded = false;
 		try {
@@ -66,8 +76,8 @@ public class GeneralUtility {
 	/**
 	 * Checks whether the passed string exceeds a limit of number of characters.
 	 * 
-	 * @param str str
-	 * @param limit limit
+	 * @param str
+	 * @param limit
 	 * @return the result of comparison, or false if str is null.
 	 */
 	public static boolean isExceedingLimit(String str, int limit) {
@@ -78,14 +88,12 @@ public class GeneralUtility {
 	}
 
 	/**
-	 * Checks the passed string list whether the cumulative length of strings
-	 * and delimiters between them exceeds a limit of number of characters. For
-	 * example for list ("one","two","three") with delimiter "," the length of
-	 * list is calculated 3+1+3+1+5=13
+	 * Checks the passed string list whether the cumulative length of strings and delimiters between them exceeds a limit of number of characters. For example for list ("one","two","three") with delimiter "," the length of list is calculated
+	 * 3+1+3+1+5=13
 	 *
-	 * @param strList strList
-	 * @param limit Limit
-	 * @param delimiterLength delimiterLength
+	 * @param strList
+	 * @param limit
+	 * @param delimiterLength
 	 *            - 0 if there is no delimeter.
 	 * @return the result of comparison, or false if strList is null.
 	 */
@@ -110,11 +118,9 @@ public class GeneralUtility {
 	}
 
 	/**
-	 * Return the extension as the substring from the last dot. For input
-	 * "kuku.txt", "txt" will be returned. If no dot is found or input is null,
-	 * empty string is returned.
+	 * Return the extension as the substring from the last dot. For input "kuku.txt", "txt" will be returned. If no dot is found or input is null, empty string is returned.
 	 * 
-	 * @param fileName fileName
+	 * @param fileName
 	 * @return extension
 	 */
 	public static String getFilenameExtension(String fileName) {
@@ -137,7 +143,7 @@ public class GeneralUtility {
 
 	/**
 	 * 
-	 * @param data data
+	 * @param data
 	 * @return
 	 */
 	public static String calculateMD5ByString(String data) {

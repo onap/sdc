@@ -60,7 +60,8 @@ public enum NodeTypeEnum {
 	PolicyType("policyType"), 
 	Group("group"), 
 	UserFunctionalMenu("userFunctionalMenu"), 
-	Input("input");
+	Input("input"),
+	GroupInstance("groupInstance"), ;
 
 	private String name;
 

@@ -39,15 +39,20 @@ import org.javatuples.Pair;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
@@ -63,11 +68,14 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.general.FileUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ComponentInstanceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
 import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
+import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
@@ -486,7 +494,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 
 		RestResponse delteArtifactFromResource = ArtifactRestUtils.deleteInformationalArtifactFromResource(
 				resourceDetails1.getUniqueId(), heatArtifactDetails, sdncDesignerDetails2);
-		logger.debug("addInformationalArtifactToResource response: {}", delteArtifactFromResource.getResponseMessage());
+		logger.debug("addInformationalArtifactToResource response: {} ",delteArtifactFromResource.getResponseMessage());
 		assertTrue("response code is not 200, returned :" + delteArtifactFromResource.getErrorCode(),
 				delteArtifactFromResource.getErrorCode() == 200);
 
@@ -685,7 +693,7 @@ public class PlaceHolderValidations extends ComponentBaseTest {
 		String sourceDir = config.getResourceConfigDir();
 		String testResourcesPath = sourceDir + File.separator + folderName;
 		List<String> listFileName = FileUtils.getFileListFromBaseDirectoryByTestName(testResourcesPath);
-		logger.debug("listFileName: {}", listFileName.toString());
+		logger.debug("listFileName: {}",listFileName.toString());
 
 		String payload = FileUtils.loadPayloadFile(listFileName, ext, true);
 		ArtifactReqDetails updateArtifactReqDetails = ElementFactory.getDefaultDeploymentArtifactForType(artType);

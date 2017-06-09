@@ -38,6 +38,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
@@ -115,6 +116,17 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
 
 			outHttpResponse(responseContext);
 
+			log.debug("Close transaction from filter");
+			TitanDao titanDao = getTitanDao();
+			if ( titanDao != null ){
+				if (responseContext.getStatus() == Response.Status.OK.getStatusCode() || responseContext.getStatus() == Response.Status.CREATED.getStatusCode() ){
+					titanDao.commit();
+					log.debug("Doing commit from filter");
+				}else{
+					titanDao.rollback();
+					log.debug("Doing rollback from filter");
+				}
+			}
 			// Cleaning up
 			MDC.clear();
 			ThreadLocalsHolder.cleanup();
@@ -126,7 +138,7 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
 	}
 
 	private String processMdcFields(ContainerRequestContext requestContext) {
-		// userId for logging
+		// UserId for logging
 		String userId = requestContext.getHeaderString(Constants.USER_ID_HEADER);
 		MDC.put("userId", userId);
 
@@ -165,7 +177,13 @@ public class BeServletFilter implements ContainerRequestFilter, ContainerRespons
 		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
 		return webApplicationContext.getBean(ComponentsUtils.class);
 	}
+	private TitanDao getTitanDao() {
+		ServletContext context = this.sr.getSession().getServletContext();
 
+		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
+		WebApplicationContext webApplicationContext = webApplicationContextWrapper.getWebAppContext(context);
+		return webApplicationContext.getBean(TitanDao.class);
+	}
 	// Extracted for purpose of clear method name, for logback %M parameter
 	private void inHttpRequest() {
 		if (isInfoLog()) {

@@ -73,7 +73,7 @@ public class UpdatePropertyOnVertex {
 						Map<String, Object> leftProps = Utils.getProperties(vertex);
 						boolean vertexLeftContainsRightProps = Utils.vertexLeftContainsRightProps(leftProps, criteria);
 						if (false == vertexLeftContainsRightProps) {
-							log.debug("Ignore vertex since properties it does not contains properties {}. Vertex properties are: {}", criteria, leftProps);
+							log.debug("Ignore vertex since properties it does not contains properties {}. Vertex properties are {}",criteria,leftProps);
 							continue;
 						}
 
@@ -90,7 +90,7 @@ public class UpdatePropertyOnVertex {
 						}
 
 					} else {
-						log.debug("No certified service was found for criteria {}", criteria);
+						log.debug("No certified service was found for criteria {}",criteria);
 					}
 				}
 
@@ -137,7 +137,7 @@ public class UpdatePropertyOnVertex {
 
 			boolean vertexLeftContainsRightProps = Utils.vertexLeftContainsRightProps(leftProps, criteria);
 			if (false == vertexLeftContainsRightProps) {
-				log.debug("Ignore vertex since properties it does not contains properties {}. Vertex properties are {}", criteria, leftProps);
+				log.debug("Ignore vertex since properties it does not contains properties {}. Vertex properties are {}",criteria,leftProps);
 				continue;
 			}
 
@@ -148,16 +148,12 @@ public class UpdatePropertyOnVertex {
 
 					// vertex.setProperty(key, value);
 					vertex.property(key, value);
-					//if(log.isDebugEnabled()){
-					// log.debug("After setting vertex: {} {} with key value: {}, {}", 
-					// vertex.getProperty(GraphPropertiesDictionary.NAME.getProperty()), 
-					// vertex.getProperty(GraphPropertiesDictionary.VERSION.getProperty()),
-					// key, value);
-					//}
-					log.debug("After setting vertex: {} {} with key value: {}, {}", 
+					
+					if (log.isDebugEnabled()){
+						log.debug("After setting vertex {} {} with key value {},{}",  
 							vertex.property(GraphPropertiesDictionary.NAME.getProperty()),
-							vertex.property(GraphPropertiesDictionary.VERSION.getProperty()),
-							key, value);
+							vertex.property(GraphPropertiesDictionary.VERSION.getProperty()),key,value);
+					}
 					numberOfUpdatedVertexesPerService++;
 				}
 			}

@@ -108,7 +108,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		// init user
 		sdncModifierDetails.setUserId(UserRoleEnum.ADMIN.getUserId());
 		// init resource details
-		resourceDetails = ElementFactory.getDefaultResource("importResource4test", NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, "jh0003");
+		resourceDetails = ElementFactory.getDefaultResource("importResource4test", NormativeTypesEnum.ROOT,
+				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, "jh0003");
 	}
 
 	@Test
@@ -119,8 +120,10 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 			DbUtils.cleanAllAudits();
 
 			// import testResources trough newResource API
-			RestResponse importResponse = ImportRestUtils.importNewResourceByName(currResource.getFolderName(), UserRoleEnum.ADMIN);
-			System.err.println("import Resource " + "<" + currResource.getFolderName() + ">" + "response: " + importResponse.getErrorCode());
+			RestResponse importResponse = ImportRestUtils.importNewResourceByName(currResource.getFolderName(),
+					UserRoleEnum.ADMIN);
+			System.err.println("import Resource " + "<" + currResource.getFolderName() + ">" + "response: "
+					+ importResponse.getErrorCode());
 
 			// validate response
 			ImportRestUtils.validateImportTestTypesResp(currResource, importResponse);
@@ -143,7 +146,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 				expectedResourceAuditJavaObject.setCurrState("");
 				expectedResourceAuditJavaObject.setComment(null);
 				expectedResourceAuditJavaObject.setStatus(errorInfo.getCode().toString());
-				List<String> variables = (currResource.getErrorParams() != null ? currResource.getErrorParams() : new ArrayList<String>());
+				List<String> variables = (currResource.getErrorParams() != null ? currResource.getErrorParams()
+						: new ArrayList<String>());
 				String auditDesc = AuditValidationUtils.buildAuditDescription(errorInfo, variables);
 				expectedResourceAuditJavaObject.setDesc(auditDesc);
 				AuditValidationUtils.validateAuditImport(expectedResourceAuditJavaObject, auditAction);
@@ -156,7 +160,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		// init user
 		sdncModifierDetails.setUserId(userRoleEnum.getUserId());
 		// init resource details
-		resourceDetails = ElementFactory.getDefaultResource("importResource4test", NormativeTypesEnum.ROOT, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, "jh0003");
+		resourceDetails = ElementFactory.getDefaultResource("importResource4test", NormativeTypesEnum.ROOT,
+				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, "jh0003");
 		// clean ES DB
 		DbUtils.cleanAllAudits();
 		// import new resource (expected checkOut state)
@@ -166,14 +171,19 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 	@Test(enabled = false)
 	public void importUIResource() throws IOException {
-		String payload = "tosca_definitions_version: tosca_simple_yaml_1_0_0\r\n" + "node_types: \r\n" + "  org.openecomp.resource.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n" + "    description: someDesc";
+		String payload = "tosca_definitions_version: tosca_simple_yaml_1_0_0\r\n" + "node_types: \r\n"
+				+ "  org.openecomp.resource.importResource4test:\r\n" + "    derived_from: tosca.nodes.Root\r\n"
+				+ "    description: someDesc";
 
 		String encodedPayload = new String(Base64.encodeBase64(payload.getBytes()));
 
-		String json = "{\r\n" + "  \"resourceName\": \"importResource4test\",\r\n" + "  \"payloadName\": \"importResource4test.yml\",\r\n"
+		String json = "{\r\n" + "  \"resourceName\": \"importResource4test\",\r\n"
+				+ "  \"payloadName\": \"importResource4test.yml\",\r\n"
 				+ "  \"categories\": [{\"name\": \"Application L4+\",\"normalizedName\": \"application l4+\",\"uniqueId\": \"resourceNewCategory.application l4+\",\"subcategories\": [{\"name\": \"Web Server\"}]}],\r\n"
-				+ "  \"description\": \"ResourceDescription\",\r\n" + "  \"vendorName\": \"VendorName\",\r\n" + "  \"vendorRelease\": \"VendorRelease\",\r\n" + "  \"contactId\": \"AT1234\",\r\n" + "  \"icon\": \"router\",\r\n" + "  \"tags\": [\r\n"
-				+ "    \"importResource4test\"\r\n" + "  ],\r\n" + "  \"payloadData\": \"" + encodedPayload + "\"\r\n" + "}";
+				+ "  \"description\": \"ResourceDescription\",\r\n" + "  \"vendorName\": \"VendorName\",\r\n"
+				+ "  \"vendorRelease\": \"VendorRelease\",\r\n" + "  \"contactId\": \"AT1234\",\r\n"
+				+ "  \"icon\": \"router\",\r\n" + "  \"tags\": [\r\n" + "    \"importResource4test\"\r\n" + "  ],\r\n"
+				+ "  \"payloadData\": \"" + encodedPayload + "\"\r\n" + "}";
 
 		String md5 = GeneralUtility.calculateMD5ByString(json);
 
@@ -226,8 +236,10 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceRespJavaObject.setLifecycleState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceRespJavaObject.getUniqueId());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceRespJavaObject.getUniqueId());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// validate
@@ -235,7 +247,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		// validate audit
 		resourceDetails.setVersion(resourceDetails.getVersion());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 
 		auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
@@ -275,7 +288,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		DbUtils.cleanAllAudits();
 
 		// import new resource while resource already exist in other state
-		importResponse = ImportRestUtils.importNewResourceByName("importResource4testUpdateVendorNameAndCategory", UserRoleEnum.ADMIN);
+		importResponse = ImportRestUtils.importNewResourceByName("importResource4testUpdateVendorNameAndCategory",
+				UserRoleEnum.ADMIN);
 
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
@@ -290,8 +304,10 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceRespJavaObject.setLifecycleState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceRespJavaObject.getUniqueId());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceRespJavaObject.getUniqueId());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// validate
@@ -299,7 +315,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		// validate audit
 		resourceDetails.setVersion(resourceDetails.getVersion());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails);
 
 		auditAction = "ResourceImport";
 		resourceVersion = "0.1";
@@ -331,14 +348,17 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name());
+		ErrorInfo errorInfo = ErrorValidationUtils
+				.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name());
 		assertEquals("Check response code after adding artifact", errorInfo.getCode(), importResponse.getErrorCode());
 
 		String[] split = resourceFromImport.getLastUpdaterFullName().split(" ");
 		String firstName = split[0];
 		String lastName = split[1];
-		List<String> variables = Arrays.asList(resourceFromImport.getName(), "resource", firstName, lastName, resourceFromImport.getLastUpdaterUserId());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name(), variables, importResponse.getResponse());
+		List<String> variables = Arrays.asList(resourceFromImport.getName(), "resource", firstName, lastName,
+				resourceFromImport.getLastUpdaterUserId());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name(), variables,
+				importResponse.getResponse());
 
 	}
 
@@ -359,74 +379,88 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name());
+		ErrorInfo errorInfo = ErrorValidationUtils
+				.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name());
 		assertEquals("Check response code after adding artifact", errorInfo.getCode(), importResponse.getErrorCode());
 
 		String[] split = resourceFromImport.getLastUpdaterFullName().split(" ");
 		String firstName = split[0];
 		String lastName = split[1];
-		List<String> variables = Arrays.asList(resourceFromImport.getName(), "resource", firstName, lastName, resourceFromImport.getLastUpdaterUserId());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name(), variables, importResponse.getResponse());
+		List<String> variables = Arrays.asList(resourceFromImport.getName(), "resource", firstName, lastName,
+				resourceFromImport.getLastUpdaterUserId());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CHECKOUT_STATE.name(), variables,
+				importResponse.getResponse());
 
 	}
 
 	@Test(enabled = false)
 	public void importNewResource_nameSpace_vf() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVF", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVF",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
-		Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(importResponse.getResponse());
+		Resource resourceRespJavaObject = ResponseParser
+				.convertResourceResponseToJavaObject(importResponse.getResponse());
 		assertTrue(resourceRespJavaObject.getResourceType().equals(ResourceTypeEnum.VF));
 
 	}
 
 	@Test
 	public void importNewResource_nameSpace_vfc() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVFC", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVFC",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
-		Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(importResponse.getResponse());
+		Resource resourceRespJavaObject = ResponseParser
+				.convertResourceResponseToJavaObject(importResponse.getResponse());
 		assertTrue(resourceRespJavaObject.getResourceType().equals(ResourceTypeEnum.VFC));
 	}
 
 	@Test
 	public void importNewResource_nameSpace_vl() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVL", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testVL",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
-		Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(importResponse.getResponse());
+		Resource resourceRespJavaObject = ResponseParser
+				.convertResourceResponseToJavaObject(importResponse.getResponse());
 		assertTrue(resourceRespJavaObject.getResourceType().equals(ResourceTypeEnum.VL));
 
 	}
 
 	@Test
 	public void importNewResource_nameSpace_cp() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testCP", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testCP",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
 
-		Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(importResponse.getResponse());
+		Resource resourceRespJavaObject = ResponseParser
+				.convertResourceResponseToJavaObject(importResponse.getResponse());
 		assertTrue(resourceRespJavaObject.getResourceType().equals(ResourceTypeEnum.CP));
 	}
 
 	@Test
 	public void importNewResource_nameSpace_unknown() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4test", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4test",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
-		Resource resourceRespJavaObject = ResponseParser.convertResourceResponseToJavaObject(importResponse.getResponse());
+		Resource resourceRespJavaObject = ResponseParser
+				.convertResourceResponseToJavaObject(importResponse.getResponse());
 		assertTrue(resourceRespJavaObject.getResourceType().equals(ResourceTypeEnum.VFC));
 
 	}
 
 	@Test
 	public void importNewResource_MissingNameSpace() throws Exception {
-		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testMissingNameSpace", UserRoleEnum.DESIGNER);
+		RestResponse importResponse = ImportRestUtils.importNewResourceByName("importResource4testMissingNameSpace",
+				UserRoleEnum.DESIGNER);
 		assertNotNull("check response object is not null after import resource", importResponse);
 		assertNotNull("check error code exists in response after import resource", importResponse.getErrorCode());
 		assertEquals("Check response code after import resource", 400, importResponse.getErrorCode().intValue());
@@ -464,8 +498,10 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceRespJavaObject.setLifecycleState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceRespJavaObject.getUniqueId());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceRespJavaObject.getUniqueId());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// validate
@@ -473,7 +509,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		// validate audit
 		resourceDetails.setVersion(resourceDetails.getVersion());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails);
 
 		auditAction = "ResourceImport";
 		resourceVersion = "0.1";
@@ -505,7 +542,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
@@ -530,8 +568,10 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceRespJavaObject.setLifecycleState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
 
 		// validate get response
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceRespJavaObject.getUniqueId());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceRespJavaObject.getUniqueId());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// validate
@@ -539,7 +579,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		// validate audit
 		resourceDetails.setVersion(resourceDetails.getVersion());
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails);
 
 		resourceVersion = "0.2";
 		auditAction = "ResourceImport";
@@ -565,9 +606,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 		// add mandatory artifacts
 		// // resourceUtils.addResourceMandatoryArtifacts(sdncModifierDetails,
@@ -583,7 +626,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
@@ -593,7 +637,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceDetails.setVersion(resourceFromGet.getVersion());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -614,11 +659,13 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertNotNull("check error code exists in response after create resource", importResponse.getErrorCode());
 		assertEquals("Check response code after create service", errorInfo.getCode(), importResponse.getErrorCode());
 		List<String> variables = Arrays.asList();
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESTRICTED_OPERATION.name(), variables, importResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESTRICTED_OPERATION.name(), variables,
+				importResponse.getResponse());
 
 		// validate audit
 
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 
 		String auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
@@ -649,9 +696,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 		// add mandatory artifacts
 		// resourceUtils.addResourceMandatoryArtifacts(sdncModifierDetails,
@@ -667,12 +716,14 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -687,18 +738,22 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		importResponse = ImportRestUtils.importNewResourceByName("importResource4test", UserRoleEnum.DESIGNER);
 
 		// validate response
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION.name());
+		ErrorInfo errorInfo = ErrorValidationUtils
+				.parseErrorConfigYaml(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION.name());
 		assertNotNull("check response object is not null after create resouce", importResponse);
 		assertNotNull("check error code exists in response after create resource", importResponse.getErrorCode());
 		assertEquals("Check response code after create service", errorInfo.getCode(), importResponse.getErrorCode());
 		String[] split = resourceFromGet.getLastUpdaterFullName().split(" ");
 		String firstName = split[0];
 		String lastName = split[1];
-		List<String> variables = Arrays.asList(resourceFromGet.getName(), "resource", firstName, lastName, resourceFromGet.getLastUpdaterUserId());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION.name(), variables, importResponse.getResponse());
+		List<String> variables = Arrays.asList(resourceFromGet.getName(), "resource", firstName, lastName,
+				resourceFromGet.getLastUpdaterUserId());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_SENT_FOR_CERTIFICATION.name(), variables,
+				importResponse.getResponse());
 
 		// validate audit
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 		String auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setModifierUid(UserRoleEnum.DESIGNER.getUserId());
@@ -727,9 +782,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// add mandatory artifacts
@@ -746,12 +803,14 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -790,7 +849,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		ResourceValidationUtils.validateModelObjects(resourceFromImport, resourceFromGet);
 
 		// validate audit
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 		auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setPrevState((LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT).toString());
@@ -812,9 +872,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// add mandatory artifacts
@@ -831,12 +893,14 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -845,7 +909,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceDetails.setVersion(resourceFromGet.getVersion());
 
 		// startCert
-		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertNotNull("check response object is not null after resource request start certification", startCert);
 		assertEquals("Check response code after checkout resource", 200, startCert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(startCert.getResponse());
@@ -866,10 +931,12 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertNotNull("check error code exists in response after create resource", importResponse.getErrorCode());
 		assertEquals("Check response code after create service", errorInfo.getCode(), importResponse.getErrorCode());
 		List<String> variables = Arrays.asList();
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESTRICTED_OPERATION.name(), variables, importResponse.getResponse());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.RESTRICTED_OPERATION.name(), variables,
+				importResponse.getResponse());
 
 		// validate audit
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 		String auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setResourceName("");
@@ -897,9 +964,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// add mandatory artifacts
@@ -916,12 +985,14 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -930,7 +1001,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceDetails.setVersion(resourceFromGet.getVersion());
 
 		// startCert
-		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertNotNull("check response object is not null after resource request start certification", startCert);
 		assertEquals("Check response code after checkout resource", 200, startCert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(startCert.getResponse());
@@ -944,15 +1016,19 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		// import new resource while resource already exist in other state
 		importResponse = ImportRestUtils.importNewResourceByName("importResource4test", UserRoleEnum.DESIGNER);
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
+		ErrorInfo errorInfo = ErrorValidationUtils
+				.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
 		assertNotNull("check response object is not null after create resouce", importResponse);
 		assertNotNull("check error code exists in response after create resource", importResponse.getErrorCode());
 		assertEquals("Check response code after create service", errorInfo.getCode(), importResponse.getErrorCode());
-		List<String> variables = Arrays.asList(resourceDetails.getName(), "resource", sdncAdminUser.getFirstName(), sdncAdminUser.getLastName(), sdncAdminUser.getUserId());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name(), variables, importResponse.getResponse());
+		List<String> variables = Arrays.asList(resourceDetails.getName(), "resource", sdncAdminUser.getFirstName(),
+				sdncAdminUser.getLastName(), sdncAdminUser.getUserId());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name(),
+				variables, importResponse.getResponse());
 
 		// validate audit
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 		String auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setModifierUid(UserRoleEnum.DESIGNER.getUserId());
@@ -983,9 +1059,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertEquals("Check response code after import resource", 201, importResponse.getErrorCode().intValue());
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 
 		// add mandatory artifacts
@@ -1002,12 +1080,14 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceVersion = resourceDetails.getVersion();
 		String checkinComment = "good checkin";
 		String checkinComentJson = "{\"userRemarks\": \"" + checkinComment + "\"}";
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CHECKIN, checkinComentJson);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -1016,7 +1096,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceDetails.setVersion(resourceFromGet.getVersion());
 
 		// startCert
-		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertNotNull("check response object is not null after resource request start certification", startCert);
 		assertEquals("Check response code after checkout resource", 200, startCert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(startCert.getResponse());
@@ -1032,15 +1113,19 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		importResponse = ImportRestUtils.importNewResourceByName("importResource4test", UserRoleEnum.ADMIN);
 
 		// validate response
-		ErrorInfo errorInfo = ErrorValidationUtils.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
+		ErrorInfo errorInfo = ErrorValidationUtils
+				.parseErrorConfigYaml(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name());
 		assertNotNull("check response object is not null after create resouce", importResponse);
 		assertNotNull("check error code exists in response after create resource", importResponse.getErrorCode());
 		assertEquals("Check response code after create service", errorInfo.getCode(), importResponse.getErrorCode());
-		List<String> variables = Arrays.asList(resourceDetails.getName(), "resource", sdncAdminUser.getFirstName(), sdncAdminUser.getLastName(), sdncAdminUser.getUserId());
-		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name(), variables, importResponse.getResponse());
+		List<String> variables = Arrays.asList(resourceDetails.getName(), "resource", sdncAdminUser.getFirstName(),
+				sdncAdminUser.getLastName(), sdncAdminUser.getUserId());
+		ErrorValidationUtils.checkBodyResponseOnError(ActionStatus.COMPONENT_IN_CERT_IN_PROGRESS_STATE.name(),
+				variables, importResponse.getResponse());
 
 		// validate audit
-		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
+		ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor
+				.constructFieldsForAuditValidation(resourceDetails, resourceVersion);
 		String auditAction = "ResourceImport";
 		expectedResourceAuditJavaObject.setAction(auditAction);
 		expectedResourceAuditJavaObject.setModifierUid(UserRoleEnum.ADMIN.getUserId());
@@ -1202,10 +1287,6 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 	// DbUtils.cleanAllAudits();
 	//
 	// // change resource details
-	// resourceDetails =
-	// ElementFactory.getDefaultResource("tosca.nodes.importResource4test",
-	// NormativeTypesEnum.COMPUTE, ResourceCategoryEnum.NETWORK_L2_3_ROUTERS,
-	// "jh0003");
 	//
 	// // import new resource while resource already exist in other state
 	// importResponse =
@@ -1279,9 +1360,11 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceVersion = resourceDetails.getVersion();
-		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails, resourceDetails.getUniqueId());
+		RestResponse resourceGetResponse = ResourceRestUtils.getResource(sdncModifierDetails,
+				resourceDetails.getUniqueId());
 		assertEquals("Check response code after get resource", 200, resourceGetResponse.getErrorCode().intValue());
-		Resource resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
+		Resource resourceFromGet = ResponseParser
+				.convertResourceResponseToJavaObject(resourceGetResponse.getResponse());
 		assertNotNull(resourceFromGet);
 		// add mandatory artifacts
 		// resourceUtils.addResourceMandatoryArtifacts(sdncModifierDetails,
@@ -1293,7 +1376,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		resourceDetails = ResponseParser.parseToObject(importResponse.getResponse(), ResourceReqDetails.class);
 		resourceDetails.setVersion(resourceFromGet.getVersion());
 
-		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, "0.1", LifeCycleStatesEnum.CHECKIN);
+		RestResponse checkInResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				"0.1", LifeCycleStatesEnum.CHECKIN);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
@@ -1301,7 +1385,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertTrue(ResourceValidationUtils.validateUuidAfterChangingStatus(oldUuid, newUuid));
 
 		// req4cert resource
-		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
+		RestResponse request4cert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.CERTIFICATIONREQUEST);
 		assertNotNull("check response object is not null after resource request for certification", request4cert);
 		assertEquals("Check response code after checkout resource", 200, request4cert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(request4cert.getResponse());
@@ -1313,7 +1398,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertTrue(ResourceValidationUtils.validateUuidAfterChangingStatus(oldUuid, newUuid2));
 
 		// startCert
-		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
+		RestResponse startCert = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				resourceVersion, LifeCycleStatesEnum.STARTCERTIFICATION);
 		assertNotNull("check response object is not null after resource request start certification", startCert);
 		assertEquals("Check response code after checkout resource", 200, startCert.getErrorCode().intValue());
 		resourceFromGet = ResponseParser.convertResourceResponseToJavaObject(startCert.getResponse());
@@ -1324,14 +1410,16 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		String newUuid3 = ResponseParser.getValueFromJsonResponse(startCert.getResponse(), "uuid");
 		assertTrue(ResourceValidationUtils.validateUuidAfterChangingStatus(oldUuid, newUuid3));
 
-		RestResponse certify = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, "0.1", LifeCycleStatesEnum.CERTIFY);
+		RestResponse certify = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, "0.1",
+				LifeCycleStatesEnum.CERTIFY);
 		assertNotNull("check response object is not null after import resource", certify);
 		assertEquals("Check response code after checkout resource", 200, certify.getErrorCode().intValue());
 
 		String newUuid4 = ResponseParser.getValueFromJsonResponse(certify.getResponse(), "uuid");
 		assertTrue(ResourceValidationUtils.validateUuidAfterChangingStatus(oldUuid, newUuid4));
 
-		RestResponse checkoutResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails, "1.0", LifeCycleStatesEnum.CHECKOUT);
+		RestResponse checkoutResponse = LifecycleRestUtils.changeResourceState(resourceDetails, sdncModifierDetails,
+				"1.0", LifeCycleStatesEnum.CHECKOUT);
 		assertNotNull("check response object is not null after import resource", checkInResponse);
 		assertEquals("Check response code after checkout resource", 200, checkInResponse.getErrorCode().intValue());
 
@@ -1349,7 +1437,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		List<PropertyDefinition> properties = resource.getProperties();
 		assertEquals("check properties size", 3, properties.size());
 
-		PropertyDefinition propertyDefinition = properties.stream().filter(p -> p.getName().equals("validation_test")).findFirst().get();
+		PropertyDefinition propertyDefinition = properties.stream().filter(p -> p.getName().equals("validation_test"))
+				.findFirst().get();
 		String defaultValue = propertyDefinition.getDefaultValue();
 
 		Map mapValue = gson.fromJson(defaultValue, Map.class);
@@ -1371,7 +1460,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		List<PropertyDefinition> properties = resource.getProperties();
 		assertEquals("check properties size", 3, properties.size());
 
-		PropertyDefinition propertyDefinition = properties.stream().filter(p -> p.getName().equals("validation_test")).findFirst().get();
+		PropertyDefinition propertyDefinition = properties.stream().filter(p -> p.getName().equals("validation_test"))
+				.findFirst().get();
 		String defaultValue = propertyDefinition.getDefaultValue();
 
 		List listValue = gson.fromJson(defaultValue, List.class);
@@ -1385,7 +1475,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		assertEquals("check properties size", 2, attributes.size());
 
 		// Verify attribute from type map
-		AttributeDefinition attributeMapDefinition = attributes.stream().filter(p -> p.getName().equals("validation_test_map")).findFirst().get();
+		AttributeDefinition attributeMapDefinition = attributes.stream()
+				.filter(p -> p.getName().equals("validation_test_map")).findFirst().get();
 		String defaultMapValue = attributeMapDefinition.getDefaultValue();
 		Map attributeMapValue = gson.fromJson(defaultMapValue, Map.class);
 		assertEquals("check Map value size", 2, attributeMapValue.size());
@@ -1393,7 +1484,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		checkMapValues(attributeMapValue, "key", 2, SPECIAL_CHARACTERS);
 
 		// Verify attribute from type list
-		AttributeDefinition attributeListDefinition = attributes.stream().filter(p -> p.getName().equals("validation_test_list")).findFirst().get();
+		AttributeDefinition attributeListDefinition = attributes.stream()
+				.filter(p -> p.getName().equals("validation_test_list")).findFirst().get();
 		String defaultListValue = attributeListDefinition.getDefaultValue();
 
 		List attributeListValue = gson.fromJson(defaultListValue, List.class);
@@ -1408,7 +1500,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 	private void checkListValues(Object object, int index, String suffix) {
 
 		Map map = (Map) object;
-		assertEquals("check Map protocol value", "protocol" + index + (suffix == null ? "" : suffix), map.get("protocol"));
+		assertEquals("check Map protocol value", "protocol" + index + (suffix == null ? "" : suffix),
+				map.get("protocol"));
 		assertEquals("check Map token value", "token" + index, map.get("token"));
 	}
 
@@ -1424,7 +1517,8 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 	private void checkMapValues(Map mapValue, String key, int index, String suffix) {
 
 		Map map1 = (Map) mapValue.get(key + index);
-		assertEquals("check Map protocol value", "protocol" + index + (suffix == null ? "" : suffix), map1.get("protocol"));
+		assertEquals("check Map protocol value", "protocol" + index + (suffix == null ? "" : suffix),
+				map1.get("protocol"));
 		assertEquals("check Map token value", "token" + index, map1.get("token"));
 
 	}

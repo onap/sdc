@@ -25,8 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
@@ -44,6 +47,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -57,6 +61,7 @@ import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.ServiceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
+import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -82,15 +87,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	@javax.annotation.Resource
 	private ApplicationDataTypeCache dataTypeCache;
 
+	@javax.annotation.Resource
+	protected ResourceOperation resourceOperation;
+	
 	@Override
-	public Either<GroupData, TitanOperationStatus> addGroupToGraph(NodeTypeEnum nodeTypeEnum, String componentId,
-			GroupDefinition groupDefinition) {
+	public Either<GroupData, TitanOperationStatus> addGroupToGraph(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition) {
 
 		String groupTypeUid = groupDefinition.getTypeUid();
 
 		if (groupTypeUid == null) {
-			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, "Group type id is empty",
-					ErrorSeverity.ERROR);
+			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, "Group type id is empty", ErrorSeverity.ERROR);
 			return Either.right(TitanOperationStatus.INVALID_ID);
 		}
 
@@ -112,41 +118,35 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		TitanOperationStatus status = null;
 		// Adding group data node to graph
 		log.debug("Before adding group to graph {}", groupData.toString());
-		Either<GroupData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(groupData,
-				GroupData.class);
+		Either<GroupData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(groupData, GroupData.class);
 		log.debug("After adding group to graph {}", groupData.toString());
 		if (createNodeResult.isRight()) {
 			status = createNodeResult.right().value();
-			log.error("Failed to add group {} to graph. Status is {}", groupDefinition.getName(), status);
+			log.error("Failed to add group {} to graph. status is {}", groupDefinition.getName(), status);
 			return Either.right(status);
 		}
 
 		// Associate group to group type
 		log.debug("Going to associate group {} to its groupType {}", groupDefinition.getName(), groupDefinition.getType());
-		Either<GraphRelation, TitanOperationStatus> associateGroupTypeRes = associateGroupToGroupType(groupData,
-				groupTypeUid);
-		log.debug("After associating group {} to its groupType {}. Status is {}", groupDefinition.getName(), groupDefinition.getType(), associateGroupTypeRes);
+		Either<GraphRelation, TitanOperationStatus> associateGroupTypeRes = associateGroupToGroupType(groupData, groupTypeUid);
+		log.debug("After associating group {} to its groupType {}. status is {}", groupDefinition.getName(), groupDefinition.getType(), associateGroupTypeRes);
 		if (associateGroupTypeRes.isRight()) {
 			status = associateGroupTypeRes.right().value();
-			String description = "Failed to associate group " + groupDefinition.getName() + " to its groupType "
-					+ groupDefinition.getType() + " in graph.";
+			String description = "Failed to associate group " + groupDefinition.getName() + " to its groupType " + groupDefinition.getType() + " in graph.";
 			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 			return Either.right(status);
 		}
 
 		// Associate group to component RESOURCE/SERVICE/PRODUCT
-		Either<GraphRelation, TitanOperationStatus> associateComponentRes = associateGroupToComponent(groupData,
-				nodeTypeEnum, componentId);
+		Either<GraphRelation, TitanOperationStatus> associateComponentRes = associateGroupToComponent(groupData, nodeTypeEnum, componentId);
 		if (associateComponentRes.isRight()) {
 			status = associateComponentRes.right().value();
-			String description = "Failed to associate group " + groupDefinition.getName() + " to "
-					+ nodeTypeEnum.getName() + " " + componentId + ". status is " + status;
+			String description = "Failed to associate group " + groupDefinition.getName() + " to " + nodeTypeEnum.getName() + " " + componentId + ". status is " + status;
 			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 			return Either.right(status);
 		}
 
-		Either<GroupTypeDefinition, TitanOperationStatus> groupTypeRes = groupTypeOperation
-				.getGroupTypeByUid(groupDefinition.getTypeUid());
+		Either<GroupTypeDefinition, TitanOperationStatus> groupTypeRes = groupTypeOperation.getGroupTypeByUid(groupDefinition.getTypeUid());
 		if (groupTypeRes.isRight()) {
 			TitanOperationStatus operationStatus = groupTypeRes.right().value();
 			log.debug("Failed to find group type {}", groupDefinition.getTypeUid());
@@ -164,18 +164,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		// points to the parent unique id
 
 		// Adding properties to group
-		List<GroupProperty> properties = groupDefinition.getProperties();
+		List<GroupProperty> properties = groupDefinition.convertToGroupProperties();
 
 		if (properties != null && false == properties.isEmpty()) {
 
 			if (groupTypeProperties == null || true == groupTypeProperties.isEmpty()) {
-				BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP,
-						"group type does not have properties", ErrorSeverity.INFO);
+				BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP, "group type does not have properties", ErrorSeverity.INFO);
 				return Either.right(TitanOperationStatus.MATCH_NOT_FOUND);
 			}
 
-			Map<String, PropertyDefinition> groupTypePropertiesMap = groupTypeProperties.stream()
-					.collect(Collectors.toMap(p -> p.getName(), p -> p));
+			Map<String, PropertyDefinition> groupTypePropertiesMap = groupTypeProperties.stream().collect(Collectors.toMap(p -> p.getName(), p -> p));
 
 			Either<PropertyValueData, TitanOperationStatus> addPropertyResult = null;
 			int i = 1;
@@ -183,10 +181,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				addPropertyResult = addPropertyToGroup(groupData, prop, groupTypePropertiesMap.get(prop.getName()), i);
 				if (addPropertyResult.isRight()) {
 					status = addPropertyResult.right().value();
-					String description = "Failed to associate group " + groupData.getUniqueId() + " to property "
-							+ prop.getName() + " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to associate group " + groupData.getUniqueId() + " to property " + prop.getName() + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 					return Either.right(status);
 				}
 				i++;
@@ -196,41 +192,22 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		// Associate artifacts to group
 		List<String> artifacts = groupDefinition.getArtifacts();
 
-		Either<GroupDefinition, TitanOperationStatus> associateArtifactsToGroupOnGraph = associateArtifactsToGroupOnGraph(
-				groupData.getGroupDataDefinition().getUniqueId(), artifacts);
-		if (associateArtifactsToGroupOnGraph.isRight()
-				&& associateArtifactsToGroupOnGraph.right().value() != TitanOperationStatus.OK) {
+		Either<GroupDefinition, TitanOperationStatus> associateArtifactsToGroupOnGraph = associateArtifactsToGroupOnGraph(groupData.getGroupDataDefinition().getUniqueId(), artifacts);
+		if (associateArtifactsToGroupOnGraph.isRight() && associateArtifactsToGroupOnGraph.right().value() != TitanOperationStatus.OK) {
 			return Either.right(status);
 		}
 		/*
-		 * Either<GraphRelation, TitanOperationStatus> addArtifactsRefResult =
-		 * null; if (artifacts != null) { for (String artifactId : artifacts) {
-		 * Either<ArtifactData, TitanOperationStatus> findArtifactRes =
-		 * titanGenericDao .getNode(UniqueIdBuilder
-		 * .getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId,
-		 * ArtifactData.class); if (findArtifactRes.isRight()) { status =
-		 * findArtifactRes.right().value(); if (status ==
-		 * TitanOperationStatus.NOT_FOUND) { status =
-		 * TitanOperationStatus.INVALID_ID; } String description =
-		 * "Failed to associate group " + groupData.getUniqueId() +
-		 * " to artifact " + artifactId + " in graph. Status is " + status;
-		 * BeEcompErrorManager.getInstance().logInternalFlowError( ADDING_GROUP,
-		 * description, ErrorSeverity.ERROR); return Either.right(status); }
+		 * Either<GraphRelation, TitanOperationStatus> addArtifactsRefResult = null; if (artifacts != null) { for (String artifactId : artifacts) { Either<ArtifactData, TitanOperationStatus> findArtifactRes = titanGenericDao .getNode(UniqueIdBuilder
+		 * .getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class); if (findArtifactRes.isRight()) { status = findArtifactRes.right().value(); if (status == TitanOperationStatus.NOT_FOUND) { status =
+		 * TitanOperationStatus.INVALID_ID; } String description = "Failed to associate group " + groupData.getUniqueId() + " to artifact " + artifactId + " in graph. Status is " + status; BeEcompErrorManager.getInstance().logInternalFlowError(
+		 * ADDING_GROUP, description, ErrorSeverity.ERROR); return Either.right(status); }
 		 * 
-		 * Map<String, Object> props = new HashMap<String, Object>();
-		 * props.put(GraphPropertiesDictionary.NAME.getProperty(),
-		 * findArtifactRes.left().value().getLabel());
+		 * Map<String, Object> props = new HashMap<String, Object>(); props.put(GraphPropertiesDictionary.NAME.getProperty(), findArtifactRes.left().value().getLabel());
 		 * 
-		 * addArtifactsRefResult = titanGenericDao.createRelation( groupData,
-		 * findArtifactRes.left().value(), GraphEdgeLabels.GROUP_ARTIFACT_REF,
-		 * props);
+		 * addArtifactsRefResult = titanGenericDao.createRelation( groupData, findArtifactRes.left().value(), GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
 		 * 
-		 * if (addArtifactsRefResult.isRight()) { status =
-		 * addArtifactsRefResult.right().value(); String description =
-		 * "Failed to associate group " + groupData.getUniqueId() +
-		 * " to artifact " + artifactId + " in graph. Status is " + status;
-		 * BeEcompErrorManager.getInstance().logInternalFlowError( ADDING_GROUP,
-		 * description, ErrorSeverity.ERROR); return Either.right(status); } } }
+		 * if (addArtifactsRefResult.isRight()) { status = addArtifactsRefResult.right().value(); String description = "Failed to associate group " + groupData.getUniqueId() + " to artifact " + artifactId + " in graph. Status is " + status;
+		 * BeEcompErrorManager.getInstance().logInternalFlowError( ADDING_GROUP, description, ErrorSeverity.ERROR); return Either.right(status); } } }
 		 */
 
 		// Associate group to members
@@ -243,31 +220,24 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				if (member.getValue() == null || member.getValue().isEmpty()) {
 					continue;
 				}
-				Either<ComponentInstanceData, TitanOperationStatus> findComponentInstanceRes = titanGenericDao.getNode(
-						UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), member.getValue(),
-						ComponentInstanceData.class);
+				Either<ComponentInstanceData, TitanOperationStatus> findComponentInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), member.getValue(), ComponentInstanceData.class);
 				if (findComponentInstanceRes.isRight()) {
 					status = findComponentInstanceRes.right().value();
 					if (status == TitanOperationStatus.NOT_FOUND) {
 						status = TitanOperationStatus.INVALID_ID;
 					}
-					String description = "Failed to find to find member of group " + member.getValue()
-							+ " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to find to find member of group " + member.getValue() + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 					return Either.right(status);
 				}
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put(GraphPropertiesDictionary.NAME.getProperty(), member.getKey());
-				addMembersRefResult = titanGenericDao.createRelation(groupData, findComponentInstanceRes.left().value(),
-						GraphEdgeLabels.GROUP_MEMBER, props);
+				addMembersRefResult = titanGenericDao.createRelation(groupData, findComponentInstanceRes.left().value(), GraphEdgeLabels.GROUP_MEMBER, props);
 
 				if (addMembersRefResult.isRight()) {
 					status = addMembersRefResult.right().value();
-					String description = "Failed to associate group " + groupData.getUniqueId()
-							+ " to component instance " + member.getValue() + " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to associate group " + groupData.getUniqueId() + " to component instance " + member.getValue() + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 					return Either.right(status);
 				}
 			}
@@ -275,8 +245,221 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 		return Either.left(groupData);
 	}
+	
+	private Either<PropertyDefinition, TitanOperationStatus> getPropertyDefFromGroupType(GroupProperty groupProperty) {
+		Either<PropertyDefinition, TitanOperationStatus> ret;
+		Either<GroupTypeDefinition, TitanOperationStatus> groupTypeRes = groupTypeOperation
+				.getGroupTypeByUid(groupProperty.getParentUniqueId());
+		if (groupTypeRes.isRight()) {
+			TitanOperationStatus operationStatus = groupTypeRes.right().value();
+			log.debug("Failed to find group type {}", groupProperty.getParentUniqueId());
+			if (operationStatus == TitanOperationStatus.NOT_FOUND) {
+				ret = Either.right(TitanOperationStatus.INVALID_ID);
+			} else {
+				ret = Either.right(operationStatus);
+			}
+		} else {
+			GroupTypeDefinition groupTypeDefinition = groupTypeRes.left().value();
+			List<PropertyDefinition> groupTypeProperties = groupTypeDefinition.getProperties();
 
-	private Either<PropertyValueData, TitanOperationStatus> addPropertyToGroup(GroupData groupData,
+			Map<String, PropertyDefinition> groupTypePropertiesMap = groupTypeProperties.stream()
+					.collect(Collectors.toMap(p -> p.getName(), p -> p));
+			if (groupTypeProperties == null || true == groupTypeProperties.isEmpty()) {
+				BeEcompErrorManager.getInstance().logInvalidInputError(ADDING_GROUP,
+						"group type does not have properties", ErrorSeverity.INFO);
+				ret = Either.right(TitanOperationStatus.MATCH_NOT_FOUND);
+			} else {
+				PropertyDefinition propertyDefinition = groupTypePropertiesMap.get(groupProperty.getName());
+				ret = Either.left(propertyDefinition);
+			}
+		}
+		return ret;
+	}
+	
+	/**
+	 * Updates GroupProperty Value
+	 * @param componentId TODO
+	 * @param groupId     TODO
+	 * @param groupProperties
+	 * @param inTransaction TODO
+	 * 
+	 * @return
+	 */
+	public Either<List<GroupProperty>, StorageOperationStatus> updateGroupProperties(String componentId,
+			String groupId, List<GroupProperty> groupProperties, boolean inTransaction) {
+		
+		Wrapper<Long> lastUpdateTimeWrapper = new Wrapper<>();
+		TitanOperationStatus titanStatus = TitanOperationStatus.OK;
+		Either<List<GroupProperty>, StorageOperationStatus> result = null;
+		//Get Group Data
+		final GroupData groupData;
+		Either<GroupData, TitanOperationStatus> eitherGroupData = titanGenericDao
+				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupId, GroupData.class);
+		if( eitherGroupData.isRight() ){
+			log.debug("Error: Could not fetch group with groupId = {}", groupId);
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(eitherGroupData.right().value()));
+		}
+		else{
+			groupData = eitherGroupData.left().value();
+		}
+		
+		try {
+			Optional<TitanOperationStatus> optionalError = 
+					//Stream of group properties to be updated
+					groupProperties.stream().
+					//updating each property and mapping to the TitanOperationStatus
+					map(e -> updateGroupProperty(e, groupData, lastUpdateTimeWrapper)).
+					//filtering in errors if there are such
+					filter( e -> e != TitanOperationStatus.OK).
+					//collect
+					findFirst();
+			if( optionalError.isPresent() ){
+				titanStatus = optionalError.get();
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus));
+			}
+			else{
+				result = updateLastModificationTimeOnVf(componentId, groupId, groupProperties, lastUpdateTimeWrapper);
+			}
+
+		}
+		finally {
+			handleTransactionCommitRollback(inTransaction, result);
+		}
+
+		return result;
+	}
+
+	private Either<List<GroupProperty>, StorageOperationStatus> updateLastModificationTimeOnVf(String componentId,
+			String groupId, List<GroupProperty> groupProperties, Wrapper<Long> lastUpdateTimeWrapper) {
+		Either<List<GroupProperty>, StorageOperationStatus> result;
+		Either<Resource, StorageOperationStatus> eitherResource = resourceOperation.getResource(componentId);
+		if( eitherResource.isRight() ){
+			result = Either.right(eitherResource.right().value());
+		}
+		else{
+			Either<ComponentMetadataData, StorageOperationStatus> eitherLastUpdateDateUpdatedOnResource = resourceOperation
+					.updateComponentLastUpdateDateOnGraph(eitherResource.left().value(), NodeTypeEnum.Resource,
+							lastUpdateTimeWrapper.getInnerElement(), true);
+			if (eitherLastUpdateDateUpdatedOnResource.isLeft()) {
+				
+				groupProperties = 
+						//Group Stream From VF
+						eitherResource.left().value().getGroups().stream().
+						//Filter in Only the relevant group
+						filter( e -> e.getUniqueId().equals(groupId)).
+						//Get it
+						findAny().get().
+						//Get Group Properties from it
+						convertToGroupProperties();
+				
+				result = Either.left(groupProperties);
+			}
+			else{
+				result = Either.right(eitherLastUpdateDateUpdatedOnResource.right().value());
+			}
+		}
+		return result;
+	}
+
+	
+	private TitanOperationStatus updateGroupProperty(GroupProperty groupProperty, GroupData groupData,
+			Wrapper<Long> lastUpdateTimeWrapper) {
+		TitanOperationStatus titanStatus = TitanOperationStatus.OK;
+		// PropertyValueData node does not exist
+		if (StringUtils.isEmpty(groupProperty.getValueUniqueUid())) {
+			// create new node
+			if (!StringUtils.isEmpty(groupProperty.getValue())) {
+				// Value does not exit and was not updated as well. no need
+				// to do anything
+			} else {
+				titanStatus = addGroupPropertyToGraph(groupProperty, groupData, lastUpdateTimeWrapper);
+
+			}
+		}
+
+		else {
+			titanStatus = updateGroupPropertyInGraph(groupProperty, lastUpdateTimeWrapper);
+		}
+		return titanStatus;
+	}
+
+	private TitanOperationStatus updateGroupPropertyInGraph(GroupProperty groupProperty,
+			Wrapper<Long> lastUpdateTimeWrapper) {
+		TitanOperationStatus titanStatus;
+		Either<PropertyValueData, TitanOperationStatus> eitherGroupPropertyValue = titanGenericDao.getNode(
+				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), groupProperty.getValueUniqueUid(),
+				PropertyValueData.class);
+		if (eitherGroupPropertyValue.isRight()) {
+
+			titanStatus = eitherGroupPropertyValue.right().value();
+
+		} else {
+			PropertyValueData groupPropertyValue = eitherGroupPropertyValue.left().value();
+			// Actual Update only if value changed
+			if (!StringUtils.equals(groupPropertyValue.getValue(), groupProperty.getValue())) {
+				long modificationTime = lastUpdateTimeWrapper.isEmpty() ? System.currentTimeMillis()
+						: lastUpdateTimeWrapper.getInnerElement();
+				groupPropertyValue.setValue(groupProperty.getValue());
+				groupPropertyValue.setModificationTime(modificationTime);
+				Either<PropertyValueData, TitanOperationStatus> eitherUpdateNode = titanGenericDao
+						.updateNode(groupPropertyValue, PropertyValueData.class);
+				if( eitherUpdateNode.isLeft() ){
+					titanStatus = TitanOperationStatus.OK;
+					lastUpdateTimeWrapper.setInnerElement(modificationTime);
+				}
+				else{
+					titanStatus = eitherUpdateNode.right().value();
+				}
+				
+			} else {
+				titanStatus = TitanOperationStatus.OK;
+			}
+		}
+		return titanStatus;
+	}
+
+	private TitanOperationStatus addGroupPropertyToGraph(GroupProperty groupProperty, GroupData groupData,
+			Wrapper<Long> lastUpdateTimeWrapper) {
+		PropertyDefinition propertyDefinition = null;
+		TitanOperationStatus ret = TitanOperationStatus.OK;
+		if (ret == TitanOperationStatus.OK) {
+			Either<PropertyDefinition, TitanOperationStatus> eitherPropertyDefFromGroupType = getPropertyDefFromGroupType(
+					groupProperty);
+			if (eitherPropertyDefFromGroupType.isRight()) {
+				log.debug("Error: Could not fetch group property from group Type with groupTypeId = {}",
+						groupProperty.getParentUniqueId());
+				ret = eitherPropertyDefFromGroupType.right().value();
+			} else {
+				propertyDefinition = eitherPropertyDefFromGroupType.left().value();
+			}
+		}
+		if (ret == TitanOperationStatus.OK){
+			final int groupPropCounter = groupData.getGroupDataDefinition().getPropertyValueCounter() + NumberUtils.INTEGER_ONE;
+			Either<PropertyValueData, TitanOperationStatus> eitherAddPropertyToGroup = addPropertyToGroup(groupData,
+					groupProperty, propertyDefinition, groupPropCounter);
+			
+			if( eitherAddPropertyToGroup.isLeft() ){
+				ret = TitanOperationStatus.OK;
+				if(  lastUpdateTimeWrapper.isEmpty() ){
+					lastUpdateTimeWrapper.setInnerElement(eitherAddPropertyToGroup.left().value().getCreationTime());
+				}
+			}
+			else{
+				ret = eitherAddPropertyToGroup.right().value();
+			}
+			if( ret == TitanOperationStatus.OK){
+				groupData.getGroupDataDefinition().setPropertyValueCounter(groupPropCounter);	
+				Either<GroupData, TitanOperationStatus> updateNode = titanGenericDao .updateNode(groupData, GroupData.class);
+				if( updateNode.isRight() ){
+					ret = updateNode.right().value();
+				}
+			}
+			
+		}
+		return ret;
+	}
+	
+	public Either<PropertyValueData, TitanOperationStatus> addPropertyToGroup(GroupData groupData,
 			GroupProperty groupProperty, PropertyDefinition prop, Integer index) {
 
 		if (prop == null) {
@@ -312,15 +495,13 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
 		if (allDataTypes.isRight()) {
 			TitanOperationStatus status = allDataTypes.right().value();
-			BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToGroup",
-					"Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
+			BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToGroup", "Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
 			return Either.right(status);
 
 		}
 
 		log.debug("Before validateAndUpdatePropertyValue");
-		Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, value,
-				innerType, allDataTypes.left().value());
+		Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, value, innerType, allDataTypes.left().value());
 		log.debug("After validateAndUpdatePropertyValue. isValid = {}", isValid);
 
 		String newValue = value;
@@ -341,9 +522,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		propertyValueData.setUniqueId(uniqueId);
 		propertyValueData.setValue(newValue);
 
-		log.debug("Before adding property value to graph {}",propertyValueData);
-		Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyValueData,
-				PropertyValueData.class);
+		log.debug("Before adding property value to graph {}", propertyValueData);
+		Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao.createNode(propertyValueData, PropertyValueData.class);
 		log.debug("After adding property value to graph {}", propertyValueData);
 
 		if (createNodeResult.isRight()) {
@@ -351,24 +531,20 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 			return Either.right(operationStatus);
 		}
 
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(propertyValueData,
-				propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(propertyValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
 
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			String description = "Failed to associate property value " + uniqueId + " to property " + propertyId
-					+ " in graph. status is " + operationStatus;
+			String description = "Failed to associate property value " + uniqueId + " to property " + propertyId + " in graph. status is " + operationStatus;
 			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 			return Either.right(operationStatus);
 		}
 
-		createRelResult = titanGenericDao.createRelation(groupData, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE,
-				null);
+		createRelResult = titanGenericDao.createRelation(groupData, propertyValueData, GraphEdgeLabels.PROPERTY_VALUE, null);
 
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			String description = "Failed to associate group " + groupData.getGroupDataDefinition().getName()
-					+ " to property value " + uniqueId + " in graph. Status is " + operationStatus;
+			String description = "Failed to associate group " + groupData.getGroupDataDefinition().getName() + " to property value " + uniqueId + " in graph. Status is " + operationStatus;
 			BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 			return Either.right(operationStatus);
 		}
@@ -376,16 +552,14 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		return Either.left(createNodeResult.left().value());
 	}
 
-	private Either<GraphRelation, TitanOperationStatus> associateGroupToComponent(GroupData groupData,
-			NodeTypeEnum nodeTypeEnum, String componentId) {
+	private Either<GraphRelation, TitanOperationStatus> associateGroupToComponent(GroupData groupData, NodeTypeEnum nodeTypeEnum, String componentId) {
 		UniqueIdData componentIdData = new UniqueIdData(nodeTypeEnum, componentId);
 
-		log.debug("Before associating component {} to group {}.", componentId, groupData);
+		log.debug("Before associating component {} to group {}", componentId, groupData);
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), groupData.getGroupDataDefinition().getName());
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(componentIdData,
-				groupData, GraphEdgeLabels.GROUP, props);
-		log.debug("After associating component {} to group {}. Status is {}", componentId, groupData, createRelResult);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(componentIdData, groupData, GraphEdgeLabels.GROUP, props);
+		log.debug("After associating component {} to group {}. status is {}", componentId, groupData, createRelResult);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
 			log.debug("Failed to associate component {} to group {} in graph. Status is {}", componentId, groupData, operationStatus);
@@ -395,18 +569,13 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		return Either.left(createRelResult.left().value());
 	}
 
-	private Either<GraphRelation, TitanOperationStatus> associateGroupToGroupType(GroupData groupData,
-			String groupTypeUid) {
+	private Either<GraphRelation, TitanOperationStatus> associateGroupToGroupType(GroupData groupData, String groupTypeUid) {
 
 		UniqueIdData groupTypeIdData = new UniqueIdData(NodeTypeEnum.GroupType, groupTypeUid);
 
-		log.debug("Before associating {} to group type {} (uid = {}).", groupData, groupData.getGroupDataDefinition().getType(), groupTypeUid);
-		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(groupData,
-				groupTypeIdData, GraphEdgeLabels.TYPE_OF, null);
-		
-		if (log.isDebugEnabled()) {
-			log.debug("After associating {} to group type {} (uid = {}). Result is {}", groupData, groupData.getGroupDataDefinition().getType(), groupTypeUid, createRelResult);
-		}
+		log.debug("Before associating {} to group type {} (uid = {})", groupData, groupData.getGroupDataDefinition().getType(), groupTypeUid);
+		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(groupData, groupTypeIdData, GraphEdgeLabels.TYPE_OF, null);
+		log.debug("After associating {} to group type {} (uid = {}). Result is {}", groupData, groupData.getGroupDataDefinition().getType(), groupTypeUid, createRelResult);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
 			return Either.right(operationStatus);
@@ -415,19 +584,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId,
-			GroupDefinition groupDefinition) {
+	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition) {
 		return addGroup(nodeTypeEnum, componentId, groupDefinition, false);
 	}
 
 	@Override
-	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId,
-			GroupDefinition groupDefinition, boolean inTransaction) {
+	public Either<GroupDefinition, StorageOperationStatus> addGroup(NodeTypeEnum nodeTypeEnum, String componentId, GroupDefinition groupDefinition, boolean inTransaction) {
 
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 		try {
-			Either<GroupData, TitanOperationStatus> addGroupRes = addGroupToGraph(nodeTypeEnum, componentId,
-					groupDefinition);
+			Either<GroupData, TitanOperationStatus> addGroupRes = addGroupToGraph(nodeTypeEnum, componentId, groupDefinition);
 			if (addGroupRes.isRight()) {
 				TitanOperationStatus status = addGroupRes.right().value();
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
@@ -506,52 +672,6 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	/**
-	 * get the list of artifacts related to a given group
-	 * 
-	 * @param groupUniqueId
-	 * @return
-	 */
-	// private Either<List<String>, TitanOperationStatus> getGroupArtifacts(
-	// String groupUniqueId) {
-	//
-	// Either<List<String>, TitanOperationStatus> result = null;
-	//
-	// Either<List<ImmutablePair<ArtifactData, GraphEdge>>,
-	// TitanOperationStatus> childrenNodes = titanGenericDao
-	// .getChildrenNodes(
-	// UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group),
-	// groupUniqueId, GraphEdgeLabels.GROUP_ARTIFACT_REF,
-	// NodeTypeEnum.ArtifactRef, ArtifactData.class);
-	// if (childrenNodes.isRight()) {
-	// TitanOperationStatus status = childrenNodes.right().value();
-	// if (status == TitanOperationStatus.NOT_FOUND) {
-	// status = TitanOperationStatus.OK;
-	// }
-	// result = Either.right(status);
-	//
-	// } else {
-	//
-	// List<String> artifactsList = new ArrayList<>();
-	// List<ImmutablePair<ArtifactData, GraphEdge>> list = childrenNodes
-	// .left().value();
-	// if (list != null) {
-	// for (ImmutablePair<ArtifactData, GraphEdge> pair : list) {
-	// ArtifactData artifactData = pair.getKey();
-	// String uniqueId = artifactData.getArtifactDataDefinition()
-	// .getUniqueId();
-	// artifactsList.add(uniqueId);
-	// }
-	// }
-	//
-	// log.debug("The artifacts list related to group {} is {}", groupUniqueId, artifactsList);
-	// result = Either.left(artifactsList);
-	// }
-	//
-	// return result;
-	//
-	// }
-
-	/**
 	 * get members of group
 	 * 
 	 * @param groupUniqueId
@@ -561,9 +681,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 		Either<Map<String, String>, TitanOperationStatus> result = null;
 
-		Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId,
-						GraphEdgeLabels.GROUP_MEMBER, NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
+		Either<List<ImmutablePair<ComponentInstanceData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId, GraphEdgeLabels.GROUP_MEMBER,
+				NodeTypeEnum.ResourceInstance, ComponentInstanceData.class);
 
 		if (childrenNodes.isRight()) {
 			TitanOperationStatus status = childrenNodes.right().value();
@@ -594,23 +713,20 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 	public Either<GroupTypeDefinition, TitanOperationStatus> getGroupTypeOfGroup(String groupUniqueId) {
 
-		Either<ImmutablePair<GroupTypeData, GraphEdge>, TitanOperationStatus> groupTypeRes = titanGenericDao.getChild(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId, GraphEdgeLabels.TYPE_OF,
-				NodeTypeEnum.GroupType, GroupTypeData.class);
+		Either<ImmutablePair<GroupTypeData, GraphEdge>, TitanOperationStatus> groupTypeRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId, GraphEdgeLabels.TYPE_OF, NodeTypeEnum.GroupType,
+				GroupTypeData.class);
 
 		if (groupTypeRes.isRight()) {
 			TitanOperationStatus status = groupTypeRes.right().value();
 			log.debug("Cannot find group type associated with capability {}. Status is {}", groupUniqueId, status);
 
-			BeEcompErrorManager.getInstance().logBeFailedFindAssociationError("Fetch Group type",
-					NodeTypeEnum.GroupType.getName(), groupUniqueId, String.valueOf(status));
+			BeEcompErrorManager.getInstance().logBeFailedFindAssociationError("Fetch Group type", NodeTypeEnum.GroupType.getName(), groupUniqueId, String.valueOf(status));
 			return Either.right(groupTypeRes.right().value());
 		}
 
 		GroupTypeData groupTypeData = groupTypeRes.left().value().getKey();
 
-		Either<GroupTypeDefinition, TitanOperationStatus> groupTypeByUid = groupTypeOperation
-				.getGroupTypeByUid(groupTypeData.getGroupTypeDataDefinition().getUniqueId());
+		Either<GroupTypeDefinition, TitanOperationStatus> groupTypeByUid = groupTypeOperation.getGroupTypeByUid(groupTypeData.getGroupTypeDataDefinition().getUniqueId());
 
 		return groupTypeByUid;
 
@@ -644,19 +760,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 			return Either.right(TitanOperationStatus.OK);
 		}
 
-		Map<String, PropertyDefinition> uidToPropDefMap = groupTypeProperties.stream()
-				.collect(Collectors.toMap(p -> p.getUniqueId(), p -> p));
+		Map<String, PropertyDefinition> uidToPropDefMap = groupTypeProperties.stream().collect(Collectors.toMap(p -> p.getUniqueId(), p -> p));
 
 		// Find all properties values on the group
-		Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> propertyImplNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUid,
-						GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue, PropertyValueData.class);
+		Either<List<ImmutablePair<PropertyValueData, GraphEdge>>, TitanOperationStatus> propertyImplNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUid, GraphEdgeLabels.PROPERTY_VALUE,
+				NodeTypeEnum.PropertyValue, PropertyValueData.class);
 
 		if (propertyImplNodes.isRight()) {
 			TitanOperationStatus status = propertyImplNodes.right().value();
 			if (status == TitanOperationStatus.NOT_FOUND) {
-				groupPropertiesList = groupTypeProperties.stream()
-						.map(p -> new GroupProperty(p, p.getDefaultValue(), null)).collect(Collectors.toList());
+				groupPropertiesList = groupTypeProperties.stream().map(p -> new GroupProperty(p, p.getDefaultValue(), null)).collect(Collectors.toList());
 				return Either.left(groupPropertiesList);
 			} else {
 				return Either.right(status);
@@ -676,9 +789,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 			String propertyValueUid = propertyValueData.getUniqueId();
 			String value = propertyValueData.getValue();
 
-			Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> propertyDefRes = titanGenericDao
-					.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), propertyValueUid,
-							GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class);
+			Either<ImmutablePair<PropertyData, GraphEdge>, TitanOperationStatus> propertyDefRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PropertyValue), propertyValueUid, GraphEdgeLabels.PROPERTY_IMPL,
+					NodeTypeEnum.Property, PropertyData.class);
 			if (propertyDefRes.isRight()) {
 				TitanOperationStatus status = propertyDefRes.right().value();
 				if (status == TitanOperationStatus.NOT_FOUND) {
@@ -704,8 +816,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		// Find all properties which does not have property value on the group.
 		List<GroupProperty> leftProps = groupTypeProperties.stream()
 				// filter out the group type properties which already processed
-				.filter(p -> false == processedProps.contains(p.getUniqueId()))
-				.map(p -> new GroupProperty(p, p.getDefaultValue(), null)).collect(Collectors.toList());
+				.filter(p -> false == processedProps.contains(p.getUniqueId())).map(p -> new GroupProperty(p, p.getDefaultValue(), null)).collect(Collectors.toList());
 		if (leftProps != null) {
 			groupPropertiesList.addAll(leftProps);
 		}
@@ -713,28 +824,24 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		return Either.left(groupPropertiesList);
 	}
 
-	public Either<List<GroupDefinition>, TitanOperationStatus> getAllGroupsFromGraph(String componentId,
-			NodeTypeEnum componentTypeEnum) {
+	public Either<List<GroupDefinition>, TitanOperationStatus> getAllGroupsFromGraph(String componentId, NodeTypeEnum componentTypeEnum) {
 
 		return getAllGroupsFromGraph(componentId, componentTypeEnum, false, false, false);
 
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId,
-			NodeTypeEnum compTypeEnum, boolean inTransaction) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId, NodeTypeEnum compTypeEnum, boolean inTransaction) {
 
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<List<GroupDefinition>, TitanOperationStatus> allGroups = this.getAllGroupsFromGraph(componentId,
-					compTypeEnum);
+			Either<List<GroupDefinition>, TitanOperationStatus> allGroups = this.getAllGroupsFromGraph(componentId, compTypeEnum);
 
 			if (allGroups.isRight()) {
 				TitanOperationStatus status = allGroups.right().value();
-				log.debug("Failed to retrieve all groups of component {} from graph. Status is {}", componentId,
-						status);
+				log.debug("Failed to retrieve all groups of component {} from graph. Status is {}", componentId, status);
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					status = TitanOperationStatus.OK;
 				}
@@ -762,8 +869,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId,
-			NodeTypeEnum compTypeEnum) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> getAllGroups(String componentId, NodeTypeEnum compTypeEnum) {
 		return getAllGroups(componentId, compTypeEnum, false);
 	}
 
@@ -778,27 +884,21 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 		GroupDefinition groupDefinition = groupFromGraph.left().value();
 		// 1. delete all properties values nodes
-		List<GroupProperty> properties = groupDefinition.getProperties();
+		List<GroupProperty> properties = groupDefinition.convertToGroupProperties();
 		if (properties != null) {
 			for (GroupProperty groupProperty : properties) {
 				String propValueUniqueId = groupProperty.getValueUniqueUid();
 
 				if (propValueUniqueId != null) {
 					UniqueIdData uniqueIdData = new UniqueIdData(NodeTypeEnum.PropertyValue, propValueUniqueId);
-					Either<PropertyValueData, TitanOperationStatus> deleteNode = titanGenericDao
-							.deleteNode(uniqueIdData, PropertyValueData.class);
+					Either<PropertyValueData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(uniqueIdData, PropertyValueData.class);
 					if (deleteNode.isRight()) {
 						TitanOperationStatus status = groupFromGraph.right().value();
-						String description = String.format(
-								"Failed to delete property {} under group {}" + groupUniqueId
-										+ " on graph. Status is {}",
-								propValueUniqueId, groupDefinition.getName(), status.name());
-						log.debug(description);
-						BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError(DELETING_GROUP, propValueUniqueId,
-								status.name());
+						log.debug("Failed to delete property {} under group {} {} on graph. Status is {}", propValueUniqueId, groupDefinition.getName(), groupUniqueId, status.name());
+						BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError(DELETING_GROUP, propValueUniqueId, status.name());
 						return Either.right(status);
 					} else {
-						log.trace("Property {} was deleted from geoup {}", propValueUniqueId, groupDefinition.getName());
+						log.trace("Property {} was deleted from group {}" ,propValueUniqueId, groupDefinition.getName());
 					}
 				}
 			}
@@ -809,10 +909,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		Either<GroupData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(uniqueIdData, GroupData.class);
 		if (deleteNode.isRight()) {
 			TitanOperationStatus status = groupFromGraph.right().value();
-			String description = String.format(
-					"Failed to delete group {} with uid " + groupUniqueId + " on graph. Status is {}",
-					groupDefinition.getName(), groupUniqueId, status.name());
-			log.debug(description);
+			log.debug("Failed to delete group {} with uid {} on graph. Status is {}", groupDefinition.getName(), groupUniqueId, status.name());
 			BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError(DELETING_GROUP, groupUniqueId, status.name());
 			return Either.right(status);
 		} else {
@@ -863,18 +960,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, TitanOperationStatus> deleteAllGroupsFromGraph(String componentId,
-			NodeTypeEnum componentTypeEnum) {
+	public Either<List<GroupDefinition>, TitanOperationStatus> deleteAllGroupsFromGraph(String componentId, NodeTypeEnum componentTypeEnum) {
 
-		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(componentTypeEnum), componentId,
-						GraphEdgeLabels.GROUP, NodeTypeEnum.Group, GroupData.class);
+		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(componentTypeEnum), componentId, GraphEdgeLabels.GROUP, NodeTypeEnum.Group,
+				GroupData.class);
 
 		if (childrenNodes.isRight()) {
 			TitanOperationStatus status = childrenNodes.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().logBeFailedFindAllNodesError(DELETING_ALL_GROUPS,
-						NodeTypeEnum.Group.name(), componentId, status.name());
+				BeEcompErrorManager.getInstance().logBeFailedFindAllNodesError(DELETING_ALL_GROUPS, NodeTypeEnum.Group.name(), componentId, status.name());
 			}
 			return Either.right(status);
 		}
@@ -888,8 +982,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				Either<GroupData, TitanOperationStatus> deleteGroupFromGraph = deleteGroupFromGraph(uniqueId);
 				if (deleteGroupFromGraph.isRight()) {
 					TitanOperationStatus status = deleteGroupFromGraph.right().value();
-					BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError(DELETING_ALL_GROUPS, uniqueId,
-							status.name());
+					BeEcompErrorManager.getInstance().logBeFailedDeleteNodeError(DELETING_ALL_GROUPS, uniqueId, status.name());
 					return Either.right(status);
 				}
 				GroupData groupData = deleteGroupFromGraph.left().value();
@@ -902,15 +995,13 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId,
-			NodeTypeEnum compTypeEnum, boolean inTransaction) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId, NodeTypeEnum compTypeEnum, boolean inTransaction) {
 
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<List<GroupDefinition>, TitanOperationStatus> allGroups = this.deleteAllGroupsFromGraph(componentId,
-					compTypeEnum);
+			Either<List<GroupDefinition>, TitanOperationStatus> allGroups = this.deleteAllGroupsFromGraph(componentId, compTypeEnum);
 
 			if (allGroups.isRight()) {
 				TitanOperationStatus status = allGroups.right().value();
@@ -942,14 +1033,11 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId,
-			NodeTypeEnum compTypeEnum) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> deleteAllGroups(String componentId, NodeTypeEnum compTypeEnum) {
 		return deleteAllGroups(componentId, compTypeEnum, false);
 	}
 
-	public Either<List<GroupDefinition>, StorageOperationStatus> prepareGroupsForCloning(
-			org.openecomp.sdc.be.model.Component origResource,
-			ImmutablePair<List<ComponentInstance>, Map<String, String>> cloneInstances) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> prepareGroupsForCloning(org.openecomp.sdc.be.model.Component origResource, ImmutablePair<List<ComponentInstance>, Map<String, String>> cloneInstances) {
 
 		List<GroupDefinition> groupsToCreate = new ArrayList<>();
 		Either<List<GroupDefinition>, StorageOperationStatus> result = Either.left(groupsToCreate);
@@ -966,19 +1054,18 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				gdToCreate.setUniqueId(null);
 				gdToCreate.setMembers(null);
 
-				List<GroupProperty> properties = groupDefinition.getProperties();
+				List<GroupProperty> properties = groupDefinition.convertToGroupProperties();
 				if (properties != null) {
 					// Take properties which was updated in the
 					// group(getValueUniqueUid != null),
 					// Then set null instead of the value(prepare for the
 					// creation).
-					List<GroupProperty> propertiesToUpdate = properties.stream()
-							.filter(p -> p.getValueUniqueUid() != null).map(p -> {
-								p.setValueUniqueUid(null);
-								return p;
-							}).collect(Collectors.toList());
+					List<GroupProperty> propertiesToUpdate = properties.stream().filter(p -> p.getValueUniqueUid() != null).map(p -> {
+						p.setValueUniqueUid(null);
+						return p;
+					}).collect(Collectors.toList());
 
-					gdToCreate.setProperties(propertiesToUpdate);
+					gdToCreate.convertFromGroupProperties(propertiesToUpdate);
 
 				}
 
@@ -988,8 +1075,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 					Map<String, String> oldCompUidToNew = cloneInstances.right;
 					if (members != null && createdInstances != null) {
 
-						Map<String, String> compInstIdToName = createdInstances.stream()
-								.collect(Collectors.toMap(p -> p.getUniqueId(), p -> p.getName()));
+						Map<String, String> compInstIdToName = createdInstances.stream().collect(Collectors.toMap(p -> p.getUniqueId(), p -> p.getName()));
 
 						Map<String, String> membersToCreate = new HashMap<>();
 
@@ -1018,8 +1104,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GroupDefinition>, StorageOperationStatus> addGroups(NodeTypeEnum nodeTypeEnum,
-			String componentId, List<GroupDefinition> groups, boolean inTransaction) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> addGroups(NodeTypeEnum nodeTypeEnum, String componentId, List<GroupDefinition> groups, boolean inTransaction) {
 
 		List<GroupDefinition> createdGroups = new ArrayList<>();
 
@@ -1029,8 +1114,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 			if (groups != null) {
 				for (GroupDefinition groupDefinition : groups) {
-					Either<GroupDefinition, StorageOperationStatus> addGroup = this.addGroup(nodeTypeEnum, componentId,
-							groupDefinition, true);
+					Either<GroupDefinition, StorageOperationStatus> addGroup = this.addGroup(nodeTypeEnum, componentId, groupDefinition, true);
 					if (addGroup.isRight()) {
 						StorageOperationStatus status = addGroup.right().value();
 						result = Either.right(status);
@@ -1059,29 +1143,25 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<String>, TitanOperationStatus> getAssociatedGroupsToComponentInstanceFromGraph(
-			String componentInstanceId) {
+	public Either<List<String>, TitanOperationStatus> getAssociatedGroupsToComponentInstanceFromGraph(String componentInstanceId) {
 
 		List<String> groups = new ArrayList<>();
 		Either<List<String>, TitanOperationStatus> result = Either.left(groups);
 
-		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> parentNodes = titanGenericDao
-				.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), componentInstanceId,
-						GraphEdgeLabels.GROUP_MEMBER, NodeTypeEnum.Group, GroupData.class);
+		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> parentNodes = titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), componentInstanceId, GraphEdgeLabels.GROUP_MEMBER,
+				NodeTypeEnum.Group, GroupData.class);
 
 		if (parentNodes.isRight()) {
 			TitanOperationStatus status = parentNodes.right().value();
 			if (status != TitanOperationStatus.NOT_FOUND) {
-				BeEcompErrorManager.getInstance().logBeFailedFindParentError("FetchGroupMembers", componentInstanceId,
-						status.name());
+				BeEcompErrorManager.getInstance().logBeFailedFindParentError("FetchGroupMembers", componentInstanceId, status.name());
 			}
 			return Either.right(status);
 		}
 
 		List<ImmutablePair<GroupData, GraphEdge>> fetchedGroups = parentNodes.left().value();
 		if (fetchedGroups != null) {
-			List<String> list = fetchedGroups.stream().map(p -> p.left.getGroupDataDefinition().getUniqueId())
-					.collect(Collectors.toList());
+			List<String> list = fetchedGroups.stream().map(p -> p.left.getGroupDataDefinition().getUniqueId()).collect(Collectors.toList());
 			groups.addAll(list);
 		}
 
@@ -1090,15 +1170,13 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(
-			String componentInstanceId, boolean inTransaction) {
+	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(String componentInstanceId, boolean inTransaction) {
 
 		Either<List<String>, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<List<String>, TitanOperationStatus> groups = this
-					.getAssociatedGroupsToComponentInstanceFromGraph(componentInstanceId);
+			Either<List<String>, TitanOperationStatus> groups = this.getAssociatedGroupsToComponentInstanceFromGraph(componentInstanceId);
 
 			if (groups.isRight()) {
 				TitanOperationStatus status = groups.right().value();
@@ -1129,14 +1207,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(
-			String componentInstanceId) {
+	public Either<List<String>, StorageOperationStatus> getAssociatedGroupsToComponentInstance(String componentInstanceId) {
 		return getAssociatedGroupsToComponentInstance(componentInstanceId, false);
 	}
 
 	@Override
-	public Either<List<GraphRelation>, TitanOperationStatus> associateGroupsToComponentInstanceOnGraph(
-			List<String> groups, String componentInstanceId, String compInstName) {
+	public Either<List<GraphRelation>, TitanOperationStatus> associateGroupsToComponentInstanceOnGraph(List<String> groups, String componentInstanceId, String compInstName) {
 
 		List<GraphRelation> relations = new ArrayList<>();
 		Either<List<GraphRelation>, TitanOperationStatus> result = Either.left(relations);
@@ -1150,14 +1226,11 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put(GraphPropertiesDictionary.NAME.getProperty(), compInstName);
-				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupData,
-						compInstData, GraphEdgeLabels.GROUP_MEMBER, props);
+				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupData, compInstData, GraphEdgeLabels.GROUP_MEMBER, props);
 				if (createRelation.isRight()) {
 					TitanOperationStatus status = createRelation.right().value();
-					String description = "Failed to associate group " + groupData.getUniqueId()
-							+ " to component instance " + compInstName + " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ASSOCIATING_GROUP_TO_COMP_INST, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to associate group " + groupData.getUniqueId() + " to component instance " + compInstName + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ASSOCIATING_GROUP_TO_COMP_INST, description, ErrorSeverity.ERROR);
 					result = Either.right(status);
 					break;
 				}
@@ -1171,21 +1244,18 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		return result;
 	}
 
-	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId,
-			String compInstName) {
+	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId, String compInstName) {
 
 		return associateGroupsToComponentInstance(groups, componentInstanceId, compInstName, false);
 	}
 
 	@Override
-	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId,
-			String compInstName, boolean inTransaction) {
+	public StorageOperationStatus associateGroupsToComponentInstance(List<String> groups, String componentInstanceId, String compInstName, boolean inTransaction) {
 
 		StorageOperationStatus result = null;
 
 		try {
-			Either<List<GraphRelation>, TitanOperationStatus> either = this
-					.associateGroupsToComponentInstanceOnGraph(groups, componentInstanceId, compInstName);
+			Either<List<GraphRelation>, TitanOperationStatus> either = this.associateGroupsToComponentInstanceOnGraph(groups, componentInstanceId, compInstName);
 
 			if (either.isRight()) {
 				TitanOperationStatus status = either.right().value();
@@ -1215,14 +1285,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public Either<List<GraphRelation>, TitanOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId,
-			NodeTypeEnum componentTypeEnum, String artifactId) {
+	public Either<List<GraphRelation>, TitanOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String artifactId) {
 
 		List<GraphRelation> relations = new ArrayList<>();
 		Either<List<GraphRelation>, TitanOperationStatus> result = Either.left(relations);
 
-		Either<List<GroupDefinition>, TitanOperationStatus> allGroupsFromGraph = getAllGroupsFromGraph(componentId,
-				componentTypeEnum, true, true, false);
+		Either<List<GroupDefinition>, TitanOperationStatus> allGroupsFromGraph = getAllGroupsFromGraph(componentId, componentTypeEnum, true, true, false);
 		if (allGroupsFromGraph.isRight()) {
 			TitanOperationStatus status = allGroupsFromGraph.right().value();
 			return Either.right(status);
@@ -1234,9 +1302,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		}
 
 		// Find all groups which contains this artifact id
-		List<GroupDefinition> associatedGroups = allGroups.stream()
-				.filter(p -> p.getArtifacts() != null && p.getArtifacts().contains(artifactId))
-				.collect(Collectors.toList());
+		List<GroupDefinition> associatedGroups = allGroups.stream().filter(p -> p.getArtifacts() != null && p.getArtifacts().contains(artifactId)).collect(Collectors.toList());
 
 		if (associatedGroups != null && false == associatedGroups.isEmpty()) {
 			log.debug("The groups {} contains the artifact {}", associatedGroups.stream().map(p -> p.getName()).collect(Collectors.toList()), artifactId);
@@ -1244,8 +1310,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 			UniqueIdData artifactData = new UniqueIdData(NodeTypeEnum.ArtifactRef, artifactId);
 			for (GroupDefinition groupDefinition : associatedGroups) {
 				UniqueIdData groupData = new UniqueIdData(NodeTypeEnum.Group, groupDefinition.getUniqueId());
-				Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData,
-						artifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
+				Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData, artifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
 				if (deleteRelation.isRight()) {
 					TitanOperationStatus status = deleteRelation.right().value();
 					if (status == TitanOperationStatus.NOT_FOUND) {
@@ -1266,18 +1331,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 	}
 
-	public Either<GroupDefinition, TitanOperationStatus> getGroupFromGraph(String uniqueId, boolean skipProperties,
-			boolean skipMembers, boolean skipArtifacts) {
+	public Either<GroupDefinition, TitanOperationStatus> getGroupFromGraph(String uniqueId, boolean skipProperties, boolean skipMembers, boolean skipArtifacts) {
 
 		Either<GroupDefinition, TitanOperationStatus> result = null;
 
-		Either<GroupData, TitanOperationStatus> groupRes = titanGenericDao
-				.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), uniqueId, GroupData.class);
+		Either<GroupData, TitanOperationStatus> groupRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), uniqueId, GroupData.class);
 		if (groupRes.isRight()) {
 			TitanOperationStatus status = groupRes.right().value();
 			log.debug("Failed to retrieve group {}  from graph. Status is {}", uniqueId, status);
-			BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Group", uniqueId,
-					String.valueOf(status));
+			BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Group", uniqueId, String.valueOf(status));
 			result = Either.right(status);
 			return result;
 		}
@@ -1324,13 +1386,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				}
 			} else {
 				List<GroupProperty> properties = propertiesRes.left().value();
-				groupDefinition.setProperties(properties);
+				groupDefinition.convertFromGroupProperties(properties);
 			}
 		}
 
 		if (false == skipArtifacts) {
-			Either<List<ImmutablePair<String, String>>, TitanOperationStatus> artifactsRes = getGroupArtifactsPairs(
-					uniqueId);
+			Either<List<ImmutablePair<String, String>>, TitanOperationStatus> artifactsRes = getGroupArtifactsPairs(uniqueId);
 			if (artifactsRes.isRight()) {
 				TitanOperationStatus status = artifactsRes.right().value();
 				if (status != TitanOperationStatus.OK) {
@@ -1376,14 +1437,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		}
 	}
 
-	protected Either<List<GroupDefinition>, TitanOperationStatus> getAllGroupsFromGraph(String componentId,
-			NodeTypeEnum componentTypeEnum, boolean skipProperties, boolean skipMembers, boolean skipArtifacts) {
+	protected Either<List<GroupDefinition>, TitanOperationStatus> getAllGroupsFromGraph(String componentId, NodeTypeEnum componentTypeEnum, boolean skipProperties, boolean skipMembers, boolean skipArtifacts) {
 
 		List<GroupDefinition> groups = new ArrayList<GroupDefinition>();
 
-		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(componentTypeEnum), componentId,
-						GraphEdgeLabels.GROUP, NodeTypeEnum.Group, GroupData.class);
+		Either<List<ImmutablePair<GroupData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(componentTypeEnum), componentId, GraphEdgeLabels.GROUP, NodeTypeEnum.Group,
+				GroupData.class);
 
 		if (childrenNodes.isRight()) {
 			TitanOperationStatus status = childrenNodes.right().value();
@@ -1403,8 +1462,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		for (ImmutablePair<GroupData, GraphEdge> pair : graphGroups) {
 
 			String groupUniqueId = pair.left.getGroupDataDefinition().getUniqueId();
-			Either<GroupDefinition, TitanOperationStatus> groupRes = this.getGroupFromGraph(groupUniqueId,
-					skipProperties, skipMembers, skipArtifacts);
+			Either<GroupDefinition, TitanOperationStatus> groupRes = this.getGroupFromGraph(groupUniqueId, skipProperties, skipMembers, skipArtifacts);
 
 			if (groupRes.isRight()) {
 				TitanOperationStatus status = groupRes.right().value();
@@ -1422,14 +1480,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum,
-			String artifactId, boolean inTransaction) {
+	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String artifactId, boolean inTransaction) {
 
 		StorageOperationStatus result = null;
 
 		try {
-			Either<List<GraphRelation>, TitanOperationStatus> either = this
-					.dissociateAllGroupsFromArtifactOnGraph(componentId, componentTypeEnum, artifactId);
+			Either<List<GraphRelation>, TitanOperationStatus> either = this.dissociateAllGroupsFromArtifactOnGraph(componentId, componentTypeEnum, artifactId);
 
 			if (either.isRight()) {
 				TitanOperationStatus status = either.right().value();
@@ -1459,18 +1515,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum,
-			String artifactId) {
+	public StorageOperationStatus dissociateAllGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String artifactId) {
 
 		return dissociateAllGroupsFromArtifact(componentId, componentTypeEnum, artifactId, false);
 	}
 
 	@Override
-	public TitanOperationStatus dissociateAndAssociateGroupsFromArtifactOnGraph(String componentId,
-			NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
+	public TitanOperationStatus dissociateAndAssociateGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
 
-		Either<List<GroupDefinition>, TitanOperationStatus> allGroupsFromGraph = getAllGroupsFromGraph(componentId,
-				componentTypeEnum, true, true, false);
+		Either<List<GroupDefinition>, TitanOperationStatus> allGroupsFromGraph = getAllGroupsFromGraph(componentId, componentTypeEnum, true, true, false);
 		if (allGroupsFromGraph.isRight()) {
 			TitanOperationStatus status = allGroupsFromGraph.right().value();
 			return status;
@@ -1482,26 +1535,22 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		}
 
 		// Find all groups which contains this artifact id
-		List<GroupDefinition> associatedGroups = allGroups.stream()
-				.filter(p -> p.getArtifacts() != null && p.getArtifacts().contains(oldArtifactId))
-				.collect(Collectors.toList());
+		List<GroupDefinition> associatedGroups = allGroups.stream().filter(p -> p.getArtifacts() != null && p.getArtifacts().contains(oldArtifactId)).collect(Collectors.toList());
 
 		if (associatedGroups != null && false == associatedGroups.isEmpty()) {
 
 			log.debug("The groups {} contains the artifact {}", associatedGroups.stream().map(p -> p.getName()).collect(Collectors.toList()), oldArtifactId);
 
 			UniqueIdData oldArtifactData = new UniqueIdData(NodeTypeEnum.ArtifactRef, oldArtifactId);
-			UniqueIdData newArtifactData = new UniqueIdData(NodeTypeEnum.ArtifactRef,
-					newArtifact.getArtifactDataDefinition().getUniqueId());
+			UniqueIdData newArtifactData = new UniqueIdData(NodeTypeEnum.ArtifactRef, newArtifact.getArtifactDataDefinition().getUniqueId());
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put(GraphPropertiesDictionary.NAME.getProperty(), newArtifactData.getLabel());
 
 			for (GroupDefinition groupDefinition : associatedGroups) {
 				UniqueIdData groupData = new UniqueIdData(NodeTypeEnum.Group, groupDefinition.getUniqueId());
 
-				Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData,
-						oldArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
-				log.trace("After dissociate group {} from artifac {}", groupDefinition.getName(), oldArtifactId);
+				Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData, oldArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
+				log.trace("After dissociate group {} from artifact {}"  , groupDefinition.getName(), oldArtifactId);
 				if (deleteRelation.isRight()) {
 					TitanOperationStatus status = deleteRelation.right().value();
 					if (status == TitanOperationStatus.NOT_FOUND) {
@@ -1510,9 +1559,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 					return status;
 				}
 
-				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupData,
-						newArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
-				log.trace("After associate group {} to artifact {}", groupDefinition.getName(), newArtifact.getUniqueIdKey());
+				Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(groupData, newArtifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
+				log.trace("After associate group {} to artifact {}" , groupDefinition.getName(), newArtifact.getUniqueIdKey());
 				if (createRelation.isRight()) {
 					TitanOperationStatus status = createRelation.right().value();
 					if (status == TitanOperationStatus.NOT_FOUND) {
@@ -1527,14 +1575,12 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId,
-			NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact, boolean inTransaction) {
+	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact, boolean inTransaction) {
 
 		StorageOperationStatus result = null;
 
 		try {
-			TitanOperationStatus status = this.dissociateAndAssociateGroupsFromArtifactOnGraph(componentId,
-					componentTypeEnum, oldArtifactId, newArtifact);
+			TitanOperationStatus status = this.dissociateAndAssociateGroupsFromArtifactOnGraph(componentId, componentTypeEnum, oldArtifactId, newArtifact);
 
 			if (status != TitanOperationStatus.OK && status != TitanOperationStatus.NOT_FOUND) {
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
@@ -1560,20 +1606,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	}
 
 	@Override
-	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId,
-			NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
-		return dissociateAndAssociateGroupsFromArtifact(componentId, componentTypeEnum, oldArtifactId, newArtifact,
-				false);
+	public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId, ArtifactData newArtifact) {
+		return dissociateAndAssociateGroupsFromArtifact(componentId, componentTypeEnum, oldArtifactId, newArtifact, false);
 	}
 
-	private Either<List<ImmutablePair<String, String>>, TitanOperationStatus> getGroupArtifactsPairs(
-			String groupUniqueId) {
+	private Either<List<ImmutablePair<String, String>>, TitanOperationStatus> getGroupArtifactsPairs(String groupUniqueId) {
 
 		Either<List<ImmutablePair<String, String>>, TitanOperationStatus> result = null;
 
-		Either<List<ImmutablePair<ArtifactData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId,
-						GraphEdgeLabels.GROUP_ARTIFACT_REF, NodeTypeEnum.ArtifactRef, ArtifactData.class);
+		Either<List<ImmutablePair<ArtifactData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Group), groupUniqueId, GraphEdgeLabels.GROUP_ARTIFACT_REF,
+				NodeTypeEnum.ArtifactRef, ArtifactData.class);
 		if (childrenNodes.isRight()) {
 			TitanOperationStatus status = childrenNodes.right().value();
 			if (status == TitanOperationStatus.NOT_FOUND) {
@@ -1631,8 +1673,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	 */
 	public Either<GroupDefinition, TitanOperationStatus> updateGroupVersionOnGraph(String groupUniqueId) {
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupUniqueId, false,
-				false, false);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupUniqueId, false, false, false);
 
 		if (groupFromGraph.isRight()) {
 			TitanOperationStatus status = groupFromGraph.right().value();
@@ -1661,10 +1702,11 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 		}
 	}
+	
+
 
 	/**
-	 * The version of the group is an integer. In order to support BC, we might
-	 * get a version in a float format.
+	 * The version of the group is an integer. In order to support BC, we might get a version in a float format.
 	 * 
 	 * @param version
 	 * @return
@@ -1680,23 +1722,20 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 	}
 
-	public Either<GroupDefinition, TitanOperationStatus> associateArtifactsToGroupOnGraph(String groupId,
-			List<String> artifactsId) {
+	public Either<GroupDefinition, TitanOperationStatus> associateArtifactsToGroupOnGraph(String groupId, List<String> artifactsId) {
 
 		if (artifactsId == null || artifactsId.isEmpty()) {
 			return Either.right(TitanOperationStatus.OK);
 		}
 
 		for (String artifactId : artifactsId) {
-			Either<ArtifactData, TitanOperationStatus> findArtifactRes = titanGenericDao.getNode(
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class);
+			Either<ArtifactData, TitanOperationStatus> findArtifactRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactRef), artifactId, ArtifactData.class);
 			if (findArtifactRes.isRight()) {
 				TitanOperationStatus status = findArtifactRes.right().value();
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					status = TitanOperationStatus.INVALID_ID;
 				}
-				String description = "Failed to associate group " + groupId + " to artifact " + artifactId
-						+ " in graph. Status is " + status;
+				String description = "Failed to associate group " + groupId + " to artifact " + artifactId + " in graph. Status is " + status;
 				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 				return Either.right(status);
 			}
@@ -1705,69 +1744,56 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 			props.put(GraphPropertiesDictionary.NAME.getProperty(), findArtifactRes.left().value().getLabel());
 
 			GraphNode groupData = new UniqueIdData(NodeTypeEnum.Group, groupId);
-			Either<GraphRelation, TitanOperationStatus> addArtifactsRefResult = titanGenericDao.createRelation(
-					groupData, findArtifactRes.left().value(), GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
+			Either<GraphRelation, TitanOperationStatus> addArtifactsRefResult = titanGenericDao.createRelation(groupData, findArtifactRes.left().value(), GraphEdgeLabels.GROUP_ARTIFACT_REF, props);
 
 			if (addArtifactsRefResult.isRight()) {
 				TitanOperationStatus status = addArtifactsRefResult.right().value();
-				String description = "Failed to associate group " + groupData.getUniqueId() + " to artifact "
-						+ artifactId + " in graph. Status is " + status;
+				String description = "Failed to associate group " + groupData.getUniqueId() + " to artifact " + artifactId + " in graph. Status is " + status;
 				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 				return Either.right(status);
 			}
 		}
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true,
-				false);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true, false);
 
 		return groupFromGraph;
 	}
 
-	public Either<GroupDefinition, TitanOperationStatus> associateMembersToGroupOnGraph(String groupId,
-			Map<String, String> members) {
+	public Either<GroupDefinition, TitanOperationStatus> associateMembersToGroupOnGraph(String groupId, Map<String, String> members) {
 
 		if (members != null && false == members.isEmpty()) {
 			Either<GraphRelation, TitanOperationStatus> addMembersRefResult = null;
 			for (Entry<String, String> member : members.entrySet()) {
-				Either<ComponentInstanceData, TitanOperationStatus> findComponentInstanceRes = titanGenericDao.getNode(
-						UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), member.getValue(),
-						ComponentInstanceData.class);
+				Either<ComponentInstanceData, TitanOperationStatus> findComponentInstanceRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceInstance), member.getValue(), ComponentInstanceData.class);
 				if (findComponentInstanceRes.isRight()) {
 
 					TitanOperationStatus status = findComponentInstanceRes.right().value();
 					if (status == TitanOperationStatus.NOT_FOUND) {
 						status = TitanOperationStatus.INVALID_ID;
 					}
-					String description = "Failed to find to find component instance group " + member.getValue()
-							+ " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to find to find component instance group " + member.getValue() + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 					return Either.right(status);
 				}
 				Map<String, Object> props = new HashMap<String, Object>();
 				props.put(GraphPropertiesDictionary.NAME.getProperty(), member.getKey());
 				GraphNode groupData = new UniqueIdData(NodeTypeEnum.Group, groupId);
-				addMembersRefResult = titanGenericDao.createRelation(groupData, findComponentInstanceRes.left().value(),
-						GraphEdgeLabels.GROUP_MEMBER, props);
+				addMembersRefResult = titanGenericDao.createRelation(groupData, findComponentInstanceRes.left().value(), GraphEdgeLabels.GROUP_MEMBER, props);
 				if (addMembersRefResult.isRight()) {
 					TitanOperationStatus status = addMembersRefResult.right().value();
-					String description = "Failed to associate group " + groupData.getUniqueId()
-							+ " to component instance " + member.getValue() + " in graph. Status is " + status;
-					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description,
-							ErrorSeverity.ERROR);
+					String description = "Failed to associate group " + groupData.getUniqueId() + " to component instance " + member.getValue() + " in graph. Status is " + status;
+					BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 					return Either.right(status);
 				}
 			}
 		}
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, false,
-				true);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, false, true);
 
 		return groupFromGraph;
 	}
 
-	public Either<GroupDefinition, TitanOperationStatus> dissociateArtifactsFromGroupOnGraph(String groupId,
-			List<String> artifactsId) {
+	public Either<GroupDefinition, TitanOperationStatus> dissociateArtifactsFromGroupOnGraph(String groupId, List<String> artifactsId) {
 
 		if (artifactsId == null || artifactsId.isEmpty()) {
 			return Either.right(TitanOperationStatus.OK);
@@ -1777,32 +1803,28 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		for (String artifactId : artifactsId) {
 
 			UniqueIdData artifactData = new UniqueIdData(NodeTypeEnum.Group, artifactId);
-			Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData,
-					artifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
-			log.trace("After dissociate group {} from artifact {}", groupId, artifactId);
+			Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData, artifactData, GraphEdgeLabels.GROUP_ARTIFACT_REF);
+			log.trace("After dissociate group {} from artifact {}" ,groupId, artifactId);
 
 			if (deleteRelation.isRight()) {
 				TitanOperationStatus status = deleteRelation.right().value();
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					status = TitanOperationStatus.INVALID_ID;
 				}
-				String description = "Failed to diassociate group " + groupId + " from artifact " + artifactId
-						+ " in graph. Status is " + status;
+				String description = "Failed to diassociate group " + groupId + " from artifact " + artifactId + " in graph. Status is " + status;
 				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 				return Either.right(status);
 			}
 
 		}
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true,
-				false);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true, false);
 
 		return groupFromGraph;
 
 	}
 
-	public Either<GroupDefinition, TitanOperationStatus> dissociateMembersFromGroupOnGraph(String groupId,
-			Map<String, String> members) {
+	public Either<GroupDefinition, TitanOperationStatus> dissociateMembersFromGroupOnGraph(String groupId, Map<String, String> members) {
 
 		if (members == null || members.isEmpty()) {
 			return Either.right(TitanOperationStatus.OK);
@@ -1812,25 +1834,22 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		for (Entry<String, String> member : members.entrySet()) {
 
 			UniqueIdData artifactData = new UniqueIdData(NodeTypeEnum.Group, member.getValue());
-			Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData,
-					artifactData, GraphEdgeLabels.GROUP_MEMBER);
-			log.trace("After dissociate group {} from members", groupId, member.getValue());
+			Either<GraphRelation, TitanOperationStatus> deleteRelation = titanGenericDao.deleteRelation(groupData, artifactData, GraphEdgeLabels.GROUP_MEMBER);
+			log.trace("After dissociate group {} from members {}" ,groupId, member.getValue());
 
 			if (deleteRelation.isRight()) {
 				TitanOperationStatus status = deleteRelation.right().value();
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					status = TitanOperationStatus.INVALID_ID;
 				}
-				String description = "Failed to diassociate group " + groupId + " from member " + member.getValue()
-						+ " in graph. Status is " + status;
+				String description = "Failed to diassociate group " + groupId + " from member " + member.getValue() + " in graph. Status is " + status;
 				BeEcompErrorManager.getInstance().logInternalFlowError(ADDING_GROUP, description, ErrorSeverity.ERROR);
 				return Either.right(status);
 			}
 
 		}
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true,
-				false);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(groupId, true, true, false);
 
 		return groupFromGraph;
 
@@ -1844,18 +1863,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<GroupDefinition, StorageOperationStatus> dissociateArtifactsFromGroup(String groupId,
-			List<String> artifactsId, boolean inTransaction) {
+	public Either<GroupDefinition, StorageOperationStatus> dissociateArtifactsFromGroup(String groupId, List<String> artifactsId, boolean inTransaction) {
 
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 
 		try {
-			Either<GroupDefinition, TitanOperationStatus> titanRes = this.dissociateArtifactsFromGroupOnGraph(groupId,
-					artifactsId);
+			Either<GroupDefinition, TitanOperationStatus> titanRes = this.dissociateArtifactsFromGroupOnGraph(groupId, artifactsId);
 
 			if (titanRes.isRight()) {
-				StorageOperationStatus storageOperationStatus = DaoStatusConverter
-						.convertTitanStatusToStorageStatus(titanRes.right().value());
+				StorageOperationStatus storageOperationStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(titanRes.right().value());
 				result = Either.right(storageOperationStatus);
 				return result;
 			}
@@ -1878,18 +1894,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 	}
 
-	public Either<GroupDefinition, StorageOperationStatus> dissociateMembersFromGroup(String groupId,
-			Map<String, String> members, boolean inTransaction) {
+	public Either<GroupDefinition, StorageOperationStatus> dissociateMembersFromGroup(String groupId, Map<String, String> members, boolean inTransaction) {
 
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 
 		try {
-			Either<GroupDefinition, TitanOperationStatus> titanRes = this.dissociateMembersFromGroupOnGraph(groupId,
-					members);
+			Either<GroupDefinition, TitanOperationStatus> titanRes = this.dissociateMembersFromGroupOnGraph(groupId, members);
 
 			if (titanRes.isRight()) {
-				StorageOperationStatus storageOperationStatus = DaoStatusConverter
-						.convertTitanStatusToStorageStatus(titanRes.right().value());
+				StorageOperationStatus storageOperationStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(titanRes.right().value());
 				result = Either.right(storageOperationStatus);
 				return result;
 			}
@@ -1920,19 +1933,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<GroupDefinition, StorageOperationStatus> associateArtifactsToGroup(String groupId,
-			List<String> artifactsId, boolean inTransaction) {
+	public Either<GroupDefinition, StorageOperationStatus> associateArtifactsToGroup(String groupId, List<String> artifactsId, boolean inTransaction) {
 
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<GroupDefinition, TitanOperationStatus> titanRes = this.associateArtifactsToGroupOnGraph(groupId,
-					artifactsId);
+			Either<GroupDefinition, TitanOperationStatus> titanRes = this.associateArtifactsToGroupOnGraph(groupId, artifactsId);
 
 			if (titanRes.isRight()) {
-				StorageOperationStatus status = DaoStatusConverter
-						.convertTitanStatusToStorageStatus(titanRes.right().value());
+				StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(titanRes.right().value());
 				result = Either.right(status);
 			}
 
@@ -1962,19 +1972,16 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<GroupDefinition, StorageOperationStatus> associateMembersToGroup(String groupId,
-			Map<String, String> members, boolean inTransaction) {
+	public Either<GroupDefinition, StorageOperationStatus> associateMembersToGroup(String groupId, Map<String, String> members, boolean inTransaction) {
 
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 
 		try {
 
-			Either<GroupDefinition, TitanOperationStatus> titanRes = this.associateMembersToGroupOnGraph(groupId,
-					members);
+			Either<GroupDefinition, TitanOperationStatus> titanRes = this.associateMembersToGroupOnGraph(groupId, members);
 
 			if (titanRes.isRight()) {
-				StorageOperationStatus status = DaoStatusConverter
-						.convertTitanStatusToStorageStatus(titanRes.right().value());
+				StorageOperationStatus status = DaoStatusConverter.convertTitanStatusToStorageStatus(titanRes.right().value());
 				result = Either.right(status);
 				return result;
 			}
@@ -1997,18 +2004,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 
 	}
 
-	public Either<List<GroupDefinition>, StorageOperationStatus> updateGroupVersion(List<String> groupsId,
-			boolean inTransaction) {
+	public Either<List<GroupDefinition>, StorageOperationStatus> updateGroupVersion(List<String> groupsId, boolean inTransaction) {
 
 		Either<List<GroupDefinition>, StorageOperationStatus> result = null;
 
 		try {
-			Either<List<GroupDefinition>, TitanOperationStatus> updateGroupVersionOnGraph = this
-					.updateGroupVersionOnGraph(groupsId);
+			Either<List<GroupDefinition>, TitanOperationStatus> updateGroupVersionOnGraph = this.updateGroupVersionOnGraph(groupsId);
 
 			if (updateGroupVersionOnGraph.isRight()) {
-				result = Either.right(DaoStatusConverter
-						.convertTitanStatusToStorageStatus(updateGroupVersionOnGraph.right().value()));
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(updateGroupVersionOnGraph.right().value()));
 				return result;
 			}
 
@@ -2029,42 +2033,53 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 		}
 
 	}
-
-	public Either<GroupDefinition, StorageOperationStatus> updateGroupName(String uniqueId, String newName,
-			boolean inTransaction) {
+	/**
+	 * This method updates group name
+	 * @param groupToUpdateFromUniqueId
+	 * @param newName
+	 * @param inTransaction
+	 * @return
+	 */
+	public Either<GroupDefinition, StorageOperationStatus> updateGroupName(String groupToUpdateFromUniqueId,
+			String newName, boolean inTransaction) {
 		Either<GroupDefinition, StorageOperationStatus> result = null;
 
 		try {
-			Either<GroupDefinition, TitanOperationStatus> updateGroupNameOnGraph = this.updateGroupNameOnGraph(uniqueId,
-					newName);
+			//Update Name
+			Either<GroupDefinition, TitanOperationStatus> updateGroupNameOnGraph = updateGroupNameOnGraph(
+					groupToUpdateFromUniqueId, newName);
 
 			if (updateGroupNameOnGraph.isRight()) {
 				result = Either.right(
 						DaoStatusConverter.convertTitanStatusToStorageStatus(updateGroupNameOnGraph.right().value()));
-				return result;
+			} 
+			else{
+				result = Either.left(updateGroupNameOnGraph.left().value());
 			}
-
-			result = Either.left(updateGroupNameOnGraph.left().value());
 			return result;
 
 		} finally {
-			if (false == inTransaction) {
-				if (result == null || result.isRight()) {
-					log.debug("Going to execute rollback on graph.");
-					BeEcompErrorManager.getInstance().logBeExecuteRollbackError("Rollback on graph");
-					titanGenericDao.rollback();
-				} else {
-					log.debug("Going to execute commit on graph.");
-					titanGenericDao.commit();
-				}
-			}
+			handleTransactionCommitRollback(inTransaction, result);
+		}
+	}
+	@Override
+	public Either<GroupDefinition, StorageOperationStatus> updateGroupName(String groupToUpdateFromUniqueId,
+			String newName, GroupDefinition groupToUpdateTo, boolean inTransaction) {
+		Either<GroupDefinition, StorageOperationStatus> result = null;
+
+		try {
+			//Update Name
+			result = updateGroupName(groupToUpdateFromUniqueId, newName, true);
+			return result;
+
+		} finally {
+			handleTransactionCommitRollback(inTransaction, result);
 		}
 	}
 
 	private Either<GroupDefinition, TitanOperationStatus> updateGroupNameOnGraph(String uniqueId, String newName) {
 
-		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(uniqueId, false, false,
-				false);
+		Either<GroupDefinition, TitanOperationStatus> groupFromGraph = this.getGroupFromGraph(uniqueId, false, false, false);
 
 		if (groupFromGraph.isRight()) {
 			TitanOperationStatus status = groupFromGraph.right().value();
@@ -2089,5 +2104,33 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
 				return groupFromGraph;
 			}
 		}
+	}
+
+
+	@Override
+	public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property) {
+		
+		StorageOperationStatus result = null;
+		String innerType = property.getSchema() == null ? null : property.getSchema().getProperty() == null ? null : property.getSchema().getProperty().getType();
+		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = dataTypeCache.getAll();
+		Either<Object, Boolean> isValid = null;
+		if (allDataTypes.isRight()) {
+			TitanOperationStatus status = allDataTypes.right().value();
+			log.debug("Failed to fetch data types from cache. Status is {}. ", status);
+			result = DaoStatusConverter.convertTitanStatusToStorageStatus(status);
+		}
+		if(result == null){
+			isValid = propertyOperation.validateAndUpdatePropertyValue(property.getType(), property.getValue(), innerType, allDataTypes.left().value());
+			if(isValid.isRight()){
+				log.debug("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
+				result =  StorageOperationStatus.INVALID_PROPERTY;
+			}
+		}
+		if(result == null){
+			String validValue = String.valueOf(isValid.left().value());
+			property.setValue(validValue);
+			result = StorageOperationStatus.OK;
+		}
+		return result;
 	}
 }

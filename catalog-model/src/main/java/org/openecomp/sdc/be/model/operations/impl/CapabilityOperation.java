@@ -99,7 +99,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<CapabilityData, TitanOperationStatus> addCapStatus = addCapabilityToResource(resourceId, capabilityName, capabilityDefinition);
 
 			if (addCapStatus.isRight()) {
-				log.debug("Failed to add capability {} [ {} ] to graph", capabilityName, capabilityDefinition);
+				log.debug("Failed to add capability {} [{}] to Graph", capabilityName, capabilityDefinition);
 				BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add Capability", capabilityName, String.valueOf(addCapStatus.right().value()));
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(addCapStatus.right().value()));
 				return result;
@@ -108,11 +108,11 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 
 				String capabilityUid = capabilityData.getUniqueId();
 				Either<CapabilityDefinition, StorageOperationStatus> capabilityRes = getCapability(capabilityUid, true);
-				log.debug("After fetching capability {} with uid {}. Status is {}", capabilityName, capabilityUid, capabilityRes);
+				log.debug("After fetching capability {} with uid {}. status is {}" ,capabilityName, capabilityUid,capabilityRes);
 
 				if (capabilityRes.isRight()) {
 					StorageOperationStatus status = capabilityRes.right().value();
-					log.debug("Failed to fetch capability {] with uid {}. Status is {}", capabilityName, capabilityUid, status);
+					log.debug("Failed to fetch capability {} with uid {}. status is {}", capabilityName, capabilityUid, status);
 					result = Either.right(status);
 					return result;
 				}
@@ -147,7 +147,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			TitanOperationStatus addCapStatus = addCapabilityToResource(metadataVertex, resourceId, capabilityName, capabilityDefinition);
 
 			if (!addCapStatus.equals(TitanOperationStatus.OK)) {
-				log.debug("Failed to add capability {} [ {} ]", capabilityName, capabilityDefinition);
+				log.debug("Failed to add capability {} [{}] to Graph", capabilityName, capabilityDefinition);
 				BeEcompErrorManager.getInstance().logBeFailedCreateNodeError("Add Capability", capabilityName, String.valueOf(addCapStatus));
 				result = DaoStatusConverter.convertTitanStatusToStorageStatus(addCapStatus);
 			}
@@ -170,8 +170,6 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 
 		CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
 		capabilityDefinition.setType(capabilityData.getType());
-
-		// TODO esofer do something
 
 		return capabilityDefinition;
 	}
@@ -326,7 +324,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<CapabilityData, TitanOperationStatus> capabiltyRes = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), uniqueId, CapabilityData.class);
 			if (capabiltyRes.isRight()) {
 				TitanOperationStatus status = capabiltyRes.right().value();
-				log.debug("Failed to retrieve capability {} from graph. Status is {}", uniqueId, status);
+				log.debug("Failed to retrieve capability {} from graph. status is {}", uniqueId, status);
 
 				BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Capability", uniqueId, String.valueOf(status));
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
@@ -343,7 +341,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<CapabilityTypeData, TitanOperationStatus> capabilityTypeRes = getCapabilityTypeOfCapability(uniqueId);
 			if (capabilityTypeRes.isRight()) {
 				TitanOperationStatus status = capabilityTypeRes.right().value();
-				log.debug("Failed to retrieve capability type of capability {}. Status is {}", uniqueId, status);
+				log.debug("Failed to retrieve capability type of capability {}. status is {}", uniqueId, status);
 				BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Capability", uniqueId, String.valueOf(status));
 
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
@@ -361,7 +359,6 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 				ImmutablePair<ResourceMetadataData, GraphEdge> pair = parentNode.left().value();
 				capabilityDefinition.setOwnerId(pair.left.getMetadataDataDefinition().getUniqueId());
 				List<String> derivedFromList = new ArrayList<>();
-				// derivedFromList.add(pair.left.getMetadataDataDefinition().getName());
 				TitanOperationStatus fillResourceDerivedListFromGraph = fillResourceDerivedListFromGraph(pair.left.getMetadataDataDefinition().getUniqueId(), derivedFromList);
 				if (fillResourceDerivedListFromGraph.equals(TitanOperationStatus.OK)) {
 					capabilityDefinition.setCapabilitySources(derivedFromList);
@@ -371,7 +368,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<List<PropertyDefinition>, TitanOperationStatus> getPropertiesRes = getPropertiesOfCapability(uniqueId, capabilityTypeData.getCapabilityTypeDataDefinition().getType());
 			if (getPropertiesRes.isRight() && !getPropertiesRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				TitanOperationStatus status = getPropertiesRes.right().value();
-				log.debug("Failed to retrieve properties of capability {}. Status is {}", uniqueId, status);
+				log.debug("Failed to retrieve properties of capability {}. status is {}", uniqueId, status);
 				BeEcompErrorManager.getInstance().logBeFailedRetrieveNodeError("Fetch Properties of Capability", uniqueId, String.valueOf(status));
 
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
@@ -522,7 +519,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 	}
 
 	public Either<List<PropertyDefinition>, TitanOperationStatus> getPropertiesOfCapability(String capabilityUid, String capabilityType) {
-		log.debug("Before getting properties of capability {} from graph ", capabilityUid);
+		log.debug("Before getting properties of capability {} from graph " , capabilityUid);
 
 		List<PropertyDefinition> properties;
 		Either<List<PropertyDefinition>, TitanOperationStatus> result = null;
@@ -539,7 +536,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			getPropertiesOfCapabilityTypeRes = getAllCapabilityTypePropertiesFromAllDerivedFrom(capabilityTypeUid);
 			if (getPropertiesOfCapabilityTypeRes.isRight() && !getPropertiesOfCapabilityTypeRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				TitanOperationStatus status = getPropertiesOfCapabilityTypeRes.right().value();
-				log.error("Failed to retrieve properties for capability type {} from graph. Status is {}", capabilityType, status);
+				log.error("Failed to retrieve properties for capability type {} from graph. status is {}", capabilityType, status);
 				result = Either.right(status);
 			}
 		}
@@ -560,14 +557,15 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		return result;
 	}
 
-	protected Either<CapabilityTypeData, TitanOperationStatus> getCapabilityTypeOfCapability(String uniqueId) {
+	@Override
+	public Either<CapabilityTypeData, TitanOperationStatus> getCapabilityTypeOfCapability(String uniqueId) {
 
 		Either<ImmutablePair<CapabilityTypeData, GraphEdge>, TitanOperationStatus> capabilityTypeRes = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), uniqueId, GraphEdgeLabels.TYPE_OF, NodeTypeEnum.CapabilityType,
 				CapabilityTypeData.class);
 
 		if (capabilityTypeRes.isRight()) {
 			TitanOperationStatus status = capabilityTypeRes.right().value();//
-			log.debug("Cannot find capability type associated with capability {}. Status is {}", uniqueId, status);
+			log.debug("Cannot find capability type associated with capability {}. status is {}", uniqueId, status);
 			BeEcompErrorManager.getInstance().logBeFailedFindAssociationError("Fetch Capability type", NodeTypeEnum.CapabilityType.getName(), uniqueId, String.valueOf(status));
 			return Either.right(capabilityTypeRes.right().value());
 		}
@@ -594,7 +592,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> capabilitiesNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resourceId, GraphEdgeLabels.CAPABILITY,
 				NodeTypeEnum.Capability, CapabilityData.class);
 
-		log.debug("After looking for all capabilities under resource {}. Status is {}", resourceId, capabilitiesNodes);
+		log.debug("After looking for all capabilities under resource {}. status is {}" , resourceId , capabilitiesNodes);
 		if (capabilitiesNodes.isRight()) {
 			TitanOperationStatus status = capabilitiesNodes.right().value();
 			return Either.right(status);
@@ -610,7 +608,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 
 	private Either<CapabilityData, TitanOperationStatus> addCapabilityToResource(String resourceId, String capabilityName, CapabilityDefinition capabilityDefinition) {
 
-		log.debug("Going to add capability {} [ {} ] to resource uid {}", capabilityName, capabilityDefinition, resourceId);
+		log.debug("Going to add capability {} [ {} ] to resource uid {}" , capabilityName, capabilityDefinition, resourceId);
 
 		Either<CapabilityData, TitanOperationStatus> createCapRes = createCapability(resourceId, capabilityName, capabilityDefinition);
 
@@ -647,7 +645,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		Either<GraphRelation, TitanOperationStatus> associateResourceRes = associateResourceToCapability(resourceId, capabilityName, capabilityData);
 		if (associateResourceRes.isRight()) {
 			TitanOperationStatus status = associateResourceRes.right().value();
-			log.error("Failed to associate resource " + resourceId + " to capability " + capabilityData + ". status is " + status);
+			log.error("Failed to associate resource {} to capability {}. status is {}", resourceId, capabilityData, status);
 			return Either.right(status);
 		}
 
@@ -702,10 +700,10 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		UniqueIdData capabilityTypeIdData = new UniqueIdData(NodeTypeEnum.CapabilityType, UniqueIdBuilder.buildCapabilityTypeUid(capabilityType));
 		log.debug("Before associating {} to capability type {}.", capabilityData, capabilityType);
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(capabilityData, capabilityTypeIdData, GraphEdgeLabels.TYPE_OF, null);
-		log.debug("After associating {} to capability type {}. status is {}", capabilityData, capabilityType, createRelResult);
+		log.debug("After associating {} to capability type {}. status is {}" , capabilityData, capabilityType, createRelResult);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			log.error("Failed to associate capability {} to capability type {} in graph. Status is {}",capabilityData, capabilityTypeIdData, operationStatus);
+			log.error("Failed to associate capability {} to capability type {} in graph. status is {}", capabilityData, capabilityTypeIdData, operationStatus);
 			return Either.right(operationStatus);
 		}
 		return Either.left(createRelResult.left().value());
@@ -733,10 +731,10 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		Map<String, Object> props = new HashMap<>();
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), capabilityName);
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resourceIdData, capabilityData, GraphEdgeLabels.CAPABILITY, props);
-		log.debug("After associating resource {} to capability {}. Status is {}", resourceId, capabilityData, createRelResult);
+		log.debug("After associating resource {} to capability {}. status is {}" , resourceId, capabilityData, createRelResult);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createRelResult.right().value();
-			log.error("Failed to associate resource {} to capability {} in graph. Status is {}", resourceId, capabilityData, operationStatus);
+			log.error("Failed to associate resource {} to capability {} in graph. status is {}", resourceId, capabilityData, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -825,7 +823,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			resultStatus = deletePropertiesStatus.right().value();
 		}
 		if (resultStatus == null) {
-			log.debug("Before deleting capability from graph {}", capabilityUid);
+			log.debug("Before deleting capability from graph {}" , capabilityUid);
 			Either<CapabilityData, TitanOperationStatus> deleteNodeStatus = titanGenericDao.deleteNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), capabilityUid, CapabilityData.class);
 			if (deleteNodeStatus.isRight()) {
 				resultStatus = deleteNodeStatus.right().value();
@@ -848,7 +846,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			if (deleteAllRes.isRight()) {
 				TitanOperationStatus status = deleteAllRes.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.debug("Failed to delete capabilities of resource {}. Status is {}", resourceId, status);
+					log.debug("Failed to delete capabilities of resource {}. status is {}", resourceId, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
@@ -895,7 +893,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			CapabilityDefinition capabilityDefinition = entry.getValue();
 			String capabilityUid = capabilityDefinition.getUniqueId();
 
-			log.debug("Before deleting properties of capability {} from graph", capabilityUid);
+			log.debug("Before deleting properties of capability {} from graph " , capabilityUid);
 
 			Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus> deletePropertiesStatus = deletePropertiesOfCapability(capabilityUid);
 			if (deletePropertiesStatus.isRight() && !deletePropertiesStatus.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
@@ -964,7 +962,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		Either<Map<String, PropertyDefinition>, TitanOperationStatus> allPropertiesOfCapabilityTypeRes = getAllCapabilityTypePropertiesFromAllDerivedFrom(capabilityTypeUid);
 		if (allPropertiesOfCapabilityTypeRes.isRight() && !allPropertiesOfCapabilityTypeRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 			TitanOperationStatus operationStatus = allPropertiesOfCapabilityTypeRes.right().value();
-			log.error("Failed to retrieve properties for capability type " + capabilityType + " from graph. status is " + operationStatus);
+			log.error("Failed to retrieve properties for capability type {} from graph. status is {}", capabilityType, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -976,7 +974,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<List<PropertyDefinition>, TitanOperationStatus> validateAndReducePropertiesRes = validatePropertyUniqueness(propertiesOfCapabilityType, properties);
 			if (validateAndReducePropertiesRes.isRight()) {
 				TitanOperationStatus operationStatus = validateAndReducePropertiesRes.right().value();
-				log.error("Failed to add properties to capability {} in graph. Status is {}", capabilityData.getUniqueId(), operationStatus);
+				log.error("Failed to add properties to capability {} in graph. status is {}", capabilityData.getUniqueId(), operationStatus);
 				return Either.right(operationStatus);
 			}
 		}
@@ -984,7 +982,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 		Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToCapabilityRes = propertyOperation.addPropertiesToElementType(capabilityData.getUniqueId(), NodeTypeEnum.Capability, properties);
 		if (addPropertiesToCapabilityRes.isRight()) {
 			TitanOperationStatus operationStatus = addPropertiesToCapabilityRes.right().value();
-			log.error("Failed to add properties to capability {} in graph. Status is {}", capabilityData.getUniqueId(), operationStatus);
+			log.error("Failed to add properties to capability {} in graph. status is {}", capabilityData.getUniqueId(), operationStatus);
 			return Either.right(operationStatus);
 		}
 		return Either.left(addPropertiesToCapabilityRes.left().value());
@@ -1066,7 +1064,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 	}
 
 	public Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus> deletePropertiesOfCapability(String capabilityUid) {
-		log.debug("Before deleting properties of capability {} from graph ", capabilityUid);
+		log.debug("Before deleting properties of capability {} from graph " , capabilityUid);
 
 		Either<List<ImmutablePair<PropertyData, GraphEdge>>, TitanOperationStatus> deletePropertiesStatus = titanGenericDao.deleteChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Capability), capabilityUid, GraphEdgeLabels.PROPERTY,
 				NodeTypeEnum.Property, PropertyData.class);
@@ -1118,7 +1116,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 				}
 			}
 			if (result.isRight()) {
-				log.debug("Failed to update properties of capability {}. Status is {}", uniqueId, result);
+				log.debug("Failed to update properties of capability {}. status is {}", uniqueId, result);
 			}
 			return result;
 		} finally {
@@ -1141,13 +1139,13 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 				GraphEdgeLabels.CALCULATED_CAPABILITY, NodeTypeEnum.Capability, CapabilityData.class);
 		if (getCapabilitiesRes.isRight()) {
 			error = getCapabilitiesRes.right().value();
-			log.debug("Failed to retrieve capabilities for resource instance {}. Status is {}", resourceInstanceId, error);
+			log.debug("Failed to retrieve capabilities for resource instance {}. status is {}", resourceInstanceId, error);
 		} else {
 			List<ImmutablePair<CapabilityData, GraphEdge>> capabilityPairsList = getCapabilitiesRes.left().value();
 			List<CapabilityData> capabilityPair = capabilityPairsList.stream().filter(pair -> pair.getLeft().getUniqueId().equals(capabilityUid)).map(pair -> pair.getLeft()).collect(Collectors.toList());
 			if (capabilityPair.isEmpty()) {
 				error = TitanOperationStatus.NOT_FOUND;
-				log.debug("Failed to retrieve capability {} for resource instance {}. Status is {}", capabilityUid, resourceInstanceId, error);
+				log.debug("Failed to retrieve capability {} for resource instance {}. status is {}", capabilityUid, resourceInstanceId, error);
 			} else {
 				capability = capabilityPair.get(0);
 			}
@@ -1181,7 +1179,7 @@ public class CapabilityOperation extends AbstractOperation implements ICapabilit
 			Either<Map<String, PropertyDefinition>, TitanOperationStatus> allPropertiesOfCapabilityTypeRes = propertyOperation.findPropertiesOfNode(NodeTypeEnum.CapabilityType, nextParentType);
 			if (allPropertiesOfCapabilityTypeRes.isRight() && !allPropertiesOfCapabilityTypeRes.right().value().equals(TitanOperationStatus.NOT_FOUND)) {
 				error = allPropertiesOfCapabilityTypeRes.right().value();
-				log.error("Failed to retrieve properties for capability type {} from graph. Status is {}", nextParentType, error);
+				log.error("Failed to retrieve properties for capability type {} from graph. status is {}", nextParentType, error);
 				return Either.right(error);
 			} else if (allPropertiesOfCapabilityTypeRes.isLeft()) {
 				if (allProperies.isEmpty()) {

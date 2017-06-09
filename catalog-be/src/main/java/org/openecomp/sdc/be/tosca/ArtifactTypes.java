@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openecomp.sdc.generator.data.ArtifactType;
 
+
 public class ArtifactTypes {
 	private List<ArtifactType> artifactTypes;
 

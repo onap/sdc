@@ -93,13 +93,11 @@ public class ComponentOperationTest {
 		CapabilityData capData = FactoryUtils.createCapabilityData();
 
 		FactoryUtils.addComponentInstanceToVF(vf, ri);
-		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> capDataList = prepareCompOperationReturnValue(
-				ri, capData);
+		Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> capDataList = prepareCompOperationReturnValue(ri, capData);
 
 		prepareMocksForCapabilitiesMethods(ri, capDataList);
 
-		Map<String, List<CapabilityDefinition>> capabilities = compOperation
-				.getCapabilities(vf, NodeTypeEnum.Resource, false).left().value();
+		Map<String, List<CapabilityDefinition>> capabilities = compOperation.getCapabilities(vf, NodeTypeEnum.Resource, false).left().value();
 		assertTrue(capabilities.size() == 1);
 		Entry<String, List<CapabilityDefinition>> entry = capabilities.entrySet().iterator().next();
 		assertTrue(entry.getKey().equals(capData.getType()));
@@ -116,13 +114,11 @@ public class ComponentOperationTest {
 
 		FactoryUtils.addComponentInstanceToVF(vf, ri);
 
-		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> reqDataEdgeList = prepareCompOperationReturnValue(
-				ri, reqData);
+		Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> reqDataEdgeList = prepareCompOperationReturnValue(ri, reqData);
 
 		prepareMocksForRequirmenetsMethods(ri, reqDataEdgeList);
 
-		Map<String, List<RequirementDefinition>> requirements = compOperation
-				.getRequirements(vf, NodeTypeEnum.Resource, false).left().value();
+		Map<String, List<RequirementDefinition>> requirements = compOperation.getRequirements(vf, NodeTypeEnum.Resource, false).left().value();
 		assertTrue(requirements.size() == 1);
 		Entry<String, List<RequirementDefinition>> entry = requirements.entrySet().iterator().next();
 		assertTrue(entry.getKey().equals(FactoryUtils.Constants.DEFAULT_CAPABILITY_TYPE));
@@ -130,70 +126,51 @@ public class ComponentOperationTest {
 		assertTrue(entry.getValue().get(0).getUniqueId().equals(reqData.getUniqueId()));
 	}
 
-	private void prepareMocksForRequirmenetsMethods(ComponentInstance ri,
-			Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> reqDataEdgeList) {
+	private void prepareMocksForRequirmenetsMethods(ComponentInstance ri, Either<List<ImmutablePair<RequirementData, GraphEdge>>, TitanOperationStatus> reqDataEdgeList) {
 
 		when(componentInstanceOperation.getRequirements(ri, NodeTypeEnum.Resource)).thenReturn(reqDataEdgeList);
 		when(requirementOperation.getRequirement(Mockito.anyString())).then(createReqDefAnswer());
 	}
 
-	private void prepareMocksForCapabilitiesMethods(ComponentInstance ri,
-			Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> capDataList) {
+	private void prepareMocksForCapabilitiesMethods(ComponentInstance ri, Either<List<ImmutablePair<CapabilityData, GraphEdge>>, TitanOperationStatus> capDataList) {
 		when(componentInstanceOperation.getCapabilities(ri, NodeTypeEnum.Resource)).thenReturn(capDataList);
-		when(capabilityOperation.getCapabilityByCapabilityData(Mockito.any(CapabilityData.class)))
-				.then(createCapDefByDataAnswer());
+		when(capabilityOperation.getCapabilityByCapabilityData(Mockito.any(CapabilityData.class))).then(createCapDefByDataAnswer());
 		List<ImmutablePair<CapabilityInstData, GraphEdge>> capInstList = new ArrayList<>();
 		CapabilityInstData curCapabilityInst = FactoryUtils.createCapabilityInstData();
 		GraphEdge edge = new GraphEdge();
 		Map<String, Object> properties = new HashMap<>();
-		properties.put(GraphPropertiesDictionary.CAPABILITY_ID.getProperty(),
-				capDataList.left().value().get(0).getLeft().getUniqueId());
+		properties.put(GraphPropertiesDictionary.CAPABILITY_ID.getProperty(), capDataList.left().value().get(0).getLeft().getUniqueId());
 		edge.setProperties(properties);
-		ImmutablePair<CapabilityInstData, GraphEdge> pair = new ImmutablePair<CapabilityInstData, GraphEdge>(
-				curCapabilityInst, edge);
+		ImmutablePair<CapabilityInstData, GraphEdge> pair = new ImmutablePair<CapabilityInstData, GraphEdge>(curCapabilityInst, edge);
 		capInstList.add(pair);
-		when(titanGenericDao.getChildrenNodes(
-				UniqueIdBuilder.getKeyByNodeType(
-						NodeTypeEnum.getByNameIgnoreCase(ri.getOriginType().getInstanceType().trim())),
-				ri.getUniqueId(), GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst,
+		when(titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByNameIgnoreCase(ri.getOriginType().getInstanceType().trim())), ri.getUniqueId(), GraphEdgeLabels.CAPABILITY_INST, NodeTypeEnum.CapabilityInst,
 				CapabilityInstData.class)).thenReturn(Either.left(capInstList));
 
-		when(titanGenericDao.getChild(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curCapabilityInst.getLabel())),
-				curCapabilityInst.getUniqueId(), GraphEdgeLabels.INSTANCE_OF, NodeTypeEnum.Capability,
-				CapabilityData.class)).thenReturn(Either.left(capDataList.left().value().get(0)));
+		when(titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curCapabilityInst.getLabel())), curCapabilityInst.getUniqueId(), GraphEdgeLabels.INSTANCE_OF, NodeTypeEnum.Capability, CapabilityData.class))
+				.thenReturn(Either.left(capDataList.left().value().get(0)));
 
 		PropertyValueData propertyValueData = FactoryUtils.createPropertyData();
-		ImmutablePair<PropertyValueData, GraphEdge> propPair = new ImmutablePair<PropertyValueData, GraphEdge>(
-				propertyValueData, null);
+		ImmutablePair<PropertyValueData, GraphEdge> propPair = new ImmutablePair<PropertyValueData, GraphEdge>(propertyValueData, null);
 		List<ImmutablePair<PropertyValueData, GraphEdge>> propPairList = new ArrayList<>();
 		propPairList.add(propPair);
-		when(titanGenericDao.getChildrenNodes(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curCapabilityInst.getLabel())),
-				curCapabilityInst.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue,
+		when(titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(curCapabilityInst.getLabel())), curCapabilityInst.getUniqueId(), GraphEdgeLabels.PROPERTY_VALUE, NodeTypeEnum.PropertyValue,
 				PropertyValueData.class)).thenReturn(Either.left(propPairList));
 
-		CapabilityDefinition capDef = FactoryUtils
-				.convertCapabilityDataToCapabilityDefinitionAddProperties(capDataList.left().value().get(0).getLeft());
-		List<PropertyDefinition> propDefList = capDef.getProperties().stream().filter(p -> p.getName().equals("host"))
-				.collect(Collectors.toList());
+		CapabilityDefinition capDef = FactoryUtils.convertCapabilityDataToCapabilityDefinitionAddProperties(capDataList.left().value().get(0).getLeft());
+		List<PropertyDefinition> propDefList = capDef.getProperties().stream().filter(p -> p.getName().equals("host")).collect(Collectors.toList());
 		PropertyDefinition propDef = propDefList.get(0);
 		PropertyData propData = FactoryUtils.convertCapabilityDefinitionToCapabilityData(propDef);
 
 		ImmutablePair<PropertyData, GraphEdge> defPropPair = new ImmutablePair<PropertyData, GraphEdge>(propData, edge);
 
-		when(titanGenericDao.getChild(
-				UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(propertyValueData.getLabel())),
-				propertyValueData.getUniqueId(), GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property,
-				PropertyData.class)).thenReturn(Either.left(defPropPair));
+		when(titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.getByName(propertyValueData.getLabel())), propertyValueData.getUniqueId(), GraphEdgeLabels.PROPERTY_IMPL, NodeTypeEnum.Property, PropertyData.class))
+				.thenReturn(Either.left(defPropPair));
 		List<CapabilityDefinition> capDefList = new ArrayList<>();
 		capDefList.add(capDef);
-		when(componentInstanceOperation.updateCapDefPropertyValues(Mockito.any(ComponentInstance.class),
-				Mockito.any(List.class))).thenReturn(Either.left(capDefList));
+		when(componentInstanceOperation.updateCapDefPropertyValues(Mockito.any(ComponentInstance.class), Mockito.any(List.class))).thenReturn(Either.left(capDefList));
 	}
 
-	private <Data> Either<List<ImmutablePair<Data, GraphEdge>>, TitanOperationStatus> prepareCompOperationReturnValue(
-			ComponentInstance ri, Data data) {
+	private <Data> Either<List<ImmutablePair<Data, GraphEdge>>, TitanOperationStatus> prepareCompOperationReturnValue(ComponentInstance ri, Data data) {
 		ImmutablePair<Data, GraphEdge> dataEdgePair = new ImmutablePair<>(data, new GraphEdge());
 		List<ImmutablePair<Data, GraphEdge>> dataEdgeList = new ArrayList<>();
 		dataEdgeList.add(dataEdgePair);
@@ -204,8 +181,7 @@ public class ComponentOperationTest {
 		return new Answer<Either<RequirementDefinition, TitanOperationStatus>>() {
 
 			@Override
-			public Either<RequirementDefinition, TitanOperationStatus> answer(InvocationOnMock invocation)
-					throws Throwable {
+			public Either<RequirementDefinition, TitanOperationStatus> answer(InvocationOnMock invocation) throws Throwable {
 				String reqDataId = (String) invocation.getArguments()[0];
 				return Either.left(FactoryUtils.convertRequirementDataIDToRequirementDefinition(reqDataId));
 			}
@@ -216,8 +192,7 @@ public class ComponentOperationTest {
 		return new Answer<Either<CapabilityDefinition, TitanOperationStatus>>() {
 
 			@Override
-			public Either<CapabilityDefinition, TitanOperationStatus> answer(InvocationOnMock invocation)
-					throws Throwable {
+			public Either<CapabilityDefinition, TitanOperationStatus> answer(InvocationOnMock invocation) throws Throwable {
 				CapabilityData capData = (CapabilityData) invocation.getArguments()[0];
 				return Either.left(FactoryUtils.convertCapabilityDataToCapabilityDefinitionAddProperties(capData));
 			}
@@ -228,15 +203,13 @@ public class ComponentOperationTest {
 		return new ComponentOperation() {
 
 			@Override
-			protected StorageOperationStatus validateCategories(Component currentComponent, Component component,
-					ComponentMetadataData componentData, NodeTypeEnum type) {
+			protected StorageOperationStatus validateCategories(Component currentComponent, Component component, ComponentMetadataData componentData, NodeTypeEnum type) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			protected <T extends Component> StorageOperationStatus updateDerived(Component component,
-					Component currentComponent, ComponentMetadataData updatedResourceData, Class<T> clazz) {
+			protected <T extends Component> StorageOperationStatus updateDerived(Component component, Component currentComponent, ComponentMetadataData updatedResourceData, Class<T> clazz) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -248,8 +221,7 @@ public class ComponentOperationTest {
 			}
 
 			@Override
-			public Either<Integer, StorageOperationStatus> increaseAndGetComponentInstanceCounter(String componentId,
-					boolean inTransaction) {
+			public Either<Integer, StorageOperationStatus> increaseAndGetComponentInstanceCounter(String componentId, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -267,8 +239,7 @@ public class ComponentOperationTest {
 			}
 
 			@Override
-			protected <T> Either<T, StorageOperationStatus> getComponentByNameAndVersion(String name, String version,
-					Map<String, Object> additionalParams, boolean inTransaction) {
+			protected <T> Either<T, StorageOperationStatus> getComponentByNameAndVersion(String name, String version, Map<String, Object> additionalParams, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -287,15 +258,13 @@ public class ComponentOperationTest {
 			// }
 
 			@Override
-			public Either<List<ArtifactDefinition>, StorageOperationStatus> getAdditionalArtifacts(String resourceId,
-					boolean recursively, boolean inTransaction) {
+			public Either<List<ArtifactDefinition>, StorageOperationStatus> getAdditionalArtifacts(String resourceId, boolean recursively, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version,
-					boolean inTransaction) {
+			public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -337,8 +306,7 @@ public class ComponentOperationTest {
 			}
 
 			@Override
-			public Either<Component, StorageOperationStatus> markComponentToDelete(Component componentToDelete,
-					boolean inTransaction) {
+			public Either<Component, StorageOperationStatus> markComponentToDelete(Component componentToDelete, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -362,29 +330,25 @@ public class ComponentOperationTest {
 			}
 
 			@Override
-			public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version,
-					LifecycleStateEnum targetLifecycle, boolean inTransaction) {
+			public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version, LifecycleStateEnum targetLifecycle, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public <T> Either<T, StorageOperationStatus> getComponent(String id,
-					ComponentParametersView componentParametersView, boolean inTrasnaction) {
+			public <T> Either<T, StorageOperationStatus> getComponent(String id, ComponentParametersView componentParametersView, boolean inTrasnaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters,
-					boolean inTransaction) {
+			public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
-			protected <T> Either<T, StorageOperationStatus> updateComponentFilterResult(T component,
-					boolean inTransaction, ComponentParametersView filterParametersView) {
+			protected <T> Either<T, StorageOperationStatus> updateComponentFilterResult(T component, boolean inTransaction, ComponentParametersView filterParametersView) {
 				// TODO Auto-generated method stub
 				return null;
 			}

@@ -30,10 +30,8 @@ import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration.DistributionNotificationTopicConfig;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.slf4j.Logger;
@@ -47,19 +45,13 @@ public class DistributionNotificationSender {
 
 	private static Logger logger = LoggerFactory.getLogger(DistributionNotificationSender.class.getName());
 
-	// final String BASE_ARTIFACT_URL = "/asdc/v1/catalog/services/%s/%s/";
+	// final String BASE_ARTIFACT_URL = "/sdc/v1/catalog/services/%s/%s/";
 	// final String RESOURCE_ARTIFACT_URL = BASE_ARTIFACT_URL
 	// + "resources/%s/%s/artifacts/%s";
 	// final String SERVICE_ARTIFACT_URL = BASE_ARTIFACT_URL + "artifacts/%s";
 
 	@javax.annotation.Resource
 	InterfaceLifecycleOperation interfaceLifecycleOperation;
-
-	@javax.annotation.Resource
-	protected IServiceOperation serviceOperation;
-
-	@javax.annotation.Resource
-	protected ResourceOperation resourceOperation;
 
 	@javax.annotation.Resource
 	protected ComponentsUtils componentUtils;

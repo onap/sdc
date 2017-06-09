@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "mapRoot": "./",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../dist/out-tsc",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "sourceMap": true,
+    "target": "es5",
+    "typeRoots": [
+      "../node_modules/@types",
+      "./typings"
+    ],
+    "types": [
+      "jquery",
+      "core-js",
+      "node"
+    ]
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ]
+}

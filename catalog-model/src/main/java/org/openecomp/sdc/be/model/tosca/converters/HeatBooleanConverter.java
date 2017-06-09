@@ -39,7 +39,7 @@ public class HeatBooleanConverter implements PropertyValueConverter {
 	@Override
 	public String convert(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
 
-		if (value == null) {
+		if (value == null || value.isEmpty()) {
 			return null;
 		}
 

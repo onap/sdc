@@ -44,7 +44,8 @@ public enum HeatParameterType {
 
 	JSON("json", HeatStringValidator.getInstance(), HeatJsonConverter.getInstance()),
 
-	COMMA_DELIMITED_LIST("comma_delimited_list", HeatCommaDelimitedListValidator.getInstance(), HeatCommaDelimitedListConverter.getInstance());
+	COMMA_DELIMITED_LIST("comma_delimited_list", HeatCommaDelimitedListValidator.getInstance(),
+			HeatCommaDelimitedListConverter.getInstance());
 
 	private String type;
 	private PropertyTypeValidator validator;

@@ -64,13 +64,11 @@ public class TestQueue {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
 					System.out.println("iN SLEEP" + Thread.currentThread());
 					Thread.sleep(10 * 1000);
 					System.out.println("OUT SLEEP");
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -98,7 +96,6 @@ public class TestQueue {
 			try {
 				queue.put("message " + i);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -175,7 +172,6 @@ public class TestQueue {
 			try {
 				Thread.sleep(1 * 1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 
 				for (int i = 0; i < 10; i++) {
 					System.out.println("*************************************************");

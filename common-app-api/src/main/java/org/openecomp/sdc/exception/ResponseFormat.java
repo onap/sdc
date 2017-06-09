@@ -20,6 +20,8 @@
 
 package org.openecomp.sdc.exception;
 
+import javax.ws.rs.core.Response;
+
 /**
  * Nested POJOs to express required JSON format of the error
  * 
@@ -188,4 +190,5 @@ public class ResponseFormat {
 	public String toString() {
 		return "ResponseFormat[" + "status=" + status + ", requestErrorWrapper=" + requestErrorWrapper + ']';
 	}
+	
 }

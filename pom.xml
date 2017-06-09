@@ -336,7 +336,7 @@
 			</activation>
 			<modules>
 				<module>onboarding</module>
-				<!--module>security-utils</module>
+				<module>security-utils</module>
 				<module>common-app-api</module>
 				<module>common-be</module>
 				<module>catalog-dao</module>
@@ -346,9 +346,9 @@
 				<module>catalog-ui</module>
 				<module>catalog-fe</module>
 				<module>asdc-tests</module>
-				<module>test-apis-ci</module>
-				<module>ui-ci</module>
-				<module>sdc-os-chef</module-->
+				<!--<module>test-apis-ci</module>-->
+				<!--<module>ui-ci</module>-->
+				<module>sdc-os-chef</module>
 			</modules>
 
 		</profile>

@@ -20,8 +20,12 @@
 
 package org.openecomp.sdc.common.datastructure;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import fj.data.Either;
 
 /**
  * Class For Functional interfaces And Functional Methods
@@ -32,9 +36,20 @@ import java.util.function.Supplier;
 public class FunctionalInterfaces {
 	private static final int DEFAULT_REDO_INTERVAL_TIME_MS = 50;
 	private static final int DEFAULT_MAX_WAIT_TIME_MS = 10000;
+	 
+	/**
+	 * This is an interface of a List that implements Serializable
+	 * @author mshitrit
+	 *
+	 * @param <T>
+	 */
+	public interface SerializableList<T> extends List<T> , Serializable {
+	}
 
 	/**
 	 * @author mshitrit Consumer that takes two parameters
+	 * @param <T1>
+	 * @param <T2>
 	 */
 	public interface ConsumerTwoParam<T1, T2> {
 		/**
@@ -48,6 +63,9 @@ public class FunctionalInterfaces {
 
 	/**
 	 * @author mshitrit Function that takes two parameters
+	 * @param <T1>
+	 * @param <T2>
+	 * @param <R>
 	 */
 	public interface FunctionTwoParam<T1, T2, R> {
 		/**
@@ -62,6 +80,9 @@ public class FunctionalInterfaces {
 
 	/**
 	 * @author mshitrit Function that throws an exception
+	 * @param <T>
+	 * @param <R>
+	 * @param <E>
 	 */
 	public interface FunctionThrows<T, R, E extends Exception> {
 		/**
@@ -75,6 +96,8 @@ public class FunctionalInterfaces {
 
 	/**
 	 * @author mshitrit Supplier that throws an exception
+	 * @param <R>
+	 * @param <E>
 	 */
 	public interface SupplierThrows<R, E extends Exception> {
 		/**
@@ -88,6 +111,8 @@ public class FunctionalInterfaces {
 
 	/**
 	 * @author mshitrit Consumer that throws an exception
+	 * @param <T>
+	 * @param <E>
 	 */
 	public interface ConsumerThrows<T, E extends Exception> {
 		/**
@@ -101,6 +126,7 @@ public class FunctionalInterfaces {
 
 	/**
 	 * @author mshitrit Runnable that throws an exception
+	 * @param <E>
 	 */
 	public interface RunnableThrows<E extends Exception> {
 		/**
@@ -277,6 +303,41 @@ public class FunctionalInterfaces {
 	public static void sleep(long millis) {
 		swallowException(() -> Thread.sleep(millis));
 
+	}
+
+	/**
+	 * Converts Either containing right value to another either with different
+	 * type of left value and the same type of right value.
+	 * 
+	 * @param eitherToConvert
+	 * @return
+	 */
+	public static <T1,T2,T3> Either<T1,T2> convertEitherRight(Either<T3,T2> eitherToConvert){
+		if( eitherToConvert.isLeft() ){
+			throw new UnsupportedOperationException("Can not convert either right value because it has left value");
+		}
+		else{
+			return Either.right(eitherToConvert.right().value());
+		}
+		
+			
+	}
+	
+	/**
+	 * Converts Either containing left value to another either with different
+	 * type of right value and the same type of left value.
+	 * 
+	 * @param eitherToConvert
+	 * @return
+	 */
+	public static <T1,T2,T3> Either<T1,T2> convertEitherLeft(Either<T1,T3> eitherToConvert){
+		if( eitherToConvert.isLeft() ){
+			throw new UnsupportedOperationException("Can not convert either left value because it has right value");
+		}
+		else{
+			return Either.left(eitherToConvert.left().value());
+		}
+			
 	}
 
 }

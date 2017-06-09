@@ -22,10 +22,7 @@ package org.openecomp.sdc.asdctool.main;
 
 import org.openecomp.sdc.asdctool.impl.DataMigration;
 import org.openecomp.sdc.asdctool.impl.EsToCassandraDataMigrationConfig;
-import org.openecomp.sdc.asdctool.impl.migration.v1604.AppConfig;
-import org.openecomp.sdc.asdctool.impl.migration.v1604.ServiceMigration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaBuilder;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;

@@ -55,7 +55,7 @@ errors:
         messageId: "SVC4002"
     }
 #---------SVC4003------------------------------ 
-# %1 - Users's USER_ID     
+# %1 - Users's USER ID     
     USER_NOT_FOUND: {
         code: 404,
         message: "Error: User '%1' was not found.",
@@ -76,7 +76,7 @@ errors:
         messageId: "SVC4005"
     }
 #---------SVC4006------------------------------ 
-# %1 - Users's USER_ID     
+# %1 - Users's USER ID     
     USER_ALREADY_EXIST: {
         code: 409,
         message: "Error: User with '%1' ID already exists.",
@@ -89,7 +89,7 @@ errors:
         messageId: "SVC4007"
     }
 #---------SVC4008----------------------------- 
-# %1 - Users's userId     
+# %1 - Users's USER ID     
     INVALID_USER_ID: {
         code: 400,
         message: "Error: Invalid userId '%1'.",
@@ -99,7 +99,7 @@ errors:
 # %1 - service/resource
     COMPONENT_MISSING_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. Missing %1 contact id.",
+        message: "Error: Invalid Content. Missing %1 Contact Id.",
         messageId: "SVC4049"
     } 
 #---------SVC4050----------------------------- 
@@ -240,9 +240,9 @@ errors:
 
 #---------SVC4069------------------------------ 
 # %1 - Service/Resource/Product
-    COMPONENT_INVALID_CONTACT_ID: {
+    COMPONENT_INVALID_CONTACT: {
         code: 400,
-        message: "Error: Invalid Content. %1 contact id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
+        message: "Error: Invalid Content. %1 Contact Id should be in format 'mnnnnnn' or 'aannna' or 'aannnn', where m=m ,a=a-zA-Z and n=0-9",
         messageId: "SVC4069"
     }
 #---------SVC4070------------------------------ 
@@ -506,7 +506,7 @@ errors:
 #-----------SVC4130---------------------------
     INVALID_PROJECT_CODE: {
         code: 400,
-        message: "Error: Invalid Content. PROJECT_CODE number must be numeric from 5 up to 10 digits.",
+        message: "Error: Invalid Content. PROJECT_CODE must be from 3 up to 50 characters.",
         messageId: "SVC4130"
     }
 #-----------SVC4131---------------------------
@@ -1055,7 +1055,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4567------------------------------ 
-# %1 - "User Name and UserId"   
+# %1 - "User Name and USER_ID"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1063,7 +1063,7 @@ errors:
         messageId: "SVC4567"
     }
 #---------SVC4568------------------------------ 
-# %1 - "User Name and UserId"   
+# %1 - "User Name and USER_ID"   
 # %2  -"checked-out"/"in-certification"
     CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS: {
         code: 409,
@@ -1139,7 +1139,7 @@ errors:
         messageId: "SVC4580"
     }
 #---------SVC4581------------------------------ 
-# %1 - userId
+# %1 - USER_ID
     INVALID_PRODUCT_CONTACT: {
         code: 400,
         message: "Error: Invalid content. User '%1' cannot be set as Product Contact.",

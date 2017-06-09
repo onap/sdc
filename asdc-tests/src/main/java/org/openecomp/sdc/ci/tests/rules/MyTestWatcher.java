@@ -22,13 +22,13 @@ package org.openecomp.sdc.ci.tests.rules;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.openecomp.sdc.ci.tests.api.SdcTest;
+import org.openecomp.sdc.ci.tests.api.AttSdcTest;
 
 public class MyTestWatcher extends TestWatcher {
 
-	SdcTest odlTest;
+	AttSdcTest odlTest;
 
-	public MyTestWatcher(SdcTest odlTest) {
+	public MyTestWatcher(AttSdcTest odlTest) {
 		this.odlTest = odlTest;
 	}
 
@@ -65,7 +65,7 @@ public class MyTestWatcher extends TestWatcher {
 	protected void starting(Description description) {
 		// System.out.println("protected void starting(Description description)
 		// {");
-		this.odlTest.getLogger().debug("Start running test {}", description.getMethodName());
+		this.odlTest.getLogger().debug("Start running test {}",description.getMethodName());
 	}
 
 	/**
@@ -77,6 +77,6 @@ public class MyTestWatcher extends TestWatcher {
 	protected void finished(Description description) {
 		// System.out.println("protected void finished(Description description)
 		// {");
-		this.odlTest.getLogger().debug("Finish running test {}", description.getMethodName());
+		this.odlTest.getLogger().debug("Finish running test {}",description.getMethodName());
 	}
 }

@@ -62,7 +62,7 @@ public interface Constants {
 	public static final String SERVICE_ARTIFACT_ID_FORMAT = "%s:%s:%s:%s"; // serviceName:serviceVersion:nodeTemplateName:artifactName
 	public static final String CONTENT_DISPOSITION = "content-disposition";
 	public static final String DOWNLOAD_ARTIFACT_LOGIC_ATTR = "downloadArtifactLogic";
-	public static final String SDC_RELEASE_VERSION_ATTR = "SDC-Version";
+	public static final String ASDC_RELEASE_VERSION_ATTR = "ASDC-Version";
 	// public static final String AUDITING_MANAGER = "auditingManager";
 	// public static final String USER_ADMIN_MANAGER = "userAdminManager";
 	public static final String YEAR = "year";
@@ -110,7 +110,8 @@ public interface Constants {
 	public static final String REQUIRED_ARTIFACTS = "requiredArtifacts";
 
 	public static final String ABSTRACT = "abstract";
-	public static final String GLOBAL_SUBSTITUTION_TYPE_SERVICE_TEMPLATE = "Definitions/GlobalSubstitutionTypesServiceTemplate.yaml";
+	public static final String GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE = "Definitions/GlobalSubstitutionTypesServiceTemplate.yaml";
+	public static final String ABSTRACT_SUBSTITUTE_GLOBAL_TYPES_SERVICE_TEMPLATE = "Definitions/AbstractSubstituteGlobalTypesServiceTemplate.yaml";
 
 	public static final String VENDOR_LICENSE_MODEL = "vendor-license-model.xml";
 	public static final String VENDOR_LICENSE_LABEL = "vendorlicense";
@@ -121,6 +122,7 @@ public interface Constants {
 	public static final String VF_LICENSE_LABEL = "vflicense";
 	public static final String VF_LICENSE_DISPLAY_NAME = "VF License";
 	public static final String VF_LICENSE_DESCRIPTION = "VF license file";
-	public static final String ARTIFACTS = "Artifacts/";
 	public static final String GET_INPUT = "get_input";
+	public static final String SERVICE_TEMPLATE_FILE_POSTFIX = "ServiceTemplate.yaml";
+	public static final String UNBOUNDED = "unbounded";
 }

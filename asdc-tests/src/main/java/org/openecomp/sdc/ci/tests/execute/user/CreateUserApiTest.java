@@ -1006,7 +1006,250 @@ public class CreateUserApiTest extends ComponentBaseTest {
 		assertEquals("Check response code after deleting user", 200, deleteOpsUser.getErrorCode().intValue());
 
 	}
-	
+
+	// create user with one optional parameter last name (UserID, Email, Last
+	// Name, Creator details)
+	// expected: role = DESIGNER, first name = null, 201 Created
+	// @Test
+	// public void createUserLastName(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user with one optional parameter role name (UserID, Email, Role
+	// = "TESTER", Creator details)
+	// // expected: first and last name = null, 201 Created
+	// @Test
+	// public void createUserRoleName(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user with two optional parameters first name and role (UserID,
+	// Email, First Name, Role = "ADMIN", Creator details)
+	// // expected: last name = null, 201 Created
+	// @Test
+	// public void createUserFirstNameAndRole(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user with two optional parameters first and last name(UserID,
+	// Email, First Name, Last name, Creator details)
+	// // expected: role = DESIGNER, 201 Created
+	// @Test
+	// public void createUserFirstAndLastName(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	//
+	//
+	//
+	// //
+	// **********************************************************Create*user*failed***************************************************
+	//
+	// //
+	// **********************************************************403***************************************************
+	// // create default user without creator details (UserID, Email)
+	// // expected: 403 Forbidden, error message:"Error : Missing information"
+	// @Test
+	// public void createDefaultUserNonCreatorDetails(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create user with part of creator details (UserID, Email, First name,
+	// Last Name, Role, Part of creator details)
+	// // expected: 403 Forbidden, error message:"Error : Missing information"
+	// @Test
+	// public void createUserPartOfCreatorDetails(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user with full parameter set, non admin creator(UserID, First
+	// Name, Last Name, Email, Role, Creator details)
+	// // expected: 403 Forbidden, error message:
+	// "Error : Restricted operation"
+	// @Test
+	// public void createUserNonAdminCreator(){
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// //
+	// **********************************************************405***************************************************
+	//
+	// // create user with full parameter set by sending http PUT request
+	// (UserID, First Name, Last Name, Email, Role, Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createUserPutRequest(){
+	// // send PUT create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create default user by sending http PUT request (UserID, Email,
+	// Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createDefaultUserPutRequest(){
+	// // send PUT create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create user with full parameter set by sending http DELETE request
+	// (UserID, First Name, Last Name, Email, Role, Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createUserDeleteRequest(){
+	// // send DELETE create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create default user by sending http DELETE request (UserID, Email,
+	// Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createDefaultUserDeleteRequest(){
+	// // send DELETE create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create user with full parameter set by sending http GET request
+	// (UserID, First Name, Last Name, Email, Role, Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createUserGetRequest(){
+	// // send GET create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// // create default user by sending http GET request (UserID, Email,
+	// Creator details)
+	// // expected: 405 not Allowed, error message:
+	// "Error : Method not allowed"
+	// @Test
+	// public void createDefaultUserGetRequest(){
+	// // send GET create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// //
+	// **********************************************************409***************************************************
+	//
+	// // create the same user twice with full parameter set(UserID, First Name,
+	// Last Name, Email, Role, Creator details)
+	// // expected 409 Conflict, error message:
+	// "Error : User with '%s' ID already exists", where: %s - UserId
+	// @Test
+	// public void createSameUserTwice(){
+	// // send POST create user request
+	// // validate data on response
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user twice, first full details (UserID, First Name, Last Name,
+	// Email, Role, Creator details), second default user (UserID, Email, Role,
+	// Creator details)
+	// // expected 409 Conflict, error message:
+	// "Error : User with '%s' ID already exists", where: %s - UserId
+	// @Test
+	// public void createFullThanDefaultUserTwice(){
+	// // send POST create user request
+	//
+	// // validate data on response
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create user twice, first default user (UserID, Email, Role, Creator
+	// details), second full details (UserID, First Name, Last Name, Email,
+	// Role, Creator details)
+	// // expected 409 Conflict, error message:
+	// "Error : User with '%s' ID already exists", where: %s - UserId
+	// @Test
+	// public void createDefaulThanFullUserTwice(){
+	// // send POST create user request
+	//
+	// // validate data on response
+	// // send POST create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	//
+	// //
+	// **********************************************************400***************************************************
+	// // create default user with invalid email address format(UserID, Email,
+	// Creator details)
+	// // expected: 400, error message:
+	// "Error : Invalid Content . Invalid e-mail address '%s'", where %s -
+	// email address
+	// @Test
+	// public void createDefaultUserInvalidEmailAddressFormat(){
+	// // send GET create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// // create an user with invalid role type (UserID, Email,Role = "TESTER-1"
+	// ,Creator details)
+	// // expected: 400, error message:
+	// "Error : Invalid Content . Invalid role '%s'", where %s - role type
+	// @Test
+	// public void createUserInvalidRoleType(){
+	// // send GET create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+	// //
+	// **********************************************************500***************************************************
+	// // create default user when BE is down (UserID, Email, Creator details)
+	// // expected: 500, error message:
+	// "Error : Internal Server Error . Try later again."
+	// @Test
+	// public void createDefaultUserBeNoAccess(){
+	// // send GET create user request
+	// // validate data on response
+	// // check the audit message
+	// }
+	//
+
+	// Benny US570551
+
 	@Test
 	public void createProductManagerUser() throws Exception {
 		String httpCspUserId = "pm1000";
@@ -1184,7 +1427,6 @@ public class CreateUserApiTest extends ComponentBaseTest {
 		noSdncUserDetails.setRole("blabla");
 		noSdncUserDetails.setUserId("bt750h");
 		User expectedProductStrategistUser = new User(userFirstName, userLastName, httpCspUserId, email, role, null);
-
 		DbUtils.deleteFromEsDbByPattern("_all");
 		// create user
 		RestResponse createUserResponse = UserRestUtils.createUser(expectedProductStrategistUser, noSdncUserDetails);

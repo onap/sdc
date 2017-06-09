@@ -40,8 +40,7 @@ public class UserAdminValidator {
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-	//private static final String USER_ID_PATTERN = "[mM]{1}[0-9]{5}|[a-zA-Z]{2}[0-9]{4}|[a-zA-Z]{2}[0-9]{4}|[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{1}";
-	private static final String USER_ID_PATTERN = "^[\\s\\w_.-]{1,50}$";
+	private static final String USER_ID_PATTERN = "\\w{1,25}";
 
 	private UserAdminValidator() {
 		emailPat = Pattern.compile(EMAIL_PATTERN);

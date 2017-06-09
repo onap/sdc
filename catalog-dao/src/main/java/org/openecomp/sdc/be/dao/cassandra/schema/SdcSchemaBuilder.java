@@ -28,12 +28,11 @@ import com.datastax.driver.core.schemabuilder.SchemaStatement;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.*;
 import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.OldExternalApiEventTableDesc;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLContext;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,11 +49,19 @@ public class SdcSchemaBuilder {
 
 	private static Logger log = LoggerFactory.getLogger(SdcSchemaBuilder.class.getName());
 
+	//TODO remove after 1707_OS migration
+	private static void handle1707OSMigration(Map<String, Map<String, List<String>>> cassndraMetadata, Map<String, List<ITableDescription>> schemeData){
+		if(cassndraMetadata.containsKey("attaudit")){
+			List<ITableDescription> list = new ArrayList<>();
+			list.add(new OldExternalApiEventTableDesc());
+			schemeData.put("attaudit", list);
+		}
+		
+	}
 	/**
 	 * the method creates all keyspaces, tables and indexes in case they do not
 	 * already exist. the method can be run multiple times. the method uses the
-	 * internal enums and external configuration for its operation
-	 * 
+	 * internal enums and external configuration for its operation	 * 
 	 * @return true if the create operation was successful
 	 */
 	public static boolean createSchema() {
@@ -62,7 +69,7 @@ public class SdcSchemaBuilder {
 		Session session = null;
 		try {
 			log.info("creating Schema for Cassandra.");
-			cluster = createCluster();
+			cluster = SdcSchemaUtils.createCluster();
 			if (cluster == null) {
 				return false;
 			}
@@ -73,17 +80,18 @@ public class SdcSchemaBuilder {
 				return false;
 			}
 			log.debug("retrived Cassndra metadata.");
-			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(
-					keyspacesMetadateFromCassandra);
+			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
+			Map<String, Map<String, List<String>>> metadataTablesStructure = getMetadataTablesStructure(keyspacesMetadateFromCassandra);
 			Map<String, List<ITableDescription>> schemeData = getSchemeData();
+			//TODO remove after 1707_OS migration
+			handle1707OSMigration(cassndraMetadata, schemeData);
 			log.info("creating Keyspaces.");
 			for (String keyspace : schemeData.keySet()) {
 				if (!createKeyspace(keyspace, cassndraMetadata, session)) {
 					return false;
 				}
 				Map<String, List<String>> keyspaceMetadate = cassndraMetadata.get(keyspace);
-				createTables(schemeData.get(keyspace), keyspaceMetadate, session);
-
+				createTables(schemeData.get(keyspace), keyspaceMetadate, session,metadataTablesStructure.get(keyspace));
 			}
 			return true;
 		} catch (Exception e) {
@@ -106,7 +114,7 @@ public class SdcSchemaBuilder {
 		Session session = null;
 		try {
 			log.info("delete Data from Cassandra.");
-			cluster = createCluster();
+			cluster = SdcSchemaUtils.createCluster();
 			if (cluster == null) {
 				return false;
 			}
@@ -117,11 +125,9 @@ public class SdcSchemaBuilder {
 				return false;
 			}
 			log.debug("retrived Cassndra metadata.");
-			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(
-					keyspacesMetadateFromCassandra);
+			Map<String, Map<String, List<String>>> cassndraMetadata = parseKeyspaceMetadata(keyspacesMetadateFromCassandra);
 			cassndraMetadata.forEach((k, v) -> {
 				if (AuditingTypesConstants.TITAN_KEYSPACE.equals(k)) {
-
 					// session.execute("")
 				} else if (AuditingTypesConstants.ARTIFACT_KEYSPACE.equals(k)) {
 
@@ -147,54 +153,7 @@ public class SdcSchemaBuilder {
 		return false;
 	}
 
-	/**
-	 * the method creates the cluster object using the supplied cassandra nodes
-	 * in the configuration
-	 * 
-	 * @return cluster object our null in case of an invalid configuration
-	 */
-	private static Cluster createCluster() {
-		List<String> nodes = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-				.getCassandraHosts();
-		if (nodes == null) {
-			log.info("no nodes were supplied in configuration.");
-			return null;
-		}
-		log.info("connecting to node:{}.", nodes);
-		Cluster.Builder clusterBuilder = Cluster.builder();
-		nodes.forEach(host -> clusterBuilder.addContactPoint(host));
-
-		clusterBuilder.withMaxSchemaAgreementWaitSeconds(60);
-
-		boolean authenticate = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-				.isAuthenticate();
-		if (authenticate) {
-			String username = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-					.getUsername();
-			String password = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-					.getPassword();
-			if (username == null || password == null) {
-				log.info("authentication is enabled but username or password were not supplied.");
-				return null;
-			}
-			clusterBuilder.withCredentials(username, password);
-		}
-		boolean ssl = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().isSsl();
-		if (ssl) {
-			String truststorePath = ConfigurationManager.getConfigurationManager().getConfiguration()
-					.getCassandraConfig().getTruststorePath();
-			String truststorePassword = ConfigurationManager.getConfigurationManager().getConfiguration()
-					.getCassandraConfig().getTruststorePassword();
-			if (truststorePath == null || truststorePassword == null) {
-				log.info("ssl is enabled but truststorePath or truststorePassword were not supplied.");
-				return null;
-			}
-			System.setProperty("javax.net.ssl.trustStore", truststorePath);
-			System.setProperty("javax.net.ssl.trustStorePassword", truststorePassword);
-			clusterBuilder.withSSL();
-		}
-		return clusterBuilder.build();
-	}
+	
 
 	/**
 	 * the method prcess the metadata retrieved from the cassandra for the
@@ -206,8 +165,7 @@ public class SdcSchemaBuilder {
 	 *            cassndra mmetadata
 	 * @return a map of maps of lists holding parsed info
 	 */
-	private static Map<String, Map<String, List<String>>> parseKeyspaceMetadata(
-			List<KeyspaceMetadata> keyspacesMetadata) {
+	private static Map<String, Map<String, List<String>>> parseKeyspaceMetadata(List<KeyspaceMetadata> keyspacesMetadata) {
 		Map<String, Map<String, List<String>>> cassndraMetadata = keyspacesMetadata.stream()
 				.collect(Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
 						keyspaceMetadata -> keyspaceMetadata.getTables().stream()
@@ -217,16 +175,25 @@ public class SdcSchemaBuilder {
 												.collect(Collectors.toList())))));
 		return cassndraMetadata;
 	}
+	
+	private static Map<String, Map<String, List<String>>> getMetadataTablesStructure(
+			List<KeyspaceMetadata> keyspacesMetadata) {
+		return keyspacesMetadata.stream().collect(
+				Collectors.toMap(keyspaceMetadata -> keyspaceMetadata.getName(),
+								 keyspaceMetadata -> keyspaceMetadata.getTables().stream().collect(
+										 Collectors.toMap(tableMetadata -> tableMetadata.getName(), 
+												 		  tableMetadata -> tableMetadata.getColumns().stream().map(
+												 				  columnMetadata -> columnMetadata.getName().toLowerCase()).collect(
+												 						  Collectors.toList())))));		
+	}
 
 	/**
 	 * the method builds an index name according to a defined logic
 	 * <table>
 	 * _<column>_idx
 	 * 
-	 * @param table
-	 *            table name
-	 * @param column
-	 *            column name
+	 * @param table: table name
+	 * @param column: column name
 	 * @return string name of the index
 	 */
 	private static String createIndexName(String table, String column) {
@@ -236,24 +203,21 @@ public class SdcSchemaBuilder {
 	/**
 	 * the method creats all the tables and indexes thet do not already exist
 	 *
-	 * @param iTableDescriptions
-	 *            a list of table description we want to create
-	 * @param keyspaceMetadate
-	 *            the current tables that exist in the cassandra under this
+	 * @param iTableDescriptions: a list of table description we want to create
+	 * @param keyspaceMetadate: the current tables that exist in the cassandra under this keyspace
+	 * @param session: the session object used for the execution of the query.
+	 * @param existingTablesMetadata 
+	 *			the current tables columns that exist in the cassandra under this
 	 *            keyspace
-	 * @param session
-	 *            the session object used for the execution of the query.
 	 */
-	private static void createTables(List<ITableDescription> iTableDescriptions,
-			Map<String, List<String>> keyspaceMetadate, Session session) {
-
+	private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session, 
+			Map<String, List<String>> existingTablesMetadata) {
 		for (ITableDescription tableDescription : iTableDescriptions) {
 			String tableName = tableDescription.getTableName().toLowerCase();
 			Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
 			log.info("creating tables:{}.", tableName);
 			if (keyspaceMetadate == null || !keyspaceMetadate.keySet().contains(tableName)) {
-				Create create = SchemaBuilder.createTable(tableDescription.getKeyspace(),
-						tableDescription.getTableName());
+				Create create = SchemaBuilder.createTable(tableDescription.getKeyspace(),tableDescription.getTableName());
 				for (ImmutablePair<String, DataType> key : tableDescription.primaryKeys()) {
 					create.addPartitionKey(key.getLeft(), key.getRight());
 				}
@@ -267,12 +231,14 @@ public class SdcSchemaBuilder {
 					create.addColumn(columnName, columnDescription.get(columnName).getLeft());
 				}
 				log.trace("exacuting :{}", create.toString());
-				ResultSet result = session.execute(create);
+				session.execute(create);
 				log.info("table:{} created succsesfully.", tableName);
 			} else {
 				log.info("table:{} already exists skiping.", tableName);
+				alterTable(session, existingTablesMetadata, tableDescription, tableName, columnDescription);
 			}
-			List<String> indexNames = (keyspaceMetadate != null ? keyspaceMetadate.get(tableName) : new ArrayList<>());
+			log.info("keyspacemetdata{}",keyspaceMetadate);
+			List<String> indexNames = (keyspaceMetadate != null && keyspaceMetadate.get(tableName) != null ? keyspaceMetadate.get(tableName) : new ArrayList<>());
 			log.info("table:{} creating indexes.", tableName);
 			for (String columnName : columnDescription.keySet()) {
 				String indexName = createIndexName(tableName, columnName).toLowerCase();
@@ -293,25 +259,44 @@ public class SdcSchemaBuilder {
 	}
 
 	/**
+	 * check if there are new columns that were added to definition but don't exist in DB
+	 * @param session
+	 * @param existingTablesMetadata
+	 * @param tableDescription
+	 * @param tableName
+	 * @param columnDescription
+	 */
+	private static void alterTable(Session session, Map<String, List<String>> existingTablesMetadata,
+			ITableDescription tableDescription, String tableName,
+			Map<String, ImmutablePair<DataType, Boolean>> columnDescription) {
+		List<String> definedTableColumns = existingTablesMetadata.get(tableName);
+		//add column to casandra if was added to table definition
+		for (Map.Entry<String, ImmutablePair<DataType, Boolean>> column : columnDescription.entrySet()) {
+			String columnName = column.getKey();
+			if (!definedTableColumns.contains(columnName.toLowerCase())){
+				log.info("Adding new column {} to the table {}", columnName,tableName);
+				Alter alter = SchemaBuilder.alterTable(tableDescription.getKeyspace(),tableDescription.getTableName());
+				SchemaStatement addColumn = alter.addColumn(columnName).type(column.getValue().getLeft());
+				log.trace("exacuting :{}", addColumn.toString());
+				session.execute(addColumn);						
+			}
+		}
+	}
+
+	/**
 	 * the method create the keyspace in case it does not already exists the
 	 * method uses configurtion to select the needed replication strategy
 	 * 
-	 * @param keyspace
-	 *            name of the keyspace we want to create
-	 * @param cassndraMetadata
-	 *            cassndra metadata
-	 * @param session
-	 *            the session object used for the execution of the query.
+	 * @param keyspace: name of the keyspace we want to create
+	 * @param cassndraMetadata: cassndra metadata
+	 * @param session: the session object used for the execution of the query.
 	 * @return true in case the operation was successful
 	 */
-	private static boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata,
-			Session session) {
-		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = ConfigurationManager
-				.getConfigurationManager().getConfiguration().getCassandraConfig().getKeySpaces();
+	private static boolean createKeyspace(String keyspace, Map<String, Map<String, List<String>>> cassndraMetadata, Session session) {
+		List<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfigList = ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().getKeySpaces();
 		log.info("creating keyspace:{}.", keyspace);
 		if (!cassndraMetadata.keySet().contains(keyspace)) {
-			Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream()
-					.filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();
+			Optional<Configuration.CassandrConfig.KeyspaceConfig> keyspaceConfig = keyspaceConfigList.stream().filter(keyspaceInfo -> keyspace.equalsIgnoreCase(keyspaceInfo.getName())).findFirst();
 			if (keyspaceConfig.isPresent()) {
 				Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo = keyspaceConfig.get();
 				String createKeyspaceQuery = createKeyspaceQuereyString(keyspace, keyspaceInfo);
@@ -356,7 +341,7 @@ public class SdcSchemaBuilder {
 	}
 
 	/**
-	 * the methoed creates the query string for the given keyspace the methoed
+ 	 * the methoed creates the query string for the given keyspace the methoed
 	 * valides the given data according the the requirments of the replication
 	 * strategy SimpleStrategy: "CREATE KEYSPACE IF NOT EXISTS
 	 * <keyspaceName></keyspaceName> WITH replication =
@@ -370,11 +355,9 @@ public class SdcSchemaBuilder {
 	 *            configuration info regurding the replication of the keyspace
 	 * @return a querey string for the creation of the keyspace
 	 */
-	private static String createKeyspaceQuereyString(String keyspace,
-			Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo) {
+	private static String createKeyspaceQuereyString(String keyspace, Configuration.CassandrConfig.KeyspaceConfig keyspaceInfo) {
 		String query = null;
-		if (ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName()
-				.equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
+		if (ReplicationStrategy.NETWORK_TOPOLOGY_STRATEGY.getName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
 			List<String> dcList = keyspaceInfo.getReplicationInfo();
 			if (dcList.size() % 2 != 0) {
 				log.error("the supplied replication info is in valid expected dc1,2,dc2,2 etc received:{}", dcList);
@@ -389,8 +372,7 @@ public class SdcSchemaBuilder {
 			}
 
 			query = String.format(CREATE_KEYSPACE_NETWORK_TOPOLOGY_STRATEGY, keyspace, sb.toString());
-		} else if (ReplicationStrategy.SIMPLE_STRATEGY.getName()
-				.equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
+		} else if (ReplicationStrategy.SIMPLE_STRATEGY.getName().equalsIgnoreCase(keyspaceInfo.getReplicationStrategy())) {
 			List<String> dcList = keyspaceInfo.getReplicationInfo();
 			if (dcList.size() != 1) {
 				log.error("the supplied replication info is in valid expected <number> etc received:{}", dcList);

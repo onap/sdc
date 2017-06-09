@@ -20,12 +20,15 @@
 
 package org.openecomp.sdc.be.model;
 
+import org.apache.commons.lang.StringUtils;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+
 public class GroupProperty extends PropertyDefinition {
 
 	/**
 	 * current value
 	 */
-	private String value;
+//	private String value;
 
 	/**
 	 * The unique is of Group property on graph. If it is null, then the
@@ -40,24 +43,19 @@ public class GroupProperty extends PropertyDefinition {
 
 	public GroupProperty(PropertyDefinition pd, String value, String valueUniqueUid) {
 		super(pd);
-		this.value = value;
+		setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
 	public GroupProperty(GroupProperty other) {
 		super(other);
 		if (other != null) {
-			this.value = other.getValue();
+			setValue(other.getValue());
 			this.valueUniqueUid = other.getValueUniqueUid();
 		}
 	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
+	public GroupProperty(PropertyDataDefinition other) {
+		super(other);
 	}
 
 	public String getValueUniqueUid() {
@@ -70,7 +68,7 @@ public class GroupProperty extends PropertyDefinition {
 
 	@Override
 	public String toString() {
-		return "GroupProperty [ " + super.toString() + " , value=" + value + ", valueUniqueUid = " + valueUniqueUid
+		return "GroupProperty [ " + super.toString() + ", valueUniqueUid = " + valueUniqueUid
 				+ " ]";
 	}
 }

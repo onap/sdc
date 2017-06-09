@@ -23,10 +23,11 @@ package org.openecomp.sdc.be.datatypes.enums;
 public enum OriginTypeEnum {
 	PRODUCT("Product", "Product", "product instance", ComponentTypeEnum.PRODUCT), 
 	SERVICE("Service", "Service", "service instance", ComponentTypeEnum.SERVICE), 
-	VF("VF", "VF (Virtual Function)", "resource instance", ComponentTypeEnum.RESOURCE), 
-	VFC("VFC", "VFC (Virtual Function Component)","resource instance",ComponentTypeEnum.RESOURCE),
+	VF("VF", "VF (Virtual Function)", "resource instance", ComponentTypeEnum.RESOURCE),
+	VFC("VFC", "VFC (Virtual Function Component)", "resource instance", ComponentTypeEnum.RESOURCE),
 	CP("CP", "CP (Connection Point)", "resource instance", ComponentTypeEnum.RESOURCE), 
-	VL("VL", "VL (Virtual Link)", "resource instance", ComponentTypeEnum.RESOURCE);
+	VL("VL", "VL (Virtual Link)", "resource instance", ComponentTypeEnum.RESOURCE),
+	VFCMT("VFCMT", "VFCMT (VFC Monitoring Template)", "resource instance", ComponentTypeEnum.RESOURCE);
 
 	private String value;
 	private String displayValue;

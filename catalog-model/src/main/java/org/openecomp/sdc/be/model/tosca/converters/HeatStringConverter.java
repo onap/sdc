@@ -39,12 +39,14 @@ public class HeatStringConverter implements PropertyValueConverter {
 
 	@Override
 	public String convert(String original, String innerType, Map<String, DataTypeDefinition> dataTypes) {
-		String coverted = ValidationUtils.removeNoneUtf8Chars(original);
-		coverted = ValidationUtils.normaliseWhitespace(coverted);
-		coverted = ValidationUtils.stripOctets(coverted);
-		coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
-		coverted = coverted.replaceAll("\"", "").replaceAll("\'", "");
-
+		String coverted = null;
+		if(original != null){
+			coverted = ValidationUtils.removeNoneUtf8Chars(original);
+			coverted = ValidationUtils.normaliseWhitespace(coverted);
+			coverted = ValidationUtils.stripOctets(coverted);
+			coverted = ValidationUtils.removeHtmlTagsOnly(coverted);
+			coverted = coverted.replaceAll("\"", "").replaceAll("\'", "");
+		}
 		return coverted;
 	}
 

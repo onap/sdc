@@ -1,16 +1,23 @@
 
-cluster.name: elasticsearch_1_5_2
-  
+cluster.name: elasticsearch
+
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.enabled: true
 discovery.zen.ping.unicast.hosts: elasticsearch_host
 
 http.cors.enabled: true
-#plugin.types: "DeleteByQueryPlugin"
-#path.home: "/home/vagrant/catalog-be/config"
+
+path.home: "/home/vagrant/catalog-be/config"
 
 elasticSearch.transportclient: true
 
 transport.client.initial_nodes:
    - elasticsearch_host:9300
+
+#shield.user: asdc:Aa12345
+#shield.ssl.keystore.path: "/vagrant/install/resources/catalog-be/keystore/es-client.jks"
+#shield.ssl.keystore.password: Aa123456
+#shield.transport.ssl: true
 
 ##################### Elasticsearch Configuration Example #####################
 
@@ -157,7 +164,6 @@ index.number_of_replicas: 0
 # Path to directory containing configuration (this file and logging.yml):
 #
 path.conf: /src/test/resources
-#path.home: /src/test/resources
 
 # Path to directory where to store index data allocated for this node.
 #

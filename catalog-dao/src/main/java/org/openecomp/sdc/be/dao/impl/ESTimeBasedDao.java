@@ -99,7 +99,7 @@ public abstract class ESTimeBasedDao {
 				res = ActionStatus.GENERAL_ERROR;
 			}
 		} catch (Exception e) {
-			log.error("Couldn't serialize object of type " + typeName + " , error:", e);
+			log.error("Couldn't serialize object of type {} | error:", typeName, e);
 			res = ActionStatus.GENERAL_ERROR;
 		}
 		return res;
@@ -236,7 +236,7 @@ public abstract class ESTimeBasedDao {
 					hits.add(event);
 				} catch (JSONException e) {
 					log.warn("failed to parse hit from audit index. error: {}", e.getMessage());
-					log.debug("failed to parse hit from audit. hit = {} {}", hit, e);
+					log.debug("failed to parse hit from audit. hit = {}", hit, e);
 				}
 			}
 			return hits;

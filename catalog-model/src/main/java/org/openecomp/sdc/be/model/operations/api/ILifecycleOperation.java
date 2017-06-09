@@ -33,32 +33,23 @@ public interface ILifecycleOperation {
 
 	public ResourceOperation getResourceOperation();
 
-	public Either<User, StorageOperationStatus> getComponentOwner(String resourceId, NodeTypeEnum nodeType,
-			boolean inTransaction);
+	public Either<User, StorageOperationStatus> getComponentOwner(String resourceId, NodeTypeEnum nodeType, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> checkinComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> checkinComponent(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> requestCertificationComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> requestCertificationComponent(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> startComponentCertification(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> startComponentCertification(NodeTypeEnum nodeType, Component component, User modifier, User owner, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> checkoutComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User currentOwner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> checkoutComponent(NodeTypeEnum nodeType, Component component, User modifier, User currentOwner, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> certifyComponent(NodeTypeEnum nodeType,
-			Component component, User modifier, User currentOwner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> certifyComponent(NodeTypeEnum nodeType, Component component, User modifier, User currentOwner, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> cancelOrFailCertification(NodeTypeEnum nodeType,
-			Component component, User modifier, User owner, LifecycleStateEnum nextState, boolean b);
+	public Either<? extends Component, StorageOperationStatus> cancelOrFailCertification(NodeTypeEnum nodeType, Component component, User modifier, User owner, LifecycleStateEnum nextState, boolean b);
 
-	public Either<Boolean, StorageOperationStatus> deleteOldComponentVersions(NodeTypeEnum nodeType,
-			String componentName, String uuid, boolean inTransaction);
+	public Either<Boolean, StorageOperationStatus> deleteOldComponentVersions(NodeTypeEnum nodeType, String componentName, String uuid, boolean inTransaction);
 
-	public Either<? extends Component, StorageOperationStatus> undoCheckout(NodeTypeEnum nodeType, Component resource,
-			User modifier, User currentOwner, boolean inTransaction);
+	public Either<? extends Component, StorageOperationStatus> undoCheckout(NodeTypeEnum nodeType, Component resource, User modifier, User currentOwner, boolean inTransaction);
 
 	public ComponentOperation getComponentOperation(NodeTypeEnum componentType);
 

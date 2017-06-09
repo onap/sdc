@@ -53,9 +53,9 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintSerialiser;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
@@ -97,13 +97,11 @@ public class PropertyServlet extends BeGenericServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		log.debug("modifier id is {}", userId);
-		log.debug("data is {}", data);
+		log.debug("Start handle request of {} modifier id is {} data is {}", url, userId, data);
 
 		try {
 			// convert json to PropertyDefinition
-			Either<Map<String, PropertyDefinition>, ActionStatus> either = getPropertyModel(data);
+			Either<Map<String, PropertyDefinition>, ActionStatus> either = getPropertyModel(resourceId, data);
 			if (either.isRight()) {
 				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(either.right().value());
 				return buildErrorResponse(responseFormat);
@@ -156,8 +154,7 @@ public class PropertyServlet extends BeGenericServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		log.debug("modifier id is {}", userId);
+		log.debug("Start handle request of {}, modifier id is {}", url, userId);
 
 		try {
 
@@ -195,19 +192,18 @@ public class PropertyServlet extends BeGenericServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
-		log.debug("modifier id is {}", userId);
+		log.debug("Start handle request of {} modifier id is {}", url, userId);
 
 		try {
 
 			// delete the property
 			PropertyBusinessLogic businessLogic = getPropertyBL(context);
-			Either<EntryData<String, PropertyDefinition>, ResponseFormat> status = businessLogic.deleteProperty(resourceId, propertyId, userId);
+			Either<Entry<String, PropertyDefinition>, ResponseFormat> status = businessLogic.deleteProperty(resourceId, propertyId, userId);
 			if (status.isRight()) {
 				log.debug("Failed to delete Property. Reason - ", status.right().value());
 				return buildErrorResponse(status.right().value());
 			}
-			EntryData<String, PropertyDefinition> property = status.left().value();
+			Entry<String, PropertyDefinition> property = status.left().value();
 			String name = property.getKey();
 			PropertyDefinition propertyDefinition = property.getValue();
 
@@ -216,7 +212,6 @@ public class PropertyServlet extends BeGenericServlet {
 			return buildOkResponse(responseFormat, propertyToJson(property));
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete Property");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Property");
 			log.debug("delete property failed with exception", e);
 			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
@@ -247,7 +242,7 @@ public class PropertyServlet extends BeGenericServlet {
 
 		try {
 			// convert json to PropertyDefinition
-			Either<Map<String, PropertyDefinition>, ActionStatus> either = getPropertyModel(data);
+			Either<Map<String, PropertyDefinition>, ActionStatus> either = getPropertyModel(resourceId, data);
 			if (either.isRight()) {
 				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(either.right().value());
 				return buildErrorResponse(responseFormat);
@@ -285,54 +280,7 @@ public class PropertyServlet extends BeGenericServlet {
 		}
 	}
 
-	// private String propertyToJsonUi(Map.Entry<String, PropertyDefinition>
-	// property) {
-	// String name = property.getKey();
-	// PropertyDefinition propertyDefinition = property.getValue();
-	// JSONObject root = new JSONObject();
-	// root.put("type", propertyDefinition.getType());
-	// root.put("source", propertyDefinition.getDefaultValue());
-	// root.put("name", name);
-	// root.put("description", propertyDefinition.getDescription());
-	// root.put("uniqueId", propertyDefinition.getUniqueId());
-	// return root.toString();
-	//
-	// }
-	//
-
-	// private Either<String ,ActionStatus> getJsonModel(String data){
-	// Either<UiProperty,ActionStatus> uiPropertyEither = getUiProperty(data);
-	// if (uiPropertyEither.isRight()){
-	// log.error("Property conetnt is invalid - {}",data);
-	// return Either.right(ActionStatus.INVALID_CONTENT);
-	// }
-	// UiProperty uiProperty = uiPropertyEither.left().value();
-	// String json = convertUiPropertyToJsonModel(uiProperty);
-	// return Either.left(json);
-	// }
-	//
-
-	// private String convertUiPropertyToJsonModel(UiProperty uiProperty) {
-	// JSONObject root = new JSONObject();
-	// JSONObject propertyD = new JSONObject();
-	// propertyD.put("type",uiProperty.getType());
-	// propertyD.put("required",false);
-	// propertyD.put("description",uiProperty.getDescription());
-	// propertyD.put("isPassword",false);
-	// propertyD.put("defaultValue",uiProperty.getSource());
-	// JSONArray jsonArr = new JSONArray();
-	// JSONArray jsonR = new JSONArray();
-	// jsonR.add(100);
-	// jsonR.add(500);
-	// JSONObject o = new JSONObject();
-	// o.put("inRange", jsonR);
-	// jsonArr.add(o);
-	// propertyD.put("constraints",jsonArr);
-	// root.put(uiProperty.getName(), propertyD);
-	// return root.toString();
-	// }
-
-	private Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String data) {
+	private Either<Map<String, PropertyDefinition>, ActionStatus> getPropertyModel(String resourceId, String data) {
 		JSONParser parser = new JSONParser();
 		JSONObject root;
 		try {
@@ -353,7 +301,7 @@ public class PropertyServlet extends BeGenericServlet {
 				PropertyDefinition propertyDefinition = convertJsonToObject.left().value();
 				// PropertyDefinition propertyDefinition =
 				// gson.fromJson(jsonString , PropertyDefinition.class);
-				String uniqueId = UniqueIdBuilder.buildPropertyUniqueId("resourceId", (String) propertyName);
+				String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(resourceId, (String) propertyName);
 				propertyDefinition.setUniqueId(uniqueId);
 				properties.put(propertyName, propertyDefinition);
 			}
@@ -384,54 +332,7 @@ public class PropertyServlet extends BeGenericServlet {
 		}
 	}
 
-	// private Either<Map<String,PropertyDefinition>,ActionStatus>
-	// getProperty(String data){
-	// Type constraintType = new TypeToken<PropertyConstraint>() {}.getType();
-	// PropertyConstraintDeserialiser propertyConstraintDeserialiser = new
-	// PropertyConstraintDeserialiser();
-	// Gson gson = new
-	// GsonBuilder().registerTypeAdapter(constraintType,propertyConstraintDeserialiser).create();
-	// JSONParser parser = new JSONParser();
-	// JSONObject root;
-	// try {
-	// Map<String,PropertyDefinition> properties = new
-	// HashMap<String,PropertyDefinition>();
-	// root = (JSONObject) parser.parse(data);
-	// Set keySet = root.keySet();
-	// for (Object propertyName : keySet){
-	// JSONObject val = (JSONObject) root.get(propertyName);
-	// String jsonString = val.toJSONString();
-	// PropertyDefinition propertyDefinition = gson.fromJson(jsonString ,
-	// PropertyDefinition.class);
-	// String uniqueId = UniqueIdBuilder.buildPropertyUniqueId("resourceId",
-	// (String)propertyName);
-	// propertyDefinition.setUniqueId(uniqueId);
-	// properties.put((String)propertyName,propertyDefinition);
-	// }
-	// return Either.left(properties);
-	// } catch (ParseException e) {
-	// log.error("Property conetnt is invalid - {}",data);
-	// return Either.right(ActionStatus.INVALID_CONTENT);
-	// }
-	// }
-	//
-	// private Either<UiProperty, ActionStatus> getUiProperty(String data) {
-	// try{
-	// Gson gson = new Gson();
-	// UiProperty uiProperty = gson.fromJson(data, UiProperty.class);
-	// return Either.left(uiProperty);
-	// }catch(JsonSyntaxException e){
-	// log.warn("Problem create UiProperty from {}",data);
-	// log.debug("Problem create UiProperty from {}",data,e);
-	// return Either.right(ActionStatus.INVALID_CONTENT);
-	// }
-	// }
-
 	private String propertyToJson(Map.Entry<String, PropertyDefinition> property) {
-		// Type constraintType = new TypeToken<PropertyConstraint>()
-		// {}.getType();
-		// Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new
-		// PropertyConstraintDeserialiser()).create();
 		JSONObject root = new JSONObject();
 		String propertyName = property.getKey();
 		PropertyDefinition propertyDefinition = property.getValue();
@@ -461,30 +362,13 @@ public class PropertyServlet extends BeGenericServlet {
 
 	}
 
-	// private JSONObject getPropertyDefinitionJSONObject(PropertyDefinition
-	// propertyDefinition) {
-	// JSONObject root = new JSONObject();
-	// root.put("type", propertyDefinition.getType());
-	// root.put("required", propertyDefinition.isRequired());
-	// root.put("defaultValue", propertyDefinition.getDefaultValue());
-	// root.put("description", propertyDefinition.getDescription());
-	// root.put("isPassword", propertyDefinition.isPassword());
-	// List<PropertyConstraint> constraints =
-	// propertyDefinition.getConstraints();
-	// for (PropertyConstraint p : constraints){
-	// p.toString();
-	// }
-	// root.put("constraints", propertyDefinition.getConstraints());
-	// return root;
-	// }
-
 	private <T> Either<T, ActionStatus> convertJsonToObject(String data, Class<T> clazz) {
 		T t = null;
 		Type constraintType = new TypeToken<PropertyConstraint>() {
 		}.getType();
 		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintDeserialiser()).create();
 		try {
-			log.trace("convert json to object. json=\n{}", data);
+			log.trace("convert json to object. json=\n {}", data);
 			t = gson.fromJson(data, clazz);
 			if (t == null) {
 				log.info("object is null after converting from json");
@@ -504,7 +388,7 @@ public class PropertyServlet extends BeGenericServlet {
 		}.getType();
 		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType, new PropertyConstraintSerialiser()).create();
 		try {
-			log.trace("convert object to json. propertyDefinition={}", propertyDefinition.toString());
+			log.trace("convert object to json. propertyDefinition= {}", propertyDefinition.toString());
 			String json = gson.toJson(propertyDefinition);
 			if (json == null) {
 				log.info("object is null after converting to json");

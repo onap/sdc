@@ -45,7 +45,8 @@ public class ConsumerRestUtils extends BaseRestUtils {
 	private static Long expectedsLastupdatedtime;
 	private static Long expectedLastAuthenticationTime;
 
-	public static RestResponse createConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse createConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails)
+			throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort());
@@ -63,14 +64,17 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		RestResponse createConsumerResponse = http.httpSendPost(url, userBodyJson, headersMap);
 		if (createConsumerResponse.getErrorCode() == STATUS_CODE_CREATED) {
 			ConsumerDataDefinition getConsumerDataObject = parseComsumerResp(createConsumerResponse);
-			consumerDataDefinition.setConsumerDetailsLastupdatedtime(getConsumerDataObject.getConsumerDetailsLastupdatedtime());
-			consumerDataDefinition.setConsumerLastAuthenticationTime(getConsumerDataObject.getConsumerLastAuthenticationTime());
+			consumerDataDefinition
+					.setConsumerDetailsLastupdatedtime(getConsumerDataObject.getConsumerDetailsLastupdatedtime());
+			consumerDataDefinition
+					.setConsumerLastAuthenticationTime(getConsumerDataObject.getConsumerLastAuthenticationTime());
 			consumerDataDefinition.setLastModfierAtuid(getConsumerDataObject.getLastModfierAtuid());
 		}
 		return createConsumerResponse;
 	}
 
-	public static RestResponse createConsumerHttpCspAtuUidIsMissing(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse createConsumerHttpCspAtuUidIsMissing(ConsumerDataDefinition consumerDataDefinition,
+			User sdncModifierDetails) throws Exception {
 
 		Config config = Utils.getConfig();
 		String url = String.format(Urls.CREATE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort());
@@ -86,17 +90,21 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		RestResponse createConsumerResponse = http.httpSendPost(url, userBodyJson, headersMap);
 		if (createConsumerResponse.getErrorCode() == STATUS_CODE_CREATED) {
 			ConsumerDataDefinition getConsumerDataObject = parseComsumerResp(createConsumerResponse);
-			consumerDataDefinition.setConsumerDetailsLastupdatedtime(getConsumerDataObject.getConsumerDetailsLastupdatedtime());
-			consumerDataDefinition.setConsumerLastAuthenticationTime(getConsumerDataObject.getConsumerLastAuthenticationTime());
+			consumerDataDefinition
+					.setConsumerDetailsLastupdatedtime(getConsumerDataObject.getConsumerDetailsLastupdatedtime());
+			consumerDataDefinition
+					.setConsumerLastAuthenticationTime(getConsumerDataObject.getConsumerLastAuthenticationTime());
 			consumerDataDefinition.setLastModfierAtuid(getConsumerDataObject.getLastModfierAtuid());
 		}
 		return createConsumerResponse;
 	}
 
-	public static RestResponse deleteConsumerHttpCspAtuUidIsMissing(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse deleteConsumerHttpCspAtuUidIsMissing(ConsumerDataDefinition consumerDataDefinition,
+			User sdncModifierDetails) throws Exception {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(), consumerDataDefinition.getConsumerName());
+		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(),
+				consumerDataDefinition.getConsumerName());
 
 		String userId = sdncModifierDetails.getUserId();
 		Map<String, String> headersMap = prepareHeadersMap(userId);
@@ -124,10 +132,12 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		return null;
 	}
 
-	public static RestResponse deleteConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse deleteConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails)
+			throws Exception {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(), consumerDataDefinition.getConsumerName());
+		String url = String.format(Urls.DELETE_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(),
+				consumerDataDefinition.getConsumerName());
 
 		String userId = sdncModifierDetails.getUserId();
 
@@ -138,10 +148,12 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		return deleteConsumerResponse;
 	}
 
-	public static RestResponse getConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails) throws Exception {
+	public static RestResponse getConsumer(ConsumerDataDefinition consumerDataDefinition, User sdncModifierDetails)
+			throws Exception {
 
 		Config config = Utils.getConfig();
-		String url = String.format(Urls.GET_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(), consumerDataDefinition.getConsumerName());
+		String url = String.format(Urls.GET_CONSUMER, config.getCatalogBeHost(), config.getCatalogBePort(),
+				consumerDataDefinition.getConsumerName());
 
 		String userId = sdncModifierDetails.getUserId();
 
@@ -152,7 +164,8 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		return getConsumerResponse;
 	}
 
-	public static void validateConsumerReqVsResp(ConsumerDataDefinition consumerDefinition, ConsumerDataDefinition getConsumerDataObject) {
+	public static void validateConsumerReqVsResp(ConsumerDataDefinition consumerDefinition,
+			ConsumerDataDefinition getConsumerDataObject) {
 
 		String expected;
 
@@ -169,10 +182,12 @@ public class ConsumerRestUtils extends BaseRestUtils {
 		assertEquals("consumer Salt - ", expected, getConsumerDataObject.getConsumerSalt());
 
 		expectedsLastupdatedtime = consumerDefinition.getConsumerDetailsLastupdatedtime();
-		assertEquals("consumer Last updated time - ", expectedsLastupdatedtime, getConsumerDataObject.getConsumerDetailsLastupdatedtime());
+		assertEquals("consumer Last updated time - ", expectedsLastupdatedtime,
+				getConsumerDataObject.getConsumerDetailsLastupdatedtime());
 
 		expectedLastAuthenticationTime = consumerDefinition.getConsumerLastAuthenticationTime();
-		assertEquals("consumer Last authentication time - ", expectedLastAuthenticationTime, getConsumerDataObject.getConsumerLastAuthenticationTime());
+		assertEquals("consumer Last authentication time - ", expectedLastAuthenticationTime,
+				getConsumerDataObject.getConsumerLastAuthenticationTime());
 	}
 
 	///// New
@@ -190,17 +205,41 @@ public class ConsumerRestUtils extends BaseRestUtils {
 	}
 
 	/*
-	 * protected void resourceArtifatAuditSuccess(String action, ArtifactReqDetails artifact, ResourceReqDetails resourceDetails , User user) throws Exception { ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject =
-	 * Convertor.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), user); String auditAction = action; expectedResourceAuditJavaObject.setAction(auditAction); expectedResourceAuditJavaObject.setPrevState("");
-	 * expectedResourceAuditJavaObject.setPrevVersion(""); expectedResourceAuditJavaObject.setCurrState((LifecycleStateEnum. NOT_CERTIFIED_CHECKOUT).toString()); expectedResourceAuditJavaObject.setStatus("200");
-	 * expectedResourceAuditJavaObject.setDesc("OK"); expectedResourceAuditJavaObject.setArtifactName(artifact.getArtifactName( )); AuditUtils.validateAudit(expectedResourceAuditJavaObject, auditAction, null); }
+	 * protected void resourceArtifatAuditSuccess(String action,
+	 * ArtifactReqDetails artifact, ResourceReqDetails resourceDetails , User
+	 * user) throws Exception { ExpectedResourceAuditJavaObject
+	 * expectedResourceAuditJavaObject =
+	 * Convertor.constructFieldsForAuditValidation(resourceDetails,
+	 * resourceDetails.getVersion(), user); String auditAction = action;
+	 * expectedResourceAuditJavaObject.setAction(auditAction);
+	 * expectedResourceAuditJavaObject.setPrevState("");
+	 * expectedResourceAuditJavaObject.setPrevVersion("");
+	 * expectedResourceAuditJavaObject.setCurrState((LifecycleStateEnum.
+	 * NOT_CERTIFIED_CHECKOUT).toString());
+	 * expectedResourceAuditJavaObject.setStatus("200");
+	 * expectedResourceAuditJavaObject.setDesc("OK");
+	 * expectedResourceAuditJavaObject.setArtifactName(artifact.getArtifactName(
+	 * )); AuditUtils.validateAudit(expectedResourceAuditJavaObject,
+	 * auditAction, null); }
 	 */
 
 	/*
-	 * protected void resourceArtifatValidateAuditWithErrorMessage(String actionStatus, ResourceReqDetails resourceDetails, String auditAction, String setCurrState, Object ... variables)throws Exception { ErrorInfo errorInfo =
-	 * utils.parseYaml(actionStatus); ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject = Convertor.constructFieldsForAuditValidation(resourceDetails, resourceDetails.getVersion(), sdncUserDetails);
-	 * expectedResourceAuditJavaObject.setAction(auditAction); expectedResourceAuditJavaObject.setPrevState(""); expectedResourceAuditJavaObject.setPrevVersion(""); expectedResourceAuditJavaObject.setCurrState(setCurrState);
-	 * expectedResourceAuditJavaObject.setStatus(errorInfo.getCode().toString()) ; expectedResourceAuditJavaObject.setDesc(errorInfo.getAuditDesc(variables) ); expectedResourceAuditJavaObject.setArtifactName("");
-	 * AuditUtils.validateAudit(expectedResourceAuditJavaObject, auditAction, null); }
+	 * protected void resourceArtifatValidateAuditWithErrorMessage(String
+	 * actionStatus, ResourceReqDetails resourceDetails, String auditAction,
+	 * String setCurrState, Object ... variables)throws Exception { ErrorInfo
+	 * errorInfo = utils.parseYaml(actionStatus);
+	 * ExpectedResourceAuditJavaObject expectedResourceAuditJavaObject =
+	 * Convertor.constructFieldsForAuditValidation(resourceDetails,
+	 * resourceDetails.getVersion(), sdncUserDetails);
+	 * expectedResourceAuditJavaObject.setAction(auditAction);
+	 * expectedResourceAuditJavaObject.setPrevState("");
+	 * expectedResourceAuditJavaObject.setPrevVersion("");
+	 * expectedResourceAuditJavaObject.setCurrState(setCurrState);
+	 * expectedResourceAuditJavaObject.setStatus(errorInfo.getCode().toString())
+	 * ;
+	 * expectedResourceAuditJavaObject.setDesc(errorInfo.getAuditDesc(variables)
+	 * ); expectedResourceAuditJavaObject.setArtifactName("");
+	 * AuditUtils.validateAudit(expectedResourceAuditJavaObject, auditAction,
+	 * null); }
 	 */
 }

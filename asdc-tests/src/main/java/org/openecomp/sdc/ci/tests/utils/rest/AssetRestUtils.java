@@ -24,6 +24,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +37,14 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.config.Config;
 import org.openecomp.sdc.ci.tests.datatypes.ArtifactAssetStructure;
@@ -68,7 +71,8 @@ public class AssetRestUtils extends BaseRestUtils {
 	static Gson gson = new Gson();
 	static ObjectMapper objectMapper = new ObjectMapper();
 
-	static Logger logger = LoggerFactory.getLogger(UserRestUtils.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(UserRestUtils.class.getName());
+
 	static final String contentTypeHeaderData = "application/json";
 	static final String acceptHeaderDate = "application/json";
 	static final String basicAuthentication = "Basic Y2k6MTIzNDU2";
@@ -87,9 +91,34 @@ public class AssetRestUtils extends BaseRestUtils {
 		httpGet.addHeader(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
 		httpGet.addHeader(HttpHeaderEnum.AUTHORIZATION.getValue(), basicAuthentication);
 
-		logger.debug("Send GET request to get Tosca model: {}", url);
+		logger.debug("Send GET request to get Tosca model: {}",url);
 
 		return httpclient.execute(httpGet);
+	}
+	
+	public static RestResponse getRestResponseComponentToscaModel(AssetTypeEnum assetType, String uuid) throws IOException {
+		Config config = Utils.getConfig();
+		
+		String url = String.format(Urls.GET_TOSCA_MODEL, config.getCatalogBeHost(), config.getCatalogBePort(),
+				assetType.getValue(), uuid);
+		
+		Map<String, String> headersMap = new HashMap<String,String>();
+		headersMap.put(HttpHeaderEnum.CONTENT_TYPE.getValue(), contentTypeHeaderData);
+		headersMap.put(HttpHeaderEnum.AUTHORIZATION.getValue(), authorizationHeader);
+		headersMap.put(HttpHeaderEnum.X_ECOMP_INSTANCE_ID.getValue(), "ci");
+		
+		HttpRequest http = new HttpRequest();
+
+		logger.debug("Send GET request to get Resource Assets: {}",url);
+		System.out.println("Send GET request to get Resource Assets: " + url);
+		
+		logger.debug("Request headers: {}",headersMap);
+		System.out.println("Request headers: " + headersMap);
+
+		RestResponse sendGetResourceAssets = http.httpSendGet(url, headersMap);
+
+		return sendGetResourceAssets;
+
 	}
 
 	public static RestResponse getComponentListByAssetType(boolean isBasicAuthentication, AssetTypeEnum assetType,
@@ -128,8 +157,8 @@ public class AssetRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.GET_FILTERED_ASSET_LIST, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue(), query);
 
-		logger.debug("Send GET request to get Resource Assets: {}", url);
-		logger.debug("Request headers: {}", headersMap);
+		logger.debug("Send GET request to get Resource Assets: {}",url);
+		logger.debug("Request headers: {}",headersMap);
 
 		RestResponse sendGetResourceAssets = http.httpSendGet(url, headersMap);
 
@@ -166,8 +195,8 @@ public class AssetRestUtils extends BaseRestUtils {
 		String url = String.format(Urls.GET_ASSET_METADATA, config.getCatalogBeHost(), config.getCatalogBePort(),
 				assetType.getValue(), uuid);
 
-		logger.debug("Send GET request to get Resource Assets: {}", url);
-		logger.debug("Request headers: {} ", headersMap);
+		logger.debug("Send GET request to get Resource Assets: {}",url);
+		logger.debug("Request headers: {}",headersMap);
 
 		RestResponse sendGetResourceAssets = http.httpSendGet(url, headersMap);
 
@@ -395,9 +424,9 @@ public class AssetRestUtils extends BaseRestUtils {
 									.equals(resourceInstanceAssetStructure.getResourceVersion()));
 					assertTrue(
 							"Expected RI asset resourceType is " + componentInstance.getOriginType() + " actual: "
-									+ resourceInstanceAssetStructure.getResourceType(),
+									+ resourceInstanceAssetStructure.getResoucreType(),
 							componentInstance.getOriginType().toString()
-									.equals(resourceInstanceAssetStructure.getResourceType()));
+									.equals(resourceInstanceAssetStructure.getResoucreType()));
 					assertTrue(
 							"Expected RI asset resourceUUID is " + componentInstance.getComponentUid() + " actual: "
 									+ resourceInstanceAssetStructure.getResourceUUID(),
@@ -507,4 +536,24 @@ public class AssetRestUtils extends BaseRestUtils {
 					resourceAsset.getResourceType().equals(resourceType.toString()));
 		}
 	}
+
+	public static void checkComponentTypeInObjectList(List<ResourceAssetStructure> resourceAssetList,
+			ComponentTypeEnum componentType) {
+		ComponentTypeEnum actualComponentType;
+		for (ResourceAssetStructure resourceAsset : resourceAssetList) {
+			actualComponentType = detectComponentType(resourceAsset);
+			assertTrue(
+					"Expected componentType is " + componentType.getValue() + " actual: " + actualComponentType.getValue(),
+							actualComponentType.equals(componentType));
+		}
+	}
+
+	private static ComponentTypeEnum detectComponentType(ResourceAssetStructure resourceAsset) {
+		String resourceType = resourceAsset.getResourceType();
+		if(ResourceTypeEnum.getType(resourceType) !=null){
+			return ComponentTypeEnum.RESOURCE;
+		}
+		return null;
+	}
+	
 }

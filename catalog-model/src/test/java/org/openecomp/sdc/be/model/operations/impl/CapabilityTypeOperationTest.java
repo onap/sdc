@@ -118,22 +118,18 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 		capabilityTypeDefinition.setDescription("desc1");
 		capabilityTypeDefinition.setType("tosca.capabilities.Container1");
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition, true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
 		assertEquals("check capability type added", true, addCapabilityType1.isLeft());
 
 		CapabilityTypeDefinition capabilityTypeAdded = addCapabilityType1.left().value();
 		compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
 
-		Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypeByUid = capabilityTypeOperation
-				.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
+		Either<CapabilityTypeDefinition, TitanOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
 		compareBetweenCreatedToSent(capabilityTypeByUid.left().value(), capabilityTypeDefinition);
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition, true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
 		assertEquals("check capability type failed", true, addCapabilityType2.isRight());
-		assertEquals("check returned error", StorageOperationStatus.SCHEMA_VIOLATION,
-				addCapabilityType2.right().value());
+		assertEquals("check returned error", StorageOperationStatus.SCHEMA_VIOLATION, addCapabilityType2.right().value());
 
 	}
 
@@ -145,14 +141,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 		capabilityTypeDefinition.setType("tosca.capabilities.Container2");
 		capabilityTypeDefinition.setDerivedFrom("derivedFrom");
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition, true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
 		// assertEquals("check capability type parent not exist",
 		// StorageOperationStatus.INVALID_ID,
 		// addCapabilityType1.right().value());
 		// TODO: esofer change to INVALID_ID
-		assertEquals("check capability type parent not exist", StorageOperationStatus.INVALID_ID,
-				addCapabilityType1.right().value());
+		assertEquals("check capability type parent not exist", StorageOperationStatus.INVALID_ID, addCapabilityType1.right().value());
 	}
 
 	public CapabilityTypeDefinition createCapability(String capabilityTypeName) {
@@ -176,12 +170,10 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
 		capabilityTypeDefinition.setProperties(properties);
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition, true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
 
 		CapabilityTypeDefinition capabilityTypeDefinitionCreated = addCapabilityType1.left().value();
-		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation
-				.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId(), true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId(), true);
 		assertEquals("check capability type fetched", true, capabilityType.isLeft());
 		CapabilityTypeDefinition fetchedCTD = capabilityType.left().value();
 
@@ -215,12 +207,10 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
 		capabilityTypeDefinition.setProperties(properties);
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation
-				.addCapabilityType(capabilityTypeDefinition, true);
+		Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
 
 		CapabilityTypeDefinition capabilityTypeDefinitionCreated = addCapabilityType1.left().value();
-		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation
-				.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId());
+		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId());
 		assertEquals("check capability type fetched", true, capabilityType.isLeft());
 		CapabilityTypeDefinition fetchedCTD = capabilityType.left().value();
 
@@ -231,8 +221,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
 	private void compareProperties(Map<String, PropertyDefinition> first, Map<String, PropertyDefinition> second) {
 
-		assertTrue("check properties are full or empty",
-				((first == null && second == null) || (first != null && second != null)));
+		assertTrue("check properties are full or empty", ((first == null && second == null) || (first != null && second != null)));
 		if (first != null) {
 			assertEquals("check properties size", first.size(), second.size());
 
@@ -254,16 +243,14 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 	@Test
 	public void testGetCapabilityTypeNotFound() {
 
-		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation
-				.getCapabilityType("not_exists");
+		Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType("not_exists");
 		assertEquals("check not found is returned", StorageOperationStatus.NOT_FOUND, capabilityType.right().value());
 
 	}
 
 	private void comparePropertyDefinition(PropertyDefinition first, PropertyDefinition second) {
 
-		assertTrue("check objects are full or empty",
-				((first == null && second == null) || (first != null && second != null)));
+		assertTrue("check objects are full or empty", ((first == null && second == null) || (first != null && second != null)));
 		if (first != null) {
 			assertTrue("check property default value", compareValue(first.getDefaultValue(), second.getDefaultValue()));
 			assertTrue("check property description", compareValue(first.getDescription(), second.getDescription()));
@@ -275,8 +262,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
 	private void compareList(List<PropertyConstraint> first, List<PropertyConstraint> second) {
 
-		assertTrue("check lists are full or empty",
-				((first == null && second == null) || (first != null && second != null)));
+		assertTrue("check lists are full or empty", ((first == null && second == null) || (first != null && second != null)));
 		if (first != null) {
 			assertEquals("check list size", first.size(), second.size());
 		}
@@ -302,8 +288,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 	private PropertyDefinition buildProperty1() {
 		PropertyDefinition property1 = new PropertyDefinition();
 		property1.setDefaultValue("10");
-		property1.setDescription(
-				"Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
+		property1.setDescription("Size of the local disk, in Gigabytes (GB), available to applications running on the Compute node.");
 		property1.setType(ToscaType.INTEGER.name().toLowerCase());
 		List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
 		GreaterThanConstraint propertyConstraint1 = new GreaterThanConstraint("0");

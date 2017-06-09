@@ -76,7 +76,8 @@ public abstract class BasicDao implements IBasicDAO {
 					for (List<GraphElement> listOfElements : listOfResults) {
 						if (listOfElements != null && false == listOfElements.isEmpty()) {
 							for (GraphElement element : listOfElements) {
-								logger.debug("element {} was returned after running batch operation {}", element, batchBuilder);
+								logger.debug("element {} was returned after running batch operation {}",
+										element, batchBuilder);
 								if (element instanceof GraphNode) {
 									GraphNode neo4jNode = (GraphNode) element;
 									if (NodeTypeEnum.getByName(neo4jNode.getLabel()) == nodeType) {

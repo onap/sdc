@@ -210,8 +210,15 @@ public class BaseRestUtils extends BaseValidationUtils {
 
 	// DELETE
 	protected static RestResponse sendDelete(String url, String userId) throws IOException {
+		return sendDelete(url, userId, null);
+	}
+	
+	protected static RestResponse sendDelete(String url, String userId, Map<String, String> additionalHeaders) throws IOException {
 		Map<String, String> headersMap = prepareHeadersMap(userId);
-
+		if (additionalHeaders != null) {
+			headersMap.putAll(additionalHeaders);
+		}
+		
 		HttpRequest http = new HttpRequest();
 		RestResponse deleteResourceResponse = http.httpSendDelete(url, headersMap);
 		return deleteResourceResponse;

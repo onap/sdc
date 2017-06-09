@@ -26,8 +26,7 @@ public class UploadArtifactInfo {
 
 	}
 
-	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType,
-			String artifactDescription) {
+	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription) {
 		super();
 		this.artifactName = artifactName;
 		this.artifactPath = artifactPath;
@@ -35,8 +34,7 @@ public class UploadArtifactInfo {
 		this.artifactDescription = artifactDescription;
 	}
 
-	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType,
-			String artifactDescription, String artifactData) {
+	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription, String artifactData) {
 		super();
 		this.artifactName = artifactName;
 		this.artifactPath = artifactPath;
@@ -139,9 +137,7 @@ public class UploadArtifactInfo {
 
 	@Override
 	public String toString() {
-		return "UploadArtifactInfo [artifactName=" + artifactName + ", artifactPath=" + artifactPath + ", artifactType="
-				+ artifactType + ", artifactDescription=" + artifactDescription + ", artifactData=" + artifactData
-				+ "]";
+		return "UploadArtifactInfo [artifactName=" + artifactName + ", artifactPath=" + artifactPath + ", artifactType=" + artifactType + ", artifactDescription=" + artifactDescription + ", artifactData=" + artifactData + "]";
 	}
 
 }

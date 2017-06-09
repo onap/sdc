@@ -34,8 +34,7 @@ public interface IGroupTypeOperation {
 	 */
 	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition,
-			boolean inTransaction);
+	public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition, boolean inTransaction);
 
 	/**
 	 * @param uniqueId
@@ -47,14 +46,11 @@ public interface IGroupTypeOperation {
 
 	public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name,
-			boolean inTransaction);
+	public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, boolean inTransaction);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name,
-			String version);
+	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version);
 
-	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version,
-			boolean inTransaction);
+	public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, boolean inTransaction);
 
 	public Either<GroupTypeData, TitanOperationStatus> getLatestGroupTypeByNameFromGraph(String name);
 

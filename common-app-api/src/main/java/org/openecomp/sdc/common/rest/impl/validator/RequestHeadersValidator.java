@@ -37,7 +37,7 @@ public class RequestHeadersValidator {
 	public static void validateContentType(HttpServletRequest request, MediaType expectedContentType,
 			Map<String, String> headersMap) throws RestRequestValidationException {
 
-		log.debug("validateContentType - expected: " + expectedContentType);
+		log.debug("validateContentType - expected: {}", expectedContentType);
 		if (request == null || expectedContentType == null) {
 			throw new RestRequestValidationException("request or media-type are null");
 		}
@@ -58,9 +58,9 @@ public class RequestHeadersValidator {
 			String headerVal = request.getHeader(requiredHeader);
 			if (headerVal != null && !headerVal.isEmpty()) {
 				headersMap.put(requiredHeader, headerVal);
-				log.debug("found header - " + requiredHeader + ": " + headerVal);
+				log.debug("found header - {} : {}", requiredHeader, headerVal);
 			} else {
-				log.error("missing identification header: " + requiredHeader);
+				log.error("missing identification header: {}", requiredHeader);
 				throw new RestRequestValidationException("missing identification header: " + requiredHeader);
 			}
 		}

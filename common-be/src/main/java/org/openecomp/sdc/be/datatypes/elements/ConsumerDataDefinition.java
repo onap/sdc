@@ -20,7 +20,9 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-public class ConsumerDataDefinition {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class ConsumerDataDefinition extends ToscaDataDefinition {
 
 	// ECOMP Consumer Name - UTF-8 string up to 255 characters containing the
 	// following characters : ( maybe to limit 4-64 chars ? )

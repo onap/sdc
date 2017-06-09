@@ -21,17 +21,26 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.operations.api.ILifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
@@ -43,12 +52,10 @@ import fj.data.Either;
 
 public class CheckoutTransition extends LifeCycleTransition {
 
-	private static final String PLACE_HOLDER_RESOURCE_TYPES = "validForResourceTypes";
-
 	private static Logger log = LoggerFactory.getLogger(CheckoutTransition.class.getName());
 
-	public CheckoutTransition(ComponentsUtils componentUtils, ILifecycleOperation lifecycleOperation) {
-		super(componentUtils, lifecycleOperation);
+	public CheckoutTransition(ComponentsUtils componentUtils, ToscaElementLifecycleOperation lifecycleOperation, ToscaOperationFacade toscaOperationFacade, TitanDao titanDao) {
+		super(componentUtils, lifecycleOperation, toscaOperationFacade, titanDao);
 
 		// authorized roles
 		Role[] resourceServiceCheckoutRoles = { Role.ADMIN, Role.DESIGNER };
@@ -74,24 +81,66 @@ public class CheckoutTransition extends LifeCycleTransition {
 
 		log.debug("start performing {} for resource {}", getName().name(), component.getUniqueId());
 
-		if (componentBl != null)
-			componentBl.setDeploymentArtifactsPlaceHolder(component, modifier);
-		NodeTypeEnum nodeType = componentType.getNodeType();
-		Either<? extends Component, StorageOperationStatus> checkoutResourceResult = lifeCycleOperation.checkoutComponent(nodeType, component, modifier, owner, inTransaction);
+		Either<? extends Component, ResponseFormat> result = null;
+		try {
 
-		if (checkoutResourceResult.isRight()) {
-			log.debug("checkout failed on graph");
-			StorageOperationStatus response = checkoutResourceResult.right().value();
-			ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
+			Either<ToscaElement, StorageOperationStatus> checkoutResourceResult = lifeCycleOperation.checkoutToscaElement(component.getUniqueId(), modifier.getUserId(), owner.getUserId());
 
-			if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
-				actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+			if (checkoutResourceResult.isRight()) {
+				log.debug("checkout failed on graph");
+				StorageOperationStatus response = checkoutResourceResult.right().value();
+				ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
+
+				if (response.equals(StorageOperationStatus.ENTITY_ALREADY_EXISTS)) {
+					actionStatus = ActionStatus.COMPONENT_VERSION_ALREADY_EXIST;
+				}
+				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
+				result = Either.right(responseFormat);
+			} else {
+				Component clonedComponent = ModelConverter.convertFromToscaElement(checkoutResourceResult.left().value());
+				result = Either.left(clonedComponent); 
+				Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
+				if (upgradeToLatestGeneric.isRight())
+					result = Either.right(upgradeToLatestGeneric.right().value());
+				else if (upgradeToLatestGeneric.left().value()) {
+					StorageOperationStatus response = upgradeToLatestGenericData(clonedComponent);
+					if (StorageOperationStatus.OK != response) {
+						ActionStatus actionStatus = componentUtils.convertFromStorageResponse(response);
+						ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
+						result = Either.right(responseFormat);
+					}
+				}
+
 			}
-			ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
-			return Either.right(responseFormat);
-		}
 
-		return Either.left(checkoutResourceResult.left().value());
+		} finally {
+			if (result == null || result.isRight()) {
+				BeEcompErrorManager.getInstance().logBeDaoSystemError("Change LifecycleState");
+				if (inTransaction == false) {
+					log.debug("operation failed. do rollback");
+					titanDao.rollback();
+				}
+			} else {
+				if (inTransaction == false) {
+					log.debug("operation success. do commit");
+					titanDao.commit();
+				}
+			}
+		}
+		return result;
+	}
+
+	private StorageOperationStatus upgradeToLatestGenericData(Component clonedComponent) {
+		
+		StorageOperationStatus updateStatus = null;
+		Either<Component, StorageOperationStatus> updateEither = toscaOperationFacade.updateToscaElement(clonedComponent);
+		if (updateEither.isRight())
+			updateStatus = updateEither.right().value();  
+		else if (clonedComponent.shouldGenerateInputs()) {
+			List<InputDefinition> newInputs = clonedComponent.getInputs();
+			updateStatus = lifeCycleOperation.updateToscaDataOfToscaElement(clonedComponent.getUniqueId(), EdgeLabelEnum.INPUTS, VertexTypeEnum.INPUTS, newInputs, JsonPresentationFields.NAME);
+		}
+		return updateStatus;
 	}
 
 	@Override
@@ -100,7 +149,7 @@ public class CheckoutTransition extends LifeCycleTransition {
 		log.debug("validate before checkout. resource name={}, oldState={}, owner userId={}", componentName, oldState, owner.getUserId());
 
 		// validate user
-		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, componentType, lifecycleChangeInfo);
+		Either<Boolean, ResponseFormat> userValidationResponse = userRoleValidation(modifier, component, componentType, lifecycleChangeInfo);
 		if (userValidationResponse.isRight()) {
 			return userValidationResponse;
 		}
@@ -130,12 +179,5 @@ public class CheckoutTransition extends LifeCycleTransition {
 		}
 		return Either.left(true);
 	}
-
-	/*
-	 * private Either<Boolean, ResponseFormat> productContactsValidation(Product product, User modifier) { // validate user Either<Boolean, ResponseFormat> eitherResponse = Either.left(true); String role = modifier.getRole(); if
-	 * (UserRoleEnum.PRODUCT_MANAGER.getName().equals(role) || UserRoleEnum.PRODUCT_STRATEGIST.getName().equals(role)){ String userId = modifier.getUserId(); if (!product.getContacts().contains(userId)){ log.
-	 * debug("User with userId {} cannot checkout product. userId not found in product contacts list" , userId); ResponseFormat responseFormat = componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION); return Either.right(responseFormat);
-	 * } else { log. trace("Found user userId {} in product contacts - checkout request validated" ); } } return eitherResponse; }
-	 */
 
 }

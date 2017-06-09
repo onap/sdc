@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.Yaml;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openecomp.sdc.ci.tests.config.Config;
@@ -37,7 +38,6 @@ import org.openecomp.sdc.ci.tests.datatypes.enums.ExceptionEnumType;
 import org.openecomp.sdc.ci.tests.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 public class ErrorValidationUtils {
 
@@ -58,9 +58,18 @@ public class ErrorValidationUtils {
 			}
 		}
 		actualResponse = actualResponse.replaceAll("\\n", "");
-		logger.debug("actualResponse - {}", actualResponse);
-		logger.debug("expectedResponseBody - {}", expectedResponseBody);
+		logger.debug("actualResponse - {}",actualResponse);
+		logger.debug("expectedResponseBody - {}",expectedResponseBody);
 		assertEquals(expectedResponseBody, new JSONObject(actualResponse));
+	}
+	
+	public static String checkUIResponseOnError(String errorType)
+			throws FileNotFoundException, JSONException {
+
+		ErrorInfo errorInfo = parseErrorConfigYaml(errorType);
+		String messageId = errorInfo.getMessageId();
+		
+		return messageId;
 	}
 
 	public static JSONObject restExceptionFormatBuilder(String messageId, String text, List<String> variables,

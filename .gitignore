@@ -1,13 +1,149 @@
-target
-package
-.settings
-.project
+# Eclipse
 .classpath
-.idea
+.project
+.settings/
 
-*.log
+# Maven
+log/
+target/
 
-### idea files
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Other
+*.kpf
+*.class
+*.orig
+catalog-ui/.*
+catalog-ui/app/scripts/tsconfig.json
+catalog-ui/app/scripts/references.ts
+catalog-ui/app/scripts/**/*.js
+catalog-ui/app/scripts/**/*.js.map
+
+# catalog-ui
+catalog-ui/app/**/*.css
+catalog-ui/.editorconfig
+catalog-ui/.jshintrc
+catalog-ui/.yo-rc.json
+catalog-ui/app/robots.txt
+catalog-ui/node_modules/
+catalog-ui/bower_components/
+catalog-ui/app/tsconfig.json
+
+
+catalog-be/.checkstyle
+catalog-be/bin/
+catalog-be/src/main/java/META-INF/MANIFEST.MF
+catalog-builders/src/test/java/com/att/tlv/sdc/be/builders/tosca/t1
+a4c/
+catalog-ui/*.tmp.txt
+catalog-dao/bin/
+catalog-ui/dist
+catalog-builders/bin/
+common-app-api/bin/
+data/compute.png
+data/loadbalancer.png
+data/mysql.png
+data/network.png
+data/normative-types-blockStorage.yml
+data/normative-types-compute.yml
+data/normative-types-database.yml
+data/normative-types-DBMS.yml
+data/normative-types-network.yml
+data/normative-types-objectStorage.yml
+data/normative-types-root.yml
+data/normative-types-softwareComponent.yml
+data/normative-types-webApplication.yml
+data/normative-types-webServer.yml
+data/objectstore.png
+data/relational_db.png
+data/root.png
+data/router.png
+data/software.png
+data/volume.png
+catalog-ui/app/dist/*
+catalog-fe/src/main/webapp/*
+catalog-fe/bin
+!catalog-fe/src/main/webapp/WEB-INF/
+!catalog-fe/src/main/webapp/META-INF/
+ui-ci/.tern-project
+catalog-be/data/*
+ci/src/main/java/com/att/tlv/sdc/ci/tests/execute/ShayPracticeTests.java
+ci/src/main/java/com/att/tlv/sdc/ci/tests/execute/ShayPracticeTests.java
+.metadata/*
+.metadata/*
+.idea/*
 *.iml
-*.ipr
-*.iws
+catalog-ui/npm-debug.log
+sdnc-tests/logs/wordnik.log
+distribution-ci/logs/wordnik.log
+distribution-ci/logs/wordnik.log.1
+distribution-ci/logs/wordnik.log.10
+distribution-ci/logs/wordnik.log.2
+distribution-ci/logs/wordnik.log.3
+distribution-ci/logs/wordnik.log.4
+distribution-ci/logs/wordnik.log.5
+distribution-ci/logs/wordnik.log.6
+distribution-ci/logs/wordnik.log.7
+distribution-ci/logs/wordnik.log.8
+distribution-ci/logs/wordnik.log.9
+vagrant-asdc-all-in-one/
+catalog-ui/tests/Coverage/*
+catalog-ui/Chrome*
+catalog-ui/PhantomJS_1.9.8_(Windows_7_0.0.0)/*
+
+.metadata/
+bin/
+Vagrantfile
+sdnc-tests/test-output/*
+sdnc-tests-new-frame-work/test-output/*
+ui-ci/test-output/*
+ui-ci/test-output/Default suite/Default test.html
+ui-ci/test-output/Default suite/Default test.xml
+ui-ci/test-output/Default suite/testng-failed.xml
+ui-ci/test-output/emailable-report.html
+ui-ci/test-output/index.html
+ui-ci/test-output/old/Default suite/classes.html
+ui-ci/test-output/old/Default suite/methods.html
+ui-ci/test-output/old/Default suite/methods-alphabetical.html
+ui-ci/test-output/old/Default suite/testng.xml.html
+ui-ci/test-output/old/Default suite/toc.html
+ui-ci/test-output/old/index.html
+ui-ci/test-output/testng-failed.xml
+ui-ci/test-output/testng-results.xml
+ui-ci/src/main/resources/Files/outputMainServiceTemplate/*
+ui-ci/src/main/resources/Files/output/*
+
+sdnc-tests-new-frame-work/test-output/**
+asdc-tests/test-output/**
+
+asdc-chef/cookbooks/Deploy-SDandC/attributes/version.rb
+asdc-tests/ExtentReport/ASDC_CI_Extent_Report.html
+*.orig
+test-apis-ci/ExtentReport/*
+test-apis-ci/test-output/*
+test-apis-ci/test-output/*
+test-apis-ci/ExtentReport/*
+ui-ci/ExtentReport/*
+test-apis-ci/test-output/*
+test-apis-ci/ExtentReport/ASDC_CI_Extent_Report.html
+test-apis-ci/extent.html
+sdc-os-chef/sdc-backend/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
+sdc-os-chef/sdc-normatives/chef-repo/cookbooks/sdc-normatives/files/default/normatives.tar.gz
+catalog-be/test-output/*
+test-apis-ci/logfile.log*
+ui-ci/logfile.log*
+catalog-ui/node/*
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/audit.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/debug_by_package.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/Error.log
+log.home_IS_UNDEFINED/ASDC/ASDC-BE/transaction.log
+openecomp-be/tools/swagger-ui/api-docs/api.html
+openecomp-be/tools/swagger-ui/api-docs/api.json
+dox-sequence-diagram-ui/node/*
+openecomp-ui/node/*
+sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
+sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar

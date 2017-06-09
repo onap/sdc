@@ -1,0 +1,19 @@
+<div class="main-wrap" data-tests-id="list-of-{{title}}">
+    <div class="header">
+        <div class="title">{{title}}</div>
+        <div class="buttons">
+            <span class="order-by hand sprite-new"
+                  data-ng-show="expandCollapseListData.expandCollapse"
+                  data-ng-class="{'asc':!desc, 'desc':desc }"
+                  data-ng-click="swapOrderBy()"></span>
+            <span class="search hand sprite-new search-icon"
+                  data-ng-class="{'selected':showSearchBox}"
+                  data-ng-show="expandCollapseListData.expandCollapse"
+                  data-ng-click="showHideSearchBox()"></span>
+            <span class="hand sprite-new expand-list"
+                  data-ng-class="{'open':expandCollapseListData.expandCollapse}"
+                  data-ng-click="expandCollapseListData.expandCollapse=!expandCollapseListData.expandCollapse"></span>
+        </div>
+    </div>
+    <input type="text" id="list-search-box" class="search-box" data-ng-if="expandCollapseListData.expandCollapse && showSearchBox" data-ng-model="expandCollapseListData.filter" autofocus/>
+</div>

@@ -1,0 +1,17 @@
+<div class="sdc-catalog-container">
+
+    <loader data-display="gui.isLoading"></loader>
+<!--
+    <ecomp-header menu-data="menuItems" version="{{version}}"></ecomp-header>
+-->
+
+    <div class="w-sdc-main-container">
+        <!--<div ng-include="'/dcaeapp/index.html'"/>-->
+        <!--<div id="dcaeAppContainer"></div>-->
+        <!--<punch-out name="'dcaeApp'" data="vendorData"  user="user" on-event="onTestEvent"></punch-out>-->
+        <div id="main" ui-view="main"></div>
+    </div>
+
+    <top-nav top-lvl-selected-index="3" search-bind="search.filterTerm" menu-model="topNavMenuModel" version="{{version}}"></top-nav>
+
+</div>

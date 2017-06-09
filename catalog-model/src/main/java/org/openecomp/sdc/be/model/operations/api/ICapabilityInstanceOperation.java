@@ -37,16 +37,14 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
 
 /**
- * public interface ICapabilityInstanceOperation provides methods for CRUD
- * operations for CapabilityInstance on component instance level
+ * public interface ICapabilityInstanceOperation provides methods for CRUD operations for CapabilityInstance on component instance level
  * 
  * @author ns019t
  *
  */
 public interface ICapabilityInstanceOperation {
 	/**
-	 * create capability instance of capability with property values for
-	 * resource instance
+	 * create capability instance of capability with property values for resource instance
 	 * 
 	 * @param resourceInstanceId
 	 * @param capabilityId
@@ -55,8 +53,7 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityName
 	 * @return
 	 */
-	public Either<Map<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> createCapabilityInstanceOfCapabilityWithPropertyValuesForResourceInstance(
-			String resourceInstanceId, String capabilityId, String capabilityName,
+	public Either<Map<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> createCapabilityInstanceOfCapabilityWithPropertyValuesForResourceInstance(String resourceInstanceId, String capabilityId, String capabilityName,
 			List<ComponentInstanceProperty> propertyValues, boolean validateCapabilityInstExistance);
 
 	/**
@@ -68,8 +65,7 @@ public interface ICapabilityInstanceOperation {
 	 * @param validateCapabilityInstExistence
 	 * @return
 	 */
-	public TitanOperationStatus createCapabilityInstanceOfCapabilityWithPropertyValuesForResourceInstance(
-			TitanVertex resourceInstanceVertex, String resourceInstanceId, String capabilityId, String capabilityName,
+	public TitanOperationStatus createCapabilityInstanceOfCapabilityWithPropertyValuesForResourceInstance(TitanVertex resourceInstanceVertex, String resourceInstanceId, String capabilityId, String capabilityName,
 			List<ComponentInstanceProperty> propertyValues, boolean validateCapabilityInstExistence);
 
 	/**
@@ -79,8 +75,7 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityId
 	 * @return
 	 */
-	public Either<Boolean, TitanOperationStatus> validateCapabilityInstExistence(String resourceInstanceId,
-			String capabilityId);
+	public Either<Boolean, TitanOperationStatus> validateCapabilityInstExistence(String resourceInstanceId, String capabilityId);
 
 	/**
 	 * delete capability instance from resource instance
@@ -89,20 +84,16 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityInstanceId
 	 * @return
 	 */
-	public Either<CapabilityInstData, TitanOperationStatus> deleteCapabilityInstanceFromResourceInstance(
-			String resourceInstanceId, String capabilityInstanceId);
+	public Either<CapabilityInstData, TitanOperationStatus> deleteCapabilityInstanceFromResourceInstance(String resourceInstanceId, String capabilityInstanceId);
 
 	/**
-	 * get all capability instances for resource instance returns all Capability
-	 * Instances related to Resource Instance as List<CapabilityInstData> or
-	 * TitanOperationStatus if error occurs or if Resource Instance have no any
-	 * related Capability Instance
+	 * get all capability instances for resource instance returns all Capability Instances related to Resource Instance as List<CapabilityInstData> or TitanOperationStatus if error occurs or if Resource Instance have no any related Capability
+	 * Instance
 	 * 
 	 * @param resourceInstanceId
 	 * @return Either<List<CapabilityInstData>, TitanOperationStatus>
 	 */
-	public Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getAllCapabilityInstancesOfResourceInstance(
-			String resourceInstanceId);
+	public Either<List<ImmutablePair<CapabilityInstData, GraphEdge>>, TitanOperationStatus> getAllCapabilityInstancesOfResourceInstance(String resourceInstanceId);
 
 	/**
 	 * get capability instance of capability for resource instance
@@ -111,8 +102,7 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityId
 	 * @return
 	 */
-	public Either<CapabilityInstData, TitanOperationStatus> getCapabilityInstanceOfCapabilityOfResourceInstance(
-			String resourceInstanceId, String capabilityId);
+	public Either<CapabilityInstData, TitanOperationStatus> getCapabilityInstanceOfCapabilityOfResourceInstance(String resourceInstanceId, String capabilityId);
 
 	/**
 	 * update capability property values
@@ -123,8 +113,7 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityId
 	 * @return
 	 */
-	public Either<List<PropertyValueData>, TitanOperationStatus> updateCapabilityPropertyValues(
-			String resourceInstanceId, String capabilityId, List<ComponentInstanceProperty> propertyValues);
+	public Either<List<PropertyValueData>, TitanOperationStatus> updateCapabilityPropertyValues(String resourceInstanceId, String capabilityId, List<ComponentInstanceProperty> propertyValues);
 
 	/**
 	 * clone and associate capability instance with property values
@@ -134,10 +123,8 @@ public interface ICapabilityInstanceOperation {
 	 * @param capabilityInstPair
 	 * @return
 	 */
-	public Either<ImmutablePair<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> cloneAssociateCapabilityInstanceWithPropertyValues(
-			ComponentInstanceData createdComponentInstance, CapabilityDefinition capability,
+	public Either<ImmutablePair<CapabilityInstData, List<PropertyValueData>>, TitanOperationStatus> cloneAssociateCapabilityInstanceWithPropertyValues(ComponentInstanceData createdComponentInstance, CapabilityDefinition capability,
 			ImmutablePair<CapabilityInstData, GraphEdge> capabilityInstPair);
 
-	Either<Boolean, TitanOperationStatus> validateCapabilityInstExistence(TitanVertex instanceVertex,
-			String resourceInstanceId, String capabilityId);
+	Either<Boolean, TitanOperationStatus> validateCapabilityInstExistence(TitanVertex instanceVertex, String resourceInstanceId, String capabilityId);
 }

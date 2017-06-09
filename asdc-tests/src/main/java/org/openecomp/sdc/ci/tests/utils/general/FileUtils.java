@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import fj.data.Either;
 
 public class FileUtils {
-
 	static Logger logger = LoggerFactory.getLogger(Utils.class.getName());
 
 	public static void writeToFile(String filePath, String content) {
@@ -99,16 +98,18 @@ public class FileUtils {
 		return null;
 	}
 
-	public static String loadPayloadFileFromListUsingPosition(List<String> listFileName, String pattern, Boolean isBase64, int positionInList) throws IOException {
+	public static String loadPayloadFileFromListUsingPosition(List<String> listFileName, String pattern,
+			Boolean isBase64, int positionInList) throws IOException {
 		List<String> newList = new ArrayList<String>(Arrays.asList(listFileName.get(positionInList)));
 		return loadPayloadFile(newList, pattern, isBase64);
 	}
 
-	public static String loadPayloadFile(List<String> listFileName, String pattern, Boolean isBase64) throws IOException {
+	public static String loadPayloadFile(List<String> listFileName, String pattern, Boolean isBase64)
+			throws IOException {
 		String fileName;
 		String payload = null;
 		fileName = FileUtils.getFilePathFromListByPattern(listFileName, pattern);
-		logger.debug("fileName: {}", fileName);
+		logger.debug("fileName: {}",fileName);
 
 		if (fileName != null) {
 			payload = Decoder.readFileToString(fileName);

@@ -29,9 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.GeneralUtility;
@@ -40,7 +38,6 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.html.HTMLStyleElement;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -62,7 +59,9 @@ public class CommonUtilsTest {
 		assertTrue(ValidationUtils.validateComponentNamePattern("1111222"));
 		assertFalse(ValidationUtils.validateComponentNamePattern("11!11222"));
 		assertFalse(ValidationUtils.validateComponentNamePattern("111|`1222"));
-
+		assertFalse(ValidationUtils.validateComponentNamePattern("."));
+		assertFalse(ValidationUtils.validateComponentNamePattern(""));
+		assertTrue(ValidationUtils.validateComponentNamePattern("s"));
 	}
 
 	@Test
@@ -104,38 +103,38 @@ public class CommonUtilsTest {
 		assertFalse(ValidationUtils.validateIconLength("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
 	}
 
-	// 1610OS Support - Because of changes in the validation in the ui this test needs to be fixed
-//	@Test
-//	public void testValidateProjectCode() {
-//
-//		assertTrue(ValidationUtils.validateProjectCode("15555"));
-//		assertTrue(ValidationUtils.validateProjectCode("12434501"));
-//		assertTrue(ValidationUtils.validateProjectCode("00000"));
-//		assertFalse(ValidationUtils.validateProjectCode("something"));
-//		assertFalse(ValidationUtils.validateProjectCode("som ething"));
-//		assertFalse(ValidationUtils.validateProjectCode("3255 656"));
-//		assertFalse(ValidationUtils.validateProjectCode("43535t636"));
-//		assertFalse(ValidationUtils.validateProjectCode("098&656"));
-//	}
+	@Test
+	public void testValidateProjectCode() {
+
+		assertTrue(ValidationUtils.validateProjectCode("15555"));
+		assertTrue(ValidationUtils.validateProjectCode("12434501"));
+		assertTrue(ValidationUtils.validateProjectCode("00000"));
+		assertTrue(ValidationUtils.validateProjectCode("something"));
+		assertTrue(ValidationUtils.validateProjectCode("som ething"));
+		assertTrue(ValidationUtils.validateProjectCode("3255 656"));
+		assertTrue(ValidationUtils.validateProjectCode("43535t636"));
+		assertFalse(ValidationUtils.validateProjectCode("098&656"));
+	}
 
 	@Test
 	public void testValidateProjectCodeLength() {
+
 		assertTrue(ValidationUtils.validateProjectCodeLegth("00000"));
 		assertFalse(ValidationUtils.validateProjectCodeLegth("ddddddddddddddddddddddsdfsddddddddddddddddddddddsdfs"));
+
 	}
 
-	// 1610OS Support - Because of changes in the validation in the ui this test needs to be fixed
-//	@Test
-//	public void testValidateContactId() {
-//
-//		assertTrue(ValidationUtils.validateContactId("ml7889"));
-//		assertTrue(ValidationUtils.validateContactId("Ml7889"));
-//		assertTrue(ValidationUtils.validateContactId("ml788r"));
-//		assertFalse(ValidationUtils.validateContactId("something"));
-//		assertFalse(ValidationUtils.validateContactId("mlk111"));
-//		assertFalse(ValidationUtils.validateContactId("12ml89"));
-//		assertFalse(ValidationUtils.validateContactId("!!78900"));
-//	}
+	@Test
+	public void testValidateContactId() {
+
+		assertTrue(ValidationUtils.validateContactId("ml7889"));
+		assertTrue(ValidationUtils.validateContactId("Ml7889"));
+		assertTrue(ValidationUtils.validateContactId("ml788r"));
+		assertTrue(ValidationUtils.validateContactId("something"));
+		assertTrue(ValidationUtils.validateContactId("mlk111"));
+		assertTrue(ValidationUtils.validateContactId("12ml89"));
+		assertFalse(ValidationUtils.validateContactId("!!78900"));
+	}
 
 	@Test
 	public void testRemoveHtml() {
@@ -242,8 +241,8 @@ public class CommonUtilsTest {
 	public void validateStringNotEmptyTest() {
 		assertTrue(ValidationUtils.validateStringNotEmpty("fsdlfsdlk"));
 		assertFalse(ValidationUtils.validateStringNotEmpty(""));
-		assertFalse(ValidationUtils.validateStringNotEmpty("  "));
-		assertFalse(ValidationUtils.validateStringNotEmpty("	"));
+		assertFalse(!ValidationUtils.validateStringNotEmpty("  "));
+		assertFalse(!ValidationUtils.validateStringNotEmpty("	"));
 	}
 
 	@Test
@@ -475,13 +474,13 @@ public class CommonUtilsTest {
 		String str = yaml.dump(parameters);
 		log.debug(str);
 	}
-
+	
 	@Test
 	public void yamlValidTest() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.append("key: \"!@;/?:&=+$,_.~*'()[]\"");
-		byte[] payload = sb.toString().getBytes();// Base64.decodeBase64(sb.toString());
+		byte[] payload = sb.toString().getBytes();
 
 		YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();
 
@@ -492,7 +491,7 @@ public class CommonUtilsTest {
 	public void testRemoveOnlyHtmlTags() {
 
 		assertEquals("gooboo", HtmlCleaner.stripHtml("<b>goo<b></b></b><b>boo</b>"));
-		String str = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");
+		/*String str = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");*/
 
 		String stripHtmlAndEscape = HtmlCleaner.stripHtml("<esofer><b>goo<b></b><</b><b>boo</b>");
 		assertEquals("<esofer>goo<boo", stripHtmlAndEscape);

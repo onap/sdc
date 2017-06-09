@@ -51,12 +51,10 @@ import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
-import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -100,7 +98,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		User modifier = new User();
@@ -128,7 +126,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 				}
 
 				Resource resource = convertResponse.left().value();
-				Either<Resource, ResponseFormat> actionResponse = businessLogic.createResource(resource, modifier, null, null);
+				Either<Resource, ResponseFormat> actionResponse = businessLogic.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, modifier, null, null);
 
 				if (actionResponse.isRight()) {
 					log.debug("failed to create resource");
@@ -160,7 +158,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 			String payloadName = json.getString(ImportUtils.Constants.UI_JSON_PAYLOAD_NAME);
 			isUIImport = payloadName != null && !payloadName.isEmpty();
 		} catch (Exception e) {
-			log.debug("failed to parse json sent from client, json:{}", data);
+			log.debug("failed to parse json sent from client, json:{}", data, e);
 			isUIImport = false;
 		}
 		return isUIImport;
@@ -177,8 +175,6 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 
 		commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, resourceInfoJsonString);
 
-		// TODO suspect next line is unnecessary
-		userWrapper.getInnerElement();
 		if (!CsarValidationUtils.isCsarPayloadName(uploadResourceInfoWrapper.getInnerElement().getPayloadName())) {
 			fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString, resourceAuthorityEnum, null);
 
@@ -212,13 +208,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		User modifier = new User();
 		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+		log.debug("modifier id is {}" , userId);
 
 		Response response = null;
 
@@ -252,13 +248,13 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		User modifier = new User();
 		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+		log.debug("modifier id is {}" , userId);
 
 		Response response = null;
 
@@ -295,12 +291,12 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		User modifier = new User();
 		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+		log.debug("modifier id is {}" , userId);
 
 		Response response = null;
 
@@ -340,11 +336,11 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		// get modifier id
 		User modifier = new User();
 		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+		log.debug("modifier id is {}" , userId);
 		Response response = null;
 		try {
 			ResourceBusinessLogic businessLogic = getResourceBL(context);
-			Either<List<Resource>, ResponseFormat> actionResponse = businessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
+			Either<Resource, ResponseFormat> actionResponse = businessLogic.getResourceByNameAndVersion(resourceName, resourceVersion, userId);
 			if (actionResponse.isRight()) {
 				response = buildErrorResponse(actionResponse.right().value());
 				return response;
@@ -370,17 +366,17 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 	public Response validateResourceName(@PathParam("resourceName") final String resourceName, @QueryParam("subtype") String resourceType, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		User modifier = new User();
 		modifier.setUserId(userId);
-		log.debug("modifier id is {}", userId);
+		log.debug("modifier id is {}" , userId);
 		Response response = null;
 		try {
 			ResourceBusinessLogic businessLogic = getResourceBL(context);
 
-			if (resourceType != null && !ResourceTypeEnum.contains(resourceType)) {
+			if (resourceType != null && !ResourceTypeEnum.containsName(resourceType)) {
 				log.debug("invalid resource type received");
 				response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
 				return response;
@@ -416,7 +412,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("(get) Start handle request of {}", url);
+		log.debug("(get) Start handle request of {}" , url);
 		Response response = null;
 		try {
 
@@ -452,7 +448,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("(get) Start handle request of {}", url);
+		log.debug("(get) Start handle request of {}" , url);
 		Response response = null;
 
 		try {
@@ -492,7 +488,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		User modifier = new User();
@@ -510,8 +506,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 				response = buildErrorResponse(updateInfoResource.right().value());
 				return response;
 			}
-			Either<Resource, ResponseFormat> actionResponse = businessLogic.updateResourceMetadata(resourceIdLower,
-					updateInfoResource.left().value(), null, modifier, false);
+			Either<Resource, ResponseFormat> actionResponse = businessLogic.updateResourceMetadata(resourceIdLower, updateInfoResource.left().value(), null, modifier, false);
 
 			if (actionResponse.isRight()) {
 				log.debug("failed to update resource metadata");
@@ -548,7 +543,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// get modifier id
 		User modifier = new User();
@@ -607,7 +602,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 	 * 
 	 * @Produces(MediaType.APPLICATION_JSON) public Response getLatestVersionNotAbstractResources(@Context final HttpServletRequest request) { //TODO: any vlidations??? ServletContext context = request.getSession().getServletContext();
 	 * 
-	 * String url = request.getMethod() + " " + request.getRequestURI(); log.debug("(get) Start handle request of {}", url); Response response=null;
+	 * String url = request.getMethod() + " " + request.getRequestURI(); log.debug("(get) Start handle request of " + url); Response response=null;
 	 * 
 	 * try {
 	 * 
@@ -653,7 +648,7 @@ public class ResourcesServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 
 		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("Start handle request of {}", url);
+		log.debug("Start handle request of {}" , url);
 
 		// retrieve user details
 		userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);

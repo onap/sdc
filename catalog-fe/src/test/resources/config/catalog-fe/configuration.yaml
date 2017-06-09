@@ -50,6 +50,16 @@ optionalHeaderFields:
    -
         - &HTTP_IV_REMOTE_ADDRESS HTTP_IV_REMOTE_ADDRESS
         - &iv-remote-address iv-remote-address
+        
+forwardHeaderFields:
+   - *HTTP_IV_USER
+   - *USER_ID
+   - *HTTP_CSP_FIRSTNAME
+   - *HTTP_CSP_LASTNAME
+   - *HTTP_IV_REMOTE_ADDRESS
+   - *HTTP_CSP_WSTYPE
+   - Content-MD5
+   - Content-Type
 
 
 version: 1.0

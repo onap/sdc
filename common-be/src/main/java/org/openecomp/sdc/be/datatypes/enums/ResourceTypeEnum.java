@@ -20,14 +20,17 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+/**
+ * Resource Type Enum
+ * @author mshitrit
+ *
+ */
 public enum ResourceTypeEnum {
 
-	VFC("VFC (Virtual Function Component)"), 
-	VF("VF"/* (Virtual Function)" */), 
-	CP("CP (Connection Point)"), 
-	VL("VL (Virtual Link)");
+	VFC("VFC (Virtual Function Component)"), VF("VF"/* (Virtual Function)" */), CP("CP (Connection Point)"), 
+		VL( "VL (Virtual Link)"), VFCMT("VFCMT (VFC Monitoring Template)"), ABSTRACT("Abstract (Generic VFC/VF/Service Type)");
 
-	String value;
+	private String value;
 
 	private ResourceTypeEnum(String value) {
 		this.value = value;
@@ -36,11 +39,60 @@ public enum ResourceTypeEnum {
 	public String getValue() {
 		return value;
 	}
-
-	public static boolean contains(String type) {
+	
+	public static ResourceTypeEnum getType(String type) {
+		for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
+			if (e.name().equals(type)) {
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	public static ResourceTypeEnum getTypeByName(String type) {
+		for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
+			if (e.name().equalsIgnoreCase(type)) {
+				return e;
+			}
+		}
+		return null;
+	}
+/**
+ * Returns ResourceTypeEnum matching to received String ignore case
+ * @param type
+ * @return
+ */
+	public static ResourceTypeEnum getTypeIgnoreCase(String type) {
+		for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
+			if (e.name().toLowerCase().equals(type.toLowerCase())) {
+				return e;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Checks if enum exist with given type
+	 * @param type
+	 * @return
+	 */
+	public static boolean containsName(String type) {
 
 		for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
 			if (e.name().equals(type)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * Checks if enum exist with given type ignare case
+	 * @param type
+	 * @return
+	 */
+	public static boolean containsIgnoreCase(String type) {
+
+		for (ResourceTypeEnum e : ResourceTypeEnum.values()) {
+			if (e.name().toLowerCase().equals(type.toLowerCase())) {
 				return true;
 			}
 		}

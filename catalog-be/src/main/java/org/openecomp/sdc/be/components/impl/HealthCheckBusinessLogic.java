@@ -39,7 +39,6 @@ import javax.servlet.ServletContext;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth;
 import org.openecomp.sdc.be.components.distribution.engine.UebHealthCheckCall;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.IEsHealthCheckDao;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -102,7 +101,7 @@ public class HealthCheckBusinessLogic {
 
 		lastBeHealthCheckInfos = getBeHealthCheckInfos();
 
-		log.debug("After initializing lastBeHealthCheckInfos :{}", lastBeHealthCheckInfos);
+		log.debug("After initializing lastBeHealthCheckInfos: {}", lastBeHealthCheckInfos);
 
 		healthCheckScheduledTask = new HealthCheckScheduledTask();
 

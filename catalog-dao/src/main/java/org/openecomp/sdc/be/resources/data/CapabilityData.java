@@ -27,13 +27,12 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import com.google.gson.reflect.TypeToken;
 
 public class CapabilityData extends GraphNode {
-	public final static String MIN_OCCURRENCES = "1"; // occurrences
-	public final static String MAX_OCCURRENCES = "UNBOUNDED";
 
 	public CapabilityData() {
 		super(NodeTypeEnum.Capability);
@@ -74,8 +73,8 @@ public class CapabilityData extends GraphNode {
 
 	private Long modificationTime;
 
-	private String minOccurrences = MIN_OCCURRENCES;
-	private String maxOccurrences = MAX_OCCURRENCES;
+	private String minOccurrences = CapabilityDataDefinition.MIN_OCCURRENCES;
+	private String maxOccurrences = CapabilityDataDefinition.MAX_OCCURRENCES;
 
 	public String getUniqueId() {
 		return uniqueId;

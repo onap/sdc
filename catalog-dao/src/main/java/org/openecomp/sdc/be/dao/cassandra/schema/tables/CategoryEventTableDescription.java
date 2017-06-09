@@ -71,13 +71,16 @@ public class CategoryEventTableDescription implements ITableDescription {
 
 	enum CEFieldsDescription {
 
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), false), DESC("description",
-				DataType.varchar(), false), CATEGORY_NAME("category_Name", DataType.varchar(),
-						false), SUB_CATEGORY_NAME("sub_Category_Name", DataType.varchar(), false), GROUPING_NAME(
-								"grouping_name", DataType.varchar(), false), MODIFIER("modifier", DataType.varchar(),
-										false), REQUEST_ID("request_id", DataType.varchar(), false), RESOURCE_TYPE(
-												"resource_type", DataType.varchar(), false), SERVICE_INSTANCE_ID(
-														"service_instance_id", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), false), 
+		DESC("description", DataType.varchar(), false), 
+		CATEGORY_NAME("category_Name", DataType.varchar(), false), 
+		SUB_CATEGORY_NAME("sub_Category_Name", DataType.varchar(), false), 
+		GROUPING_NAME("grouping_name", DataType.varchar(), false), 
+		MODIFIER("modifier", DataType.varchar(), false), 
+		REQUEST_ID("request_id", DataType.varchar(), false), 
+		RESOURCE_TYPE("resource_type", DataType.varchar(), false), 
+		SERVICE_INSTANCE_ID("service_instance_id", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

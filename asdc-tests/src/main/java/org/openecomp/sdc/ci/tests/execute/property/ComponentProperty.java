@@ -99,8 +99,8 @@ public class ComponentProperty extends ComponentBaseTest {
 				{ "boolean", "[true,,false]", "[true,false]" }, { "boolean", "[true,false,]", "[true,false]" },
 				{ "boolean", "[,true,false]", "[true,false]" }, { "boolean", null, null },
 				// DE199713 - Default value for property type Boolean should
-				// support also the following values: true, t , one , 1 ,
-				// false, f , off , 0
+				// support also the following values: "true", "t" , "on" , "1" ,
+				// "false", "f" , "off" , "0"
 				{ "boolean", "[on,off]", "[true,false]" }, { "boolean", "[ON,OFF]", "[true,false]" },
 				{ "boolean", "[On,Off]", "[true,false]" }, { "boolean", "[yes,no]", "[true,false]" },
 				{ "boolean", "[YES,NO]", "[true,false]" }, { "boolean", "[Yes,No]", "[true,false]" },

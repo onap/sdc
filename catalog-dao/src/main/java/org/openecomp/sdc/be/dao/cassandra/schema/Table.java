@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetCatHierEventTableDesc
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUebClusterEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.GetUsersListEventTableDesc;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.ResAdminEventTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.SdcSchemaFilesTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAccessEventTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescription;
 
@@ -46,17 +47,18 @@ public enum Table {
 	RESOURCE_ADMIN_EVENT(new ResAdminEventTableDescription()), 
 	DISTRIBUTION_DOWNLOAD_EVENT(new DistribDownloadEventTableDesc()), 
 	DISTRIBUTION_ENGINE_EVENT(new DistribEngineEventTableDesc()), 
-	DISTRIBUTION_NOTIFICATION_EVENT(new DistribNotifEventTableDesc()), 
+	DISTRIBUTION_NOTIFICATION_EVENT(new DistribNotifEventTableDesc()),
 	DISTRIBUTION_STATUS_EVENT(new DistribStatusEventTableDesc()), 
 	DISTRIBUTION_DEPLOY_EVENT(new DistribDeployEventTableDesc()), 
-	DISTRIBUTION_GET_UEB_CLUSTER_EVENT(new GetUebClusterEventTableDesc()),
+	DISTRIBUTION_GET_UEB_CLUSTER_EVENT(new GetUebClusterEventTableDesc()), 
 	AUTH_EVENT(new AuthEventTableDescription()), 
 	CONSUMER_EVENT(new ConsumerEventTableDefinition()), 
 	CATEGORY_EVENT(new CategoryEventTableDescription()), 
 	GET_USERS_LIST_EVENT(new GetUsersListEventTableDesc()), 
 	GET_CATEGORY_HIERARCHY_EVENT(new GetCatHierEventTableDesc()), 
-	EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()),
-	COMPONENT_CACHE(new ComponentCacheTableDescription());
+	EXTERNAL_API_EVENT(new ExternalApiEventTableDesc()), 
+	COMPONENT_CACHE(new ComponentCacheTableDescription()),
+	SDC_SCHEMA_FILES(new SdcSchemaFilesTableDescription());
 
 	ITableDescription tableDescription;
 

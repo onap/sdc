@@ -1,0 +1,154 @@
+// ---------------------------------------------------------------------------------------------------
+// tooltips
+// ---------------------------------------------------------------------------------------------------
+div.tooltips {
+    position: relative;
+    display: inline;
+    float: right;
+    z-index: 1;
+    top: 30px;
+    left: 85px;
+
+    span {
+        .bg_s;
+        position: absolute;
+        width: 230px;
+        color: @color_c;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 6px;
+        visibility: hidden;
+
+        &:after {
+            .arrow(8px, @color_s);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Tooltip
+// ---------------------------------------------------------------------------------------------------
+.w-sdc-canvas-tooltip{
+
+    position: absolute;
+    z-index: 100;
+
+    .w-sdc-custom-tooltip {
+        .c_1;
+        position:relative;
+        color: white;
+        padding:10px;
+        height: 25px;
+        min-width: 100px;
+        background-color: rgba(80, 99, 113, 0.9);
+        border-radius: 2px;
+        line-height: 2px;
+        text-align: center;
+
+        .w-sdc-tooltip-arrow {
+            position: absolute;
+            bottom:25px;
+            right:20px;
+            width:0;height:0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid  rgba(80, 99, 113, 0.9);
+            border-top: transparent;
+            border-width:7px;
+            border-style:solid;
+        }
+
+    }
+}
+
+.qtip-custom {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background-color: rgb(80, 99, 113);
+    border-color:rgb(80, 99, 113);
+    color: white;
+    font-size:13px;
+}
+
+.tooltip-custom {
+    background-color: rgba(80, 99, 113, 0.9);
+    z-index: 1100;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    max-width: 280px;
+    text-align: center;
+    word-break: normal;
+    word-wrap: break-word;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+._720kb-tooltip-caret:before
+    {
+      border: 6px solid rgba(80, 99, 113, 0.9);
+
+    }
+
+.tooltip-rightside{
+    right: 2px;
+    left: initial !important;
+
+    ._720kb-tooltip-caret:before{
+        right: 21px;
+        left: initial;
+    }
+}
+
+.tab-tooltip{
+    max-width: 220px;
+    white-space: nowrap;
+}
+.break-word-tooltip{
+    word-break: break-all;
+    margin-right: 2px;
+}
+
+.icon-tooltip{
+    margin-left: 12px;
+    right: initial !important;
+
+    ._720kb-tooltip-caret:before{
+        left: 44px;
+        right: initial;
+    }
+}
+
+.uib-custom-tooltip {
+    z-index: 999999;
+
+    .tooltip-inner {
+        background-color: rgba(80, 99, 113, 0.9);
+        padding: 5px 10px 5px 10px;
+        border-radius: 2px;
+        }
+}
+.tooltip {
+    &.bottom .tooltip-arrow {
+
+        margin-left: -6px !important;
+        border-width: 0 6px 6px !important;
+        border-bottom-color: rgba(80, 99, 113, 0.9) !important;
+    }
+   /* &.right {
+        white-space: nowrap;
+        max-width: none;
+        .tooltip-arrow {
+            border-right-color: rgba(80, 99, 113, 0.9);
+        }
+    }
+    &.left {
+        white-space:nowrap;
+        max-width:none;
+        .tooltip-arrow {
+            border-left-color: rgba(80, 99, 113, 0.9);
+        }
+    }*/
+}

@@ -94,7 +94,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 		boolean initialized = false;
 
-		logger.debug("HttpRestClientServiceImpl::init - start. restConfigurationInfo=" + restConfigurationInfo);
+		logger.debug("HttpRestClientServiceImpl::init - start. restConfigurationInfo= {}", restConfigurationInfo);
 
 		try {
 			createHttpClient(restConfigurationInfo);
@@ -124,8 +124,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 	}
 
-	private void createHttpClient(RestConfigurationInfo restConfigurationInfo)
-			throws KeyManagementException, NoSuchAlgorithmException {
+	private void createHttpClient(RestConfigurationInfo restConfigurationInfo) throws KeyManagementException, NoSuchAlgorithmException {
 
 		PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
 
@@ -141,10 +140,8 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 		this.httpClient = new DefaultHttpClient(cm);
 
-		int timeoutInSec = restConfigurationInfo.getReadTimeoutInSec() == null ? 0
-				: restConfigurationInfo.getReadTimeoutInSec();
-		int connectTimeoutInSec = restConfigurationInfo.getConnectTimeoutInSec() == null ? DEFAULT_CONNECT_TIMEOUT
-				: restConfigurationInfo.getConnectTimeoutInSec();
+		int timeoutInSec = restConfigurationInfo.getReadTimeoutInSec() == null ? 0 : restConfigurationInfo.getReadTimeoutInSec();
+		int connectTimeoutInSec = restConfigurationInfo.getConnectTimeoutInSec() == null ? DEFAULT_CONNECT_TIMEOUT : restConfigurationInfo.getConnectTimeoutInSec();
 		HttpParams params = new BasicHttpParams();
 		params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectTimeoutInSec * 1000);
 		params.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeoutInSec * 1000);
@@ -212,14 +209,12 @@ public class HttpRestClientServiceImpl implements IRestClient {
 	protected SSLSocketFactory createSSLSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
 		TrustManager easyTrustManager = new javax.net.ssl.X509TrustManager() {
 
-			public void checkClientTrusted(java.security.cert.X509Certificate[] arg0, String arg1)
-					throws CertificateException {
+			public void checkClientTrusted(java.security.cert.X509Certificate[] arg0, String arg1) throws CertificateException {
 				// TODO Auto-generated method stub
 
 			}
 
-			public void checkServerTrusted(java.security.cert.X509Certificate[] arg0, String arg1)
-					throws CertificateException {
+			public void checkServerTrusted(java.security.cert.X509Certificate[] arg0, String arg1) throws CertificateException {
 				// TODO Auto-generated method stub
 
 			}
@@ -271,7 +266,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 	 * @return String
 	 */
 	public RestResponse doGET(String uri, Properties headers) {
-		logger.debug("Before executing uri " + uri + ". headers = " + headers);
+		logger.debug("Before executing uri {}. headers = {}", uri, headers);
 
 		HttpGet httpGet = new HttpGet(uri);
 
@@ -292,8 +287,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 	public RestResponse doPOST(String uri, Properties headers, Object objectToCreate) {
 
-		logger.debug("Before executing uri " + uri + ". body = "
-				+ (objectToCreate != null ? objectToCreate.toString() : null) + ". headers = " + headers);
+		logger.debug("Before executing uri {}. body = {}. headers = {}", uri, (objectToCreate != null ? objectToCreate.toString() : null), headers);
 
 		HttpPost httpPost = new HttpPost(uri);
 
@@ -321,8 +315,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 	public RestResponse doPUT(String uri, Properties headers, Object objectToCreate) {
 
-		logger.debug("Before executing uri " + uri + ". body = "
-				+ (objectToCreate != null ? objectToCreate.toString() : null) + ". headers = " + headers);
+		logger.debug("Before executing uri {}. body = {}. headers = {}", uri, (objectToCreate != null ? objectToCreate.toString() : null), headers);
 
 		HttpPut httpPut = new HttpPut(uri);
 
@@ -373,8 +366,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 
 		} catch (Exception exception) {
 			httpRequestBase.abort();
-			log.error("Failed to execute the " + httpRequestBase.getMethod() + " request " + httpRequestBase.getURI(),
-					exception);
+			log.error("Failed to execute the {} request {}", httpRequestBase.getMethod(), httpRequestBase.getURI(), exception);
 			// processAndThrowException(exception);
 			return null;
 		}
@@ -384,7 +376,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 		if (logger.isDebugEnabled()) {
 			URI uri = httpRequestBase.getURI();
 			String url = uri.toString();
-			logger.debug("After executing uri " + url + ". response = " + restResponse);
+			logger.debug("After executing uri {}. response = {}", url, restResponse);
 		}
 
 		return restResponse;
@@ -393,7 +385,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 	public RestResponse doDELETE(String uri, Properties headers) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Before executing uri " + uri + ". headers = " + headers);
+			logger.debug("Before executing uri {}. headers = {}", uri, headers);
 		}
 
 		HttpDelete httpDelete = new HttpDelete(uri);
@@ -413,12 +405,11 @@ public class HttpRestClientServiceImpl implements IRestClient {
 	 *            name of method
 	 */
 	private void logResponse(String response, String method) {
-		logger.debug(method + " response = " + response);
+		logger.debug("{} response = {}", method, response);
 	}
 
 	/**
-	 * Exception during client invocation usually it happens when status code
-	 * starting with 400 or 500 is returned
+	 * Exception during client invocation usually it happens when status code starting with 400 or 500 is returned
 	 * 
 	 * @param exception
 	 *            Exception
@@ -427,7 +418,7 @@ public class HttpRestClientServiceImpl implements IRestClient {
 	private void processAndThrowException(Exception exception) throws RestClientServiceExeption {
 
 		logger.debug("\n------------------------");
-		logger.debug("FAILURE: " + exception.getMessage());
+		logger.debug("FAILURE: {}", exception.getMessage());
 
 		throw new RestClientServiceExeption(exception);
 

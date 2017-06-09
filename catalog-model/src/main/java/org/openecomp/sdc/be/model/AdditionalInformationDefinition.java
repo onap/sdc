@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 
 public class AdditionalInformationDefinition extends AdditionalInfoParameterDataDefinition implements Serializable {
 
@@ -34,7 +35,6 @@ public class AdditionalInformationDefinition extends AdditionalInfoParameterData
 
 	private String parentUniqueId;
 
-	private List<AdditionalInfoParameterInfo> parameters;
 
 	public AdditionalInformationDefinition() {
 		super();
@@ -44,15 +44,19 @@ public class AdditionalInformationDefinition extends AdditionalInfoParameterData
 			List<AdditionalInfoParameterInfo> parameters) {
 		super(p);
 		this.parentUniqueId = parentUniqueId;
-		this.parameters = parameters;
+		setParameters(parameters);
 	}
-
+	public AdditionalInformationDefinition(AdditionalInfoParameterDataDefinition p){
+		this.setUniqueId(p.getUniqueId());
+		this.setCreationTime(p.getCreationTime());
+		this.setModificationTime(p.getModificationTime());
+		setParameters(p.getParameters());
+	}
 	public AdditionalInformationDefinition(AdditionalInformationDefinition pd) {
 		this.setUniqueId(pd.getUniqueId());
 		this.setCreationTime(pd.getCreationTime());
 		this.setModificationTime(pd.getModificationTime());
 		this.parentUniqueId = pd.parentUniqueId;
-		this.parameters = pd.parameters;
 	}
 
 	public String getParentUniqueId() {
@@ -63,17 +67,11 @@ public class AdditionalInformationDefinition extends AdditionalInfoParameterData
 		this.parentUniqueId = parentUniqueId;
 	}
 
-	public List<AdditionalInfoParameterInfo> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(List<AdditionalInfoParameterInfo> parameters) {
-		this.parameters = parameters;
-	}
+	
 
 	@Override
 	public String toString() {
-		return "AdditionalInformationDefinition [parameters=" + parameters + ", parentUniqueId=" + parentUniqueId + " "
+		return "AdditionalInformationDefinition [ parentUniqueId=" + parentUniqueId + " "
 				+ super.toString() + "]";
 	}
 

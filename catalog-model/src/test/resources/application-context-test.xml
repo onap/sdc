@@ -8,6 +8,8 @@
 
   <context:component-scan
     base-package="org.openecomp.sdc.be.model.operations.impl,
+    	org.openecomp.sdc.be.model.jsontitan.operations,
+    	org.openecomp.sdc.be.dao.jsongraph,
     	org.openecomp.sdc.be.model.cache,
 		org.openecomp.sdc.be.dao.titan,
 		org.openecomp.sdc.be.dao.cassandra">

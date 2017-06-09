@@ -283,7 +283,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 		@Override
 		public String toString() {
-			return "CreateTopicConfig [partitionCount=" + partitionCount + ", replicationCount=" + replicationCount + "]";
+			return "CreateTopicConfig [partitionCount=" + partitionCount + ", replicationCount=" + replicationCount
+					+ "]";
 		}
 
 	}
@@ -357,7 +358,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 		@Override
 		public String toString() {
-			return "DistributionStatusTopicConfig [pollingIntervalSec=" + pollingIntervalSec + ", fetchTimeSec=" + fetchTimeSec + ", consumerGroup=" + consumerGroup + ", consumerId=" + consumerId + "]";
+			return "DistributionStatusTopicConfig [pollingIntervalSec=" + pollingIntervalSec + ", fetchTimeSec="
+					+ fetchTimeSec + ", consumerGroup=" + consumerGroup + ", consumerId=" + consumerId + "]";
 		}
 
 	}
@@ -394,7 +396,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 		@Override
 		public String toString() {
-			return "DistributionNotificationTopicConfig [maxWaitingAfterSendingSeconds=" + maxWaitingAfterSendingSeconds + ", maxThreadPoolSize=" + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
+			return "DistributionNotificationTopicConfig [maxWaitingAfterSendingSeconds=" + maxWaitingAfterSendingSeconds
+					+ ", maxThreadPoolSize=" + maxThreadPoolSize + ", minThreadPoolSize=" + minThreadPoolSize + "]";
 		}
 
 	}

@@ -25,12 +25,7 @@ import java.util.List;
 
 public enum ArtifactGroupTypeEnum {
 
-	INFORMATIONAL("INFORMATIONAL"), 
-	DEPLOYMENT("DEPLOYMENT"), 
-	LIFE_CYCLE("LIFE_CYCLE"), 
-	SERVICE_API("SERVICE_API"), 
-	TOSCA("TOSCA"), 
-	OTHER("OTHER");
+	INFORMATIONAL("INFORMATIONAL"), DEPLOYMENT("DEPLOYMENT"), LIFE_CYCLE("LIFE_CYCLE"), SERVICE_API("SERVICE_API"), TOSCA("TOSCA"), OTHER("OTHER");
 
 	private String type;
 
@@ -56,7 +51,7 @@ public enum ArtifactGroupTypeEnum {
 	}
 
 	public static List<String> getAllTypes() {
-		List<String> types = new ArrayList<String>();
+		List<String> types = new ArrayList<>();
 		for (ArtifactGroupTypeEnum ate : ArtifactGroupTypeEnum.values()) {
 			types.add(ate.getType());
 		}

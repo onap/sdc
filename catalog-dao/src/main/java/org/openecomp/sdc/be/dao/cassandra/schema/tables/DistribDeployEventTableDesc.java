@@ -70,13 +70,16 @@ public class DistribDeployEventTableDesc implements ITableDescription {
 	}
 
 	enum DSEFieldsDescription {
-		ACTION("action", DataType.varchar(), true), STATUS("status", DataType.varchar(), true), DESCRIPTION(
-				"description", DataType.varchar(), false), REQUEST_ID("request_id", DataType.varchar(),
-						false), SERVICE_INST_ID("service_instance_id", DataType.varchar(), true), MODIFIER("modifier",
-								DataType.varchar(), false), CURR_VERSION("curr_version", DataType.varchar(),
-										false), DID("did", DataType.varchar(), true), RESOURCE_NAME("resource_name",
-												DataType.varchar(),
-												false), RESOURCE_TYPE("resource_type", DataType.varchar(), false);
+		ACTION("action", DataType.varchar(), true), 
+		STATUS("status", DataType.varchar(), true), 
+		DESCRIPTION("description", DataType.varchar(), false), 
+		REQUEST_ID("request_id", DataType.varchar(), false), 
+		SERVICE_INST_ID("service_instance_id", DataType.varchar(), true), 
+		MODIFIER("modifier", DataType.varchar(), false), 
+		CURR_VERSION("curr_version", DataType.varchar(), false), 
+		DID("did", DataType.varchar(), true), 
+		RESOURCE_NAME("resource_name", DataType.varchar(), false), 
+		RESOURCE_TYPE("resource_type", DataType.varchar(), false);
 
 		private String name;
 		private DataType type;

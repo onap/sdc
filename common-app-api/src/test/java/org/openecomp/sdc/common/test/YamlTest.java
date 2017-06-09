@@ -51,11 +51,11 @@ public class YamlTest {
 
 	@Test
 	public void testValidYamlBase64() {
-		assertTrue(yamlToObjectConverter.isValidYaml(Base64.encodeBase64(validYaml.getBytes())));
+		assertTrue(yamlToObjectConverter.isValidYamlEncoded64(Base64.encodeBase64(validYaml.getBytes())));
 	}
 
 	@Test
 	public void testInvalidYamlBase64() {
-		assertFalse(yamlToObjectConverter.isValidYaml(Base64.encodeBase64(invalidYaml.getBytes())));
+		assertFalse(yamlToObjectConverter.isValidYamlEncoded64(Base64.encodeBase64(invalidYaml.getBytes())));
 	}
 }

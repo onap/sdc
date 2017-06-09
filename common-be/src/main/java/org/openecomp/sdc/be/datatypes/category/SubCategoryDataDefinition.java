@@ -23,7 +23,9 @@ package org.openecomp.sdc.be.datatypes.category;
 import java.io.Serializable;
 import java.util.List;
 
-public class SubCategoryDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class SubCategoryDataDefinition extends ToscaDataDefinition implements Serializable {
 	/**
 	 * 
 	 */

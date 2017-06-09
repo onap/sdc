@@ -63,7 +63,7 @@ public class Worker<T extends Job<E>, E> implements Runnable {
 		} catch (Exception e) {
 			BeEcompErrorManager.getInstance().logInternalFlowError("executingJobFailed",
 					"failed during job execution worker" + workerName, BeEcompErrorManager.ErrorSeverity.ERROR);
-			log.debug("worker:" + workerName + " nothing to do stoping", e);
+			log.debug("worker: {} nothing to do stoping", workerName,e);
 		}
 	}
 

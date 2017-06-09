@@ -54,6 +54,7 @@ public enum AuditingFieldsKeysEnum {
 	AUDIT_RESOURCE_DPREV_STATUS(String.class, "DPREV_STATUS"), 
 	AUDIT_RESOURCE_DCURR_STATUS(String.class, "DCURR_STATUS"), 
 	AUDIT_RESOURCE_TOSCA_NODE_TYPE(String.class, "TOSCA_NODE_TYPE"),
+	AUDIT_RESOURCE_URL(String.class, "RESOURCE_URL"),
 
 	// Distribution Engine
 	AUDIT_DISTRIBUTION_ENVRIONMENT_NAME(String.class, "D_ENV"), 

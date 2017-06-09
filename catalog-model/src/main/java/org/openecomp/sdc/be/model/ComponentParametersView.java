@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.model;
 
+import java.util.List;
+
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 
 public class ComponentParametersView {
@@ -41,6 +45,99 @@ public class ComponentParametersView {
 	boolean ignoreComponentInstancesAttributesFrom = false;
 	boolean ignoreInputs = false;
 	boolean ignoreComponentInstancesInputs = false;
+	boolean ignoreCapabiltyProperties = true;
+	
+	public ComponentParametersView() {
+	}
+	
+	public ComponentParametersView(boolean setAllToIgnore) {
+		this();
+		if(setAllToIgnore){
+			this.disableAll();
+		}
+	}
+
+	public ComponentParametersView(List<String> filters) {
+		this(true);
+		
+		for(String fieldName: filters) {
+			switch (ComponentFieldsEnum.findByValue(fieldName)) {	
+			case PROPERTIES:
+				this.setIgnoreProperties(false);
+				break;
+			case INPUTS:
+				this.setIgnoreInputs(false);;
+				break;
+			case USERS:
+				this.setIgnoreUsers(false);
+				break;
+			case CATEGORIES:
+				this.setIgnoreCategories(false);
+				break;
+			case METADATA:
+				this.setIgnoreUsers(false);
+				this.setIgnoreCategories(false);
+				this.setIgnoreAllVersions(false);
+				this.setIgnoreDerivedFrom(false);
+				break;
+			case GROUPS:
+				this.setIgnoreGroups(false);
+				break;
+			case COMPONENT_INSTANCES:
+				this.setIgnoreComponentInstances(false);
+				this.setIgnoreCapabilities(false);
+				this.setIgnoreRequirements(false);
+				break;
+			case COMPONENT_INSTANCES_PROPERTIES:
+				this.setIgnoreComponentInstances(false); //we need this in order to get the calculate capabilities requirements 
+				this.setIgnoreComponentInstancesProperties(false);
+				break;
+			case CAPABILITIES:
+				this.setIgnoreComponentInstances(false);//we need this in order to get the calculate capabilities requirements 
+				this.setIgnoreCapabilities(false);
+				break;
+			case REQUIREMENTS:
+				this.setIgnoreComponentInstances(false);
+				this.setIgnoreRequirements(false);
+				break;
+			case ALL_VERSIONS:
+				this.setIgnoreAllVersions(false);
+				break;
+			case ADDITIONAL_INFORMATION:
+				this.setIgnoreAdditionalInformation(false);
+				break;
+			case ARTIFACTS:
+			case DEPLOYMENT_ARTIFACTS:
+			case TOSCA_ARTIFACTS:
+			case SERVICE_API_ARTIFACTS:
+				this.setIgnoreArtifacts(false);
+				break;
+			case INTERFACES:
+				this.setIgnoreInterfaces(false);
+				break;
+			case DERIVED_FROM:
+				this.setIgnoreDerivedFrom(false);
+				break;
+			case ATTRIBUTES:
+				this.setIgnoreAttributesFrom(false);
+				break;
+			case COMPONENT_INSTANCES_ATTRIBUTES:
+				this.setIgnoreComponentInstances(false);
+				this.setIgnoreComponentInstancesAttributesFrom(false);
+				break;
+			case COMPONENT_INSTANCE_INPUTS:
+				this.setIgnoreComponentInstances(false);
+				this.setIgnoreComponentInstancesInputs(false);
+				break;
+			case INSTANCE_CAPABILTY_PROPERTIES:
+				this.setIgnoreCapabiltyProperties(false);
+				break;
+			default:
+				break;
+			}
+						
+		}
+	}
 
 	///////////////////////////////////////////////////////////////
 	// When adding new member, please update the filter method.
@@ -152,7 +249,6 @@ public class ComponentParametersView {
 		if (ignoreComponentInstancesInputs) {
 			component.setComponentInstancesInputs(null);
 		}
-
 		return component;
 
 	}
@@ -175,6 +271,7 @@ public class ComponentParametersView {
 		ignoreInputs = true;
 		ignoreComponentInstancesAttributesFrom = true;
 		ignoreComponentInstancesInputs = true;
+		ignoreCapabiltyProperties = true;
 	}
 
 	public boolean isIgnoreGroups() {
@@ -278,7 +375,7 @@ public class ComponentParametersView {
 	}
 
 	public void setIgnoreAttributesFrom(boolean ignoreAttributesFrom) {
-		this.ignoreAttributesFrom = ignoreDerivedFrom;
+		this.ignoreAttributesFrom = ignoreAttributesFrom;
 	}
 
 	public boolean isIgnoreComponentInstancesAttributesFrom() {
@@ -313,4 +410,21 @@ public class ComponentParametersView {
 		this.ignoreInputs = ignoreInputs;
 	}
 
+	public boolean isIgnoreCapabiltyProperties() {
+		return ignoreCapabiltyProperties;
+	}
+
+	public void setIgnoreCapabiltyProperties(boolean ignoreCapabiltyProperties) {
+		this.ignoreCapabiltyProperties = ignoreCapabiltyProperties;
+	}
+
+	public JsonParseFlagEnum detectParseFlag() {
+		JsonParseFlagEnum parseFlag;
+		if(isIgnoreComponentInstances()){
+			parseFlag = JsonParseFlagEnum.ParseMetadata;
+		} else {
+			parseFlag = JsonParseFlagEnum.ParseAll;
+		}
+		return parseFlag;
+	}
 }

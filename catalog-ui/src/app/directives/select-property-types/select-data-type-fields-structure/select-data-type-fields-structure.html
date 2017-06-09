@@ -1,0 +1,81 @@
+<div class="data-type-fields-structure">
+    <div class="open-close">
+        <div class="open-close-button" data-ng-class="{'expand':expand,'collapse':!expand}"
+             data-ng-click="expandAndCollapse()"></div>
+        <span class="data-type-name">{{typeName.replace("org.openecomp.datatypes.heat.","")}}</span>
+    </div>
+    <div data-ng-show="expand" data-ng-repeat="property in dataTypeProperties" class="property" data-ng-init="property.isAlreadyInput = isAlreadyInput(property)">
+
+            <sdc-radio-button sdc-model="dataTypesService.selectedPropertiesName" value="{{path + '#' + property.name}}" data-ng-if="path && !property.isAlreadyInput"
+                              disabled="false" elem-name="selectedPropertiesName" elem-id="{{path + '#' + property.name}}" class="selectPropertyType"
+                              on-value-change="setSelectedType(property)" data-tests-id="propertyRadioButton_{{property.name}}"></sdc-radio-button>
+        <div class="existInputContainer" data-ng-if="property.isAlreadyInput"><span class="existInput"></span></div>
+        <div class="i-sdc-form-item property-name">
+            <div tooltips tooltip-content="{{property.name}}">
+                <input class="i-sdc-form-input"
+                       type="text"
+                       data-ng-disabled="true"
+                       value="{{property.name}}"/>
+            </div>
+        </div>
+        <div data-ng-if="dataTypesService.isDataTypeForDataTypePropertyType(property)" class="inner-structure">
+            <select-fields-structure value-obj-ref="(valueObjRef[property.name])"
+                                     type-name="property.type"
+                                     parent-form-obj="parentFormObj"
+                                     fields-prefix-name="fieldsPrefixName+property.name"
+                                     read-only="readOnly"
+                                     default-value="{{currentTypeDefaultValue[property.name]}}"
+                                     path="{{path + '#' + property.name}}"
+                                     is-parent-already-input="isParentAlreadyInput"
+            ></select-fields-structure>
+
+        </div>
+        <div data-ng-if="!dataTypesService.isDataTypeForDataTypePropertyType(property)" ng-switch="property.type">
+            <div ng-switch-when="map">
+                <select-type-map value-obj-ref="valueObjRef[property.name]"
+                                 schema-property="property.schema.property"
+                                 parent-form-obj="parentFormObj"
+                                 fields-prefix-name="fieldsPrefixName+property.name"
+                                 read-only="readOnly"
+                                 default-value="{{currentTypeDefaultValue[property.name]}}"
+                ></select-type-map>
+            </div>
+            <div ng-switch-when="list">
+                <select-type-list value-obj-ref="valueObjRef[property.name]"
+                                  schema-property="property.schema.property"
+                                  parent-form-obj="parentFormObj"
+                                  fields-prefix-name="fieldsPrefixName+property.name"
+                                  read-only="readOnly"
+                                  default-value="{{currentTypeDefaultValue[property.name]}}"
+                ></select-type-list>
+            </div>
+            <div ng-switch-default class="primitive-value-field">
+                <div class="i-sdc-form-item"
+                     data-ng-class="{error:(parentFormObj[fieldsPrefixName+property.name].$dirty && parentFormObj[fieldsPrefixName+property.name].$invalid)}">
+                    <input class="i-sdc-form-input"
+                           data-tests-id="{{fieldsPrefixName+property.name}}"
+                           ng-if="!((property.simpleType||property.type) == 'boolean')"
+                           data-ng-maxlength="100"
+                           data-ng-disabled="readOnly"
+                           maxlength="100"
+                           data-ng-model="valueObjRef[property.name]"
+                           type="text"
+                           name="{{fieldsPrefixName+property.name}}"
+                           data-ng-model-options="{ debounce: 200 }"
+                           data-ng-change="!parentFormObj[fieldsPrefixName+property.name].$error.pattern && ('integer'==property.type && parentFormObj[fieldsPrefixName+property.name].$setValidity('pattern', validateIntRange(valueObjRef[property.name])) || onValueChange(property.name, (property.simpleType||property.type)))"
+                           autofocus/>
+                    <select class="i-sdc-form-select"
+                            data-tests-id="{{fieldsPrefixName+property.name}}"
+                            ng-if="(property.simpleType||property.type) == 'boolean'"
+                            data-ng-disabled="readOnly"
+                            name="{{fieldsPrefixName+property.name}}"
+                            data-ng-change="onValueChange(property.name,'boolean')"
+                            data-ng-model="valueObjRef[property.name]"
+                            data-ng-options="option.v as option.n for option in [{ n: '', v: undefined }, { n: 'false', v: false }, { n: 'true', v: true }]">
+                    </select>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

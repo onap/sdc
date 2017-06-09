@@ -58,40 +58,15 @@ public class GraphDeleteUtil {
 				Map<String, Object> properties = null;
 				if (log.isDebugEnabled()) {
 					properties = getProperties(incomingVertex);
-					log.debug("Going to delete vertex {}", properties);
+					log.debug("Going to delete vertex {}",properties);
 				}
 				incomingVertex.remove();
 				if (log.isDebugEnabled()) {
-					log.debug("After deleting vertex {}", properties);
+					log.debug("After deleting vertex {}",properties);
 				}
 			}
 
 		}
-
-		//
-		// if (edgesCreatorIterable != null) {
-		// for (Edge edge : edgesCreatorIterable) {
-		//
-		// Vertex incomingVertex = edge.getVertex(Direction.IN);
-		// Iterable<Edge> outEdges = incomingVertex.getEdges(Direction.OUT);
-		// if (outEdges != null) {
-		// if (outEdges.iterator().hasNext()) {
-		// return TitanOperationStatus.CANNOT_DELETE_NON_LEAF_NODE;
-		// } else {
-		// Map<String, Object> properties = null;
-		// if (log.isDebugEnabled()) {
-		// properties = ElementHelper.getProperties(incomingVertex);
-		// log.debug("Going to delete vertex {}", properties);
-		// }
-		// incomingVertex.remove();
-		// if (log.isDebugEnabled()) {
-		// log.debug("After deleting vertex {}", properties);
-		// }
-		// }
-		// }
-		//
-		// }
-		// }
 
 		return TitanOperationStatus.OK;
 

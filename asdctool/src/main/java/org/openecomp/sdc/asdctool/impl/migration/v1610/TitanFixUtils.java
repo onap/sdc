@@ -37,9 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-/**
- * Created by mlando on 8/17/2016.
- */
 public class TitanFixUtils {
 	private static Logger log = LoggerFactory.getLogger(TitanFixUtils.class.getName());
 
@@ -291,7 +288,7 @@ public class TitanFixUtils {
 			List<TitanVertex> vertexList = new ArrayList<>();
 
 			if (iterator == null) {
-				log.error("failed to get iterator over vertices object returned for resource id " + propertyIdSecure);
+				log.error("failed to get iterator over vertices object returned for resource id {}", propertyIdSecure);
 				operationFailed = true;
 				return false;
 			}
@@ -301,7 +298,7 @@ public class TitanFixUtils {
 				vertexList.add(vertex);
 			}
 
-			if (!(vertexList.size() == 1)) {
+			if (vertexList.size() != 1) {
 				log.error("failed to get 1 vertex for resource id {} instead got {}", propertyIdSecure,
 						vertexList.size());
 				operationFailed = true;

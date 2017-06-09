@@ -86,7 +86,7 @@ public class ToscaValueBaseConverter {
 		Object jsonValue = null;
 
 		Map<String, Object> value = new HashMap<String, Object>();
-		if ( elementValue.isJsonObject() ){
+		if (elementValue.isJsonObject()) {
 			JsonObject jsonOb = elementValue.getAsJsonObject();
 			Set<Entry<String, JsonElement>> entrySet = jsonOb.entrySet();
 			Iterator<Entry<String, JsonElement>> iteratorEntry = entrySet.iterator();
@@ -106,14 +106,18 @@ public class ToscaValueBaseConverter {
 				}
 			}
 			jsonValue = value;
-		}else{
-			if ( elementValue.isJsonArray() ){
+		} else {
+			if (elementValue.isJsonArray()) {
 				jsonValue = handleJsonArray(elementValue);
-			}else{
-				log.debug("not supported json type {} ",elementValue);
+			} else {
+				if (elementValue.isJsonPrimitive()) {
+					jsonValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
+				} else {
+					log.debug("not supported json type {} ", elementValue);
+				}
 			}
 		}
-		
+
 		return jsonValue;
 	}
 
@@ -149,5 +153,25 @@ public class ToscaValueBaseConverter {
 		} else {
 			throw new IllegalStateException();
 		}
+	}
+
+	/**
+	 * checks is received Object empty or equals null or not It is relevant only
+	 * if received Object is instance of String, Map or List class.
+	 * 
+	 * @param convertedValue
+	 * @return
+	 */
+	static public boolean isEmptyObjectValue(Object convertedValue) {
+		if (convertedValue == null) {
+			return true;
+		} else if (convertedValue instanceof String && ((String) convertedValue).isEmpty()) {
+			return true;
+		} else if (convertedValue instanceof Map && ((Map) convertedValue).isEmpty()) {
+			return true;
+		} else if (convertedValue instanceof List && ((List) convertedValue).isEmpty()) {
+			return true;
+		}
+		return false;
 	}
 }

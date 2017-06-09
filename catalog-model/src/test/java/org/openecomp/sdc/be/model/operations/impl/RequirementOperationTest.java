@@ -21,46 +21,26 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.CapabiltyInstance;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.RequirementImplDef;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
-import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.model.operations.impl.RequirementOperation;
-import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
-import org.openecomp.sdc.be.model.operations.impl.util.PrintGraph;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UserData;
-import org.openecomp.sdc.common.api.ConfigurationListener;
-import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,10 +57,8 @@ public class RequirementOperationTest extends ModelTestBase {
 	private static Logger log = LoggerFactory.getLogger(RequirementOperationTest.class.getName());
 	private Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
 
-	private static String USER_ID = "muserId";
+	private static String USER_ID = "muUserId";
 	private static String CATEGORY_NAME = "category/mycategory";
-
-	private static ConfigurationManager configurationManager;
 
 	@javax.annotation.Resource(name = "titan-generic-dao")
 	private TitanGenericDao titanDao;
@@ -147,11 +125,9 @@ public class RequirementOperationTest extends ModelTestBase {
 		ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 		resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
-		Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", "0.1", null,
-				true, true);
+		Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", "0.1", null, true, true);
 
-		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation
-				.addRequirementToResource(reqName, reqDefinition, resource.getUniqueId());
+		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation.addRequirementToResource(reqName, reqDefinition, resource.getUniqueId());
 		assertEquals("check error", StorageOperationStatus.INVALID_ID, addRequirementToResource.right().value());
 
 	}
@@ -175,8 +151,17 @@ public class RequirementOperationTest extends ModelTestBase {
 
 		return userData;
 	}
-	
+
+	/*
+	 * private void deleteAndCreateCategory(String category) { CategoryData categoryData = new CategoryData(); categoryData.setName(category);
+	 * 
+	 * titanDao.deleteNode(categoryData, CategoryData.class); Either<CategoryData, TitanOperationStatus> createNode = titanDao .createNode(categoryData, CategoryData.class); System.out.println("after creating caetgory " + createNode);
+	 * 
+	 * }
+	 */
+
 	@Test
+	@Ignore
 	public void testAddRequirementWithCapability() {
 
 		String capabilityTypeName = "tosca.nodes.Container";
@@ -195,11 +180,9 @@ public class RequirementOperationTest extends ModelTestBase {
 		ResourceOperationTest resourceOperationTest = new ResourceOperationTest();
 		resourceOperationTest.setOperations(titanDao, resourceOperation, propertyOperation);
 
-		Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", "2.0", null,
-				true, true);
+		Resource resource = resourceOperationTest.createResource(USER_ID, CATEGORY_NAME, "my-resource", "2.0", null, true, true);
 
-		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation
-				.addRequirementToResource(reqName, reqDefinition, resource.getUniqueId());
+		Either<RequirementDefinition, StorageOperationStatus> addRequirementToResource = requirementOperation.addRequirementToResource(reqName, reqDefinition, resource.getUniqueId());
 
 		assertEquals("check requirement was added", true, addRequirementToResource.isLeft());
 
@@ -207,9 +190,8 @@ public class RequirementOperationTest extends ModelTestBase {
 		String json = prettyGson.toJson(resource2);
 		log.debug(json);
 	}
-	
-	private void compareProperties(Map<String, PropertyDefinition> capabilityProperties,
-			CapabiltyInstance capabiltyInstance, Map<String, String> actual) {
+
+	private void compareProperties(Map<String, PropertyDefinition> capabilityProperties, CapabiltyInstance capabiltyInstance, Map<String, String> actual) {
 
 		Map<String, String> properties = capabiltyInstance.getProperties();
 

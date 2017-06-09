@@ -161,7 +161,7 @@ public class SwitchoverDetector {
 				if (message == null) {
 					message = e.getClass().getName();
 				}
-				switchoverLogger.debug("Error occured during switchover detector query, Result is {}", message);
+				logger.debug("Error occured during switchover detector query, Result is {}", message, e);
 			}
 		}
 		if (null == result) {
@@ -178,14 +178,18 @@ public class SwitchoverDetector {
 
 		@Override
 		public void run() {
-			switchoverLogger.trace("Executing Switchover Detector Task - Start");
+			logger.trace("Executing Switchover Detector Task - Start");
 
 			initializeSiteMode();
 
 			Boolean beRes = queryBe();
 			Boolean feRes = queryFe();
 
-			Boolean updateRequired = siteMode == SwitchoverDetectorState.STANDBY.getState() && (beRes || feRes);
+			if (null == beRes || null == feRes) {
+				return;
+			}
+			
+			Boolean updateRequired = siteMode == SwitchoverDetectorState.STANDBY.getState() && (beRes || feRes) & (beMatch != beRes || feMatch != feRes);
 
 			updateSiteModeAndPriority(beRes && feRes, siteMode == SwitchoverDetectorState.STANDBY.getState(), updateRequired);
 
@@ -232,7 +236,8 @@ public class SwitchoverDetector {
 				if (message == null) {
 					message = e.getClass().getName();
 				}
-				switchoverLogger.error("Error occured during change site priority request, Result is {}", message);
+			
+				logger.debug("Error occured during change site priority request, Result is {}", message, e);
 			}
 
 		}
@@ -252,7 +257,8 @@ public class SwitchoverDetector {
 				if (message == null) {
 					message = e.getClass().getName();
 				}
-				switchoverLogger.error("Error occured during publish network request, Result is {}", message);
+				
+				logger.debug("Error occured during publish network request, Result is {}", message, e);
 			}
 		}
 

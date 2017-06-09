@@ -103,7 +103,7 @@ public class ValidateHeatArtFieldsTypes extends ComponentBaseTest {
 							response.getErrorCode() == 200);
 					ArtifactDefinition artifactDefinitionJavaObject = ResponseParser
 							.convertArtifactDefinitionResponseToJavaObject(response.getResponse());
-					List<HeatParameterDefinition> heatParameters = artifactDefinitionJavaObject.getHeatParameters();
+					List<HeatParameterDefinition> heatParameters = artifactDefinitionJavaObject.getListHeatParameters();
 					String currentValue = null;
 					for (HeatParameterDefinition heatParameterDefinition : heatParameters) {
 						if (heatParameterDefinition.getName().equals("city_name")) {

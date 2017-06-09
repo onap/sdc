@@ -90,7 +90,7 @@ public class AddGroupUuid {
 
 						groupUUID = UniqueIdBuilder.generateUUID();
 
-						log.debug("Before updating groups {} with groupUUID {}", builder.toString(), groupUUID);
+						log.debug("Before updating groups {} with groupUUID {}",builder.toString(),groupUUID);
 
 						for (GroupData groupData : groupsData) {
 
@@ -99,21 +99,20 @@ public class AddGroupUuid {
 							Either<GroupData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(groupData,
 									GroupData.class);
 							if (updateNode.isRight()) {
-								log.error("Failed to update group " + groupData + ". Error is {}",
-										updateNode.right().value().toString());
+								log.error("Failed to update group {}. Error is {}",groupData,updateNode.right().value().toString());
 								result = false;
 								return result;
 							}
 
 						}
 
-						log.debug("After updating groups {} with groupUUID {}", builder.toString(), groupUUID);
+						log.debug("After updating groups {} with groupUUID {}",builder.toString(),groupUUID);
 					}
 
 				}
 			}
 
-			log.info("The number of groups updated with groupUUID is " + numberOfUpdates);
+			log.info("The number of groups updated with groupUUID is {}", numberOfUpdates);
 
 			return result;
 

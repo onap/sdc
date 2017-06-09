@@ -58,34 +58,27 @@ public enum ToscaPropertyType {
 
 	STRING("string", StringValidator.getInstance(), StringConvertor.getInstance(), ToscaStringConvertor.getInstance()),
 
-	BOOLEAN("boolean", BooleanValidator.getInstance(), ToscaBooleanConverter.getInstance(),
-			BooleanConverter.getInstance()),
+	BOOLEAN("boolean", BooleanValidator.getInstance(), ToscaBooleanConverter.getInstance(), BooleanConverter.getInstance()),
 
 	FLOAT("float", FloatValidator.getInstance(), ToscaFloatConverter.getInstance(), FloatConverter.getInstance()),
 
 	INTEGER("integer", IntegerValidator.getInstance(), DefaultConverter.getInstance(), IntegerConverter.getInstance()),
 
-	SCALAR_UNIT_SIZE("scalar-unit.size", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	SCALAR_UNIT_SIZE("scalar-unit.size", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
-	SCALAR_UNIT_TIME("scalar-unit.time", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	SCALAR_UNIT_TIME("scalar-unit.time", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
-	SCALAR_UNIT_FREQUENCY("scalar-unit.frequency", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	SCALAR_UNIT_FREQUENCY("scalar-unit.frequency", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
-	RANGE("range", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	RANGE("range", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
-	TIMESTAMP("timestamp", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	TIMESTAMP("timestamp", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
 	MAP("map", MapValidator.getInstance(), MapConverter.getInstance(), ToscaMapValueConverter.getInstance()),
 
 	LIST("list", ListValidator.getInstance(), ListConverter.getInstance(), ToscaListValueConverter.getInstance()),
 
-	VERSION("version", StringValidator.getInstance(), DefaultConverter.getInstance(),
-			ToscaValueDefaultConverter.getInstance()),
+	VERSION("version", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
 	KEY("key", KeyValidator.getInstance(), StringConvertor.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
@@ -100,16 +93,14 @@ public enum ToscaPropertyType {
 	private ToscaValueConverter valueConverter;
 	private boolean isAbstract = false;
 
-	ToscaPropertyType(String type, PropertyTypeValidator validator, PropertyValueConverter converter,
-			ToscaValueConverter valueConverter) {
+	ToscaPropertyType(String type, PropertyTypeValidator validator, PropertyValueConverter converter, ToscaValueConverter valueConverter) {
 		this.type = type;
 		this.validator = validator;
 		this.converter = converter;
 		this.valueConverter = valueConverter;
 	}
 
-	ToscaPropertyType(String type, PropertyTypeValidator validator, PropertyValueConverter converter,
-			ToscaValueConverter valueConverter, boolean isAbstract) {
+	ToscaPropertyType(String type, PropertyTypeValidator validator, PropertyValueConverter converter, ToscaValueConverter valueConverter, boolean isAbstract) {
 		this(type, validator, converter, valueConverter);
 		this.isAbstract = isAbstract;
 	}
@@ -178,6 +169,17 @@ public enum ToscaPropertyType {
 
 		return isPrimitiveToscaType != null && isPrimitiveToscaType.isAbstract() == false;
 
+	}
+	
+	public static boolean isPrimitiveType(String dataTypeName) {
+		
+		if (ToscaPropertyType.MAP.getType().equals(dataTypeName) || ToscaPropertyType.LIST.getType().equals(dataTypeName)){
+			return false;
+		}
+		if(isScalarType(dataTypeName)){
+			return true;
+		}
+		return false;
 	}
 
 	public static ToscaPropertyType getTypeIfScalar(String dataTypeName) {

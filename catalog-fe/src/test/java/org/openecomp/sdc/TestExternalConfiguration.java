@@ -57,7 +57,6 @@ public class TestExternalConfiguration<T extends Object> {
 		try {
 			Thread.currentThread().sleep(100 * 1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

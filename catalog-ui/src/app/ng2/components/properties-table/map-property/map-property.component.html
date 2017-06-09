@@ -1,0 +1,38 @@
+<div class="add-data-row">
+    <div class="sprite-new add-item-icon" (click)="addMapItemFields()"></div>
+</div>
+
+<!--the ngFor runs on dummy array in mapKey array length and not on maKeys array in order to prevent from page do the ngFor again when user changes a key-->
+<template  ngFor let-num [ngForOf]="getNumber(mapKeys.length)" let-i="index">
+    <div class="table-inner-row"
+         [ngClass]="{'selected': property.schema.property.isDataType && selectedPropertyId === property.childrenProperties[i].treeNodeId}"
+         (click)="property.schema.property.isDataType && onChildPropertySelected(property.childrenProperties[i])">
+        <div class="table-cell">
+            <input class="value-input" (keyup)="changeKeyOfMap(mapKeys[i], i);$event.stopPropagation();"
+                    [(ngModel)]="mapKeys[i]"
+                    name="mapKey{{property.treeNodeId}}{{i}}"
+                    (change)="propValueChanged()"/>
+        </div>
+        <div class="table-cell">
+            <input class="value-input" *ngIf="property.schema.property.isSimpleType"
+                    [(ngModel)]="property.valueObjectRef[mapKeys[i]]"
+                   type="property.schema.property.derivedFromSimpleTypeName || property.schema.property.type"
+                    (change)="propValueChanged()"/>
+            <div *ngIf="property.schema.property.isDataType">
+                <div>{{ property.schema.property.type | contentAfterLastDot }}</div>
+                <span (click)="property.updateExpandedChildPropertyId(property.childrenProperties[i].treeNodeId)">V</span>
+            </div>
+            <span class="delete-span sprite-new delete-item-icon" (click)="deleteMapItem(i)"></span>
+        </div>
+    </div>
+    <div class="table-inner-row" *ngIf="property.schema.property.isDataType && property.expandedChildPropertyId == property.childrenProperties[i].treeNodeId">
+        <div class="inner-table-container">
+            <properties-value-inner-table [property]="property.childrenProperties[i]"
+                                          [selectedPropertyId]="selectedPropertyId"
+                                          [propertyNameSearchText]="propertyNameSearchText"
+                                            (selectChildProperty)="onChildPropertySelected($event)"
+                                            (valueChanged)="propValueChanged()"></properties-value-inner-table>
+        </div>
+    </div>
+</template>
+

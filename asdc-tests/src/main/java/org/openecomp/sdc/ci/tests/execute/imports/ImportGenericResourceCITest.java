@@ -46,9 +46,12 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -82,9 +85,10 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 	private static Logger log = LoggerFactory.getLogger(ImportGenericResourceCITest.class.getName());
 	private static final String FILE_NAME_MY_COMPUTE = "tosca.nodes.MyCompute";
 	private static final String RESOURCE_NAME_UPDATE_COMPUTE = "userUpdateCompute";
-	private static final String RESOURCE_NAME_MY_COMPUTE = "myCompute";
+	private static final String RESOURCE_NAME_MY_COMPUTE = "MyCompute";
 	private static final String RESOURCE_NAME_USER_COMPUTE = "userCompute";
 	private static final String FILE_NAME_USER_COMPUTE = "tosca.nodes.userCompute";
+	private static final String FILE_NAME_USER_VFC = "Derived_VFC";
 	@Rule
 	public static TestName name = new TestName();
 
@@ -503,7 +507,7 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 		String fileName = FILE_NAME_MY_COMPUTE;
 		RestResponse response = ImportRestUtils.importNormativeResourceByName(RESOURCE_NAME_MY_COMPUTE, UserRoleEnum.ADMIN);
 		Integer statusCode = response.getErrorCode();
-		assertTrue(statusCode == BaseRestUtils.STATUS_CODE_IMPORT_SUCCESS);
+		assertTrue(String.format("Expected code %s and got code %s",ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS,statusCode),statusCode == ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS);
 		String uid = ResponseParser.getUniqueIdFromResponse(response);
 		validateMyComputeResource(uid, fileName, "1.0", "CERTIFIED");
 
@@ -572,7 +576,7 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 		String fileName = FILE_NAME_USER_COMPUTE;
 		RestResponse response = ImportRestUtils.importNormativeResourceByName(RESOURCE_NAME_USER_COMPUTE, UserRoleEnum.ADMIN);
 		Integer statusCode = response.getErrorCode();
-		assertTrue(statusCode == ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS);
+		assertTrue(String.format("Expected code %s and got code %s",ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS,statusCode),statusCode == ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS);
 		String uid = ResponseParser.getUniqueIdFromResponse(response);
 		validateMyComputeResource(uid, fileName, "1.0", "CERTIFIED");
 
@@ -594,6 +598,23 @@ public class ImportGenericResourceCITest extends ComponentBaseTest {
 	public void importNormativeTypesDesignerUserRole() throws Exception {
 		Integer statusCode = ImportRestUtils.importNormativeResourceByName(RESOURCE_NAME_MY_COMPUTE, UserRoleEnum.DESIGNER).getErrorCode();
 		assertTrue(statusCode == 409);
+	}
+	
+	@Test
+	public void testImportVFCDerivedFromGeneric() throws IOException {
+	
+		RestResponse response = ImportRestUtils.importNewResourceByName(FILE_NAME_USER_VFC, UserRoleEnum.ADMIN);
+		Integer statusCode = response.getErrorCode();
+		assertTrue(String.format("Expected code %s and got code %s",ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS,statusCode),statusCode == ImportRestUtils.STATUS_CODE_IMPORT_SUCCESS);
+		String uid = ResponseParser.getUniqueIdFromResponse(response);
+		response = ResourceRestUtils.getResource(uid);
+		Resource VFC = ResponseParser.convertResourceResponseToJavaObject(response.getResponse());
+		List<PropertyDefinition> props = VFC.getProperties();
+		for (PropertyDefinition prop : props) {
+			assertTrue(null != prop.getOwnerId() && !uid.equals(prop.getOwnerId()));
+			
+		}
+
 	}
 
 }

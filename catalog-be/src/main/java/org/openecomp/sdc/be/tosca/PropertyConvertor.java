@@ -71,11 +71,10 @@ public class PropertyConvertor {
 				Map<String, ToscaProperty> properties = new HashMap<>();
 
 				// take only the properties of this resource
-				props.stream().filter(p -> component.getUniqueId().equals(p.getParentUniqueId())).forEach(property -> {
+				props.stream().filter(p -> p.getOwnerId() == null || p.getOwnerId().equals(component.getUniqueId())).forEach(property -> {
 					ToscaProperty prop = convertProperty(dataTypes, property, false);
 
 					properties.put(property.getName(), prop);
-
 				});
 				if (!properties.isEmpty()) {
 					toscaNodeType.setProperties(properties);
@@ -172,7 +171,7 @@ public class PropertyConvertor {
 						if (innerConverter != null) {
 							convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
 						} else {
-							convertedValue = mapConverterInst.convertDataTypeToToscaMap(innerType, dataTypes, innerConverter, isScalar, jsonElement);
+							convertedValue = mapConverterInst.convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement);
 						}
 					}
 				}

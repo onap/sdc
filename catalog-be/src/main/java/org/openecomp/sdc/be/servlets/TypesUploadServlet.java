@@ -42,6 +42,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
@@ -105,13 +107,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create Capability Type from yaml", httpMethod = "POST", notes = "Returns created Capability Type", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Capability Type created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "Capability Type already exist") })
+	@ApiResponse(code = 409, message = "Capability Type already exist") })
 	public Response uploadCapabilityType(@ApiParam("FileInputStream") @FormDataParam("capabilityTypeZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		capabilityTypeImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> CapabilityTypeImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload));
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name());
-
 	}
 
 	@POST
@@ -120,9 +120,8 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create Interface Lyfecycle Type from yaml", httpMethod = "POST", notes = "Returns created Interface Lifecycle Type", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Interface Lifecycle Type created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "Interface Lifecycle Type already exist") })
+	@ApiResponse(code = 409, message = "Interface Lifecycle Type already exist") })
 	public Response uploadInterfaceLifecycleType(@ApiParam("FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		interfaceLifecycleTypeImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> InterfaceLifecycleTypeImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload));
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
@@ -134,13 +133,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create Categories from yaml", httpMethod = "POST", notes = "Returns created categories", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Categories created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "Category already exist") })
+	@ApiResponse(code = 409, message = "Category already exist") })
 	public Response uploadCategories(@ApiParam("FileInputStream") @FormDataParam("categoriesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		categoriesImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> CategoriesImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper, () -> categoriesImportManager.createCategories(ymlPayload));
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "categories");
-
 	}
 
 	@POST
@@ -149,13 +146,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create Categories from yaml", httpMethod = "POST", notes = "Returns created data types", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Data types created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "Data types already exist") })
+	@ApiResponse(code = 409, message = "Data types already exist") })
 	public Response uploadDataTypes(@ApiParam("FileInputStream") @FormDataParam("dataTypesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		dataTypeImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> DataTypeImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createDataTypes(responseWrapper, ymlPayload);
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.DataType.getName());
-
 	}
 
 	@POST
@@ -164,12 +159,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create GroupTypes from yaml", httpMethod = "POST", notes = "Returns created group types", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "group types created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "group types already exist") })
+	@ApiResponse(code = 409, message = "group types already exist") })
 	public Response uploadGroupTypes(@ApiParam("FileInputStream") @FormDataParam("groupTypesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		groupTypeImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> GroupTypeImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createGroupTypes(responseWrapper, ymlPayload);
-
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.GroupType.getName());
 	}
 
@@ -179,14 +172,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create PolicyTypes from yaml", httpMethod = "POST", notes = "Returns created policy types", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "policy types created"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
-			@ApiResponse(code = 409, message = "policy types already exist") })
+	@ApiResponse(code = 409, message = "policy types already exist") })
 	public Response uploadPolicyTypes(@ApiParam("FileInputStream") @FormDataParam("policyTypesZip") File file, @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-
 		policyTypeImportManager = initElementTypeImportManager(request.getSession().getServletContext(), () -> PolicyTypeImportManager.class);
 		ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createPolicyTypes(responseWrapper, ymlPayload);
-
 		return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.PolicyType.getName());
-
 	}
 
 	private Response uploadElementTypeServletLogic(ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod, File file, final HttpServletRequest request, String creator, String elementTypeName) {
@@ -221,7 +211,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 			return responseWrapper.getInnerElement();
 
 		} catch (Exception e) {
-			log.debug("create {} failed with exception: {}", elementTypeName, e);
+			log.debug("create {} failed with exception:", elementTypeName, e);
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create " + elementTypeName);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
@@ -233,8 +223,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 			Response response = buildErrorResponse(eitherResult.right().value());
 			responseWrapper.setInnerElement(response);
 		} else {
-			Response response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), eitherResult.left().value());
-			responseWrapper.setInnerElement(response);
+			try {
+				Response response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), RepresentationUtils.toRepresentation(eitherResult.left().value()));
+				responseWrapper.setInnerElement(response);
+			} catch (Exception e) {
+				Response response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+				responseWrapper.setInnerElement(response);
+			} 
 		}
 	}
 
@@ -248,20 +243,16 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
 	private void createGroupTypes(Wrapper<Response> responseWrapper, String groupTypesYml) {
 		final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> groupTypeImportManager.createGroupTypes(groupTypesYml);
 		buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.GROUP_TYPE_ALREADY_EXIST, NodeTypeEnum.GroupType.name());
-
 	}
 
 	// policy types
 	private void createPolicyTypes(Wrapper<Response> responseWrapper, String policyTypesYml) {
 		final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> policyTypeImportManager.createPolicyTypes(policyTypesYml);
 		buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.POLICY_TYPE_ALREADY_EXIST, NodeTypeEnum.PolicyType.name());
-
 	}
 
 	// data types
-	private <ElementTypeDefinition> void buildStatusForElementTypeCreate(Wrapper<Response> responseWrapper, Supplier<Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml,
-			ActionStatus alreadyExistStatus, String elementTypeName) {
-
+	private <ElementTypeDefinition> void buildStatusForElementTypeCreate(Wrapper<Response> responseWrapper, Supplier<Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml, ActionStatus alreadyExistStatus, String elementTypeName) {
 		Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat> eitherResult = generateElementTypeFromYml.get();
 
 		if (eitherResult.isRight()) {

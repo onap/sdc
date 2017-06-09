@@ -29,17 +29,15 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.api.IServiceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
@@ -71,12 +69,6 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
 	@javax.annotation.Resource
 	private IAdditionalInformationOperation additionalInformationOperation = null;
-
-	@javax.annotation.Resource
-	private IResourceOperation resourceOperation;
-
-	@javax.annotation.Resource
-	private IServiceOperation serviceOperation;
 
 	@javax.annotation.Resource
 	private IGraphLockOperation graphLockOperation;
@@ -551,7 +543,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
 			// verify that resource is checked-out and the user is the last
 			// updater
-			if (!ComponentValidationUtils.canWorkOnResource(resourceId, resourceOperation, userId)) {
+			if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
 				return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			}
 			break;
@@ -559,7 +551,7 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
 
 			// verify that resource is checked-out and the user is the last
 			// updater
-			if (!ComponentValidationUtils.canWorkOnService(resourceId, serviceOperation, userId)) {
+			if (!ComponentValidationUtils.canWorkOnComponent(resourceId, toscaOperationFacade, userId)) {
 				return componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION);
 			}
 			break;

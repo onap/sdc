@@ -32,14 +32,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
-import com.thinkaurelius.titan.core.TitanVertex;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.codehaus.jackson.JsonNode;
@@ -60,7 +57,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
@@ -69,7 +65,6 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
@@ -79,22 +74,18 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
-import org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter;
 import org.openecomp.sdc.be.model.tosca.validators.PropertyTypeValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
-import org.openecomp.sdc.be.resources.data.InputValueData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
-import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -104,13 +95,15 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
+import com.thinkaurelius.titan.core.TitanVertex;
 
 import fj.data.Either;
 
 @Component("property-operation")
 public class PropertyOperation extends AbstractOperation implements IPropertyOperation {
 
+	private TitanGenericDao titanGenericDao;
+	
 	public static void main(String[] args) {
 
 		List<Pattern> buildFunctionPatterns = buildFunctionPatterns();
@@ -126,10 +119,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	}
 
-	public static final String PROPERTY = "property";
-
-	public PropertyOperation() {
+	public PropertyOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
 		super();
+		this.titanGenericDao = titanGenericDao;
 	}
 
 	private static Logger log = LoggerFactory.getLogger(PropertyOperation.class.getName());
@@ -165,7 +157,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	@Override
 	public Either<PropertyDefinition, StorageOperationStatus> getPropertyOfResource(String propertyName, String resourceId) {
 
-		String propertyId = UniqueIdBuilder.buildPropertyUniqueId(resourceId, propertyName);
+		String propertyId = UniqueIdBuilder.buildComponentPropertyUniqueId(resourceId, propertyName);
 
 		Either<PropertyData, TitanOperationStatus> getResult = this.titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Property), propertyId, PropertyData.class);
 		if (getResult.isLeft()) {
@@ -173,7 +165,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			return Either.left(convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId));
 		} else {
 			TitanOperationStatus titanStatus = getResult.right().value();
-			log.debug("Node with id {} was not found in the graph. Status: {}", propertyId, titanStatus);
+			log.debug("Node with id {} was not found in the graph. status: {}", propertyId, titanStatus);
 			StorageOperationStatus storageOperationStatus = DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
 			return Either.right(storageOperationStatus);
 		}
@@ -192,10 +184,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * Either<PropertyData, TitanOperationStatus> status = addPropertyToGraph(propertyName, propertyDefinition, resourceId);
 	 * 
-	 * if (status.isRight()) { titanGenericDao.rollback(); log.error("Failed to add property " + propertyName + " to resource " + resourceId); return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status. right().value())); } else
+	 * if (status.isRight()) { titanGenericDao.rollback(); 
+	 * log.error("Failed to add property {} to resource {}, propertyName, resourceId);
+	 *  return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status. right().value())); } else
 	 * { titanGenericDao.commit(); PropertyData propertyData = status.left().value();
 	 * 
-	 * PropertyDefinition propertyDefResult = convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId); log.debug("The returned PropertyDefintion is {}", propertyDefinition); return Either.left(propertyDefResult); }
+	 * PropertyDefinition propertyDefResult = convertPropertyDataToPropertyDefinition(propertyData, propertyName, resourceId); log.debug("The returned PropertyDefintion is " + propertyDefinition); return Either.left(propertyDefResult); }
 	 * 
 	 * 
 	 * }
@@ -244,7 +238,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		PropertyDefinition propertyDefResult = new PropertyDefinition(propertyDataResult.getPropertyDataDefinition());
 		propertyDefResult.setConstraints(convertConstraints(propertyDataResult.getConstraints()));
 		propertyDefResult.setName(propertyName);
-		propertyDefResult.setParentUniqueId(resourceId);
+//		propertyDefResult.setParentUniqueId(resourceId);
 
 		return propertyDefResult;
 	}
@@ -545,7 +539,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, allDataTypes);
 	 * 
-	 * if (validateResult.right.booleanValue() == false) { log.debug("The value {} of property from type {} is invalid", value, propertyType); return Either.right(false); }
+	 * if (validateResult.right.booleanValue() == false) { 
+	 * log.debug("The value {} of property from type {} is invalid", value, propertyType); 
+	 * return Either.right(false); }
 	 * 
 	 * JsonElement jsonElement = validateResult.left;
 	 * 
@@ -555,9 +551,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * }
 	 * 
-	 * log.trace("After validating property type " + propertyType);
+	 * log.trace("After validating property type {}", propertyType);
 	 * 
-	 * boolean isValidProperty = isValidValue(type, value, innerType); if (false == isValidProperty) { log.debug("The value {} of property from type {} is invalid", value, type); return Either.right(false); }
+	 * boolean isValidProperty = isValidValue(type, value, innerType); if (false == isValidProperty) { log.debug("The value " + value + " of property from type " + type + " is invalid"); return Either.right(false); }
 	 * 
 	 * 
 	 * Object convertedValue = value; if (false == isEmptyValue(value)) { PropertyValueConverter converter = type.getConverter(); convertedValue = converter.convert(value, null); }
@@ -572,7 +568,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		List<PropertyConstraint> constraints = propertyDefinition.getConstraints();
 
-		propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, propertyName));
+		propertyDefinition.setUniqueId(UniqueIdBuilder.buildComponentPropertyUniqueId(resourceId, propertyName));
 		PropertyData propertyData = new PropertyData(propertyDefinition, convertConstraintsToString(constraints));
 
 		log.debug("Before adding property to graph {}", propertyData);
@@ -580,7 +576,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		log.debug("After adding property to graph {}", propertyData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add property {} to graph. Status is {}", propertyName, operationStatus);
+			log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -589,7 +585,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(resourceData, propertyData, GraphEdgeLabels.PROPERTY, props);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to associate resource {} to property {} in graph. Status is {}", resourceId, propertyName, operationStatus);
+			log.error("Failed to associate resource {} to property {} in graph. status is {}", resourceId, propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -601,7 +597,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		List<PropertyConstraint> constraints = propertyDefinition.getConstraints();
 
-		propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, propertyName));
+		propertyDefinition.setUniqueId(UniqueIdBuilder.buildComponentPropertyUniqueId(resourceId, propertyName));
 		PropertyData propertyData = new PropertyData(propertyDefinition, convertConstraintsToString(constraints));
 
 		log.debug("Before adding property to graph {}", propertyData);
@@ -609,7 +605,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		log.debug("After adding property to graph {}", propertyData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
+			log.error("Failed to add property {} to graph. status is ", propertyName, operationStatus);
 			return operationStatus;
 		}
 
@@ -731,7 +727,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			log.debug("After adding property to graph {}", propertyData);
 		if (createNodeResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to add property {} to graph. Status is {}", propertyName, operationStatus);
+			log.error("Failed to add property {} to graph. status is {}", propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -739,11 +735,11 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		props.put(GraphPropertiesDictionary.NAME.getProperty(), propertyName);
 
 		UniqueIdData uniqueIdData = new UniqueIdData(nodeType, uniqueId);
-		log.debug("Before associating {} to property {}.", uniqueIdData, propertyName);
+		log.debug("Before associating {} to property {}", uniqueIdData, propertyName);
 		Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao.createRelation(uniqueIdData, propertyData, GraphEdgeLabels.PROPERTY, props);
 		if (createRelResult.isRight()) {
 			TitanOperationStatus operationStatus = createNodeResult.right().value();
-			log.error("Failed to associate resource {} to property {} in graph. Status is {}", uniqueId, propertyName, operationStatus);
+			log.error("Failed to associate resource {} to property {} in graph. status is {}", uniqueId, propertyName, operationStatus);
 			return Either.right(operationStatus);
 		}
 
@@ -830,7 +826,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			String propertyUid = propertyDefinition.getUniqueId();
 			Either<PropertyData, TitanOperationStatus> deletePropertyRes = deletePropertyFromGraph(propertyUid);
 			if (deletePropertyRes.isRight()) {
-				log.error("Failed to delete property with id " + propertyUid);
+				log.error("Failed to delete property with id {}", propertyUid);
 				TitanOperationStatus status = deletePropertyRes.right().value();
 				if (status == TitanOperationStatus.NOT_FOUND) {
 					status = TitanOperationStatus.INVALID_ID;
@@ -887,8 +883,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 					log.debug("Property {} is associated to node {}", propertyName, uniqueId);
 				PropertyData propertyData = immutablePair.getKey();
 				PropertyDefinition propertyDefinition = this.convertPropertyDataToPropertyDefinition(propertyData, propertyName, uniqueId);
-
-				properties.add(propertyDefinition);
+				//Adds parent property to List if it hasn't been overrided in one of the children
+				if(!properties.stream().filter(p -> p.getName().equals(propertyDefinition.getName())).findAny().isPresent()){
+					properties.add(propertyDefinition);
+				}
 
 				if (log.isTraceEnabled())
 					log.trace("findPropertiesOfNode - property {} associated to node {}", propertyDefinition, uniqueId);
@@ -898,24 +896,28 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		return TitanOperationStatus.OK;
 	}
-
-	public boolean isPropertyExist(List<PropertyDefinition> properties, String resourceUid, String propertyName) {
-
-		if (properties == null) {
-			return false;
-		}
-
-		for (PropertyDefinition propertyDefinition : properties) {
-			String parentUniqueId = propertyDefinition.getParentUniqueId();
-			String name = propertyDefinition.getName();
-
-			if (parentUniqueId.equals(resourceUid) && name.equals(propertyName)) {
-				return true;
+/**
+ * Checks existence of a property with the same name belonging to the same resource
+ * or existence of property with the same name and different type (including derived from hierarchy)
+ * @param properties
+ * @param resourceUid
+ * @param propertyName
+ * @param propertyType
+ * @return
+ */
+	public boolean isPropertyExist(List<PropertyDefinition> properties, String resourceUid, String propertyName, String propertyType) {
+		boolean result = false;
+		if (!CollectionUtils.isEmpty(properties)) {
+			for (PropertyDefinition propertyDefinition : properties) {
+	
+				if ( propertyDefinition.getName().equals(propertyName) &&
+						(propertyDefinition.getParentUniqueId().equals(resourceUid) || !propertyDefinition.getType().equals(propertyType)) ) {
+					result = true;
+					break;
+				}
 			}
 		}
-
-		return false;
-
+		return result;
 	}
 
 	/**
@@ -947,7 +949,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * "Failed to update property value on instance. Status is " + updatePropertyOfResourceInstance.right().value(), ErrorSeverity.ERROR); return Either.right(updatePropertyOfResourceInstance.right().value()); } return
 	 * Either.left(updatePropertyOfResourceInstance.left().value()); }
 	 * 
-	 * if (isPropertyValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) { log.debug("After finding property value of {} on component instance {}", propertyId, resourceInstanceId); return Either.right(isPropertyValueExists.getLeft()); }
+	 * if (isPropertyValueExists.getLeft() != TitanOperationStatus.NOT_FOUND) { 
+	 * log.debug("After finding property value of {} on componenet instance {}", propertyId, resourceInstanceId); 
+	 * return Either.right(isPropertyValueExists.getLeft()); }
 	 * 
 	 * String propertyType = propertyData.getPropertyDataDefinition().getType(); String value = resourceInstanceProperty.getValue(); Either<Object, Boolean> isValid = validateAndUpdatePropertyValue(propertyType, value);
 	 * 
@@ -961,7 +965,8 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * logBeInvalidValueError("Add property value", pair.getLeft(), resourceInstanceProperty.getName(), propertyType); return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT); } addRulesToNewPropertyValue(propertyValueData,
 	 * resourceInstanceProperty, resourceInstanceId);
 	 * 
-	 * log.debug("Before adding property value to graph {}", propertyValueData); Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao .createNode(propertyValueData, PropertyValueData.class);
+	 * log.debug("Before adding property value to graph {}", propertyValueData); 
+	 * Either<PropertyValueData, TitanOperationStatus> createNodeResult = titanGenericDao .createNode(propertyValueData, PropertyValueData.class);
 	 * log.debug("After adding property value to graph {}", propertyValueData);
 	 * 
 	 * Either<GraphRelation, TitanOperationStatus> createRelResult = titanGenericDao .createRelation(propertyValueData, propertyData, GraphEdgeLabels.PROPERTY_IMPL, null);
@@ -1108,7 +1113,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * Either<Object, Boolean> isValid = validateAndUpdatePropertyValue(propertyType, value);
 	 * 
 	 * String newValue = value; if (isValid.isRight()) { Boolean res = isValid.right().value(); if (res == false) { return Either.right(TitanOperationStatus.ILLEGAL_ARGUMENT); } } else { Object object = isValid.left().value(); if (object != null) {
-	 * newValue = object.toString(); } } PropertyValueData propertyValueData = findPropertyValueRes.left().value(); log.debug("Going to update property value from {} to {}", propertyValueData.getValue(), newValue);
+	 * newValue = object.toString(); } } PropertyValueData propertyValueData = findPropertyValueRes.left().value(); log.debug("Going to update property value from " + propertyValueData.getValue() + " to " + newValue);
 	 * propertyValueData.setValue(newValue);
 	 * 
 	 * ImmutablePair<String, Boolean> pair = validateAndUpdateRules(propertyType, resourceInstanceProperty.getRules()); if (pair.getRight() != null && pair.getRight() == false) { BeEcompErrorManager.getInstance().
@@ -1220,7 +1225,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * ComponentInstanceProperty propertyValueResult = buildResourceInstanceProperty( propertyValueData, resourceInstanceProperty);
 	 * 
-	 * log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult); result = Either.left(propertyValueResult); return result; } }
+	 * log.debug("The returned ResourceInstanceProperty is  {}", propertyValueResult); result = Either.left(propertyValueResult); return result; } }
 	 * 
 	 * finally { if (false == inTransaction) { if (result == null || result.isRight()) { log.error("Going to execute rollback on graph."); titanGenericDao.rollback(); } else { log.debug("Going to execute commit on graph."); titanGenericDao.commit();
 	 * } } }
@@ -1238,7 +1243,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * ComponentInstanceProperty propertyValueResult = buildResourceInstanceProperty( propertyValueData, resourceInstanceProperty);
 	 * 
-	 * log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult); result = Either.left(propertyValueResult); return result; } }
+	 * log.debug("The returned ResourceInstanceProperty is  {}", propertyValueResult); result = Either.left(propertyValueResult); return result; } }
 	 * 
 	 * finally { if (false == inTransaction) { if (result == null || result.isRight()) { log.error("Going to execute rollback on graph."); titanGenericDao.rollback(); } else { log.debug("Going to execute commit on graph."); titanGenericDao.commit();
 	 * } } }
@@ -1306,7 +1311,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				propertyValueResult.setUniqueId(resourceInstanceId);
 				propertyValueResult.setValue(propertyValueData.getValue());
 
-				log.debug("The returned ResourceInstanceProperty is {}", propertyValueResult);
+				log.debug("The returned ResourceInstanceProperty is  {}", propertyValueResult);
 				result = Either.left(propertyValueResult);
 				return result;
 			}
@@ -1425,7 +1430,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		if (innerToscaType == null) {
 			DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
 			if (dataTypeDefinition == null) {
-				log.debug("The inner type {} is not a data type", innerType);
+				log.debug("The inner type {} is not a data type.", innerType);
 				return new ImmutablePair<String, Boolean>(innerType, false);
 			} else {
 				log.debug("The inner type {} is a data type. Data type definition is {}", innerType, dataTypeDefinition);
@@ -1438,7 +1443,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	private boolean isValidComplexValue(DataTypeDefinition foundDt, String value, Map<String, DataTypeDefinition> dataTypes) {
 		/*
 		 * Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypesRes = getAllDataTypes(); if (allDataTypesRes.isRight()) { TitanOperationStatus status = allDataTypesRes.right().value();
-		 * log.debug("Failed to fetch data types from graph. Status is {}", status); return false; }
+		 * return false; }
 		 * 
 		 * Map<String, DataTypeDefinition> allDataTypes = allDataTypesRes.left().value();
 		 */
@@ -1483,10 +1488,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	public Either<List<ComponentInstanceProperty>, TitanOperationStatus> getAllPropertiesOfResourceInstanceOnlyPropertyDefId(String resourceInstanceUid, NodeTypeEnum instanceNodeType) {
 
-		// Either<ComponentInstanceData, TitanOperationStatus>
-		// findResInstanceRes =
-		// titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(instanceNodeType),
-		// resourceInstanceUid, ComponentInstanceData.class);
 		Either<TitanVertex, TitanOperationStatus> findResInstanceRes = titanGenericDao.getVertexByProperty(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid);
 
 		if (findResInstanceRes.isRight()) {
@@ -1497,11 +1498,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			return Either.right(status);
 		}
 
-		// Either<List<ImmutablePair<PropertyValueData, GraphEdge>>,
-		// TitanOperationStatus> propertyImplNodes =
-		// titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(instanceNodeType),
-		// resourceInstanceUid, GraphEdgeLabels.PROPERTY_VALUE,
-		// NodeTypeEnum.PropertyValue, PropertyValueData.class);
 		Either<List<ImmutablePair<TitanVertex, Edge>>, TitanOperationStatus> propertyImplNodes = titanGenericDao.getChildrenVertecies(UniqueIdBuilder.getKeyByNodeType(instanceNodeType), resourceInstanceUid, GraphEdgeLabels.PROPERTY_VALUE);
 
 		if (propertyImplNodes.isRight()) {
@@ -1558,7 +1554,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 */
 	public Either<String, TitanOperationStatus> findDefaultValueFromSecondPosition(List<String> pathOfComponentInstances, String propertyUniqueId, String defaultValue) {
 
-		log.trace("In find default value: path=" + pathOfComponentInstances + "propertyUniqId=" + propertyUniqueId + "defaultValue=" + defaultValue);
+		log.trace("In find default value: path= {} propertyUniqId={} defaultValue= {}", pathOfComponentInstances, propertyUniqueId, defaultValue);
 
 		if (pathOfComponentInstances == null || pathOfComponentInstances.size() < 2) {
 			return Either.left(defaultValue);
@@ -1583,7 +1579,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			}
 
 			ComponentInstanceProperty foundCompInstanceProperty = fetchByPropertyUid(propertyValuesResult.left().value(), propertyUniqueId);
-			log.trace("After finding the component instance property on {}. {}", compInstanceId, foundCompInstanceProperty);
+			log.trace("After finding the component instance property on{} . {}", compInstanceId, foundCompInstanceProperty);
 
 			if (foundCompInstanceProperty == null) {
 				continue;
@@ -1695,7 +1691,9 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				Matcher matcher = pattern.matcher(stringForMatch);
 
 				if (matcher.matches()) {
-					log.trace("{} matches the rule {}", stringForMatch, patternStr);
+					if (log.isTraceEnabled()) {
+						log.trace("{} matches the rule {}", stringForMatch, patternStr);
+					}
 					propertyRule = rule;
 					break;
 				}
@@ -1752,14 +1750,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 					if (numberOfMatches == 1) {
 						instanceProperty.setValue(value);
 						if (log.isDebugEnabled()) {
-							log.debug("Set the value of property " + propertyUniqueId + " " + instanceProperty.getName() + " on path " + pathOfInstances + " to be " + value);
+							log.debug("Set the value of property {} {} on path {} to be {}", propertyUniqueId, instanceProperty.getName(), pathOfInstances, value);
 						}
 					} else if (numberOfMatches == 2) {
 						// In case of another property value match, then use the
 						// value to be the default value of the property.
 						instanceProperty.setDefaultValue(value);
 						if (log.isDebugEnabled()) {
-							log.debug("Set the default value of property " + propertyUniqueId + " " + instanceProperty.getName() + " on path " + pathOfInstances + " to be " + value);
+							log.debug("Set the default value of property {} {} on path {} to be {}", propertyUniqueId, instanceProperty.getName(), pathOfInstances, value);
 						}
 						break;
 					}
@@ -1820,19 +1818,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 */
 	private Either<DataTypeData, TitanOperationStatus> addDataTypeToGraph(DataTypeDefinition dataTypeDefinition) {
 
-		log.debug("Got data type " + dataTypeDefinition);
+		log.debug("Got data type {}", dataTypeDefinition);
 
 		String dtUniqueId = UniqueIdBuilder.buildDataTypeUid(dataTypeDefinition.getName());
 
 		DataTypeData dataTypeData = buildDataTypeData(dataTypeDefinition, dtUniqueId);
 
-		log.debug("Before adding data type to graph. dataTypeData = " + dataTypeData);
+		log.debug("Before adding data type to graph. dataTypeData = {}", dataTypeData);
 		Either<DataTypeData, TitanOperationStatus> createDataTypeResult = titanGenericDao.createNode(dataTypeData, DataTypeData.class);
 		log.debug("After adding data type to graph. status is = {}", createDataTypeResult);
 
 		if (createDataTypeResult.isRight()) {
 			TitanOperationStatus operationStatus = createDataTypeResult.right().value();
-			log.debug("Failed to data type " + dataTypeDefinition.getName() + " to graph. status is " + operationStatus);
+			log.debug("Failed to data type {} to graph. status is {}", dataTypeDefinition.getName(), operationStatus);
 			BeEcompErrorManager.getInstance().logBeFailedAddingNodeTypeError("AddDataType", NodeTypeEnum.DataType.getName());
 			return Either.right(operationStatus);
 		}
@@ -1841,19 +1839,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		List<PropertyDefinition> properties = dataTypeDefinition.getProperties();
 		Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToDataType = addPropertiesToDataType(resultCTD.getUniqueId(), properties);
 		if (addPropertiesToDataType.isRight()) {
-			log.debug("Failed add properties " + properties + " to data type " + dataTypeDefinition.getName());
+			log.debug("Failed add properties {} to data type {}", properties, dataTypeDefinition.getName());
 			return Either.right(addPropertiesToDataType.right().value());
 		}
 
 		String derivedFrom = dataTypeDefinition.getDerivedFromName();
 		if (derivedFrom != null) {
-			log.debug("Before creating relation between data type " + dtUniqueId + " to its parent " + derivedFrom);
+			log.debug("Before creating relation between data type {} to its parent {}", dtUniqueId, derivedFrom);
 			UniqueIdData from = new UniqueIdData(NodeTypeEnum.DataType, dtUniqueId);
 
 			String deriveFromUid = UniqueIdBuilder.buildDataTypeUid(derivedFrom);
 			UniqueIdData to = new UniqueIdData(NodeTypeEnum.DataType, deriveFromUid);
 			Either<GraphRelation, TitanOperationStatus> createRelation = titanGenericDao.createRelation(from, to, GraphEdgeLabels.DERIVED_FROM, null);
-			log.debug("After create relation between capability type " + dtUniqueId + " to its parent " + derivedFrom + ". status is " + createRelation);
+			log.debug("After create relation between capability type {} to its parent {}. status is {}", dtUniqueId, derivedFrom, createRelation);
 			if (createRelation.isRight()) {
 				return Either.right(createRelation.right().value());
 			}
@@ -1898,19 +1896,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				String propertyType = propertyDefinition.getType();
 				Either<Boolean, TitanOperationStatus> validPropertyType = isValidPropertyType(propertyType);
 				if (validPropertyType.isRight()) {
-					log.debug("Data type " + uniqueId + " contains invalid property type " + propertyType);
+					log.debug("Data type {} contains invalid property type {}", uniqueId, propertyType);
 					return Either.right(validPropertyType.right().value());
 				}
 				Boolean isValid = validPropertyType.left().value();
 				if (isValid == null || isValid.booleanValue() == false) {
-					log.debug("Data type " + uniqueId + " contains invalid property type " + propertyType);
+					log.debug("Data type {} contains invalid property type {}", uniqueId, propertyType);
 					return Either.right(TitanOperationStatus.INVALID_TYPE);
 				}
 
 				Either<PropertyData, TitanOperationStatus> addPropertyToNodeType = this.addPropertyToNodeType(propertyName, propertyDefinition, NodeTypeEnum.DataType, uniqueId);
 				if (addPropertyToNodeType.isRight()) {
 					TitanOperationStatus operationStatus = addPropertyToNodeType.right().value();
-					log.debug("Failed to associate data type " + uniqueId + " to property " + propertyName + " in graph. status is " + operationStatus);
+					log.debug("Failed to associate data type {} to property {} in graph. status is {}", uniqueId, propertyName, operationStatus);
 					BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToDataType", "Failed to associate property to data type. Status is " + operationStatus, ErrorSeverity.ERROR);
 					return Either.right(operationStatus);
 				}
@@ -1925,7 +1923,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			Either<DataTypeData, TitanOperationStatus> updateNode = titanGenericDao.updateNode(dataTypeData, DataTypeData.class);
 			if (updateNode.isRight()) {
 				TitanOperationStatus operationStatus = updateNode.right().value();
-				log.debug("Failed to update modification time data type " + uniqueId + " from graph. status is " + operationStatus);
+				log.debug("Failed to update modification time data type {} from graph. status is {}", uniqueId, operationStatus);
 				BeEcompErrorManager.getInstance().logInternalFlowError("AddPropertyToDataType", "Failed to fetch data type. Status is " + operationStatus, ErrorSeverity.ERROR);
 				return Either.right(operationStatus);
 			} else {
@@ -1952,7 +1950,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		if (dataTypesRes.isRight()) {
 			TitanOperationStatus status = dataTypesRes.right().value();
-			log.debug("Data type " + uniqueId + " cannot be found in graph. status is " + status);
+			log.debug("Data type {} cannot be found in graph. status is {}", uniqueId, status);
 			return Either.right(status);
 		}
 
@@ -1961,17 +1959,17 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		TitanOperationStatus propertiesStatus = fillProperties(uniqueId, dataTypeDefinition);
 		if (propertiesStatus != TitanOperationStatus.OK) {
-			log.error("Failed to fetch properties of data type " + uniqueId);
+			log.error("Failed to fetch properties of data type {}", uniqueId);
 			return Either.right(propertiesStatus);
 		}
 
 		Either<ImmutablePair<DataTypeData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
 				DataTypeData.class);
-		log.debug("After retrieving DERIVED_FROM node of " + uniqueId + ". status is " + parentNode);
+		log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
 		if (parentNode.isRight()) {
 			TitanOperationStatus titanOperationStatus = parentNode.right().value();
 			if (titanOperationStatus != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find the parent data type of data type " + uniqueId + ". status is " + titanOperationStatus);
+				log.error("Failed to find the parent data type of data type {}. status is {}", uniqueId, titanOperationStatus);
 				result = Either.right(titanOperationStatus);
 				return result;
 			}
@@ -2002,7 +2000,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
 		if (findPropertiesOfNode.isRight()) {
 			TitanOperationStatus titanOperationStatus = findPropertiesOfNode.right().value();
-			log.debug("After looking for properties of vertex " + uniqueId + ". status is " + titanOperationStatus);
+			log.debug("After looking for properties of vertex {}. status is {}", uniqueId, titanOperationStatus);
 			if (TitanOperationStatus.NOT_FOUND.equals(titanOperationStatus)) {
 				return TitanOperationStatus.OK;
 			} else {
@@ -2044,7 +2042,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 				DataTypeData capabilityTypeData = eitherStatus.left().value();
 
 				DataTypeDefinition dataTypeDefResult = convertDTDataToDTDefinition(capabilityTypeData);
-				log.debug("The returned CapabilityTypeDefinition is " + dataTypeDefResult);
+				log.debug("The returned CapabilityTypeDefinition is {}", dataTypeDefResult);
 				result = Either.left(dataTypeDefResult);
 				return result;
 			}
@@ -2079,7 +2077,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			if (ctResult.isRight()) {
 				TitanOperationStatus status = ctResult.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to retrieve information on capability type " + name + "status is " + status);
+					log.error("Failed to retrieve information on capability type {} status is {}", name, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(ctResult.right().value()));
 				return result;
@@ -2124,7 +2122,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			if (ctResult.isRight()) {
 				TitanOperationStatus status = ctResult.right().value();
 				if (status != TitanOperationStatus.NOT_FOUND) {
-					log.error("Failed to retrieve information on capability type " + name + "status is " + status);
+					log.error("Failed to retrieve information on capability type {} status is {}", name, status);
 				}
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(ctResult.right().value()));
 				return result;
@@ -2153,7 +2151,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		if (dataTypesRes.isRight()) {
 			TitanOperationStatus status = dataTypesRes.right().value();
-			log.debug("Data type " + uniqueId + " cannot be found in graph. status is " + status);
+			log.debug("Data type {} cannot be found in graph. status is {}", uniqueId, status);
 			return Either.right(status);
 		}
 
@@ -2162,7 +2160,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		TitanOperationStatus propertiesStatus = fillProperties(uniqueId, dataTypeDefinition);
 		if (propertiesStatus != TitanOperationStatus.OK) {
-			log.error("Failed to fetch properties of data type " + uniqueId);
+			log.error("Failed to fetch properties of data type {}", uniqueId);
 			return Either.right(propertiesStatus);
 		}
 
@@ -2184,7 +2182,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * @return
 	 */
 	protected DataTypeDefinition convertDTDataToDTDefinition(DataTypeData dataTypeData) {
-		log.debug("The object returned after create data type is " + dataTypeData);
+		log.debug("The object returned after create data type is {}", dataTypeData);
 
 		DataTypeDefinition dataTypeDefResult = new DataTypeDefinition(dataTypeData.getDataTypeDataDefinition());
 
@@ -2206,7 +2204,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		}
 	}
 
-	private Either<Boolean, TitanOperationStatus> isDefinedInDataTypes(String propertyType) {
+	public Either<Boolean, TitanOperationStatus> isDefinedInDataTypes(String propertyType) {
 
 		String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(propertyType);
 		Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = getDataTypeByUid(dataTypeUid);
@@ -2253,14 +2251,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		List<DataTypeData> list = getAllDataTypes.left().value();
 		if (list != null) {
 
-			log.trace("Number of data types to load is " + list.size());
+			log.trace("Number of data types to load is {}" , list.size());
 
 			List<String> collect = list.stream().map(p -> p.getDataTypeDataDefinition().getName()).collect(Collectors.toList());
-			log.trace("The data types to load are " + collect);
+			log.trace("The data types to load are {}" , collect);
 
 			for (DataTypeData dataTypeData : list) {
 
-				log.trace("Going to fetch data type " + dataTypeData.getDataTypeDataDefinition().getName() + ". uid is " + dataTypeData.getUniqueId());
+				log.trace("Going to fetch data type {}. uid is {}", dataTypeData.getDataTypeDataDefinition().getName(), dataTypeData.getUniqueId());
 				Either<DataTypeDefinition, TitanOperationStatus> dataTypeByUid = this.getAndAddDataTypeByUid(dataTypeData.getUniqueId(), dataTypes);
 				if (dataTypeByUid.isRight()) {
 					TitanOperationStatus status = dataTypeByUid.right().value();
@@ -2274,12 +2272,12 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		if (log.isTraceEnabled()) {
 			if (result.isRight()) {
-				log.trace("After fetching all data types " + result);
+				log.trace("After fetching all data types {}" , result);
 			} else {
 				Map<String, DataTypeDefinition> map = result.left().value();
 				if (map != null) {
 					String types = map.keySet().stream().collect(Collectors.joining(",", "[", "]"));
-					log.trace("After fetching all data types " + types);
+					log.trace("After fetching all data types {} " , types);
 				}
 			}
 		}
@@ -2305,7 +2303,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		if (dataTypesRes.isRight()) {
 			TitanOperationStatus status = dataTypesRes.right().value();
-			log.debug("Data type " + uniqueId + " cannot be found in graph. status is " + status);
+			log.debug("Data type {} cannot be found in graph. status is {}", uniqueId, status);
 			return Either.right(status);
 		}
 
@@ -2314,7 +2312,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		TitanOperationStatus propertiesStatus = fillProperties(uniqueId, dataTypeDefinition);
 		if (propertiesStatus != TitanOperationStatus.OK) {
-			log.error("Failed to fetch properties of data type " + uniqueId);
+			log.error("Failed to fetch properties of data type {}", uniqueId);
 			return Either.right(propertiesStatus);
 		}
 
@@ -2331,11 +2329,11 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 		Either<ImmutablePair<DataTypeData, GraphEdge>, TitanOperationStatus> parentNode = titanGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
 				DataTypeData.class);
-		log.debug("After retrieving DERIVED_FROM node of " + uniqueId + ". status is " + parentNode);
+		log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
 		if (parentNode.isRight()) {
 			TitanOperationStatus titanOperationStatus = parentNode.right().value();
 			if (titanOperationStatus != TitanOperationStatus.NOT_FOUND) {
-				log.error("Failed to find the parent data type of data type " + uniqueId + ". status is " + titanOperationStatus);
+				log.error("Failed to find the parent data type of data type {}. status is {}", uniqueId, titanOperationStatus);
 				result = Either.right(titanOperationStatus);
 				return result;
 			}
@@ -2436,7 +2434,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 		Either<Map<String, PropertyDefinition>, TitanOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(NodeTypeEnum.GroupType, uniqueId);
 		if (findPropertiesOfNode.isRight()) {
 			TitanOperationStatus titanOperationStatus = findPropertiesOfNode.right().value();
-			log.debug("After looking for properties of vertex " + uniqueId + ". status is " + titanOperationStatus);
+			log.debug("After looking for properties of vertex {}. status is {}", uniqueId, titanOperationStatus);
 			if (TitanOperationStatus.NOT_FOUND.equals(titanOperationStatus)) {
 				return TitanOperationStatus.OK;
 			} else {
@@ -2461,7 +2459,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 	 * 
 	 * @param uniqueId
 	 * @param propertiesMap
-	 *            TODO
+	 *            
 	 * @return
 	 */
 	protected Either<Map<String, PropertyData>, TitanOperationStatus> addPropertiesToElementType(String uniqueId, NodeTypeEnum nodeType, Map<String, PropertyDefinition> propertiesMap) {
@@ -2477,7 +2475,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 				if (addPropertyToNodeType.isRight()) {
 					TitanOperationStatus operationStatus = addPropertyToNodeType.right().value();
-					log.error("Failed to associate " + nodeType.getName() + " " + uniqueId + " to property " + propertyName + " in graph. status is " + operationStatus);
+					log.error("Failed to associate {} {} to property {} in graph. status is {}", nodeType.getName(), uniqueId, propertyName, operationStatus);
 					return Either.right(operationStatus);
 				}
 				propertiesData.put(propertyName, addPropertyToNodeType.left().value());
@@ -2556,14 +2554,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 			List<PropertyDefinition> propertiesToAdd = new ArrayList<>();
 			if (isPropertyOmitted(newProperties, oldProperties, dataTypeName) || isPropertyTypeChanged(dataTypeName, newProperties, oldProperties, propertiesToAdd) || isDerivedFromNameChanged(dataTypeName, newDerivedFromName, oldDerivedFromName)) {
 
-				log.debug("The new data type " + dataTypeName + " is invalid.");
+				log.debug("The new data type {} is invalid.", dataTypeName);
 
 				result = Either.right(StorageOperationStatus.CANNOT_UPDATE_EXISTING_ENTITY);
 				return result;
 			}
 
 			if (propertiesToAdd == null || propertiesToAdd.isEmpty()) {
-				log.debug("No new properties has been defined in the new data type " + newDataTypeDefinition);
+				log.debug("No new properties has been defined in the new data type {}", newDataTypeDefinition);
 				result = Either.right(StorageOperationStatus.OK);
 				return result;
 			}
@@ -2606,15 +2604,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
 
 	private String getDerivedFromName(DataTypeDefinition dataTypeDefinition) {
 		String derivedFromName = dataTypeDefinition.getDerivedFromName();
-		// if (derivedFromName == null) {
-		// DataTypeDefinition derivedFrom = dataTypeDefinition.getDerivedFrom();
-		// if (derivedFrom != null) {
-		// log.debug("Dervied from is taken from definition");
-		// derivedFromName = derivedFrom.getName();
-		// }
-		// } else {
-		// log.debug("Dervied from is taken from field derivedFromName");
-		// }
 		return derivedFromName;
 	}
 

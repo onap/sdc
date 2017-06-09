@@ -85,9 +85,11 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 		defaultCategories = createCategoriesChain(definitionsList);
 	}
 
-	private List<CategoryDefinition> createCategoriesChain(List<CategoryDefinition> categoryDefinitions) throws Exception {
+	private List<CategoryDefinition> createCategoriesChain(List<CategoryDefinition> categoryDefinitions)
+			throws Exception {
 		for (CategoryDefinition categoryDefinition : categoryDefinitions) {
-			RestResponse createCategory = CategoryRestUtils.createCategory(categoryDefinition, productStrategistUser1, PRODUCT_COMPONENT_TYPE);
+			RestResponse createCategory = CategoryRestUtils.createCategory(categoryDefinition, productStrategistUser1,
+					PRODUCT_COMPONENT_TYPE);
 			int status = createCategory.getErrorCode().intValue();
 			if (status == BaseRestUtils.STATUS_CODE_CREATED) {
 				String categoryId = ResponseParser.getUniqueIdFromResponse(createCategory);
@@ -95,7 +97,8 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 			}
 			List<SubCategoryDefinition> subcategories = categoryDefinition.getSubcategories();
 			for (SubCategoryDefinition subCategoryDefinition : subcategories) {
-				RestResponse createSubCategory = CategoryRestUtils.createSubCategory(subCategoryDefinition, categoryDefinition, productStrategistUser1, PRODUCT_COMPONENT_TYPE);
+				RestResponse createSubCategory = CategoryRestUtils.createSubCategory(subCategoryDefinition,
+						categoryDefinition, productStrategistUser1, PRODUCT_COMPONENT_TYPE);
 				status = createSubCategory.getErrorCode().intValue();
 				if (status == BaseRestUtils.STATUS_CODE_CREATED) {
 					String subCategoryId = ResponseParser.getUniqueIdFromResponse(createSubCategory);
@@ -103,7 +106,8 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 				}
 				List<GroupingDefinition> groupings = subCategoryDefinition.getGroupings();
 				for (GroupingDefinition groupingDefinition : groupings) {
-					RestResponse createGroupingRest = CategoryRestUtils.createGrouping(groupingDefinition, subCategoryDefinition, categoryDefinition, productStrategistUser1, PRODUCT_COMPONENT_TYPE);
+					RestResponse createGroupingRest = CategoryRestUtils.createGrouping(groupingDefinition,
+							subCategoryDefinition, categoryDefinition, productStrategistUser1, PRODUCT_COMPONENT_TYPE);
 					status = createGroupingRest.getErrorCode().intValue();
 					if (status == BaseRestUtils.STATUS_CODE_CREATED) {
 						String groupingId = ResponseParser.getUniqueIdFromResponse(createGroupingRest);
@@ -114,8 +118,9 @@ public abstract class ProductBaseTest extends ComponentBaseTest {
 		}
 		RestResponse allCategories = CategoryRestUtils.getAllCategories(productStrategistUser1, PRODUCT_COMPONENT_TYPE);
 		Gson gson = new Gson();
-		List<CategoryDefinition> res = gson.fromJson(allCategories.getResponse(), new TypeToken<List<CategoryDefinition>>() {
-		}.getType());
+		List<CategoryDefinition> res = gson.fromJson(allCategories.getResponse(),
+				new TypeToken<List<CategoryDefinition>>() {
+				}.getType());
 		return res;
 	}
 

@@ -1,0 +1,50 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types:
+  org.openecomp.resource.vl.extVL:
+    derived_from: tosca.nodes.Root
+    description: VF Tenant oam protected network
+    properties:
+      network_type:
+        type: string
+        required: true
+        description: ECOMP supported network types. 
+      network_role:
+        type: string
+        required: ture
+        description: >
+          Unique label that defines the role that this network performs.  
+          example: vce oam network, vnat sr-iov1 network
+      network_scope:
+        type: string
+        constraints:
+          valid_values: ["VF", "SERVICE", "GLOBAL"]
+        description: >
+          Uniquely identifies the network scope. Valid values for the network scope  
+          includes:
+          VF - VF-level network. Intra-VF network which connects the VFCs (VMs)
+          inside the VF.
+          SERVICE - Service-level network. Intra-Service network which connects 
+          the VFs within the service
+          GLOBAL - Global network which can be shared by multiple services
+      network_technology:
+        type: string
+        required: true
+        description: ECOMP supported network technology
+      exVL_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+      network_homing:
+        type: org.openecomp.datatypes.EcompHoming
+        required: true
+      network_assignments:
+        type: org.openecomp.datatypes.network.NetworkAssignments
+        required: true
+      provider_network:
+        type: org.openecomp.datatypes.network.ProviderNetwork
+        required: true
+      network_flows:
+        type: org.openecomp.datatypes.network.NetworkFlows
+        required: false	  
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.network.Linkable

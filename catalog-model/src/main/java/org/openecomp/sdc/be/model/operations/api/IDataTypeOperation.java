@@ -32,8 +32,7 @@ public interface IDataTypeOperation {
 	 */
 	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition);
 
-	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition,
-			boolean inTransaction);
+	public Either<DataTypeDefinition, StorageOperationStatus> addDataType(DataTypeDefinition dataTypeDefinition, boolean inTransaction);
 
 	/**
 	 * @param name

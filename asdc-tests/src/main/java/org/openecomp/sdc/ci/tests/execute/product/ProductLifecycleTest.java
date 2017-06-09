@@ -48,7 +48,8 @@ public abstract class ProductLifecycleTest extends ProductBaseTest {
 	public void init() throws Exception {
 		ProductReqDetails defaultProduct = ElementFactory.getDefaultProduct(defaultCategories);
 		RestResponse createProduct = ProductRestUtils.createProduct(defaultProduct, productManager1);
-		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_CREATED, createProduct.getErrorCode().intValue());
+		assertEquals("Check response code after create Product", BaseRestUtils.STATUS_CODE_CREATED,
+				createProduct.getErrorCode().intValue());
 		expectedProduct = ResponseParser.parseToObjectUsingMapper(createProduct.getResponse(), Product.class);
 	}
 }

@@ -23,6 +23,7 @@ package org.openecomp.sdc.ci.tests.execute.resource;
 import static org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils.STATUS_CODE_SUCCESS;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +31,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.AssertTrue;
+
+import org.apache.log4j.lf5.util.ResourceUtils;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -46,6 +52,7 @@ import org.openecomp.sdc.ci.tests.datatypes.ComponentInstanceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.ErrorInfo;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.NormativeTypesEnum;
@@ -58,6 +65,7 @@ import org.openecomp.sdc.ci.tests.datatypes.http.HttpRequest;
 import org.openecomp.sdc.ci.tests.datatypes.http.RestResponse;
 import org.openecomp.sdc.ci.tests.utils.DbUtils;
 import org.openecomp.sdc.ci.tests.utils.Utils;
+import org.openecomp.sdc.ci.tests.utils.general.AtomicOperationUtils;
 import org.openecomp.sdc.ci.tests.utils.general.Convertor;
 import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.utils.rest.ArtifactRestUtils;
@@ -70,6 +78,7 @@ import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ResourceValidationUtils;
+import org.openecomp.sdc.ci.tests.utils.validation.ServiceValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -884,7 +893,7 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		ResourceReqDetails resourceDetails = createRandomResource();
 
-		// set null in userId header
+		// set null in UserId header
 		sdncModifierDetails.setUserId(null);
 
 		// create resource
@@ -1177,6 +1186,19 @@ public class CreateResourceApiTest extends ComponentBaseTest {
 
 		// init ADMIN user
 		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
+
+		// // set resource details
+		// String resourceName = "CISCO4";
+		// String description = "description";
+		// ArrayList<String> resourceTags = new ArrayList<String>();
+		// resourceTags.add(resourceName);
+		// resourceTags.add("tag2");
+		// String category = ResourceServiceCategoriesEnum.VOIP.getValue();
+		// ArrayList<String> derivedFrom = new ArrayList<String>();
+		// derivedFrom.add(NormativeTypesEnum.ROOT.getNormativeName());
+		// String vendorName = "Oracle";
+		// String vendorRelease = "1.5";
+		// String icon = "myICON";
 		ResourceReqDetails resourceDetails = ElementFactory.getDefaultResource();
 		resourceDetails.setTags(Arrays.asList(resourceDetails.getName(), "tag2"));
 

@@ -24,8 +24,7 @@ import org.openecomp.sdc.common.datastructure.ESTimeBasedEvent;
 
 public class MonitoringEvent extends ESTimeBasedEvent {
 
-	private static String MONITORING_EVENT_TEMPLATE = "hostid=\"%s\" hostcpu=\"%s\" hostmem=\"%s\" hostdisk=\"%s\" "
-			+ "jvmid=\"%s\" jvmcpu=\"%s\" jvmmem=\"%s\" jvmtnum=\"%s\" " + "appid=\"%s\" appstat=\"%s\"";
+	private static String MONITORING_EVENT_TEMPLATE = "hostid=\"%s\" hostcpu=\"%s\" hostmem=\"%s\" hostdisk=\"%s\" " + "jvmid=\"%s\" jvmcpu=\"%s\" jvmmem=\"%s\" jvmtnum=\"%s\" " + "appid=\"%s\" appstat=\"%s\"";
 
 	private String hostid;
 	private Long hostcpu;
@@ -120,7 +119,6 @@ public class MonitoringEvent extends ESTimeBasedEvent {
 
 	@Override
 	public String toString() {
-		return getFormattedString(MONITORING_EVENT_TEMPLATE, hostid, hostcpu, hostmem, hostdisk, jvmid, jvmcpu, jvmmem,
-				jvmtnum, appid, appstat);
+		return getFormattedString(MONITORING_EVENT_TEMPLATE, hostid, hostcpu, hostmem, hostdisk, jvmid, jvmcpu, jvmmem, jvmtnum, appid, appstat);
 	}
 }

@@ -40,34 +40,40 @@ import com.google.common.base.CharMatcher;
 
 public class ValidationUtils {
 	public final static Integer COMPONENT_NAME_MAX_LENGTH = 1024;
-	public final static Pattern COMPONENT_NAME_PATTERN = Pattern.compile("^[\\w \\.\\-\\_\\:\\+]{1," + COMPONENT_NAME_MAX_LENGTH + "}$");
+	public final static Pattern COMPONENT_NAME_PATTERN = Pattern
+			.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (COMPONENT_NAME_MAX_LENGTH-1) + "}$");
 	public final static Integer ADDITIONAL_INFORMATION_KEY_MAX_LENGTH = 50;
-	public final static Pattern ADDITIONAL_INFORMATION_KEY_PATTERN = Pattern.compile("^[\\w\\s\\.\\-\\_]{1," + COMPONENT_NAME_MAX_LENGTH + "}$");
+	public final static Pattern ADDITIONAL_INFORMATION_KEY_PATTERN = Pattern
+			.compile("^[\\w\\s\\.\\-\\_]{1," + COMPONENT_NAME_MAX_LENGTH + "}$");
 	public final static Integer RSI_NAME_MAX_LENGTH = 1024;
-	public final static Pattern RSI_NAME_PATTERN = Pattern.compile("^[\\w \\s\\.\\-\\_\\:\\+]{1," + RSI_NAME_MAX_LENGTH + "}$");
+	public final static Pattern RSI_NAME_PATTERN = Pattern
+			.compile("^[\\w \\s\\.\\-\\_\\:\\+]{1," + RSI_NAME_MAX_LENGTH + "}$");
 	public final static Integer COMMENT_MAX_LENGTH = 256;
 
 	public final static Integer ICON_MAX_LENGTH = 25;
 	public final static Pattern ICON_PATTERN = Pattern.compile("^[\\w\\-]{1," + ICON_MAX_LENGTH + "}$");
-	public final static Integer PROJECT_CODE_MAX_LEGTH = 10;
-	//public final static Pattern PROJECT_CODE_PATTERN = Pattern.compile("^[\\d]{5," + PROJECT_CODE_MAX_LEGTH + "}$");
-	public final static Pattern PROJECT_CODE_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,50}$");
-	public final static Integer CONNTACT_ID_MAX_LENGTH = 6;
-	// Format : aannnX (where a=a-z or A-Z, n=0-9, and X=a-z,A-Z, or 0-9)
-	//public final static Pattern CONTACT_ID_PATTERN = Pattern.compile("[mM]{1}[0-9]{5}|[a-zA-Z]{2}[0-9]{4}|[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{1}");
+	public final static Integer PROJECT_CODE_MAX_LEGTH = 50;
+	public final static Pattern PROJECT_CODE_PATTERN = Pattern.compile("^[\\s\\w_.-]{5,50}$");
+
+	// USER_ID format : aannnX (where a=a-z or A-Z, n=0-9, and X=a-z,A-Z, or 0-9)
+	public final static Integer CONNTACT_ID_MAX_LENGTH = 50;
+//	public final static Pattern CONTACT_ID_PATTERN = Pattern
+//			.compile("[mM]{1}[0-9]{5}|[a-zA-Z]{2}[0-9]{4}|[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{1}");
 	public final static Pattern CONTACT_ID_PATTERN = Pattern.compile("^[\\s\\w_.-]{1,50}$");
 	public final static Pattern OCTET_PATTERN = Pattern.compile("%[a-fA-F0-9]{2}");
 	public final static Pattern NONE_UTF8_PATTERN = Pattern.compile("[^\\x00-\\x7F]+");
-	public final static Pattern URL_INVALIDE_PATTERN = Pattern.compile("[,#?&@$<>~^`\\\\\\[\\]{}|\")(*!+=;%]+");
+	public final static Pattern URL_INVALIDE_PATTERN = Pattern.compile("[,#?&@$<>~^`\\\\\\[\\]{}|\")(*!+=;%]+");// ,#?&@$<>~^`\\[]{}|")(*!
 
 	public final static Pattern ENGLISH_PATTERN = Pattern.compile("^[\\p{Graph}\\x20]+$");
 	public final static Integer COMPONENT_DESCRIPTION_MAX_LENGTH = 1024;
 	public final static Integer TAG_MAX_LENGTH = 1024;
 	public final static Integer TAG_LIST_MAX_LENGTH = 1024;
 	public final static Integer VENDOR_NAME_MAX_LENGTH = 25;
-	public final static Pattern VENDOR_NAME_PATTERN = Pattern.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
+	public final static Pattern VENDOR_NAME_PATTERN = Pattern
+			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
 	public final static Integer VENDOR_RELEASE_MAX_LENGTH = 25;
-	public final static Pattern VENDOR_RELEASE_PATTERN = Pattern.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
+	public final static Pattern VENDOR_RELEASE_PATTERN = Pattern
+			.compile("^[\\x20-\\x21\\x23-\\x29\\x2B-\\x2E\\x30-\\x39\\x3B\\x3D\\x40-\\x5B\\x5D-\\x7B\\x7D-\\xFF]+$");
 
 	public final static Pattern CLEAN_FILENAME_PATTERN = Pattern.compile("[\\x00-\\x1f\\x80-\\x9f\\x5c/<?>\\*:|\"/]+");
 
@@ -83,11 +89,13 @@ public class ValidationUtils {
 	public final static Pattern COLON_PATTERN = Pattern.compile("[:]+");
 	public final static Pattern AT_PATTERN = Pattern.compile("[@]+");
 	public final static Pattern AND_PATTERN = Pattern.compile(" [aA][Nn][Dd] ");
-	public final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<String>(Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
+	public final static Set<String> CATEGORY_CONJUNCTIONS = new HashSet<String>(
+			Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
 
 	public final static Pattern COST_PATTERN = Pattern.compile("^[0-9]{1,5}\\.[0-9]{1,3}$");
 	public final static Pattern ARTIFACT_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9 \\-+]+$");
-	public final static Integer ARTIFACT_LABEL_LENGTH = 25;
+	public final static Integer ARTIFACT_LABEL_LENGTH = 255;
+	public final static Pattern ARTIFACT_DISPLAY_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
 	public final static Pattern CATEGORY_LABEL_PATTERN = Pattern.compile("^[a-zA-Z0-9][a-zA-Z0-9 &\\.'#=:@_\\-+]+$");
 	public final static Integer CATEGORY_LABEL_MIN_LENGTH = 4;
 	public final static Integer CATEGORY_LABEL_MAX_LENGTH = 25;
@@ -117,6 +125,10 @@ public class ValidationUtils {
 
 	public static boolean validateArtifactLabel(String label) {
 		return ARTIFACT_LABEL_PATTERN.matcher(label).matches();
+	}
+	
+	public static boolean validateArtifactDisplayName(String displayName) {
+		return ARTIFACT_DISPLAY_NAME_PATTERN.matcher(displayName).matches();
 	}
 
 	public static boolean validateCategoryDisplayNameFormat(String label) {
@@ -171,11 +183,13 @@ public class ValidationUtils {
 	}
 
 	public static boolean validateCategoryDisplayNameLength(String label) {
-		return (label != null && label.length() >= CATEGORY_LABEL_MIN_LENGTH && label.length() <= CATEGORY_LABEL_MAX_LENGTH);
+		return (label != null && label.length() >= CATEGORY_LABEL_MIN_LENGTH
+				&& label.length() <= CATEGORY_LABEL_MAX_LENGTH);
 	}
 
 	public static boolean validateProductFullNameLength(String fullName) {
-		return (fullName != null && fullName.length() >= PRODUCT_FULL_NAME_MIN_LENGTH && fullName.length() <= PRODUCT_FULL_NAME_MAX_LENGTH);
+		return (fullName != null && fullName.length() >= PRODUCT_FULL_NAME_MIN_LENGTH
+				&& fullName.length() <= PRODUCT_FULL_NAME_MAX_LENGTH);
 	}
 
 	public static boolean validateArtifactLabelLength(String label) {
@@ -291,7 +305,7 @@ public class ValidationUtils {
 	}
 
 	public static boolean validateStringNotEmpty(String value) {
-		if ((value == null) || (value.trim().isEmpty())) {
+		if ((value == null) || (value.isEmpty())) {
 			return false;
 		}
 		return true;
@@ -334,7 +348,7 @@ public class ValidationUtils {
 
 	}
 
-	public static String normaliseComponentInstanceName(String name) {
+	public static String normalizeComponentInstanceName(String name) {
 		String[] split = splitComponentInctanceName(name);
 		StringBuffer sb = new StringBuffer();
 		for (String splitElement : split) {
@@ -421,6 +435,7 @@ public class ValidationUtils {
 		str = UNDERSCORE_PATTERN.matcher(str).replaceAll("");
 		str = PLUS_PATTERN.matcher(str).replaceAll("");
 		str = SPACE_PATTERN.matcher(str).replaceAll("");
+		str = DOT_PATTERN.matcher(str).replaceAll("");
 		str = str.toLowerCase();
 
 		return str;

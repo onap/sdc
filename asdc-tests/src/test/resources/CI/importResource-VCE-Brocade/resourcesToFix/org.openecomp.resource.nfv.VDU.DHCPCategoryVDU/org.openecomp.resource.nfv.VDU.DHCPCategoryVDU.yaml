@@ -3,7 +3,7 @@
 ##################################################################
   org.openecomp.resource.nfv.VDU.DHCPCategoryVDU: 
     derived_from: org.openecomp.resource.nfv.VDU
-    capabilities: #paharoni - added to connect to VCE_Brocade_VDU
+    capabilities: #paronin - added to connect to VCE_Brocade_VDU
       dhcp: 
         type: org.openecomp.capabilities.nfv.VNF.DHCPCapability
         description: This capability has been introduced

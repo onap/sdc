@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -10,6 +10,7 @@
 		<artifactId>sdc-main</artifactId>
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
+
 
 	<properties>
 		<docker.tag>${project.version}-${maven.build.timestamp}</docker.tag>
@@ -57,8 +58,12 @@
 				<docker.latest.tag>${project.version}-STAGING-latest</docker.latest.tag>
 			</properties>
 		</profile>
+
 		<profile>
 			<id>docker</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -67,7 +72,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-be</id>
-								<!-- here the phase you need -->
 								<phase>validate</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -78,7 +82,7 @@
 										<resource>
 											<directory>${project.parent.basedir}/openecomp-be/api/openecomp-sdc-rest-webapp/onboarding-rest-war/target</directory>
 											<includes>
-												<include>onboarding-be-*.war</include>
+												<include>onboarding-be-${project.version}.war</include>
 											</includes>
 										</resource>
 									</resources>
@@ -86,26 +90,6 @@
 							</execution>
 							<execution>
 								<id>copy-resources-fe</id>
-								<!-- here the phase you need -->
-								<phase>validate</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${basedir}/sdc-frontend</outputDirectory>
-									<resources>
-										<resource>
-											<directory>${project.parent.basedir}/openecomp-ui/target</directory>
-											<includes>
-												<include>onboarding-fe-${project.version}.war</include>
-											</includes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-sanity</id>
-								<!-- here the phase you need -->
 								<phase>validate</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -148,7 +132,6 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -163,7 +146,6 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -178,7 +160,6 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -193,7 +174,6 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -208,11 +188,10 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
-								
+
 								<!-- Build sanity image -->
 								<image>
 									<name>openecomp/sdc-sanity</name>
@@ -223,7 +202,6 @@
 										<tags>
 											<tag>${docker.tag}</tag>
 											<tag>${docker.latest.tag}</tag>
-											<tag>1.1-STAGING-latest</tag>
 										</tags>
 									</build>
 								</image>
@@ -232,15 +210,15 @@
 						</configuration>
 						<executions>
 							<execution>
-								<id>clean-images</id>
-								<phase>pre-clean</phase>
-								<goals>
-									<goal>remove</goal>
-								</goals>
-								<configuration>
-									<removeAll>true</removeAll>
-									<image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
-								</configuration>
+                                <id>clean-images</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                <goal>remove</goal>
+                                </goals>
+                                <configuration>
+                                <removeAll>true</removeAll>
+                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
+                                </configuration>
 							</execution>
 
 							<execution>
@@ -252,19 +230,18 @@
 							</execution>
 
 							<execution>
-								<id>push-images</id>
-								<phase>deploy</phase>
-								<goals>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                                <goals>
+									<goal>build</goal>
 									<goal>push</goal>
-								</goals>
-								<configuration>
-									<image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
-								</configuration>
+                                </goals>
+                                <configuration>
+                                <image>openecomp/sdc-backend,openecomp/sdc-frontend,openecomp/sdc-elasticsearch,openecomp/sdc-kibana,openecomp/sdc-sanity</image>
+                                </configuration>
 							</execution>
 						</executions>
-
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>

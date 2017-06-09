@@ -32,6 +32,10 @@ import org.openecomp.sdc.asdctool.impl.migration.v1604.VfcNamingAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1607.CsarMigration;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
+import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707Config;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.VfModulesPropertiesAdding;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
@@ -57,7 +61,11 @@ public class MigrationMenu {
 		POPULATE_COMPONENT_CACHE("populate-component-cache", "populateComponentCache"), 
 		FIX_PROPERTIES("fix-properties", "titanFixUtils"), 
 		ALIGN_TOSCA_ARTIFACTS("align-tosca-artifacts", "toscaArtifactsAlignment"), 
-		FIX_ICONS("fix-icons", "titanFixUtils");
+		FIX_ICONS("fix-icons", "titanFixUtils"),
+		MIGRATION_1610_1702("migrate-1610-1702", "migration1702"),
+		MIGRATION_1702_1707("migrate-1702-1707", "migration1707"),
+		VFMODULES_PROPERTIES_ADDING("vfModules-properties-adding", "vfModulesPropertiesAdding");
+		// UPDATE_DATA_TYPES("update_data_types", "updateDataTypes");
 
 		private String value, beanName;
 
@@ -80,48 +88,52 @@ public class MigrationMenu {
 		}
 	};
 
+	//arguments will be [operation] [version] [config path] [align derived - optional]
+	//example : migrate-1610-1702 1702 /home/config
 	public static void main(String[] args) throws Exception {
 
-		if (args == null || args.length < 2) {
+		if (args == null || args.length < 3) {
 			usageAndExit();
 		}
 		MigrationOperationEnum operationEnum = MigrationOperationEnum.findByValue(args[0]);
-		String appConfigDir = args[1];
+		String appConfigDir = args[2];
 		String dataInputFileDir = null;
-		if (operationEnum == MigrationOperationEnum.ALIGN_DERIVED_FROM_1604) {
-			dataInputFileDir = args[2];
+		if (operationEnum == MigrationOperationEnum.ALIGN_DERIVED_FROM_1604 ) {
+			dataInputFileDir = args[3];
 		}
+		log.info("Run with configuration folder {}", appConfigDir);
 		AnnotationConfigApplicationContext context = initContext(appConfigDir);
 		try {
 			ServiceMigration serviceMigration = (ServiceMigration) context.getBean(SERVICE_MIGARTION_BEAN);
 			switch (operationEnum) {
 			case MIGRATION_1602_1604:
-				log.debug("Start Titan migration from 1602 version to 1604");
+				log.info("Start Titan migration from 1602 version to 1604");
 				if (serviceMigration.migrate1602to1604(appConfigDir)) {
-					log.debug("Titan migration from 1602 version to 1604 was finished successfull");
+					log.info("Titan migration from 1602 version to 1604 was finished successfull");
 					System.exit(0);
 				} else {
-					log.debug("Titan migration from 1602 version to 1604 was failed");
+					log.info("Titan migration from 1602 version to 1604 was failed");
 					System.exit(2);
 				}
+				break;
 			case MIGRATE_1604_1607:
-				log.debug("Start Titan migration from 1604 version to 1607");
+				log.info("Start Titan migration from 1604 version to 1607");
 				if (serviceMigration.migrate1604to1607(appConfigDir)) {
-					log.debug("Titan migration from 1604 version to 1607 was finished successfull");
+					log.info("Titan migration from 1604 version to 1607 was finished successfull");
 					System.exit(0);
 				} else {
-					log.debug("Titan migration from 1604 version to 1607 was failed");
+					log.info("Titan migration from 1604 version to 1607 was failed");
 					System.exit(2);
 				}
 				break;
 			case ALIGN_VFC_NAMES_1604:
 				VfcNamingAlignment vfcNamingAlignment = (VfcNamingAlignment) context.getBean(operationEnum.getBeanName());
-				log.debug("Start VFC naming alignment on 1604");
+				log.info("Start VFC naming alignment on 1604");
 				if (vfcNamingAlignment.alignVfcNames1604(appConfigDir)) {
-					log.debug("VFC naming alignment on 1604 was finished successfull");
+					log.info("VFC naming alignment on 1604 was finished successfull");
 					System.exit(0);
 				} else {
-					log.debug("VFC naming alignment on 1604 was failed");
+					log.info("VFC naming alignment on 1604 was failed");
 					System.exit(2);
 				}
 				break;
@@ -143,12 +155,12 @@ public class MigrationMenu {
 				break;
 			case ALIGN_DERIVED_FROM_1604:
 				DerivedFromAlignment derivedFromAlignment = (DerivedFromAlignment) context.getBean(operationEnum.getBeanName());
-				log.debug("Start derived from alignment on 1604");
+				log.info("Start derived from alignment on 1604");
 				if (derivedFromAlignment.alignDerivedFrom1604(appConfigDir, dataInputFileDir)) {
-					log.debug("Derived from alignment on 1604 was finished successfull");
+					log.info("Derived from alignment on 1604 was finished successfull");
 					System.exit(0);
 				} else {
-					log.debug("Derived from alignment on 1604 was failed");
+					log.info("Derived from alignment on 1604 was failed");
 					System.exit(2);
 				}
 				break;
@@ -164,27 +176,24 @@ public class MigrationMenu {
 				}
 				break;
 			case CLEAN_CSAR:
-				log.debug("Start remove CSAR resources");
+				log.info("Start remove CSAR resources");
 				CsarMigration csarMigration = (CsarMigration) context.getBean(operationEnum.getBeanName());
-				// TODO Show to Michael L fixed return value
 				if (csarMigration.removeCsarResources()) {
-					log.debug("Remove CSAR resources finished successfully");
+					log.info("Remove CSAR resources finished successfully");
 					System.exit(0);
 				} else {
-					log.debug("Remove CSAR resources failed");
+					log.info("Remove CSAR resources failed");
 					System.exit(2);
 				}
 				break;
 			case POPULATE_COMPONENT_CACHE:
 				PopulateComponentCache populateComponentCache = (PopulateComponentCache) context.getBean(operationEnum.getBeanName());
-				// TODO Show to Michael L No return value always returns 0
 				populateComponentCache.populateCache();
 				System.exit(0);
 				break;
 			case FIX_PROPERTIES:
 				log.debug("Start fix capability properties types");
 				TitanFixUtils titanFixUtils = (TitanFixUtils) context.getBean(operationEnum.getBeanName());
-				// TODO Show to Michael L fixed return value
 				if (titanFixUtils.fixCapabiltyPropertyTypes()) {
 					log.debug("Fix capability properties types finished successfully");
 					System.exit(0);
@@ -194,34 +203,73 @@ public class MigrationMenu {
 				}
 				break;
 			case FIX_ICONS:
-				log.debug("Start fix icons of vl and eline");
+				log.info("Start fix icons of vl and eline");
 				titanFixUtils = (TitanFixUtils) context.getBean(operationEnum.getBeanName());
-				// TODO Show to Michael L fixed return value
 				if (titanFixUtils.fixIconsInNormatives()) {
-					log.debug("Fix icons of vl and eline finished successfully");
+					log.info("Fix icons of vl and eline finished successfully");
 					System.exit(0);
 				} else {
-					log.debug("Fix icons of vl and eline failed");
+					log.info("Fix icons of vl and eline failed");
 					System.exit(2);
 				}
 				break;
 			case ALIGN_TOSCA_ARTIFACTS:
-				log.debug("Start align tosca artifacts");
+				log.info("Start align tosca artifacts");
 				ToscaArtifactsAlignment toscaArtifactsAlignment = (ToscaArtifactsAlignment) context.getBean(operationEnum.getBeanName());
 				boolean isSuccessful = toscaArtifactsAlignment.alignToscaArtifacts();
 				if (isSuccessful) {
-					log.debug("Tosca Artifacts alignment was finished successfull");
+					log.info("Tosca Artifacts alignment was finished successfull");
 					System.exit(0);
 				} else {
-					log.debug("Tosca Artifacts alignment has failed");
+					log.info("Tosca Artifacts alignment has failed");
+					System.exit(2);
+				}
+				break;
+			case MIGRATION_1610_1702:
+				log.info("Start ASDC migration from 1610 to 1702");
+				Migration1702 migration = (Migration1702) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migration.migrate(appConfigDir);
+				if (isSuccessful) {
+					log.info("ASDC migration from 1610 to 1702 was finished successful");
+					System.exit(0);
+				} else{
+					log.info("ASDC migration from 1610 to 1702 has failed");
+					System.exit(2);
+				}
+			
+				break;
+			case MIGRATION_1702_1707:
+//				log.info("Start ASDC migration from 1702 to 1707");
+				System.exit(0);
+//				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
+//				isSuccessful = migration1707.migrate();
+//				if (isSuccessful) {
+//					log.info("SDC migration from 1702 to 1707 was finished successfully");
+//					System.exit(0);
+//				} else{
+//					log.info("SDC migration from 1702 to 1707 has failed");
+//					System.exit(2);
+//				}
+				break;
+			case VFMODULES_PROPERTIES_ADDING:
+				log.info("Start adding new properties to vfModules");
+				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
+				if (isSuccessful) {
+					log.info("Adding new properties to vfModules was finished successfully");
+					System.exit(0);
+				} else{
+					log.info("Adding new properties to vfModules has failed");
 					System.exit(2);
 				}
 				break;
 			default:
 				usageAndExit();
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
+			log.info("Failed {} with exception: {}", operationEnum, t.toString());
 			t.printStackTrace();
+			log.debug("Error while Running MigrationMenu {}", t.getMessage(), t);
 			System.exit(3);
 		} finally {
 			context.close();
@@ -231,7 +279,7 @@ public class MigrationMenu {
 	private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
 		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
 		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class, Migration1707Config.class);
 		return context;
 	}
 
@@ -247,5 +295,9 @@ public class MigrationMenu {
 		System.out.println("Usage: align-derived-from-1604 <configuration dir> <data_input_file dir>");
 		System.out.println("Usage: align-groups <configuration dir>");
 		System.out.println("Usage: fix-properties <configuration dir>");
+		System.out.println("Usage: migrate-1610-1702 <configuration dir>");
+		System.out.println("Usage: migrate-1702-1707 <configuration dir>");
+		System.out.println("Usage: update_data_types <configuration dir> <data_types_input_file path>");
+		System.out.println("Usage: vfModules-properties-adding <group_types_input_file path> <configuration dir>");
 	}
 }

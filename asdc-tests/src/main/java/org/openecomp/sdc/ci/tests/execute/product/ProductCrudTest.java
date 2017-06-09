@@ -34,10 +34,13 @@ import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Product;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.ci.tests.api.Urls;
 import org.openecomp.sdc.ci.tests.datatypes.ProductReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceReqDetails;
+import org.openecomp.sdc.ci.tests.datatypes.ResourceRespJavaObject;
 import org.openecomp.sdc.ci.tests.datatypes.enums.LifeCycleStatesEnum;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.datatypes.expected.ExpectedProductAudit;
@@ -49,10 +52,13 @@ import org.openecomp.sdc.ci.tests.utils.rest.BaseRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.CatalogRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.LifecycleRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ProductRestUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.ResourceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.rest.ResponseParser;
+import org.openecomp.sdc.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.AuditValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ErrorValidationUtils;
 import org.openecomp.sdc.ci.tests.utils.validation.ProductValidationUtils;
+import org.openecomp.sdc.ci.tests.utils.validation.ResourceValidationUtils;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -310,7 +316,7 @@ public class ProductCrudTest extends ProductBaseTest {
 
 		productManager1.setUserId(null);
 		RestResponse getProductRes = ProductRestUtils.getProduct(productReqDetails.getUniqueId(), productManager1.getUserId());
-		assertEquals("Check response code after getting created Producuct with userId extracted from header", BaseRestUtils.STATUS_CODE_MISSING_INFORMATION, getProductRes.getErrorCode().intValue());
+		assertEquals("Check response code after getting created Producuct with UserId extracted from header", BaseRestUtils.STATUS_CODE_MISSING_INFORMATION, getProductRes.getErrorCode().intValue());
 
 	}
 
@@ -337,8 +343,8 @@ public class ProductCrudTest extends ProductBaseTest {
 
 	// US594753 - Update Product metadata
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductAllFieldsByPM() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -558,8 +564,8 @@ public class ProductCrudTest extends ProductBaseTest {
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct, ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameHasMinLength() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -581,8 +587,8 @@ public class ProductCrudTest extends ProductBaseTest {
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct, ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	// DE193857 - Normalized Name is not removing special characters
 	@Test(enabled = false)
 	public void updateProductNameMaxLength() throws Exception {
@@ -641,7 +647,7 @@ public class ProductCrudTest extends ProductBaseTest {
 		Product product1 = ResponseParser.parseToObjectUsingMapper(createProduct.getResponse(), Product.class);
 		RestResponse changeProductLifeCycle = ProductRestUtils.changeProductLifeCycle(product1, productManager2, LifeCycleStatesEnum.CHECKIN);
 		ProductRestUtils.checkSuccess(changeProductLifeCycle);
-		productReqDetails.setName("CiProduct2000");
+		productReqDetails.setName("Product2000");
 		// productReqDetails.setTags(Arrays.asList(productReqDetails.getName()));
 		createProduct = ProductRestUtils.createProduct(productReqDetails, productManager2);
 		ProductRestUtils.checkCreateResponse(createProduct);
@@ -670,8 +676,8 @@ public class ProductCrudTest extends ProductBaseTest {
 	}
 
 	// DE193857 - Normalized Name is not removing special characters
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameAllowedCharacters() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -686,7 +692,7 @@ public class ProductCrudTest extends ProductBaseTest {
 																// , ‘ ‘
 																// (space),
 																// ampersand
-																// dash
+																// "&", dash
 																// “-“, plus
 																// "+", period
 																// ".",
@@ -697,7 +703,7 @@ public class ProductCrudTest extends ProductBaseTest {
 																// ":", at "@",
 																// and
 																// underscore
-																//
+																// "_"
 		String newNormalizedName = "abu4km&kobujuggp";
 		String newName = "A_BU4k M&K=o#b-u.j-uG'g+P";
 		RestResponse updateProduct = ProductRestUtils.updateProduct(productReqDetails, productManager1);
@@ -714,8 +720,8 @@ public class ProductCrudTest extends ProductBaseTest {
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct, ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameRemoveSpaceFromBeginning() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -741,8 +747,8 @@ public class ProductCrudTest extends ProductBaseTest {
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct, ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameRemoveSpaceFromEnd() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -769,8 +775,8 @@ public class ProductCrudTest extends ProductBaseTest {
 	}
 
 	//// DE193857 - Normalized Name is not removing special characters
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	//// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameRemoveExtraNonAlphanumericChars() throws Exception {
 		createProducrByPSAndCheckIn();
@@ -796,8 +802,8 @@ public class ProductCrudTest extends ProductBaseTest {
 		ProductValidationUtils.compareExpectedAndActualProducts(expectedProduct, actualProduct, ComponentOperationEnum.UPDATE_COMPONENT);
 	}
 
-	// If user update Product Name we need to remove the old product name from
-	// Tags and add the new product name instead - will be handled in new US
+	// If user update "product name" we need to remove the old product name from
+	// "Tags" and add the new product name instead - will handled in mew US
 	@Test(enabled = false)
 	public void updateProductNameValidationStartWithNumber() throws Exception {
 		createProducrByPSAndCheckIn();

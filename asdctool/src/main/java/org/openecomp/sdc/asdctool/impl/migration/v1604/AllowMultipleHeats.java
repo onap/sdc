@@ -68,7 +68,7 @@ public class AllowMultipleHeats {
 				}
 
 				List<ArtifactData> list = allHeatArtifacts.left().value();
-				log.debug("Found {} artifacts with label {}", (list == null ? 0 : list.size()), artifactLabel);
+				log.debug("Found {} artifacts with label {}",(list == null ? 0 : list.size()),artifactLabel);
 
 				if (list != null && false == list.isEmpty()) {
 
@@ -87,7 +87,7 @@ public class AllowMultipleHeats {
 				for (ArtifactData artifactData : artifactsToDelete) {
 					// System.out.println("Going to delete artifact " +
 					// artifactData);
-					log.debug("Going to delete artifact {}", artifactData);
+					log.debug("Going to delete artifact {}",artifactData);
 					Either<ArtifactData, TitanOperationStatus> deleteNode = titanGenericDao.deleteNode(artifactData,
 							ArtifactData.class);
 					if (deleteNode.isRight()) {
@@ -95,12 +95,12 @@ public class AllowMultipleHeats {
 						result = false;
 						return result;
 					} else {
-						log.debug("Delete artifact node {}", deleteNode.left().value());
+						log.debug("Delete artifact node {}",deleteNode.left().value());
 					}
 				}
 			}
 
-			log.debug("Number of deleted artifacts is {}", artifactsToDelete.size());
+			log.debug("Number of deleted artifacts is {}",artifactsToDelete.size());
 
 			int counter = 0;
 			if (false == artifactsToUpdate.isEmpty()) {
@@ -110,7 +110,7 @@ public class AllowMultipleHeats {
 
 					if (artifactData.getArtifactDataDefinition().getMandatory() != null
 							&& true == artifactData.getArtifactDataDefinition().getMandatory()) {
-						log.debug("Going to update artifact {}", artifactData);
+						log.debug("Going to update artifact {}",artifactData);
 						counter++;
 						artifactData.getArtifactDataDefinition().setMandatory(false);
 						Either<ArtifactData, TitanOperationStatus> updatedNode = titanGenericDao
@@ -120,13 +120,13 @@ public class AllowMultipleHeats {
 							result = false;
 							return result;
 						} else {
-							log.debug("Update artifact node {}", updatedNode.left().value());
+							log.debug("Update artifact node {}",updatedNode.left().value());
 						}
 					}
 				}
 			}
 
-			log.debug("Number of updated artifacts is {}", counter);
+			log.debug("Number of updated artifacts is {}",counter);
 
 			return result;
 

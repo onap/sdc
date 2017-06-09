@@ -79,7 +79,6 @@ public class MonitoringMetricsFetcher {
 
 		monitoringEvent.setAppid(appName);
 		// this is probably from healthcheck
-		// TODO
 		monitoringEvent.setAppstat("appStatus");
 		return monitoringEvent;
 	}

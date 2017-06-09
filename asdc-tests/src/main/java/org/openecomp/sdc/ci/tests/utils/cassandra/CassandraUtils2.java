@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.ci.tests.utils.cassandra;
 
-import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.List;
-
+import com.datastax.driver.core.*;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
+import com.datastax.driver.core.querybuilder.Select.Where;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.openecomp.sdc.ci.tests.utils.Utils;
@@ -31,15 +31,9 @@ import org.openecomp.sdc.common.datastructure.AuditingFieldsKeysEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.KeyspaceMetadata;
-import com.datastax.driver.core.Metadata;
-import com.datastax.driver.core.Row;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.TableMetadata;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
-import com.datastax.driver.core.querybuilder.Select.Where;
+import java.io.FileNotFoundException;
+import java.util.Collection;
+import java.util.List;
 
 public final class CassandraUtils2 {
 	private static Logger logger = LoggerFactory.getLogger(CassandraUtils2.class.getName());
@@ -63,7 +57,7 @@ public final class CassandraUtils2 {
 			session = cluster.connect(keyspace);
 			if (session != null) {
 				session.execute(QueryBuilder.truncate(keyspace, tableName));
-				logger.debug("The table {}. {} was cleaned", keyspace, tableName);
+				logger.debug("The table {}.{} was cleaned",keyspace,tableName);
 			} else {
 				throw new RuntimeException("Keyspace " + keyspace + " not connected");
 			}
@@ -95,7 +89,7 @@ public final class CassandraUtils2 {
 					Collection<TableMetadata> tables = keyspaceMetadata.getTables();
 					tables.forEach(table -> {
 						session.execute(QueryBuilder.truncate(table));
-						logger.debug("Table trunceted - {}", table.getName());
+						logger.debug("Table trunceted - {}",table.getName());
 					});
 				}
 			} else {
@@ -164,9 +158,9 @@ public final class CassandraUtils2 {
 	// Map<AuditingFieldsKeysEnum, String> map = new HashMap<>();
 	// map.put(AuditingFieldsKeysEnum.AUDIT_ACTION, "Access");
 	// map.put(AuditingFieldsKeysEnum.AUDIT_STATUS, "200");
-	// // CassandraUtils.truncateTable("sdcArtifact", "resources");
-	//// CassandraUtils.truncateAllTables("sdcAudit");
-	// CassandraUtils.fetchFromTable("sdcAudit", "useraccessevent", map );
+	// // CassandraUtils.truncateTable("sdcartifact", "resources");
+	//// CassandraUtils.truncateAllTables("sdcaudit");
+	// CassandraUtils.fetchFromTable("sdcaudit", "useraccessevent", map );
 	// }
 
 }

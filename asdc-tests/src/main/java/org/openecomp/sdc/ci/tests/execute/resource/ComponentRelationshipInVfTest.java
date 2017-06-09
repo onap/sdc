@@ -91,7 +91,7 @@ public class ComponentRelationshipInVfTest extends ComponentBaseTest {
 				designerUser.getUserId(), ResourceTypeEnum.CP.toString()); // resourceType
 																			// =
 																			// VFC
-		resourceDetailsCap = ElementFactory.getDefaultResourceByType("MyCompute", NormativeTypesEnum.COMPUTE,
+		resourceDetailsCap = ElementFactory.getDefaultResourceByType("ciMyCompute", NormativeTypesEnum.COMPUTE,
 				ResourceCategoryEnum.NETWORK_L2_3_ROUTERS, designerUser.getUserId(), ResourceTypeEnum.CP.toString()); // resourceType
 																														// =
 																														// VFC

@@ -75,7 +75,7 @@ public class RestUtils {
 			}
 			return status;
 		} catch (IOException e) {
-			log.error("Product uid:" + productUid + " delete failed with exception", e);
+			log.error("Product uid:{} delete failed with exception",productUid, e);
 		}
 		return null;
 	}

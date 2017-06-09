@@ -20,9 +20,6 @@
 
 package org.openecomp.sdc.be.info;
 
-import java.util.List;
-import java.util.Map;
-
 public class GroupTemplateInfo {
 	String groupName;
 	boolean isBase;
@@ -30,7 +27,6 @@ public class GroupTemplateInfo {
 
 	public GroupTemplateInfo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getGroupName() {

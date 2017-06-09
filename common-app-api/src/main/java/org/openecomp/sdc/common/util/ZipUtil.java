@@ -121,7 +121,6 @@ public class ZipUtil {
 			ZipUtil.readZip(zipAsBytes);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

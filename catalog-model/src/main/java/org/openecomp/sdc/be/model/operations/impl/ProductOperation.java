@@ -94,10 +94,8 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> Either<T, StorageOperationStatus> getComponentByNameAndVersion(String name, String version,
-			Map<String, Object> additionalParams, boolean inTransaction) {
-		return (Either<T, StorageOperationStatus>) getByNamesAndVersion(GraphPropertiesDictionary.NAME.getProperty(),
-				name, version, additionalParams, inTransaction);
+	protected <T> Either<T, StorageOperationStatus> getComponentByNameAndVersion(String name, String version, Map<String, Object> additionalParams, boolean inTransaction) {
+		return (Either<T, StorageOperationStatus>) getByNamesAndVersion(GraphPropertiesDictionary.NAME.getProperty(), name, version, additionalParams, inTransaction);
 	}
 
 	@Override
@@ -106,14 +104,12 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 	}
 
 	@Override
-	public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters,
-			boolean inTransaction) {
+	public <T> Either<List<T>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, boolean inTransaction) {
 		return getFilteredComponents(filters, inTransaction, NodeTypeEnum.Product);
 	}
 
 	private Product convertProductDataToProduct(ProductMetadataData productData) {
-		ProductMetadataDefinition productMetadataDefinition = new ProductMetadataDefinition(
-				(ProductMetadataDataDefinition) productData.getMetadataDataDefinition());
+		ProductMetadataDefinition productMetadataDefinition = new ProductMetadataDefinition((ProductMetadataDataDefinition) productData.getMetadataDataDefinition());
 
 		Product product = new Product(productMetadataDefinition);
 
@@ -123,28 +119,24 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Either<T, StorageOperationStatus> updateComponent(T component, boolean inTransaction) {
-		return (Either<T, StorageOperationStatus>) updateComponent((Component) component, inTransaction,
-				titanGenericDao, Product.class, NodeTypeEnum.Product);
+		return (Either<T, StorageOperationStatus>) updateComponent((Component) component, inTransaction, titanGenericDao, Product.class, NodeTypeEnum.Product);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Either<Component, StorageOperationStatus> deleteComponent(String id, boolean inTransaction) {
-		return (Either<Component, StorageOperationStatus>) (Either<?, StorageOperationStatus>) deleteProduct(id,
-				inTransaction);
+		return (Either<Component, StorageOperationStatus>) (Either<?, StorageOperationStatus>) deleteProduct(id, inTransaction);
 	}
 
 	@Override
-	public Either<List<ArtifactDefinition>, StorageOperationStatus> getAdditionalArtifacts(String resourceId,
-			boolean recursively, boolean inTransaction) {
+	public Either<List<ArtifactDefinition>, StorageOperationStatus> getAdditionalArtifacts(String resourceId, boolean recursively, boolean inTransaction) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends org.openecomp.sdc.be.model.Component> Either<T, StorageOperationStatus> getComponent(String id,
-			Class<T> clazz) {
+	public <T extends org.openecomp.sdc.be.model.Component> Either<T, StorageOperationStatus> getComponent(String id, Class<T> clazz) {
 		return (Either<T, StorageOperationStatus>) getProduct(id, false);
 	}
 
@@ -160,16 +152,14 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 
 			Either<TitanGraph, TitanOperationStatus> graphResult = titanGenericDao.getGraph();
 			if (graphResult.isRight()) {
-				result = Either
-						.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graphResult.right().value()));
+				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(graphResult.right().value()));
 				return result;
 			}
 
-			Either<ProductMetadataData, TitanOperationStatus> productNode = titanGenericDao.getNode(
-					UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Product), productId, ProductMetadataData.class);
+			Either<ProductMetadataData, TitanOperationStatus> productNode = titanGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Product), productId, ProductMetadataData.class);
 			if (productNode.isRight()) {
 				TitanOperationStatus status = productNode.right().value();
-				log.error("Failed to find product {}. Status is {}", productId, status);
+				log.error("Failed to find product {}. status is {}", productId, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -177,29 +167,27 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			Either<Product, StorageOperationStatus> productRes = getProduct(productId, true);
 			if (productRes.isRight()) {
 				StorageOperationStatus status = productRes.right().value();
-				log.error("Failed to find product {}", productId, status);
+				log.error("Failed to find product {}.status is {}", productId, status);
 				result = Either.right(status);
 				return result;
 			}
 			Product product = productRes.left().value();
 
-			Either<List<ComponentInstance>, StorageOperationStatus> deleteAllInstancesRes = componentInstanceOperation
-					.deleteAllComponentInstances(productId, NodeTypeEnum.Product, true);
-			log.debug("After deleting instances under product {}. Result is {}", productId, deleteAllInstancesRes);
+			Either<List<ComponentInstance>, StorageOperationStatus> deleteAllInstancesRes = componentInstanceOperation.deleteAllComponentInstances(productId, NodeTypeEnum.Product, true);
+			log.debug("After deleting instances under product {}.Result is {}", productId, deleteAllInstancesRes);
 			if (deleteAllInstancesRes.isRight()) {
 				StorageOperationStatus status = deleteAllInstancesRes.right().value();
 				if (status != StorageOperationStatus.NOT_FOUND) {
-					log.error("Failed to delete instances under product {}. Status is {}", productId, status);
+					log.error("Failed to delete instances under product {}.status is {}", productId, status);
 					result = Either.right(status);
 					return result;
 				}
 			}
 
-			Either<ProductMetadataData, TitanOperationStatus> deleteProductNodeRes = titanGenericDao
-					.deleteNode(productNode.left().value(), ProductMetadataData.class);
+			Either<ProductMetadataData, TitanOperationStatus> deleteProductNodeRes = titanGenericDao.deleteNode(productNode.left().value(), ProductMetadataData.class);
 			if (deleteProductNodeRes.isRight()) {
 				TitanOperationStatus status = deleteProductNodeRes.right().value();
-				log.error("Failed to delete product node {}. Status is {}", productId, status);
+				log.error("Failed to delete product node {}. status is {}", productId, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
@@ -230,47 +218,20 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			/*
 			 * Map<String, Object> propertiesToMatch = new HashMap<>();
 			 * 
-			 * propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty
-			 * (), LifecycleStateEnum.CERTIFIED.name());
-			 * Either<List<ProductMetadataData>, TitanOperationStatus>
-			 * lastVersionNodes = getLastVersion(NodeTypeEnum.Product,
-			 * propertiesToMatch, ProductMetadataData.class); if
-			 * (lastVersionNodes.isRight() && lastVersionNodes.right().value()
-			 * != TitanOperationStatus.NOT_FOUND) { return
-			 * Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus
-			 * (lastVersionNodes.right().value())); } List<ProductMetadataData>
-			 * notCertifiedHighest = (lastVersionNodes.isLeft() ?
-			 * lastVersionNodes.left().value() : new
-			 * ArrayList<ProductMetadataData>());
+			 * propertiesToMatch.put(GraphPropertiesDictionary.STATE.getProperty (), LifecycleStateEnum.CERTIFIED.name()); Either<List<ProductMetadataData>, TitanOperationStatus> lastVersionNodes = getLastVersion(NodeTypeEnum.Product,
+			 * propertiesToMatch, ProductMetadataData.class); if (lastVersionNodes.isRight() && lastVersionNodes.right().value() != TitanOperationStatus.NOT_FOUND) { return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus
+			 * (lastVersionNodes.right().value())); } List<ProductMetadataData> notCertifiedHighest = (lastVersionNodes.isLeft() ? lastVersionNodes.left().value() : new ArrayList<ProductMetadataData>());
 			 * 
-			 * propertiesToMatch.put(GraphPropertiesDictionary.
-			 * IS_HIGHEST_VERSION.getProperty(), true);
-			 * Either<List<ProductMetadataData>, TitanOperationStatus>
-			 * componentsNodes =
-			 * titanGenericDao.getByCriteria(NodeTypeEnum.Product,
-			 * propertiesToMatch, ProductMetadataData.class); if
-			 * (componentsNodes.isRight() && componentsNodes.right().value() !=
-			 * TitanOperationStatus.NOT_FOUND) { return
-			 * Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus
-			 * (componentsNodes.right().value())); } List<ProductMetadataData>
-			 * certifiedHighest = (componentsNodes.isLeft() ?
-			 * componentsNodes.left().value() : new
-			 * ArrayList<ProductMetadataData>()); Set<String> names = new
-			 * HashSet<String>(); for (ProductMetadataData data :
-			 * notCertifiedHighest) { String name =
-			 * data.getMetadataDataDefinition().getName(); names.add(name); }
+			 * propertiesToMatch.put(GraphPropertiesDictionary. IS_HIGHEST_VERSION.getProperty(), true); Either<List<ProductMetadataData>, TitanOperationStatus> componentsNodes = titanGenericDao.getByCriteria(NodeTypeEnum.Product, propertiesToMatch,
+			 * ProductMetadataData.class); if (componentsNodes.isRight() && componentsNodes.right().value() != TitanOperationStatus.NOT_FOUND) { return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus
+			 * (componentsNodes.right().value())); } List<ProductMetadataData> certifiedHighest = (componentsNodes.isLeft() ? componentsNodes.left().value() : new ArrayList<ProductMetadataData>()); Set<String> names = new HashSet<String>(); for
+			 * (ProductMetadataData data : notCertifiedHighest) { String name = data.getMetadataDataDefinition().getName(); names.add(name); }
 			 * 
-			 * for (ProductMetadataData data : certifiedHighest) { String
-			 * productName = data.getMetadataDataDefinition().getName(); if
-			 * (!names.contains(productName)) { notCertifiedHighest.add(data); }
-			 * }
+			 * for (ProductMetadataData data : certifiedHighest) { String productName = data.getMetadataDataDefinition().getName(); if (!names.contains(productName)) { notCertifiedHighest.add(data); } }
 			 */
-			Either<List<ProductMetadataData>, TitanOperationStatus> listOfHighestComponents = this
-					.getListOfHighestComponents(NodeTypeEnum.Product, ProductMetadataData.class);
-			if (listOfHighestComponents.isRight()
-					&& listOfHighestComponents.right().value() != TitanOperationStatus.NOT_FOUND) {
-				return Either.right(
-						DaoStatusConverter.convertTitanStatusToStorageStatus(listOfHighestComponents.right().value()));
+			Either<List<ProductMetadataData>, TitanOperationStatus> listOfHighestComponents = this.getListOfHighestComponents(NodeTypeEnum.Product, ProductMetadataData.class);
+			if (listOfHighestComponents.isRight() && listOfHighestComponents.right().value() != TitanOperationStatus.NOT_FOUND) {
+				return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(listOfHighestComponents.right().value()));
 			}
 
 			List<ProductMetadataData> notCertifiedHighest = listOfHighestComponents.left().value();
@@ -282,42 +243,30 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 				// fetch from cache
 				long startFetchAllFromCache = System.currentTimeMillis();
 
-				Map<String, Long> components = notCertifiedHighest.stream()
-						.collect(Collectors.toMap(p -> p.getMetadataDataDefinition().getUniqueId(),
-								p -> p.getMetadataDataDefinition().getLastUpdateDate()));
+				Map<String, Long> components = notCertifiedHighest.stream().collect(Collectors.toMap(p -> p.getMetadataDataDefinition().getUniqueId(), p -> p.getMetadataDataDefinition().getLastUpdateDate()));
 
-				Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> componentsFromCacheForCatalog = this
-						.getComponentsFromCacheForCatalog(components, ComponentTypeEnum.PRODUCT);
+				Either<ImmutablePair<List<Component>, Set<String>>, ActionStatus> componentsFromCacheForCatalog = this.getComponentsFromCacheForCatalog(components, ComponentTypeEnum.PRODUCT);
 				if (componentsFromCacheForCatalog.isLeft()) {
-					ImmutablePair<List<Component>, Set<String>> immutablePair = componentsFromCacheForCatalog.left()
-							.value();
+					ImmutablePair<List<Component>, Set<String>> immutablePair = componentsFromCacheForCatalog.left().value();
 					List<Component> list = immutablePair.getLeft();
 					if (list != null) {
 						for (Component component : list) {
 							result.add((Product) component);
 						}
-						List<String> addedUids = list.stream()
-								.map(p -> p.getComponentMetadataDefinition().getMetadataDataDefinition().getUniqueId())
-								.collect(Collectors.toList());
-						notCertifiedHighest = notCertifiedHighest.stream()
-								.filter(p -> false == addedUids.contains(p.getMetadataDataDefinition().getUniqueId()))
-								.collect(Collectors.toList());
+						List<String> addedUids = list.stream().map(p -> p.getComponentMetadataDefinition().getMetadataDataDefinition().getUniqueId()).collect(Collectors.toList());
+						notCertifiedHighest = notCertifiedHighest.stream().filter(p -> false == addedUids.contains(p.getMetadataDataDefinition().getUniqueId())).collect(Collectors.toList());
 					}
 				}
 				long endFetchAllFromCache = System.currentTimeMillis();
-				log.debug("Fetch all catalog products metadata from cache took {} ms",
-						(endFetchAllFromCache - startFetchAllFromCache));
+				log.debug("Fetch all catalog products metadata from cache took {} ms", (endFetchAllFromCache - startFetchAllFromCache));
 				log.debug("The number of products added to catalog from cache is {}", result.size());
 
-				log.debug("The number of products needed to be fetch as light component is {}",
-						notCertifiedHighest.size());
+				log.debug("The number of products needed to be fetch as light component is {}", notCertifiedHighest.size());
 
 				for (ProductMetadataData data : notCertifiedHighest) {
-					Either<Product, StorageOperationStatus> component = getLightComponent(
-							data.getMetadataDataDefinition().getUniqueId(), inTransaction);
+					Either<Product, StorageOperationStatus> component = getLightComponent(data.getMetadataDataDefinition().getUniqueId(), inTransaction);
 					if (component.isRight()) {
-						log.debug("Failed to get product for id = {}, error : {}. skip product", data.getUniqueId(),
-								component.right().value());
+						log.debug("Failed to get product for id = {}, error : {}. skip product", data.getUniqueId(), component.right().value());
 					} else {
 						// get all versions
 						Product product = component.left().value();
@@ -332,7 +281,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			if (false == inTransaction) {
 				titanGenericDao.commit();
 			}
-			log.debug("Fetch all catalog products took {} ms", (System.currentTimeMillis() - start));
+			log.debug("Fetch all catalog products took {} ms", System.currentTimeMillis() - start);
 		}
 	}
 
@@ -383,34 +332,29 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			}
 
 			log.trace("Finding groupings for product {}", uniqueId);
-			Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(
-					NodeTypeEnum.ProductGrouping, product);
+			Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(NodeTypeEnum.ProductGrouping, product);
 			if (findGroupingsForComponent.isRight()) {
 				return Either.right(findGroupingsForComponent.right().value());
 			}
 			List<GroupingData> groupingDataToAssociate = findGroupingsForComponent.left().value();
 
 			log.debug("try to create product node on graph for id {}", uniqueId);
-			Either<ProductMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(productData,
-					ProductMetadataData.class);
+			Either<ProductMetadataData, TitanOperationStatus> createNode = titanGenericDao.createNode(productData, ProductMetadataData.class);
 			if (createNode.isRight()) {
 				TitanOperationStatus status = createNode.right().value();
-				log.error("Error returned after creating product data node {}. Status returned is {}", productData,
-						status);
+				log.error("Error returned after creating product data node {}. Status returned is {}", productData, status);
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 				return result;
 			}
 			log.debug("product node created on graph for id {}", productData.getUniqueId());
 
-			TitanOperationStatus associateMetadata = associateMetadataToComponent(productData, creatorUserData,
-					updaterUserData, null, null);
+			TitanOperationStatus associateMetadata = associateMetadataToComponent(productData, creatorUserData, updaterUserData, null, null);
 			if (associateMetadata != TitanOperationStatus.OK) {
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(associateMetadata));
 				return result;
 			}
 
-			TitanOperationStatus associateCategories = associateCategoriesToProduct(productData,
-					groupingDataToAssociate);
+			TitanOperationStatus associateCategories = associateCategoriesToProduct(productData, groupingDataToAssociate);
 			if (associateCategories != TitanOperationStatus.OK) {
 				result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(associateCategories));
 				return result;
@@ -442,14 +386,11 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		}
 	}
 
-	private TitanOperationStatus associateCategoriesToProduct(ProductMetadataData productData,
-			List<GroupingData> groupingDataToAssociate) {
+	private TitanOperationStatus associateCategoriesToProduct(ProductMetadataData productData, List<GroupingData> groupingDataToAssociate) {
 		for (GroupingData groupingData : groupingDataToAssociate) {
 			GraphEdgeLabels groupingLabel = GraphEdgeLabels.CATEGORIZED_TO;
-			Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.createRelation(productData,
-					groupingData, groupingLabel, null);
-			log.debug("After associating grouping {} to product {}. Edge type is {}", groupingData, productData,
-					groupingLabel);
+			Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.createRelation(productData, groupingData, groupingLabel, null);
+			log.debug("After associating grouping {} to product {}. Edge type is {}", groupingData, productData, groupingLabel);
 			if (result.isRight()) {
 				return result.right().value();
 			}
@@ -458,14 +399,11 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return TitanOperationStatus.OK;
 	}
 
-	private TitanOperationStatus dissociateCategoriesFromProduct(ProductMetadataData productData,
-			List<GroupingData> groupingDataToDissociate) {
+	private TitanOperationStatus dissociateCategoriesFromProduct(ProductMetadataData productData, List<GroupingData> groupingDataToDissociate) {
 		for (GroupingData groupingData : groupingDataToDissociate) {
 			GraphEdgeLabels groupingLabel = GraphEdgeLabels.CATEGORIZED_TO;
-			Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.deleteRelation(productData,
-					groupingData, groupingLabel);
-			log.debug("After dissociating grouping {} from product {}. Edge type is {}", groupingData, productData,
-					groupingLabel);
+			Either<GraphRelation, TitanOperationStatus> result = titanGenericDao.deleteRelation(productData, groupingData, groupingLabel);
+			log.debug("After dissociating grouping {} from product {}. Edge type is {}", groupingData, productData, groupingLabel);
 			if (result.isRight()) {
 				return result.right().value();
 			}
@@ -479,8 +417,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return getProduct(uniqueId, componentParametersView, inTransaction);
 	}
 
-	private Either<Product, StorageOperationStatus> getProduct(String uniqueId,
-			ComponentParametersView componentParametersView, boolean inTransaction) {
+	private Either<Product, StorageOperationStatus> getProduct(String uniqueId, ComponentParametersView componentParametersView, boolean inTransaction) {
 		Product product = null;
 		Either<Product, StorageOperationStatus> result = null;
 		try {
@@ -488,8 +425,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			NodeTypeEnum productNodeType = NodeTypeEnum.Product;
 			NodeTypeEnum compInstNodeType = NodeTypeEnum.Service;
 
-			Either<ProductMetadataData, StorageOperationStatus> getComponentByLabel = getComponentByLabelAndId(uniqueId,
-					productNodeType, ProductMetadataData.class);
+			Either<ProductMetadataData, StorageOperationStatus> getComponentByLabel = getComponentByLabelAndId(uniqueId, productNodeType, ProductMetadataData.class);
 			if (getComponentByLabel.isRight()) {
 				result = Either.right(getComponentByLabel.right().value());
 				return result;
@@ -499,12 +435,10 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			// Try to fetch resource from the cache. The resource will be
 			// fetched only if the time on the cache equals to
 			// the time on the graph.
-			Either<Product, ActionStatus> componentFromCacheIfUpToDate = this.getComponentFromCacheIfUpToDate(uniqueId,
-					productData, componentParametersView, Product.class, ComponentTypeEnum.PRODUCT);
+			Either<Product, ActionStatus> componentFromCacheIfUpToDate = this.getComponentFromCacheIfUpToDate(uniqueId, productData, componentParametersView, Product.class, ComponentTypeEnum.PRODUCT);
 			if (componentFromCacheIfUpToDate.isLeft()) {
 				Product cachedProduct = componentFromCacheIfUpToDate.left().value();
-				log.debug("Product {} with uid {} was fetched from cache.", cachedProduct.getName(),
-						cachedProduct.getUniqueId());
+				log.debug("Product {} with uid {} was fetched from cache.", cachedProduct.getName(), cachedProduct.getUniqueId());
 				return Either.left(cachedProduct);
 			}
 
@@ -533,9 +467,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 				}
 			}
 
-			if (false == componentParametersView.isIgnoreComponentInstances()
-					|| false == componentParametersView.isIgnoreComponentInstancesProperties()
-					|| false == componentParametersView.isIgnoreCapabilities()
+			if (false == componentParametersView.isIgnoreComponentInstances() || false == componentParametersView.isIgnoreComponentInstancesProperties() || false == componentParametersView.isIgnoreCapabilities()
 					|| false == componentParametersView.isIgnoreRequirements()) {
 				status = setComponentInstancesFromGraph(uniqueId, product, productNodeType, compInstNodeType);
 				if (status != TitanOperationStatus.OK) {
@@ -545,7 +477,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 				}
 			}
 			if (false == componentParametersView.isIgnoreComponentInstancesProperties()) {
-				status = setComponentInstancesPropertiesFromGraph(uniqueId, product);
+				status = setComponentInstancesPropertiesFromGraph(product);
 				if (status != TitanOperationStatus.OK) {
 					result = Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(status));
 					return result;
@@ -683,8 +615,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 	// }
 
 	private TitanOperationStatus setAllVersions(Product product) {
-		Either<Map<String, String>, TitanOperationStatus> res = getVersionList(NodeTypeEnum.Product,
-				product.getVersion(), product, ProductMetadataData.class);
+		Either<Map<String, String>, TitanOperationStatus> res = getVersionList(NodeTypeEnum.Product, product.getVersion(), product, ProductMetadataData.class);
 		if (res.isRight()) {
 			return res.right().value();
 		}
@@ -692,8 +623,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return TitanOperationStatus.OK;
 	}
 
-	private Either<Product, StorageOperationStatus> sendError(TitanOperationStatus status,
-			StorageOperationStatus statusIfNotFound) {
+	private Either<Product, StorageOperationStatus> sendError(TitanOperationStatus status, StorageOperationStatus statusIfNotFound) {
 		Either<Product, StorageOperationStatus> result;
 		if (status == TitanOperationStatus.NOT_FOUND) {
 			result = Either.right(statusIfNotFound);
@@ -708,9 +638,8 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 	TitanOperationStatus setComponentCategoriesFromGraph(Component component) {
 		Product product = (Product) component;
 		// Building the cat->subcat->grouping triples
-		Either<List<ImmutablePair<GroupingData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao
-				.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Product), product.getUniqueId(),
-						GraphEdgeLabels.CATEGORIZED_TO, NodeTypeEnum.ProductGrouping, GroupingData.class);
+		Either<List<ImmutablePair<GroupingData, GraphEdge>>, TitanOperationStatus> childrenNodes = titanGenericDao.getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Product), product.getUniqueId(), GraphEdgeLabels.CATEGORIZED_TO,
+				NodeTypeEnum.ProductGrouping, GroupingData.class);
 		if (childrenNodes.isRight()) {
 			if (childrenNodes.right().value() != TitanOperationStatus.NOT_FOUND) {
 				log.debug("Error when finding groupings for this product, error {}", childrenNodes.right().value());
@@ -725,19 +654,15 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		List<ImmutablePair<GroupingData, GraphEdge>> valueList = childrenNodes.left().value();
 		for (ImmutablePair<GroupingData, GraphEdge> groupPair : valueList) {
 			GroupingData groupingData = groupPair.getLeft();
-			Either<ImmutablePair<SubCategoryData, GraphEdge>, TitanOperationStatus> parentSubCat = titanGenericDao
-					.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ProductGrouping),
-							(String) groupingData.getUniqueId(), GraphEdgeLabels.GROUPING,
-							NodeTypeEnum.ProductSubcategory, SubCategoryData.class);
+			Either<ImmutablePair<SubCategoryData, GraphEdge>, TitanOperationStatus> parentSubCat = titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ProductGrouping), (String) groupingData.getUniqueId(),
+					GraphEdgeLabels.GROUPING, NodeTypeEnum.ProductSubcategory, SubCategoryData.class);
 			if (parentSubCat.isRight()) {
 				log.debug("Cannot find subcategory for grouping {}", groupingData.getUniqueId());
 				return parentSubCat.right().value();
 			}
 			SubCategoryData subCatData = parentSubCat.left().value().getLeft();
-			Either<ImmutablePair<CategoryData, GraphEdge>, TitanOperationStatus> parentCat = titanGenericDao
-					.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ProductSubcategory),
-							(String) subCatData.getUniqueId(), GraphEdgeLabels.SUB_CATEGORY,
-							NodeTypeEnum.ProductCategory, CategoryData.class);
+			Either<ImmutablePair<CategoryData, GraphEdge>, TitanOperationStatus> parentCat = titanGenericDao.getParentNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ProductSubcategory), (String) subCatData.getUniqueId(),
+					GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ProductCategory, CategoryData.class);
 			if (parentCat.isRight()) {
 				log.debug("Cannot find category for subcategory {}", subCatData.getUniqueId());
 				return parentCat.right().value();
@@ -752,11 +677,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			SubCategoryDefinition subDef = new SubCategoryDefinition(subDefinition);
 			GroupingDefinition groupingDef = new GroupingDefinition(groupingDefinition);
 
-			if (log.isDebugEnabled()) {
-				log.debug("Found category {} -> subcategory {} -> grouping {} for product {}",			
-					categoryDefinition.getUniqueId(), subCatData.getUniqueId(), groupingData.getUniqueId(),
-					product.getUniqueId());
-			}
+			log.debug("Found category {} -> subcategory {} -> grouping {} for product {}", categoryDefinition.getUniqueId(), subCatData.getUniqueId(), groupingData.getUniqueId(), product.getUniqueId());
 			Map<SubCategoryDefinition, List<GroupingDefinition>> subMap = categoriesDataStructure.get(categoryDef);
 			if (subMap == null) {
 				subMap = new HashMap<>();
@@ -773,14 +694,12 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return TitanOperationStatus.OK;
 	}
 
-	private void convertToCategoriesList(Product product,
-			Map<CategoryDefinition, Map<SubCategoryDefinition, List<GroupingDefinition>>> categoriesDataStructure) {
+	private void convertToCategoriesList(Product product, Map<CategoryDefinition, Map<SubCategoryDefinition, List<GroupingDefinition>>> categoriesDataStructure) {
 		List<CategoryDefinition> categoryDataList = product.getCategories();
 		if (categoryDataList == null) {
 			categoryDataList = new ArrayList<CategoryDefinition>();
 		}
-		for (Entry<CategoryDefinition, Map<SubCategoryDefinition, List<GroupingDefinition>>> triple : categoriesDataStructure
-				.entrySet()) {
+		for (Entry<CategoryDefinition, Map<SubCategoryDefinition, List<GroupingDefinition>>> triple : categoriesDataStructure.entrySet()) {
 			CategoryDefinition categoryDefinition = triple.getKey();
 			List<SubCategoryDefinition> subList = new ArrayList<>();
 			categoryDefinition.setSubcategories(subList);
@@ -795,13 +714,11 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			categoryDataList.add(categoryDefinition);
 		}
 		product.setCategories(categoryDataList);
-		log.debug("Fetched categories for product {}, categories: {}", product.getUniqueId(),
-				Arrays.toString(categoryDataList.toArray()));
+		log.debug("Fetched categories for product {}, categories: {}", product.getUniqueId(), Arrays.toString(categoryDataList.toArray()));
 	}
 
 	private ProductMetadataData getProductMetadataDataFromProduct(Product product) {
-		ProductMetadataData productMetadata = new ProductMetadataData(
-				(ProductMetadataDataDefinition) product.getComponentMetadataDefinition().getMetadataDataDefinition());
+		ProductMetadataData productMetadata = new ProductMetadataData((ProductMetadataDataDefinition) product.getComponentMetadataDefinition().getMetadataDataDefinition());
 		return productMetadata;
 	}
 
@@ -820,14 +737,11 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version,
-			LifecycleStateEnum targetLifecycle, boolean inTransaction) {
-		return (Either<T, StorageOperationStatus>) cloneProduct((Product) other, version, targetLifecycle,
-				inTransaction);
+	public <T> Either<T, StorageOperationStatus> cloneComponent(T other, String version, LifecycleStateEnum targetLifecycle, boolean inTransaction) {
+		return (Either<T, StorageOperationStatus>) cloneProduct((Product) other, version, targetLifecycle, inTransaction);
 	}
 
-	private Either<Product, StorageOperationStatus> cloneProduct(Product other, String version,
-			LifecycleStateEnum targetLifecycle, boolean inTransaction) {
+	private Either<Product, StorageOperationStatus> cloneProduct(Product other, String version, LifecycleStateEnum targetLifecycle, boolean inTransaction) {
 		Either<Product, StorageOperationStatus> result = null;
 
 		try {
@@ -835,12 +749,10 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			other.setVersion(version);
 			other.setUniqueId(null);
 
-			Either<Integer, StorageOperationStatus> counterStatus = getComponentInstanceCoutner(origProductId,
-					NodeTypeEnum.Product);
+			Either<Integer, StorageOperationStatus> counterStatus = getComponentInstanceCoutner(origProductId, NodeTypeEnum.Product);
 			if (counterStatus.isRight()) {
 				StorageOperationStatus status = counterStatus.right().value();
-				log.error("failed to get resource instance counter on product {}. status={}", origProductId,
-						counterStatus);
+				log.error("failed to get resource instance counter on product {}. status={}", origProductId, counterStatus);
 				result = Either.right(status);
 				return result;
 			}
@@ -861,12 +773,10 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 				return result;
 			}
 
-			Either<Integer, StorageOperationStatus> setResourceInstanceCounter = setComponentInstanceCounter(
-					product.getUniqueId(), NodeTypeEnum.Product, counterStatus.left().value(), inTransaction);
+			Either<Integer, StorageOperationStatus> setResourceInstanceCounter = setComponentInstanceCounter(product.getUniqueId(), NodeTypeEnum.Product, counterStatus.left().value(), inTransaction);
 			if (setResourceInstanceCounter.isRight()) {
 				StorageOperationStatus status = setResourceInstanceCounter.right().value();
-				log.error("failed to set resource instance counter on product {}. status={}", product.getUniqueId(),
-						setResourceInstanceCounter);
+				log.error("failed to set resource instance counter on product {}. status={}", product.getUniqueId(), setResourceInstanceCounter);
 				result = Either.right(status);
 				return result;
 			}
@@ -896,8 +806,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		}
 	}
 
-	private Either<Product, StorageOperationStatus> getByNamesAndVersion(String nameKey, String nameValue,
-			String version, Map<String, Object> additionalParams, boolean inTransaction) {
+	private Either<Product, StorageOperationStatus> getByNamesAndVersion(String nameKey, String nameValue, String version, Map<String, Object> additionalParams, boolean inTransaction) {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(nameKey, nameValue);
 		props.put(GraphPropertiesDictionary.VERSION.getProperty(), version);
@@ -906,8 +815,7 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 			props.putAll(additionalParams);
 		}
 
-		Either<List<ProductMetadataData>, TitanOperationStatus> byCriteria = titanGenericDao
-				.getByCriteria(NodeTypeEnum.Product, props, ProductMetadataData.class);
+		Either<List<ProductMetadataData>, TitanOperationStatus> byCriteria = titanGenericDao.getByCriteria(NodeTypeEnum.Product, props, ProductMetadataData.class);
 
 		if (byCriteria.isRight()) {
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value()));
@@ -919,11 +827,9 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 				return Either.right(StorageOperationStatus.GENERAL_ERROR);
 			}
 			ProductMetadataData productData = dataList.get(0);
-			Either<Product, StorageOperationStatus> product = getProduct(
-					productData.getMetadataDataDefinition().getUniqueId(), inTransaction);
+			Either<Product, StorageOperationStatus> product = getProduct(productData.getMetadataDataDefinition().getUniqueId(), inTransaction);
 			if (product.isRight()) {
-				log.debug("Failed to fetch product, name {} id {}", productData.getMetadataDataDefinition().getName(),
-						productData.getMetadataDataDefinition().getUniqueId());
+				log.debug("Failed to fetch product, name {} id {}", productData.getMetadataDataDefinition().getName(), productData.getMetadataDataDefinition().getUniqueId());
 			}
 			return product;
 		}
@@ -936,49 +842,42 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 	}
 
 	@Override
-	protected <T extends org.openecomp.sdc.be.model.Component> StorageOperationStatus updateDerived(
-			org.openecomp.sdc.be.model.Component component, org.openecomp.sdc.be.model.Component currentComponent,
-			ComponentMetadataData componentData, Class<T> clazz) {
+	protected <T extends org.openecomp.sdc.be.model.Component> StorageOperationStatus updateDerived(org.openecomp.sdc.be.model.Component component, org.openecomp.sdc.be.model.Component currentComponent, ComponentMetadataData componentData,
+			Class<T> clazz) {
 		log.debug("Derived class isn't supported for product");
 		return StorageOperationStatus.OK;
 	}
 
 	@Override
-	public Either<Integer, StorageOperationStatus> increaseAndGetComponentInstanceCounter(String componentId,
-			boolean inTransaction) {
+	public Either<Integer, StorageOperationStatus> increaseAndGetComponentInstanceCounter(String componentId, boolean inTransaction) {
 		return increaseAndGetComponentInstanceCounter(componentId, NodeTypeEnum.Product, inTransaction);
 	}
 
 	@Override
-	protected StorageOperationStatus validateCategories(Component currentComponent, Component component,
-			ComponentMetadataData componentData, NodeTypeEnum type) {
+	protected StorageOperationStatus validateCategories(Component currentComponent, Component component, ComponentMetadataData componentData, NodeTypeEnum type) {
 		// As agreed with Ella, update categories - delete old and create new
 		StorageOperationStatus status = StorageOperationStatus.OK;
 		List<CategoryDefinition> newcategories = component.getCategories();
 		List<CategoryDefinition> currentcategories = currentComponent.getCategories();
 		if (newcategories != null) {
 			if (currentcategories != null && !currentcategories.isEmpty()) {
-				Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(
-						NodeTypeEnum.ProductGrouping, currentComponent);
+				Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(NodeTypeEnum.ProductGrouping, currentComponent);
 				if (findGroupingsForComponent.isRight()) {
 					status = findGroupingsForComponent.right().value();
 				}
 				List<GroupingData> groupingDataToDissociate = findGroupingsForComponent.left().value();
-				TitanOperationStatus titanStatus = dissociateCategoriesFromProduct((ProductMetadataData) componentData,
-						groupingDataToDissociate);
+				TitanOperationStatus titanStatus = dissociateCategoriesFromProduct((ProductMetadataData) componentData, groupingDataToDissociate);
 				if (titanStatus != TitanOperationStatus.OK) {
 					status = DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
 				}
 			}
 			if (!newcategories.isEmpty()) {
-				Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(
-						NodeTypeEnum.ProductGrouping, component);
+				Either<List<GroupingData>, StorageOperationStatus> findGroupingsForComponent = findGroupingsForComponent(NodeTypeEnum.ProductGrouping, component);
 				if (findGroupingsForComponent.isRight()) {
 					status = findGroupingsForComponent.right().value();
 				}
 				List<GroupingData> groupingDataToAssociate = findGroupingsForComponent.left().value();
-				TitanOperationStatus titanStatus = associateCategoriesToProduct((ProductMetadataData) componentData,
-						groupingDataToAssociate);
+				TitanOperationStatus titanStatus = associateCategoriesToProduct((ProductMetadataData) componentData, groupingDataToAssociate);
 				if (titanStatus != TitanOperationStatus.OK) {
 					status = DaoStatusConverter.convertTitanStatusToStorageStatus(titanStatus);
 				}
@@ -987,11 +886,10 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return status;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public Either<List<Product>, StorageOperationStatus> getFollowed(String userId,
-			Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction) {
-		return (Either<List<Product>, StorageOperationStatus>) (Either<?, StorageOperationStatus>) getFollowedComponent(
-				userId, lifecycleStates, lastStateStates, inTransaction, titanGenericDao, NodeTypeEnum.Product);
+	public Either<List<Product>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, boolean inTransaction) {
+		return (Either<List<Product>, StorageOperationStatus>) (Either<?, StorageOperationStatus>) getFollowedComponent(userId, lifecycleStates, lastStateStates, inTransaction, titanGenericDao, NodeTypeEnum.Product);
 	}
 
 	@Override
@@ -1011,11 +909,9 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Either<Component, StorageOperationStatus> markComponentToDelete(Component componentToDelete,
-			boolean inTransaction) {
+	public Either<Component, StorageOperationStatus> markComponentToDelete(Component componentToDelete, boolean inTransaction) {
 		// markComponentToDelete is not defined yet for products
-		return (Either<Component, StorageOperationStatus>) (Either<?, StorageOperationStatus>) deleteProduct(
-				componentToDelete.getUniqueId(), inTransaction);
+		return (Either<Component, StorageOperationStatus>) (Either<?, StorageOperationStatus>) deleteProduct(componentToDelete.getUniqueId(), inTransaction);
 	}
 
 	@Override
@@ -1040,28 +936,22 @@ public class ProductOperation extends ComponentOperation implements IProductOper
 		return Either.left(new ArrayList<>());
 	}
 
-	public Either<Product, StorageOperationStatus> getProductByNameAndVersion(String productName, String productVersion,
-			boolean inTransaction) {
-		return getByNamesAndVersion(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(),
-				ValidationUtils.normaliseComponentName(productName), productVersion, null, inTransaction);
+	public Either<Product, StorageOperationStatus> getProductByNameAndVersion(String productName, String productVersion, boolean inTransaction) {
+		return getByNamesAndVersion(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty(), ValidationUtils.normaliseComponentName(productName), productVersion, null, inTransaction);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Either<T, StorageOperationStatus> getComponent(String id,
-			ComponentParametersView componentParametersView, boolean inTransaction) {
+	public <T> Either<T, StorageOperationStatus> getComponent(String id, ComponentParametersView componentParametersView, boolean inTransaction) {
 		return (Either<T, StorageOperationStatus>) getProduct(id, false);
 	}
 
-	public Either<Product, StorageOperationStatus> updateProduct(Product product, boolean inTransaction,
-			ComponentParametersView filterResultView) {
-		return (Either<Product, StorageOperationStatus>) updateComponentFilterResult(product, inTransaction,
-				titanGenericDao, product.getClass(), NodeTypeEnum.Service, filterResultView);
+	public Either<Product, StorageOperationStatus> updateProduct(Product product, boolean inTransaction, ComponentParametersView filterResultView) {
+		return (Either<Product, StorageOperationStatus>) updateComponentFilterResult(product, inTransaction, titanGenericDao, product.getClass(), NodeTypeEnum.Service, filterResultView);
 	}
 
 	@Override
-	protected <T> Either<T, StorageOperationStatus> updateComponentFilterResult(T component, boolean inTransaction,
-			ComponentParametersView filterResultView) {
+	protected <T> Either<T, StorageOperationStatus> updateComponentFilterResult(T component, boolean inTransaction, ComponentParametersView filterResultView) {
 		return (Either<T, StorageOperationStatus>) updateProduct((Product) component, inTransaction, filterResultView);
 	}
 }

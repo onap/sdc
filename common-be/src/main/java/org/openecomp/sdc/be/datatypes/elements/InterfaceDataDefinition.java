@@ -24,7 +24,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InterfaceDataDefinition implements Serializable {
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+
+public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
 
 	/**
 	 * 
@@ -46,10 +48,14 @@ public class InterfaceDataDefinition implements Serializable {
 	 * Timestamp of the last resource (artifact) creation
 	 */
 	private Long lastUpdateDate;
-
+	/**
+	 * Defines an operation available to manage particular aspects of the Node
+	 * Type.
+	 */
+	private Map<String, OperationDataDefinition> operations = new HashMap<String, OperationDataDefinition>();
+	
 	public InterfaceDataDefinition() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InterfaceDataDefinition(String type, String description) {
@@ -105,5 +111,11 @@ public class InterfaceDataDefinition implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public Map<String, OperationDataDefinition> getOperations() {
+		return operations;
+	}
 
+	public void setOperations(Map<String, OperationDataDefinition> operations) {
+		this.operations = operations;
+	}
 }

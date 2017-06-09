@@ -24,7 +24,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -54,17 +57,18 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
+import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -123,7 +127,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return response;
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Create Service");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Create Service");
 			log.debug("create service failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -163,7 +166,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			}
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), actionResponse.left().value());
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Validate Service Name");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Validate Service Name");
 			log.debug("validate service name failed with exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -187,9 +189,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
 		modifier.setUserId(userId);
 		log.debug("modifier id is {}", userId);
 		Wrapper<Response> responseWrapper = new Wrapper<Response>();
-		Wrapper<String> uuidWrapper = new Wrapper<String>();
-		Wrapper<String> versionWrapper = new Wrapper<String>();
-		Wrapper<User> userWrapper = new Wrapper<User>();
+		Wrapper<String> uuidWrapper = new Wrapper<>();
+		Wrapper<String> versionWrapper = new Wrapper<>();
+		Wrapper<User> userWrapper = new Wrapper<>();
 		Wrapper<ComponentTypeEnum> componentWrapper = new Wrapper<ComponentTypeEnum>();
 		try {
 			validateUserExist(responseWrapper, userWrapper, userId);
@@ -217,7 +219,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			}
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Validate Service Name");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Validate Service Name");
 			log.debug("get Service Audit Records failed with exception", e);
 			Response errorResponse = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -278,7 +279,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return response;
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete Service");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
 			log.debug("delete service failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -315,7 +315,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return response;
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Delete Service");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Service");
 			log.debug("delete service failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -367,13 +366,73 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Update Service Metadata");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Service Metadata");
 			log.debug("update service metadata failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 			return response;
 
 		}
+	}
+	/**
+	 * updates group instance property values
+	 * Note, than in case of group instance updated successfully, related resourceInstance and containing component modification time will be updated
+	 * @param serviceId
+	 * @param componentInstanceId
+	 * @param groupInstanceId
+	 * @param data
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
+	@PUT
+	@Path("/{containerComponentType}/{serviceId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstanceId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update Group Instance Property Values", httpMethod = "PUT", notes = "Returns updated group instance", response = Service.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Group Instance Property Values Updated"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 400, message = "Invalid content / Missing content") })
+	public Response updateGroupInstancePropertyValues(@PathParam("serviceId") final String serviceId,@PathParam("componentInstanceId") final String componentInstanceId, @PathParam("groupInstanceId") final String groupInstanceId, @ApiParam(value = "Group instance object to be Updated", required = true) String data, @Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+
+		Response response = null;
+		ServletContext context = request.getSession().getServletContext();
+		String url = request.getMethod() + " " + request.getRequestURI();
+		log.debug("Start handle request of {}", url);
+		
+		User modifier = new User();
+		modifier.setUserId(userId);
+		log.debug("modifier id is {}",userId);
+		
+		ServiceBusinessLogic businessLogic;
+		Either<List<GroupInstanceProperty>, ResponseFormat> actionResponse = null;
+		try {
+			List<GroupInstanceProperty> updatedProperties;
+			Type listType = new TypeToken<ArrayList<GroupInstanceProperty>>(){}.getType();
+			ArrayList<GroupInstanceProperty> newProperties = gson.fromJson(data, listType);
+			if (newProperties == null) {
+				actionResponse = Either.right(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
+			}
+			if(actionResponse == null){
+				log.debug("Start handle update group instance property values request. Received group instance is {}", groupInstanceId);
+				businessLogic = getServiceBL(context);
+				actionResponse = businessLogic.updateGroupInstancePropertyValues(modifier, serviceId, componentInstanceId, groupInstanceId, newProperties);
+				if(actionResponse.isRight()){
+					actionResponse = Either.right(actionResponse.right().value());
+				}
+			}
+			if(actionResponse.isLeft()){
+				updatedProperties = actionResponse.left().value();
+				ObjectMapper mapper = new ObjectMapper();
+				String result = mapper.writeValueAsString(updatedProperties);
+				response =  buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+			}
+			else{
+				response = buildErrorResponse(actionResponse.right().value());
+			}
+		} catch (Exception e) {
+			log.error("Exception occured during update Group Instance property values: {}", e.getMessage(), e);
+			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+		}
+		return response;
 	}
 
 	@GET
@@ -412,7 +471,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Service");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Service");
 			log.debug("get service failed with exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -451,7 +509,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Get Service by name and version");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Service by name and version");
 			log.debug("get service failed with exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -492,7 +549,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Update Service Distribution State");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Update Service Distribution State");
 			log.debug("updateServiceDistributionState failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -531,7 +587,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			Object result = RepresentationUtils.toRepresentation(service);
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Activate Distribution");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Activate Distribution");
 			log.debug("activate distribution failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -570,7 +625,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			Object result = RepresentationUtils.toRepresentation(service);
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Mark Distribution As Deployed");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Mark Distribution As Deployed");
 			log.debug("mark distribution as deployed failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -604,7 +658,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			}
 			return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), null);
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "tempUrlToBeDeleted");
 			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("tempUrlToBeDeleted");
 			log.debug("failed with exception", e);
 			response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -621,12 +674,9 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 404, message = "Artifact not found") })
 	public Response downloadServiceArtifact(@PathParam("artifactName") final String artifactName, @Context final HttpServletRequest request) {
 		Response response = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
-		String requestURI = request.getRequestURI();
 
 		try {
 			log.debug("artifact name = {}", artifactName);
-			ServletContext context = request.getSession().getServletContext();
 
 			Either<byte[], ResponseFormat> executeCommand = executeCommand(artifactName);
 
@@ -640,7 +690,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 				InputStream is = new ByteArrayInputStream(value);
 
 				Map<String, String> headers = new HashMap<>();
-				String heatFileName = null;
+				String heatFileName;
 				if (artifactName.indexOf(".") > -1) {
 					heatFileName = artifactName.substring(0, artifactName.indexOf(".")) + ".heat";
 				} else {
@@ -653,7 +703,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			return response;
 
 		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "download heat artifact");
 			log.error("download artifact failed with exception", e);
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
@@ -671,8 +720,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			heatTranslator = "/home/m98835/heat-translator-0.3.0/heat_translator.py";
 		}
 
-		log.debug("toscaFilesDir={}", toscaFilesDir);
-		log.debug("heatTranslator={}", heatTranslator);
+		log.debug("toscaFilesDir= {} | heatTranslator= {}", toscaFilesDir, heatTranslator);
 
 		StringBuffer output = new StringBuffer();
 
@@ -702,19 +750,19 @@ public class ServiceServlet extends AbstractValidationsServlet {
 			log.debug("waitFor = {}", waitFor);
 
 			if (waitFor != 0) {
-				log.error("Failed running the command {}", command);
+				log.error("Failed runnign the command {}", command);
 				return Either.right(getComponentsUtils().getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, artifactName));
 			}
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-			String line = "";
+			String line;
 			while ((line = reader.readLine()) != null) {
 				output.append(line + "\n");
 			}
 
 		} catch (Exception e) {
-			log.error("Failed running the command {} {}", command, e);
+			log.error("Failed runnign the command {}", command, e);
 			e.printStackTrace();
 			return Either.right(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
