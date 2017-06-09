@@ -4,7 +4,7 @@
 
     <name>openecomp-nosqldb-lib</name>
     <artifactId>openecomp-nosqldb-lib</artifactId>
-    <groupId>org.openecomp.core</groupId>
+    <groupId>org.openecomp.sdc.core</groupId>
     <packaging>pom</packaging>
     <parent>
         <artifactId>openecomp-sdc-lib</artifactId>
@@ -20,13 +20,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-core</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>

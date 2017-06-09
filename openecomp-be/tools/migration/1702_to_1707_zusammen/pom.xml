@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <artifactId>openecomp-zusammen-plugin</artifactId>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -40,7 +40,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-zusammen-core</artifactId>
             <version>${project.version}</version>
         </dependency>

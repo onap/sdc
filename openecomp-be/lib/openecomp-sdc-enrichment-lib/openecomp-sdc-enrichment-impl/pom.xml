@@ -38,7 +38,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -53,7 +53,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -64,12 +64,12 @@
             <version>${mockito.all.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-heat-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-tosca-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -79,7 +79,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-config-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

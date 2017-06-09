@@ -52,7 +52,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-zusammen-core</artifactId>
             <version>${project.version}</version>
         </dependency>

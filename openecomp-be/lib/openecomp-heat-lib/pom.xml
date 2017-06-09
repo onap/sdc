@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openecomp.core</groupId>
+    <groupId>org.openecomp.sdc.core</groupId>
     <name>openecomp-heat-lib</name>
     <artifactId>openecomp-heat-lib</artifactId>
 
@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -25,7 +25,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

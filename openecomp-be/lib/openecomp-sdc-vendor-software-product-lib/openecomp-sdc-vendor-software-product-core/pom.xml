@@ -19,7 +19,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -35,7 +35,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-config-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -89,12 +89,12 @@
             <version>${openecomp.sdc.common.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-zusammen-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-zusammen-core</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>

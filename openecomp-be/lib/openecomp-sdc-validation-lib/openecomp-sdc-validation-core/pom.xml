@@ -33,7 +33,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -71,7 +71,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-heat-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

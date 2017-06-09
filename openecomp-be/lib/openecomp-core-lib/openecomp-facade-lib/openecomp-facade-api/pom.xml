@@ -4,7 +4,7 @@
 
     <name>openecomp-facade-api</name>
     <artifactId>openecomp-facade-api</artifactId>
-    <groupId>org.openecomp.core</groupId>
+    <groupId>org.openecomp.sdc.core</groupId>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -16,12 +16,12 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

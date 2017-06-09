@@ -19,7 +19,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-core</artifactId>
             <version>${project.version}</version>
         </dependency>

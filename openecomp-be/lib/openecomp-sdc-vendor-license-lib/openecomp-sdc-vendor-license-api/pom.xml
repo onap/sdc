@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-facade-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -23,7 +23,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.core</groupId>
+            <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-nosqldb-core</artifactId>
             <version>${project.version}</version>
         </dependency>
