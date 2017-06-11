@@ -20,7 +20,7 @@ export class ServiceServiceNg2 {
 
     validateConformanceLevel(service: Service): Observable<boolean> {
 
-        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uniqueId + '/conformanceLevelValidation')
+        return this.http.get(this.baseUrl + service.getTypeUrl() + service.uuid + '/conformanceLevelValidation')
             .map((res: Response) => {
                 return res.json();
             });

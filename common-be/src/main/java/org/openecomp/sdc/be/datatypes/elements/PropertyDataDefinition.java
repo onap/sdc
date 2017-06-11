@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,12 +61,11 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	private String value;
 
 	private String label;
-	private Boolean hidden = Boolean.FALSE;;
+	protected Boolean hidden = Boolean.FALSE;
 	private Boolean immutable = Boolean.FALSE;
 	
 	private String inputPath;
-	
-
+    private String status;
 
 	/**
 	 * The resource id which this property belongs to
@@ -104,9 +104,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.setOwnerId(p.getOwnerId());
 		this.setGetInputValues(p.getInputValues);
 		this.setInputPath(p.getInputPath());
+		this.setStatus(p.getStatus());
 
 	}
-	
+
 	public String getInputPath() {
 		return inputPath;
 	}
@@ -114,7 +115,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	public void setInputPath(String inputPath) {
 		this.inputPath = inputPath;
 	}
-
 
 	public String getName() {
 		return name;
@@ -238,6 +238,15 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	public void setGetInputValues(List<GetInputValueDataDefinition> getInputValues) {
 		this.getInputValues = getInputValues;
 	}
+	
+	public String getStatus() {
+		return status;
+    }
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 	@Override
 	public String toString() {
 		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", defaultValue=" + defaultValue + ", description=" + description + ", entrySchema=" + schema + ", parentUniqueId=" + parentUniqueId + ", password=" + password + "]";
@@ -256,6 +265,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
 		result = prime * result + ((parentUniqueId == null) ? 0 : parentUniqueId.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -307,6 +317,11 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 				return false;
 		} else if (!uniqueId.equals(other.uniqueId))
 			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
 		return true;
 	}
 
@@ -332,34 +347,23 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		}
 	}
 
-	protected <T extends PropertyDataDefinition> T overrideDataDefinition(T other, boolean allowDefaultValueOverride){
-		if(this.getType().equals(other.getType())){
+	private <T extends ToscaDataDefinition> boolean compareSchemaType(T other){
+		return !"list".equals(type) && !"map".equals(type) || this.getSchema().getProperty().getType().equals(((PropertyDataDefinition)other).getSchema().getProperty().getType());
+	}
+	
+	
+	@Override
+	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride){
+		if(this.getType().equals(other.getType()) && compareSchemaType(other)){
 			other.setOwnerId(getOwnerId());
 			if(allowDefaultValueOverride)
-				other.setDefaultValue(getDefaultValue());
+				other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
 			return other;
 		}
 		return null;
 	}
-	
-	
-	//return Either.right(propertyName) if an illegal merge was attempted (overriding data type is forbidden)
-	public static <T extends PropertyDataDefinition> Either<Map<String, T>, String> mergeProperties(Map<String, T> derivedProps, Map<String, T> importedProps, boolean allowDefaultValueOverride){
-		for(T property : importedProps.values()){
-			derivedProps.merge(property.getName(), property, (derivedProp, importedProp) -> derivedProp.overrideDataDefinition(importedProp, allowDefaultValueOverride));
-		    //validate merge success
-		    if(!derivedProps.containsKey(property.getName()))
-		    	return Either.right(property.getName());
-		}
-		return Either.left(derivedProps);
-	}
-	
-	
 		
-	public static <T extends PropertyDataDefinition> Map<String, T> listToMapByName(List<T> propertiesList) {
-		return propertiesList.stream()
-		.collect(Collectors.toMap(p -> p.getName(), p -> p));
-	}
+
 
 
 }

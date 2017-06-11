@@ -38,9 +38,9 @@ def checkUser(userName):
 
 
 
-def createUser( firstName, lastName, userId , email , role ):
-    print '[INFO] create first:[' + firstName + '], last:[' + lastName + '], Id:[' + userId + '], email:[' + email + '], role:[' + role +']'
-    command="curl -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" http://localhost:8080/sdc2/rest/v1/user/ -d '{\"firstName\": '" + firstName + "', \"lastName\": '" + lastName + "',\"userId\": '" + userId + "',\"email\": '" + email + "',\"role\": '" + role + "'}'"
+def createUser( firstName, lastName, userId , email_dom , role ):
+    print '[INFO] create first:[' + firstName + '], last:[' + lastName + '], Id:[' + userId + '], email:[' + userId + '@' + email_dom + '], role:[' + role +']'
+    command="curl -s -o /dev/null -w \"%{http_code}\" -X POST -i -H \"Accept: application/json; charset=UTF-8\" -H \"Content-Type: application/json\" -H \"USER_ID: jh0003\" http://localhost:8080/sdc2/rest/v1/user/ -d '{\"firstName\": '" + firstName + "', \"lastName\": '" + lastName + "',\"userId\": '" + userId + "',\"email\": '" + userId + "@" + email_dom + "',\"role\": '" + role + "'}'"
 
     proc = subprocess.Popen( command , shell=True , stdout=subprocess.PIPE)
     (out, err) = proc.communicate()
@@ -53,11 +53,11 @@ def createUser( firstName, lastName, userId , email , role ):
 ##############################
 #    Definitions
 ##############################
-userList = [ "demo" ]
-lastName = "demo"
-userId   = "demo"
-email    = "demo@openecomp.org"
-role     = "ADMIN"
+userId    = [ "demo" , "op0001" , "gv0001" , "jh0003" , "jm0007" , "cs0008" ]
+firstName = [ "demo" , "Oper" , "Giuseppe" , "Jimmy" , "Joni" , "Carlos" ]
+lastName  = [ "demo" , "P" , "Verdi" , "Hendrix" , "Mitchell" , "Santana" ]
+role      = [ "ADMIN" , "OPS" , "ADMIN" , "GOVERNOR" , "TESTER" , "DESIGNER" ]
+email_dom = "openecomp.org"
 beStat=0
 
 
@@ -80,13 +80,14 @@ if beStat == 0:
     print '[ERROR]: ' + time.strftime('%Y/%m/%d %H:%M:%S') + bcolors.FAIL + 'Backend is DOWN :-(' + bcolors.ENDC
     exit()
 
-for user in userList:
+for user in userId:
     myResult = checkUser(user)
+    pos = userId.index(user)
     if myResult == '200':
         print '[INFO]: ' + user + ' already exists'
     else:
-        myResult = createUser( user, lastName, userId, email, role )
+        myResult = createUser( firstName[pos], lastName[pos], userId[pos], email_dom, role[pos] )
         if myResult == '201':
-            print '[INFO]: ' + userId + ' created, result: [' + myResult + ']'
+            print '[INFO]: ' + userId[pos] + ' created, result: [' + myResult + ']'
         else:
-            print '[ERROR]: ' + bcolors.FAIL + userId + bcolors.ENDC + ' error creating , result: [' + myResult + ']'
+            print '[ERROR]: ' + bcolors.FAIL + userId[pos] + bcolors.ENDC + ' error creating , result: [' + myResult + ']'

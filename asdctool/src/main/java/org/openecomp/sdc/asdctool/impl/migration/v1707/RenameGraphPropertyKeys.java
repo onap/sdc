@@ -1,8 +1,6 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707;
 
-import org.openecomp.sdc.asdctool.impl.migration.MigrationMsg;
-import org.openecomp.sdc.asdctool.impl.migration.Migration;
-import org.openecomp.sdc.asdctool.impl.migration.MigrationOperationUtils;
+import org.openecomp.sdc.asdctool.impl.migration.*;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component("renameGraphPropertyKeysMigration")
-public class RenameGraphPropertyKeys implements Migration {
+public class RenameGraphPropertyKeys implements Migration1707Task {
 
     private final static Map<String, String> KEY_PROPERTIES_TO_RENAME;
 

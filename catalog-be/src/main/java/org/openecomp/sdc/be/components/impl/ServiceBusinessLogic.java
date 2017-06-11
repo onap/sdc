@@ -1390,7 +1390,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 			}
 			Collections.sort(vfModulePayloadForCurrVF, (art1, art2) -> VfModuleArtifactPayload.compareByGroupName(art1, art2));
 			// Update Payload With Heat Env
-			vfModulePayloadForCurrVF.stream().forEach(e -> addHeatEnvArtifactsToVFModulePayload(e, currVFInstance));
+//			vfModulePayloadForCurrVF.stream().forEach(e -> addHeatEnvArtifactsToVFModulePayload(e, currVFInstance));
 
 			final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -1436,7 +1436,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 			vfModuleAertifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, modifier, groupsForCurrVF, payloadWrapper, responseWrapper);
 		}
 		if (responseWrapper.isEmpty() && vfModuleAertifact != null) {
-			vfModuleAertifact = fillVfModulePayload(modifier, currVFInstance, vfModuleAertifact, shouldLock, payloadWrapper, responseWrapper);
+			vfModuleAertifact = fillVfModulePayload(modifier, currVFInstance, vfModuleAertifact, shouldLock, payloadWrapper, responseWrapper, service);
 		}
 
 		Either<ArtifactDefinition, ResponseFormat> result;
@@ -1449,21 +1449,21 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact, boolean shouldLock, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper) {
+	private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact, boolean shouldLock, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper, Service service) {
 		ArtifactDefinition result = null;
-		final Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(currVF.getComponentUid());
-		if (eitherResource.isRight()) {
-			responseWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(eitherResource.right().value())));
-		} else if (!payloadWrapper.isEmpty()) {
-			Resource resource = eitherResource.left().value();
-			Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic.generateArtifactPayload(vfModuleArtifact, resource.getComponentType(), resource, currVF.getName(), modifier, shouldLock, () -> System.currentTimeMillis(),
+//		final Either<Resource, StorageOperationStatus> eitherResource = toscaOperationFacade.getToscaElement(currVF.getComponentUid());
+//		if (eitherResource.isRight()) {
+//			responseWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(eitherResource.right().value())));
+//		} else if (!payloadWrapper.isEmpty()) {
+//			Resource resource = eitherResource.left().value();
+			Either<ArtifactDefinition, ResponseFormat> eitherPayload = artifactsBusinessLogic.generateArtifactPayload(vfModuleArtifact, ComponentTypeEnum.RESOURCE_INSTANCE, service, currVF.getName(), modifier, shouldLock, () -> System.currentTimeMillis(),
 					() -> Either.left(artifactsBusinessLogic.createEsArtifactData(vfModuleArtifact, payloadWrapper.getInnerElement().getBytes(StandardCharsets.UTF_8))), currVF.getUniqueId());
 			if (eitherPayload.isLeft()) {
 				result = eitherPayload.left().value();
 			} else {
 				responseWrapper.setInnerElement(eitherPayload.right().value());
 			}
-		}
+//		}
 		if (result == null) {
 			result = vfModuleArtifact;
 		}
@@ -1962,13 +1962,18 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId, List<String> dataParamsToReturn) {
+	public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String serviceId, List<String> dataParamsToReturn) {
 
 		ComponentParametersView paramsToRetuen = new ComponentParametersView(dataParamsToReturn);
-		Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(resourceId, paramsToRetuen);
+		Either<Service, StorageOperationStatus> serviceResultEither = toscaOperationFacade.getToscaElement(serviceId, paramsToRetuen);
 
 		if (serviceResultEither.isRight()) {
-			log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn.toString());
+			if(serviceResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+				log.debug("Failed to found service with id {} ", serviceId);
+				Either.right(componentsUtils.getResponseFormat(ActionStatus.SERVICE_NOT_FOUND, serviceId));
+			}
+			
+			log.debug("failed to get service by id {} with filters {}", serviceId, dataParamsToReturn.toString());
 			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(serviceResultEither.right().value()), ""));
 		}
 

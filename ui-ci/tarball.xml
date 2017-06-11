@@ -1,0 +1,70 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+	<id>bin</id>
+	<formats>
+		<format>tar</format>
+	</formats>
+	<files>
+		<file>
+			<source>${project.build.directory}/${project.artifactId}-${project.version}-jar-with-dependencies.jar</source>
+			<outputDirectory>./</outputDirectory>
+			<destName>${project.artifactId}-${project.version}-jar-with-dependencies.jar</destName>
+		</file>
+ 		<file>
+			<source>src/main/resources/ci/scripts/startTest.sh</source>
+			<outputDirectory>./</outputDirectory>
+			<destName>startTest.sh</destName>
+		</file>
+		<!--file> <source>src/main/resources/ci/scripts/postinstall</source> <outputDirectory>./</outputDirectory> 
+			<destName>postinstall</destName> </file -->
+		<file>
+			<source>src/main/resources/ci/conf/attsdc.yaml</source>
+			<outputDirectory>conf</outputDirectory>
+			<destName>attsdc.yaml</destName>
+		</file>
+		<file>
+			<source>src/main/resources/ci/conf/attsdc-packages.yaml</source>
+			<outputDirectory>conf</outputDirectory>
+			<destName>attsdc-packages.yaml</destName>
+		</file>
+				<file>
+			<source>../catalog-be/src/main/resources/config/error-configuration.yaml</source>
+			<outputDirectory>conf</outputDirectory>
+			<destName>error-configuration.yaml</destName>
+		</file>
+		<file>
+			<source>../asdc-tests/src/main/resources/ci/conf/log4j.properties</source>
+			<outputDirectory>conf</outputDirectory>
+			<destName>log4j.properties</destName>
+		</file>
+		<file>
+			<source>src/main/resources/ci/conf/credentials.yaml</source>
+			<outputDirectory>conf</outputDirectory>
+			<destName>credentials.yaml</destName>
+		</file>
+		<file>
+			<source>src/main/resources/ci/drivers/chromedriver.exe/</source>
+			<outputDirectory>drivers</outputDirectory>
+			<destName>chromedriver.exe</destName>
+		</file>
+
+	</files>
+
+	<fileSets>
+		<fileSet>
+			<directory>src/test/resources</directory>
+			<outputDirectory>./</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/ci/testSuites</directory>
+	        <outputDirectory>./testSuites</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/Files</directory>
+	        <outputDirectory>./Files</outputDirectory>
+		</fileSet>
+	</fileSets>
+
+</assembly>

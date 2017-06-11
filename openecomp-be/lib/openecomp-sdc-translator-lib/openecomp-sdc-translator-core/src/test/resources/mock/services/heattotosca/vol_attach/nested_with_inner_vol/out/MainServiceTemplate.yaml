@@ -99,7 +99,7 @@ topology_template:
       type: string
       description: the name of the target volume backend
   node_templates:
-    server_cmaui:
+    server_cmaui_1:
       type: org.openecomp.resource.abstract.nodes.heat.nested
       directives:
       - substitutable
@@ -123,4 +123,4 @@ topology_template:
         heat_file: ../Artifacts/main.yml
         description: cmaui server template for vMMSC
       members:
-      - server_cmaui
+      - server_cmaui_1

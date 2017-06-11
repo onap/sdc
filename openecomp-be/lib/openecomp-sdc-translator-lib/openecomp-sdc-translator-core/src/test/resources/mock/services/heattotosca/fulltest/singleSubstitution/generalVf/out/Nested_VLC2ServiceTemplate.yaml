@@ -11,11 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_VLC_SCTP_A_network:
+    port_VLC_GTP_exCP_naming:
       type: list
       required: true
       entry_schema:
-        type: string
+        type: json
     port_VLC_OAM_network_role_tag:
       type: list
       required: true
@@ -49,21 +49,21 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_VLC_OAM_ip_requirements:
+    port_VLC2_Internal1_network_role_tag:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: string
     port_VLC2_Internal2_mac_address:
       type: list
       required: true
       entry_schema:
         type: string
-    port_VLC_OAM_fixed_ips:
+    port_VLC_GTP_network_role_tag:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: string
     vm_image_name:
       type: string
       required: true
@@ -78,11 +78,6 @@ topology_template:
       entry_schema:
         type: json
     port_VLC2_Internal1_mac_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: json
-    port_VLC_SCTP_A_ip_requirements:
       type: list
       required: true
       entry_schema:
@@ -102,7 +97,132 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_VLC_GTP_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_VLC_OAM_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_GTP_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_GTP_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal2_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_A_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_A_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_VLC_SCTP_B_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_OAM_fixed_ips:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal1_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_VLC_OAM_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_A_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal2_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_A_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_OAM_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_B_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_VLC2_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_OAM_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_VLC2_Internal1_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal2_network_role:
       type: list
       required: true
       entry_schema:
@@ -114,11 +234,36 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_VLC_SCTP_B_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal2_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_VLC_SCTP_B_fixed_ips:
       type: list
       required: true
       entry_schema:
         type: json
+    port_VLC_GTP_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_A_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal2_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     port_VLC_GTP_mac_requirements:
       type: list
       required: true
@@ -134,7 +279,7 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_VLC_GTP_fixed_ips:
+    port_VLC2_Internal1_exCP_naming:
       type: list
       required: true
       entry_schema:
@@ -144,7 +289,12 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_VLC_OAM_network:
+    port_VLC2_Internal1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC2_Internal2_subnetpoolid:
       type: list
       required: true
       entry_schema:
@@ -154,7 +304,32 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    port_VLC2_Internal2_network:
+    port_VLC2_Internal2_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_B_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_VLC_GTP_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC2_Internal1_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_VLC_SCTP_B_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_VLC_SCTP_B_network_role:
       type: list
       required: true
       entry_schema:
@@ -163,13 +338,37 @@ topology_template:
     VLC2_VLC2_Internal2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC2_Internal2_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC2_Internal2_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC2_Internal2_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC2_Internal2_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_VLC2_Internal2_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC2_Internal2_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC2_Internal2_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC2_Internal2_subnetpoolid
           - index_value
         network:
           get_input:
@@ -187,6 +386,14 @@ topology_template:
     VLC2_VLC_OAM:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC_OAM_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC_OAM_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC_OAM_ip_requirements
@@ -198,6 +405,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_VLC_OAM_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC_OAM_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC_OAM_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC_OAM_subnetpoolid
           - index_value
         fixed_ips:
           get_input:
@@ -215,13 +434,37 @@ topology_template:
     VLC2_VLC2_Internal1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC2_Internal1_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC2_Internal1_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC2_Internal1_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC2_Internal1_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_VLC2_Internal1_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC2_Internal1_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC2_Internal1_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC2_Internal1_subnetpoolid
           - index_value
         network:
           get_input:
@@ -239,13 +482,37 @@ topology_template:
     VLC2_VLC_SCTP_A:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC_SCTP_A_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC_SCTP_A_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC_SCTP_A_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC_SCTP_A_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_VLC_SCTP_A_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC_SCTP_A_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC_SCTP_A_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC_SCTP_A_subnetpoolid
           - index_value
         fixed_ips:
           get_input:
@@ -263,13 +530,37 @@ topology_template:
     VLC2_VLC_SCTP_B:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC_SCTP_B_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC_SCTP_B_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC_SCTP_B_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC_SCTP_B_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_VLC_SCTP_B_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC_SCTP_B_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC_SCTP_B_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC_SCTP_B_subnetpoolid
           - index_value
         fixed_ips:
           get_input:
@@ -287,13 +578,37 @@ topology_template:
     VLC2_VLC_GTP:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_VLC_GTP_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_VLC_GTP_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_VLC_GTP_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_VLC_GTP_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_VLC_GTP_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_VLC_GTP_order
+          - index_value
+        network_role:
+          get_input:
+          - port_VLC_GTP_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_VLC_GTP_subnetpoolid
           - index_value
         fixed_ips:
           get_input:

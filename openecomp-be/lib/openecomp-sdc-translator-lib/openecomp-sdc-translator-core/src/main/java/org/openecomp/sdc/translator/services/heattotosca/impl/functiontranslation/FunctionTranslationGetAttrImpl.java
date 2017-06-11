@@ -276,7 +276,7 @@ public class FunctionTranslationGetAttrImpl implements FunctionTranslation {
           .getPortTemplateConsolidationData(context, serviceTemplate, resourceId));
     } else if (HeatToToscaUtil.isNestedResource(resource)) {
       return Optional.of(ConsolidationDataUtil
-          .getNestedTemplateConsolidationData(context, serviceTemplate, resourceId));
+          .getNestedTemplateConsolidationData(context, serviceTemplate, heatFileName, resourceId));
     }
     return Optional.empty();
   }

@@ -372,7 +372,7 @@ export class ModalsHandler implements IModalsHandler {
     public openConformanceLevelModal = ():ng.IPromise<any> => {
         let deferred = this.$q.defer();
         let modalOptions:ng.ui.bootstrap.IModalSettings = {
-            templateUrl: '../view-models/workspace/conformance-level-modal/conformance-level-modal-view.html',
+            templateUrl: '../view-models/modals/conformance-level-modal/conformance-level-modal-view.html',
             controller: 'Sdc.ViewModels.ConformanceLevelModalViewModel',
             size: 'sdc-sm',
             backdrop: 'static',

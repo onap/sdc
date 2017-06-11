@@ -3,19 +3,8 @@ package org.openecomp.sdc.asdctool.impl.migration.v1707;
 
 import java.util.List;
 
-import org.openecomp.sdc.asdctool.impl.migration.Migration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.MigrationByIdDerivedNodeTypeResolver;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.NormativesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.NormativesResolver;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.ResourceVersionMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.ResourcesCategoriesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.ServiceCategoriesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.ServiceVersionMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.ServicesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.UserStatesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.UsersMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.VFResourcesMigration;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.VersionMigration;
+import org.openecomp.sdc.asdctool.impl.migration.Migration1707Task;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.*;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.relations.FulfilledCapabilitiesMigrationService;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.relations.FulfilledRequirementsMigrationService;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.relations.RequirementsCapabilitiesMigrationService;
@@ -37,6 +26,7 @@ import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
 import org.openecomp.sdc.be.model.operations.api.ToscaDefinitionPathCalculator;
+import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
 import org.openecomp.sdc.be.model.operations.impl.ElementOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -45,6 +35,7 @@ import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 
 @Configuration
@@ -52,69 +43,72 @@ public class Migration1707Config {
 
 
     @Bean(name = "migration1707")
-    public Migration1707 migration1707(List<Migration> migrations) {
+    public Migration1707 migration1707(List<Migration1707Task> migrations) {
         return new Migration1707(migrations);
     }
 
-    @Bean(name = "renameGraphPropertyKeysMigration")
-    @Order(1)
-    public Migration renameGraphPropertyKeysMigration() {
-        return new RenameGraphPropertyKeys();
-    }
+    //@Bean(name = "renameGraphPropertyKeysMigration")
+    //@Order(1)
+    //public Migration1707Task renameGraphPropertyKeysMigration() {
+     //   return new RenameGraphPropertyKeys();
+   // }
 
-    @Bean(name = "toscaNamesUpdate")
-    @Order(2)
-    public Migration toscaNamesUpdate() {
-        return new ToscaNamesUpdate();
-    }
+    //@Bean(name = "toscaNamesUpdate")
+    //@Order(2)
+    //public Migration1707Task toscaNamesUpdate() {
+    //    return new ToscaNamesUpdate();
+    //}
 
     @Bean(name = "users-migration")
-    @Order(3)
-    public Migration usersMigration() {
+    @Order(1)
+    public Migration1707Task usersMigration() {
         return new UsersMigration();
     }
 
     @Bean(name = "resource-category-migration")
-    @Order(4)
-    public Migration resourceCategoriesMigration() {
+    @Order(2)
+    public Migration1707Task resourceCategoriesMigration() {
         return new ResourcesCategoriesMigration();
     }
 
     @Bean(name = "service-category-migration")
-    @Order(5)
-    public Migration serviceCategoriesMigration() {
+    @Order(3)
+    public Migration1707Task serviceCategoriesMigration() {
         return new ServiceCategoriesMigration();
     }
 
     @Bean(name = "normatives-migration")
-    @Order(6)
-    public Migration normativesMigration() {
+    @Order(4)
+    public Migration1707Task normativesMigration() {
         return new NormativesMigration();
     }
 
     @Bean(name = "vf-migration")
-    @Order(7)
-    public Migration vfMigration() {
+    @Order(5)
+    public Migration1707Task vfMigration() {
         return new VFResourcesMigration();
     }
 
     @Bean(name = "service-migration")
-    @Order(8)
-    public Migration serviceMigration() {
+    @Order(6)
+    public Migration1707Task serviceMigration() {
         return new ServicesMigration();
     }
 
-    @Bean(name = "user-states-migration")
-    @Order(9)
-    public Migration userStatesMigration() {
-        return new UserStatesMigration();
+    @Bean(name = "consumers-migration")
+    @Order(7)
+    public Migration1707Task consumersMigration() { return new ConsumersMigration(); }
+
+    @Bean(name = "tosca-template-regeneration")
+    @Order(8)
+    public Migration1707Task ToscaTemplateRegeneration() {
+        return new ToscaTemplateRegeneration();
     }
-    
-//    @Bean(name = "tosca-template-regeneration")
-//    @Order(10)
-//    public Migration ToscaTemplateRegeneration() {
-//        return new ToscaTemplateRegeneration();
-//    }
+
+    @Bean(name = "distributionStatusUpdate")
+    public DistributionStatusUpdate distributionStatusUpdate() {
+        return new DistributionStatusUpdate();
+    }
 
     @Bean("resource-version-migration")
     public VersionMigration<Resource> resourceVersionMigration() {
@@ -236,5 +230,20 @@ public class Migration1707Config {
         return new MigrationByIdDerivedNodeTypeResolver();
     }
 
+    @Bean(name = "invariant-uuid-resolver")
+    public InvariantUUIDResolver invariantUUIDResolver() {
+        return new InvariantUUIDResolver();
+    }
+
+    @Bean(name="consumer-operation-mig")
+    @Primary
+    public ConsumerOperation consumerOperation(@Qualifier("titan-generic-dao-migration") TitanGenericDao titanGenericDao) {
+        return new ConsumerOperation(titanGenericDao);
+    }
+    
+    @Bean(name = "vfModulesPropertiesAdding")
+    public VfModulesPropertiesAdding vfModulesPropertiesAdding() {
+        return new VfModulesPropertiesAdding();
+    }
 
 }

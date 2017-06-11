@@ -80,14 +80,15 @@ public class ProcessArtifactEnricher implements ExternalArtifactEnricherInterfac
                   componentId, entity.getId());*/
 
     processes.stream()
-        .filter(entity -> entity.getType().equals(ProcessType.Lifecycle_Operations))
         .forEach(entity -> {
           ProcessEntity artifactEntity = new ProcessEntity(vspId, version,
               componentId, entity.getId());
 
           ProcessEntity artifactProcessEntity = getProcessDao().get(artifactEntity);
           //ProcessArtifactEntity artifact = getProcessArtifactDao().get(artifactEntity);
-          if (artifactProcessEntity != null) {
+          if (artifactProcessEntity != null && ProcessType.Lifecycle_Operations.equals(
+              artifactProcessEntity.getType())
+              && artifactProcessEntity.getArtifactName() != null ) {
             String componentName = componentEntity.getComponentCompositionData().getName();
             String path = componentName + File.separator
                 + ArtifactCategory.DEPLOYMENT.getDisplayName() + File.separator

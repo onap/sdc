@@ -1,0 +1,140 @@
+heat_template_version: 2013-05-23
+#################################
+#
+#  Changes in v0.2:
+#  - Unique availability zone for each VM
+#  - LAN8 and SLAN networks removed according to latest Prod/Type I diagram
+#  - 2 DB VMs added
+#  - Images corrected
+#  - VM start-up order: SMP->DB->BE->FE (no error handling yet)
+#  - Provisioning scripts placeholders
+#
+#################################
+
+description: ASC Template
+
+parameters:
+  city_name:
+    type: boolean
+    description: city name
+    default: FALSE
+  address:
+    type: string
+    description: address
+    default: Alonim
+  home_number:
+    type: number
+    description: home_number
+    default: 8
+resources:
+#  scp_be_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: scp_be_wait_handle }
+#      count: 5
+#      timeout: 300
+#  scp_be_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  scp_fe_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: scp_fe_wait_handle }
+#      count: 2
+#      timeout: 300
+#  scp_fe_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  smp_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: smp_wait_handle }
+#      count: 2
+#      timeout: 300
+#  smp_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+#
+#  db_wait_condition:
+#    type: OS::Heat::WaitCondition
+#    properties:
+#      handle: { get_resource: db_wait_handle }
+#      count: 2
+#      timeout: 300
+#  db_wait_handle:
+#    type: OS::Heat::WaitConditionHandle
+
+  FE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"] 
+  BE_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+  SMP_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+  DB_Affinity:
+    type: OS::Nova::ServerGroup
+    properties:
+      policies: ["anti-affinity"]
+      
+  FE_Clustering_KA:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_fe_cluster_net_id }
+
+  FE_Clustering_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: FE_Clustering_KA }
+      cidr: { get_param: int_vscp_fe_cluster_cidr }
+
+  Clustering_Network:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_cluster_net_id }
+
+  Clustering_Network_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: Clustering_Network }
+      cidr: { get_param: int_vscp_cluster_cidr }
+
+  DB_Network:
+    type: OS::Contrail::VirtualNetwork
+    properties:
+      name: { get_param: int_vscp_db_network_net_id }
+
+  DB_Network_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: DB_Network }
+      cidr: { get_param: int_vscp_db_network_cidr }
+
+  server_scp_be0:
+    type: OS::Nova::Server
+#    depends on: db_wait_condition
+    properties:
+      name: { get_param: vm_scp_be0_name }
+      image: { get_param: image_scp_be_id }
+#      availability_zone: { get_param: availability_zone_be0 }
+      flavor: { get_param: flavor_scp_be_id }
+      scheduler_hints: { group: { get_resource: BE_Affinity } }
+      networks:
+      - port: { get_resource: be0_port_3 }
+      - port: { get_resource: be0_port_4 }
+      - port: { get_resource: be0_port_5 }
+      - port: { get_resource: be0_port_7 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash
+            #todo: provision $vm_name
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+          params:
+            $vm_name: {get_param: vm_scp_be0_name}
+#            wc_notify: { get_attr: ['scp_be_wait_handle', 'curl_cli'] }

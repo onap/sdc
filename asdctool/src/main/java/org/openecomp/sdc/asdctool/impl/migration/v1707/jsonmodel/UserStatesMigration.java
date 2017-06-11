@@ -7,7 +7,6 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.asdctool.impl.migration.MigrationMsg;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static fj.data.List.list;
+import static org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils.handleError;
 
 public class UserStatesMigration extends JsonModelMigration<Edge> {
 
@@ -71,9 +71,16 @@ public class UserStatesMigration extends JsonModelMigration<Edge> {
     }
 
     @Override
-    Either<Edge, TitanOperationStatus> save(Edge userState) {
+    boolean save(Edge userState) {
         Either<InOutVertices, TitanOperationStatus> titanVertices = findEdgeInOutVerticesInNewGraph(userState);
-        return titanVertices.left().bind(inOutVertices -> genericDaoMigration.copyEdge(inOutVertices.getOutVertex(), inOutVertices.getInVertex(), userState));
+        return titanVertices.either(inOutVertices -> saveUserState(inOutVertices, userState),
+                                    err ->  handleError(String.format("could not find user edge %s in vertx. error: %s", userState.label(), err.name())));
+    }
+
+    private boolean saveUserState(InOutVertices inOutVertices, Edge userState) {
+        return genericDaoMigration.copyEdge(inOutVertices.getOutVertex(), inOutVertices.getInVertex(), userState)
+                .either(edge -> true,
+                        err -> handleError(String.format("failed to save user state edge %s. reason: %s", userState.label(), err.name())));
     }
 
     @Override
@@ -125,7 +132,7 @@ public class UserStatesMigration extends JsonModelMigration<Edge> {
         String vertexUniqueId = getVertexUniqueId(vertex);
         LOGGER.debug(String.format("fetching vertex %s from new graph", vertexUniqueId));
         return genericDaoMigration.getVertexByProperty(vertexUniqueId, vertex.property(vertexUniqueId).value())
-                                   .right().map(err -> MigrationUtils.handleError(err, String.format("could not find vertex %s in new graph.", vertexUniqueId)))  ;
+                                   .right().map(err -> handleError(err, String.format("could not find vertex %s in new graph.", vertexUniqueId)))  ;
     }
 
 //    private boolean deleteAllEdges(UserData userData, Direction direction) {
@@ -154,6 +161,7 @@ public class UserStatesMigration extends JsonModelMigration<Edge> {
         TitanVertex getInVertex() {
             return inVertex;
         }
+
     }
 
 }

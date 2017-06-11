@@ -96,15 +96,17 @@ export class TypeMapDirective implements ng.IDirective {
             } else {
                 scope.parentFormObj[fieldName].$setValidity('keyExist', true);
                 if (!scope.parentFormObj[fieldName].$invalid) {
+                    //To preserve the order of the keys, delete each one and recreate
                     let newObj = {};
-                    angular.forEach(scope.valueObjRef,function(value:any,key:string){
+                    angular.copy(scope.valueObjRef , newObj);
+                    angular.forEach(newObj,function(value:any,key:string){
+                        delete scope.valueObjRef[key];
                         if(key == oldKey){
-                            newObj[newKey] = value;
+                            scope.valueObjRef[newKey] = value;
                         }else{
-                            newObj[key] = value;
+                            scope.valueObjRef[key] = value;
                         }
                     });
-                    scope.valueObjRef = newObj;
                 }
             }
         };

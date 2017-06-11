@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

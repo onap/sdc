@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+
+node_types:
+
+  org.openecomp.resource.vfc.vFW.Fortigate02Tedy: 
+    derived_from: org.openecomp.resource.vfc.vFWTedy
+     
+    properties: 
+      att-part-number:
+        type: string
+        default: "ATT-FortiGate-VM02"
+      vendor-name:
+        type: string
+        default: “FORTINET”
+      vendor-model:
+        type: string
+        default: "VM02"
+      vendor-model-description:
+        type: string
+      vcpu-default:
+        type: integer
+        default: 2
+      vcpu-min:
+        type: integer
+        default: 1
+      vcpu-max:
+        type: integer
+        default: 2
+      vmemory-default:
+        default: 4
+        type: integer        
+      vmemory-units:
+        type: string
+        default: "GB"
+      vmemory-min:
+        type: integer
+        default: 1
+      vmemory-max:
+        type: integer
+        default: 4
+      vdisk-default:
+        type: integer
+        default: 20
+      vdisk-units:
+        type: string
+        default: "GB"
+      vdisk-min:
+        type: integer
+        default: 2
+      vdisk-max:
+        type: integer
+        default: 20
+      vnf-type: 
+        type: string
+        default: “Advanced FW”
+      software-version: 
+        type: string
+        default: “5.2.4”
+      software-file-name: 
+        type: string
+      vnf-feature: 
+        type: string
+        default: “IPS, AntiVirus, URL Filter, APPID”	

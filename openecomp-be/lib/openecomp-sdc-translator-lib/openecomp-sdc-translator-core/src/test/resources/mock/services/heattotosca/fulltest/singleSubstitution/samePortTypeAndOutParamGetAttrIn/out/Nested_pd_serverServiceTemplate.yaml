@@ -31,6 +31,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd01_port_0_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_pd01_port_1_ip_requirements:
       type: list
       required: true
@@ -53,18 +58,63 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd01_port_1_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     vm_flavor_name:
       type: string
       required: true
+    port_pd01_port_0_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_1_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_0_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_pd01_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     port_pd01_port_1_mac_requirements:
       type: list
       required: true
       entry_schema:
         type: json
+    port_pd01_port_1_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     vm_image_name:
       type: string
       required: true
+    port_pd01_port_1_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     port_pd01_port_1_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_0_subnetpoolid:
       type: list
       required: true
       entry_schema:
@@ -102,6 +152,14 @@ topology_template:
     pd_server_pd01_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_pd01_port_1_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pd01_port_1_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_pd01_port_1_ip_requirements
@@ -113,6 +171,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_pd01_port_1_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_pd01_port_1_order
+          - index_value
+        network_role:
+          get_input:
+          - port_pd01_port_1_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_pd01_port_1_subnetpoolid
           - index_value
         network:
           get_input:
@@ -126,6 +196,14 @@ topology_template:
     pd_server_pd01_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_pd01_port_0_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pd01_port_0_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_pd01_port_0_ip_requirements
@@ -137,6 +215,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_pd01_port_0_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_pd01_port_0_order
+          - index_value
+        network_role:
+          get_input:
+          - port_pd01_port_0_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_pd01_port_0_subnetpoolid
           - index_value
         network:
           get_input:

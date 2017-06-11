@@ -26,6 +26,8 @@ import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.inter.Enricher;
 import org.openecomp.sdc.enrichment.inter.ExternalArtifactEnricherInterface;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 
 import java.io.InputStream;
@@ -43,6 +45,7 @@ public class ExternalArtifactEnricher extends Enricher {
       "An Error has occured during enrichment of external artifacts ";
   private static Collection<String> implementingClasses =
       getExternalArtifactEnrichedImplClassesList();
+  private static Logger logger = LoggerFactory.getLogger(ExternalArtifactEnricher.class);
 
   private static Collection<String> getExternalArtifactEnrichedImplClassesList() {
     InputStream externalArtifactEnrichConfigurationJson =
@@ -68,7 +71,8 @@ public class ExternalArtifactEnricher extends Enricher {
                 externalArtifactEnricherInstance.enrich(this.data);
             }
         } catch (Exception e) {
-            e.printStackTrace(); //// FIXME: 29-Nov-16
+            e.printStackTrace();
+          logger.error(e.getMessage());
         }
 
     mdcDataDebugMessage.debugExitMessage(null, null);

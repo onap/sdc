@@ -71,6 +71,7 @@ public class Configuration extends BasicConfiguration {
 	private String titanCfgFile;
 	private String titanMigrationKeySpaceCfgFile;
 	private Boolean titanInMemoryGraph;
+	private int startMigrationFrom;
 	private Long titanLockTimeout;
 	private Long titanReconnectIntervalInSeconds;
 	private Long titanHealthCheckReadTimeout;
@@ -291,6 +292,14 @@ public class Configuration extends BasicConfiguration {
 
 	public void setTitanInMemoryGraph(Boolean titanInMemoryGraph) {
 		this.titanInMemoryGraph = titanInMemoryGraph;
+	}
+
+	public int getStartMigrationFrom() {
+		return startMigrationFrom;
+	}
+
+	public void setStartMigrationFrom(int startMigrationFrom) {
+		this.startMigrationFrom = startMigrationFrom;
 	}
 
 	public Long getTitanLockTimeout() {

@@ -18,7 +18,7 @@ source ${FULL_PATH}/baseOperation.sh
 
 mainClass="org.openecomp.sdc.asdctool.main.MigrationMenu"
 
-command="java $JVM_LOG_FILE -cp $JARS $mainClass migrate-1702-1707 $@"
+command="java $JVM_LOG_FILE -Xmx6000M -cp $JARS $mainClass migrate-1702-1707 $@"
 echo $command
 
 $command

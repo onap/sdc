@@ -28,7 +28,7 @@
                             <div class="heat-env-connect-container" ng-class="{'heat-env-connect-container-view-mode': isViewMode()}" data-ng-if="artifact.envArtifact">
                             <span  class="heat-env-connect"></span>
                              </div>
-                            <span data-tests-id="artifactDisplayName_{{artifact.artifactDisplayName}}" sdc-smart-tooltip class="artifact-name">{{artifact.artifactDisplayName}}</span>
+                            <span data-tests-id="artifactDisplayName_{{artifact.artifactDisplayName}}" class="artifact-name text" tooltips tooltip-content="{{artifact.artifactDisplayName}}">{{artifact.artifactDisplayName}}</span>
 
                             <span class="sprite-new show-desc hand description-popover-icon"
                                   uib-popover-template="popoverTemplate"

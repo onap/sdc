@@ -21,7 +21,10 @@
 package org.openecomp.sdc.be.components.lifecycle;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -29,16 +32,22 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsontitan.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -97,6 +106,7 @@ public class CheckoutTransition extends LifeCycleTransition {
 				ResponseFormat responseFormat = componentUtils.getResponseFormatByComponent(actionStatus, component, componentType);
 				result = Either.right(responseFormat);
 			} else {
+			
 				Component clonedComponent = ModelConverter.convertFromToscaElement(checkoutResourceResult.left().value());
 				result = Either.left(clonedComponent); 
 				Either<Boolean, ResponseFormat> upgradeToLatestGeneric = componentBl.shouldUpgradeToLatestGeneric(clonedComponent);
@@ -132,7 +142,7 @@ public class CheckoutTransition extends LifeCycleTransition {
 
 	private StorageOperationStatus upgradeToLatestGenericData(Component clonedComponent) {
 		
-		StorageOperationStatus updateStatus = null;
+		StorageOperationStatus updateStatus = StorageOperationStatus.OK;
 		Either<Component, StorageOperationStatus> updateEither = toscaOperationFacade.updateToscaElement(clonedComponent);
 		if (updateEither.isRight())
 			updateStatus = updateEither.right().value();  

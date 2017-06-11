@@ -8,5 +8,4 @@ packages:
  - org.openecomp.sdc.ci.tests.execute.artifacts
  - org.openecomp.sdc.ci.tests.execute.imports
  - org.openecomp.sdc.ci.tests.execute.category
- - org.openecomp.sdc.ci.tests.execute.distribution  
- - org.openecomp.sdc.ci.tests.execute.product
+ - org.openecomp.sdc.ci.tests.execute.distribution

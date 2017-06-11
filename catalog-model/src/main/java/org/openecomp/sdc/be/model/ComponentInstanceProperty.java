@@ -87,6 +87,14 @@ public class ComponentInstanceProperty extends PropertyDefinition implements ICo
 		this.setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
+	
+	public ComponentInstanceProperty(Boolean hidden, PropertyDefinition pd, String valueUniqueUid) {
+		super(pd);
+
+		this.hidden = hidden;
+		this.valueUniqueUid = valueUniqueUid;
+		setParentUniqueId(pd.getParentUniqueId());
+	}
 
 	
 

@@ -210,7 +210,7 @@ export class PropertyFormViewModel {
                 this.$scope.isLoading = false;
 
                 if (!doNotCloseModal) {
-                    this.$uibModalInstance.close();
+                    this.$uibModalInstance.close(propertyFromBE);
                 } else {
                     this.$scope.forms.editForm.$setPristine();
                     this.$scope.editPropertyModel.property = new PropertyModel();

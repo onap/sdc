@@ -8,7 +8,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.asdctool.impl.migration.Migration;
+import org.openecomp.sdc.asdctool.impl.migration.Migration1707Task;
 import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
@@ -46,7 +46,7 @@ import com.thinkaurelius.titan.core.TitanVertex;
 import fj.data.Either;
 
 @Component("toscaNamesUpdate")
-public class ToscaNamesUpdate implements Migration {
+public class ToscaNamesUpdate implements Migration1707Task {
 	private static Logger log = LoggerFactory.getLogger(ToscaNamesUpdate.class.getName());
 
 	@Override

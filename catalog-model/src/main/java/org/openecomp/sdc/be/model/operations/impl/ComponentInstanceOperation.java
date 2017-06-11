@@ -66,7 +66,6 @@ import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -3893,7 +3892,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	private StorageOperationStatus cloneResourceInstanceAttributeValues(ComponentInstance createdInstance, ComponentInstance resourceInstance) {
 		Wrapper<StorageOperationStatus> storageStatusWrapper = new Wrapper<>();
-		Wrapper<List<ComponentInstanceAttribute>> compInstanceAttList = new Wrapper<>();
+		Wrapper<List<ComponentInstanceProperty>> compInstanceAttList = new Wrapper<>();
 
 		findAllAttributesOfResourceInstance(resourceInstance, compInstanceAttList, storageStatusWrapper);
 
@@ -3902,7 +3901,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 
 		if (storageStatusWrapper.isEmpty()) {
-			List<ComponentInstanceAttribute> attributesOnInstance = compInstanceAttList.getInnerElement();
+			List<ComponentInstanceProperty> attributesOnInstance = compInstanceAttList.getInnerElement();
 			for (int i = 0; i < attributesOnInstance.size() && storageStatusWrapper.isEmpty(); i++) {
 				cloneSingleAttributeOnResourceInstance(createdInstance, attributesOnInstance.get(i), storageStatusWrapper);
 			}
@@ -3915,7 +3914,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	private StorageOperationStatus cloneResourceInstanceAttributeValues(TitanVertex createdInstanceVertex, ComponentInstance resourceInstance, String instanceId) {
 		Wrapper<StorageOperationStatus> storageStatusWrapper = new Wrapper<>();
-		Wrapper<List<ComponentInstanceAttribute>> compInstanceAttList = new Wrapper<>();
+		Wrapper<List<ComponentInstanceProperty>> compInstanceAttList = new Wrapper<>();
 
 		findAllAttributesOfResourceInstance(resourceInstance, compInstanceAttList, storageStatusWrapper);
 
@@ -3924,7 +3923,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 
 		if (storageStatusWrapper.isEmpty()) {
-			List<ComponentInstanceAttribute> attributesOnInstance = compInstanceAttList.getInnerElement();
+			List<ComponentInstanceProperty> attributesOnInstance = compInstanceAttList.getInnerElement();
 			for (int i = 0; i < attributesOnInstance.size() && storageStatusWrapper.isEmpty(); i++) {
 				StorageOperationStatus result = cloneSingleAttributeOnResourceInstance(createdInstanceVertex, attributesOnInstance.get(i), instanceId);
 				if (result != StorageOperationStatus.OK) {
@@ -3945,9 +3944,9 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 	}
 
-	private void findAllAttributesOfResourceInstance(ComponentInstance resourceInstance, Wrapper<List<ComponentInstanceAttribute>> compInstanceAttList, Wrapper<StorageOperationStatus> storageStatusWrapper) {
+	private void findAllAttributesOfResourceInstance(ComponentInstance resourceInstance, Wrapper<List<ComponentInstanceProperty>> compInstanceAttList, Wrapper<StorageOperationStatus> storageStatusWrapper) {
 
-		Either<List<ComponentInstanceAttribute>, TitanOperationStatus> allAttributes = attributeOperation.getAllAttributesOfResourceInstance(resourceInstance);
+		Either<List<ComponentInstanceProperty>, TitanOperationStatus> allAttributes = attributeOperation.getAllAttributesOfResourceInstance(resourceInstance);
 		if (allAttributes.isRight()) {
 			TitanOperationStatus status = allAttributes.right().value();
 			if (status == TitanOperationStatus.NOT_FOUND) {
@@ -3960,7 +3959,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 	}
 
-	private void cloneSingleAttributeOnResourceInstance(ComponentInstance createdInstance, ComponentInstanceAttribute attribute, Wrapper<StorageOperationStatus> storageStatusWrapper) {
+	private void cloneSingleAttributeOnResourceInstance(ComponentInstance createdInstance, ComponentInstanceProperty attribute, Wrapper<StorageOperationStatus> storageStatusWrapper) {
 		// Only if valueUniqueId is not empty, then its belongs to the
 		// instance
 		if (attribute.getValueUniqueUid() != null) {
@@ -3981,7 +3980,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	}
 
-	private StorageOperationStatus cloneSingleAttributeOnResourceInstance(TitanVertex createdInstanceVertex, ComponentInstanceAttribute attribute, String instanceId) {
+	private StorageOperationStatus cloneSingleAttributeOnResourceInstance(TitanVertex createdInstanceVertex, ComponentInstanceProperty attribute, String instanceId) {
 		// Only if valueUniqueId is not empty, then its belongs to the
 		// instance
 		if (attribute.getValueUniqueUid() != null) {
@@ -4053,7 +4052,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		}
 	}
 
-	private void createAttributeValueDataNode(ComponentInstanceAttribute attributeInstanceProperty, Integer index, Wrapper<TitanOperationStatus> errorWrapper, ComponentInstanceData resourceInstanceData,
+	private void createAttributeValueDataNode(ComponentInstanceProperty attributeInstanceProperty, Integer index, Wrapper<TitanOperationStatus> errorWrapper, ComponentInstanceData resourceInstanceData,
 			Wrapper<AttributeValueData> attValueDataWrapper) {
 		String valueUniqueUid = attributeInstanceProperty.getValueUniqueUid();
 		if (valueUniqueUid == null) {
@@ -4093,7 +4092,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	 * } else { BeEcompErrorManager.getInstance().logInternalFlowError( "CreateAttributeValueDataNode", "attribute value already exists.", ErrorSeverity.ERROR); errorWrapper.setInnerElement(TitanOperationStatus.ALREADY_EXIST); } }
 	 */
 
-	private AttributeValueData buildAttributeValueDataFromComponentInstanceAttribute(ComponentInstanceAttribute resourceInstanceAttribute, String uniqueId) {
+	private AttributeValueData buildAttributeValueDataFromComponentInstanceAttribute(ComponentInstanceProperty resourceInstanceAttribute, String uniqueId) {
 		AttributeValueData attributeValueData = new AttributeValueData();
 		attributeValueData.setUniqueId(uniqueId);
 		attributeValueData.setHidden(resourceInstanceAttribute.isHidden());
@@ -4509,7 +4508,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	}
 
 	@Override
-	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(ComponentInstanceAttribute attributeInstanceProperty, String resourceInstanceId) {
+	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId) {
 		Either<AttributeValueData, TitanOperationStatus> result;
 		// Create
 		if (attributeInstanceProperty.getValueUniqueUid() == null) {
@@ -4536,7 +4535,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	 * @param resourceInstanceId
 	 * @return
 	 */
-	private Either<AttributeValueData, TitanOperationStatus> updateAttributeOfResourceInstance(ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId) {
+	private Either<AttributeValueData, TitanOperationStatus> updateAttributeOfResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId) {
 
 		Either<AttributeValueData, TitanOperationStatus> result = null;
 		Wrapper<TitanOperationStatus> errorWrapper = new Wrapper<>();
@@ -4562,7 +4561,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 
 	}
 
-	private Either<AttributeValueData, TitanOperationStatus> addAttributeToResourceInstance(ComponentInstanceAttribute attributeInstanceProperty, String resourceInstanceId, Integer index) {
+	private Either<AttributeValueData, TitanOperationStatus> addAttributeToResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId, Integer index) {
 		Wrapper<TitanOperationStatus> errorWrapper = new Wrapper<>();
 		Wrapper<ComponentInstanceData> compInsWrapper = new Wrapper<>();
 		Wrapper<AttributeData> attDataWrapper = new Wrapper<>();
@@ -5263,8 +5262,8 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	}
 
 	@Override
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction) {
-		Either<ComponentInstanceAttribute, StorageOperationStatus> result = null;
+	public Either<ComponentInstanceProperty, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction) {
+		Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
 
 		try {
 
@@ -5277,7 +5276,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			} else {
 				AttributeValueData attributeValueData = eitherStatus.left().value();
 
-				ComponentInstanceAttribute attributeValueResult = attributeOperation.buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
+				ComponentInstanceProperty attributeValueResult = attributeOperation.buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
 				log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
 
 				result = Either.left(attributeValueResult);
@@ -5291,9 +5290,9 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 	}
 
 	@Override
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId, boolean inTransaction) {
+	public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, boolean inTransaction) {
 
-		Either<ComponentInstanceAttribute, StorageOperationStatus> result = null;
+		Either<ComponentInstanceProperty, StorageOperationStatus> result = null;
 
 		try {
 			Either<AttributeValueData, TitanOperationStatus> eitherAttributeValue = updateAttributeOfResourceInstance(resourceInstanceAttribute, resourceInstanceId);
@@ -5305,7 +5304,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 			} else {
 				AttributeValueData attributeValueData = eitherAttributeValue.left().value();
 
-				ComponentInstanceAttribute attributeValueResult = attributeOperation.buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
+				ComponentInstanceProperty attributeValueResult = attributeOperation.buildResourceInstanceAttribute(attributeValueData, resourceInstanceAttribute);
 				log.debug("The returned ResourceInstanceAttribute is {}", attributeValueResult);
 
 				result = Either.left(attributeValueResult);
@@ -5463,7 +5462,7 @@ public class ComponentInstanceOperation extends AbstractOperation implements ICo
 		return Either.left(result);
 	}
 
-	// TODO Tal G US831698
+	//US831698
 	public Either<List<ComponentInstanceProperty>, StorageOperationStatus> getComponentInstancesPropertiesAndValuesFromGraph(ComponentInstance resourceInstance) {
 
 		Map<String, List<PropertyDefinition>> alreadyProcessedResources = new HashMap<>();

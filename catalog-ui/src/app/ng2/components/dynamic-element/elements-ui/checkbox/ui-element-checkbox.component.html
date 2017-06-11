@@ -1,1 +1,1 @@
-<input #{{name}}  [(ngModel)]="value" type="checkbox" (change)="onSave(value)" />
+<input #{{name}}  [(ngModel)]="value" type="checkbox" (change)="onSave(value)" [ngClass]="{'disabled':readonly}"/>

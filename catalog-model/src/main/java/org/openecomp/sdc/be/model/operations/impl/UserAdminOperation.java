@@ -33,6 +33,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.FunctionalMenuInfo;
 import org.openecomp.sdc.be.model.User;
@@ -282,7 +283,7 @@ public class UserAdminOperation implements IUserAdminOperation {
 		}
 	}
 
-	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user, Map<String, Object> properties) {
+	public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties) {
 
 		UserData userData = convertToUserData(user);
 
@@ -316,7 +317,16 @@ public class UserAdminOperation implements IUserAdminOperation {
 				}
 			}
 		}
-
+		
+		if(log.isDebugEnabled()) {
+			for (Edge edge : pandingTasks) {
+				Object resourceUuid = edge.inVertex().property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value();
+				Object componentName = edge.inVertex().property(GraphPropertyEnum.NAME.getProperty()).value();
+				Object componentState = edge.inVertex().property(GraphPropertyEnum.STATE.getProperty()).value();
+				log.debug("The user userId = {} is working on the component name = {} uid = {} in state {}", user.getUserId(), componentName, resourceUuid, componentState);					
+			}
+		}
+		
 		return Either.left(pandingTasks);
 	}
 

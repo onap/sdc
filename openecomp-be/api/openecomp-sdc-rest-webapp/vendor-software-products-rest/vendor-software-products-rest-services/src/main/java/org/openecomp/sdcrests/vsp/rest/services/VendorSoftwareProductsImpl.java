@@ -38,9 +38,20 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.VersionedVendorSoftwareProd
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
-import org.openecomp.sdcrests.vendorsoftwareproducts.types.*;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.PackageInfoDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.QuestionnaireResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VersionSoftwareProductActionRequestDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspCreationDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
-import org.openecomp.sdcrests.vsp.rest.mapping.*;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapQuestionnaireResponseToQuestionnaireResponseDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapVersionedVendorSoftwareProductInfoToVspDetailsDto;
+import org.openecomp.sdcrests.vsp.rest.mapping.MapVspDescriptionDtoToVspDetails;
+import org.openecomp.sdcrests.vsp.rest.mapping.MspVspDetailsToVspCreationDto;
 import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.openecomp.sdcrests.wrappers.StringWrapperResponse;
 import org.slf4j.MDC;
@@ -59,48 +70,48 @@ import java.util.List;
 @Scope(value = "prototype")
 public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
 
-    private VendorSoftwareProductManager vendorSoftwareProductManager =
-            VspManagerFactory.getInstance().createInterface();
+  private VendorSoftwareProductManager vendorSoftwareProductManager =
+      VspManagerFactory.getInstance().createInterface();
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
 
-    private ActivityLogManager activityLogManager =
-            ActivityLogManagerFactory.getInstance().createInterface();
+  private ActivityLogManager activityLogManager =
+      ActivityLogManagerFactory.getInstance().createInterface();
 
-    @Override
-    public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP + vspDescriptionDto.getName());
+  @Override
+  public Response createVsp(VspDescriptionDto vspDescriptionDto, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Create_VSP.toString());
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.CREATE_VSP + vspDescriptionDto.getName());
 
-        VspDetails vspDetails =
-                new MapVspDescriptionDtoToVspDetails().applyMapping(vspDescriptionDto, VspDetails.class);
+    VspDetails vspDetails =
+        new MapVspDescriptionDtoToVspDetails().applyMapping(vspDescriptionDto, VspDetails.class);
 
-        vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
+    vspDetails = vendorSoftwareProductManager.createVsp(vspDetails, user);
 
-        MspVspDetailsToVspCreationDto mapping = new MspVspDetailsToVspCreationDto();
-        VspCreationDto vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
+    MspVspDetailsToVspCreationDto mapping = new MspVspDetailsToVspCreationDto();
+    VspCreationDto vspCreationDto = mapping.applyMapping(vspDetails, VspCreationDto.class);
 
-        return Response.ok(vspCreationDto).build();
+    return Response.ok(vspCreationDto).build();
+  }
+
+  @Override
+  public Response listVsps(String versionFilter, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_VSP.toString());
+    List<VersionedVendorSoftwareProductInfo> vspList =
+        vendorSoftwareProductManager.listVsps(versionFilter, user);
+
+    GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
+    if (!vspList.isEmpty()) {
+      MapVersionedVendorSoftwareProductInfoToVspDetailsDto mapper =
+          new MapVersionedVendorSoftwareProductInfoToVspDetailsDto();
+      for (VersionedVendorSoftwareProductInfo versionedVsp : vspList) {
+        results.add(mapper.applyMapping(versionedVsp, VspDetailsDto.class));
+      }
     }
 
-    @Override
-    public Response listVsps(String versionFilter, String user) {
-        MdcUtil.initMdc(LoggerServiceName.List_VSP.toString());
-        List<VersionedVendorSoftwareProductInfo> vspList =
-                vendorSoftwareProductManager.listVsps(versionFilter, user);
-
-        GenericCollectionWrapper<VspDetailsDto> results = new GenericCollectionWrapper<>();
-        if (!vspList.isEmpty()) {
-            MapVersionedVendorSoftwareProductInfoToVspDetailsDto mapper =
-                    new MapVersionedVendorSoftwareProductInfoToVspDetailsDto();
-            for (VersionedVendorSoftwareProductInfo versionedVsp : vspList) {
-                results.add(mapper.applyMapping(versionedVsp, VspDetailsDto.class));
-            }
-        }
-
-        return Response.ok(results).build();
-    }
+    return Response.ok(results).build();
+  }
 
   @Override
   public Response getVsp(String vspId, String versionId, String user) {
@@ -115,15 +126,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     VersionInfo versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
 
     //
-    if(vspDetails.getOldVersion()!=null && !"".equals(vspDetails.getOldVersion())) {
+    if (vspDetails.getOldVersion() != null && !"".equals(vspDetails.getOldVersion())) {
       if (Version.valueOf(versionId).equals(versionInfo.getActiveVersion())) {
         try {
           Version healedVersion = vendorSoftwareProductManager.callAutoHeal(vspId, versionInfo,
-              vspDetails , user);
+              vspDetails, user);
           vspDetails =
               vendorSoftwareProductManager
                   .getVsp(vspId, resolveVspVersion(vspId, healedVersion.toString(), user,
-                      VersionableEntityAction.Read),user);
+                      VersionableEntityAction.Read), user);
           versionInfo = getVersionInfo(vspId, VersionableEntityAction.Read, user);
         } catch (Exception e) {
           //to do
@@ -137,8 +148,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
             .applyMapping(new VersionedVendorSoftwareProductInfo(vspDetails, versionInfo),
                 VspDetailsDto.class);
 
-        return Response.ok(vspDetailsDto).build();
-    }
+    return Response.ok(vspDetailsDto).build();
+  }
 
   @Override
   public Response updateVsp(String vspId, String versionId, VspDescriptionDto vspDescriptionDto,
@@ -149,23 +160,23 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     vspDetails.setId(vspId);
     vspDetails.setVersion(resolveVspVersion(vspId, null, user, VersionableEntityAction.Write));
 
-        vendorSoftwareProductManager.updateVsp(vspDetails, user);
+    vendorSoftwareProductManager.updateVsp(vspDetails, user);
 
-        return Response.ok().build();
-    }
+    return Response.ok().build();
+  }
 
-    @Override
-    public Response deleteVsp(String vspId, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Delete_VSP.toString());
-        vendorSoftwareProductManager.deleteVsp(vspId, user);
+  @Override
+  public Response deleteVsp(String vspId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Delete_VSP.toString());
+    vendorSoftwareProductManager.deleteVsp(vspId, user);
 
-        return Response.ok().build();
-    }
+    return Response.ok().build();
+  }
 
-    @Override
-    public Response actOnVendorSoftwareProduct(String vspId, String versionId,
-                                               VersionSoftwareProductActionRequestDto request,
-                                               String user) throws IOException {
+  @Override
+  public Response actOnVendorSoftwareProduct(String vspId, String versionId,
+                                             VersionSoftwareProductActionRequestDto request,
+                                             String user) throws IOException {
 
     switch (request.getAction()) {
       case Checkout:
@@ -207,88 +218,87 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     return Response.ok().build();
   }
 
-    @Override
-    public Response getValidationVsp(String user)
-            throws Exception {
-        String validationVspId = vendorSoftwareProductManager.fetchValidationVsp(user);
-        StringWrapperResponse response = new StringWrapperResponse(validationVspId);
-        return Response.ok(response).build();
-    }
+  @Override
+  public Response getValidationVsp(String user)
+      throws Exception {
+    String validationVspId = vendorSoftwareProductManager.fetchValidationVsp(user);
+    StringWrapperResponse response = new StringWrapperResponse(validationVspId);
+    return Response.ok(response).build();
+  }
 
-
-    @Override
-    public Response getOrchestrationTemplate(String vspId, String versionId, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File.toString());
-        byte[] orchestrationTemplateFile =
-                vendorSoftwareProductManager
-                        .getOrchestrationTemplateFile(vspId,
-                                resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
-
-        if (orchestrationTemplateFile == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);
-        response.header("Content-Disposition", "attachment; filename=LatestHeatPackage.zip");
-        return response.build();
-    }
-
-    @Override
-    public Response listPackages(String category, String subCategory, String user) {
-        MdcUtil.initMdc(LoggerServiceName.List_Packages.toString());
-        List<PackageInfo> packageInfoList =
-                vendorSoftwareProductManager.listPackages(category, subCategory);
-
-        GenericCollectionWrapper<PackageInfoDto> results = new GenericCollectionWrapper<>();
-        MapPackageInfoToPackageInfoDto mapper = new MapPackageInfoToPackageInfoDto();
-
-        if (packageInfoList != null) {
-            for (PackageInfo packageInfo : packageInfoList) {
-                results.add(mapper.applyMapping(packageInfo, PackageInfoDto.class));
-            }
-        }
-        return Response.ok(results).build();
-    }
 
   @Override
-  public Response getTranslatedFile(String vspId, String version, String user) {
+  public Response getOrchestrationTemplate(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Uploaded_File.toString());
+    byte[] orchestrationTemplateFile =
+        vendorSoftwareProductManager
+            .getOrchestrationTemplateFile(vspId,
+                resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
+
+    if (orchestrationTemplateFile == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    Response.ResponseBuilder response = Response.ok(orchestrationTemplateFile);
+    response.header("Content-Disposition", "attachment; filename=LatestHeatPackage.zip");
+    return response.build();
+  }
+
+  @Override
+  public Response listPackages(String category, String subCategory, String user) {
+    MdcUtil.initMdc(LoggerServiceName.List_Packages.toString());
+    List<PackageInfo> packageInfoList =
+        vendorSoftwareProductManager.listPackages(category, subCategory);
+
+    GenericCollectionWrapper<PackageInfoDto> results = new GenericCollectionWrapper<>();
+    MapPackageInfoToPackageInfoDto mapper = new MapPackageInfoToPackageInfoDto();
+
+    if (packageInfoList != null) {
+      for (PackageInfo packageInfo : packageInfoList) {
+        results.add(mapper.applyMapping(packageInfo, PackageInfoDto.class));
+      }
+    }
+    return Response.ok(results).build();
+  }
+
+  @Override
+  public Response getTranslatedFile(String vspId, String versionId, String user) {
     MdcUtil.initMdc(LoggerServiceName.Get_Translated_File.toString());
-    File zipFile =
-        vendorSoftwareProductManager.getTranslatedFile(vspId,Version.valueOf(version), user);
 
-    Version versionObj = Version.valueOf(version);
-    Version resolvedVersion = versionObj == null
+    Version version = Version.valueOf(versionId);
+    Version resolvedVersion = version == null
         ? getVersionInfo(vspId, VersionableEntityAction.Read, user).getLatestFinalVersion()
-        : versionObj;
+        : version;
 
+    File zipFile = vendorSoftwareProductManager.getTranslatedFile(vspId, resolvedVersion, user);
 
-        Response.ResponseBuilder response = Response.ok(zipFile);
-        if (zipFile == null) {
-            logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        response.header("Content-Disposition", "attachment; filename=" + zipFile.getName());
+    Response.ResponseBuilder response = Response.ok(zipFile);
+    if (zipFile == null) {
+      logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_FAIL + vspId);
+      return Response.status(Response.Status.NOT_FOUND).build();
+    }
+    response.header("Content-Disposition", "attachment; filename=" + zipFile.getName());
 
-        logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
-        return response.build();
+    logger.audit(AuditMessages.AUDIT_MSG + AuditMessages.IMPORT_SUCCESS + vspId);
+    return response.build();
+  }
+
+  @Override
+  public Response getQuestionnaire(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_VSP.toString());
+    QuestionnaireResponse questionnaireResponse =
+        vendorSoftwareProductManager.getVspQuestionnaire(vspId,
+            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
+
+    if (questionnaireResponse.getErrorMessage() != null) {
+      return Response.status(Response.Status.EXPECTATION_FAILED).entity(
+          new MapQuestionnaireResponseToQuestionnaireResponseDto()
+              .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class)).build();
     }
 
-    @Override
-    public Response getQuestionnaire(String vspId, String versionId, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Get_Questionnaire_VSP.toString());
-        QuestionnaireResponse questionnaireResponse =
-                vendorSoftwareProductManager.getVspQuestionnaire(vspId,
-                        resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
-
-        if (questionnaireResponse.getErrorMessage() != null) {
-            return Response.status(Response.Status.EXPECTATION_FAILED).entity(
-                    new MapQuestionnaireResponseToQuestionnaireResponseDto()
-                            .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class)).build();
-        }
-
-        QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
-                .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
-        return Response.ok(result).build();
-    }
+    QuestionnaireResponseDto result = new MapQuestionnaireResponseToQuestionnaireResponseDto()
+        .applyMapping(questionnaireResponse, QuestionnaireResponseDto.class);
+    return Response.ok(result).build();
+  }
 
   @Override
   public Response updateQuestionnaire(String questionnaireData, String vspId, String
@@ -300,26 +310,26 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     return Response.ok().build();
   }
 
-    @Override
-    public Response heal(String vspId, String versionId, String user) {
-        vendorSoftwareProductManager.heal(vspId, Version.valueOf(versionId), user);
+  @Override
+  public Response heal(String vspId, String versionId, String user) {
+    vendorSoftwareProductManager.heal(vspId, Version.valueOf(versionId), user);
 
-        return Response.ok().build();
+    return Response.ok().build();
+  }
+
+  @Override
+  public Response getVspInformationArtifact(String vspId, String versionId, String user) {
+    MdcUtil.initMdc(LoggerServiceName.Get_Information_Artifact.toString());
+    File textInformationArtifact =
+        vendorSoftwareProductManager.getInformationArtifact(vspId,
+            resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
+
+    Response.ResponseBuilder response = Response.ok(textInformationArtifact);
+    if (textInformationArtifact == null) {
+      return Response.status(Response.Status.NOT_FOUND).build();
     }
-
-    @Override
-    public Response getVspInformationArtifact(String vspId, String versionId, String user) {
-        MdcUtil.initMdc(LoggerServiceName.Get_Information_Artifact.toString());
-        File textInformationArtifact =
-                vendorSoftwareProductManager.getInformationArtifact(vspId,
-                        resolveVspVersion(vspId, versionId, user, VersionableEntityAction.Read), user);
-
-        Response.ResponseBuilder response = Response.ok(textInformationArtifact);
-        if (textInformationArtifact == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        response
-                .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
-        return response.build();
-    }
+    response
+        .header("Content-Disposition", "attachment; filename=" + textInformationArtifact.getName());
+    return response.build();
+  }
 }

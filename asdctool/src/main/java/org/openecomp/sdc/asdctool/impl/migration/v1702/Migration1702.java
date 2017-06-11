@@ -1036,10 +1036,8 @@ public class Migration1702 {
 				property.setName(fe.getKey());
 				Map<String, Object> definitionInYaml = (Map<String, Object>) fe.getValue();
 				property.setType((String) definitionInYaml.get("type"));
-				// Fix by Tal G
 				property.setRequired((Boolean) definitionInYaml.get("required"));
 				property.setDescription((String) definitionInYaml.get("description"));
-				// Fix by Tal G
 				String defaultValue = definitionInYaml.get("default") == null ? null : definitionInYaml.get("default").toString();
 				if (defaultValue != null) {
 					property.setDefaultValue(defaultValue);

@@ -34,7 +34,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
-import org.openecomp.portalsdk.core.onboarding.crossapi.ECOMPSSO;
+import org.openecomp.portalsdk.core.onboarding.util.CipherUtil;
+import org.openecomp.portalsdk.core.onboarding.util.PortalApiConstants;
+import org.openecomp.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.fe.Constants;
@@ -95,9 +97,8 @@ public class PortalServlet extends HttpServlet {
 		if (null == userId) {
 			// Authentication via ecomp portal
 			try {
-				String valdiateECOMPSSO = ECOMPSSO.valdiateECOMPSSO(request);
-				String userIdFromCookie = ECOMPSSO.getUserIdFromCookie(request);
-				if (valdiateECOMPSSO == null || ("").equals(userIdFromCookie)) {
+				String userIdFromCookie = getUserIdFromCookie(request);
+				if (("").equals(userIdFromCookie)) {
 					// This is probably a webseal request, so missing header in request should be printed.
 					response.sendError(HttpServletResponse.SC_USE_PROXY, MISSING_HEADERS_MSG);
 				}
@@ -275,5 +276,20 @@ public class PortalServlet extends HttpServlet {
 		}
 		return newHeaderIsSet;
 	}
+	
+	private static String getUserIdFromCookie(HttpServletRequest request) throws Exception {
+		String userId = "";
+		Cookie[] cookies = request.getCookies();
+		Cookie userIdcookie = null;
+		if (cookies != null)
+			for (Cookie cookie : cookies)
+				if (cookie.getName().equals(Constants.USER_ID))
+					userIdcookie = cookie;
+		if (userIdcookie != null) {
+			userId = CipherUtil.decrypt(userIdcookie.getValue(),
+					PortalApiProperties.getProperty(PortalApiConstants.Decryption_Key));
+		}
+		return userId;
 
+	}
 }

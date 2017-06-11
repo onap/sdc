@@ -1,18 +1,22 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
 import fj.data.Either;
-import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import jersey.repackaged.com.google.common.collect.Sets;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class NormativesMigration extends ComponentMigration<Resource> {
 
     private static Logger LOGGER = LoggerFactory.getLogger(NormativesMigration.class);
+    private static final String JCP_VERSION_PROPERTY = "jcp-version";
+    private static final Set<String> e2eMalformedVfcs = Sets.newHashSet("71879ee1-ad63-46d0-9943-d33083a6fdbb", "e54e7c4d-6020-4c53-838b-42d34c0da5c9");
 
     @javax.annotation.Resource(name = "normatives-resolver")
     private NormativesResolver normativesResolver;
@@ -28,6 +32,30 @@ public class NormativesMigration extends ComponentMigration<Resource> {
     @Override
     Either<List<Resource>, ?> getElementsToMigrate() {
         return normativesResolver.getAllNodeTypeNormatives();
+    }
+
+    @Override
+    boolean save(Resource element) {
+        if (e2eMalformedVfcs.contains(element.getUniqueId())) {
+            replaceJcpVersionPropertyTypeToVersion(element);
+        }
+        return super.save(element);
+    }
+
+    private void replaceJcpVersionPropertyTypeToVersion(Resource element) {
+        getJcpIntegerProperty(element).ifPresent(propertyDefinition -> {
+            LOGGER.info("resource {} with id {}: found property jcp-version with type 'integer', changing type to 'version'", element.getName(), element.getUniqueId());
+            propertyDefinition.setType(ToscaPropertyType.VERSION.getType());
+        });
+    }
+
+    private Optional<PropertyDefinition> getJcpIntegerProperty(Resource element) {
+        if (element.getProperties() == null) return Optional.empty();
+        return element.getProperties().stream()
+                               .filter(prop -> prop.getName().equals(JCP_VERSION_PROPERTY))
+                               .filter(prop -> prop.getType().equals(ToscaPropertyType.INTEGER.getType()))
+                               .findAny();
+
     }
 
     @Override

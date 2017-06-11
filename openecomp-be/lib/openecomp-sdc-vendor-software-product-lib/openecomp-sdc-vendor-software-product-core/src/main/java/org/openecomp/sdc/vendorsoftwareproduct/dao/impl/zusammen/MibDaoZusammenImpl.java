@@ -135,6 +135,38 @@ public class MibDaoZusammenImpl implements MibDao {
         VspZusammenUtil.aggregateElements(componentElement, mibsElement), "Delete mibs");
   }
 
+  @Override
+  public Collection<MibEntity> listArtifacts(MibEntity mib) {
+    SessionContext context = ZusammenUtil.createSessionContext();
+    Id itemId = new Id(mib.getVspId());
+    ElementContext elementContext = new ElementContext(itemId,
+        VspZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor),
+        VspZusammenUtil.getVersionTag(mib.getVersion()));
+
+    final Optional<Element> elementByName =
+        zusammenAdaptor.getElementByName(context, elementContext, new Id(mib.getComponentId()
+        ), StructureElement.Mibs.name());
+
+    if(!elementByName.isPresent())
+      return null;
+    else {
+      final Id elementId = elementByName.get().getElementId();
+      return zusammenAdaptor.listElementData(context, elementContext, elementId).stream()
+          .map(element ->
+              buildMibEntity(element,mib)
+          ).collect(Collectors.toList());
+    }
+  }
+
+  private MibEntity buildMibEntity (Element element, MibEntity mib) {
+    MibEntity createdMib = new MibEntity(mib.getVspId(), mib.getVersion(), mib.getComponentId(),
+        null);
+    createdMib.setArtifactName((String) element.getInfo().getProperties().get(ARTIFACT_NAME));
+    createdMib.setArtifact(ByteBuffer.wrap(FileUtils.toByteArray(element.getData())));
+    createdMib.setType( ArtifactType.valueOf(element.getInfo().getName()));
+    return createdMib;
+  }
+
   private ZusammenElement buildComponentElement(MibEntity mibEntity) {
     ZusammenElement componentElement = new ZusammenElement();
     componentElement.setElementId(new Id(mibEntity.getComponentId()));

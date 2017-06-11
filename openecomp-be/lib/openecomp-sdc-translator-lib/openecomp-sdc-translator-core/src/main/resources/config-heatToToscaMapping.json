@@ -74,7 +74,7 @@
       },
       "attributes": {
         "name": "name",
-        "virtual_machine_intefrace_mac_addresses": "virtual_machine_intefrace_mac_addresses",
+        "virtual_machine_interface_mac_addresses": "virtual_machine_interface_mac_addresses",
         "virtual_machine_interface_mac_addresses#virtual_machine_interface_mac_addresses_mac_address": "mac_address",
         "virtual_network_refs": "virtual_network_refs",
         "port_tuple_refs": "port_tuple_refs",

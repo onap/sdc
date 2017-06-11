@@ -100,9 +100,6 @@ topology_template:
           - 0
         port_pd01_port_replacement_policy:
         - AUTO
-        port_pd02_port_mac_requirements:
-        - mac_count_required:
-            is_required: false
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
@@ -118,6 +115,11 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+        compute_pd_server_user_data_format:
+        - RAW
+        port_pd02_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
         port_pd01_port_network:
         - packet_mirror_network
         port_pd02_port_ip_requirements:
@@ -128,8 +130,6 @@ topology_template:
               is_required: false
         port_pd02_port_network:
         - packet_mirror_network
-        compute_pd_server_user_data_format:
-        - RAW
         service_template_filter:
           substitute_service_template: Nested_pd_serverServiceTemplate.yaml
           count: 1

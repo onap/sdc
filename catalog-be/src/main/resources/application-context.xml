@@ -57,7 +57,7 @@
   <bean id="additionalInformationBusinessLogic" class="org.openecomp.sdc.be.components.impl.AdditionalInformationBusinessLogic" />
   <bean id="distribution-engine-cluster-health" class="org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth" />
   <bean id="categoriesImportManager" class="org.openecomp.sdc.be.components.impl.CategoriesImportManager" />
-  <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.externalapi.servlet.AssetMetadataConverter" />
+  <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter" />
 
   <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
 

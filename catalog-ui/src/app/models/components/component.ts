@@ -205,7 +205,19 @@ export abstract class Component implements IComponent {
 
     //------------------------------------------ API Calls ----------------------------------------------------------------//
     public changeLifecycleState = (state:string, commentObj:AsdcComment):ng.IPromise<Component> => {
-        return this.componentService.changeLifecycleState(this, state, JSON.stringify(commentObj));
+        let deferred = this.$q.defer();
+        let onSuccess = (componentMetadata:ComponentMetadata):void => {
+            this.setComponentMetadata(componentMetadata);
+            // this.version = componentMetadata.version;
+            this.lifecycleState = componentMetadata.lifecycleState;
+
+            deferred.resolve(this);
+        };
+        let onError = (error:any):void => {
+            deferred.reject(error);
+        };
+        this.componentService.changeLifecycleState(this, state, JSON.stringify(commentObj)).then(onSuccess, onError);
+        return deferred.promise;
     };
 
     public getComponent = ():ng.IPromise<Component> => {
@@ -892,7 +904,7 @@ export abstract class Component implements IComponent {
         this.systemName = componentMetadata.systemName;
         this.projectCode = componentMetadata.projectCode;
         this.categories = componentMetadata.categories;
- 
+
     }
 
     public toJSON = ():any => {

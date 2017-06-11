@@ -11,6 +11,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
+import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiResourceMetadata;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
@@ -215,4 +216,20 @@ public class UiComponentDataConverter {
 		return dataTransfer;
 	}
 
+	
+	public static UiComponentMetadata convertToUiComponentMetadata(Component component) {
+		
+		UiComponentMetadata uiComponentMetadata = null;
+		switch (component.getComponentType()) {
+			case RESOURCE: 
+				Resource resource = (Resource)component;
+				uiComponentMetadata = new UiResourceMetadata(component.getCategories(),  resource.getDerivedFrom(), (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition());
+				break;
+			case SERVICE:
+				uiComponentMetadata = new UiServiceMetadata(component.getCategories(),  (ServiceMetadataDataDefinition) component.getComponentMetadataDefinition().getMetadataDataDefinition());
+			default:
+
+		}
+		return uiComponentMetadata;
+	}
 }

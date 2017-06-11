@@ -118,4 +118,11 @@ public class JsonContainerResourceInstance {
 	public void setSubcategory(String subcategory) {
 		this.subcategory = subcategory;
 	}
+
+	@Override
+	public String toString() {
+		return "JsonContainerResourceInstance [resourceInstanceName=" + resourceInstanceName + ", resourceName=" + resourceName + ", resourceVersion=" + resourceVersion + ", resoucreType=" + resoucreType + ", resourceUUID=" + resourceUUID
+				+ ", resourceInvariantUUID=" + resourceInvariantUUID + ", resourceCustomizationUUID=" + resourceCustomizationUUID + ", category=" + category + ", subcategory=" + subcategory + ", artifacts=" + artifacts + "]";
+	}
+	
 }

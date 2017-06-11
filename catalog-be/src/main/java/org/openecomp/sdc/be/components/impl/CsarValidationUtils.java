@@ -289,7 +289,7 @@ public class CsarValidationUtils {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.CSAR_INVALID, csarUUID));
 		}
 		byte[] toscaMetaBytes = csar.get(TOSCA_METADATA_FILE);
-		// Tal && exchanged for ||
+		// && exchanged for ||
 		if (toscaMetaBytes == null || toscaMetaBytes.length == 0) {
 			log.debug("TOSCA-Metadata/TOSCA.meta file not found in csar, csar ID {}", csarUUID);
 			BeEcompErrorManager.getInstance().logInternalDataError("TOSCA-Metadata/TOSCA.meta file not found in CSAR with id " + csarUUID, "CSAR structure is invalid", ErrorSeverity.ERROR);

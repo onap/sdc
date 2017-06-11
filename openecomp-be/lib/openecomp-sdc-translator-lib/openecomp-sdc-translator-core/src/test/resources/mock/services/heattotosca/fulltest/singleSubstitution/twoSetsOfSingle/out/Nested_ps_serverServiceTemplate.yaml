@@ -16,9 +16,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    vm_image_name:
-      type: string
+    port_ps01_port_subnetpoolid:
+      type: list
       required: true
+      entry_schema:
+        type: string
     compute_ps_server_availability_zone:
       type: list
       required: true
@@ -36,6 +38,27 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_ps01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
+    port_ps01_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    vm_image_name:
+      type: string
+      required: true
+    port_ps01_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_ps01_port_mac_requirements:
       type: list
       required: true
@@ -46,9 +69,6 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    vm_flavor_name:
-      type: string
-      required: true
     port_ps01_port_ip_requirements:
       type: list
       required: true
@@ -59,6 +79,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_ps01_port_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
   node_templates:
     ps_server:
       type: org.openecomp.resource.vfc.nodes.heat.ps_server
@@ -82,6 +107,14 @@ topology_template:
     ps_server_ps01_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_ps01_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_ps01_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_ps01_port_ip_requirements
@@ -93,6 +126,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_ps01_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_ps01_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_ps01_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_ps01_port_subnetpoolid
           - index_value
         network:
           get_input:

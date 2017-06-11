@@ -168,7 +168,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 				return handleComplexJsonValue(entryValue);
 			}
 			
-			// Tal G ticket 228696523 created   / DE272734 / Bug 154492 Fix
+			// ticket 228696523 created   / DE272734 / Bug 154492 Fix
 			if(entryValue instanceof JsonArray) {
 				ArrayList<Object> toscaObjectPresentationArray = new ArrayList<>();
 				JsonArray jsonArray = entryValue.getAsJsonArray();

@@ -1,0 +1,13 @@
+org.openecomp.groups.MyHeatStack1:
+  derived_from: tosca.groups.Root
+  description: Grouped all heat resources which are in the same heat stack
+  properties:
+    heat_files:
+      type: list
+      description: Heat files which associate to this group/heat stack
+      required: true
+      status: SUPPORTED
+      entry_schema:
+        type: string
+    url_credential:
+      type: tosca.datatypes.Credential

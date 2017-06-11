@@ -23,6 +23,7 @@ package org.openecomp.sdc.asdctool.impl;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraClient;
+import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,5 +48,9 @@ public class EsToCassandraDataMigrationConfig {
 	public CassandraClient cassandraClient() {
 		return new CassandraClient();
 	}
-
+	
+	@Bean(name = "sdc-schema-files-cassandra-dao")
+	public SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao() {
+		return new SdcSchemaFilesCassandraDao();
+	}
 }

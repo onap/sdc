@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="ciFull" configfailurepolicy="continue" verbose="2">
+	<test name="Category">
+		<classes>
+			<class name="org.openecomp.sdc.ci.tests.execute.category.ElementsApiTest" />
+			<class name="org.openecomp.sdc.ci.tests.execute.category.CategoriesTests">
+				<methods>
+					<exclude name="importCategories" />
+					<exclude name="getServiceCategoryHierarchySuccessFlow" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest" />
+			<class name="org.openecomp.sdc.ci.tests.execute.category.GroupingTest" >
+				<methods>
+					<exclude name="createProductGroupForNonExistingCategory" />
+					<exclude name="createProductGroupForNonExistingSunCategory" />
+					<exclude name="getProductCategoryHierarchySuccessFlow" />
+				</methods>
+			</class>
+			
+			<class name="org.openecomp.sdc.ci.tests.execute.category.SubCategoriesTest">
+				<methods>
+					<exclude name="createProductSubCategoryForNonExistingCategory" />
+					<exclude name="createResourceSubCategoryForNonExistingCategory" />
+					<exclude name="getResourceCategoryHierarchySuccessFlow" />
+				</methods>
+			</class>
+		</classes>
+	</test> <!-- Test -->
+	<test name="Distribution">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.distribution.AuthanticationTests" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.distribution.DistributionDownloadArtifactTest">
+				<methods>
+					<exclude name="downloadServiceArtifact_ServiceVersionNotFound" />
+				</methods>
+			</class>
+		</classes>
+	</test> <!-- Test -->
+	<test name="General">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.general.ManageEcompConsumerCredentials">
+				<methods>
+					<exclude name="createEcompCredentialsByNoExistingIUser" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.general.FeProxyTest" />
+			<class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest" />
+		</classes>
+	</test>
+	<test name="Resource">
+		<classes>
+			<!-- <class
+				name="org.openecomp.sdc.ci.tests.execute.resource.SimultaneousApiTest" /> -->
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.ComponentRelationshipInVfTest">
+				<methods>
+					<exclude name="associateOneOfTwoCPsToVl_ThenDiscocciate" />
+					<exclude name="disassociateRelationInVfNotFound" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.UpdateResourceMetadataTest">
+				<methods>
+					<exclude name="UpdateResourceCategory_negativeFlow" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.VFResourceInstanceNameCRUD"/>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.VfComponentInstanceCRUDTest">
+				<methods>
+					<exclude name="createAllAtomicInstancesTestGetReqCapAPI_suc" />
+					<exclude name="createVfcInstance_UserIdIsEmpty" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.resource.ResourceApiTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.resource.ValidateExtendedVfData" />
+		</classes>
+	</test>
+	<test name="Product">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
+				<methods>
+					<exclude name="undoCheckOutNotExist" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest">
+				<methods>
+					<exclude name="createServiceInstanceNameIsNull" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest">
+				<methods>
+					<exclude name="changeServiceInstanceVersionToNonExisitingServiceVersion" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductToscaYamlGenerationTest" />
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
+				<methods>
+					<exclude name="checkInProductNotExist" />
+				</methods>
+			</class>
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest" />
+			<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest">
+				<methods>
+					<exclude name="updateProductDescriptionRemoveSpacesFromBeginning" />
+					<exclude name="updateProductDescriptionRemoveSpacesFromTheEnd" />
+					<exclude name="updateProductDescriptionValidCharacters02" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.product.ProductCreateWithValidationsTest">
+				<methods>
+					<exclude name="createProductDescriptionRemoveSpacesFromBeginning" />
+					<exclude name="createProductDescriptionRemoveSpacesFromTheEnd" />
+					<exclude name="createProductDescriptionValidCharacters01" />
+					<exclude name="createProductDescriptionValidCharacters02" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+	<test name="Service">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.GetServiceLatestVersionTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.CreateServiceMetadataApiTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.ReqCapOccurrencesTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.ChangeServiceDistributionStatusApiTest">
+				<methods>
+					<exclude name="approveCertifiedService_byDesigner" />
+					<exclude name="approveCertifiedService_byOps" />
+					<exclude name="approveCertifiedService_byTester" />
+					<exclude
+						name="distributionStatusChange_approve_Reject_AprroveBysdncAdminDetails" />
+					<exclude name="rejectCertifiedService_byDesigner" />
+					<exclude name="rejectCertifiedService_byOps" />
+					<exclude name="rejectCertifiedService_byTester" />
+					<exclude name="rejectCertifiedService_bysdncAdminDetails" />
+					<exclude name="rejectCertifiedService_bysdncGovernorDeatails" />
+					<exclude name="rejectNotCertifiedService_checkedin" />
+					<exclude name="rejectNotCertifiedService_checkeout" />
+					<exclude name="rejectNotCertifiedService_inProgress" />
+					<exclude name="rejectNotCertifiedService_readyForCer" />
+					<exclude name="rejectServiceNotFound" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.ServiceComponentInstanceCRUDTest">
+				<methods>
+					<exclude name="associateAfterCheckoutAllInstancesTest" />
+					<exclude name="associateAfterDeletingResourceTest" />
+					<exclude name="associateDissociateTwoVFs" />
+					<exclude name="associateInstancesInTwoServiceVersionsTest" />
+					<exclude name="associateNotCompitableReqCapTest" />
+					<exclude name="associateOnceAgainExistingRelationTest" />
+					<exclude name="associateResourceInstanceToResourceInstanceNotFoundTest" />
+					<exclude
+						name="associateTwoRelations_CheckinCheckout_DissoicateOneRelationInSecondVersion" />
+					<exclude name="createResourceInstanceWithEmptyUserIdTest" />
+					<exclude name="deleteNotFoundResourceInstanceTest" />
+					<exclude name="deleteResourceInstanceWithEmptyUserIdTest" />
+					<exclude name="dissociateOnceAgainTest" />
+					<exclude name="dissociateRelationNotFoundTest" />
+					<exclude name="dissoicateRelationWhileInstanceNotFound" />
+					<exclude name="dissoicateWithEmptyUserIdHeaderTest" />
+					<exclude name="relationDeletedAfterDeletingResourceInstanceTest" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.UpdateServiceMetadataTest">
+				<methods>
+					<exclude name="categoryValidationTest6" />
+					<exclude name="categoryValidationTest7" />
+					<exclude name="descriptionValidationTest11" />
+					<exclude name="descriptionValidationTest12" />
+					<exclude name="descriptionValidationTest13" />
+					<exclude name="descriptionValidationTest7" />
+					<exclude name="serviceNameValidationTest17" />
+					<exclude name="updateCertifiedService" />
+					<exclude name="updateCheckoutCertifiedService" />
+					<exclude name="updateServiceByMethod_delete" />
+					<exclude name="updateServiceByMethod_get" />
+					<exclude name="updateServiceByMethod_post" />
+					<exclude name="updateServiceNotExist" />
+				</methods>
+			</class>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions" />
+		</classes>
+	</test>
+	<test name="Artifacts">
+		<classes>
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.DownloadComponentArt" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ArtifactServletTest" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateHeatArtFieldsTypes" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.PlaceHolderValidations" />
+			<class
+				name="org.openecomp.sdc.ci.tests.execute.artifacts.ValidateArtResponse" />
+			<class name="org.openecomp.sdc.ci.tests.execute.artifacts.CrudArt" />
+		</classes>
+	</test>
+</suite> 

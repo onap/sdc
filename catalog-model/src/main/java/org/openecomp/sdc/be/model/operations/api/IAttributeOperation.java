@@ -25,10 +25,10 @@ import java.util.Map;
 
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.resources.data.AttributeData;
 import org.openecomp.sdc.be.resources.data.AttributeValueData;
 
@@ -39,23 +39,23 @@ import fj.data.Either;
 public interface IAttributeOperation {
 	Either<AttributeData, StorageOperationStatus> deleteAttribute(String attributeId);
 
-	TitanOperationStatus addAttributesToGraph(TitanVertex metadataVertex, Map<String, AttributeDefinition> attributes, String resourceId, Map<String, DataTypeDefinition> dataTypes);
+	TitanOperationStatus addAttributesToGraph(TitanVertex metadataVertex, Map<String, PropertyDefinition> attributes, String resourceId, Map<String, DataTypeDefinition> dataTypes);
 
-	Either<List<ComponentInstanceAttribute>, TitanOperationStatus> getAllAttributesOfResourceInstance(ComponentInstance compInstance);
+	Either<List<ComponentInstanceProperty>, TitanOperationStatus> getAllAttributesOfResourceInstance(ComponentInstance compInstance);
 
-	TitanOperationStatus findAllResourceAttributesRecursively(String resourceId, List<AttributeDefinition> attributes);
+	TitanOperationStatus findAllResourceAttributesRecursively(String resourceId, List<PropertyDefinition> attributes);
 
-	Either<Map<String, AttributeDefinition>, StorageOperationStatus> deleteAllAttributeAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
+	Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllAttributeAssociatedToNode(NodeTypeEnum nodeType, String uniqueId);
 
-	TitanOperationStatus findNodeNonInheretedAttribues(String uniqueId, NodeTypeEnum nodeType, List<AttributeDefinition> attributes);
+	TitanOperationStatus findNodeNonInheretedAttribues(String uniqueId, NodeTypeEnum nodeType, List<PropertyDefinition> attributes);
 
-	Either<AttributeData, StorageOperationStatus> addAttribute(AttributeDefinition attributeDefinition, String resourceId);
+	Either<AttributeData, StorageOperationStatus> addAttribute(PropertyDefinition attributeDefinition, String resourceId);
 
-	Either<AttributeData, TitanOperationStatus> addAttributeToGraph(AttributeDefinition attribute, String resourceId, Map<String, DataTypeDefinition> dataTypes);
+	Either<AttributeData, TitanOperationStatus> addAttributeToGraph(PropertyDefinition attribute, String resourceId, Map<String, DataTypeDefinition> dataTypes);
 
-	AttributeDefinition convertAttributeDataToAttributeDefinition(AttributeData attributeData, String attributeName, String resourceId);
+	PropertyDefinition convertAttributeDataToAttributeDefinition(AttributeData attributeData, String attributeName, String resourceId);
 
-	Either<AttributeData, StorageOperationStatus> updateAttribute(String attributeId, AttributeDefinition newAttDef, Map<String, DataTypeDefinition> dataTypes);
+	Either<AttributeData, StorageOperationStatus> updateAttribute(String attributeId, PropertyDefinition newAttDef, Map<String, DataTypeDefinition> dataTypes);
 
 	/**
 	 * Builds ComponentInstanceAttribute from AttributeValueData
@@ -64,8 +64,8 @@ public interface IAttributeOperation {
 	 * @param resourceInstanceAttribute
 	 * @return
 	 */
-	ComponentInstanceAttribute buildResourceInstanceAttribute(AttributeValueData attributeValueData, ComponentInstanceAttribute resourceInstanceAttribute);
+	ComponentInstanceProperty buildResourceInstanceAttribute(AttributeValueData attributeValueData, ComponentInstanceProperty resourceInstanceAttribute);
 
-	TitanOperationStatus addAttributeToGraphByVertex(TitanVertex metadataVertex, AttributeDefinition attribute, String resourceId, Map<String, DataTypeDefinition> dataTypes);
+	TitanOperationStatus addAttributeToGraphByVertex(TitanVertex metadataVertex, PropertyDefinition attribute, String resourceId, Map<String, DataTypeDefinition> dataTypes);
 
 }

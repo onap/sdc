@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="5 seconds">
 
-	<property scope="system" name="ECOMP-component-name" value="ASDC" />
-	<property scope="system" name="ECOMP-subcomponent-name" value="ASDC-FE" />
+	<property scope="system" name="ECOMP-component-name" value="SDC" />
+	<property scope="system" name="ECOMP-subcomponent-name" value="SDC-FE" />
 	<property scope="context" name="enable-all-log" value="false" />
 	<property file="${config.home}/catalog-fe/configuration.yaml" />
 	<!-- value used by pattern field list (| - is inter-field separator, || - unavailable or not applicable field value) (m - mandatory, o- optional)-->

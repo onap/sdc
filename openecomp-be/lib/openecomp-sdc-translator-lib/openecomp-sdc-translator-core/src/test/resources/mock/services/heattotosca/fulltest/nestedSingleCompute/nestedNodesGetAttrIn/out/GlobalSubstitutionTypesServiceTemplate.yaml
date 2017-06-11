@@ -8,6 +8,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.heat.pcm_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_pcm_port_0_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       metadata:
         type: string
         description: metadata
@@ -18,14 +24,71 @@ node_types:
         description: availabilityzone name
         required: true
         status: SUPPORTED
-      oam_net_gw:
-        type: string
-        description: CPS network gateway
+      port_pcm_port_0_vlan_requirements:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: json
       pcm_image_name:
         type: string
         description: PCRF CM image name
+        required: true
+        status: SUPPORTED
+      port_pcm_port_0_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pcm_port_0_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pcm_port_1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      pcm_server_name:
+        type: string
+        description: PCRF CM server name
+        required: true
+        status: SUPPORTED
+      cps_net_mask:
+        type: string
+        description: CPS network mask
+        required: true
+        status: SUPPORTED
+      port_pcm_port_1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pcm_port_0_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      oam_net_name:
+        type: string
+        description: OAM network name
+        required: true
+        status: SUPPORTED
+      port_pcm_port_1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      oam_net_gw:
+        type: string
+        description: CPS network gateway
         required: true
         status: SUPPORTED
       security_group_name:
@@ -38,6 +101,12 @@ node_types:
         description: CPS network ip
         required: true
         status: SUPPORTED
+      port_pcm_port_1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       pcm_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
@@ -58,19 +127,9 @@ node_types:
         description: CPS Cluman Cinder Volume
         required: true
         status: SUPPORTED
-      pcm_server_name:
-        type: string
-        description: PCRF CM server name
-        required: true
-        status: SUPPORTED
       cps_net_name:
         type: string
         description: CPS network name
-        required: true
-        status: SUPPORTED
-      cps_net_mask:
-        type: string
-        description: CPS network mask
         required: true
         status: SUPPORTED
       oam_net_ip:
@@ -83,11 +142,12 @@ node_types:
         description: CPS network mask
         required: true
         status: SUPPORTED
-      oam_net_name:
-        type: string
-        description: OAM network name
+      port_pcm_port_1_order:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: integer
     attributes:
       server_pcm_id:
         type: string
@@ -510,6 +570,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.heat.oam_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_pcm_port_0_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
@@ -520,6 +586,12 @@ node_types:
         description: CPS network gateway
         required: true
         status: SUPPORTED
+      port_pcm_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       oam_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
@@ -540,6 +612,30 @@ node_types:
         description: oam server name
         required: true
         status: SUPPORTED
+      port_pcm_port_1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pcm_port_0_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pcm_port_0_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pcm_port_1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       pcm_vol:
         type: string
         description: CPS Cluman Cinder Volume
@@ -570,11 +666,35 @@ node_types:
         description: CPS network mask
         required: true
         status: SUPPORTED
+      port_pcm_port_1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pcm_port_0_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       oam_net_name:
         type: string
         description: OAM network name
         required: true
         status: SUPPORTED
+      port_pcm_port_1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pcm_port_1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
     attributes:
       server_oam_id:
         type: string

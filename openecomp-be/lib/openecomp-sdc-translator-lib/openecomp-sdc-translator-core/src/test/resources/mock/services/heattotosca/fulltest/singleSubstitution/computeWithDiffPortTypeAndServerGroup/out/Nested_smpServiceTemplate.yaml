@@ -11,25 +11,22 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    port_port_ip_requirements:
-      type: list
-      required: true
-      entry_schema:
-        type: json
     port_port_mac_requirements:
       type: list
       required: true
       entry_schema:
         type: json
-    vm_image_name:
-      type: string
-      required: true
     port_port_network:
       type: list
       required: true
       entry_schema:
         type: string
     compute_smp_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_port_subnetpoolid:
       type: list
       required: true
       entry_schema:
@@ -46,7 +43,35 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     vm_flavor_name:
+      type: string
+      required: true
+    compute_smp_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
       type: string
       required: true
     compute_smp_metadata:
@@ -54,16 +79,21 @@ topology_template:
       required: true
       entry_schema:
         type: json
-    compute_smp_user_data_format:
+    port_port_exCP_naming:
       type: list
       required: true
       entry_schema:
-        type: string
+        type: json
     port_port_replacement_policy:
       type: list
       required: true
       entry_schema:
         type: string
+    port_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     compute_smp_scheduler_hints:
       type: list
       required: true
@@ -73,17 +103,41 @@ topology_template:
     smp_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_port_exCP_naming
+          - index_value
         replacement_policy:
           get_input:
           - port_port_replacement_policy
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_port_vlan_requirements
           - index_value
         ip_requirements:
           get_input:
           - port_port_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_port_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_port_subnetpoolid
           - index_value
         network:
           get_input:

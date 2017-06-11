@@ -78,7 +78,7 @@ public class MigrationMain {
     printMessage(logger, "Checking whether a migration has already been run.");
     if (MigrationMarker.isMigrated()) {
       printMessage(logger, "The DB has already been migrated, this script will now exit.");
-      return;
+      System.exit(status);
     }
     ItemCassandraDao itemCassandraDao = new ItemCassandraDao();
     VersionCassandraDao versionCassandraDao = new VersionCassandraDao();
@@ -243,7 +243,8 @@ public class MigrationMain {
         new OrchestrationTemplateCandidateCassandraLoader();
 
     orchestrationTemplateCandidateCassandraLoader.list().stream()
-        .filter(entity -> needMigration(entity.getId(), entity.getVersion()))
+        .filter(entity -> needMigration(entity.getId(), entity.getVersion()) &&
+            entity.getContentData()!=null && entity.getFilesDataStructure()!=null)
         .forEach(entity -> ElementHandler
             .save(context, cassandraElementRepository, entity.getId(), entity.getVersion(),
                 OrchestrationTemplateCandidateConvertor

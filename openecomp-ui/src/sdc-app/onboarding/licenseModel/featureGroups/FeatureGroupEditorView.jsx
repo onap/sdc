@@ -18,7 +18,7 @@ import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
 import Tab from 'react-bootstrap/lib/Tab.js';
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import Form from 'nfvo-components/input/validation/Form.jsx';
+import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
 import DualListboxView from 'nfvo-components/input/dualListbox/DualListboxView.jsx';
 import Input from 'nfvo-components/input/validation/Input.jsx';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -169,17 +169,23 @@ class FeatureGroupEditorView extends React.Component {
 				className='feature-group-form'>
 				<Tabs activeKey={onTabSelect ? selectedTab : undefined} onSelect={onTabSelect} invalidTabs={invalidTabs} id='vlmFGValTabs' >
 					<Tab eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.GENERAL} title={i18n('General')}  >
-						<GeneralTab data={data} onDataChanged={onDataChanged} genericFieldInfo={genericFieldInfo}  validateName={(value)=> this.validateName(value)}/>
+						<fieldset disabled={isReadOnlyMode}>
+							<GeneralTab data={data} onDataChanged={onDataChanged} genericFieldInfo={genericFieldInfo}  validateName={(value)=> this.validateName(value)}/>
+						</fieldset>
 					</Tab>
 					<Tab
 						eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.ENTITLEMENT_POOLS}
 						title={i18n('Entitlement Pools')} >
-						<EntitlementPoolsTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} entitlementPoolsList={entitlementPoolsList} />
+						<fieldset disabled={isReadOnlyMode}>
+							<EntitlementPoolsTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} entitlementPoolsList={entitlementPoolsList} />
+						</fieldset>
 					</Tab>
 					<Tab
 						eventKey={FeatureGroupStateConstants.SELECTED_FEATURE_GROUP_TAB.LICENSE_KEY_GROUPS}
 						title={i18n('License Key Groups')} >
-						<LKGTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} licenseKeyGroupsList={licenseKeyGroupsList} />
+						<fieldset disabled={isReadOnlyMode}>
+							<LKGTab isReadOnlyMode={isReadOnlyMode} data={data} onDataChanged={onDataChanged} licenseKeyGroupsList={licenseKeyGroupsList} />
+						</fieldset>
 					</Tab>
 				</Tabs>
 

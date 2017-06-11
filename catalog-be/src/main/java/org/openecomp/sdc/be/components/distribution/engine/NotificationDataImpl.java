@@ -77,9 +77,11 @@ public class NotificationDataImpl implements INotificationData {
 		this.serviceDescription = serviceDescription;
 	}
 
+	
 	@Override
 	public String toString() {
-		return "NotificationDataImpl [distributionID=" + distributionID + ", serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", serviceUUID=" + serviceUUID + ", serviceInvariantUUID=" + serviceInvariantUUID + "]";
+		return "NotificationDataImpl [distributionID=" + distributionID + ", serviceName=" + serviceName + ", serviceVersion=" + serviceVersion + ", serviceUUID=" + serviceUUID + ", serviceDescription=" + serviceDescription
+				+ ", serviceInvariantUUID=" + serviceInvariantUUID + ", resources=" + resources + ", serviceArtifacts=" + serviceArtifacts + "]";
 	}
 
 	@Override

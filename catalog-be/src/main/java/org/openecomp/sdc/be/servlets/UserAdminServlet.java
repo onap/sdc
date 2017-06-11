@@ -43,7 +43,6 @@ import javax.ws.rs.core.Response;
 
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.model.FunctionalMenuInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -474,41 +473,4 @@ public class UserAdminServlet extends BeGenericServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
-
-	@GET
-	@Path("/{userId}/functionalmenu")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "retrieve user details", httpMethod = "GET", notes = "Returns user details according to userId", response = User.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Returns user Ok"), @ApiResponse(code = 404, message = "User not found"), @ApiResponse(code = 405, message = "Method Not Allowed"),
-			@ApiResponse(code = 500, message = "Internal Server Error") })
-	public Response getFunctionalMenu(@ApiParam(value = "userId of user to get", required = true) @PathParam("userId") final String userId, @Context final HttpServletRequest request) {
-
-		String url = request.getMethod() + " " + request.getRequestURI();
-		log.debug("(get) Start handle request of {}", url);
-
-		UserBusinessLogic userAdminManager = getUserAdminManager(request.getSession().getServletContext());
-
-		try {
-			Either<FunctionalMenuInfo, ActionStatus> functionalMenuResp = userAdminManager.getFunctionalMenu(userId);
-
-			if (functionalMenuResp.isRight()) {
-				return buildErrorResponse(getComponentsUtils().getResponseFormatByUserId(functionalMenuResp.right().value(), userId));
-			} else {
-				FunctionalMenuInfo functionalMenuInfo = functionalMenuResp.left().value();
-				if (functionalMenuInfo != null && functionalMenuInfo.getFunctionalMenu() != null) {
-					log.debug("Functional menu fetched is {}", functionalMenuInfo.getFunctionalMenu());
-					return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), functionalMenuInfo.getFunctionalMenu());
-				} else {
-					log.debug("Functional menu is null");
-					return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-				}
-			}
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get User");
-			log.debug("get user failed with unexpected error: {}", e);
-			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-		}
-	}
-
 }

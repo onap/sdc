@@ -8,22 +8,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.smp:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       port_port_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
       port_port_network:
         type: list
         required: true
@@ -31,6 +21,12 @@ node_types:
         entry_schema:
           type: string
       compute_smp_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
@@ -50,7 +46,41 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_port_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_smp_user_data_format:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_image_name:
         type: string
         required: true
         status: SUPPORTED
@@ -60,18 +90,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      compute_smp_user_data_format:
+      port_port_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
+          type: json
       port_port_replacement_policy:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       compute_smp_scheduler_hints:
         type: list
         required: true

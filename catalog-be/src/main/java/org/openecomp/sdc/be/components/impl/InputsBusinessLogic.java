@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
@@ -551,7 +552,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				return result;
 			}
 			
-			Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addciInputsEither = toscaOperationFacade.addComponentInstanceInputsToComponent(inputsValueToCreateMap, component.getUniqueId());
+			Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addciInputsEither = toscaOperationFacade.addComponentInstanceInputsToComponent(component, inputsValueToCreateMap);
 			if(addciInputsEither.isRight()){
 				log.debug("Failed to add inputs values under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
@@ -621,6 +622,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		input.setImmutable(oldInput.isImmutable());
 		input.setDefinition(oldInput.isDefinition());
 		input.setRequired(oldInput.isRequired());
+		input.setOwnerId(null);
+		input.setParentUniqueId(null);
 		inputsToCreate.put(input.getName(), input);
 		
 		
@@ -739,7 +742,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			}
 			if (resourceProperties != null) {
 				Map<String, InputDefinition> generatedInputs = resourceProperties.stream().collect(Collectors.toMap(i -> i.getName(), i -> i));
-				Either<Map<String, InputDefinition>, String> mergeEither = PropertyDataDefinition.mergeProperties(generatedInputs, inputs, false);
+				Either<Map<String, InputDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedInputs, inputs);
 				if(mergeEither.isRight()){
 					return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, mergeEither.right().value()));
 				}
@@ -808,6 +811,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		if (!optionalInput.isPresent()) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId));
 		}
+		
+		InputDefinition inputForDelete = optionalInput.get();
 
 		// Lock component
 		Either<Boolean, ResponseFormat> lockResultEither = lockComponent(componentId, component, "deleteInput");
@@ -818,8 +823,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		}
 
 		// Delete input operations
-	
-		InputDefinition inputForDelete = optionalInput.get();
 		try {
 			StorageOperationStatus status = toscaOperationFacade.deleteInputOfResource(component, inputForDelete.getName());
 			if(status != StorageOperationStatus.OK){
@@ -863,7 +866,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 						
 						resetInputName(mappedToscaTemplate, inputForDelete.getName());
 						
-						value = gson.toJson(mappedToscaTemplate);
+						value = "";
+						if(!mappedToscaTemplate.isEmpty())
+							value = gson.toJson(mappedToscaTemplate);
 						propertyValue.setValue(value);
 						String compInstId = propertyValue.getComponentInstanceId();
 						propertyValue.setRules(null);
@@ -1159,6 +1164,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			
 			if (properties != null && !properties.isEmpty()) {
 				for (ComponentInstancePropInput propInput : properties) {
+					propInput.setOwnerId(null);
+					propInput.setParentUniqueId(null);
 					Either<InputDefinition, StorageOperationStatus> createInputRes = createInputForComponentInstance(component, origComponent,ci, inputsToCreate, propertiesToCreate, dataTypes, inputName, propInput);
 					
 					if (createInputRes.isRight()) {
@@ -1259,6 +1266,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		propertiesToCreate.add(prop);
 		
 		inputsToCreate.put(input.getName(), input);
+		
+		List<ComponentInstanceProperty> propertiesList = new ArrayList<>(); // adding the property with the new value for UI
+		propertiesList.add(prop);
+		input.setProperties(propertiesList);
 		
 		return Either.left(input);
 		

@@ -21,38 +21,31 @@
 package org.openecomp.sdc.be.components.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
-import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -64,13 +57,10 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.ComponentOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -86,9 +76,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.datastax.driver.core.UserType.Field;
-import com.wordnik.swagger.models.auth.In;
 
 import fj.data.Either;
 
@@ -283,40 +270,43 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 	}
 
 	
-	public Either<Boolean, ResponseFormat> validateConformanceLevel(String componentId, ComponentTypeEnum componentTypeEnum, String userId) {
+	public Either<Boolean, ResponseFormat> validateConformanceLevel(String componentUuid, ComponentTypeEnum componentTypeEnum, String userId) {
 		log.trace("validate conformance level");
 		
 		if (componentTypeEnum != ComponentTypeEnum.SERVICE) {
-			log.error("conformance level validation for non service component, id {}", componentId);
+			log.error("conformance level validation for non service component, id {}", componentUuid);
 			ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT);
 			return Either.right(errorResponse);
 		}
 		
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "validateConformanceLevel", false);
 		if (resp.isRight()) {
-			log.error("can't validate conformance level, user is not validated, id {}, userId {}", componentId, userId);
+			log.error("can't validate conformance level, user is not validated, uuid {}, userId {}", componentUuid, userId);
 			return Either.right(resp.right().value());
 		}
 		
-		ComponentParametersView filter = new ComponentParametersView(true);
-		Either<Component, ResponseFormat> eitherComponent = validateComponentExists(componentId, componentTypeEnum, filter);
+		Either<ComponentMetadataData, StorageOperationStatus> eitherComponent = toscaOperationFacade.getLatestComponentMetadataByUuid(componentUuid, JsonParseFlagEnum.ParseMetadata, null);
 		if (eitherComponent.isRight()) {
-			log.error("can't validate conformance level, component not found, id {}", componentId);
-			BeEcompErrorManager.getInstance().logBeComponentMissingError("validateConformanceLevel", componentTypeEnum.getValue(), componentId);
-			return Either.right(eitherComponent.right().value());
+			log.error("can't validate conformance level, component not found, uuid {}", componentUuid);
+			BeEcompErrorManager.getInstance().logBeComponentMissingError("validateConformanceLevel", componentTypeEnum.getValue(), componentUuid);
+			
+			StorageOperationStatus status = eitherComponent.right().value();
+			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(status, componentTypeEnum);
+			ResponseFormat responseFormat = componentsUtils.getResponseFormat(actionStatus);
+			return Either.right(responseFormat);
 		}
 		
-		Component component = eitherComponent.left().value();
-		if (component.getConformanceLevel() == null || "".equals(component.getConformanceLevel())) {
-			log.error("component conformance level property is null or empty, id {}", componentId);
+		String componentConformanceLevel = eitherComponent.left().value().getMetadataDataDefinition().getConformanceLevel();
+		if (StringUtils.isBlank(componentConformanceLevel)) {
+			log.error("component conformance level property is null or empty, uuid {}", componentUuid);
 			ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
 			return Either.right(errorResponse);
 		}
 		
 		String configConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getMinToscaConformanceLevel();
 		Boolean result = true;
-		if (CommonBeUtils.conformanceLevelCompare(component.getConformanceLevel(), configConformanceLevel) < 0) {
-			log.error("invalid asset conformance level, id {}, asset conformanceLevel {}, config conformanceLevel {}", componentId, component.getConformanceLevel(), configConformanceLevel);
+		if (CommonBeUtils.conformanceLevelCompare(componentConformanceLevel, configConformanceLevel) < 0) {
+			log.error("invalid asset conformance level, uuid {}, asset conformanceLevel {}, config conformanceLevel {}", componentUuid, componentConformanceLevel, configConformanceLevel);
 			result = false;
 		}
 		log.trace("conformance level validation finished");
@@ -1154,9 +1144,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 			return Either.right(fetchAndSetLatestGeneric.right().value());
 		Resource genericTypeResource = fetchAndSetLatestGeneric.left().value();
 		if(null == currentGenericType || !currentGenericType.equals(genericTypeResource.getToscaResourceName()) || !currentGenericVersion.equals(genericTypeResource.getVersion())){
-			List<PropertyDefinition> genericTypeProps = genericTypeResource.getProperties();
-			List<InputDefinition> genericTypeInputs = null == genericTypeProps? null : convertGenericTypePropertiesToInputsDefintion(genericTypeProps, genericTypeResource.getUniqueId());
-			shouldUpgrade = upgradeToLatestGeneric(clonedComponent, genericTypeInputs);
+			shouldUpgrade = upgradeToLatestGeneric(clonedComponent, genericTypeResource);
 			if(!shouldUpgrade) {
 				reverntUpdateOfGenericVersion(clonedComponent, currentGenericType, currentGenericVersion);
 			}
@@ -1169,12 +1157,37 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 		clonedComponent.setDerivedFromGenericVersion(currentGenericVersion);
 	} 
 	
+	private <T extends PropertyDataDefinition> Either<Map<String, T>, String> validateNoConflictingProperties(List<T> currentList, List<T> upgradedList) {
+		Map<String, T> currentMap = ToscaDataDefinition.listToMapByName(currentList);
+		Map<String, T> upgradedMap = ToscaDataDefinition.listToMapByName(upgradedList);
+		return ToscaDataDefinition.mergeDataMaps(upgradedMap, currentMap, true);
+	}
 	
-	private boolean upgradeToLatestGeneric(Component componentToCheckOut, List<InputDefinition> upgradedList) {
+	private boolean shouldUpgradeNodeType(Component componentToCheckOut, Resource latestGeneric){
 		
-		if (!componentToCheckOut.shouldGenerateInputs())
-			return true;
-		
+		List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();
+		Either<Map<String, PropertyDefinition>, String> validMerge = validateNoConflictingProperties(genericTypeProps, ((Resource)componentToCheckOut).getProperties());
+		if (validMerge.isRight()) { 
+			log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+			return false;
+		}
+		List<PropertyDefinition> genericTypeAttributes = latestGeneric.getAttributes();
+		validMerge = validateNoConflictingProperties(genericTypeAttributes, ((Resource)componentToCheckOut).getAttributes());
+		if (validMerge.isRight()) { 
+			log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic", validMerge.right().value());
+			return false;
+		}
+		return true;
+	}
+	
+    private boolean upgradeToLatestGeneric(Component componentToCheckOut, Resource latestGeneric) {
+    	
+		if (!componentToCheckOut.shouldGenerateInputs()) {
+			//node type - validate properties and attributes
+			return shouldUpgradeNodeType(componentToCheckOut, latestGeneric);
+		}
+		List<PropertyDefinition> genericTypeProps = latestGeneric.getProperties();	
+		List<InputDefinition> genericTypeInputs = null == genericTypeProps? null : convertGenericTypePropertiesToInputsDefintion(genericTypeProps, latestGeneric.getUniqueId());
 		List<InputDefinition> currentList = new ArrayList<>();	
 	    // nullify existing ownerId from existing list and merge into updated list
 		if (null != componentToCheckOut.getInputs()) {
@@ -1184,20 +1197,20 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 				currentList.add(copy);
 			}
 		}
-		if (null == upgradedList) {
+		if (null == genericTypeInputs) {
 			componentToCheckOut.setInputs(currentList);
 			return true;
 		}
-		Map<String, InputDefinition> currentMap = PropertyDataDefinition.listToMapByName(currentList);
-		Map<String, InputDefinition> upgradedMap = PropertyDataDefinition.listToMapByName(upgradedList);
-		Either<Map<String, InputDefinition>, String> eitherMerged = PropertyDataDefinition.mergeProperties(upgradedMap, currentMap, true);
+		
+		Either<Map<String, InputDefinition>, String> eitherMerged = validateNoConflictingProperties(genericTypeInputs, currentList);
 		if (eitherMerged.isRight()) { 
-			log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic", eitherMerged.right().value());
+			log.debug("input {} cannot be overriden, check out performed without upgrading to latest generic", eitherMerged.right().value());
 			return false;
 		}
 		componentToCheckOut.setInputs(new ArrayList<InputDefinition>(eitherMerged.left().value().values()));
 		return true;
 	}
+	
 
 	private List<ComponentInstance> getFilteredInstances(Component component, List<String> resourceTypes) {
 		List<ComponentInstance> filteredInstances = null;

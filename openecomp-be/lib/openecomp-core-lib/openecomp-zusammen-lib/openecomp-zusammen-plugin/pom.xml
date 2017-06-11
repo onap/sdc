@@ -15,23 +15,23 @@
         <dependency>
             <groupId>com.amdocs.zusammen</groupId>
             <artifactId>zusammen-sdk</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.amdocs.zusammen</groupId>
             <artifactId>zusammen-commons-db-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.amdocs.zusammen</groupId>
             <artifactId>zusammen-commons-db-impl</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.amdocs.zusammen.plugin</groupId>
             <artifactId>zusammen-state-store-cassandra-plugin</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 </project>

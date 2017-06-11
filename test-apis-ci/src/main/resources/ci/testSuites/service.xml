@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Service" >
+   <test name="Service">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.GetServiceLatestVersionTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.CreateServiceMetadataApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.ReqCapOccurrencesTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.ChangeServiceDistributionStatusApiTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.ServiceComponentInstanceCRUDTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.UpdateServiceMetadataTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.service.GetAllServiceVersions"/>
+        </classes> 
+    </test>
+</suite> <!-- Service -->

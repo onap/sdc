@@ -163,6 +163,7 @@ public interface Urls {
 	final String GET_RESOURCE = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s";
 	final String GET_RESOURCE_BY_NAME_AND_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/resources/resourceName/%s/resourceVersion/%s";
 	final String GET_RESOURCE_BY_CSAR_UUID = "http://%s:%s/sdc2/rest/v1/catalog/resources/csar/%s";
+	final String GET_RESOURCE_DATA_BY_PARAMS = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s/filteredDataByParams?";
 	final String GET_COMPONENT_REQUIRMENTS_CAPABILITIES = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/requirmentsCapabilities";
 
 	final String DELETE_RESOURCE = "http://%s:%s/sdc2/rest/v1/catalog/resources/%s";
@@ -270,7 +271,6 @@ public interface Urls {
 	final String GET_COMPONENT_INSTANCES = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/componentInstances";
 	//{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/properties
 	final String GET_COMPONENT_INSTANCE_PROPERTIES_BY_ID = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/componentInstances/%s/properties";
-	// Tal New API
 	final String UPDATE_MULTIPLE_COMPONENT_INSTANCE = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/multipleComponentInstance";
 
 	final String CHANGE_RESOURCE_INSTANCE_VERSION = "http://%s:%s/sdc2/rest/v1/catalog/%s/%s/resourceInstance/%s/changeVersion";

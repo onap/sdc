@@ -11,6 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_1c1_t1_port_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     compute_1c12_scalling_instance_scheduler_hints:
       type: list
       required: true
@@ -26,9 +31,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    vm_image_name:
-      type: string
+    port_1c1_t1_port_vlan_requirements:
+      type: list
       required: true
+      entry_schema:
+        type: json
     port_1c1_t1_port_mac_requirements:
       type: list
       required: true
@@ -41,24 +48,9 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_1c1_t1_port_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     vm_flavor_name:
       type: string
       required: true
-    compute_1c12_scalling_instance_availability_zone:
-      type: list
-      required: true
-      entry_schema:
-        type: string
-    port_1c1_t1_port_network:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     compute_1c12_scalling_instance_user_data_format:
       type: list
       required: true
@@ -69,17 +61,79 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    vm_image_name:
+      type: string
+      required: true
+    port_1c1_t1_port_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_1c12_scalling_instance_availability_zone:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1c1_t1_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
   node_templates:
     1c12_scalling_instance_1c1_t1_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_1c1_t1_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_1c1_t1_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_1c1_t1_port_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_1c1_t1_port_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_1c1_t1_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_1c1_t1_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_1c1_t1_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_1c1_t1_port_subnetpoolid
           - index_value
         fixed_ips:
           get_input:

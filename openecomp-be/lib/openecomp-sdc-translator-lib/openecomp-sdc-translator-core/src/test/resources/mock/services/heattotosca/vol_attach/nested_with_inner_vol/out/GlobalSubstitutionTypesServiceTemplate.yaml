@@ -103,14 +103,14 @@ node_types:
         type: string
         status: SUPPORTED
     requirements:
-    - dependency_server_cmaui:
+    - dependency_server_cmaui_2:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
         relationship: tosca.relationships.DependsOn
         occurrences:
         - 0
         - UNBOUNDED
-    - local_storage_server_cmaui:
+    - local_storage_server_cmaui_2:
         capability: tosca.capabilities.Attachment
         node: tosca.nodes.BlockStorage
         relationship: tosca.relationships.AttachesTo
@@ -138,19 +138,19 @@ node_types:
         - 1
         - 1
     capabilities:
-      cpu.delta_server_cmaui:
+      disk.write.bytes.rate_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.requests.rate_server_cmaui:
+      disk.device.write.bytes_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.allocation_server_cmaui:
+      disk.device.usage_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -162,43 +162,24 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      scalable_server_cmaui:
-        type: tosca.capabilities.Scalable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.read.bytes.rate_server_cmaui:
+      disk.write.bytes_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      cpu_server_cmaui:
+      feature_server_cmaui_2:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.latency_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.bytes.rate_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.device.read.bytes.rate_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      host_server_cmaui:
-        type: tosca.capabilities.Container
-        valid_source_types:
-        - tosca.nodes.SoftwareComponent
-        occurrences:
-        - 1
-        - UNBOUNDED
-      cpu_util_server_cmaui:
+      disk.allocation_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -209,21 +190,31 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.latency_server_cmaui:
+      binding_server_cmaui_2:
+        type: tosca.capabilities.network.Bindable
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.root.size_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.requests_server_cmaui:
+      disk.device.write.requests.rate_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.read.requests_server_cmaui:
+      vcpus_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_server_cmaui_2:
+        type: tosca.capabilities.Scalable
         occurrences:
         - 1
         - UNBOUNDED
@@ -233,13 +224,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.capacity_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.usage_server_cmaui:
+      disk.read.requests_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -250,85 +235,92 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.usage_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.outgoing.bytes_cmaui_port_0:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.capacity_server_cmaui:
+      disk.write.requests_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.requests.rate_server_cmaui:
+      disk.device.iops_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.requests_server_cmaui:
+      disk.usage_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      instance_server_cmaui:
+      disk.device.capacity_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.bytes_server_cmaui:
+      disk.device.read.bytes.rate_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      memory_server_cmaui:
+      endpoint_server_cmaui_2:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.bytes_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.root.size_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_server_cmaui:
-        type: tosca.capabilities.network.Bindable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.device.read.requests.rate_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.write.bytes_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      os_server_cmaui:
+      os_server_cmaui_2:
         type: tosca.capabilities.OperatingSystem
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.bytes.rate_server_cmaui:
+      disk.device.read.bytes_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.allocation_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_server_cmaui_2:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
         occurrences:
         - 1
         - UNBOUNDED
@@ -338,13 +330,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      memory.resident_server_cmaui:
+      disk.ephemeral.size_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.latency_server_cmaui:
+      disk.capacity_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      instance_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -357,19 +355,8 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      feature_server_cmaui:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
       feature_cmaui_volume:
         type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      vcpus_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -379,25 +366,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.bytes_server_cmaui:
+      disk.iops_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.allocation_server_cmaui:
+      disk.device.write.requests_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.requests_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      memory.usage_server_cmaui:
+      disk.device.read.requests_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -409,7 +390,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.ephemeral.size_server_cmaui:
+      disk.read.bytes.rate_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      cpu.delta_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.resident_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -421,24 +420,13 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      endpoint_server_cmaui:
-        type: tosca.capabilities.Endpoint.Admin
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.iops_server_cmaui:
+      disk.latency_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.iops_server_cmaui:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.read.bytes_server_cmaui:
+      cpu_util_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -450,6 +438,18 @@ node_types:
         - 1
         - UNBOUNDED
       network.incoming.bytes_cmaui_port_0:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes.rate_server_cmaui_2:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_server_cmaui_2:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:

@@ -16,12 +16,66 @@ topology_template:
       immutable: false
       type: string
       description: UID of OAM network
+    port_oam_port_1_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
       immutable: false
       type: string
       description: availabilityzone name
+    port_oam_port_0_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    oam_server_name:
+      label: oam server name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam server name
+    port_oam_port_0_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_port_1_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_oam_port_1_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_oam_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    oam_image_name:
+      label: image name
+      hidden: false
+      immutable: false
+      type: string
+      description: oam image name
+    cps_net_mask:
+      label: CPS network mask
+      hidden: false
+      immutable: false
+      type: string
+      description: CPS network mask
+    oam_net_name:
+      label: OAM network name
+      hidden: false
+      immutable: false
+      type: string
+      description: OAM network name
     oam_net_gw:
       label: CPS network gateway
       hidden: false
@@ -46,36 +100,38 @@ topology_template:
       immutable: false
       type: string
       description: CPS network ip
-    oam_server_name:
-      label: oam server name
-      hidden: false
-      immutable: false
-      type: string
-      description: oam server name
+    port_oam_port_0_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_oam_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_oam_port_1_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_oam_port_0_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     pcm_vol:
       label: CPS Cluman Cinder Volume
       hidden: false
       immutable: false
       type: string
       description: CPS Cluman Cinder Volume
-    oam_image_name:
-      label: image name
-      hidden: false
-      immutable: false
-      type: string
-      description: oam image name
     cps_net_name:
       label: CPS network name
       hidden: false
       immutable: false
       type: string
       description: CPS network name
-    cps_net_mask:
-      label: CPS network mask
-      hidden: false
-      immutable: false
-      type: string
-      description: CPS network mask
     oam_net_ip:
       label: OAM network ip
       hidden: false
@@ -93,12 +149,6 @@ topology_template:
       immutable: false
       type: string
       description: UID of OAM network
-    oam_net_name:
-      label: OAM network name
-      hidden: false
-      immutable: false
-      type: string
-      description: OAM network name
   node_templates:
     oam_port_0:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -111,15 +161,35 @@ topology_template:
             is_required: false
         security_groups:
         - get_input: shared_security_group_id1
+        network_role:
+          get_input:
+          - port_oam_port_0_network_role
+          - index_value
         fixed_ips:
         - ip_address:
             get_input: cps_net_ip
+        subnetpoolid:
+          get_input:
+          - port_oam_port_0_subnetpoolid
+          - index_value
         mac_requirements:
           mac_count_required:
             is_required: false
+        exCP_naming:
+          get_input:
+          - port_oam_port_0_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_oam_port_0_vlan_requirements
+          - index_value
         network_role_tag: cps
         network:
           get_input: cps_net_name
+        order:
+          get_input:
+          - port_oam_port_0_order
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -149,15 +219,35 @@ topology_template:
         security_groups:
         - get_input: shared_security_group_id1
         - get_input: security_group_name
+        network_role:
+          get_input:
+          - port_oam_port_1_network_role
+          - index_value
         fixed_ips:
         - ip_address:
             get_input: oam_net_ip
+        subnetpoolid:
+          get_input:
+          - port_oam_port_1_subnetpoolid
+          - index_value
         mac_requirements:
           mac_count_required:
             is_required: false
+        exCP_naming:
+          get_input:
+          - port_oam_port_1_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_oam_port_1_vlan_requirements
+          - index_value
         network_role_tag: oam
         network:
           get_input: oam_net_name
+        order:
+          get_input:
+          - port_oam_port_1_order
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

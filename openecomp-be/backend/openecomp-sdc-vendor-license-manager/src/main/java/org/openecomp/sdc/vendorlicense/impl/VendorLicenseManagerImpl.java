@@ -25,6 +25,8 @@ import org.openecomp.sdc.activityLog.ActivityLogManager;
 import org.openecomp.sdc.activityLog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.logging.context.impl.MdcDataErrorMessage;
 import org.openecomp.sdc.logging.types.LoggerConstants;
@@ -87,6 +89,8 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
       LicenseKeyGroupDaoFactory.getInstance().createInterface();
   private ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
+  private static final Logger logger =
+      LoggerFactory.getLogger(VendorLicenseManagerImpl.class);
 
   private static void sortVlmListByModificationTimeDescOrder(
       List<VersionedVendorLicenseModel> vendorLicenseModels) {
@@ -178,14 +182,21 @@ public class VendorLicenseManagerImpl implements VendorLicenseManager {
         version.setStatus(VersionStatus.Locked);
       }
 
-      VendorLicenseModelEntity vlm =
-          vendorLicenseModelDao.get(new VendorLicenseModelEntity(entry.getKey(), version));
-      if (vlm != null) {
-        VersionedVendorLicenseModel versionedVlm = new VersionedVendorLicenseModel();
-        versionedVlm.setVendorLicenseModel(vlm);
-        versionedVlm.setVersionInfo(versionInfo);
-        vendorLicenseModels.add(versionedVlm);
-      }
+      try {
+        VendorLicenseModelEntity vlm =
+            vendorLicenseModelDao.get(new VendorLicenseModelEntity(entry.getKey(), version));
+        if (vlm != null) {
+          VersionedVendorLicenseModel versionedVlm = new VersionedVendorLicenseModel();
+          versionedVlm.setVendorLicenseModel(vlm);
+          versionedVlm.setVersionInfo(versionInfo);
+          vendorLicenseModels.add(versionedVlm);
+        }
+      }catch(RuntimeException rte){
+      logger.error("Error trying to retrieve vlm["+entry.getKey()+"] version["+version.toString
+          ()+"] " +
+          "message:"+rte
+          .getMessage());
+    }
     }
 
     sortVlmListByModificationTimeDescOrder(vendorLicenseModels);

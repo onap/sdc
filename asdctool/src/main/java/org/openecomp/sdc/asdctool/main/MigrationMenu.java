@@ -35,6 +35,8 @@ import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707Config;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.DistributionStatusUpdate;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707VnfFix;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.VfModulesPropertiesAdding;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -64,7 +66,10 @@ public class MigrationMenu {
 		FIX_ICONS("fix-icons", "titanFixUtils"),
 		MIGRATION_1610_1702("migrate-1610-1702", "migration1702"),
 		MIGRATION_1702_1707("migrate-1702-1707", "migration1707"),
-		VFMODULES_PROPERTIES_ADDING("vfModules-properties-adding", "vfModulesPropertiesAdding");
+		DISTRIBUTION_STATUS_UPDATE_1707("distribution-status-update-1707", "distributionStatusUpdate"),
+		VFMODULES_PROPERTIES_ADDING("vfModules-properties-adding", "vfModulesPropertiesAdding"),
+		MIGRATION_1707_RELATIONS_FIX("fix-relations-after-migration-1707", "migration1707relationsFix"),
+		MIGRATION_1707_VNF_FIX("fix-vnf-after-migration-1707", "migration1707vnfFix");
 		// UPDATE_DATA_TYPES("update_data_types", "updateDataTypes");
 
 		private String value, beanName;
@@ -238,9 +243,8 @@ public class MigrationMenu {
 				}
 			
 				break;
-			case MIGRATION_1702_1707:
+			case MIGRATION_1702_1707://this migration is currently not needed, but will be commented out for production env
 //				log.info("Start ASDC migration from 1702 to 1707");
-				System.exit(0);
 //				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
 //				isSuccessful = migration1707.migrate();
 //				if (isSuccessful) {
@@ -250,18 +254,59 @@ public class MigrationMenu {
 //					log.info("SDC migration from 1702 to 1707 has failed");
 //					System.exit(2);
 //				}
+				System.exit(0);
 				break;
-			case VFMODULES_PROPERTIES_ADDING:
-				log.info("Start adding new properties to vfModules");
-				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
-				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
-				if (isSuccessful) {
-					log.info("Adding new properties to vfModules was finished successfully");
-					System.exit(0);
-				} else{
-					log.info("Adding new properties to vfModules has failed");
-					System.exit(2);
-				}
+			case VFMODULES_PROPERTIES_ADDING://this migration is currently not needed, but will be commented out for production env
+//				log.info("Start adding new properties to vfModules");
+//				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
+//				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
+//				if (isSuccessful) {
+//					log.info("Adding new properties to vfModules was finished successfully");
+//					System.exit(0);
+//				} else{
+//					log.info("Adding new properties to vfModules has failed");
+//					System.exit(2);
+//				}
+				System.exit(0);
+				break;
+			case MIGRATION_1707_VNF_FIX://this migration is currently not needed, but will be commented out for production env
+//				log.info("Start fixing vnf after 1707 migration");
+//				Migration1707VnfFix migrationVnfFix = (Migration1707VnfFix) context.getBean(operationEnum.getBeanName());
+//				isSuccessful = migrationVnfFix.migrate();
+//				if (isSuccessful) {
+//					log.info("Fixing VNFs after 1707 migration was finished successfully");
+//					System.exit(0);
+//				} else{
+//					log.info("Fixing VNFs after 1707 migration has failed");
+//					System.exit(2);
+//				}
+				System.exit(0);
+				break;
+			case DISTRIBUTION_STATUS_UPDATE_1707://not needed can be dropped
+//				log.info("Start Distribution status update 1707");
+//				DistributionStatusUpdate distStatusUpdate = (DistributionStatusUpdate) context.getBean(operationEnum.getBeanName());
+//				isSuccessful = distStatusUpdate.migrate();
+//				if (isSuccessful) {
+//					log.info("ASDC Distribution status update 1707 was finished successful");
+//					System.exit(0);
+//				} else{
+//					log.info("ASDC Distribution status update 1707 has failed");
+//					System.exit(2);
+//				}
+				System.exit(0);
+				break;
+			case MIGRATION_1707_RELATIONS_FIX://not needed can be dropped
+//				log.info("Start fixing relations after 1707 migration");
+//				Migration migrationFix = (Migration1707RelationsFix) context.getBean(operationEnum.getBeanName());
+//				isSuccessful = migrationFix.migrate();
+//				if (isSuccessful) {
+//					log.info("Fixing relations after 1707 migration was finished successfully");
+//					System.exit(0);
+//				} else{
+//					log.info("Fixing relations after 1707 migration has failed");
+//					System.exit(2);
+//				}
+				System.exit(0);
 				break;
 			default:
 				usageAndExit();
@@ -298,6 +343,9 @@ public class MigrationMenu {
 		System.out.println("Usage: migrate-1610-1702 <configuration dir>");
 		System.out.println("Usage: migrate-1702-1707 <configuration dir>");
 		System.out.println("Usage: update_data_types <configuration dir> <data_types_input_file path>");
+		System.out.println("Usage: distribution-status-update-1707");
 		System.out.println("Usage: vfModules-properties-adding <group_types_input_file path> <configuration dir>");
+		System.out.println("Usage: fix-relations-after-migration-1707 <configuration dir>");
+		System.out.println("Usage: fix-vnf-after-migration-1707 <configuration dir>");
 	}
 }

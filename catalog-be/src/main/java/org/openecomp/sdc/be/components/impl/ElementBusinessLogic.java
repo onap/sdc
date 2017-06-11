@@ -990,9 +990,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 		Map<String, List<? extends Component>> resMap = new HashMap<>();
 
-		Either<List<Resource>, StorageOperationStatus> resResources = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.RESOURCE);
+		Either<List<Resource>, StorageOperationStatus> resResources = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.RESOURCE, true);
 		if (resResources.isLeft()) {
-			Either<List<Service>, StorageOperationStatus> resServices = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE);
+			Either<List<Service>, StorageOperationStatus> resServices = toscaOperationFacade.getCatalogComponents(ComponentTypeEnum.SERVICE, true);
 			if (resServices.isLeft()) {
 				// Either<List<Product>, StorageOperationStatus> resProducts = productOperation.getProductCatalogData(false);
 				// if (resProducts.isLeft()) {
@@ -1021,7 +1021,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 
 		if (filters == null || filters.isEmpty()) {
-			Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum);
+			Either<List<Component>, StorageOperationStatus> componentsList = toscaOperationFacade.getCatalogComponents(assetTypeEnum, false);
 			if(componentsList.isRight()) {
 				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentsList.right().value())));
 			}

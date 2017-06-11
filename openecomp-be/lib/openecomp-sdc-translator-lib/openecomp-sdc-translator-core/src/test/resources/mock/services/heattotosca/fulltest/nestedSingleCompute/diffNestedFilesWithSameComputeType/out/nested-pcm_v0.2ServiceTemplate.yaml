@@ -11,6 +11,11 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_pcm_port_0_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
@@ -23,6 +28,11 @@ topology_template:
       immutable: false
       type: string
       description: CPS network gateway
+    port_pcm_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     pcm_image_name:
       label: image name
       hidden: false
@@ -41,12 +51,32 @@ topology_template:
       immutable: false
       type: string
       description: CPS network ip
+    port_pcm_port_1_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     pcm_flavor_name:
       label: PCRF CM flavor name
       hidden: false
       immutable: false
       type: string
       description: flavor name of PCRF CM instance
+    port_pcm_port_0_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_pcm_port_0_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pcm_port_1_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     pcm_vol:
       label: CPS Cluman Cinder Volume
       hidden: false
@@ -83,12 +113,32 @@ topology_template:
       immutable: false
       type: string
       description: CPS network mask
+    port_pcm_port_1_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pcm_port_0_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     oam_net_name:
       label: OAM network name
       hidden: false
       immutable: false
       type: string
       description: OAM network name
+    port_pcm_port_1_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_pcm_port_1_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
   node_templates:
     pcm_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -101,15 +151,35 @@ topology_template:
             is_required: false
         security_groups:
         - get_input: security_group_name
+        network_role:
+          get_input:
+          - port_pcm_port_1_network_role
+          - index_value
         fixed_ips:
         - ip_address:
             get_input: oam_net_ip
+        subnetpoolid:
+          get_input:
+          - port_pcm_port_1_subnetpoolid
+          - index_value
         mac_requirements:
           mac_count_required:
             is_required: false
+        exCP_naming:
+          get_input:
+          - port_pcm_port_1_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pcm_port_1_vlan_requirements
+          - index_value
         network_role_tag: oam
         network:
           get_input: oam_net_name
+        order:
+          get_input:
+          - port_pcm_port_1_order
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -139,15 +209,35 @@ topology_template:
             is_required: false
         security_groups:
         - get_input: security_group_name
+        network_role:
+          get_input:
+          - port_pcm_port_0_network_role
+          - index_value
         fixed_ips:
         - ip_address:
             get_input: cps_net_ip
+        subnetpoolid:
+          get_input:
+          - port_pcm_port_0_subnetpoolid
+          - index_value
         mac_requirements:
           mac_count_required:
             is_required: false
+        exCP_naming:
+          get_input:
+          - port_pcm_port_0_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pcm_port_0_vlan_requirements
+          - index_value
         network_role_tag: cps
         network:
           get_input: cps_net_name
+        order:
+          get_input:
+          - port_pcm_port_0_order
+          - index_value
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

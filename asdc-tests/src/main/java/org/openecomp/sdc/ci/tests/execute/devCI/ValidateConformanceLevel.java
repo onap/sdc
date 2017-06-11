@@ -63,8 +63,35 @@ public class ValidateConformanceLevel extends ComponentBaseTest {
 		Service serviceFirstImport = ResponseParser.parseToObjectUsingMapper(createdService.getResponse(), Service.class);
 		Component serviceObject = AtomicOperationUtils.changeComponentState(serviceFirstImport, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
 		
-		RestResponse apiRes = ComponentRestUtils.validateConformanceLevel(serviceObject.getUniqueId(), user.getUserId());
+		RestResponse apiRes = ComponentRestUtils.validateConformanceLevel(serviceObject.getUUID(), user.getUserId());
 		String result = apiRes.getResponse();
+		assertTrue(apiRes.getErrorCode() == 200);
+		assertTrue(result.equals("true"));
+	}
+	
+	@Test
+	public void testValidateServiceConformanceLevelForSecondMajorVersion() throws Exception {
+		User user = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		
+		ServiceReqDetails service = ElementFactory.getDefaultService();
+		RestResponse createdService = ServiceRestUtils.createService(service, user);
+		BaseRestUtils.checkCreateResponse(createdService);
+		Service serviceFirstImport = ResponseParser.parseToObjectUsingMapper(createdService.getResponse(), Service.class);
+		Component serviceObject = AtomicOperationUtils.changeComponentState(serviceFirstImport, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		String uuid1 = serviceObject.getUUID();
+		Component service20Object = AtomicOperationUtils.changeComponentState(serviceFirstImport, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CHECKIN, true).getLeft();
+		service20Object = AtomicOperationUtils.changeComponentState(service20Object, UserRoleEnum.DESIGNER, LifeCycleStatesEnum.CERTIFY, true).getLeft();
+		String uuid2 = service20Object.getUUID();
+		
+		assertTrue(uuid1 != uuid2);
+		
+		RestResponse apiRes = ComponentRestUtils.validateConformanceLevel(uuid1, user.getUserId());
+		String result = apiRes.getResponse();
+		assertTrue(apiRes.getErrorCode() == 200);
+		assertTrue(result.equals("true"));
+		
+		apiRes = ComponentRestUtils.validateConformanceLevel(uuid2, user.getUserId());
+		result = apiRes.getResponse();
 		assertTrue(apiRes.getErrorCode() == 200);
 		assertTrue(result.equals("true"));
 	}

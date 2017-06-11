@@ -74,7 +74,6 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.info.MergedArtifactInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -542,8 +541,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		try {
 			Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> prepareForUpdate = null;
 			Resource preparedResource = null;
-
-			Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(csar.left().value(), csarUUID, yamlFileName, oldRresource, user, true);
+			Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, newRresource, toscaYamlCsarStatus.left().value().getValue(), user);
+			if (uploadComponentInstanceInfoMap.isRight()) {
+				ResponseFormat responseFormat = uploadComponentInstanceInfoMap.right().value();
+				componentsUtils.auditResource(responseFormat, user, newRresource, "", "", updateResource, null);
+				result = Either.right(responseFormat);
+				return result;
+			}
+			Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.left().value().getInstances();
+			Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(csar.left().value(), csarUUID, yamlFileName, oldRresource, user, true, instances);
 			if (findNodeTypesArtifactsToHandleRes.isRight()) {
 				log.debug("failed to find node types for update with artifacts during import csar {}. ", csarUUID);
 				result = Either.right(findNodeTypesArtifactsToHandleRes.right().value());
@@ -571,14 +577,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					return result;
 				}
 
-				Either<ParsedToscaYamlInfo, ResponseFormat> uploadComponentInstanceInfoMap = parseResourceInfoFromYaml(yamlFileName, preparedResource, yamlFileContents, user);
-				if (uploadComponentInstanceInfoMap.isRight()) {
-					ResponseFormat responseFormat = uploadComponentInstanceInfoMap.right().value();
-					componentsUtils.auditResource(responseFormat, user, preparedResource, "", "", updateResource, null);
-					result = Either.right(responseFormat);
-					return result;
-				}
-
 				Map<String, InputDefinition> inputs = uploadComponentInstanceInfoMap.left().value().getInputs();
 				Either<Resource, ResponseFormat> createInputsOnResource = createInputsOnResource(preparedResource, user, inputs, true);
 				if (createInputsOnResource.isRight()) {
@@ -590,7 +588,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 				preparedResource = createInputsOnResource.left().value();
 
-				Map<String, UploadComponentInstanceInfo> instances = uploadComponentInstanceInfoMap.left().value().getInstances();
 				Either<Resource, ResponseFormat> createResourcesInstancesEither = createResourceInstances(user, yamlFileName, preparedResource, instances, true, false, parseNodeTypeInfoYamlEither.left().value());
 				if (createResourcesInstancesEither.isRight()) {
 					log.debug("failed to create resource instances status is {}", createResourcesInstancesEither.right().value());
@@ -677,7 +674,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user,
-			boolean inTransaction) {
+			boolean inTransaction, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
 
 		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
@@ -685,7 +682,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		try {
 			nodeTypesArtifactsToHandleRes = Either.left(nodeTypesArtifactsToHandle);
-			List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractedVfcToscaNames = extractVfcToscaNames(csar, yamlFileName, oldResource.getSystemName());
+			List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractedVfcToscaNames = extractVfcToscaNames(csar, yamlFileName, oldResource.getSystemName(), uploadComponentInstanceInfoMap);
 			validateNodeTypeIdentifiers(extractedVfcsArtifacts, extractedVfcToscaNames);
 			Either<EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>, ResponseFormat> curNodeTypeArtifactsToHandleRes = null;
 			EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>> curNodeTypeArtifactsToHandle = null;
@@ -913,7 +910,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return handleNodeTypeArtifactsRes;
 	}
 
-	private List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractVfcToscaNames(Map<String, byte[]> csar, String yamlFileName, String vfResourceName) {
+	@SuppressWarnings("unchecked")
+	private List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractVfcToscaNames(Map<String, byte[]> csar, String yamlFileName, String vfResourceName, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
 		List<ImmutablePair<ImmutablePair<String, List<String>>, String>> vfcToscaNames = new ArrayList<>();
 		Map<String, Object> nodeTypes;
 		if (csar != null) {
@@ -921,12 +919,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			putNodeTypesFromYaml(csar, yamlFileName, nodeTypes);
 			putNodeTypesFromYaml(csar, Constants.GLOBAL_SUBSTITUTION_TYPES_SERVICE_TEMPLATE, nodeTypes);
 			putNodeTypesFromYaml(csar, Constants.ABSTRACT_SUBSTITUTE_GLOBAL_TYPES_SERVICE_TEMPLATE, nodeTypes);
-
+			Map<String,String> nestedServiceTemplatesMap = new HashMap<>();
+			for(UploadComponentInstanceInfo ci : uploadComponentInstanceInfoMap.values()){
+				if(ci.getProperties() != null && ci.getProperties().containsKey("service_template_filter")){
+					String tempName = CsarUtils.DEFINITIONS_PATH + ((Map<String, String>)ci.getProperties().get("service_template_filter").get(0).getValue()).get("substitute_service_template");
+					putNodeTypesFromYaml(csar,tempName, nodeTypes);
+					nestedServiceTemplatesMap.put(ci.getType(), tempName);
+				}
+			}
+			
 			if (!nodeTypes.isEmpty()) {
 				Iterator<Entry<String, Object>> nodesNameEntry = nodeTypes.entrySet().iterator();
 				while (nodesNameEntry.hasNext()) {
 					Entry<String, Object> nodeType = nodesNameEntry.next();
-					addVfcToscaNameFindSubstitutes(csar, vfResourceName, vfcToscaNames, nodeType.getKey());
+					addVfcToscaNameFindSubstitutes(csar, vfResourceName, vfcToscaNames, nodeType.getKey(), nestedServiceTemplatesMap);
 				}
 			}
 		}
@@ -947,20 +953,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 	}
 
-	private void addVfcToscaNameFindSubstitutes(Map<String, byte[]> csar, String vfResourceName, List<ImmutablePair<ImmutablePair<String, List<String>>, String>> vfcToscaNames, String nodeTypeFullName) {
+	private void addVfcToscaNameFindSubstitutes(Map<String, byte[]> csar, String vfResourceName, List<ImmutablePair<ImmutablePair<String, List<String>>, String>> vfcToscaNames, String nodeTypeFullName, Map<String, String> nestedServiceTemplatesMap) {
 
 		String toscaResourceName = buildNestedVfcToscaResourceName(vfResourceName, nodeTypeFullName);
-		String nodeTypeTemplateYamlName = buildNestedSubstituteYamlName(nodeTypeFullName);
+		String nodeTypeTemplateYamlName =null;
+		if(nestedServiceTemplatesMap.containsKey(nodeTypeFullName)){
+			nodeTypeTemplateYamlName = nestedServiceTemplatesMap.get(nodeTypeFullName);
+		}
 		List<String> relatedVfcsToscaNameSpaces = new ArrayList<>();
 		relatedVfcsToscaNameSpaces.add(buildNestedVfcToscaNamespace(nodeTypeFullName));
-		if (csar.containsKey(nodeTypeTemplateYamlName)) {
-			addSubstituteToscaNamespacesRecursively(csar, nodeTypeTemplateYamlName, relatedVfcsToscaNameSpaces);
+		if (nodeTypeTemplateYamlName!=null && csar.containsKey(nodeTypeTemplateYamlName)) {
+			addSubstituteToscaNamespacesRecursively(csar, nodeTypeTemplateYamlName, relatedVfcsToscaNameSpaces, nestedServiceTemplatesMap);
 		}
 		ImmutablePair<String, List<String>> toscaNameSpacesHierarchy = new ImmutablePair<>(nodeTypeFullName, relatedVfcsToscaNameSpaces);
 		vfcToscaNames.add(new ImmutablePair<>(toscaNameSpacesHierarchy, toscaResourceName));
 	}
 
-	private void addSubstituteToscaNamespacesRecursively(Map<String, byte[]> csar, String yamlFileName, List<String> toscaNameSpaces) {
+	private void addSubstituteToscaNamespacesRecursively(Map<String, byte[]> csar, String yamlFileName, List<String> toscaNameSpaces, Map<String, String> nestedServiceTemplatesMap) {
 
 		Map<String, Object> nodeTypes = new HashMap<>();
 
@@ -978,10 +987,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				}
 				toscaNameSpaces.add(toscaNameSpace);
 
-				String nodeTypeTemplateYamlName = buildNestedSubstituteYamlName(nodeTypeFullName);
+				String nodeTypeTemplateYamlName =null;
+				if(nestedServiceTemplatesMap.containsKey(nodeTypeFullName)){
+					nodeTypeTemplateYamlName = nestedServiceTemplatesMap.get(nodeTypeFullName);
+				}
 
-				if (csar.containsKey(nodeTypeTemplateYamlName)) {
-					addSubstituteToscaNamespacesRecursively(csar, nodeTypeTemplateYamlName, toscaNameSpaces);
+				if (nodeTypeTemplateYamlName!=null && csar.containsKey(nodeTypeTemplateYamlName)) {
+					addSubstituteToscaNamespacesRecursively(csar, nodeTypeTemplateYamlName, toscaNameSpaces, nestedServiceTemplatesMap);
 				}
 			}
 		}
@@ -1651,7 +1663,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Either<Resource, ResponseFormat> result;
 		Either<Resource, ResponseFormat> createResourcesInstancesEither;
 
-		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = findNodeTypeArtifactsToCreate(csar, yamlName, resource);
+		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = findNodeTypeArtifactsToCreate(csar, yamlName, resource, uploadComponentInstanceInfoMap);
 
 		log.debug("************* Going to create all nodes {}", yamlName);
 		Either<Map<String, Resource>, ResponseFormat> createdResourcesFromdNodeTypeMap = this.handleNodeTypes(yamlName, resource, user, topologyTemplateYaml, csar, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts);
@@ -1694,10 +1706,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return result;
 	}
 
-	private Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> findNodeTypeArtifactsToCreate(Map<String, byte[]> csar, String yamlName, Resource resource) {
+	private Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> findNodeTypeArtifactsToCreate(Map<String, byte[]> csar, String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
 
 		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
-		List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractedVfcToscaNames = extractVfcToscaNames(csar, yamlName, resource.getSystemName());
+		List<ImmutablePair<ImmutablePair<String, List<String>>, String>> extractedVfcToscaNames = extractVfcToscaNames(csar, yamlName, resource.getSystemName(), uploadComponentInstanceInfoMap);
 		validateNodeTypeIdentifiers(extractedVfcsArtifacts, extractedVfcToscaNames);
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = null;
 		if (!extractedVfcsArtifacts.isEmpty() && !extractedVfcToscaNames.isEmpty()) {
@@ -3429,7 +3441,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties = new HashMap<>();
 		Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements = new HashMap<>();
 		Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
-		Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
+		Map<String, List<PropertyDefinition>> instAttributes = new HashMap<>();
 		Map<String, Resource> originCompMap = new HashMap<>();
 		List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 
@@ -4321,7 +4333,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				List<Object> getInputList = (List<Object>) getInput;
 				getInputInfo.setPropName(propName);
 				getInputInfo.setInputName((String) getInputList.get(0));
-				if (getInputList.size() >= 1) {
+				if (getInputList.size() > 1) {
 					Object indexObj = getInputList.get(1);
 					if (indexObj instanceof Integer) {
 						getInputInfo.setIndexValue((Integer) indexObj);
@@ -5838,7 +5850,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(true);
 	}
 
-	// Tal G for extending inheritance US815447
+	// for extending inheritance US815447
 	private Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource, Resource updateInfoResource, AuditingActionEnum actionEnum) {
 		// If updated resource is not deriving, should fail validation
 		/*
@@ -6633,12 +6645,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return toscaResourceName;
 	}
 
-	private String buildNestedSubstituteYamlName(String nodeTypeFullName) {
-		String[] nodeTypeFullNameParsed = nodeTypeFullName.split("\\.");
-		String nodeTypeActualName = nodeTypeFullNameParsed[nodeTypeFullNameParsed.length - 1];
-		return CsarUtils.DEFINITIONS_PATH + nodeTypeActualName + Constants.SERVICE_TEMPLATE_FILE_POSTFIX;
-	}
-
 	public ICacheMangerOperation getCacheManagerOperation() {
 		return cacheManagerOperation;
 	}
@@ -6726,6 +6732,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId, paramsToRetuen);
 
 		if (resourceResultEither.isRight()) {
+			if(resourceResultEither.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+				log.debug("Failed to found resource with id {} ", resourceId);
+				Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
+			}
+			
 			log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn.toString());
 			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(resourceResultEither.right().value()), ""));
 		}

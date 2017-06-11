@@ -1,11 +1,18 @@
 .sequence-diagram {
-  @extend .flex-column;
   .sequence-diagram-sequencer {
-    flex: 0 1 auto;
-    margin-bottom: 30px;
+	.asdcs-diagram {
+	  overflow: auto;
+	  max-height: 60vh;
+	}
+	.asdcs-editor {
+	  height: 60vh;
+	}
   }
   .sequence-diagram-action-buttons {
-    flex: 0.1;
-    text-align: center;
+	margin-left: 20px;
+	margin-top: 20px;
+	button:first-of-type {
+	  margin-right: 20px;
+	}
   }
 }

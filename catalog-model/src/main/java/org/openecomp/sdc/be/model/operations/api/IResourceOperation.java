@@ -137,10 +137,5 @@ public interface IResourceOperation extends IComponentOperation {
 	 */
 	Either<List<Resource>, StorageOperationStatus> getVFResources();
 
-	/**
-	 *
-	 * @return all resources
-	 */
-	Either<List<Resource>, StorageOperationStatus> getAll();
 
 }

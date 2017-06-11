@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="General" >
+  <test name="Test">
+    <classes>
+      <class name="org.openecomp.sdc.ci.tests.execute.general.SampleTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.general.ManageEcompConsumerCredentials"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.general.UuidTest"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- General -->

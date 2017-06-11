@@ -20,6 +20,7 @@ export default (state = {}, action) => {
 		case actionTypes.COMPONENT_LOAD:
 			return {
 				...state,
+				data: action.component,
 				formReady: null,
 				formName: forms.ALL_SPC_FORMS,
 				genericFieldInfo: {

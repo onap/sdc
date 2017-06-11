@@ -733,91 +733,6 @@ topology_template:
           capability: tosca.capabilities.Node
           node: packet_internal_network
           relationship: tosca.relationships.DependsOn
-    QRouter:
-      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_QRouterTemplate
-      directives:
-      - substitutable
-      properties:
-        vf_module_id:
-          get_input: vf_module_id
-        qrouter_cluster_name:
-          get_input: qrouter_cluster_name
-        oam_private_net_name:
-          get_input: oam_private_net_name
-        qrouter_flavor_name:
-          get_input: qrouter_flavor_name
-        version_number:
-          get_input: version_number
-        vf_module_name:
-          get_input: vf_module_name
-        service_template_filter:
-          substitute_service_template: FEAdd_On_Module_QRouterTemplateServiceTemplate.yaml
-        domain_name:
-          get_input: domain_name
-        ntp_timezone:
-          get_input: ntp_timezone
-        vnf_id:
-          get_input: vnf_id
-        availability_zone_0:
-          get_input: availability_zone_0
-        region_name:
-          get_input: region_name
-        manager_name_0:
-          get_input: manager_name_0
-        qrouter_names:
-          get_input: qrouter_names
-        tenant_name:
-          get_input: tenant_name
-        security_group: security_group
-        cdr_network:
-          get_input: cdr_network
-        qrouter_image_name:
-          get_input: base_image_name
-        qrouter_volume_type_1:
-          get_input: qrouter_volume_type_1
-        qrouter_volume_type_2:
-          get_input: qrouter_volume_type_2
-        qrouter_node_count:
-          get_input: qrouter_node_count
-        qrouter_volume_name_2:
-          get_input: qrouter_volume_name_2
-        qrouter_volume_name_1:
-          get_input: qrouter_volume_name_1
-        qrouter_volume_name_0:
-          get_input: qrouter_volume_name_0
-        qrouter_volume_type_0:
-          get_input: qrouter_volume_type_0
-        qrouter_volume_size_0:
-          get_input: qrouter_volume_size_0
-        qrouter_volume_size_1:
-          get_input: qrouter_volume_size_1
-        manager_oam_direct_ip_0:
-          get_input: manager_oam_direct_ip_0
-        qrouter_volume_size_2:
-          get_input: qrouter_volume_size_2
-        rpmrepository_ip_0:
-          get_input: rpmrepository_ip_0
-      requirements:
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: security_group
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_mirror_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
-      - dependency:
-          capability: tosca.capabilities.Node
-          node: packet_internal_network
-          relationship: tosca.relationships.DependsOn
     packet_mirror_network:
       type: org.openecomp.resource.vl.nodes.heat.network.neutron.Net
       properties:
@@ -915,11 +830,11 @@ topology_template:
       requirements:
       - port:
           capability: attachment_oam_private_net_network_port
-          node: QRouter
+          node: QRouter0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_cdr_network_port
-          node: QRouter
+          node: QRouter0
           relationship: org.openecomp.relationships.AttachesTo
       - port:
           capability: attachment_oam_private_net_network_port
@@ -957,6 +872,91 @@ topology_template:
           capability: attachment_packet_internal_network_port
           node: vProbe
           relationship: org.openecomp.relationships.AttachesTo
+    QRouter0:
+      type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_QRouterTemplate
+      directives:
+      - substitutable
+      properties:
+        vf_module_id:
+          get_input: vf_module_id
+        qrouter_cluster_name:
+          get_input: qrouter_cluster_name
+        oam_private_net_name:
+          get_input: oam_private_net_name
+        qrouter_flavor_name:
+          get_input: qrouter_flavor_name
+        version_number:
+          get_input: version_number
+        vf_module_name:
+          get_input: vf_module_name
+        service_template_filter:
+          substitute_service_template: FEAdd_On_Module_QRouterTemplateServiceTemplate.yaml
+        domain_name:
+          get_input: domain_name
+        ntp_timezone:
+          get_input: ntp_timezone
+        vnf_id:
+          get_input: vnf_id
+        availability_zone_0:
+          get_input: availability_zone_0
+        region_name:
+          get_input: region_name
+        manager_name_0:
+          get_input: manager_name_0
+        qrouter_names:
+          get_input: qrouter_names
+        tenant_name:
+          get_input: tenant_name
+        security_group: security_group
+        cdr_network:
+          get_input: cdr_network
+        qrouter_image_name:
+          get_input: base_image_name
+        qrouter_volume_type_1:
+          get_input: qrouter_volume_type_1
+        qrouter_volume_type_2:
+          get_input: qrouter_volume_type_2
+        qrouter_node_count:
+          get_input: qrouter_node_count
+        qrouter_volume_name_2:
+          get_input: qrouter_volume_name_2
+        qrouter_volume_name_1:
+          get_input: qrouter_volume_name_1
+        qrouter_volume_name_0:
+          get_input: qrouter_volume_name_0
+        qrouter_volume_type_0:
+          get_input: qrouter_volume_type_0
+        qrouter_volume_size_0:
+          get_input: qrouter_volume_size_0
+        qrouter_volume_size_1:
+          get_input: qrouter_volume_size_1
+        manager_oam_direct_ip_0:
+          get_input: manager_oam_direct_ip_0
+        qrouter_volume_size_2:
+          get_input: qrouter_volume_size_2
+        rpmrepository_ip_0:
+          get_input: rpmrepository_ip_0
+      requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: security_group
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_mirror_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: packet_internal_network
+          relationship: tosca.relationships.DependsOn
     vLB:
       type: org.openecomp.resource.abstract.nodes.heat.FEAdd_On_Module_vLBTemplate
       directives:
@@ -1062,8 +1062,8 @@ topology_template:
       members:
       - vLBAgent
       - vProbe
-      - QRouter
       - packet_mirror_network
       - packet_internal_network
       - security_group
+      - QRouter0
       - vLB

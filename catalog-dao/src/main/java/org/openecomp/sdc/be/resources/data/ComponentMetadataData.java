@@ -51,6 +51,7 @@ public abstract class ComponentMetadataData extends GraphNode {
 		metadataDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
 		metadataDataDefinition.setCreationDate((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
 		metadataDataDefinition.setDescription((String) properties.get(GraphPropertiesDictionary.DESCRIPTION.getProperty()));
+		metadataDataDefinition.setConformanceLevel((String) properties.get(GraphPropertiesDictionary.CONFORMANCE_LEVEL.getProperty()));
 		metadataDataDefinition.setIcon((String) properties.get(GraphPropertiesDictionary.ICON.getProperty()));
 		metadataDataDefinition.setHighestVersion((Boolean) properties.get(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty()));
 		metadataDataDefinition.setLastUpdateDate((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
@@ -87,6 +88,7 @@ public abstract class ComponentMetadataData extends GraphNode {
 		addIfExists(map, GraphPropertiesDictionary.VERSION, metadataDataDefinition.getVersion());
 		addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, metadataDataDefinition.getCreationDate());
 		addIfExists(map, GraphPropertiesDictionary.DESCRIPTION, metadataDataDefinition.getDescription());
+		addIfExists(map, GraphPropertiesDictionary.CONFORMANCE_LEVEL, metadataDataDefinition.getConformanceLevel());
 		addIfExists(map, GraphPropertiesDictionary.ICON, metadataDataDefinition.getIcon());
 		addIfExists(map, GraphPropertiesDictionary.IS_HIGHEST_VERSION, metadataDataDefinition.isHighestVersion());
 		addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, metadataDataDefinition.getLastUpdateDate());

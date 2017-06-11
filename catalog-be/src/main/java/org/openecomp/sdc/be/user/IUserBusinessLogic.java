@@ -25,7 +25,6 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.model.FunctionalMenuInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -50,7 +49,4 @@ public interface IUserBusinessLogic {
 	public Either<User, ResponseFormat> deActivateUser(User modifier, String userUniuqeIdToDeactive);
 
 	public Either<User, ResponseFormat> authorize(User authUser);
-
-	public Either<FunctionalMenuInfo, ActionStatus> getFunctionalMenu(String userId);
-
 }

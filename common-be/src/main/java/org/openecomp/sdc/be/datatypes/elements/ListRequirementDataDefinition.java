@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonValue;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class ListRequirementDataDefinition extends ListDataDefinition<RequirementDataDefinition> {
 	
@@ -33,11 +34,8 @@ public class ListRequirementDataDefinition extends ListDataDefinition<Requiremen
 		this.listToscaDataDefinition = listToscaDataDefinition;
 	}
 
-	public ListRequirementDataDefinition mergeListItemsByName(ListRequirementDataDefinition other){
-		Map<String, RequirementDataDefinition> mapByName = listToMapByName();
-		Map<String, RequirementDataDefinition> mapOtherByName = other.listToMapByName();
-		mapByName.putAll(mapOtherByName);
-		return new ListRequirementDataDefinition(mapByName.values().stream().collect(Collectors.toList()));	
-	}
+
+	
+	
 	
 }

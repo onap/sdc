@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
@@ -46,12 +47,12 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
@@ -101,7 +102,9 @@ public class ResourceImportManager {
 
 	@Autowired
 	protected ResourceOperation resourceOperation;
-
+	
+	public final static Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern
+			.compile("[\\w\\-\\_\\d\\:]+");
 	@Autowired
 	protected CapabilityTypeOperation capabilityTypeOperation;
 	@Autowired
@@ -289,7 +292,9 @@ public class ResourceImportManager {
 		eitherResult = setCapabilities(toscaJson, resource, parentResource);
 		if (eitherResult.isRight())
 			return eitherResult;
-		setProperties(toscaJson, resource);
+		eitherResult = setProperties(toscaJson, resource);
+		if (eitherResult.isRight())
+			return eitherResult;
 		eitherResult = setRequirements(toscaJson, resource, parentResource);
 		if (eitherResult.isRight())
 			return eitherResult;
@@ -467,10 +472,10 @@ public class ResourceImportManager {
 		return result;
 	}
 
-	private ResultStatusEnum setProperties(Map<String, Object> toscaJson, Resource resource) {
+	private Either<Boolean, ResponseFormat> setProperties(Map<String, Object> toscaJson, Resource resource) {
 		Map<String, Object> reducedToscaJson = new HashMap<>(toscaJson);
 		ImportUtils.removeElementFromJsonMap(reducedToscaJson, "capabilities");
-		ResultStatusEnum result = ResultStatusEnum.OK;
+		Either<Boolean, ResponseFormat> result = Either.left(true);
 		Either<Map<String, PropertyDefinition>, ResultStatusEnum> properties = ImportUtils.getProperties(reducedToscaJson);
 		if (properties.isLeft()) {
 			List<PropertyDefinition> propertiesList = new ArrayList<>();
@@ -478,28 +483,32 @@ public class ResourceImportManager {
 			if (value != null) {
 				for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
 					String name = entry.getKey();
+					if(!PROPERTY_NAME_PATTERN_IGNORE_LENGTH.matcher(name).matches()){
+						log.debug("The property with invalid name {} occured upon import resource {}. ", name, resource.getName());
+						result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromResultStatusEnum(ResultStatusEnum.INVALID_PROPERTY_NAME, JsonPresentationFields.PROPERTY)));
+					}
 					PropertyDefinition propertyDefinition = entry.getValue();
 					propertyDefinition.setName(name);
 					propertiesList.add(propertyDefinition);
 				}
 			}
 			resource.setProperties(propertiesList);
-		} else {
-			result = properties.right().value();
+		} else if(properties.right().value() != ResultStatusEnum.ELEMENT_NOT_FOUND){
+			result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromResultStatusEnum(properties.right().value(), JsonPresentationFields.PROPERTY)));
 		}
 		return result;
 	}
 
 	private ResultStatusEnum setAttributes(Map<String, Object> toscaJson, Resource resource) {
 		ResultStatusEnum result = ResultStatusEnum.OK;
-		Either<Map<String, AttributeDefinition>, ResultStatusEnum> attributes = ImportUtils.getAttributes(toscaJson);
+		Either<Map<String, PropertyDefinition>, ResultStatusEnum> attributes = ImportUtils.getAttributes(toscaJson);
 		if (attributes.isLeft()) {
-			List<AttributeDefinition> attributeList = new ArrayList<>();
-			Map<String, AttributeDefinition> value = attributes.left().value();
+			List<PropertyDefinition> attributeList = new ArrayList<>();
+			Map<String, PropertyDefinition> value = attributes.left().value();
 			if (value != null) {
-				for (Entry<String, AttributeDefinition> entry : value.entrySet()) {
+				for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
 					String name = entry.getKey();
-					AttributeDefinition attributeDef = entry.getValue();
+					PropertyDefinition attributeDef = entry.getValue();
 					attributeDef.setName(name);
 					attributeList.add(attributeDef);
 				}

@@ -55,17 +55,9 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         port_port_mac_requirements:
         - mac_count_required:
             is_required: false
-        vm_image_name:
-          get_input: image_smp_name
         port_port_network:
         - get_input: port_name
         compute_smp_name:
@@ -74,14 +66,22 @@ topology_template:
         - get_input: availability_zone_0
         vm_flavor_name:
           get_input: flavor_smp_name
+        compute_smp_user_data_format:
+        - RAW
+        port_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        vm_image_name:
+          get_input: image_smp_name
         compute_smp_metadata:
         - jx_vm_role: smp2
           vnf_id:
             get_input: vnf_id
           jx_lab_name:
             get_input: lab_name
-        compute_smp_user_data_format:
-        - RAW
         port_port_replacement_policy:
         - AUTO
         compute_smp_scheduler_hints:

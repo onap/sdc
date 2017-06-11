@@ -408,7 +408,23 @@ node_types:
         type: list
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
-        required: true  
+        required: true
+      network_role:
+        description: identical to VL network_role
+        type: string
+        required: false
+      order:
+        description: The order of the CP on the compute instance (e.g. eth2).
+        type: integer
+        required: false
+      exCP_naming:
+        description: CP Name
+        type: org.openecomp.datatypes.Naming
+        required: false
+      subnetpoolid:
+        description: subnet pool id
+        type: string
+        required: false
     capabilities:
       network.incoming.packets.rate:
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.

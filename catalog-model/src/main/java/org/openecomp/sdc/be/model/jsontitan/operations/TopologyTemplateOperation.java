@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Map.Entry;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -20,7 +22,6 @@ import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
@@ -31,6 +32,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.User;
@@ -117,6 +119,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 			result = Either.right(associateInstInputs);
 			return result;
 		}
+		StorageOperationStatus associateInstGroups = associateInstGroupsToComponent(topologyTemplateVertex, topologyTemplate);
+		if (associateInstProperties != StorageOperationStatus.OK) {
+			result = Either.right(associateInstInputs);
+			return result;
+		}
+		
 		StorageOperationStatus associateRequirements = associateRequirementsToResource(topologyTemplateVertex, topologyTemplate);
 		if (associateRequirements != StorageOperationStatus.OK) {
 			result = Either.right(associateRequirements);
@@ -251,6 +259,12 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 		Map<String, MapPropertiesDataDefinition> instProps = topologyTemplate.getInstInputs();
 		return associateInstInputsToComponent(nodeTypeVertex, instProps);
 	}
+	
+	public StorageOperationStatus associateInstGroupsToComponent(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
+		Map<String, MapGroupsDataDefinition> instGroups = topologyTemplate.getInstGroups();
+		return associateInstGroupsToComponent(nodeTypeVertex, instGroups);
+	}
+	
 
 	public StorageOperationStatus associateInstPropertiesToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instProps) {
 		if (instProps != null && !instProps.isEmpty()) {
@@ -271,20 +285,17 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 		}
 		return StorageOperationStatus.OK;
 	}
-
-	public StorageOperationStatus addInstInputsToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instInputs) {
-
-		if (instInputs != null && !instInputs.isEmpty()) {
-			instInputs.entrySet().forEach(i -> {
-				StorageOperationStatus status = addToscaDataDeepElementsBlockToToscaElement(nodeTypeVertex, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, i.getValue(), i.getKey());
-				if (status != StorageOperationStatus.OK) {
-					return;
-				}
-			});
+	
+	public StorageOperationStatus associateInstGroupsToComponent(GraphVertex nodeTypeVertex, Map<String, MapGroupsDataDefinition> instGroups) {
+		if (instGroups != null && !instGroups.isEmpty()) {
+			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.INST_GROUPS, EdgeLabelEnum.INST_GROUPS, instGroups);
+			if (assosiateElementToData.isRight()) {
+				return assosiateElementToData.right().value();
+			}
 		}
-
 		return StorageOperationStatus.OK;
 	}
+
 
 	public StorageOperationStatus deleteInstInputsToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instInputs) {
 
@@ -361,11 +372,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 	}
 
 	private StorageOperationStatus associateInstAttributesToComponent(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
-		Map<String, MapAttributesDataDefinition> instAttr = topologyTemplate.getInstAttributes();
+		Map<String, MapPropertiesDataDefinition> instAttr = topologyTemplate.getInstAttributes();
 		return associateInstAttributeToComponent(nodeTypeVertex, instAttr);
 	}
 
-	public StorageOperationStatus associateInstAttributeToComponent(GraphVertex nodeTypeVertex, Map<String, MapAttributesDataDefinition> instAttr) {
+	public StorageOperationStatus associateInstAttributeToComponent(GraphVertex nodeTypeVertex, Map<String, MapPropertiesDataDefinition> instAttr) {
 		if (instAttr != null && !instAttr.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.INST_ATTRIBUTES, EdgeLabelEnum.INST_ATTRIBUTES, instAttr);
 			if (assosiateElementToData.isRight()) {
@@ -953,6 +964,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 				if (instances != null && instances.getComponentInstances() != null && !instances.getComponentInstances().isEmpty()) {
 					for (ComponentInstanceDataDefinition ci : instances.getComponentInstances().values()) {
 						if (ci.getComponentUid().equals(elementV.getUniqueId())) {
+							log.debug("The resource {} failed to delete cause in use as component instance UniqueID = {} in {} with UniqueID {}", elementV.getUniqueId(), ci.getUniqueId(), containerV.getType(), containerV.getUniqueId());
 							return true;
 						}
 					}

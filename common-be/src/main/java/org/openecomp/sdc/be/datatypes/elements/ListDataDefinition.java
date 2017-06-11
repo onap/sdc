@@ -55,15 +55,17 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 			listToscaDataDefinition.forEach(e -> e.setOwnerIdIfEmpty(ownerId));
 		}
 	}
-
-
-	public Map<String, T> listToMapByName() {
-		Map<String, T> mapByName = new HashMap<>();
-		listToscaDataDefinition.forEach(e -> mapByName.put((String)e.getToscaPresentationValue(JsonPresentationFields.NAME), e));
-		return mapByName;
-	}
 	
-
+	@Override
+	public <S extends ToscaDataDefinition> S mergeFunction(S other, boolean allowDefaultValueOverride){
+		Map<String, T> mapByName = listToMapByName(listToscaDataDefinition);
+		List<T> otherList = ((ListDataDefinition)other).getListToscaDataDefinition();
+		for(T item : otherList){
+			mapByName.merge(item.getName(), item, (thisItem, otherItem) -> thisItem.mergeFunction(otherItem, allowDefaultValueOverride));
+		}
+		((ListDataDefinition)other).listToscaDataDefinition = mapByName.values().stream().collect(Collectors.toList());
+		return other;	
+	}
 		
 
 }
