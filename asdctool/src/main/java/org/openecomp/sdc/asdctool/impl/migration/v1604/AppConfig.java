@@ -27,9 +27,11 @@ import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.DataTypesUpdate;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.VfModulesPropertiesAdding;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707RelationsFix;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707VnfFix;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.components.impl.*;
@@ -51,7 +53,32 @@ import org.openecomp.sdc.be.model.operations.api.IAdditionalInformationOperation
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
-import org.openecomp.sdc.be.model.operations.impl.*;
+import org.openecomp.sdc.be.model.operations.impl.AdditionalInformationOperation;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
+import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
+import org.openecomp.sdc.be.model.operations.impl.CacheMangerOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
+import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ComponentInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.ConsumerOperation;
+import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
+import org.openecomp.sdc.be.model.operations.impl.ElementOperation;
+import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupInstanceOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
+import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.HeatParametersOperation;
+import org.openecomp.sdc.be.model.operations.impl.InputsOperation;
+import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.OnboardingClient;
+import org.openecomp.sdc.be.model.operations.impl.ProductOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.RequirementOperation;
+import org.openecomp.sdc.be.model.operations.impl.ResourceOperation;
+import org.openecomp.sdc.be.model.operations.impl.ServiceOperation;
+import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.user.IUserBusinessLogic;
@@ -65,6 +92,11 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 @Import(DAOSpringConfig.class)
 public class AppConfig {
+
+	@Bean(name="artifact-resolver")
+	public ArtifactsResolver artifactsResolver() {
+		return new ArtifactResolverImpl();
+	}
 
 	@Bean(name = "sdc-schema-files-cassandra-dao")
 	public SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao() {
@@ -543,9 +575,22 @@ public class AppConfig {
 		return new MigrationOperationUtils();
 	}
 
-    @Bean(name = "vfModulesPropertiesAdding")
-    public VfModulesPropertiesAdding vfModulesPropertiesAdding() {
-        return new VfModulesPropertiesAdding();
-    }
+	@Bean("consumer-operation")
+	public ConsumerOperation consumerOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+		return new ConsumerOperation(titanGenericDao);
+	}
 
+	@Bean(name = "migration1707relationsFix")
+    public Migration1707RelationsFix migration1707RelationsFix() {
+        return new Migration1707RelationsFix();
+    }
+    @Bean(name = "migration1707vnfFix")
+    public Migration1707VnfFix migration1707VnfFix() {
+        return new Migration1707VnfFix();
+    }
+    
+//    @Bean(name = "migration1707relationsFix")
+//    public Migration1707RelationsFix migration1707RelationsFix() {
+//        return new Migration1707RelationsFix();
+//    }
 }

@@ -22,12 +22,13 @@ import {ArtifactModel, IFileDownload, InstancesInputsPropertiesMap, InputModel, 
     AttributeModel, IAppConfigurtaion, Resource, Module, DisplayModule, ArtifactGroupModel, InputsAndProperties} from "app/models";
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "../sharing-service";
+import {ComponentMetadata} from "../../models/component-metadata";
 
 export interface IComponentService {
 
     getComponent(id:string);
     updateComponent(component:Component):ng.IPromise<Component>;
-    changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<Component> ;
+    changeLifecycleState(component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> ;
     validateName(newName:string, subtype?:string):ng.IPromise<IValidate>;
     createComponent(component:Component):ng.IPromise<Component>;
     addOrUpdateArtifact(componentId:string, artifact:ArtifactModel):ng.IPromise<ArtifactModel>;
@@ -213,11 +214,11 @@ export class ComponentService implements IComponentService {
         return deferred.promise;
     };
 
-    public changeLifecycleState = (component:Component, state:string, userRemarks:any):ng.IPromise<Component> => {
+    public changeLifecycleState = (component:Component, state:string, userRemarks:any):ng.IPromise<ComponentMetadata> => {
         let deferred = this.$q.defer();
-        this.restangular.one(component.uniqueId).one(state).customPOST(userRemarks).then((response:Component) => {
+        this.restangular.one(component.uniqueId).one(state).customPOST(userRemarks).then((response:ComponentMetadata) => {
             this.sharingService.addUuidValue(response.uniqueId, response.uuid);
-            let component:Component = this.createComponentObject(response);
+            let component:ComponentMetadata = new ComponentMetadata().deserialize(response);
             deferred.resolve(component);
         }, (err)=> {
             deferred.reject(err);

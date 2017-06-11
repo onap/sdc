@@ -42,8 +42,11 @@ import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,6 +61,7 @@ public class TranslationContext {
   private static Map<String, ImplementationConfiguration> nameExtractorImplMap;
   private static Map<String, ImplementationConfiguration> supportedConsolidationComputeResources;
   private static Map<String, ImplementationConfiguration> supportedConsolidationPortResources;
+  private static List enrichPortResourceProperties;
 
   static {
     Configuration config = ConfigurationManager.lookup();
@@ -77,11 +81,19 @@ public class TranslationContext {
     supportedConsolidationPortResources = config.populateMap(ConfigConstants
         .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
         .SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY, ImplementationConfiguration.class);
+    enrichPortResourceProperties = config.getAsStringValues(ConfigConstants
+        .MANDATORY_UNIFIED_MODEL_NAMESPACE, ConfigConstants
+        .ENRICH_PORT_RESOURCE_PROP);
 
   }
 
   private Map<String, UnifiedSubstitutionData> unifiedSubstitutionData = new HashMap<>();
   private ManifestFile manifest;
+
+  public static List getEnrichPortResourceProperties() {
+    return enrichPortResourceProperties;
+  }
+
   private FileContentHandler files = new FileContentHandler();
   private Map<String, FileData.Type> manifestFiles = new HashMap<>();
   //Key - file name, value - file type
@@ -240,6 +252,19 @@ public class TranslationContext {
 
   public Map<String, Map<String, String>> getTranslatedIds() {
     return translatedIds;
+  }
+
+  public Set<String> getAllTranslatedResourceIdsFromDiffNestedFiles(String
+                                                                        nestedHeatFileNameToSkip){
+    Set<String> allTranslatedResourceIds = new HashSet<>();
+
+    this.translatedIds.entrySet().stream().filter(
+        heatFileNameToTranslatedIdsEntry -> !heatFileNameToTranslatedIdsEntry.getKey()
+            .equals(nestedHeatFileNameToSkip)).forEach(heatFileNameToTranslatedIdsEntry -> {
+      allTranslatedResourceIds.addAll(heatFileNameToTranslatedIdsEntry.getValue().keySet());
+    });
+
+    return allTranslatedResourceIds;
   }
 
   // get tosca name from mapping configuration file
@@ -449,4 +474,6 @@ public class TranslationContext {
     return this.unifiedSubstitutionData.get(serviceTemplateName).getGlobalNodeTypeIndex
         (computeType);
   }
+
+
 }

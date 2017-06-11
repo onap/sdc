@@ -141,7 +141,7 @@ public interface VendorSoftwareProducts extends VspEntities {
       notes = "Exports translated file to a zip file",
       response = File.class)
   Response getTranslatedFile(@PathParam("vspId") String vspId,
-                             @QueryParam("version") String version,
+                             @QueryParam("versionId") String versionId,
                              @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
   @GET

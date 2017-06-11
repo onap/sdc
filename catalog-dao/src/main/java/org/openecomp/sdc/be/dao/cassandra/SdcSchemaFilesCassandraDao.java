@@ -1,13 +1,11 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.resources.data.ESSdcSchemaFilesData;
+import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,33 +48,41 @@ public class SdcSchemaFilesCassandraDao extends CassandraDao {
 		}
 	}
 	
-	public CassandraOperationStatus saveArtifact(ESSdcSchemaFilesData artifact) {
-		return client.save(artifact, ESSdcSchemaFilesData.class, manager);
+	public CassandraOperationStatus saveSchemaFile(SdcSchemaFilesData schemaFileData) {
+		return client.save(schemaFileData, SdcSchemaFilesData.class, manager);
 	}
 
-	public Either<ESSdcSchemaFilesData, CassandraOperationStatus> getArtifact(String artifactId) {
-		return client.getById(artifactId, ESSdcSchemaFilesData.class, manager);
+	public Either<SdcSchemaFilesData, CassandraOperationStatus> getSchemaFile(String schemaFileId) {
+		return client.getById(schemaFileId, SdcSchemaFilesData.class, manager);
 	}
 
-	public CassandraOperationStatus deleteArtifact(String artifactId) {
-		return client.delete(artifactId, ESSdcSchemaFilesData.class, manager);
+	public CassandraOperationStatus deleteSchemaFile(String schemaFileId) {
+		return client.delete(schemaFileId, SdcSchemaFilesData.class, manager);
 	}
 	
-	public Either<List<ESSdcSchemaFilesData>, ActionStatus> getSpecificSchemaFiles(String sdcreleasenum, String conformancelevel) {		
-		Result<ESSdcSchemaFilesData> specificSdcSchemaFiles = sdcSchemaFilesAccessor.getSpecificSdcSchemaFiles(sdcreleasenum, conformancelevel);
+	public Either<List<SdcSchemaFilesData>, CassandraOperationStatus> getSpecificSchemaFiles(String sdcreleasenum, String conformancelevel) {		
+		
+		Result<SdcSchemaFilesData> specificSdcSchemaFiles = null;
+		try {
+			specificSdcSchemaFiles = sdcSchemaFilesAccessor.getSpecificSdcSchemaFiles(sdcreleasenum, conformancelevel);
+		} catch (Exception e) {
+			logger.debug("getSpecificSchemaFiles failed with exception {}", e);
+			return Either.right(CassandraOperationStatus.GENERAL_ERROR);
+		}
 		
 		if(specificSdcSchemaFiles == null) {
 			logger.debug("not found specific SdcSchemaFiles for sdcreleasenum {}, conformancelevel {}", sdcreleasenum, conformancelevel);
-			return Either.left(new LinkedList<ESSdcSchemaFilesData>());
+			return Either.right(CassandraOperationStatus.NOT_FOUND);
 		}
 		
+		List<SdcSchemaFilesData> list = specificSdcSchemaFiles.all();
 		if(logger.isDebugEnabled()){
-			for (ESSdcSchemaFilesData esSdcSchemaFilesData : specificSdcSchemaFiles) {
-				logger.debug(esSdcSchemaFilesData.toString());
+			for (SdcSchemaFilesData esSdcSchemaFilesData : list) {
+				logger.trace(esSdcSchemaFilesData.toString());
 			}			
 		}
 		
-		return Either.left(specificSdcSchemaFiles.all());
+		return Either.left(list);
 	}
 	
 	/**

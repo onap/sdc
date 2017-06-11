@@ -10,6 +10,8 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils.handleError;
+
 public class ServiceCategoriesMigration extends JsonModelMigration<CategoryDefinition> {
 
     @Resource(name = "element-operation")
@@ -31,12 +33,15 @@ public class ServiceCategoriesMigration extends JsonModelMigration<CategoryDefin
 
     @Override
     Either<CategoryDefinition, ?> getElementFromNewGraph(CategoryDefinition node) {
-        return elementOperationMigration.getCategory(NodeTypeEnum.ServiceNewCategory, node.getUniqueId());
+        String categoryUid = UniqueIdBuilder.buildCategoryUid(node.getNormalizedName(), NodeTypeEnum.ServiceNewCategory);//in malformed graph there are some categories with different id but same normalized name. so in new graph they same id
+        return elementOperationMigration.getCategory(NodeTypeEnum.ServiceNewCategory, categoryUid);
     }
 
     @Override
-    Either<CategoryDefinition, ActionStatus> save(CategoryDefinition graphNode) {
-        return elementOperationMigration.createCategory(graphNode, NodeTypeEnum.ServiceNewCategory);
+    boolean save(CategoryDefinition graphNode) {
+        return elementOperationMigration.createCategory(graphNode, NodeTypeEnum.ServiceNewCategory)
+                .either(savedCategory -> true,
+                        err -> handleError(String.format("failed to save category %s. error: %s", graphNode.getName(), err.name())));
     }
 
     @Override

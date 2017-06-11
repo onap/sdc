@@ -269,7 +269,7 @@ parameters:
     description: Windows servers' domain
     type: string
 resources:
-  QRouter:
+  QRouter0:
     depends_on:
     - security_group
     - packet_mirror_network

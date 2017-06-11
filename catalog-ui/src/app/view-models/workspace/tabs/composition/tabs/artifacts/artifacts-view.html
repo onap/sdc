@@ -49,7 +49,7 @@
                             data-tests-id="edit-parameters-of-{{artifact.artifactDisplayName}}"></button>
 
                     <download-artifact ng-if="artifact.esId && 'deployment' != artifactType" class="i-sdc-designer-sidebar-section-content-item-button download sprite e-sdc-small-download hand"
-                                       artifact="artifact" component="currentComponent" data-tests-id="download-{{artifact.artifactDisplayName}}" instance="isComponentInstanceSelected()"></download-artifact>
+                                       artifact="artifact" component="currentComponent" data-tests-id="download_{{artifact.artifactDisplayName}}" instance="isComponentInstanceSelected()"></download-artifact>
                     <download-artifact ng-if="artifact.esId && 'deployment' == artifactType" class="i-sdc-designer-sidebar-section-content-item-button download sprite e-sdc-small-download hand"
                                        artifact="artifact" component="currentComponent" instance="isComponentInstanceSelected()" data-tests-id="download_{{artifact.artifactDisplayName}}"
                                        show-loader="artifact.isHEAT()"

@@ -197,6 +197,9 @@ public class ProcessDaoZusammenImpl implements ProcessDao {
     processEntity
         .setArtifactName((String) elementInfo.getInfo().getProperties().get(ARTIFACT_NAME));
     processEntity.setDescription((String) elementInfo.getInfo().getProperties().get(DESCRIPTION));
+    processEntity.setType( elementInfo.getInfo().getProperties().get(PROCESS_TYPE) != null ?
+            ProcessType.valueOf((String) elementInfo.getInfo().getProperties().get(PROCESS_TYPE)) :
+            null);
     return processEntity;
   }
 

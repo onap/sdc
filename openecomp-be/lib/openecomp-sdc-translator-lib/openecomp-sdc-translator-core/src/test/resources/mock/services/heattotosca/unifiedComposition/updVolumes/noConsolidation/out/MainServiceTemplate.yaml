@@ -195,16 +195,18 @@ topology_template:
       properties:
         port_FSB1_Internal_mac_address:
         - get_input: fsb1-Internal1-mac
-        port_FSB1_Internal_network:
-        - Internal1-net
         vm_flavor_name:
           get_input: fsb-flavor
-        port_FSB2_Internal_mac_address:
-        - get_input: fsb1-Internal2-mac
         vm_image_name:
           get_input: fsb-image
         compute_FSB_admin_pass:
         - STATIC-DATA-FSB1
+        port_FSB_OAM_network:
+        - jsa_net1
+        port_FSB1_Internal_network:
+        - Internal1-net
+        port_FSB2_Internal_mac_address:
+        - get_input: fsb1-Internal2-mac
         port_FSB_OAM_fixed_ips:
         - - ip_address:
               get_input: fsb1-oam-ip
@@ -216,8 +218,6 @@ topology_template:
           - path: /path2/etc/sysconfig/network-scripts/ifcfg-eth1
         compute_FSB_availability_zone:
         - get_input: fsb1_zone
-        port_FSB_OAM_network:
-        - jsa_net1
         compute_FSB_name:
         - get_input: fsb1-name
         service_template_filter:

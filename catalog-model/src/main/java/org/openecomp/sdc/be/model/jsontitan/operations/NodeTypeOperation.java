@@ -2,16 +2,17 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -20,11 +21,11 @@ import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
@@ -32,6 +33,22 @@ import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.resources.data.AttributeData;
+import org.openecomp.sdc.be.resources.data.AttributeValueData;
+import org.openecomp.sdc.be.resources.data.CapabilityData;
+import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
+import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.be.resources.data.GroupData;
+import org.openecomp.sdc.be.resources.data.GroupTypeData;
+import org.openecomp.sdc.be.resources.data.InputValueData;
+import org.openecomp.sdc.be.resources.data.InputsData;
+import org.openecomp.sdc.be.resources.data.PolicyTypeData;
+import org.openecomp.sdc.be.resources.data.PropertyData;
+import org.openecomp.sdc.be.resources.data.PropertyValueData;
+import org.openecomp.sdc.be.resources.data.RelationshipInstData;
+import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
+import org.openecomp.sdc.be.resources.data.RequirementData;
+import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
@@ -44,6 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @org.springframework.stereotype.Component("node-type-operation")
@@ -152,7 +170,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	private StorageOperationStatus associateInterfacesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, InterfaceDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, InterfaceDataDefinition.class, EdgeLabelEnum.INTERFACE_ARTIFACTS);
+		Either<Map<String, InterfaceDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.INTERFACE_ARTIFACTS);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -377,7 +395,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 	}
 
 	private TitanOperationStatus setResourceAttributesFromGraph(GraphVertex componentV, NodeType toscaElement) {
-		Either<Map<String, AttributeDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ATTRIBUTES);
+		Either<Map<String, PropertyDataDefinition>, TitanOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.ATTRIBUTES);
 		if (result.isLeft()) {
 			toscaElement.setAttributes(result.left().value());
 		} else {
@@ -413,7 +431,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	private StorageOperationStatus addAdditionalInformationToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, AdditionalInfoParameterDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, AdditionalInfoParameterDataDefinition.class, EdgeLabelEnum.ADDITIONAL_INFORMATION);
+		Either<Map<String, AdditionalInfoParameterDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ADDITIONAL_INFORMATION);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -421,7 +439,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 		Map<String, AdditionalInfoParameterDataDefinition> addInformation = nodeType.getAdditionalInformation();
 		if (addInformation != null) {
-			addInformationAll.putAll(addInformation);
+			ToscaDataDefinition.mergeDataMaps(addInformationAll, addInformation);
 		}
 		if (!addInformationAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.ADDITIONAL_INFORMATION, EdgeLabelEnum.ADDITIONAL_INFORMATION, addInformationAll);
@@ -434,7 +452,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	private StorageOperationStatus associateCapabilitiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, ListCapabilityDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, ListCapabilityDataDefinition.class, EdgeLabelEnum.CAPABILITIES);
+		Either<Map<String, ListCapabilityDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.CAPABILITIES);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -452,9 +470,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 				});
 			});
 
-			for (Entry<String, ListCapabilityDataDefinition> entry : capabilties.entrySet()) {
-				capabiltiesAll.merge(entry.getKey(), entry.getValue(), (list1, list2) -> list1.mergeListItemsByName(list2));
-			}
+			ToscaDataDefinition.mergeDataMaps(capabiltiesAll, capabilties);
 		}
 		if (!capabiltiesAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILTIES, EdgeLabelEnum.CAPABILITIES, capabiltiesAll);
@@ -467,7 +483,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	private StorageOperationStatus associateRequirementsToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, ListRequirementDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, ListRequirementDataDefinition.class, EdgeLabelEnum.REQUIREMENTS);
+		Either<Map<String, ListRequirementDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.REQUIREMENTS);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -485,9 +501,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
 				});
 			});
 			
-			for (Entry<String, ListRequirementDataDefinition> entry : requirements.entrySet()) {
-				requirementsAll.merge(entry.getKey(), entry.getValue(), (list1, list2) -> list1.mergeListItemsByName(list2));
-			}
+			ToscaDataDefinition.mergeDataMaps(requirementsAll, requirements);
+
 		}
 		if (!requirementsAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.REQUIREMENTS, EdgeLabelEnum.REQUIREMENTS, requirementsAll);
@@ -500,19 +515,19 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	private StorageOperationStatus associateAttributesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, AttributeDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, AttributeDataDefinition.class, EdgeLabelEnum.ATTRIBUTES);
+		Either<Map<String, PropertyDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.ATTRIBUTES);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
-		Map<String, AttributeDataDefinition> attributesAll = dataFromDerived.left().value();
+		Map<String, PropertyDataDefinition> attributesAll = dataFromDerived.left().value();
 
-		Map<String, AttributeDataDefinition> attributes = nodeType.getAttributes();
+		Map<String, PropertyDataDefinition> attributes = nodeType.getAttributes();
 		if (attributes != null) {
 			attributes.values().stream().filter(p -> p.getUniqueId() == null).forEach(p -> {
 				String uid = UniqueIdBuilder.buildAttributeUid(nodeTypeVertex.getUniqueId(), p.getName());
 				p.setUniqueId(uid);
 			});
-			attributesAll.putAll(attributes);
+			ToscaDataDefinition.mergeDataMaps(attributesAll, attributes);
 		}
 		if (!attributesAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.ATTRIBUTES, EdgeLabelEnum.ATTRIBUTES, attributesAll);
@@ -526,7 +541,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 	// TODO get from derived
 	private StorageOperationStatus associateCapabilitiesPropertiesToResource(GraphVertex nodeTypeVertex, NodeType nodeType, List<GraphVertex> derivedResources) {
 		// // Note : currently only one derived supported!!!!
-		Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, MapPropertiesDataDefinition.class, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
+		Either<Map<String, MapPropertiesDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.CAPABILITIES_PROPERTIES);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -542,9 +557,9 @@ public class NodeTypeOperation extends ToscaElementOperation {
 					});
 				}
 			});
-			propertiesAll.putAll(capabiltiesProps);
+			ToscaDataDefinition.mergeDataMaps(propertiesAll, capabiltiesProps);
 		}
-		if (propertiesAll != null) {
+		if (!propertiesAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, propertiesAll);
 			if (assosiateElementToData.isRight()) {
 				return assosiateElementToData.right().value();
@@ -657,7 +672,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
 	protected <T extends ToscaElement> StorageOperationStatus updateDerived(T toscaElementToUpdate, GraphVertex nodeTypeV) {
 
 		NodeType nodeType = (NodeType) toscaElementToUpdate;
-		List<GraphVertex> derivedResources = null;
+		List<GraphVertex> derivedResources = new ArrayList<>();
 
 		List<String> derivedFromResources = nodeType.getDerivedFrom();
 
@@ -691,7 +706,8 @@ public class NodeTypeOperation extends ToscaElementOperation {
 				}
 				// must be only one
 				GraphVertex newDerived = getParentResources.left().value().get(0);
-				StorageOperationStatus updateStatus = updateDataFromNewDerived(newDerived, nodeTypeV);
+				derivedResources.add(newDerived);
+				StorageOperationStatus updateStatus = updateDataFromNewDerived(derivedResources, nodeTypeV, (NodeType)toscaElementToUpdate);
 				if (updateStatus != StorageOperationStatus.OK) {
 					CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update data for {} from new derived {} ", nodeTypeV.getUniqueId(), newDerived.getUniqueId(), updateStatus);
 					return updateStatus;
@@ -704,44 +720,70 @@ public class NodeTypeOperation extends ToscaElementOperation {
 					return DaoStatusConverter.convertTitanStatusToStorageStatus(deleteError);
 				}
 
-				titanDao.createEdge(nodeTypeV, newDerived, EdgeLabelEnum.DERIVED_FROM, null);
+				titanDao.createEdge(nodeTypeV, newDerived, EdgeLabelEnum.DERIVED_FROM, new HashMap<>());
 			}
 		}
 
 		return StorageOperationStatus.OK;
 	}
+	
+	private StorageOperationStatus associateDerivedDataByType(EdgeLabelEnum edgeLabel, GraphVertex nodeTypeV, NodeType nodeToUpdate, List<GraphVertex> newDerived) {
+		
+		switch (edgeLabel) {
+		case CAPABILITIES:
+			return associateCapabilitiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+		case REQUIREMENTS:
+			return associateRequirementsToResource(nodeTypeV, nodeToUpdate, newDerived);
+		case PROPERTIES:
+			return associatePropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+		case ATTRIBUTES:
+			return associateAttributesToResource(nodeTypeV, nodeToUpdate, newDerived);
+		case ADDITIONAL_INFORMATION:
+			return addAdditionalInformationToResource(nodeTypeV, nodeToUpdate, newDerived);
+		case CAPABILITIES_PROPERTIES:
+			return associateCapabilitiesPropertiesToResource(nodeTypeV, nodeToUpdate, newDerived);
+		default:
+			return StorageOperationStatus.OK;
+		}
 
-	private StorageOperationStatus updateDataFromNewDerived(GraphVertex newDerived, GraphVertex nodeTypeV) {
-		StorageOperationStatus status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.CAPABILITIES, CapabilityDataDefinition.class);
+	}
+
+	private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate) {
+        
+		StorageOperationStatus status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.CAPABILITIES, nodeToUpdate);
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.REQUIREMENTS, RequirementDefinition.class);
+		
+		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.REQUIREMENTS, nodeToUpdate);
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.PROPERTIES, PropertyDataDefinition.class);
+	
+		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.PROPERTIES, nodeToUpdate);
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ATTRIBUTES, AttributeDataDefinition.class);
+		
+		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ATTRIBUTES, nodeToUpdate);
+		if (status != StorageOperationStatus.OK) {
+				return status;
+		}
+		
+		status = updateDataByType(newDerived, nodeTypeV,EdgeLabelEnum.CAPABILITIES_PROPERTIES, nodeToUpdate);
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		// TODO
-		// status = updateDataByType(newDerived, nodeTypeV,
-		// EdgeLabelEnum.CAPABILITIES_PROPERTIES, capa);
-		// if ( status != StorageOperationStatus.OK){
-		// return status;
-		// }
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ADDITIONAL_INFORMATION, AdditionalInfoParameterDataDefinition.class);
+		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ADDITIONAL_INFORMATION, nodeToUpdate);
 		return status;
 	}
 
-	private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(GraphVertex newDerived, GraphVertex nodeTypeV, EdgeLabelEnum label, Class<T> clazz) {
+	private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV, EdgeLabelEnum label, NodeType nodeElement) {
 		log.debug("Update data from derived for element {} type {}", nodeTypeV.getUniqueId(), label);
 		Either<GraphVertex, TitanOperationStatus> dataFromGraph = getDataVertex(nodeTypeV, label);
 		if (dataFromGraph.isRight()) {
+			if (TitanOperationStatus.NOT_FOUND == dataFromGraph.right().value())
+				return associateDerivedDataByType(label, nodeTypeV, nodeElement, newDerivedList);
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(dataFromGraph.right().value());
 		}
 		GraphVertex dataV = dataFromGraph.left().value();
@@ -749,16 +791,19 @@ public class NodeTypeOperation extends ToscaElementOperation {
 		Map<String, T> mapFromGraph = (Map<String, T>) dataV.getJson();
 		mapFromGraph.entrySet().removeIf(e -> e.getValue().getOwnerId() != null);
 
-		List<GraphVertex> derivedList = new ArrayList<>();
-		derivedList.add(newDerived);
-
-		Either<Map<String, T>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedList, clazz, EdgeLabelEnum.CAPABILITIES);
+		
+		Either<Map<String, T>, StorageOperationStatus> dataFromDerived = getDataFromDerived(newDerivedList, label);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
-		Map<String, T> capabiltiesAll = dataFromDerived.left().value();
-		capabiltiesAll.putAll(mapFromGraph);
-
+		Map<String, T> dataFromDerivedAll = dataFromDerived.left().value();
+		
+		Either<Map<String, T>, String> merged = ToscaDataDefinition.mergeDataMaps(dataFromDerivedAll, mapFromGraph);
+		if(merged.isRight()){
+			log.debug("property {} cannot be overriden", merged.right().value());
+			return StorageOperationStatus.INVALID_PROPERTY;
+		}
+		dataV.setJson(dataFromDerivedAll);
 		Either<GraphVertex, TitanOperationStatus> updateDataV = updateOrCopyOnUpdate(dataV, nodeTypeV, label);
 		if (updateDataV.isRight()) {
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(updateDataV.right().value());

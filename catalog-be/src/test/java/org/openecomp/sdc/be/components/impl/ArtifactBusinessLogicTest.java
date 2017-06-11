@@ -40,8 +40,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.config.Configuration.ArtifactTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -96,7 +98,7 @@ public class ArtifactBusinessLogicTest {
 	public static final ServiceOperation serviceOperation = Mockito.mock(ServiceOperation.class);
 	public static final ArtifactCassandraDao artifactCassandraDao =  Mockito.mock(ArtifactCassandraDao.class);
 	public static final ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
-	
+
 	// public static final InformationDeployedArtifactsBusinessLogic
 	// informationDeployedArtifactsBusinessLogic =
 	// Mockito.mock(InformationDeployedArtifactsBusinessLogic.class);

@@ -27,21 +27,21 @@ import java.util.Map;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.utils.Constants;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 
 import com.google.gson.reflect.TypeToken;
 
 public class AttributeData extends GraphNode {
-	AttributeDataDefinition attributeDataDefinition;
+	PropertyDataDefinition attributeDataDefinition;
 
 	public AttributeData() {
 		super(NodeTypeEnum.Attribute);
-		attributeDataDefinition = new AttributeDataDefinition();
+		attributeDataDefinition = new PropertyDataDefinition();
 	}
 
-	public AttributeData(AttributeDataDefinition attributeDataDefinition) {
+	public AttributeData(PropertyDataDefinition attributeDataDefinition) {
 		super(NodeTypeEnum.Attribute);
 		this.attributeDataDefinition = attributeDataDefinition;
 	}
@@ -56,11 +56,11 @@ public class AttributeData extends GraphNode {
 		return attributeDataDefinition.getUniqueId();
 	}
 
-	public AttributeDataDefinition getAttributeDataDefinition() {
+	public PropertyDataDefinition getAttributeDataDefinition() {
 		return attributeDataDefinition;
 	}
 
-	public void setAttributeDataDefinition(AttributeDataDefinition attributeDataDefinition) {
+	public void setAttributeDataDefinition(PropertyDataDefinition attributeDataDefinition) {
 		this.attributeDataDefinition = attributeDataDefinition;
 	}
 

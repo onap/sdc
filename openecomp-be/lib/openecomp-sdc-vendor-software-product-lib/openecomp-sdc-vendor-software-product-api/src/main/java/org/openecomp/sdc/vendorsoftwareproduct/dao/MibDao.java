@@ -38,4 +38,6 @@ public interface MibDao extends VersionableDao {
   Collection<MibEntity> list(MibEntity entity);
 
   void deleteAll(MibEntity entity);
+
+  Collection<MibEntity> listArtifacts(MibEntity entity);
 }

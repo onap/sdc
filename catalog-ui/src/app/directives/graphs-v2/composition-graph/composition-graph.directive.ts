@@ -168,7 +168,7 @@ export class CompositionGraph implements ng.IDirective {
 
             this.ComponentServiceNg2.getCapabilitiesAndRequirements(leftPaletteComponent.componentType, leftPaletteComponent.uniqueId).subscribe((response: ComponentGenericResponse) => {
 
-                    let component = this.ComponentFactory.createEmptyComponent(leftPaletteComponent.componentType); 
+                    let component = this.ComponentFactory.createEmptyComponent(leftPaletteComponent.componentType);
                     component.uniqueId = component.uniqueId;
                     component.capabilities = response.capabilities;
                     component.requirements = response.requirements;
@@ -246,6 +246,7 @@ export class CompositionGraph implements ng.IDirective {
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_VERSION_CHANGED, (component:Component) => {
             scope.component = component;
+            this._cy.elements().remove();
             this.loadGraphData(scope);
         });
 

@@ -1,13 +1,10 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
-import fj.Function;
 import fj.data.Either;
-import org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +33,16 @@ public class UsersMigration extends JsonModelMigration<User> {
     @Override
     Either<User, ActionStatus> getElementFromNewGraph(User user) {
         LOGGER.debug(String.format("trying to load user %s from new graph", user.getUserId()));
-        return userAdminOperationMigration.getUserData(user.getUserId(), false);
+        return user.getStatus().equals(UserStatusEnum.ACTIVE) ? userAdminOperationMigration.getUserData(user.getUserId(), false) :
+                                                                userAdminOperationMigration.getInactiveUserData(user.getUserId());
     }
 
     @Override
-    Either<User, StorageOperationStatus> save(User user) {
+    boolean save(User user) {
         LOGGER.debug(String.format("trying to save user %s to new graph", user.getUserId()));
-        return userAdminOperationMigration.saveUserData(user);
+        return userAdminOperationMigration.saveUserData(user)
+                .either(savedUser -> true,
+                        err -> handleError(String.format("failed when saving user %s. error %s", user.getUserId(), err.name())));
     }
 
     @Override

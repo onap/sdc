@@ -11,6 +11,21 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+    port_pd01_port_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
     port_pd01_port_mac_requirements:
       type: list
       required: true
@@ -34,16 +49,16 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    index_value:
-      type: integer
-      description: Index value of this substitution service template runtime instance
-      required: false
-      default: 0
-      constraints:
-      - greater_or_equal: 0
-    vm_flavor_name:
-      type: string
+    port_pd01_port_order:
+      type: list
       required: true
+      entry_schema:
+        type: integer
+    port_pd01_port_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_oam_server_user_data_format:
       type: list
       required: true
@@ -54,15 +69,33 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd01_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_pd01_port_network_role_tag:
       type: list
       required: true
       entry_schema:
         type: string
+    port_pd01_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
   node_templates:
     oam_server_pd01_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_pd01_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pd01_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_pd01_port_ip_requirements
@@ -74,6 +107,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_pd01_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_pd01_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_pd01_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_pd01_port_subnetpoolid
           - index_value
         network:
           get_input:

@@ -30,7 +30,7 @@ resources:
       forwarding_mode: { get_param: Internal1_forwarding_mode }
       shared: { get_param: Internal1_shared }
 
-  test_nested:
+  test_nested0:
     type: OCS-fw.yml
     properties:
       network_param1: { get_resource: Internal1-net}

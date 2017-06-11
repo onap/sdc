@@ -94,7 +94,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
         .filter(nodeTypes -> Objects.nonNull(nodeTypes) && nodeTypes.containsKey(nodeTypeKey))
         .findFirst();
     if (nodeTypeMap.isPresent()) {
-      return Optional.ofNullable(nodeTypeMap.get().values().iterator().next());
+      return Optional.ofNullable(nodeTypeMap.get().get(nodeTypeKey));
     }
     return Optional.empty();
   }
@@ -601,7 +601,7 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
     return substitutionNodeType;
   }
 
-  private Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(
+  public Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(
       ServiceTemplate substitutionServiceTemplate) {
     Map<String, PropertyDefinition> substitutionNodeTypeProperties = new HashMap<>();
     Map<String, ParameterDefinition> properties =

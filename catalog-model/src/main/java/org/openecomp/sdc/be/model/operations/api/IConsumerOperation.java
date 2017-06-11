@@ -24,6 +24,8 @@ import org.openecomp.sdc.be.resources.data.ConsumerData;
 
 import fj.data.Either;
 
+import java.util.List;
+
 public interface IConsumerOperation {
 
 	/**
@@ -94,5 +96,11 @@ public interface IConsumerOperation {
 	 * @return ConsumerData or the error received during the operation
 	 */
 	Either<ConsumerData, StorageOperationStatus> getCredentials(String consumerName);
+
+	/**
+	 *
+	 * @return all consumers
+     */
+	Either<List<ConsumerData>, StorageOperationStatus> getAll();
 
 }

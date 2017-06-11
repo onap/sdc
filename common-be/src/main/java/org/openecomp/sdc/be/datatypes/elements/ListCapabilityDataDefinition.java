@@ -33,10 +33,4 @@ public class ListCapabilityDataDefinition extends ListDataDefinition<CapabilityD
 		this.listToscaDataDefinition = listToscaDataDefinition;
 	}
 
-	public ListCapabilityDataDefinition mergeListItemsByName(ListCapabilityDataDefinition other){
-		Map<String, CapabilityDataDefinition> mapByName = listToMapByName();
-		Map<String, CapabilityDataDefinition> mapOtherByName = other.listToMapByName();
-		mapByName.putAll(mapOtherByName);
-		return new ListCapabilityDataDefinition(mapByName.values().stream().collect(Collectors.toList()));	
-	}
 }

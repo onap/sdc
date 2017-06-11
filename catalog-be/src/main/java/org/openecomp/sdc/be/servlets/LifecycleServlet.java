@@ -39,11 +39,13 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoBase;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -138,7 +140,8 @@ public class LifecycleServlet extends BeGenericServlet {
 				}
 
 				log.debug("change state successful !!!");
-				Object value = RepresentationUtils.toRepresentation(actionResponse.left().value());
+				UiComponentMetadata componentMetatdata = UiComponentDataConverter.convertToUiComponentMetadata(actionResponse.left().value());
+				Object value = RepresentationUtils.toRepresentation(componentMetatdata);
 				response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), value);
 				return response;
 			} else {

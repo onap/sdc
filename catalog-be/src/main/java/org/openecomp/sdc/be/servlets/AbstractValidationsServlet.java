@@ -278,7 +278,7 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 			} else {
 				if (!resourceAuthorityEnum.isBackEndImport()) {
 					isValid = resourceInfoObject.getPayloadName() != null && !resourceInfoObject.getPayloadName().isEmpty();
-					//Tal only resource name is checked
+					//only resource name is checked
 				} else {
 					isValid = true;
 				}

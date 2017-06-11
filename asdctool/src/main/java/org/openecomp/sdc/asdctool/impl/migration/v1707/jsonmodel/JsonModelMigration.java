@@ -1,17 +1,19 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
 import fj.data.Either;
+import org.openecomp.sdc.asdctool.impl.migration.Migration1707Task;
 import org.openecomp.sdc.asdctool.impl.migration.MigrationMsg;
-import org.openecomp.sdc.asdctool.impl.migration.Migration;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-public abstract class JsonModelMigration<T> implements Migration {
+public abstract class JsonModelMigration<T> implements Migration1707Task {
 
-    private final boolean COMPLETED_OK = true;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonModelMigration.class);
 
     @Resource(name = "titan-dao")
     TitanDao titanDao;
@@ -31,7 +33,11 @@ public abstract class JsonModelMigration<T> implements Migration {
         return true;
     }
 
+    void doPreMigrationOperation(List<T> elements){}
+
     private boolean migrateElementsToNewGraph(List<T> elementsToMigrate) {
+        LOGGER.info(this.description() + ": starting to migrate elements to new graph. elements to migrate: {}", elementsToMigrate.size());
+        doPreMigrationOperation(elementsToMigrate);
         for (T node : elementsToMigrate) {
             boolean migratedSuccessfully = migrateElement(node);
             if (!migratedSuccessfully) {
@@ -59,14 +65,10 @@ public abstract class JsonModelMigration<T> implements Migration {
     }
 
     private boolean saveElementIfNotExists(T element) {
-        return isExists(element).either(isExist -> isExist || createElement(element),
+        return isExists(element).either(isExist -> isExist || save(element),
                                         status -> MigrationUtils.handleError(MigrationMsg.FAILED_TO_GET_NODE_FROM_GRAPH.getMessage(status.toString())));
     }
 
-    private boolean createElement(T element) {
-        return save(element).either(savedNode -> COMPLETED_OK,
-                                 errorStatus -> MigrationUtils.handleError(MigrationMsg.FAILED_TO_CREATE_NODE.getMessage(element.getClass().getName(), errorStatus.toString())));
-    }
 
     private Either<Boolean, ?> isExists(T element) {
         Either<T, ?> byId = getElementFromNewGraph(element);
@@ -82,7 +84,7 @@ public abstract class JsonModelMigration<T> implements Migration {
 
     abstract Either<T, ?> getElementFromNewGraph(T element);
 
-    abstract Either<T, ?> save(T element);
+    abstract boolean save(T element);
 
     abstract <S extends Enum> S getNotFoundErrorStatus();
 

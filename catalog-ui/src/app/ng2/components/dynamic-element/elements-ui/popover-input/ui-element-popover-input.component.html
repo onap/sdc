@@ -4,10 +4,10 @@
         type="text"
         [ngClass]="{'error': control.invalid}"
         [name]="name"
-        [value]="value"
+        [value]="value!=undefined?value:''"
         disabled
         />
-    <button [popover]="popoverForm">Edit</button>
+    <button [popover]="popoverForm"  [ngClass]="{'disabled':readonly}">Edit</button>
 </div>
 
 <popover-content #popoverForm [title]="name" [buttons]="buttonsArray" [placement]="'top'" [closeOnClickOutside]="true">

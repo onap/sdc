@@ -37,12 +37,14 @@ import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
+import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -1252,6 +1254,31 @@ public class ComponentsUtils {
 			break;
 		}
 		log.debug("convert storage response {} to action response {}", storageResponse.name(), responseEnum.name());
+		return responseEnum;
+	}
+	
+	public ActionStatus convertFromResultStatusEnum(ResultStatusEnum resultStatus, JsonPresentationFields elementType) {
+		ActionStatus responseEnum = ActionStatus.GENERAL_ERROR;
+		switch (resultStatus) {
+		case OK:
+			responseEnum = ActionStatus.OK;
+			break;
+		case ELEMENT_NOT_FOUND:
+			if(elementType!= null && elementType == JsonPresentationFields.PROPERTY){
+				responseEnum = ActionStatus.PROPERTY_NOT_FOUND;
+			}
+		break;
+		case INVALID_PROPERTY_DEFAULT_VALUE:
+		case INVALID_PROPERTY_TYPE:
+		case INVALID_PROPERTY_VALUE:
+		case INVALID_PROPERTY_NAME:
+		case MISSING_ENTRY_SCHEMA_TYPE:
+			responseEnum = ActionStatus.INVALID_PROPERTY;
+			break;
+		default:
+			responseEnum = ActionStatus.GENERAL_ERROR;
+			break;
+		}
 		return responseEnum;
 	}
 

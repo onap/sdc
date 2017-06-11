@@ -21,11 +21,9 @@ import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -168,15 +166,15 @@ public class ModelConverter {
 	}
 
 	private static void convertAttributes(NodeType nodeType, Resource resource) {
-		Map<String, AttributeDataDefinition> attributes = nodeType.getAttributes();
+		Map<String, PropertyDataDefinition> attributes = nodeType.getAttributes();
 		if (attributes != null) {
-			List<AttributeDefinition> attrs = attributes.values().stream().map(dataDef -> ModelConverter.fromDataDefinition(resource.getUniqueId(), dataDef)).collect(Collectors.toList());
+			List<PropertyDefinition> attrs = attributes.values().stream().map(dataDef -> ModelConverter.fromDataDefinition(resource.getUniqueId(), dataDef)).collect(Collectors.toList());
 			resource.setAttributes(attrs);
 		}
 	}
 
-	private static AttributeDefinition fromDataDefinition(String resourceId, AttributeDataDefinition dataDefinition) {
-		AttributeDefinition attributeDefinition = new AttributeDefinition(dataDefinition);
+	private static PropertyDefinition fromDataDefinition(String resourceId, PropertyDataDefinition dataDefinition) {
+		PropertyDefinition attributeDefinition = new PropertyDefinition(dataDefinition);
 		attributeDefinition.setParentUniqueId(resourceId);
 		return attributeDefinition;
 	}
@@ -684,9 +682,9 @@ public class ModelConverter {
 	}
 
 	private static void convertAttributes(Resource component, NodeType nodeType) {
-		List<AttributeDefinition> attributes = component.getAttributes();
+		List<PropertyDefinition> attributes = component.getAttributes();
 		if (attributes != null) {
-			Map<String, AttributeDataDefinition> attrsByName = attributes.stream().map(AttributeDataDefinition::new).collect(Collectors.toMap(AttributeDataDefinition::getName, Function.identity()));
+			Map<String, PropertyDataDefinition> attrsByName = attributes.stream().map(PropertyDataDefinition::new).collect(Collectors.toMap(PropertyDataDefinition::getName, Function.identity()));
 			nodeType.setAttributes(attrsByName);
 		}
 	}
@@ -997,11 +995,11 @@ public class ModelConverter {
 
 	private static void setComponentInstancesAttributesToComponent(TopologyTemplate topologyTemplate, Component component) {
 		if (topologyTemplate.getInstAttributes() != null) {
-			Map<String, List<ComponentInstanceAttribute>> attributes = new HashMap<>();
-			for (Map.Entry<String, MapAttributesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
+			Map<String, List<ComponentInstanceProperty>> attributes = new HashMap<>();
+			for (Map.Entry<String, MapPropertiesDataDefinition> entry : topologyTemplate.getInstAttributes().entrySet()) {
 				if (entry.getValue() != null && entry.getValue().getMapToscaDataDefinition() != null) {
 					String key = entry.getKey();
-					List<ComponentInstanceAttribute> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceAttribute(new AttributeDefinition(e.getValue())))
+					List<ComponentInstanceProperty> componentInstanceAttributes = entry.getValue().getMapToscaDataDefinition().entrySet().stream().map(e -> new ComponentInstanceProperty(new ComponentInstanceProperty(e.getValue())))
 							.collect(Collectors.toList());
 					attributes.put(key, componentInstanceAttributes);
 				}
@@ -1206,11 +1204,11 @@ public class ModelConverter {
 
 		if (component.getComponentInstancesAttributes() != null) {
 			topologyTemplate.setInstAttributes(new HashMap<>());
-			MapAttributesDataDefinition attributesMap;
-			for (Entry<String, List<ComponentInstanceAttribute>> entry : component.getComponentInstancesAttributes().entrySet()) {
-				attributesMap = new MapAttributesDataDefinition();
+			MapPropertiesDataDefinition attributesMap;
+			for (Entry<String, List<ComponentInstanceProperty>> entry : component.getComponentInstancesAttributes().entrySet()) {
+				attributesMap = new MapPropertiesDataDefinition();
 
-				attributesMap.setMapToscaDataDefinition(entry.getValue().stream().map(e -> new AttributeDataDefinition(e)).collect(Collectors.toMap(e -> e.getName(), e -> e)));
+				attributesMap.setMapToscaDataDefinition(entry.getValue().stream().map(e -> new PropertyDataDefinition(e)).collect(Collectors.toMap(e -> e.getName(), e -> e)));
 
 				topologyTemplate.getInstAttributes().put(entry.getKey(), attributesMap);
 			}

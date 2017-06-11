@@ -110,5 +110,19 @@ class Form extends React.Component {
 
 }
 
+export class TabsForm extends Form {
+	render() {
+		// eslint-disable-next-line no-unused-vars
+		let {isValid, formReady, onValidateForm, isReadOnlyMode, hasButtons, onSubmit, labledButtons, onValidChange, onValidityChanged, onDataChanged, children, ...formProps} = this.props;
+		return (
+			<form {...formProps} ref={(form) => this.form = form} onSubmit={event => this.handleFormValidation(event)}>
+				<div className='validation-form-content'>
+						{children}
+				</div>
+				{hasButtons && <ValidationButtons labledButtons={labledButtons} ref={(buttons) => this.buttons = buttons} isReadOnlyMode={isReadOnlyMode}/>}
+			</form>
+		);
+	}
+}
 
 export default Form;

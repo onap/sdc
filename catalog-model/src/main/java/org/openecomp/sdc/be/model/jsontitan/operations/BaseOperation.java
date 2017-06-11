@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -23,17 +24,24 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -948,7 +956,7 @@ public abstract class BaseOperation {
 		if (result == null) {
 			currMap.put(key, toscaDataBlock);
 		}
-		return null;
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1248,9 +1256,9 @@ public abstract class BaseOperation {
 		return result;
 	}
 
-	private <K extends ToscaDataDefinition> StorageOperationStatus handleToscaData(GraphVertex toscaElement, VertexTypeEnum vertexLabel, EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex, Map<String, K> mergedToscaDataMap) {
+	protected <K extends ToscaDataDefinition> StorageOperationStatus handleToscaData(GraphVertex toscaElement, VertexTypeEnum vertexLabel, EdgeLabelEnum edgeLabel, GraphVertex toscaDataVertex, Map<String, K> mergedToscaDataMap) {
 
-		StorageOperationStatus result = null;
+		StorageOperationStatus result = StorageOperationStatus.OK;
 		if (toscaDataVertex == null) {
 
 			Either<GraphVertex, StorageOperationStatus> createRes = assosiateElementToData(toscaElement, vertexLabel, edgeLabel, mergedToscaDataMap);
@@ -1312,5 +1320,41 @@ public abstract class BaseOperation {
 //		}
 //		return StorageOperationStatus.OK;
 //	}
+	
+	protected GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDataDefinition group, ComponentInstanceDataDefinition componentInstance) {
+
+		String componentInstanceName = componentInstance.getName();
+		Long creationDate = System.currentTimeMillis();
+		GroupInstanceDataDefinition groupInstance = new GroupInstanceDataDefinition();
+		String groupUid = group.getUniqueId();
+
+		groupInstance.setGroupUid(groupUid);
+		groupInstance.setType(group.getType());
+		groupInstance.setCustomizationUUID(generateCustomizationUUID());
+		groupInstance.setCreationTime(creationDate);
+		groupInstance.setModificationTime(creationDate);
+		groupInstance.setName(buildGroupInstanceName(componentInstanceName, group.getName()));
+		groupInstance.setGroupName(group.getName());
+		groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
+		groupInstance.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
+		groupInstance.setArtifacts(group.getArtifacts());
+		groupInstance.setArtifactsUuid(group.getArtifactsUuid());
+		groupInstance.setProperties(group.getProperties());
+		groupInstance.setInvariantUUID(group.getInvariantUUID());
+		groupInstance.setGroupUUID(group.getGroupUUID());
+		groupInstance.setVersion(group.getVersion());
+
+		return groupInstance;
+	}
+	
+	protected String buildGroupInstanceName(String instanceName, String groupName) {
+		int groupNameIndex = groupName.indexOf("..");
+		//turn group name from VFName..heatfile..module-n to VFiName..heatfile..module-n
+		return ValidationUtils.normaliseComponentName(instanceName) + groupName.substring(groupNameIndex);
+	}
+	
+	protected String generateCustomizationUUID() {
+		return UUID.randomUUID().toString();
+	}
 
 }

@@ -50,7 +50,7 @@ public interface IUserAdminOperation {
 
 	Either<List<User>, ActionStatus> getAllUsers();
 
-	public Either<List<Edge>, StorageOperationStatus> getUserPandingTasksList(User user, Map<String, Object> properties);
+	public Either<List<Edge>, StorageOperationStatus> getUserPendingTasksList(User user, Map<String, Object> properties);
 
 	public Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> getUserDataWithFunctionalMenu(String userId);
 

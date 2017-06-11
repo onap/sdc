@@ -3,7 +3,6 @@ import { PropertyBEModel, PropertyFEModel, DerivedFEProperty, DerivedPropertyTyp
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 import { PropertiesUtils } from "app/ng2/pages/properties-assignment/properties.utils";
 import { DataTypeService } from "../../../services/data-type.service";
-import { UUID } from "angular2-uuid";
 
 
 @Component({
@@ -17,64 +16,33 @@ export class DynamicPropertyComponent {
     propType: DerivedPropertyType;
     propPath: string;
     isPropertyFEModel: boolean;
-    mapOfIDsAndKeys: Map<string, string> = new Map(); //used for map and list
+    childrenCount: number;
 
-    childrenCanBeDeclared: boolean;
     @Input() canBeDeclared: boolean;
     @Input() property: PropertyFEModel | DerivedFEProperty;
-    @Input() propChildren: Array<DerivedFEProperty>;
     @Input() expandedChildId: string;
     @Input() selectedPropertyId: string;
+    @Input() propertyNameSearchText: string;
+    @Input() readonly: boolean;
 
     @Output() valueChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() expandChild: EventEmitter<string> = new EventEmitter<string>();
     @Output() checkProperty: EventEmitter<string> = new EventEmitter<string>();
     @Output() deleteItem: EventEmitter<string> = new EventEmitter<string>();
     @Output() clickOnPropertyRow: EventEmitter<PropertyFEModel | DerivedFEProperty> = new EventEmitter<PropertyFEModel | DerivedFEProperty>();
+    @Output() mapKeyChanged: EventEmitter<string> = new EventEmitter<string>();
+    @Output() addChildPropsToParent: EventEmitter<Array<DerivedFEProperty>> = new EventEmitter<Array<DerivedFEProperty>>();
+
 
     constructor(private propertiesUtils: PropertiesUtils, private dataTypeService: DataTypeService) {
     }
 
     ngOnInit() {
         this.isPropertyFEModel = this.property instanceof PropertyFEModel;
-        if (this.property instanceof PropertyFEModel) {
-            this.propType = this.getDerivedPropertyType(this.property.type);
-            this.propPath = this.property.name;
-        } else {
-            this.propType = this.property.derivedDataType;
-            this.propPath = this.property.propertiesName;
-        }
-
-        this.childrenCanBeDeclared = this.canBeDeclared && this.propType != this.derivedPropertyTypes.MAP && this.propType != this.derivedPropertyTypes.LIST;
-
-        if (this.propType == this.derivedPropertyTypes.LIST || this.propType == this.derivedPropertyTypes.MAP) {
-            this.initializeValues();
-        }
-
+        this.propType = this.property.derivedDataType;
+        this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
     }
 
-    initializeValues = () => {
-        let tempValue: any;
-        if (this.property.value) {
-            tempValue = JSON.parse(this.property.value);
-            if (!_.isEmpty(tempValue)) {
-                tempValue.forEach((element, key) => {
-                    let newChildID: string = this.createNewChildProperty(JSON.stringify(element));
-                    this.mapOfIDsAndKeys[newChildID] = key;
-                    console.log(this.mapOfIDsAndKeys);
-                });
-            }
-        }
-        //this.pseudoChildren = [];
-        //this.valueObjRef = [];
-        //TODO: generate necessary elements for existing values here
-        // if (this.propType == this.derivedPropertyTypes.LIST) {
-        //     this.valueObjRef = (this.property.value) ? JSON.parse(this.property.value) : [];
-        // } else if (this.propType == this.derivedPropertyTypes.MAP) {
-        //     this.valueObjRef = (this.property.value)? JSON.parse(this.property.value) : {};
-        // }
-        console.log(this.property.value);
-    }
 
     onClickPropertyRow = (property, event) => {
         // Because DynamicPropertyComponent is recrusive second time the event is fire event.stopPropagation = undefined
@@ -82,68 +50,106 @@ export class DynamicPropertyComponent {
         this.clickOnPropertyRow.emit(property);
     }
 
-    deleteListOrMapItem  = (itemName: string) => {
-        this.propChildren = this.propChildren.filter(prop => prop.propertiesName.indexOf(itemName) != 0); //remove item and children;
-    }
-
-    propValueChanged = (property) => {
-        console.log("property value change!! Prop type: " + property.type + " New value: " + property.value);
-        this.valueChanged.emit(property);
-    };
 
     expandChildById = (id: string) => {
         this.expandedChildId = id;
-         this.expandChild.emit(id);
+        this.expandChild.emit(id);
     }
 
     checkedChange = (propName: string) => {
         this.checkProperty.emit(propName);
     }
 
-
-
-    addRows = (): void => { //from within the template, when creating empty item
-        let childPropId = this.createNewChildProperty();
-        this.expandChildById(this.propPath + "#" + childPropId);
+    hasChildren = (): number => {
+        return (this.property.valueObj && typeof this.property.valueObj == 'object') ? Object.keys(this.property.valueObj).length : 0;
     }
 
-    createNewChildProperty = (value?:string):string => {
-        let propUUID:string = UUID.UUID();
-        let newProp: DerivedFEProperty;
-        if (this.propType == this.derivedPropertyTypes.LIST) { //for list - create new prop of schema type
-            newProp = new DerivedFEProperty(propUUID, this.propPath, this.property.schema.property.type, value, true);
-        } else { //for map - create new prop of type map, with schema, but with flag that its a child
-            newProp = new DerivedFEProperty(propUUID, this.propPath, this.property.type, value, true, this.property.schema);
+    createNewChildProperty = (): void => {
+        
+        let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", null);
+        if (this.property instanceof PropertyFEModel) {
+            this.addChildProps(newProps, this.property.name);
+        } else {
+            this.addChildPropsToParent.emit(newProps);
         }
+    }
 
-
-        this.propChildren = this.propChildren || [];
-        this.propChildren.push(newProp);
-
-        //if it's a complex type, add children properties
-        if (!this.property.schema.property.isSimpleType) {
-            let schemaDataType: DataTypeModel = this.dataTypeService.getDataTypeByTypeName(this.property.schema.property.type);
-            this.dataTypeService.getDerivedDataTypeProperties(schemaDataType, this.propChildren, newProp.propertiesName);
-            this.propertiesUtils.assignValuesRecursively(JSON.parse(value), this.propChildren, newProp.propertiesName);
-            console.log(JSON.stringify(this.propChildren));
+    addChildProps = (newProps: Array<DerivedFEProperty>, childPropName: string) => {
+        
+        if (this.property instanceof PropertyFEModel) {
+            let insertIndex: number = this.property.getIndexOfChild(childPropName) + this.property.getCountOfChildren(childPropName); //insert after parent prop and existing children 
+            this.property.flattenedChildren.splice(insertIndex, 0, ...newProps); //using ES6 spread operator 
+            this.expandChildById(newProps[0].propertiesName);
         }
+    }
 
-        return propUUID;
+    childValueChanged = (property: DerivedFEProperty) => { //value of child property changed
+
+        if (this.property instanceof PropertyFEModel) { // will always be the case
+            let parentNames = this.getParentNamesArray(property.propertiesName, []);
+            if (parentNames.length) {
+                _.set(this.property.valueObj, parentNames.join('.'), property.valueObj);
+            }
+            console.log(parentNames);
+            this.valueChanged.emit(this.property.name);
+        }
     }    
 
-
-
-    //TODO: remove this and move to somewhere central!! (or make all properties be the same type...)
-    getDerivedPropertyType = (type) => {
-        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(type) > -1) {
-            return DerivedPropertyType.SIMPLE;
-        } else if (type == PROPERTY_TYPES.LIST) {
-            return DerivedPropertyType.LIST;
-        } else if (type == PROPERTY_TYPES.MAP) {
-            return DerivedPropertyType.MAP;
-        } else {
-            return DerivedPropertyType.COMPLEX;
+    deleteListOrMapItem = (item: DerivedFEProperty) => {
+        if (this.property instanceof PropertyFEModel) {
+            this.removeValueFromParent(item);
+            this.property.flattenedChildren.splice(this.property.getIndexOfChild(item.propertiesName), this.property.getCountOfChildren(item.propertiesName));
+            this.expandChildById(item.propertiesName);
         }
     }
+
+    removeValueFromParent = (item: DerivedFEProperty, replaceKey?: string) => {
+        if (this.property instanceof PropertyFEModel) {
+            let itemParent = (item.parentName == this.property.name) ? this.property : this.property.flattenedChildren.find(prop => prop.propertiesName == item.parentName);
+
+            if (item.derivedDataType == DerivedPropertyType.MAP) {
+                let oldKey = item.mapKey;
+                if (typeof replaceKey == 'string') { //allow saving empty string
+                    _.set(itemParent.valueObj, replaceKey, itemParent.valueObj[oldKey]);
+                    item.mapKey = replaceKey;
+                }
+                delete itemParent.valueObj[oldKey];
+            } else {
+                let itemIndex: number = this.property.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName);
+                itemParent.valueObj.splice(itemIndex, 1);
+            }
+
+            if (itemParent instanceof PropertyFEModel) { //direct child
+                this.valueChanged.emit(this.property.name);
+            } else { //nested child - need to update parent prop by getting flattened name (recurse through parents and replace map/list keys, etc)
+                this.childValueChanged(itemParent);
+            }
+        }
+    }
+
+
+    getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
+        if (this.property instanceof PropertyFEModel) {
+
+            if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
+
+            let parentProp: DerivedFEProperty = this.property.flattenedChildren.find(prop => prop.propertiesName === parentPropName);
+            let nameToInsert: string = parentProp.name;
+
+            if (parentProp.isChildOfListOrMap) {
+                if (parentProp.derivedDataType == DerivedPropertyType.MAP) {
+                    nameToInsert = parentProp.mapKey;
+                } else { //LIST
+                    let siblingProps = this.property.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
+                    nameToInsert = siblingProps.indexOf(parentProp.propertiesName).toString();
+                }
+            }
+
+            parentNames.splice(0, 0, nameToInsert); //add prop name to array
+            return this.getParentNamesArray(parentProp.parentName, parentNames); //continue recursing
+            
+        }
+    }
+
 
 }

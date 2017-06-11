@@ -215,6 +215,10 @@ export class CompositionViewModel {
             if (this.$state.current.name === 'workspace.composition.api') {
                 this.$state.go('workspace.composition.details');
             }
+
+            if(this.$scope.selectedComponent.isService() && this.$state.current.name === 'workspace.composition.relations'){
+                this.$state.go('workspace.composition.api');
+            }
         };
 
         this.$scope.openUpdateModal = ():void => {

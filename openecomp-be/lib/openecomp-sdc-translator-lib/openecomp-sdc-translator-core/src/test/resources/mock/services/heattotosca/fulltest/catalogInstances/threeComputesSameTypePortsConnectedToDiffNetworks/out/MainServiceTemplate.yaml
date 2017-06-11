@@ -76,6 +76,14 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 2
+        vm_flavor_name:
+          get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -89,14 +97,6 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - packet_external_network
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 2
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -122,6 +122,14 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        vm_flavor_name:
+          get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -135,14 +143,6 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - packet_internal_network
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 0
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -163,6 +163,14 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        vm_flavor_name:
+          get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -176,14 +184,6 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - packet_internal_network
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 1
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

@@ -25,7 +25,7 @@ export const mapStateToProps = ({softwareProduct}) => {
 	return {
 		isReadOnlyMode,
 		softwareProductDependencies: softwareProductDependencies.length ? softwareProductDependencies : [{sourceId: '', targetId: '', relationType: 'dependsOn', id: 'fake'}],
-		componentsOptions: componentsList.map(component => ({value: component.id, label: component.name}))
+		componentsOptions: componentsList.map(component => ({value: component.id, label: component.displayName}))
 	};
 };
 

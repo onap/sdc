@@ -1,86 +1,40 @@
 import {SchemaPropertyGroupModel, SchemaProperty} from '../aschema-property';
-import { PROPERTY_DATA } from 'app/utils';
-import { PropertyBEModel, DerivedFEPropertyMap, DerivedFEProperty } from '../../models';
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
+import { FilterPropertiesAssignmentData, PropertyBEModel, DerivedPropertyType, DerivedFEPropertyMap, DerivedFEProperty } from 'app/models';
 
 
 export class PropertyFEModel extends PropertyBEModel {
 
-    //START - TO REMOVE:
-    treeNodeId: string;
-    parent: PropertyFEModel;
-
-    childrenProperties: Array<PropertyFEModel>;
-    isAllChildrenLevelsCalculated: boolean;
-    uniqueId: string;
-    valueObjectRef: any;
-    //END - TO REMOVE:
-
     expandedChildPropertyId: string;
     flattenedChildren:  Array<DerivedFEProperty>; //[parentPath] : Array<DerivedFEProp>
-    isDataType: boolean; //aka- isComplexType. (Type is NOT: simple, list, or map)
     isDeclared: boolean;
     isDisabled: boolean;
     isSelected: boolean;
-    isSimpleType: boolean;
+    isSimpleType: boolean; //for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the prop is simple
+    uniqueId: string;
+    valueObj: any; //this is the only value we relate to in the html templates
+    derivedDataType: DerivedPropertyType;
 
-    private _derivedFromSimpleTypeName:string;
-    get derivedFromSimpleTypeName():string {
-        return this._derivedFromSimpleTypeName;
-    }
-    set derivedFromSimpleTypeName(derivedFromSimpleTypeName:string) {
-        this._derivedFromSimpleTypeName = derivedFromSimpleTypeName;
-    }
-
-    constructor(property?: PropertyBEModel);
-    constructor(name: string, type: string, treeNodeId: string, parent: PropertyFEModel, valueObjectRef: any, schema?: SchemaPropertyGroupModel);
-    constructor(nameOrPropertyObj?: string | PropertyBEModel, type?: string, treeNodeId?: string, parent?: PropertyFEModel, valueObjectRef?: any, schema?: SchemaPropertyGroupModel) {
-
-        super(typeof nameOrPropertyObj === 'string' ? null : nameOrPropertyObj);
-
-        if (typeof nameOrPropertyObj === 'string') {
-            this.name = nameOrPropertyObj;
-            this.type = type;
-            this.treeNodeId = treeNodeId;
-            this.parent = parent;
-            this.valueObjectRef = valueObjectRef;
-            this.value = this.value || this.defaultValue;
-            if(schema){
-                this.schema = new SchemaPropertyGroupModel(new SchemaProperty(schema.property));
-            }
-        }
-
+    constructor(property: PropertyBEModel){
+        super(property);
         this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
-        this.isDataType = PROPERTY_DATA.TYPES.indexOf(this.type) == -1;
         this.setNonDeclared();
+        this.derivedDataType = this.getDerivedPropertyType();
+        this.flattenedChildren = [];
     }
 
-    public convertChildToInput = (childName: string): void => {
-        //childName: "mac_count_required"
-        let childJson = this.flattenedChildren[childName].map((child) => {
 
-        });
-    };
-
-    public getChildJsonRecursive = (child: string, value?: string): void => {
-        //TODO: use array.map for the below
-       /* value += "{" + this.flattenedChildren[child].name + ":";
-        if (this.flattenedChildren[child].valueType == 'simple') {
-            value += this.flattenedChildren[child].value + '}';
-            return value;
-        } else {
-            this.flattenedChildren[child].forEach(grandChild => {
-                if (this.flattenedChildren[grandChild].valueType == 'simple') {
-                    return "{" + this.flattenedChildren[grandChild].name + ':' + this.flattenedChildren[child].value.toString() + "}";
-                } else {
-                    return  this.getChildJsonRecursive(grandChild + '#' + this.flattenedChildren[child].name);
-                }
-            });
+    public getJSONValue = (): string => {
+        //If type is JSON, need to try parsing it before we stringify it so that it appears property in TOSCA - change per Bracha due to AMDOCS
+        //TODO: handle this.derivedDataType == DerivedPropertyType.MAP
+        if (this.derivedDataType == DerivedPropertyType.LIST && this.schema.property.type == PROPERTY_TYPES.JSON) {
+            try {
+                return JSON.stringify(this.valueObj.map(item => JSON.parse(item)));
+            } catch (e){}
         }
 
-        return "{" + this.flattenedChildren[child].name + this.flattenedChildren[child].value.toString() + "}";
-*/
-
-    };
+        return (this.derivedDataType == DerivedPropertyType.SIMPLE) ? this.valueObj : JSON.stringify(this.valueObj);     
+    }
 
     public setNonDeclared = (childPath?: string): void => {
         if (!childPath) { //declaring a child prop
@@ -102,31 +56,26 @@ export class PropertyFEModel extends PropertyBEModel {
         }
     }
 
-
-
-    //For expand-collapse functionality
+    //For expand-collapse functionality - used within HTML template
     public updateExpandedChildPropertyId = (childPropertyId: string): void => {
         if (childPropertyId.lastIndexOf('#') > -1) {
             this.expandedChildPropertyId = (this.expandedChildPropertyId == childPropertyId) ? (childPropertyId.substring(0, childPropertyId.lastIndexOf('#'))) : childPropertyId;
         } else {
             this.expandedChildPropertyId = this.name;
         }
-        //console.log("expandedChild is now " + this.expandedChildPropertyId);
     }
 
-    public convertToServerObject: Function = (): any => { //TODO: Idan, Rachel, Nechama: Decide what we need to do here
-        // let serverObject = {};
-        // let mapData = {
-        //     'type': this.type,
-        //     'required': this.required || false,
-        //     'defaultValue': this.defaultValue != '' && this.defaultValue != '[]' && this.defaultValue != '{}' ? this.defaultValue : null,
-        //     'description': this.description,
-        //     'isPassword': this.password || false,
-        //     'schema': this.schema,
-        //     'name': this.name
-        // };
-        // serverObject[this.name] = mapData;
+    public getIndexOfChild = (childPropName: string): number => {
+        return this.flattenedChildren.findIndex(prop => prop.propertiesName.indexOf(childPropName) === 0);
+    }
 
-        //return JSON.stringify(serverObject);
-    };
+    public getCountOfChildren = (childPropName: string):number => {
+        let matchingChildren:Array<DerivedFEProperty> = this.flattenedChildren.filter(prop => prop.propertiesName.indexOf(childPropName) === 0) || [];
+        return matchingChildren.length;
+    }
+
+    // public getListIndexOfChild = (childPropName: string): number => { //gets list of siblings and then the index within that list
+    //     this.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName)
+    // }
+
 }

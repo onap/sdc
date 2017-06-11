@@ -42,7 +42,6 @@ import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -300,7 +299,7 @@ public class ImportUtilsTest {
 	public void testGetAttributesFromYml() throws IOException {
 
 		Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaWithAttribute.yml");
-		Either<Map<String, AttributeDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
+		Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualAttributes = ImportUtils.getAttributes(toscaJson);
 		assertTrue(actualAttributes.isLeft());
 		Map<String, Map<String, Object>> expectedAttributes = getElements(toscaJson, ToscaTagNamesEnum.ATTRIBUTES);
 		compareAttributes(expectedAttributes, actualAttributes.left().value());
@@ -318,10 +317,10 @@ public class ImportUtilsTest {
 
 	}
 
-	private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, AttributeDefinition> actual) {
+	private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, PropertyDefinition> actual) {
 
 		Map<String, Object> singleExpectedAttribute;
-		AttributeDefinition actualAttribute, expectedAttributeModel;
+		PropertyDefinition actualAttribute, expectedAttributeModel;
 		// attributes of resource
 		for (Map.Entry<String, Map<String, Object>> expectedAttribute : expected.entrySet()) {
 

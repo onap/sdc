@@ -29,6 +29,7 @@ export * from './models/properties-inputs/property-fe-model';
 export * from './models/properties-inputs/property-fe-map';
 export * from './models/properties-inputs/derived-fe-property';
 export * from './models/properties-inputs/input-fe-model';
+export * from './models/properties-inputs/simple-flat-property';
 export * from './models/data-types-map';
 export * from './models/data-types';
 export * from './models/distribution';
@@ -82,3 +83,5 @@ export * from './models/component-metadata';
 
 export * from './models/button';
 export * from './models/filter-properties-assignment-data'
+export * from './models/properties-inputs/input-be-model'
+

@@ -51,7 +51,6 @@ import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -338,6 +337,10 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		
 		for (ArtifactDefinition artifact : componentDeploymentArtifacts.values()) {
 			String type = artifact.getArtifactType();
+			
+			if ( !type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType()) ){
+				finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
+			}
 
 			if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
 				continue;
@@ -351,9 +354,6 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				}
 				ArtifactDefinition artifactDefinition = createHeatEnvPlaceHolder.left().value();
 				
-				//put heat
-				finalDeploymentArtifacts.put(artifact.getArtifactLabel(), artifact);
-						
 				//put env
 				finalDeploymentArtifacts.put(artifactDefinition.getArtifactLabel(), artifactDefinition);
 				
@@ -890,12 +890,12 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		}
 	}
 
-	private Either<ComponentInstanceAttribute, ResponseFormat> updateAttributeValue(ComponentInstanceAttribute attribute, String resourceInstanceId) {
-		Either<ComponentInstanceAttribute, StorageOperationStatus> eitherAttribute = componentInstanceOperation.updateAttributeValueInResourceInstance(attribute, resourceInstanceId, true);
-		Either<ComponentInstanceAttribute, ResponseFormat> result;
+	private Either<ComponentInstanceProperty, ResponseFormat> updateAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
+		Either<ComponentInstanceProperty, StorageOperationStatus> eitherAttribute = componentInstanceOperation.updateAttributeValueInResourceInstance(attribute, resourceInstanceId, true);
+		Either<ComponentInstanceProperty, ResponseFormat> result;
 		if (eitherAttribute.isLeft()) {
 			log.debug("Attribute value {} was updated on graph.", attribute.getValueUniqueUid());
-			ComponentInstanceAttribute instanceAttribute = eitherAttribute.left().value();
+			ComponentInstanceProperty instanceAttribute = eitherAttribute.left().value();
 
 			result = Either.left(instanceAttribute);
 
@@ -910,9 +910,9 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		return result;
 	}
 
-	private Either<ComponentInstanceAttribute, ResponseFormat> createAttributeValue(ComponentInstanceAttribute attribute, String resourceInstanceId) {
+	private Either<ComponentInstanceProperty, ResponseFormat> createAttributeValue(ComponentInstanceProperty attribute, String resourceInstanceId) {
 
-		Either<ComponentInstanceAttribute, ResponseFormat> result;
+		Either<ComponentInstanceProperty, ResponseFormat> result;
 
 		Wrapper<Integer> indexCounterWrapper = new Wrapper<>();
 		Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
@@ -921,10 +921,10 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		if (!errorWrapper.isEmpty()) {
 			result = Either.right(errorWrapper.getInnerElement());
 		} else {
-			Either<ComponentInstanceAttribute, StorageOperationStatus> eitherAttribute = componentInstanceOperation.addAttributeValueToResourceInstance(attribute, resourceInstanceId, indexCounterWrapper.getInnerElement(), true);
+			Either<ComponentInstanceProperty, StorageOperationStatus> eitherAttribute = componentInstanceOperation.addAttributeValueToResourceInstance(attribute, resourceInstanceId, indexCounterWrapper.getInnerElement(), true);
 			if (eitherAttribute.isLeft()) {
 				log.debug("Attribute value was added to resource instance {}", resourceInstanceId);
-				ComponentInstanceAttribute instanceAttribute = eitherAttribute.left().value();
+				ComponentInstanceProperty instanceAttribute = eitherAttribute.left().value();
 				result = Either.left(instanceAttribute);
 
 			} else {
@@ -948,8 +948,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return
 	 */
-	public Either<ComponentInstanceAttribute, ResponseFormat> createOrUpdateAttributeValue(ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, ComponentInstanceAttribute attribute, String userId) {
-		Either<ComponentInstanceAttribute, ResponseFormat> result = null;
+	public Either<ComponentInstanceProperty, ResponseFormat> createOrUpdateAttributeValue(ComponentTypeEnum componentTypeEnum, String componentId, String resourceInstanceId, ComponentInstanceProperty attribute, String userId) {
+		Either<ComponentInstanceProperty, ResponseFormat> result = null;
 		Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
 
 		validateUserExist(userId, "create Or Update Attribute Value", errorWrapper);
@@ -1104,8 +1104,6 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(TitanOperationStatus.ILLEGAL_ARGUMENT))));
 		}
-		
-		
 
 		try {
 			List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(resourceInstanceId);
@@ -1122,6 +1120,10 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
 				return resultOp;
 			}
+			List<String> path = new ArrayList<>();
+			path.add(foundResourceInstance.getUniqueId());
+			property.setPath(path);
+			
 			foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
 			Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
 			
@@ -1603,7 +1605,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				return resultOp;
 			}
 
-			List<GroupInstance> groupInstances = currentResourceInstance.getGroupInstances();
+		//	List<GroupInstance> groupInstances = currentResourceInstance.getGroupInstances();
 			Map<String, ArtifactDefinition> deploymentArtifacts =  currentResourceInstance.getDeploymentArtifacts();
 			resultOp = deleteComponentInstance(containerComponent, componentInstanceId, containerComponentType);
 			if (resultOp.isRight()) {
@@ -1639,13 +1641,15 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 				return resultOp;
 			}
 
-			if (CollectionUtils.isNotEmpty(groupInstances)) {
+	/*		if (CollectionUtils.isNotEmpty(groupInstances)) {
 				StorageOperationStatus addGroupsToComponentInstance = toscaOperationFacade.addGroupInstancesToComponentInstance(containerComponent, updatedComponentInstance, groupInstances);
 				if (addGroupsToComponentInstance != StorageOperationStatus.OK) {
 					BeEcompErrorManager.getInstance().logInternalFlowError("ChangeComponentInstanceVersion", "Failed to associate groups to new component instance", ErrorSeverity.ERROR);
 					resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 					return resultOp;
 				}
+			
+				
 			}
 			if (MapUtils.isNotEmpty(deploymentArtifacts)) {
 				StorageOperationStatus addDeploymentArtifactsToComponentInstance = toscaOperationFacade.addDeploymentArtifactsToComponentInstance(containerComponent, updatedComponentInstance, deploymentArtifacts);
@@ -1654,7 +1658,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 					resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 					return resultOp;
 				}
-			}
+			}*/
 
 			
 			ComponentParametersView filter = new ComponentParametersView(true);

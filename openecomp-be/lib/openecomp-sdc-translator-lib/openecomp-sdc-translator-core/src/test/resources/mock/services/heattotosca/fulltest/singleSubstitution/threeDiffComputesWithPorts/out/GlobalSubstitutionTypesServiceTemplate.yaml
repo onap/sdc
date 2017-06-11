@@ -8,6 +8,36 @@ node_types:
   org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      compute_pd_server_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_pd_server_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
       port_pd01_port_mac_requirements:
         type: list
         required: true
@@ -30,36 +60,36 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
+      port_pd01_port_order:
+        type: list
+        required: true
         status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
-      compute_pd_server_availability_zone:
+        entry_schema:
+          type: integer
+      port_pd01_port_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_pd_server_name:
+      port_pd01_port_network_role:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
       port_pd01_port_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       compute_pd_server_user_data_format:
         type: list
         required: true
@@ -405,6 +435,24 @@ node_types:
   org.openecomp.resource.abstract.nodes.oam_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
       port_pd01_port_mac_requirements:
         type: list
         required: true
@@ -433,18 +481,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
-        status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
-      vm_flavor_name:
-        type: string
+      port_pd01_port_order:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_oam_server_user_data_format:
         type: list
         required: true
@@ -457,12 +505,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_pd01_port_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
     requirements:
     - dependency_oam_server_pd01_port:
         capability: tosca.capabilities.Node
@@ -802,22 +862,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.ps_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_pd01_port_mac_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       compute_ps_server_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
       compute_ps_server_availability_zone:
         type: list
         required: true
@@ -825,18 +875,6 @@ node_types:
         entry_schema:
           type: string
       compute_ps_server_user_data_format:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_pd01_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_pd01_port_network:
         type: list
         required: true
         status: SUPPORTED
@@ -850,10 +888,68 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_pd01_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
+      port_pd01_port_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
     requirements:
     - dependency_ps_server_pd01_port:
         capability: tosca.capabilities.Node

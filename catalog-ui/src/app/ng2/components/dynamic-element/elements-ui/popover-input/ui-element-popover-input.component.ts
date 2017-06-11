@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef} from '@angular/core';
+import {Component, ViewChild, ElementRef, Input} from '@angular/core';
 import {UiElementBase, UiElementBaseInterface} from "../ui-element-base.component";
 import {ButtonsModelMap, ButtonModel} from "app/models";
 import { PopoverContentComponent } from "app/ng2/components/popover/popover-content.component"
@@ -10,7 +10,6 @@ import { PopoverComponent } from "app/ng2/components/popover/popover.component"
     styleUrls: ['./ui-element-popover-input.component.less']
 })
 export class UiElementPopoverInputComponent extends UiElementBase implements UiElementBaseInterface {
-
     @ViewChild('textArea') textArea: ElementRef;
     @ViewChild('popoverForm') popoverContentComponent: PopoverContentComponent;
 

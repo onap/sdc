@@ -25,7 +25,18 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
     }
 
     @Test
+    public void testNestedWithOneComputeSamePortType() throws IOException {
+        inputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneComputeDiffPortType/in";
+        outputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithOneComputeDiffPortType/out";
+
+        testTranslationWithInit();
+    }
+
+    @Test
     public void testOneNestedWithTwoComputesOfSameType() throws IOException {
+        //Not pattern 4 (Complex VFC)
         inputFilesPath =
             "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoComputesOfSameType/in";
         outputFilesPath =
@@ -36,6 +47,7 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
 
     @Test
     public void testOneNestedWithTwoDiffComputeTypes() throws IOException {
+        //Not pattern 4 (Complex VFC)
         inputFilesPath =
             "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedWithTwoDiffComputeTypes/in";
         outputFilesPath =
@@ -124,6 +136,7 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
 
     @Test
     public void testMultiLevelNestedComposition() throws IOException {
+        //Not pattern 4 (Multi level Complex VFC)
         inputFilesPath =
             "/mock/services/heattotosca/fulltest/nestedSingleCompute/nestedMultiLevels/in";
         outputFilesPath =

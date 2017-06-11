@@ -31,7 +31,7 @@ import org.junit.rules.TestName;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.ci.tests.api.ComponentBaseTest;
 import org.openecomp.sdc.ci.tests.api.Urls;
@@ -69,13 +69,13 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 				.addComponentInstanceToComponentContainer(vfcWithAttributes, vf).left().value();
 
 		// util method to get the specific attribute from the vf
-		Function<Resource, ComponentInstanceAttribute> attributeGetter = resourceVf -> resourceVf
+		Function<Resource, ComponentInstanceProperty> attributeGetter = resourceVf -> resourceVf
 				.getComponentInstancesAttributes().values().iterator().next().stream()
 				.filter(att -> att.getName().equals("private_address")).findAny().get();
 		// update attribute on vfc instance
 		final Resource vfWithInsatncePreUpdate = swallowException(
 				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
-		ComponentInstanceAttribute attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
+		ComponentInstanceProperty attributeOfRI = attributeGetter.apply(vfWithInsatncePreUpdate);
 		final String newAttValue = "NewValue";
 		attributeOfRI.setValue(newAttValue);
 		String body = gson.toJson(attributeOfRI);
@@ -87,7 +87,7 @@ public class ComponentInstanceAttributeTest extends ComponentBaseTest {
 		// Retrieve updated vf and verify attribute was updated
 		final Resource vfWithInsatncePostUpdate = swallowException(
 				() -> (Resource) AtomicOperationUtils.getCompoenntObject(vf, UserRoleEnum.DESIGNER));
-		ComponentInstanceAttribute updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
+		ComponentInstanceProperty updatedAttribute = attributeGetter.apply(vfWithInsatncePostUpdate);
 		assertEquals(updatedAttribute.getValue(), newAttValue);
 
 	}

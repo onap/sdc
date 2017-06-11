@@ -155,10 +155,12 @@ export default {
 				licenseModelId = response[0].vendorId;
 			}
 
+			const newVersion = response[0].version ? response[0].version : version;
+
 			SoftwareProductActionHelper.loadSoftwareProductDetailsData(dispatch, {licenseModelId, licensingVersion});
-			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version});
-			SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version});
-			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version});
+			SoftwareProductComponentsActionHelper.fetchSoftwareProductComponents(dispatch, {softwareProductId, version: newVersion});
+			SoftwareProductActionHelper.loadSoftwareProductHeatCandidate(dispatch, {softwareProductId, version: newVersion});
+			setCurrentScreen(dispatch, enums.SCREEN.SOFTWARE_PRODUCT_LANDING_PAGE, {softwareProductId, licenseModelId, version: newVersion});
 		});
 	},
 

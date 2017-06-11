@@ -326,7 +326,6 @@ topology_template:
           - sub_interface_vlan_tag
           - mac
           - port_tuple_refs
-          - virtual_machine_intefrace_mac_addresses
           - ip_prefix
           - address_mode
           - mac_address
@@ -337,6 +336,7 @@ topology_template:
           - virtual_network_refs
           - virtual_machine_interface_properties
           - virtual_machine_interface_allowed_address_pairs
+          - virtual_machine_interface_mac_addresses
   groups:
     ep-jsa_net_group:
       type: org.openecomp.groups.heat.HeatStack

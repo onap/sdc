@@ -77,8 +77,8 @@ export const mapActionsToProps = (dispatch, {softwareProductId}) => {
 			}
 		}),
 		onSave: (heatCandidate, version) => SoftwareProductActionHelper.updateSoftwareProductHeatCandidate(dispatch, {softwareProductId, heatCandidate, version}),
-		onGoToOverview: () => {
-			OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId});
+		onGoToOverview: ({version}) => {
+			OnboardingActionHelper.navigateToSoftwareProductLandingPage(dispatch, {softwareProductId, version});
 		},
 		onProcessAndValidate: ({heatData, heatDataCache, isReadOnlyMode, version}) => {
 			return HeatSetupActionHelper.processAndValidateHeat(dispatch,

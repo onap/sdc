@@ -472,10 +472,17 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       if (user.equals(versionInfo.getLockingUser())) {
         version.setStatus(VersionStatus.Locked);
       }
-      VspDetails vsp = vspInfoDao.get(new VspDetails(entry.getKey(), version));
-      if (vsp != null && !vsp.getId().equals(VALIDATION_VSP_ID)) {
-        vsp.setValidationDataStructure(null);
-        vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
+      try {
+        VspDetails vsp = vspInfoDao.get(new VspDetails(entry.getKey(), version));
+        if (vsp != null && !vsp.getId().equals(VALIDATION_VSP_ID)) {
+          vsp.setValidationDataStructure(null);
+          vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
+        }
+      }catch(RuntimeException rte){
+        logger.error("Error trying to retrieve vsp["+entry.getKey()+"] version["+version.toString
+            ()+"] " +
+            "message:"+rte
+            .getMessage());
       }
     }
 

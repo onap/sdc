@@ -35,7 +35,7 @@ public enum Messages {
   MANIFEST_NOT_EXIST("Manifest doesn't exist"),
   FILE_TYPE_NOT_LEGAL("File type not legal as data for other file"),
   MODULE_IN_MANIFEST_NO_YAML("Module '%s', has no yaml file reference"),
-  NO_MODULES_IN_MANIFEST("At least on Base/Module must be defined \n"),
+  NO_MODULES_IN_MANIFEST("At least one Base/Module must be defined \n"),
   MODULE_IN_MANIFEST_VOL_ENV_NO_VOL("Module '%s', has volume Env. reference with no Volume " +
       "reference"),
   ILLEGAL_MANIFEST("Illegal Manifest"),

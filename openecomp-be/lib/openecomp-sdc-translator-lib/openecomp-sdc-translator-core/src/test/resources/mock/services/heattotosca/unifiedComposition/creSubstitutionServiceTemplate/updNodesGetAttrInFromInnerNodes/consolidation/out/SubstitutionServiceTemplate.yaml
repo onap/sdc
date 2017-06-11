@@ -16,11 +16,31 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_FSB1_Internal_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB1_Internal_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_FSB1_metadata:
       type: list
       required: true
       entry_schema:
         type: json
+    port_FSB2_Internal_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB2_Internal_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     compute_FSB1_availability_zone:
       type: list
       required: true
@@ -33,16 +53,16 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    port_FSB2_Internal_network:
+    port_FSB2_Internal_mac_requirements:
       type: list
       required: true
       entry_schema:
-        type: string
-    compute_FSB1_name:
+        type: json
+    port_FSB2_Internal_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: string
+        type: json
     vm_flavor_name:
       type: string
       required: true
@@ -51,10 +71,102 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_FSB2_Internal_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB1_Internal_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB1_Internal_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_FSB1_Internal_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB2_Internal_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB1_Internal_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_FSB1_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB1_Internal_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_FSB1_Internal_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_FSB2_Internal_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
   node_templates:
     FSB1_FSB1_Internal:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_FSB1_Internal_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_FSB1_Internal_vlan_requirements
+          - index_value
+        ip_requirements:
+          get_input:
+          - port_FSB1_Internal_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_FSB1_Internal_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_FSB1_Internal_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_FSB1_Internal_order
+          - index_value
+        network_role:
+          get_input:
+          - port_FSB1_Internal_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_FSB1_Internal_subnetpoolid
+          - index_value
         network:
           get_attribute:
           - FSB1_FSB2_Internal
@@ -71,6 +183,38 @@ topology_template:
     FSB1_FSB2_Internal:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_FSB2_Internal_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_FSB2_Internal_vlan_requirements
+          - index_value
+        ip_requirements:
+          get_input:
+          - port_FSB2_Internal_ip_requirements
+          - index_value
+        network_role_tag:
+          get_input:
+          - port_FSB2_Internal_network_role_tag
+          - index_value
+        mac_requirements:
+          get_input:
+          - port_FSB2_Internal_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_FSB2_Internal_order
+          - index_value
+        network_role:
+          get_input:
+          - port_FSB2_Internal_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_FSB2_Internal_subnetpoolid
+          - index_value
         device_id:
           get_attribute:
           - FSB1

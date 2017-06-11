@@ -46,14 +46,29 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_scheduler_hints:
+        - group: BE_Affinity_group
+        - group: BE_Affinity_group
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd01_port_replacement_policy:
+        - AUTO_PORT_1
+        - AUTO_PORT_0
+        vm_flavor_name:
+          get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
         - mac_count_required:
             is_required: false
-        compute_pd_server_scheduler_hints:
-        - group: BE_Affinity_group
-        - group: BE_Affinity_group
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
@@ -70,21 +85,6 @@ topology_template:
         port_pd01_port_network:
         - Network-1
         - Network-0
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 1
-        - get_input:
-          - pd_server_names
-          - 0
-        port_pd01_port_replacement_policy:
-        - AUTO_PORT_1
-        - AUTO_PORT_0
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_pd_server_user_data_format:
         - RAW_SERVER_PD_2
         - RAW_SERVER_PD_1

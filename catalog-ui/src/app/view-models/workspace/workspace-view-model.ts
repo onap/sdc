@@ -408,7 +408,7 @@ export class WorkspaceViewModel {
                 switch (url) {
                     case 'lifecycleState/CHECKOUT':
                         // only checkOut get the full component from server
-                        this.$scope.component = component;
+                     //   this.$scope.component = component;
                         // Work around to change the csar version
                         if (this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG)) {
                             (<Resource>this.$scope.component).csarVersion = this.cacheService.get(CHANGE_COMPONENT_CSAR_VERSION_FLAG);
@@ -424,12 +424,17 @@ export class WorkspaceViewModel {
                             //when checking out a major(certified) version
                             this.components.unshift(component);
                         }
+                        this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
+                        // this.$state.go(this.$state.current.name, {
+                        //     id: component.uniqueId,
+                        //     type: component.componentType.toLowerCase(),
+                        //     components: this.components
+                        // });
+                        this.$scope.mode = this.initViewMode();
+                        this.initChangeLifecycleStateButtons();
+                        this.initVersionObject();
+                        this.$scope.isLoading = false;
 
-                        this.$state.go(this.$state.current.name, {
-                            id: component.uniqueId,
-                            type: component.componentType.toLowerCase(),
-                            components: this.components
-                        });
                         this.Notification.success({
                             message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
                             title: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TITLE")

@@ -28,18 +28,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.openecomp.portalsdk.core.onboarding.ueb.FunctionalMenu;
-import org.openecomp.portalsdk.core.onboarding.ueb.UebException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.FunctionalMenuInfo;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.IUserAdminOperation;
@@ -249,16 +245,17 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		// comment until admin will be able to do do check-in/check-out from the
 		// UI
 
-		Either<List<Edge>, StorageOperationStatus> userPendingTasksReq = getPandingUserPandingTasksWithCommit(userToUpdate);
+		Either<List<Edge>, StorageOperationStatus> userPendingTasksReq = getPendingUserPendingTasksWithCommit(userToUpdate);
 		if (userPendingTasksReq.isRight()) {
-			log.debug("updateUserRole method - failed to get user pending tasks list", userIdToUpdate);
+			log.debug("updateUserRole method - failed to get user pending tasks list userId {}", userIdToUpdate);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(userPendingTasksReq.right().value())));
 		}
 
 		List<Edge> userPendingTasks = userPendingTasksReq.left().value();
-		if (userPendingTasks.size() > 0) {
-			log.debug("updateUserRole method - User canot be updated, user have panding projects", userIdToUpdate);
-			String userTasksStatusForErrorMessage = getUserPandingTaskStatusByRole(UserRoleEnum.valueOf(userToUpdate.getRole()));
+		if (!userPendingTasks.isEmpty()) {
+			log.debug("updateUserRole method - User canot be updated, user have pending projects userId {}", userIdToUpdate);
+			
+			String userTasksStatusForErrorMessage = getUserPendingTaskStatusByRole(UserRoleEnum.valueOf(userToUpdate.getRole()));
 			String userInfo = userToUpdate.getFirstName() + " " + userToUpdate.getLastName() + '(' + userToUpdate.getUserId() + ')';
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.CANNOT_UPDATE_USER_WITH_ACTIVE_ELEMENTS, userInfo, userTasksStatusForErrorMessage);
 			handleAuditing(modifier, userToUpdate, userToUpdate, responseFormat, AuditingActionEnum.UPDATE_USER);
@@ -413,7 +410,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			return Either.right(responseFormat);
 		}
 
-		Either<List<Edge>, StorageOperationStatus> userPendingTasksReq = getPandingUserPandingTasksWithCommit(userToDeactivate);
+		Either<List<Edge>, StorageOperationStatus> userPendingTasksReq = getPendingUserPendingTasksWithCommit(userToDeactivate);
 		if (userPendingTasksReq.isRight()) {
 			log.debug("deActivateUser method - failed to get user pending tasks list", userUniuqeIdToDeactive);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(userPendingTasksReq.right().value())));
@@ -421,9 +418,9 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 
 		List<Edge> userPendingTasks = userPendingTasksReq.left().value();
 		if (userPendingTasks.size() > 0) {
-			log.debug("deActivateUser method - User canot be deleted, user have panding projects", userUniuqeIdToDeactive);
+			log.debug("deActivateUser method - User canot be deleted, user have pending projects", userUniuqeIdToDeactive);
 
-			String userTasksStatusForErrorMessage = getUserPandingTaskStatusByRole(UserRoleEnum.valueOf(userToDeactivate.getRole()));
+			String userTasksStatusForErrorMessage = getUserPendingTaskStatusByRole(UserRoleEnum.valueOf(userToDeactivate.getRole()));
 			String userInfo = userToDeactivate.getFirstName() + " " + userToDeactivate.getLastName() + '(' + userToDeactivate.getUserId() + ')';
 			responseFormat = componentsUtils.getResponseFormat(ActionStatus.CANNOT_DELETE_USER_WITH_ACTIVE_ELEMENTS, userInfo, userTasksStatusForErrorMessage);
 			handleAuditing(modifier, userToDeactivate, userToDeactivate, responseFormat, AuditingActionEnum.DELETE_USER);
@@ -589,7 +586,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		return Either.left(updatedUser);
 	}
 
-	private Either<List<Edge>, StorageOperationStatus> getPandingUserPandingTasksWithCommit(User user) {
+	private Either<List<Edge>, StorageOperationStatus> getPendingUserPendingTasksWithCommit(User user) {
 
 		Either<List<Edge>, StorageOperationStatus> result = null;
 
@@ -601,21 +598,21 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 			case PRODUCT_STRATEGIST:
 			case PRODUCT_MANAGER:
 				properties.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
-				return userAdminOperation.getUserPandingTasksList(user, properties);
+				return userAdminOperation.getUserPendingTasksList(user, properties);
 			case TESTER:
 				properties.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name());
-				return userAdminOperation.getUserPandingTasksList(user, properties);
+				return userAdminOperation.getUserPendingTasksList(user, properties);
 			case ADMIN:
 				properties.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.CERTIFICATION_IN_PROGRESS.name());
 				properties.put(GraphPropertiesDictionary.STATE.getProperty(), LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
-				return userAdminOperation.getUserPandingTasksList(user, properties);
+				return userAdminOperation.getUserPendingTasksList(user, properties);
 			default:
 				return Either.left(new ArrayList<>());
 			}
 		} finally {
 			// commit will be perform outside!!!
 			if (result == null || result.isRight()) {
-				log.debug("getUserPandingTasksList failed to perform fetching");
+				log.debug("getUserPendingTasksList failed to perform fetching");
 				titanDao.rollback();
 			} else {
 				titanDao.commit();
@@ -623,7 +620,7 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		}
 	}
 
-	private String getUserPandingTaskStatusByRole(UserRoleEnum role) {
+	private String getUserPendingTaskStatusByRole(UserRoleEnum role) {
 
 		switch (role) {
 		case DESIGNER:
@@ -638,78 +635,5 @@ public class UserBusinessLogic implements IUserBusinessLogic {
 		default:
 			return "";
 		}
-	}
-
-	/**
-	 * return the functional menu of a given user
-	 * 
-	 * @param userId
-	 * @param inTransaction
-	 * @return
-	 */
-	public Either<FunctionalMenuInfo, ActionStatus> getFunctionalMenu(String userId) {
-
-		boolean toCommit = false;
-
-		FunctionalMenuInfo functionalMenuInfo = new FunctionalMenuInfo();
-
-		try {
-
-			Either<ImmutablePair<User, FunctionalMenuInfo>, ActionStatus> userResult = userAdminOperation.getUserDataWithFunctionalMenu(userId);
-			if (userResult.isRight()) {
-				ActionStatus actionStatus = userResult.right().value();
-				if (actionStatus == ActionStatus.USER_NOT_FOUND) {
-					actionStatus = ActionStatus.INVALID_USER_ID;
-				}
-				return Either.right(actionStatus);
-			}
-
-			ImmutablePair<User, FunctionalMenuInfo> immutablePair = userResult.left().value();
-			FunctionalMenuInfo currentFunctionalMenu = immutablePair.right;
-			String currentMenuStr = currentFunctionalMenu != null ? currentFunctionalMenu.getFunctionalMenu() : null;
-
-			String functionalMenu = getFunctionalMenuFromUeb(userId);
-
-			// functionalMenu can be null or since we catch UebException
-			if (functionalMenu != null && false == functionalMenu.isEmpty()) {
-				functionalMenuInfo.setFunctionalMenu(functionalMenu);
-				if (false == functionalMenu.equals(currentMenuStr)) {
-					log.debug("Going to update functional menu of user {}. Functional menu is {}", userId, functionalMenu);
-					userAdminOperation.createOrUpdateFunctionalMenu(userId, functionalMenu);
-				}
-			} else {
-				String menu = currentMenuStr;
-				if (menu == null) {
-					menu = "[]";
-				}
-				log.debug("Fetch functional menu from old request. Functional menu is {}", menu);
-				functionalMenuInfo.setFunctionalMenu(menu);
-			}
-
-			toCommit = true;
-
-		} finally {
-			if (toCommit) {
-				titanDao.commit();
-			} else {
-				titanDao.rollback();
-			}
-		}
-
-		return Either.left(functionalMenuInfo);
-	}
-
-	private String getFunctionalMenuFromUeb(String userId) {
-		String functionalMenu = null;
-		try {
-			log.debug("Before calling to FunctionalMenu method for user {}", userId);
-			functionalMenu = FunctionalMenu.get(userId);
-			log.debug("Functional menu fetched is {}", functionalMenu);
-
-		} catch (UebException e) {
-			log.debug("Failed to fetch 'functional menu' of user {} from ecomp portal(via UEB)", userId, e);
-			BeEcompErrorManager.getInstance().logInternalFlowError("FetchFunctionalMenu", "Failed to fetch 'functional menu'", ErrorSeverity.ERROR);
-		}
-		return functionalMenu;
 	}
 }

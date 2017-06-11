@@ -554,6 +554,7 @@ public class AaiArtifactGenerator implements ArtifactGenerator {
     ToscaTemplate tosca = null;
     if (checksum.equalsIgnoreCase(input.getChecksum())) {
       try {
+        log.debug("Input yaml name " + input.getName() + "payload " + new String(decodedInput));
         tosca = GeneratorUtil.translateTosca(new String(decodedInput), ToscaTemplate.class);
         tosca.getMetadata().put("version", serviceVersion);
         return tosca;

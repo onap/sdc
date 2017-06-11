@@ -28,6 +28,7 @@ import java.util.Collection;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 public class ProcessArtifactEnricherTest {
@@ -56,7 +57,6 @@ public class ProcessArtifactEnricherTest {
     version.setMinor(0);
 
     ComponentEntity componentEntity = getComponentEntity(vspId, version, componentId);
-    setMockToEnrichComponent(vspId, componentId, version);
 
     ProcessEntity entity = new ProcessEntity(vspId, version, componentId, null);
     ProcessEntity processEntity = new ProcessEntity();
@@ -64,6 +64,8 @@ public class ProcessArtifactEnricherTest {
     processEntity.setVspId(vspId);
     processEntity.setVersion(version);
     processEntity.setComponentId(componentId);
+    processEntity.setArtifactName("artifact_1kb.txt");
+    processEntity.setArtifact(getMibByteBuffer("/mock/enrichProcess/artifact_1kb.txt"));
 
     Collection<ComponentEntity> componentList = new ArrayList<ComponentEntity>();
     componentList.add(componentEntity);
@@ -72,6 +74,8 @@ public class ProcessArtifactEnricherTest {
     Collection<ProcessEntity> list = new ArrayList<ProcessEntity>();
     list.add(processEntity);
     when(processDaoMock.list(entity)).thenReturn(list);
+
+    when(processDaoMock.get(anyObject())).thenReturn(processEntity);
 
     EnrichmentInfo info = new EnrichmentInfo();
     info.setVersion(version);
@@ -90,19 +94,6 @@ public class ProcessArtifactEnricherTest {
         componentName + File.separator + ArtifactCategory.DEPLOYMENT.getDisplayName() +
             File.separator + "Lifecycle Operations" + File.separator + "artifact_1kb.txt");
 
-  }
-
-  private void setMockToEnrichComponent(String vspId, String componentId, Version version) {
-    ProcessEntity returnedArtifact = new ProcessEntity();
-    returnedArtifact.setVspId(vspId);
-    returnedArtifact.setVersion(version);
-    returnedArtifact.setComponentId(componentId);
-    returnedArtifact.setArtifactName("artifact_1kb.txt");
-    returnedArtifact.setArtifact(getMibByteBuffer("/mock/enrichProcess/artifact_1kb.txt"));
-
-    Mockito.when(processDaoMock.get(anyObject()))
-        .thenReturn(returnedArtifact);
-    Mockito.doNothing().when(enrichedServiceModelDaoMock).storeExternalArtifact(anyObject());
   }
 
   private ComponentEntity getComponentEntity(String vspId, Version version, String componentId) {

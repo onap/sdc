@@ -1468,26 +1468,7 @@ public class ImportCsarResourceTest extends ComponentBaseTest {
 
 	@Test
 	public void createImportRIRelationByCapNameFromCsarUITest() throws Exception {
-		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
-		String payloadName = "vmmc_relate_by_cap_name.csar";
-		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
-		String rootPath = System.getProperty("user.dir");
-		Path path = null;
-		byte[] data = null;
-		String payloadData = null;
-
-		path = Paths.get(rootPath + CSARS_PATH + "vmmc_relate_by_cap_name.csar");
-		data = Files.readAllBytes(path);
-		payloadData = Base64.encodeBase64String(data);
-		resourceDetails.setPayloadData(payloadData);
-
-		// create new resource from Csar
-		resourceDetails.setCsarUUID(payloadName);
-		resourceDetails.setPayloadName(payloadName);
-		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
-		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
-		BaseRestUtils.checkCreateResponse(createResource);
-		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		Resource resource = ResourceRestUtils.importResourceFromCsar("vmmc_relate_by_cap_name.csar");
 		// assert all relations created
 		assertEquals(80, resource.getComponentInstancesRelations().size());
 	}

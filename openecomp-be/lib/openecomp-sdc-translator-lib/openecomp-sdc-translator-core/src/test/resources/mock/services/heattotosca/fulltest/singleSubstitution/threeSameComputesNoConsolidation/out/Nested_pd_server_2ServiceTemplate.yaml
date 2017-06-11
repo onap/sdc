@@ -11,6 +11,21 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_pd01_port_2_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_pd01_port_3_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_3_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -18,6 +33,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
+    port_pd01_port_2_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     compute_pd_server_availability_zone:
       type: list
       required: true
@@ -51,15 +71,40 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_pd01_port_2_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_pd01_port_2_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     vm_image_name:
       type: string
       required: true
+    port_pd01_port_3_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_pd01_port_2_network:
       type: list
       required: true
       entry_schema:
         type: string
+    port_pd01_port_3_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     port_pd01_port_2_mac_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_2_exCP_naming:
       type: list
       required: true
       entry_schema:
@@ -75,6 +120,11 @@ topology_template:
       entry_schema:
         type: string
     port_pd01_port_2_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_pd01_port_3_exCP_naming:
       type: list
       required: true
       entry_schema:
@@ -102,6 +152,14 @@ topology_template:
     pd_server_pd01_port_2:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_pd01_port_2_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pd01_port_2_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_pd01_port_2_ip_requirements
@@ -113,6 +171,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_pd01_port_2_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_pd01_port_2_order
+          - index_value
+        network_role:
+          get_input:
+          - port_pd01_port_2_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_pd01_port_2_subnetpoolid
           - index_value
         network:
           get_input:
@@ -126,6 +196,14 @@ topology_template:
     pd_server_pd01_port_3:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_pd01_port_3_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_pd01_port_3_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_pd01_port_3_ip_requirements
@@ -137,6 +215,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_pd01_port_3_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_pd01_port_3_order
+          - index_value
+        network_role:
+          get_input:
+          - port_pd01_port_3_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_pd01_port_3_subnetpoolid
           - index_value
         network:
           get_input:

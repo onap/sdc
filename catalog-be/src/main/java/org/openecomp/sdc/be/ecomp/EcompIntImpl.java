@@ -26,7 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openecomp.portalsdk.core.onboarding.crossapi.IPortalRestAPIService;
-import org.openecomp.portalsdk.core.onboarding.crossapi.PortalAPIException;
+import org.openecomp.portalsdk.core.onboarding.exception.PortalAPIException;
 import org.openecomp.portalsdk.core.restful.domain.EcompRole;
 import org.openecomp.portalsdk.core.restful.domain.EcompUser;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.ecomp.converters.EcompUserConverter;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -377,5 +378,29 @@ public class EcompIntImpl implements IPortalRestAPIService {
 		ApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
 		UserBusinessLogic userBusinessLogic = (UserBusinessLogic) ctx.getBean("userBusinessLogic");
 		return userBusinessLogic;
+	}
+	
+	/**
+     * Gets and returns the userId for the logged-in user based on the request.
+     * If any error occurs, the method should throw PortalApiException with an
+     * appropriate message. The FW library will catch the exception and send an
+     * appropriate response to Portal.
+     * 
+      * As a guideline for AT&T specific implementation, see the sample apps
+     * repository
+     * https://codecloud.web.att.com/projects/EP_SDK/repos/ecomp_portal_sdk_third_party/
+     * for a sample implementation for on-boarded applications using EPSDK-FW.
+     * However, the app can always choose to have a custom implementation of
+     * this method. For Open-source implementation, for example, the app will
+     * have a totally different implementation for this method.
+     * 
+      * @param request
+     * @return true if the request contains appropriate credentials, else false.
+     * @throws PortalAPIException
+     *             If an unexpected error occurs while processing the request.
+     */
+	@Override
+	public String getUserId(HttpServletRequest request) throws PortalAPIException {
+		return request.getHeader(Constants.USER_ID_HEADER);
 	}
 }

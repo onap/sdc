@@ -9,7 +9,6 @@ import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabiltyDataDefinition;
@@ -28,7 +27,7 @@ public class TopologyTemplate extends ToscaElement{
 	private Map<String, PropertyDataDefinition> inputs;
 	private Map<String, MapPropertiesDataDefinition> instInputs;
 	private Map<String, ? extends ToscaDataDefinition> heatParameters;
-	private Map<String, MapAttributesDataDefinition> instAttributes;
+	private Map<String, MapPropertiesDataDefinition> instAttributes;
 	private Map<String, MapPropertiesDataDefinition> instProperties;
 	private Map<String, GroupDataDefinition> groups;
 	private Map<String, MapGroupsDataDefinition> instGroups;
@@ -64,10 +63,10 @@ public class TopologyTemplate extends ToscaElement{
 	public void setHeatParameters(Map<String, ? extends ToscaDataDefinition> heatParameters) {
 		this.heatParameters = heatParameters;
 	}
-	public Map<String, MapAttributesDataDefinition> getInstAttributes() {
+	public Map<String, MapPropertiesDataDefinition> getInstAttributes() {
 		return instAttributes;
 	}
-	public void setInstAttributes(Map<String, MapAttributesDataDefinition> instAttributes) {
+	public void setInstAttributes(Map<String, MapPropertiesDataDefinition> instAttributes) {
 		this.instAttributes = instAttributes;
 	}
 	public Map<String, MapPropertiesDataDefinition> getInstProperties() {
@@ -163,7 +162,7 @@ public class TopologyTemplate extends ToscaElement{
 		getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue()).getComponentInstances().put(componentInstance.getUniqueId(), componentInstance);
 	}
 	/**
-	 * Returns map of component inctances from composition
+	 * Returns map of component instances from composition
 	 * @return
 	 */
 	public Map<String, ComponentInstanceDataDefinition> getComponentInstances() {

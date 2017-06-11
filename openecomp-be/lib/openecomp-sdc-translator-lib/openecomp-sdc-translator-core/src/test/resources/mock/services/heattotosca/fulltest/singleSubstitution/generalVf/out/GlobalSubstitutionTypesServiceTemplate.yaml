@@ -14,6 +14,112 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_FSB2_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      compute_FSB2_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB_OAM_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_FSB2_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal1_mac_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB_OAM_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal1_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal2_mac_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB_OAM_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_FSB2_Internal2_mac_requirements:
         type: list
         required: true
@@ -40,41 +146,37 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_FSB_OAM_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       port_FSB2_Internal2_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      compute_FSB2_availability_zone:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_FSB_OAM_ip_requirements:
+      port_FSB2_Internal2_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_FSB2_Internal1_ip_requirements:
+      port_FSB2_Internal1_order:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      compute_FSB2_name:
+          type: integer
+      port_FSB2_Internal2_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal1_mac_address:
+      port_FSB2_Internal1_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
@@ -92,24 +194,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_FSB_OAM_network:
+      port_FSB2_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_FSB2_Internal1_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB2_Internal1_network:
+      port_FSB_OAM_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      port_FSB2_Internal2_mac_address:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
+          type: json
     requirements:
     - dependency_FSB2_FSB_OAM:
         capability: tosca.capabilities.Node
@@ -605,12 +707,12 @@ node_types:
   org.openecomp.resource.abstract.nodes.VLC2:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_VLC_SCTP_A_network:
+      port_VLC_GTP_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
+          type: json
       port_VLC_OAM_network_role_tag:
         type: list
         required: true
@@ -651,24 +753,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC_OAM_ip_requirements:
+      port_VLC2_Internal1_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
       port_VLC2_Internal2_mac_address:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_VLC_OAM_fixed_ips:
+      port_VLC_GTP_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
       vm_image_name:
         type: string
         required: true
@@ -686,12 +788,6 @@ node_types:
         entry_schema:
           type: json
       port_VLC2_Internal1_mac_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_VLC_SCTP_A_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
@@ -715,7 +811,157 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC_GTP_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_OAM_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_A_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_GTP_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC2_Internal2_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_A_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_SCTP_B_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_A_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC2_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_OAM_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC2_Internal2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_A_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_OAM_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_B_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_VLC2_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_OAM_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC2_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC2_Internal2_network_role:
         type: list
         required: true
         status: SUPPORTED
@@ -729,12 +975,42 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_VLC_SCTP_B_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC2_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_VLC_SCTP_B_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC_GTP_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC2_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       port_VLC_GTP_mac_requirements:
         type: list
         required: true
@@ -753,7 +1029,7 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_VLC_GTP_fixed_ips:
+      port_VLC2_Internal1_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
@@ -765,7 +1041,13 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC_OAM_network:
+      port_VLC2_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC2_Internal2_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
@@ -777,7 +1059,37 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC2_Internal2_network:
+      port_VLC2_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_B_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_GTP_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC2_Internal1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_B_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_B_network_role:
         type: list
         required: true
         status: SUPPORTED
@@ -1512,6 +1824,80 @@ node_types:
   org.openecomp.resource.abstract.nodes.NCB1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_NCB1_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB1_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB1_Internal1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      compute_NCB1_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB1_Internal2_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_NCB1_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_NCB1_Internal2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB1_Internal1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB1_Internal1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB1_Internal2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB1_Internal2_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_NCB1_Internal2_mac_address:
         type: list
         required: true
@@ -1532,29 +1918,31 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_NCB1_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_NCB1_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       port_NCB1_Internal1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      compute_NCB1_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_NCB1_Internal1_mac_requirements:
+      port_NCB1_Internal1_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_NCB1_Internal2_mac_requirements:
+      port_NCB1_Internal1_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
@@ -1572,16 +1960,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_NCB1_Internal2_ip_requirements:
+      port_NCB1_Internal2_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
       port_NCB1_Internal2_network:
         type: list
         required: true
@@ -2005,6 +2389,62 @@ node_types:
   org.openecomp.resource.abstract.nodes.NCB2:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      compute_NCB2_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_NCB2_Internal2_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB2_Internal1_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_NCB2_Internal1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB2_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB2_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_NCB2_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB2_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -2019,35 +2459,25 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_NCB2_availability_zone:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       port_NCB2_Internal2_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_NCB2_Internal2_mac_requirements:
+      port_NCB2_Internal2_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
       port_NCB2_Internal2_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_NCB2_Internal1_mac_requirements:
+      port_NCB2_Internal2_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
@@ -2065,11 +2495,37 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_image_name:
-        type: string
+      port_NCB2_Internal1_subnetpoolid:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB2_Internal1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB2_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       compute_NCB2_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_NCB2_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_NCB2_Internal2_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
@@ -2498,6 +2954,74 @@ node_types:
   org.openecomp.resource.abstract.nodes.GPB2:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_GPB2_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB2_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_GPB2_Internal1_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB2_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_GPB2_Internal2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_GPB2_Internal2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB2_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_GPB2_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB2_Internal1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB2_Internal2_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_GPB2_Internal2_mac_address:
         type: list
         required: true
@@ -2516,7 +3040,7 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_GPB2_Internal1_network:
+      port_GPB2_Internal2_network_role:
         type: list
         required: true
         status: SUPPORTED
@@ -2536,27 +3060,31 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_flavor_name:
-        type: string
+      port_GPB2_Internal2_exCP_naming:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB2_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       port_GPB2_Internal1_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_GPB2_Internal2_ip_requirements:
+      port_GPB2_Internal1_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      compute_GPB2_name:
+      port_GPB2_Internal1_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
@@ -2997,18 +3525,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_VLC1_Internal1_network:
+      port_VLC_GTP_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      port_VLC_SCTP_A_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
+          type: json
       port_VLC_OAM_network_role_tag:
         type: list
         required: true
@@ -3027,6 +3549,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC1_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_VLC_SCTP_A_mac_requirements:
         type: list
         required: true
@@ -3055,6 +3589,160 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC1_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_VLC1_Internal1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_B_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC1_Internal1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_OAM_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal1_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_SCTP_A_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_GTP_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_VLC1_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC1_Internal2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal1_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC1_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_A_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_SCTP_B_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_SCTP_A_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       port_VLC_OAM_ip_requirements:
         type: list
         required: true
@@ -3073,23 +3761,37 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      vm_image_name:
-        type: string
+      port_VLC1_Internal2_vlan_requirements:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: json
+      port_VLC_OAM_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC1_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC1_Internal2_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_VLC_SCTP_A_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC_SCTP_B_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_VLC_GTP_network:
+      port_VLC_SCTP_A_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
@@ -3101,6 +3803,24 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_VLC_OAM_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_B_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_OAM_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -3109,31 +3829,37 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
-      port_VLC1_Internal1_mac_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC1_Internal2_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC_SCTP_B_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_VLC_SCTP_B_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC_GTP_mac_requirements:
+      port_VLC_GTP_network_role:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      port_VLC_GTP_fixed_ips:
+          type: string
+      port_VLC_SCTP_A_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_GTP_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
@@ -3145,30 +3871,42 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC_OAM_network:
+      port_VLC1_Internal1_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
-      compute_VLC1_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
+          type: json
       port_VLC_SCTP_B_mac_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_VLC1_Internal2_ip_requirements:
+      port_VLC_SCTP_B_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_VLC_GTP_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_VLC_SCTP_B_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_VLC_SCTP_B_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
     requirements:
     - dependency_VLC1_VLC_SCTP_B:
         capability: tosca.capabilities.Node
@@ -3916,26 +4654,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB_OAM_mac_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      compute_FSB1_availability_zone:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
-        status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
       port_FSB1_Internal1_network:
         type: list
         required: true
@@ -3946,6 +4664,12 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
+      port_FSB_OAM_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       port_FSB1_Internal2_mac_address:
         type: list
         required: true
@@ -3958,6 +4682,110 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_FSB1_Internal1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal2_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal1_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB_OAM_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB1_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_FSB_OAM_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB_OAM_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB_OAM_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      compute_FSB1_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_FSB_OAM_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_FSB1_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_FSB1_Internal2_mac_requirements:
         type: list
         required: true
@@ -3970,7 +4798,25 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_FSB1_Internal2_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       port_FSB_OAM_fixed_ips:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB1_Internal1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB_OAM_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
@@ -3982,24 +4828,18 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_FSB1_Internal1_mac_requirements:
+      port_FSB1_Internal2_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_FSB1_Internal1_ip_requirements:
+      port_FSB1_Internal2_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_FSB_OAM_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
     requirements:
     - dependency_FSB1_FSB1_Internal2:
         capability: tosca.capabilities.Node
@@ -4495,6 +5335,92 @@ node_types:
   org.openecomp.resource.abstract.nodes.GPB1:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_GPB1_Internal1_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB1_Internal2_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      compute_GPB1_name:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_GPB1_Internal2_mac_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB1_Internal1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_GPB1_Internal1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB1_Internal2_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB1_Internal1_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      compute_GPB1_availability_zone:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB1_Internal1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB1_Internal2_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB1_Internal2_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_GPB1_Internal1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_GPB1_Internal2_network:
         type: list
         required: true
@@ -4515,16 +5441,6 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      compute_GPB1_name:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
       port_GPB1_Internal2_mac_requirements:
         type: list
         required: true
@@ -4537,40 +5453,36 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      port_GPB1_Internal2_mac_address:
+      port_GPB1_Internal1_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_image_name:
-        type: string
+      port_GPB1_Internal2_subnetpoolid:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
+      port_GPB1_Internal2_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_GPB1_Internal1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
-      port_GPB1_Internal1_mac_requirements:
+      port_GPB1_Internal2_order:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      compute_GPB1_availability_zone:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
-      port_GPB1_Internal2_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
+          type: integer
     requirements:
     - dependency_GPB1:
         capability: tosca.capabilities.Node

@@ -118,7 +118,9 @@ export class ResourcePropertiesViewModel {
             (this.$scope.isPropertyOwner() ?
                 this.$scope.properties[property.parentUniqueId] :
                 this.$scope.properties[property.resourceInstanceUniqueId]) || [],
-            this.isPropertyValueOwner()).then(() => {
+            this.isPropertyValueOwner()).then((updatedProperty:PropertyModel) => {
+               let oldProp = _.find(this.$scope.properties[updatedProperty.resourceInstanceUniqueId], (prop:PropertyModel) => {return prop.uniqueId == updatedProperty.uniqueId;});
+            oldProp.value = updatedProperty.value;
         });
     };
 

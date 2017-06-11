@@ -214,7 +214,7 @@ public class TxtInformationArtifactGeneratorImpl implements InformationArtifactG
         .getNetworkDescription(), TAB + TAB + TAB + TAB));
     networkOpt.ifPresent(network -> addEntryWithIndent(VNICS_NETWORK, network.toString(),
         TAB + TAB + TAB + TAB));
-    addEntryWithIndent(VNICS_PROTOCOLS, nicQuestionnaire.getProtocols().toString(),
+    addEntryWithIndent(VNICS_PROTOCOLS, nicQuestionnaire.getProtocols() == null ? "" : nicQuestionnaire.getProtocols().toString(),
         TAB + TAB + TAB + TAB);
 
     Optional<IpConfiguration> ipconfigOpt = Optional.of(nicQuestionnaire).map

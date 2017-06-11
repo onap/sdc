@@ -11,6 +11,62 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
+    port_1b_t1_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_1b_t1_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1b_t1_port_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_flavor_name:
+      type: string
+      required: true
+    port_1b_t1_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    vm_image_name:
+      type: string
+      required: true
+    port_1b_t2_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1b_t2_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    compute_b_single_1b_user_data_format:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1b_t2_port_exCP_naming:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_1b_t2_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1b_t2_port_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_1b_t2_port_mac_requirements:
       type: list
       required: true
@@ -33,14 +89,16 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_1b_t2_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
     port_1b_t2_port_ip_requirements:
       type: list
       required: true
       entry_schema:
         type: json
-    vm_flavor_name:
-      type: string
-      required: true
     port_1b_t1_port_value_specs:
       type: list
       required: true
@@ -51,14 +109,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    port_1b_t1_port_ip_requirements:
+    port_1b_t1_port_subnetpoolid:
       type: list
       required: true
       entry_schema:
-        type: json
-    vm_image_name:
-      type: string
-      required: true
+        type: string
     port_1b_t1_port_mac_requirements:
       type: list
       required: true
@@ -69,11 +124,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    compute_b_single_1b_user_data_format:
+    port_1b_t1_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: string
+        type: json
     port_1b_t1_port_network:
       type: list
       required: true
@@ -115,6 +170,14 @@ topology_template:
           get_input:
           - port_1b_t1_port_value_specs
           - index_value
+        exCP_naming:
+          get_input:
+          - port_1b_t1_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_1b_t1_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_1b_t1_port_ip_requirements
@@ -126,6 +189,18 @@ topology_template:
         mac_requirements:
           get_input:
           - port_1b_t1_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_1b_t1_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_1b_t1_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_1b_t1_port_subnetpoolid
           - index_value
         network:
           get_input:
@@ -139,13 +214,37 @@ topology_template:
     b_single_1b_1b_t2_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_1b_t2_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_1b_t2_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_1b_t2_port_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_1b_t2_port_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_1b_t2_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_1b_t2_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_1b_t2_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_1b_t2_port_subnetpoolid
           - index_value
         network:
           get_input:

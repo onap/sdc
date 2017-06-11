@@ -148,12 +148,12 @@ topology_template:
         - get_input: fsb_zone
         port_FSB1_Internal_network:
         - Internal1-net
-        port_FSB2_Internal_network:
-        - Internal2-net
         vm_flavor_name:
           get_input: fsb1-flavor
         port_FSB2_Internal_mac_address:
         - get_input: fsb1-Internal2-mac
+        port_FSB2_Internal_network:
+        - Internal2-net
         service_template_filter:
           substitute_service_template: Nested_FSB1_0ServiceTemplate.yaml
           count: 1

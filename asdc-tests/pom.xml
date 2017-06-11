@@ -270,7 +270,7 @@
 
 		<dependency>
 			<groupId>org.openecomp.ecompsdkos</groupId>
-			<artifactId>ecompFW</artifactId>
+			<artifactId>epsdk-fw</artifactId>
 			<version>${ecomp.version}</version>
 			<scope>compile</scope>
 			<exclusions>

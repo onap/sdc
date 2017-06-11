@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openecomp.sdc.webseal.simulator.User;
 import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
 public class Login extends HttpServlet {
@@ -94,11 +95,12 @@ public class Login extends HttpServlet {
 		}
 		writer.println("</table>");	
 
-		writer.println("<hr/><iframe name='resultFrame' width='400' height='50'></iframe>");	
+		writer.println("<a href='create?all=true' target='resultFrame'>Create All</a>");
+		writer.println("<hr/><iframe name='resultFrame' width='400' height='300'></iframe>");	
 		
 		writer.println("</body>");
 		writer.println("</html>");
-
+		
 	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -5,6 +5,7 @@ import com.amdocs.zusammen.adaptor.inbound.api.types.item.ElementInfo;
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
+import com.amdocs.zusammen.datatypes.item.Action;
 import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.utils.fileutils.FileUtils;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
@@ -13,7 +14,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
 import org.openecomp.sdc.versioning.dao.types.Version;
-import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
@@ -89,11 +89,11 @@ public class OrchestrationTemplateDaoZusammenImpl implements OrchestrationTempla
         VspZusammenUtil.buildStructuralElement(StructureElement.OrchestrationTemplate, null);
     ZusammenElement orchestrationTemplateValidationDataElement =
         VspZusammenUtil
-            .buildStructuralElement(StructureElement.OrchestrationTemplateValidationData, null);
+            .buildStructuralElement(StructureElement.OrchestrationTemplateValidationData, Action.UPDATE);
     orchestrationTemplateValidationDataElement.setData(new ByteArrayInputStream(uploadData
         .getValidationData().getBytes()));
     ZusammenElement orchestrationTemplateContent =
-        VspZusammenUtil.buildStructuralElement(StructureElement.OrchestrationTemplateContent, null);
+        VspZusammenUtil.buildStructuralElement(StructureElement.OrchestrationTemplateContent, Action.UPDATE);
     orchestrationTemplateContent
         .setData(new ByteArrayInputStream(uploadData.getContentData().array()));
     orchestrationTemplateElement.addSubElement(orchestrationTemplateValidationDataElement);

@@ -12,41 +12,23 @@ echo -e "$KEYSPACE\n$KEYSPACE1" > /tmp/create_dox_keyspace.cql
 chmod 755 /tmp/create_dox_keyspace.cql
 cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS -f /tmp/create_dox_keyspace.cql > /dev/null 2>&1
 
-CS_VERSION=`cassandra -v`
-CS_MAJOR_VERSION=`cassandra -v | cut -c1`
-if [ ${CS_MAJOR_VERSION} -gt 2 ]; then
-   echo "`date` --- CS [${CS_VERSION}] uses system_schema.keyspaces"
-   res=`echo "select keyspace_name from system_schema.keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS |grep -c dox 2>/dev/null`
-else
-   echo "`date` --- CS [${CS_VERSION}] uses system.schema_keyspaces"
-   res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS |grep -c dox 2>/dev/null`
-fi
+
+res=`echo "select keyspace_name from system.schema_keyspaces ;" | cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS |grep -c dox 2>/dev/null`
 
 if [ $res -gt 0 ]; then
-   echo "`date` --- dox keyspace was created "
+        echo "`date` --- dox keyspace was created "
 else
-   echo "`date` --- Failed to create dox keyspace"
+        echo "`date` --- Failed to create dox keyspace"
 fi
 
 
 echo "run create_dox_db.cql"
 chmod 755 /tmp/create_dox_db.cql
 cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS -f /tmp/create_dox_db.cql > /dev/null 2>&1
-$res=$?
-if [ $res -gt 0 ]; then
-        echo "`date` --- dox keyspace: create_dox_db.cql failed ! "
-else
-        echo "`date` --- dox keyspace: create_dox_db.cql completed successfully "
-fi
 
 sleep 10
 
 echo "run alter_dox_db.cql"
 chmod 755 /tmp/alter_dox_db.cql
 cqlsh -u $CASSANDRA_USER -p $CASSANDRA_PASS -f /tmp/alter_dox_db.cql > /dev/null 2>&1
-$res=$?
-if [ $res -gt 0 ]; then
-        echo "`date` --- dox keyspace: alter_dox_db.cql failed !"
-else
-        echo "`date` --- dox keyspace: alter_dox_db.cql completed successfully "
-fi
+

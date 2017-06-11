@@ -20,16 +20,12 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import java.io.File;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -41,13 +37,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -79,7 +73,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.LifecycleOperation;
 import org.openecomp.sdc.be.resources.data.ESArtifactData;
-import org.openecomp.sdc.be.resources.data.ESSdcSchemaFilesData;
+import org.openecomp.sdc.be.resources.data.SdcSchemaFilesData;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -143,8 +137,9 @@ public class CsarUtils {
 	private static final String TOSCA_META_PATH_FILE_NAME = "TOSCA-Metadata/TOSCA.meta";
 	private static final String TOSCA_META_VERSION = "1.0";
 	private static final String CSAR_VERSION = "1.1";
-
-	public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS_PATH + ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "([\\w\\_\\-\\.\\s]+)(/)([\\w\\_\\-\\.\\s]+)(/)([\\w\\_\\-\\.\\s\\/]+)";
+	private static String versionFirstThreeOctates;
+	
+	public static final String VFC_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS_PATH + ImportUtils.Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "([\\d\\w\\_\\-\\.\\s]+)(/)([\\d\\w\\_\\-\\.\\s]+)(/)([\\d\\w\\_\\-\\.\\s\\/]+)";
 
 	public static final String VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN = ARTIFACTS_PATH +
 	// Artifact Group (i.e Deployment/Informational)
@@ -155,6 +150,16 @@ public class CsarUtils {
 			"([\\w\\_\\-\\.\\s]+)";
 	public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
 
+	public CsarUtils() {
+		if(SDC_VERSION != null && !SDC_VERSION.isEmpty()){
+			Matcher matcher = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])").matcher(SDC_VERSION);
+			matcher.find();
+			versionFirstThreeOctates = matcher.group(0);			
+		} else {
+			versionFirstThreeOctates = "";
+		}
+	}
+	
 	/**
 	 * 
 	 * @param component
@@ -301,39 +306,40 @@ public class CsarUtils {
 				}
 				
 				//add inner components to CSAR
-				innerComponentsCache.forEach((childUid, innerComponentTriple) -> {
-					Component innerComponent = innerComponentTriple.getRight();
-					String icFileName = innerComponentTriple.getMiddle();
-					
-					try {
-						//add component to zip
-						Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
-						byte[] content = entryData.left().value();
-						zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + icFileName));
-						zip.write(content);
-						
-					} catch (IOException e) {
+			
+			for (Entry<String, ImmutableTriple<String, String, Component>> innerComponentTripleEntry : innerComponentsCache.entrySet()) {
+				
+				ImmutableTriple<String, String, Component> innerComponentTriple = innerComponentTripleEntry.getValue();
 
-					}
+				Component innerComponent = innerComponentTriple.getRight();
+				String icFileName = innerComponentTriple.getMiddle();
 
-					//add component interface to zip
-					if(!ToscaUtils.isAtomicType(innerComponent)) {
-						writeComponentInterface(innerComponent, zip, icFileName);
-					}
-				});
+				// add component to zip
+				Either<byte[], ActionStatus> entryData = getEntryData(innerComponentTriple.getLeft(), innerComponent);
+				byte[] content = entryData.left().value();
+				zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + icFileName));
+				zip.write(content);
+
+				// add component interface to zip
+				if (!ToscaUtils.isAtomicType(innerComponent)) {
+					writeComponentInterface(innerComponent, zip, icFileName);
+				}
+			}
 		}
 		
-		/*Either<byte[], ActionStatus> latestSchemaFilesFromCassandra = getLatestSchemaFilesFromCassandra();
+		//retrieve SDC.zip from Cassandra 
+		Either<byte[], ResponseFormat> latestSchemaFilesFromCassandra = getLatestSchemaFilesFromCassandra();
 		
 		if(latestSchemaFilesFromCassandra.isRight()){
-			return null;
-		}*/
+			log.error("Error retrieving SDC Schema files from cassandra" );
+			return Either.right(latestSchemaFilesFromCassandra.right().value());
+		}
 		
-		//TODO Tal G this is quick solution until Cassandra US is alligned 
-		Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromConfig = addSchemaFilesFromConfig(zip);
+		//add files from retireved SDC.zip to Definitions folder in CSAR
+		Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra = addSchemaFilesFromCassandra(zip, latestSchemaFilesFromCassandra.left().value());
 		
-		if(addSchemaFilesFromConfig.isRight()){
-			return addSchemaFilesFromConfig;
+		if(addSchemaFilesFromCassandra.isRight()){
+			return addSchemaFilesFromCassandra;
 		}
 		
 		// Artifact Generation
@@ -371,36 +377,47 @@ public class CsarUtils {
 		
 		return writeAllFilesToScar(component, collectedComponentCsarDefinition.left().value(), zip, isInCertificationRequest);
 	}
-
-	private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromConfig(ZipOutputStream zip) throws ZipException, IOException {
-		final String pathAndFile = "config/SDC.zip";
+	
+	private Either<ZipOutputStream, ResponseFormat> addSchemaFilesFromCassandra(ZipOutputStream zip, byte[] schemaFileZip){
 		
-		File file = new File(pathAndFile);
-		if(!file.exists()){
-			log.debug("SDC.zip schema files archive not found");
-			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
-		}
+		final int initSize = 2048;
 		
-		try(ZipFile zipFile = new ZipFile(new File(pathAndFile));){
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+		log.debug("Starting coppy from Schema file zip to CSAR zip");
+		
+		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(schemaFileZip));
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				BufferedOutputStream bos = new BufferedOutputStream(out, initSize);) {
 			
-			while(entries.hasMoreElements()){
-				ZipEntry nextElement = entries.nextElement();
-				InputStream inputStream = zipFile.getInputStream(nextElement);
-				byte[] byteArray = IOUtils.toByteArray(inputStream);
-				
-				zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + nextElement.getName()));
-				zip.write(byteArray);
+			ZipEntry entry = null;
+			
+			while ((entry = zipStream.getNextEntry()) != null) {
+			
+				String entryName = entry.getName();
+				int readSize = initSize;
+				byte[] entryData = new byte[initSize];
+
+				while ((readSize = zipStream.read(entryData, 0, readSize)) != -1) {
+					bos.write(entryData, 0, readSize);
+				}
+
+				bos.flush();
+				out.flush();
+				zip.putNextEntry(new ZipEntry(DEFINITIONS_PATH + entryName));
+				zip.write(out.toByteArray());
+				zip.flush();
+				out.reset();
 			}
-			zipFile.close();			
-		}catch (Exception e) {
-			log.debug("Error in writing SDC.zip schema files to CSAR");
+		} catch (IOException e) {
+			log.error("Error while writing the SDC schema file to the CSAR {}", e);
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
+		
+		log.debug("Finished coppy from Schema file zip to CSAR zip");
 		
 		return Either.left(zip);
 	}
 
+	
 	private void insertInnerComponentsToCache(Map<String, ImmutableTriple<String, String, Component>> componentCache,
 			Component childComponent) {
 		
@@ -705,25 +722,24 @@ public class CsarUtils {
 		return Either.left(content);
 	}
 	
-	private Either<byte[], ActionStatus> getLatestSchemaFilesFromCassandra() {
-		Matcher matcher = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])").matcher(SDC_VERSION);
-		matcher.find();
-		final String VERSION_FIRST_THREE_OCTATES = matcher.group(0);
-		Either<List<ESSdcSchemaFilesData>, ActionStatus> specificSchemaFiles = sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(VERSION_FIRST_THREE_OCTATES, CONFORMANCE_LEVEL);
+	private Either<byte[], ResponseFormat> getLatestSchemaFilesFromCassandra() {
+		Either<List<SdcSchemaFilesData>, CassandraOperationStatus> specificSchemaFiles = sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(versionFirstThreeOctates, CONFORMANCE_LEVEL);
 		
-		if(specificSchemaFiles.isRight()){
-			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", VERSION_FIRST_THREE_OCTATES, CONFORMANCE_LEVEL);
-			return Either.right(specificSchemaFiles.right().value()); 
+		if(specificSchemaFiles.isRight()){			
+			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates, CONFORMANCE_LEVEL);
+			StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(specificSchemaFiles.right().value());
+			ActionStatus convertedFromStorageResponse = componentsUtils.convertFromStorageResponse(storageStatus);
+			return Either.right(componentsUtils.getResponseFormat(convertedFromStorageResponse)); 
 		}
 		
-		 List<ESSdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
+		 List<SdcSchemaFilesData> listOfSchemas = specificSchemaFiles.left().value();
 		
 		if(listOfSchemas.isEmpty()){
-			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", VERSION_FIRST_THREE_OCTATES, CONFORMANCE_LEVEL);
-			return Either.right(ActionStatus.GENERAL_ERROR);
+			log.debug("Failed to get the schema files SDC-Version: {} Conformance-Level {}", versionFirstThreeOctates, CONFORMANCE_LEVEL);
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, versionFirstThreeOctates, CONFORMANCE_LEVEL));
 		}
 		
-		ESSdcSchemaFilesData schemaFile = listOfSchemas.iterator().next();
+		SdcSchemaFilesData schemaFile = listOfSchemas.iterator().next();
 		
 		return Either.left(schemaFile.getPayloadAsArray());
 	}

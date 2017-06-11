@@ -26,6 +26,17 @@
       "enable": true
     }
   },
+  "enrichPortResourceProperties": [
+      "network_role_tag",
+      "mac_requirements",
+      "vlan_requirements",
+      "ip_requirements",
+      "network_role",
+      "order",
+      "exCP_naming",
+      "subnetpoolid"
+    ]
+  ,
   "_config": {
     "namespace": "mandatoryUnifiedModel"
   }

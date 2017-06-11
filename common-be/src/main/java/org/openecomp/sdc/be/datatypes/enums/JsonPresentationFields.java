@@ -38,8 +38,8 @@ public enum JsonPresentationFields {
 	CONTACT_ID						("contactId",				null),
 	PROJECT_CODE					("projectCode", 			null),
 	DISTRIBUTION_STATUS				("distributionStatus", 		GraphPropertyEnum.DISTRIBUTION_STATUS),
-	DERIVED_FROM_GENERIC_TYPE("derivedFromGenericType", null),
-	DERIVED_FROM_GENERIC_VERSION("derivedFromGenericVersion", null),
+	DERIVED_FROM_GENERIC_TYPE		("derivedFromGenericType", 	null),
+	DERIVED_FROM_GENERIC_VERSION	("derivedFromGenericVersion", null),
 
 	////Artifact
 	ARTIFACT_TYPE					("artifactType", 			null),
@@ -68,7 +68,7 @@ public enum JsonPresentationFields {
 	REQUIRED_ARTIFACTS				("requiredArtifacts",		null),
 	DUPLICATED 						("duplicated", 				null),
 	HEAT_PARAMETERS 				("heatParameters", 			null),
-	GENERATED_FROM_ID 		("generatedFromId", 		null),
+	GENERATED_FROM_ID 				("generatedFromId", 		null),
 	
 	
 	// end artifacts
@@ -89,10 +89,11 @@ public enum JsonPresentationFields {
 	COMPONENT_INSTANCES				("componentInstances", 			null),
 	RELATIONS						("relations", 					null),
 	
-	
+	//attribute
+	STATUS							("status", 						null),			
 	//capability
 	VALID_SOURCE_TYPE				("validSourceTypes", 			null),
-	CREATION_TIME				("creationTime", 				null),
+	CREATION_TIME					("creationTime", 				null),
 	MODIFICATION_TIME				("modificationTime", 			null),
 	CAPABILITY_SOURCES				("capabilitySources", 			null),
 	MAX_OCCURRENCES					("maxOccurrences", 				null),
@@ -124,17 +125,17 @@ public enum JsonPresentationFields {
 	GROUP_UUID						("groupUUID",					null), 	
 	GROUP_MEMBER					("members",						null), 
 	GROUP_ARTIFACTS					("artifacts",					null),
-	GROUP_ARTIFACTS_UUID			(" artifactsUuid",				null),
-	GROUP_PROPERTIES				(" properties",					null),
-	GROUP_UNIQUE_ID					(" groupUid",					null),
-	POS_X							(" posX",						null),
-	POS_Y							(" posY",						null),
-	PROPERTY_VALUE_COUNTER			(" propertyValueCounter",		null),
-	CUSTOMIZATION_UUID				(" customizationUUID",			null),
-	GROUP_NAME						(" groupName",					null),
-	GROUP_INSTANCE_ARTIFACTS		(" groupInstanceArtifacts",		null),
-	GROUP_INSTANCE_ARTIFACTS_UUID	(" groupInstanceArtifactsUuid",	null),
-	GROUP_INSTANCE_PROPERTIES		(" groupInstancesProperties",	null),
+	GROUP_ARTIFACTS_UUID			("artifactsUuid",				null),
+	GROUP_PROPERTIES				("properties",					null),
+	GROUP_UNIQUE_ID					("groupUid",					null),
+	POS_X							("posX",						null),
+	POS_Y							("posY",						null),
+	PROPERTY_VALUE_COUNTER			("propertyValueCounter",		null),
+	CUSTOMIZATION_UUID				("customizationUUID",			null),
+	GROUP_NAME						("groupName",					null),
+	GROUP_INSTANCE_ARTIFACTS		("groupInstanceArtifacts",		null),
+	GROUP_INSTANCE_ARTIFACTS_UUID	("groupInstanceArtifactsUuid",	null),
+	GROUP_INSTANCE_PROPERTIES		("groupInstancesProperties",	null),
 
 	;
 	

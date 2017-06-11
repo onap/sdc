@@ -33,7 +33,6 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
@@ -103,7 +102,7 @@ public final class ImportUtils {
 	}
 
 	public enum ResultStatusEnum {
-		ELEMENT_NOT_FOUND, GENERAL_ERROR, OK, INVALID_PROPERTY_DEFAULT_VALUE, INVALID_PROPERTY_TYPE, INVALID_PROPERTY_VALUE, MISSING_ENTRY_SCHEMA_TYPE
+		ELEMENT_NOT_FOUND, GENERAL_ERROR, OK, INVALID_PROPERTY_DEFAULT_VALUE, INVALID_PROPERTY_TYPE, INVALID_PROPERTY_VALUE, MISSING_ENTRY_SCHEMA_TYPE, INVALID_PROPERTY_NAME
 	}
 
 	public enum ToscaElementTypeEnum {
@@ -346,9 +345,9 @@ public final class ImportUtils {
 		return inputDef;
 	}
 
-	public static AttributeDefinition createModuleAttribute(Map<String, Object> attributeMap) {
+	public static PropertyDefinition createModuleAttribute(Map<String, Object> attributeMap) {
 
-		AttributeDefinition attributeDef = new AttributeDefinition();
+		PropertyDefinition attributeDef = new PropertyDefinition();
 		ImportUtils.setField(attributeMap, ToscaTagNamesEnum.TYPE, type -> attributeDef.setType(type));
 		ImportUtils.setField(attributeMap, ToscaTagNamesEnum.DESCRIPTION, desc -> attributeDef.setDescription(desc));
 		ImportUtils.setField(attributeMap, ToscaTagNamesEnum.STATUS, status -> attributeDef.setStatus(status));
@@ -374,7 +373,7 @@ public final class ImportUtils {
 
 	}
 
-	private static void setAttributeFieldStatus(Map<String, Object> propertyValue, AttributeDefinition propertyDef) {
+	private static void setAttributeFieldStatus(Map<String, Object> propertyValue, PropertyDefinition propertyDef) {
 		Either<String, ResultStatusEnum> propertyFieldIsStatus = findFirstToscaStringElement(propertyValue, ToscaTagNamesEnum.STATUS);
 		if (propertyFieldIsStatus.isLeft()) {
 			propertyDef.setStatus(propertyFieldIsStatus.left().value());
@@ -392,7 +391,7 @@ public final class ImportUtils {
 
 	}
 
-	private static void setAttributeScheme(Map<String, Object> propertyValue, AttributeDefinition propertyDefinition) {
+	private static void setAttributeScheme(Map<String, Object> propertyValue, PropertyDefinition propertyDefinition) {
 		Either<SchemaDefinition, ResultStatusEnum> eitherSchema = getSchema(propertyValue);
 		if (eitherSchema.isLeft()) {
 			SchemaDefinition schemaDef = new SchemaDefinition();
@@ -465,7 +464,7 @@ public final class ImportUtils {
 		return ResultStatusEnum.OK;
 	}
 
-	private static ResultStatusEnum setAttributeFieldDefaultValue(Map<String, Object> propertyValue, AttributeDefinition dataDefinition) {
+	private static ResultStatusEnum setAttributeFieldDefaultValue(Map<String, Object> propertyValue, PropertyDefinition dataDefinition) {
 		Either<Object, ResultStatusEnum> propertyFieldDefaultValue = findToscaElement(propertyValue, ToscaTagNamesEnum.DEFAULT_VALUE, ToscaElementTypeEnum.ALL);
 		Gson gson = GsonFactory.getGson();
 		if (propertyFieldDefaultValue.isLeft()) {
@@ -519,7 +518,7 @@ public final class ImportUtils {
 		}
 	}
 
-	private static void setAttributeFieldType(Map<String, Object> propertyValue, AttributeDefinition dataDefinition) {
+	private static void setAttributeFieldType(Map<String, Object> propertyValue, PropertyDefinition dataDefinition) {
 		Either<String, ResultStatusEnum> propertyFieldType = findFirstToscaStringElement(propertyValue, ToscaTagNamesEnum.TYPE);
 		if (propertyFieldType.isLeft()) {
 			dataDefinition.setType(propertyFieldType.left().value());
@@ -533,7 +532,7 @@ public final class ImportUtils {
 		}
 	}
 
-	private static void setAttributeFieldDescription(Map<String, Object> propertyValue, AttributeDefinition dataDefinition) {
+	private static void setAttributeFieldDescription(Map<String, Object> propertyValue, PropertyDefinition dataDefinition) {
 		Either<String, ResultStatusEnum> propertyFieldDescription = findFirstToscaStringElement(propertyValue, ToscaTagNamesEnum.DESCRIPTION);
 		if (propertyFieldDescription.isLeft()) {
 			dataDefinition.setDescription(propertyFieldDescription.left().value());
@@ -556,9 +555,9 @@ public final class ImportUtils {
 
 	}
 
-	public static Either<Map<String, AttributeDefinition>, ResultStatusEnum> getAttributes(Map<String, Object> toscaJson) {
-		Function<String, AttributeDefinition> elementGenByName = elementName -> createAttribute(elementName);
-		Function<Map<String, Object>, AttributeDefinition> func = map -> createModuleAttribute(map);
+	public static Either<Map<String, PropertyDefinition>, ResultStatusEnum> getAttributes(Map<String, Object> toscaJson) {
+		Function<String, PropertyDefinition> elementGenByName = elementName -> createAttribute(elementName);
+		Function<Map<String, Object>, PropertyDefinition> func = map -> createModuleAttribute(map);
 
 		return getElements(toscaJson, ToscaTagNamesEnum.ATTRIBUTES, elementGenByName, func);
 	}
@@ -595,8 +594,8 @@ public final class ImportUtils {
 
 	}
 
-	private static AttributeDefinition createAttribute(String name) {
-		AttributeDefinition attribute = new AttributeDefinition();
+	private static PropertyDefinition createAttribute(String name) {
+		PropertyDefinition attribute = new PropertyDefinition();
 
 		attribute.setName(name);
 		return attribute;

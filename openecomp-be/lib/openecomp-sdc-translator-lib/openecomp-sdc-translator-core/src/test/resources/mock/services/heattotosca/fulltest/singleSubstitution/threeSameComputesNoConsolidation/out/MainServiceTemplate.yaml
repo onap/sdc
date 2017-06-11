@@ -233,6 +233,16 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -246,16 +256,6 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 1
-        vm_flavor_name:
-          get_attribute:
-          - network_policy_server
-          - name
         port_pd01_port_network_role_tag:
         - oam
         compute_pd_server_user_data_format:
@@ -273,6 +273,16 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 0
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -286,16 +296,6 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_attribute:
-          - network_policy_server
-          - name
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 0
-        vm_flavor_name:
-          get_attribute:
           - network_policy_server
           - name
         compute_pd_server_user_data_format:

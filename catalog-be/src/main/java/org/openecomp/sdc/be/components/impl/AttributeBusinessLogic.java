@@ -28,8 +28,8 @@ import java.util.Optional;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -65,8 +65,8 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return AttributeDefinition if created successfully Or ResponseFormat
 	 */
-	public Either<AttributeDefinition, ResponseFormat> createAttribute(String resourceId, AttributeDefinition newAttributeDef, String userId) {
-		Either<AttributeDefinition, ResponseFormat> result = null;
+	public Either<PropertyDefinition, ResponseFormat> createAttribute(String resourceId, PropertyDefinition newAttributeDef, String userId) {
+		Either<PropertyDefinition, ResponseFormat> result = null;
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "create Attribute", false);
 		if (resp.isRight()) {
 			return Either.right(resp.right().value());
@@ -111,7 +111,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			// add the new attribute to resource on graph
 			// need to get StorageOpaerationStatus and convert to ActionStatus from
 			// componentsUtils
-			Either<AttributeDefinition, StorageOperationStatus> either = toscaOperationFacade.addAttributeOfResource(resource, newAttributeDef);
+			Either<PropertyDefinition, StorageOperationStatus> either = toscaOperationFacade.addAttributeOfResource(resource, newAttributeDef);
 			if (either.isRight()) {
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(either.right().value()), resource.getName()));
 				return result;
@@ -126,7 +126,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 
 	}
 
-	private boolean isAttributeExist(List<AttributeDefinition> attributes, String resourceUid, String propertyName) {
+	private boolean isAttributeExist(List<PropertyDefinition> attributes, String resourceUid, String propertyName) {
 		boolean isExist = false;
 		if (attributes != null) {
 			isExist = attributes.stream().filter(p -> Objects.equals(p.getName(), propertyName) && Objects.equals(p.getParentUniqueId(), resourceUid)).findAny().isPresent();
@@ -141,7 +141,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return
 	 */
-	public Either<AttributeDefinition, ResponseFormat> getAttribute(String resourceId, String attributeId, String userId) {
+	public Either<PropertyDefinition, ResponseFormat> getAttribute(String resourceId, String attributeId, String userId) {
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "get Attribute", false);
 		if (resp.isRight()) {
@@ -155,13 +155,13 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 		}
 		Resource resource = status.left().value();
 
-		List<AttributeDefinition> attributes = resource.getAttributes();
+		List<PropertyDefinition> attributes = resource.getAttributes();
 		if (attributes == null) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_NOT_FOUND, ""));
 		} else {
-			Either<AttributeDefinition, ResponseFormat> result;
+			Either<PropertyDefinition, ResponseFormat> result;
 			// verify attribute exist in resource
-			Optional<AttributeDefinition> optionalAtt = attributes.stream().filter(att -> att.getUniqueId().equals(attributeId) && att.getParentUniqueId().equals(resourceId)).findAny();
+			Optional<PropertyDefinition> optionalAtt = attributes.stream().filter(att -> att.getUniqueId().equals(attributeId) && att.getParentUniqueId().equals(resourceId)).findAny();
 
 			if (optionalAtt.isPresent()) {
 				result = Either.left(optionalAtt.get());
@@ -182,8 +182,8 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return
 	 */
-	public Either<AttributeDefinition, ResponseFormat> updateAttribute(String resourceId, String attributeId, AttributeDefinition newAttDef, String userId) {
-		Either<AttributeDefinition, ResponseFormat> result = null;
+	public Either<PropertyDefinition, ResponseFormat> updateAttribute(String resourceId, String attributeId, PropertyDefinition newAttDef, String userId) {
+		Either<PropertyDefinition, ResponseFormat> result = null;
 
 		StorageOperationStatus lockResult = graphLockOperation.lockComponent(resourceId, NodeTypeEnum.Resource);
 		if (lockResult != StorageOperationStatus.OK) {
@@ -205,7 +205,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			}
 
 			// verify attribute exist in resource
-			Either<AttributeDefinition, ResponseFormat> eitherAttribute = getAttribute(resourceId, attributeId, userId);
+			Either<PropertyDefinition, ResponseFormat> eitherAttribute = getAttribute(resourceId, attributeId, userId);
 			if (eitherAttribute.isRight()) {
 				return Either.right(eitherAttribute.right().value());
 			}
@@ -228,7 +228,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			}
 
 			
-			Either<AttributeDefinition, StorageOperationStatus> eitherAttUpdate = toscaOperationFacade.updateAttributeOfResource(resource, newAttDef);
+			Either<PropertyDefinition, StorageOperationStatus> eitherAttUpdate = toscaOperationFacade.updateAttributeOfResource(resource, newAttDef);
 
 			if (eitherAttUpdate.isRight()) {
 				log.debug("Problem while updating attribute with id {}. Reason - {}", attributeId, eitherAttUpdate.right().value());
@@ -253,9 +253,9 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 	 * @param userId
 	 * @return
 	 */
-	public Either<AttributeDefinition, ResponseFormat> deleteAttribute(String resourceId, String attributeId, String userId) {
+	public Either<PropertyDefinition, ResponseFormat> deleteAttribute(String resourceId, String attributeId, String userId) {
 
-		Either<AttributeDefinition, ResponseFormat> result = null;
+		Either<PropertyDefinition, ResponseFormat> result = null;
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "delete Attribute", false);
 		if (resp.isRight()) {
@@ -283,7 +283,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
 			}
 
 			// verify attribute exist in resource
-			Either<AttributeDefinition, ResponseFormat> eitherAttributeExist = getAttribute(resourceId, attributeId, userId);
+			Either<PropertyDefinition, ResponseFormat> eitherAttributeExist = getAttribute(resourceId, attributeId, userId);
 			if (eitherAttributeExist.isRight()) {
 				return Either.right(eitherAttributeExist.right().value());
 			}

@@ -23,24 +23,29 @@ package org.openecomp.sdc.be.model.operations.impl;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanGenericDao;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IConsumerOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ConsumerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import fj.data.Either;
 
+import java.util.Collections;
+import java.util.List;
+
 @Component("consumer-operation")
 public class ConsumerOperation implements IConsumerOperation {
 
-	@javax.annotation.Resource
 	private TitanGenericDao titanGenericDao;
 
 	private static Logger log = LoggerFactory.getLogger(ConsumerOperation.class.getName());
 
-	public ConsumerOperation() {
+	public ConsumerOperation(@Qualifier("titan-generic-dao") TitanGenericDao titanGenericDao) {
+		this.titanGenericDao = titanGenericDao;
 	}
 
 	@Override
@@ -56,6 +61,13 @@ public class ConsumerOperation implements IConsumerOperation {
 		}
 		ConsumerData consumerData = getNode.left().value();
 		return Either.left(consumerData);
+	}
+
+	@Override
+	public Either<List<ConsumerData>, StorageOperationStatus> getAll() {
+		log.debug("retrieving all consumers");
+		return titanGenericDao.getByCriteria(NodeTypeEnum.ConsumerCredentials, Collections.emptyMap(), ConsumerData.class)
+				.right().map(DaoStatusConverter::convertTitanStatusToStorageStatus);
 	}
 
 	@Override

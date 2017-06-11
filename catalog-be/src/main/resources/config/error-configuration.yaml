@@ -1765,7 +1765,7 @@ errors:
 # %4 – Artifact uuid
     ARTIFACT_PAYLOAD_NOT_FOUND_DURING_CSAR_CREATION: {
         code: 400,
-        message: " Error: CSAR packaging failed for %1 %2. Artifact %3 [%4] was not found",
+        message: "Error: CSAR packaging failed for %1 %2. Artifact %3 [%4] was not found",
         messageId: "SVC4659"
     }
 #---------SVC4660------------------------------
@@ -1775,4 +1775,12 @@ errors:
         code: 404,
         message: "Creation of %1 failed. Generic type %2 was not found",
         messageId: "SVC4660"
+    }
+#---------SVC4661------------------------------
+# %1 - assetType
+# %2 - matching generic node type name
+    TOSCA_SCHEMA_FILES_NOT_FOUND: {
+        code: 400,
+        message: "Error: CSAR packaging failed. TOSCA schema files for SDC-Version: %1 and Conformance-Level %2 were not found",
+        messageId: "SVC4661"
     }

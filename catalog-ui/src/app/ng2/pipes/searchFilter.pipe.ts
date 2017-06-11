@@ -8,8 +8,7 @@ export class SearchFilterPipe implements PipeTransform {
         if (!term || !term.length) return value;
         return value.filter((item) => {
             if (item.hasOwnProperty(key)) {
-                let regExp = new RegExp(term, 'gi');
-                return regExp.test(item[key]);
+                return item[key].indexOf(term) > -1;
             } else {
                 return false;
             }

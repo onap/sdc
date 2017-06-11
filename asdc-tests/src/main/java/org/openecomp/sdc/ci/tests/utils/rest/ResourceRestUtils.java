@@ -24,16 +24,22 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -62,6 +68,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResourceRestUtils extends BaseRestUtils {
+	
+	private static final String CSARS_PATH = "/src/test/resources/CI/csars/";
 	private static Logger logger = LoggerFactory.getLogger(ResourceRestUtils.class.getName());
 
 	// ****** CREATE *******
@@ -384,6 +392,16 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return http.httpSendGet(url, headersMap);
 
 	}
+	
+	public static RestResponse getResourceFilteredDataByParams(User sdncModifierDetails, String uniqueId , List<String> parameters) throws IOException {
+		Config config = Utils.getConfig();
+		String urlGetResourceDataByParams = Urls.GET_RESOURCE_DATA_BY_PARAMS;
+		String joinedParameters = StringUtils.join(parameters , "&");
+		String url = String.format(urlGetResourceDataByParams + joinedParameters , config.getCatalogBeHost(), config.getCatalogBePort(), uniqueId);
+		return sendGet(url, sdncModifierDetails.getUserId());
+		
+	}
+
 
 	public static RestResponse sendOptionsTowardsCatalogFeWithUuid() throws IOException {
 
@@ -661,5 +679,33 @@ public class ResourceRestUtils extends BaseRestUtils {
 		return ProductRestUtils.changeServiceInstanceVersion(containerUniqueId, instanceToReplaceUniqueId,
 				newResourceUniqueId, sdncModifierDetails, componentType);
 	}
+	
+	public static Resource importResourceFromCsar(String csarName) throws Exception{
+		User sdncModifierDetails = ElementFactory.getDefaultUser(UserRoleEnum.DESIGNER);
+		String payloadName = csarName;
+		ImportReqDetails resourceDetails = ElementFactory.getDefaultImportResource();
+		String rootPath = System.getProperty("user.dir");
+		Path path = null;
+		byte[] data = null;
+		
+		String payloadData = null;
+
+		path = Paths.get(rootPath + CSARS_PATH + csarName);
+		data = Files.readAllBytes(path);
+		payloadData = Base64.encodeBase64String(data);
+		resourceDetails.setPayloadData(payloadData);
+
+		// create new resource from Csar
+		resourceDetails.setCsarUUID(payloadName);
+		resourceDetails.setPayloadName(payloadName);
+		resourceDetails.setResourceType(ResourceTypeEnum.VF.name());
+		RestResponse createResource = ResourceRestUtils.createResource(resourceDetails, sdncModifierDetails);
+		BaseRestUtils.checkCreateResponse(createResource);
+		Resource resource = ResponseParser.parseToObjectUsingMapper(createResource.getResponse(), Resource.class);
+		return resource;
+		
+		// add to restResourceUtil
+	}
+
 
 }

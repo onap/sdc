@@ -130,7 +130,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		Either<GraphVertex, StorageOperationStatus> result = null;
 		GraphVertex createdToscaElementVertex = null;
 		TitanOperationStatus status;
-		
+
 		Either<GraphVertex, TitanOperationStatus> createNextVersionRes = titanDao.createVertex(nextToscaElement);
 		if (createNextVersionRes.isRight()) {
 			status = createNextVersionRes.right().value();
@@ -182,7 +182,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 				}
 			}
 		}
-		
+
 		if (result == null) {
 			result = Either.left(createdToscaElementVertex);
 		} else {
@@ -203,6 +203,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		toscaElement.setLastUpdaterFullName(buildFullName(userV));
 		return TitanOperationStatus.OK;
 	}
+
 	public String buildFullName(GraphVertex userV) {
 
 		String fullName = (String) userV.getMetadataProperty(GraphPropertyEnum.FIRST_NAME);
@@ -217,6 +218,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		}
 		return fullName;
 	}
+
 	protected TitanOperationStatus setCreatorFromGraph(GraphVertex componentV, ToscaElement toscaElement) {
 		Either<GraphVertex, TitanOperationStatus> parentVertex = titanDao.getParentVertex(componentV, EdgeLabelEnum.CREATOR, JsonParseFlagEnum.NoParse);
 		if (parentVertex.isRight()) {
@@ -227,7 +229,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		String creatorUserId = (String) userV.getMetadataProperty(GraphPropertyEnum.USERID);
 		toscaElement.setCreatorUserId(creatorUserId);
 		toscaElement.setCreatorFullName(buildFullName(userV));
-		
+
 		return TitanOperationStatus.OK;
 	}
 
@@ -318,7 +320,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 
 		toscaElement.setLastUpdaterUserId(toscaElement.getCreatorUserId());
 		toscaElement.setLastUpdaterFullName(toscaElement.getCreatorFullName());
-		
+
 		result = titanDao.createEdge(creatorVertex, nodeTypeVertex, EdgeLabelEnum.CREATOR, null);
 		log.debug("After associating user {} to resource {}. Edge type is {} ", creatorVertex, nodeTypeVertex.getUniqueId(), EdgeLabelEnum.CREATOR);
 		if (!result.equals(TitanOperationStatus.OK)) {
@@ -472,9 +474,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	private StorageOperationStatus associatePropertiesToResource(GraphVertex nodeTypeVertex, ToscaElement nodeType, List<GraphVertex> derivedResources) {
+	protected StorageOperationStatus associatePropertiesToResource(GraphVertex nodeTypeVertex, ToscaElement nodeType, List<GraphVertex> derivedResources) {
 		// Note : currently only one derived supported!!!!
-		Either<Map<String, PropertyDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, PropertyDataDefinition.class, EdgeLabelEnum.PROPERTIES);
+		Either<Map<String, PropertyDataDefinition>, StorageOperationStatus> dataFromDerived = getDataFromDerived(derivedResources, EdgeLabelEnum.PROPERTIES);
 		if (dataFromDerived.isRight()) {
 			return dataFromDerived.right().value();
 		}
@@ -488,13 +490,12 @@ public abstract class ToscaElementOperation extends BaseOperation {
 				p.setUniqueId(uid);
 			});
 
-			Either<Map<String, PropertyDataDefinition>, String> eitherMerged = PropertyDataDefinition.mergeProperties(propertiesAll, properties, false);
+			Either<Map<String, PropertyDataDefinition>, String> eitherMerged = ToscaDataDefinition.mergeDataMaps(propertiesAll, properties);
 			if (eitherMerged.isRight()) {
 				// TODO re-factor error handling - moving BL to operation resulted in loss of info about the invalid property
 				log.debug("property {} cannot be overriden", eitherMerged.right().value());
 				return StorageOperationStatus.INVALID_PROPERTY;
 			}
-
 		}
 		if (!propertiesAll.isEmpty()) {
 			Either<GraphVertex, StorageOperationStatus> assosiateElementToData = assosiateElementToData(nodeTypeVertex, VertexTypeEnum.PROPERTIES, EdgeLabelEnum.PROPERTIES, propertiesAll);
@@ -516,7 +517,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		return StorageOperationStatus.OK;
 	}
 
-	protected <T extends ToscaDataDefinition> Either<Map<String, T>, StorageOperationStatus> getDataFromDerived(List<GraphVertex> derivedResources, Class<T> clazz, EdgeLabelEnum edge) {
+	protected <T extends ToscaDataDefinition> Either<Map<String, T>, StorageOperationStatus> getDataFromDerived(List<GraphVertex> derivedResources, EdgeLabelEnum edge) {
 		Map<String, T> propertiesAll = new HashMap<>();
 
 		if (derivedResources != null && !derivedResources.isEmpty()) {
@@ -575,10 +576,11 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		Map<String, String> allVersion = new HashMap<>();
 
 		allVersion.put((String) componentV.getMetadataProperty(GraphPropertyEnum.VERSION), componentV.getUniqueId());
+		ArrayList<GraphVertex> allChildrenAndParants = new ArrayList<GraphVertex>();
 		Either<GraphVertex, TitanOperationStatus> childResourceRes = titanDao.getChildVertex(componentV, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
 		while (childResourceRes.isLeft()) {
 			GraphVertex child = childResourceRes.left().value();
-			allVersion.put((String) child.getMetadataProperty(GraphPropertyEnum.VERSION), child.getUniqueId());
+			allChildrenAndParants.add(child);
 			childResourceRes = titanDao.getChildVertex(child, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
 		}
 		TitanOperationStatus operationStatus = childResourceRes.right().value();
@@ -589,13 +591,18 @@ public abstract class ToscaElementOperation extends BaseOperation {
 			Either<GraphVertex, TitanOperationStatus> parentResourceRes = titanDao.getParentVertex(componentV, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
 			while (parentResourceRes.isLeft()) {
 				GraphVertex parent = parentResourceRes.left().value();
-				allVersion.put((String) parent.getMetadataProperty(GraphPropertyEnum.VERSION), parent.getUniqueId());
+				allChildrenAndParants.add(parent);
 				parentResourceRes = titanDao.getParentVertex(parent, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
 			}
 			operationStatus = parentResourceRes.right().value();
 			if (operationStatus != TitanOperationStatus.NOT_FOUND) {
 				return operationStatus;
 			} else {
+				allChildrenAndParants.stream().filter(vertex -> {
+					Boolean isDeleted = (Boolean) vertex.getMetadataProperty(GraphPropertyEnum.IS_DELETED);
+					return (isDeleted == null || isDeleted == false);
+				}).forEach(vertex -> allVersion.put((String) vertex.getMetadataProperty(GraphPropertyEnum.VERSION), vertex.getUniqueId()));
+
 				toscaElement.setAllVersions(allVersion);
 				return TitanOperationStatus.OK;
 			}
@@ -1047,98 +1054,113 @@ public abstract class ToscaElementOperation extends BaseOperation {
 		return status;
 	}
 
-	
-	public <T extends ToscaElement> Either<List<T>, StorageOperationStatus> getElementCatalogData(ComponentTypeEnum componentType , ToscaElementTypeEnum toscaElement) {
-		Either<List<GraphVertex>, TitanOperationStatus> listOfHighestAndAllCertifiedComponents = this.getListOfHighestAndAllCertifiedComponents(componentType , toscaElement);
-		if (listOfHighestAndAllCertifiedComponents.isRight() && listOfHighestAndAllCertifiedComponents.right().value() != TitanOperationStatus.NOT_FOUND) {
-			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(listOfHighestAndAllCertifiedComponents.right().value()));
+	public <T extends ToscaElement> Either<List<T>, StorageOperationStatus> getElementCatalogData(ComponentTypeEnum componentType, ToscaElementTypeEnum toscaElement, boolean isHighestVersions) {
+		Either<List<GraphVertex>, TitanOperationStatus> listOfComponents;
+		if (isHighestVersions) {
+			listOfComponents = getListOfHighestComponents(componentType, toscaElement);
+		} else {
+			listOfComponents = getListOfHighestAndAllCertifiedComponents(componentType, toscaElement);
 		}
-		List<GraphVertex> highestAndAllCertified = listOfHighestAndAllCertifiedComponents.left().value();
+		if (listOfComponents.isRight() && listOfComponents.right().value() != TitanOperationStatus.NOT_FOUND) {
+			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(listOfComponents.right().value()));
+		}
 		List<T> result = new ArrayList<>();
-		if (highestAndAllCertified != null && false == highestAndAllCertified.isEmpty()) {
-			for (GraphVertex vertexComponent : highestAndAllCertified) {
-				Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, componentType, new ComponentParametersView(true));
-				if (component.isRight()) {
-					log.debug("Failed to fetch ligth element for {} error {}", vertexComponent.getUniqueId(), component.right().value());
-					return Either.right(component.right().value());
-				} else {
-					result.add(component.left().value());
+		if (listOfComponents.isLeft()) {
+			List<GraphVertex> highestAndAllCertified = listOfComponents.left().value();
+			if (highestAndAllCertified != null && false == highestAndAllCertified.isEmpty()) {
+				for (GraphVertex vertexComponent : highestAndAllCertified) {
+					Either<T, StorageOperationStatus> component = getLightComponent(vertexComponent, componentType, new ComponentParametersView(true));
+					if (component.isRight()) {
+						log.debug("Failed to fetch ligth element for {} error {}", vertexComponent.getUniqueId(), component.right().value());
+						return Either.right(component.right().value());
+					} else {
+						result.add(component.left().value());
+					}
 				}
 			}
 		}
 		return Either.left(result);
 	}
-	
 
-public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType , ToscaElementTypeEnum toscaElement) {
-	long startFetchAllStates = System.currentTimeMillis();
-	Map<GraphPropertyEnum, Object> propertiesToMatchCertified = new HashMap<>();
-	propertiesToMatchCertified.put(GraphPropertyEnum.STATE , LifecycleStateEnum.CERTIFIED.name());
-	propertiesToMatchCertified.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
-	if (componentType == ComponentTypeEnum.RESOURCE ){
-		propertiesToMatchCertified.put(GraphPropertyEnum.IS_ABSTRACT, false);
-	}
+	private Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestComponents(ComponentTypeEnum componentType, ToscaElementTypeEnum toscaElement) {
+		Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
+		propertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+		propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
 
-	Map<GraphPropertyEnum, Object> propertiesHasNotToMatchCertified = new HashMap<>();
-	propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_DELETED, true);
-	
-	
-	Either<List<GraphVertex>, TitanOperationStatus> certifiedNodes = titanDao.getByCriteria(ToscaElementTypeEnum.getVertexTypeByToscaType(toscaElement) , propertiesToMatchCertified, propertiesHasNotToMatchCertified, JsonParseFlagEnum.ParseMetadata);
-	if (certifiedNodes.isRight() && certifiedNodes.right().value() != TitanOperationStatus.NOT_FOUND) {
-		return Either.right(certifiedNodes.right().value());
-	}
-	
-	Map<GraphPropertyEnum, Object> propertiesToMatchHighest = new HashMap<>();
-	propertiesToMatchHighest.put(GraphPropertyEnum.IS_HIGHEST_VERSION , true);
-	propertiesToMatchHighest.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
-	if (componentType == ComponentTypeEnum.RESOURCE ){
-		propertiesToMatchHighest.put(GraphPropertyEnum.IS_ABSTRACT, false);
+		if (componentType == ComponentTypeEnum.RESOURCE) {
+			propertiesToMatch.put(GraphPropertyEnum.IS_ABSTRACT, false);
+		}
+
+		Map<GraphPropertyEnum, Object> propertiesHasNotToMatch = new HashMap<>();
+		propertiesHasNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
+
+		return titanDao.getByCriteria(ToscaElementTypeEnum.getVertexTypeByToscaType(toscaElement), propertiesToMatch, propertiesHasNotToMatch, JsonParseFlagEnum.ParseMetadata);
 	}
 
+	public Either<List<GraphVertex>, TitanOperationStatus> getListOfHighestAndAllCertifiedComponents(ComponentTypeEnum componentType, ToscaElementTypeEnum toscaElement) {
+		long startFetchAllStates = System.currentTimeMillis();
+		Map<GraphPropertyEnum, Object> propertiesToMatchCertified = new HashMap<>();
+		propertiesToMatchCertified.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+		propertiesToMatchCertified.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+		if (componentType == ComponentTypeEnum.RESOURCE) {
+			propertiesToMatchCertified.put(GraphPropertyEnum.IS_ABSTRACT, false);
+		}
 
-	Map<GraphPropertyEnum, Object> propertiesHasNotToMatchHighest = new HashMap<>();
-	propertiesHasNotToMatchHighest.put(GraphPropertyEnum.IS_DELETED, true);
-	propertiesHasNotToMatchHighest.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-	
-	
-	Either<List<GraphVertex>, TitanOperationStatus> highestNode = titanDao.getByCriteria(ToscaElementTypeEnum.getVertexTypeByToscaType(toscaElement) , propertiesToMatchHighest, propertiesHasNotToMatchHighest, JsonParseFlagEnum.ParseMetadata);
-	if (highestNode.isRight() && highestNode.right().value() != TitanOperationStatus.NOT_FOUND) {
-		return Either.right(highestNode.right().value());
-	}
-	
-	long endFetchAllStates = System.currentTimeMillis();
+		Map<GraphPropertyEnum, Object> propertiesHasNotToMatchCertified = new HashMap<>();
+		propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_DELETED, true);
 
-	
-	List<GraphVertex> allNodes = new ArrayList<>();
-	
-	if (certifiedNodes.isLeft()) {
-		allNodes.addAll(certifiedNodes.left().value());
-	} 
-	if (highestNode.isLeft()){
-		allNodes.addAll(highestNode.left().value());
-	}
-	
-	int certifiedSize;
-	int nonCertifiedSize;
-	
-	if (certifiedNodes.isRight()){
-		certifiedSize = 0;
-	} else {
-		certifiedSize =  certifiedNodes.left().value().size();
-	}
-	
-	if (highestNode.isRight()){
-		nonCertifiedSize = 0;
-	} else {
-		nonCertifiedSize =  highestNode.left().value().size();
-	}
-	
-	
-	log.debug("Fetch catalog {}s all states: certified {}, noncertified {}", componentType, certifiedSize , nonCertifiedSize );
-	log.debug("Fetch catalog {}s all states from graph took {} ms", componentType, endFetchAllStates - startFetchAllStates);
-	return Either.left(allNodes);
-}
+		Either<List<GraphVertex>, TitanOperationStatus> certifiedNodes = titanDao.getByCriteria(ToscaElementTypeEnum.getVertexTypeByToscaType(toscaElement), propertiesToMatchCertified, propertiesHasNotToMatchCertified,
+				JsonParseFlagEnum.ParseMetadata);
+		if (certifiedNodes.isRight() && certifiedNodes.right().value() != TitanOperationStatus.NOT_FOUND) {
+			return Either.right(certifiedNodes.right().value());
+		}
 
+		Map<GraphPropertyEnum, Object> propertiesToMatchHighest = new HashMap<>();
+		propertiesToMatchHighest.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+		propertiesToMatchHighest.put(GraphPropertyEnum.COMPONENT_TYPE, componentType.name());
+		if (componentType == ComponentTypeEnum.RESOURCE) {
+			propertiesToMatchHighest.put(GraphPropertyEnum.IS_ABSTRACT, false);
+		}
+
+		Map<GraphPropertyEnum, Object> propertiesHasNotToMatchHighest = new HashMap<>();
+		propertiesHasNotToMatchHighest.put(GraphPropertyEnum.IS_DELETED, true);
+		propertiesHasNotToMatchHighest.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+
+		Either<List<GraphVertex>, TitanOperationStatus> highestNode = titanDao.getByCriteria(ToscaElementTypeEnum.getVertexTypeByToscaType(toscaElement), propertiesToMatchHighest, propertiesHasNotToMatchHighest, JsonParseFlagEnum.ParseMetadata);
+		if (highestNode.isRight() && highestNode.right().value() != TitanOperationStatus.NOT_FOUND) {
+			return Either.right(highestNode.right().value());
+		}
+
+		long endFetchAllStates = System.currentTimeMillis();
+
+		List<GraphVertex> allNodes = new ArrayList<>();
+
+		if (certifiedNodes.isLeft()) {
+			allNodes.addAll(certifiedNodes.left().value());
+		}
+		if (highestNode.isLeft()) {
+			allNodes.addAll(highestNode.left().value());
+		}
+
+		int certifiedSize;
+		int nonCertifiedSize;
+
+		if (certifiedNodes.isRight()) {
+			certifiedSize = 0;
+		} else {
+			certifiedSize = certifiedNodes.left().value().size();
+		}
+
+		if (highestNode.isRight()) {
+			nonCertifiedSize = 0;
+		} else {
+			nonCertifiedSize = highestNode.left().value().size();
+		}
+
+		log.debug("Fetch catalog {}s all states: certified {}, noncertified {}", componentType, certifiedSize, nonCertifiedSize);
+		log.debug("Fetch catalog {}s all states from graph took {} ms", componentType, endFetchAllStates - startFetchAllStates);
+		return Either.left(allNodes);
+	}
 
 	protected Either<List<GraphVertex>, StorageOperationStatus> getAllComponentsMarkedForDeletion(ComponentTypeEnum componentType) {
 

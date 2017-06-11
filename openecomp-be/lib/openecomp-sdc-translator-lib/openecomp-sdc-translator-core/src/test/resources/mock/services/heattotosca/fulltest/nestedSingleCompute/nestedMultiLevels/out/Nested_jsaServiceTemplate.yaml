@@ -1,0 +1,171 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: Nested_jsa
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.jsa:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    compute_jsa_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    index_value:
+      type: integer
+      description: Index value of this substitution service template runtime instance
+      required: false
+      default: 0
+      constraints:
+      - greater_or_equal: 0
+  node_templates:
+    jsa:
+      type: org.openecomp.resource.vfc.nodes.heat.jsa
+      properties:
+        image:
+          get_input: vm_image_name
+        name:
+          get_input:
+          - compute_jsa_name
+          - index_value
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.jsa
+    capabilities:
+      instance_jsa:
+      - jsa
+      - instance
+      disk.latency_jsa:
+      - jsa
+      - disk.latency
+      disk.device.usage_jsa:
+      - jsa
+      - disk.device.usage
+      disk.iops_jsa:
+      - jsa
+      - disk.iops
+      disk.read.bytes.rate_jsa:
+      - jsa
+      - disk.read.bytes.rate
+      disk.device.allocation_jsa:
+      - jsa
+      - disk.device.allocation
+      disk.write.bytes.rate_jsa:
+      - jsa
+      - disk.write.bytes.rate
+      disk.ephemeral.size_jsa:
+      - jsa
+      - disk.ephemeral.size
+      cpu_util_jsa:
+      - jsa
+      - cpu_util
+      disk.device.write.bytes.rate_jsa:
+      - jsa
+      - disk.device.write.bytes.rate
+      disk.read.bytes_jsa:
+      - jsa
+      - disk.read.bytes
+      disk.capacity_jsa:
+      - jsa
+      - disk.capacity
+      disk.write.bytes_jsa:
+      - jsa
+      - disk.write.bytes
+      memory.usage_jsa:
+      - jsa
+      - memory.usage
+      disk.device.read.bytes.rate_jsa:
+      - jsa
+      - disk.device.read.bytes.rate
+      disk.device.capacity_jsa:
+      - jsa
+      - disk.device.capacity
+      disk.device.read.requests_jsa:
+      - jsa
+      - disk.device.read.requests
+      endpoint_jsa:
+      - jsa
+      - endpoint
+      disk.read.requests_jsa:
+      - jsa
+      - disk.read.requests
+      memory.resident_jsa:
+      - jsa
+      - memory.resident
+      disk.device.write.requests.rate_jsa:
+      - jsa
+      - disk.device.write.requests.rate
+      scalable_jsa:
+      - jsa
+      - scalable
+      feature_jsa:
+      - jsa
+      - feature
+      cpu_jsa:
+      - jsa
+      - cpu
+      disk.usage_jsa:
+      - jsa
+      - disk.usage
+      disk.write.requests_jsa:
+      - jsa
+      - disk.write.requests
+      memory_jsa:
+      - jsa
+      - memory
+      disk.device.write.bytes_jsa:
+      - jsa
+      - disk.device.write.bytes
+      disk.root.size_jsa:
+      - jsa
+      - disk.root.size
+      cpu.delta_jsa:
+      - jsa
+      - cpu.delta
+      disk.device.write.requests_jsa:
+      - jsa
+      - disk.device.write.requests
+      disk.device.read.requests.rate_jsa:
+      - jsa
+      - disk.device.read.requests.rate
+      os_jsa:
+      - jsa
+      - os
+      disk.allocation_jsa:
+      - jsa
+      - disk.allocation
+      binding_jsa:
+      - jsa
+      - binding
+      disk.device.read.bytes_jsa:
+      - jsa
+      - disk.device.read.bytes
+      host_jsa:
+      - jsa
+      - host
+      disk.device.latency_jsa:
+      - jsa
+      - disk.device.latency
+      vcpus_jsa:
+      - jsa
+      - vcpus
+      disk.device.iops_jsa:
+      - jsa
+      - disk.device.iops
+      disk.write.requests.rate_jsa:
+      - jsa
+      - disk.write.requests.rate
+    requirements:
+      local_storage_jsa:
+      - jsa
+      - local_storage
+      dependency_jsa:
+      - jsa
+      - dependency

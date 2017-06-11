@@ -49,12 +49,14 @@ export class DataTypeService {
         return propertiesArray;
     }
 */
-    
+
     public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
         //push all child properties to array
         if (dataTypeObj.properties) {
             dataTypeObj.properties.forEach((derivedProperty) => {
-                propertiesArray.push(new DerivedFEProperty(derivedProperty, parentName));
+                if(dataTypeObj.name !== PROPERTY_DATA.OPENECOMP_ROOT || derivedProperty.name !== PROPERTY_DATA.SUPPLEMENTAL_DATA){//The requirement is to not display the property supplemental_data
+                    propertiesArray.push(new DerivedFEProperty(derivedProperty, parentName));
+                }
                 let derivedDataTypeObj: DataTypeModel = this.getDataTypeByTypeName(derivedProperty.type);
                 this.getDerivedDataTypeProperties(derivedDataTypeObj, propertiesArray, parentName + "#" + derivedProperty.name);
             });
@@ -62,8 +64,8 @@ export class DataTypeService {
         //recurse parent (derivedFrom), in case one of parents contains properties
         if (PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeProperties(dataTypeObj.derivedFrom, propertiesArray, parentName);
-        }    
-    }    
-    
+        }
+    }
+
 }
 

@@ -87,12 +87,12 @@ public class ComponentServlet extends BeGenericServlet {
 	private static Logger log = LoggerFactory.getLogger(ComponentServlet.class.getName());
 
 	@GET
-	@Path("/{componentType}/{componentId}/conformanceLevelValidation")
+	@Path("/{componentType}/{componentUuid}/conformanceLevelValidation")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Validate Component Conformance Level", httpMethod = "GET", notes = "Returns the result according to conformance level in BE config", response = Resource.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
-	public Response conformanceLevelValidation(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @Context final HttpServletRequest request,
+	public Response conformanceLevelValidation(@PathParam("componentType") final String componentType, @PathParam("componentUuid") final String componentUuid, @Context final HttpServletRequest request,
 			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 		Response response;
 		ServletContext context = request.getSession().getServletContext();
@@ -103,7 +103,7 @@ public class ComponentServlet extends BeGenericServlet {
 		ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
 		if (componentTypeEnum != null) {
 			ComponentBusinessLogic compBL = getComponentBL(componentTypeEnum, context);
-			Either<Boolean, ResponseFormat> eitherConformanceLevel = compBL.validateConformanceLevel(componentId, componentTypeEnum, userId);
+			Either<Boolean, ResponseFormat> eitherConformanceLevel = compBL.validateConformanceLevel(componentUuid, componentTypeEnum, userId);
 			if (eitherConformanceLevel.isRight()) {
 				response = buildErrorResponse(eitherConformanceLevel.right().value());
 			} else {

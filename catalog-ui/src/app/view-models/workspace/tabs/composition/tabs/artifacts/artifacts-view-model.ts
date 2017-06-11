@@ -179,7 +179,7 @@ export class ResourceArtifactsViewModel {
                     this.$scope.currentComponent.selectedInstance.artifacts = artifacts;
                     break;
             }
-            this.loadComponentArtifactIfNeeded();
+            this.initArtifactArr(this.$scope.artifactType);
         };
 
         let onError = ()=> {

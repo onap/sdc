@@ -13,10 +13,12 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.DataTypesUpdate;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -45,7 +47,7 @@ import fj.data.Either;
 @Component("vfModulesPropertiesAdding")
 public class VfModulesPropertiesAdding {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(ToscaTemplateRegeneration.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(VfModulesPropertiesAdding.class);
 	
 	@Autowired
     private ToscaOperationFacade toscaOperationFacade;
@@ -61,25 +63,35 @@ public class VfModulesPropertiesAdding {
 	
 	
 	public boolean migrate(String groupsTypeYmlFilePath) {
+		LOGGER.debug("Going to add new properties to vfModules. ");
 		boolean result = true;
-		Either<Map<org.openecomp.sdc.be.model.Component, GraphVertex>, StorageOperationStatus> getAllComponentsRes = null;
 		GroupTypeDefinition vfModule;
 		Either<List<GraphVertex>, TitanOperationStatus> getAllTopologyTemplatesRes = null;
-		List<PropertyDefinition> newProperties = null;
-
+		String vfModuleUid = "org.openecomp.groups.VfModule.1.0.grouptype";
 		Either<GroupTypeDefinition, TitanOperationStatus> getGroupTypeVfModuleRes ;
+		List<PropertyDefinition> updatedProperties = null;
 		try{
-			getGroupTypeVfModuleRes = groupTypeOperation.getGroupTypeByUid("org.openecomp.groups.VfModule.1.0.grouptype");
+			LOGGER.debug("Going to fetch {}. ", vfModuleUid);
+			getGroupTypeVfModuleRes = groupTypeOperation.getGroupTypeByUid(vfModuleUid);
 			
-			if(getGroupTypeVfModuleRes.isRight()){
-				 result = false;
+			if(getGroupTypeVfModuleRes.isRight() && getGroupTypeVfModuleRes.right().value() != TitanOperationStatus.NOT_FOUND){
+				LOGGER.debug("Failed to fetch the group type {}. The status is {}. ", vfModuleUid, getGroupTypeVfModuleRes.right().value());
+				result = false;
+			}
+			if(getGroupTypeVfModuleRes.isRight() && getGroupTypeVfModuleRes.right().value() == TitanOperationStatus.NOT_FOUND){
+				LOGGER.debug("The group type with id {} was not found. Skipping adding the new properties. ", vfModuleUid);
+				return true;
 			}
 			if(result){
+				LOGGER.debug("Going to add the new properties {} to org.openecomp.groups.VfModule.1.0.grouptype. ");
 				vfModule = getGroupTypeVfModuleRes.left().value();
-				newProperties = getNewVfModuleTypeProperties(getAllVfModuleTypePropertiesFromYaml(groupsTypeYmlFilePath), vfModule);
-				result = addNewPropertiesToGroupType(vfModule, newProperties);
+				updatedProperties = getAllVfModuleTypePropertiesFromYaml(groupsTypeYmlFilePath);
+				result = addNewPropertiesToGroupType(vfModule, getNewVfModuleTypeProperties(updatedProperties, vfModule));
+				if(!result){
+					LOGGER.debug("Failed to add the new properties {} to org.openecomp.groups.VfModule.1.0.grouptype. ");
+				}
 			}
-			if(result && CollectionUtils.isNotEmpty(newProperties)){
+			if(result && CollectionUtils.isNotEmpty(updatedProperties)){
 				Map<GraphPropertyEnum, Object> propsHasNot = new EnumMap<>(GraphPropertyEnum.class);
 				propsHasNot.put(GraphPropertyEnum.IS_DELETED, true);
 				getAllTopologyTemplatesRes = toscaOperationFacade.getTitanDao().getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, null, propsHasNot, JsonParseFlagEnum.ParseAll);
@@ -89,13 +101,7 @@ public class VfModulesPropertiesAdding {
 				}
 			}
 			if(result && getAllTopologyTemplatesRes!=null && getAllTopologyTemplatesRes.isLeft()){
-				getAllComponentsRes = getAllContainerComponents(getAllTopologyTemplatesRes.left().value());
-				if(getAllComponentsRes.isRight()){
-					result = false;
-				}
-			}
-			if(result && getAllComponentsRes != null){
-				result = addNewVfModulesProperties(getAllComponentsRes.left().value(), newProperties);
+				result = addNewVfModulesProperties(getAllTopologyTemplatesRes.left().value(), updatedProperties);
 			}
 		} catch (Exception e){
 			result = false;
@@ -110,41 +116,61 @@ public class VfModulesPropertiesAdding {
 		return result;
 	}
 
-	private boolean addNewVfModulesProperties(Map<org.openecomp.sdc.be.model.Component, GraphVertex> components, List<PropertyDefinition> newGroupTypeProperties) {
+	private boolean addNewVfModulesProperties(List<GraphVertex> components, List<PropertyDefinition> updatedProperties) {
 		boolean result = true;
-		for(Map.Entry<org.openecomp.sdc.be.model.Component, GraphVertex> component : components.entrySet()){
-			result = addNewPropertiesToVfModules(component, newGroupTypeProperties);
+		for(GraphVertex component : components){
+			LOGGER.debug("Going to add the new properties {} to component {}. ", updatedProperties, component.getUniqueId());
+			result = addNewPropertiesToVfModules(component, updatedProperties);
 			if(!result){
+				LOGGER.debug("Failed to add the new properties {} to component {}. ", updatedProperties, component.getUniqueId());
 				break;
 			}
+			toscaOperationFacade.commit();
 		}
 		return result;
 	}
 
-	private boolean addNewPropertiesToVfModules(Entry<org.openecomp.sdc.be.model.Component, GraphVertex> component, List<PropertyDefinition> newGroupTypeProperties) {
+	private boolean addNewPropertiesToVfModules(GraphVertex componentV, List<PropertyDefinition> updatedProperties) {
 		boolean result = true;
 		List<GroupDefinition> vfModules = null;
-		if(CollectionUtils.isNotEmpty(component.getKey().getGroups())){
-			vfModules = component.getKey().getGroups().stream().filter(g -> g.getType().equals(BaseOperation.VF_MODULE)).collect(Collectors.toList());
+		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getToscaElementRes = toscaOperationFacade.getToscaElement(componentV);
+		if(getToscaElementRes.isRight()){
+			LOGGER.debug("Failed to fetch the component {}. ", componentV.getUniqueId());
+			result = false;
+		}
+		else if(CollectionUtils.isNotEmpty(getToscaElementRes.left().value().getGroups())){
+			vfModules = getToscaElementRes.left().value().getGroups().stream().filter(g -> g.getType().equals(BaseOperation.VF_MODULE)).collect(Collectors.toList());
 		}
 		if(vfModules != null){
-			vfModules.forEach(vfModule -> vfModule.getProperties().addAll(newGroupTypeProperties));
-			StorageOperationStatus status = topologyTemplateOperation.updateToscaDataOfToscaElement(component.getValue(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, vfModules, JsonPresentationFields.NAME);
+			vfModules.forEach(vfModule -> addAllNewProperties(vfModule.getProperties(), updatedProperties));
+			StorageOperationStatus status = topologyTemplateOperation.updateToscaDataOfToscaElement(componentV, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, vfModules, JsonPresentationFields.NAME);
 			if(status!= StorageOperationStatus.OK){
+				LOGGER.debug("Failed to add the new properties {} to groups of component {}. ", updatedProperties, componentV.getUniqueId());
 				result = false;
 			}
 		}
-		if(result && CollectionUtils.isNotEmpty(component.getKey().getComponentInstances())){
-			result = addPropertiesToVfModuleInstances(component, newGroupTypeProperties);
+		if(result && CollectionUtils.isNotEmpty(getToscaElementRes.left().value().getComponentInstances())){
+			result = addPropertiesToVfModuleInstances(getToscaElementRes.left().value(), componentV, updatedProperties);
 		}
 		return result;
 	}
 
-	private boolean addPropertiesToVfModuleInstances(Entry<org.openecomp.sdc.be.model.Component, GraphVertex> component, List<PropertyDefinition> newGroupTypeProperties) {
+	private void addAllNewProperties(List<PropertyDataDefinition> vfModuleProperties, List<PropertyDefinition> updatedProperties) {
+		Map<String, PropertyDataDefinition> propertiesMap = vfModuleProperties.stream().collect(Collectors.toMap(p->p.getName(), p->p));
+		
+		for(PropertyDefinition property : updatedProperties){
+			if(!propertiesMap.containsKey(property.getName())){
+				vfModuleProperties.add(property);
+			}
+		}
+	}
+
+	private boolean addPropertiesToVfModuleInstances(org.openecomp.sdc.be.model.Component component, GraphVertex componentV, List<PropertyDefinition> updatedProperties) {
 		boolean result = true;
 		List<GroupInstance> vfModuleInstances;
 		List<String> pathKeys;
-		for(ComponentInstance componentInstance : component.getKey().getComponentInstances()){
+		LOGGER.debug("Going to add the new properties {} to group instances of component {}. ", updatedProperties, componentV.getUniqueId());
+		for(ComponentInstance componentInstance : component.getComponentInstances()){
 			vfModuleInstances = null;
 			if(CollectionUtils.isNotEmpty(componentInstance.getGroupInstances())){
 				vfModuleInstances = componentInstance.getGroupInstances()
@@ -154,41 +180,25 @@ public class VfModulesPropertiesAdding {
 			}
 			if(vfModuleInstances != null){
 				for(GroupInstance vfModuleInstance :vfModuleInstances){
-					vfModuleInstance.getProperties().addAll(newGroupTypeProperties);
+					addAllNewProperties(vfModuleInstance.getProperties(),updatedProperties);
 					pathKeys = new ArrayList<>();
 					pathKeys.add(componentInstance.getUniqueId());
 					StorageOperationStatus status = topologyTemplateOperation
-							.updateToscaDataDeepElementOfToscaElement(component.getValue(), EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS, vfModuleInstance, pathKeys, JsonPresentationFields.NAME);
+							.updateToscaDataDeepElementOfToscaElement(componentV, EdgeLabelEnum.INST_GROUPS, VertexTypeEnum.INST_GROUPS, vfModuleInstance, pathKeys, JsonPresentationFields.NAME);
 					if(status!= StorageOperationStatus.OK){
 						result = false;
+						LOGGER.debug("Failed to add the new properties {} to group instances of component {}. ", updatedProperties, componentV.getUniqueId());
 						break;
 					}
 				}
 				if(!result){
+					LOGGER.debug("Failed to add the new properties {} to group instances of component {}. ", updatedProperties, componentV.getUniqueId());
 					break;
 				}
 			}
 		}
 		return result;
 	}
-
-	private Either<Map<org.openecomp.sdc.be.model.Component, GraphVertex>, StorageOperationStatus> getAllContainerComponents(List<GraphVertex> componentsV) {
-		Map<org.openecomp.sdc.be.model.Component, GraphVertex> foundComponents = new HashMap<>();
-		Either<Map<org.openecomp.sdc.be.model.Component, GraphVertex>, StorageOperationStatus> result = null;
-		for(GraphVertex componentV : componentsV){
-			Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentRes = toscaOperationFacade.getToscaElement(componentV);
-			if(getComponentRes.isRight()){
-				result = Either.right(getComponentRes.right().value());
-				break;
-			}
-			foundComponents.put(getComponentRes.left().value(), componentV);
-		}
-		if(result == null){
-			result = Either.left(foundComponents);
-		}
-		return result;
-	}
-	
 	
 	private boolean addNewPropertiesToGroupType(GroupTypeDefinition vfModule, List<PropertyDefinition> newProperties) {
 		boolean result = true;

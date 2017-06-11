@@ -59,6 +59,7 @@ public class AbstractSubstituteToscaEnricher {
 
     final Map<String, NodeTemplate> node_templates =
         serviceTemplate.getTopology_template().getNode_templates();
+    if(node_templates == null) return errors;
 
     final Map<String, List<String>> componentDisplayNameToNodeTempalteIds =
         populateAllNodeTemplateIdForComponent(node_templates, serviceTemplate, toscaModel);

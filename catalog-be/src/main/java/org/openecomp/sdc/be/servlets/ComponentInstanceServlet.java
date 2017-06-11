@@ -51,7 +51,6 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.info.GroupDefinitionInfo;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -191,7 +190,6 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
 	}
 
-	// TODO Tal New Multiple Instance API
 	@POST
 	@Path("/{containerComponentType}/{componentId}/resourceInstance/multipleComponentInstance")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -618,13 +616,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 
 			Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
 			Wrapper<String> dataWrapper = new Wrapper<>();
-			Wrapper<ComponentInstanceAttribute> attributeWrapper = new Wrapper<>();
+			Wrapper<ComponentInstanceProperty> attributeWrapper = new Wrapper<>();
 			Wrapper<ComponentInstanceBusinessLogic> blWrapper = new Wrapper<>();
 
 			validateInputStream(request, dataWrapper, errorWrapper);
 
 			if (errorWrapper.isEmpty()) {
-				validateClassParse(dataWrapper.getInnerElement(), attributeWrapper, () -> ComponentInstanceAttribute.class, errorWrapper);
+				validateClassParse(dataWrapper.getInnerElement(), attributeWrapper, () -> ComponentInstanceProperty.class, errorWrapper);
 			}
 
 			if (errorWrapper.isEmpty()) {
@@ -635,7 +633,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 				ComponentInstanceBusinessLogic componentInstanceLogic = blWrapper.getInnerElement();
 				ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
 				log.debug("Start handle request of ComponentInstanceAttribute. Received attribute is {}", attributeWrapper.getInnerElement());
-				Either<ComponentInstanceAttribute, ResponseFormat> eitherAttribute = componentInstanceLogic.createOrUpdateAttributeValue(componentTypeEnum, componentId, componentInstanceId, attributeWrapper.getInnerElement(), userId);
+				Either<ComponentInstanceProperty, ResponseFormat> eitherAttribute = componentInstanceLogic.createOrUpdateAttributeValue(componentTypeEnum, componentId, componentInstanceId, attributeWrapper.getInnerElement(), userId);
 				if (eitherAttribute.isRight()) {
 					errorWrapper.setInnerElement(eitherAttribute.right().value());
 				} else {
