@@ -24,6 +24,8 @@ beSslPort: 8443
 
 version: 1.0
 released: 2012-11-30
+toscaConformanceLevel: 3.0
+minToscaConformanceLevel: 3.0
 
 titanCfgFile: src\main\resources\config\titan.properties
 titanMigrationKeySpaceCfgFile: src\main\resources\config\titan-migration.properties
