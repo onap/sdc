@@ -73,6 +73,21 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_pd_server_availability_zone:
+        - get_input: availabilityzone_name
+        - get_input: availabilityzone_name
+        compute_pd_server_name:
+        - get_input:
+          - pd_server_names
+          - 1
+        - get_input:
+          - pd_server_names
+          - 0
+        port_pd01_port_replacement_policy:
+        - AUTO
+        - AUTO
+        vm_flavor_name:
+          get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -94,21 +109,6 @@ topology_template:
         port_pd01_port_network:
         - Network-PD-1
         - Network-PD-0
-        compute_pd_server_availability_zone:
-        - get_input: availabilityzone_name
-        - get_input: availabilityzone_name
-        compute_pd_server_name:
-        - get_input:
-          - pd_server_names
-          - 1
-        - get_input:
-          - pd_server_names
-          - 0
-        port_pd01_port_replacement_policy:
-        - AUTO
-        - AUTO
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_pd_server_user_data_format:
         - null
         - RAW
@@ -132,14 +132,16 @@ topology_template:
         - get_input:
           - ps_server_names
           - 1
-        vm_image_name:
-          get_input: ps_image_name
         compute_ps_server_availability_zone:
         - get_input: availabilityzone_name
         - get_input: availabilityzone_name
         compute_ps_server_user_data_format:
         - null
         - RAW
+        vm_flavor_name:
+          get_input: ps_flavor_name
+        vm_image_name:
+          get_input: ps_image_name
         port_ps01_port_replacement_policy:
         - AUTO
         - AUTO
@@ -151,8 +153,6 @@ topology_template:
         port_ps01_port_network:
         - Network-PS-0
         - Network-PS-1
-        vm_flavor_name:
-          get_input: ps_flavor_name
         port_ps01_port_ip_requirements:
         - - ip_version: 4
             ip_count_required:

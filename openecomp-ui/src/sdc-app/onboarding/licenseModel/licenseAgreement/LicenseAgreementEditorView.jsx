@@ -17,7 +17,7 @@ import React from 'react';
 
 import GridSection from 'nfvo-components/grid/GridSection.jsx';
 import GridItem from 'nfvo-components/grid/GridItem.jsx';
-import Form from 'nfvo-components/input/validation/Form.jsx';
+import {TabsForm as Form} from 'nfvo-components/input/validation/Form.jsx';
 import Tabs from 'nfvo-components/input/validation/Tabs.jsx';
 import Tab from 'react-bootstrap/lib/Tab.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
@@ -151,21 +151,25 @@ class LicenseAgreementEditorView extends React.Component {
 							eventKey={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.GENERAL}
 							data-test-id='general-tab'
 							title={i18n('General')}>
-								<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged} validateLTChoice={(value)=>this.validateLTChoice(value)}
-									validateName={(value)=>this.validateName(value)}/>
+								<fieldset disabled={isReadOnlyMode}>
+									<GeneralTabContent data={data} genericFieldInfo={genericFieldInfo} onDataChanged={onDataChanged} validateLTChoice={(value)=>this.validateLTChoice(value)}
+										   validateName={(value)=>this.validateName(value)}/>
+								</fieldset>
 						</Tab>
 						<Tab
 							eventKey={LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB.FEATURE_GROUPS}
 							data-test-id='feature-group-tab'
 							title={i18n('Feature Groups')}>
+								<fieldset disabled={isReadOnlyMode}>
 							{featureGroupsList.length > 0 ?
-								<DualListboxView
-									isReadOnlyMode={isReadOnlyMode}
-									filterTitle={dualBoxFilterTitle}
-									selectedValuesList={data.featureGroupsIds}
-									availableList={featureGroupsList}
-									onChange={ selectedValuesList => onDataChanged( { featureGroupsIds: selectedValuesList }, LA_EDITOR_FORM )}/> :
-								<p>{i18n('There is no available feature groups')}</p>}
+									<DualListboxView
+										isReadOnlyMode={isReadOnlyMode}
+										filterTitle={dualBoxFilterTitle}
+										selectedValuesList={data.featureGroupsIds}
+										availableList={featureGroupsList}
+										onChange={ selectedValuesList => onDataChanged( { featureGroupsIds: selectedValuesList }, LA_EDITOR_FORM )}/> :
+									<p>{i18n('There is no available feature groups')}</p>}
+								</fieldset>
 						</Tab>
 					</Tabs>
 				</Form>}

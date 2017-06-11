@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="5 seconds">
 
-	<property scope="system" name="ECOMP-component-name" value="ASDC" />
-	<property scope="system" name="ECOMP-subcomponent-name" value="ASDC-BE" />
+	<property scope="system" name="ECOMP-component-name" value="SDC" />
+	<property scope="system" name="ECOMP-subcomponent-name" value="SDC-BE" />
 	<property file="${config.home}/catalog-be/configuration.yaml" />
 	<property scope="context" name="enable-all-log" value="false" />
 

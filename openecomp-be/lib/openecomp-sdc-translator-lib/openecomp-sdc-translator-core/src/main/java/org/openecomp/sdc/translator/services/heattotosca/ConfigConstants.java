@@ -40,6 +40,9 @@ public class ConfigConstants {
       "supportedConsolidationComputeResources";
   public static final String SUPPORTED_CONSOLIDATION_PORT_RESOURCES_KEY =
       "supportedConsolidationPortResources";
+  public static final String ENRICH_PORT_RESOURCE_PROP =
+      "enrichPortResourceProperties";
+
 
   //others
   public static final String TRANS_MAPPING_DELIMITER_CHAR = "#";

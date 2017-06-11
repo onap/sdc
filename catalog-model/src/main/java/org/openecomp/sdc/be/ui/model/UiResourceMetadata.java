@@ -16,6 +16,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
 	private String toscaResourceName;
 	private List<String> derivedFrom;
 	
+	
 	public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom, ResourceMetadataDataDefinition metadata) {
 		super(categories, metadata);
 		this.vendorName = metadata.getVendorName();
@@ -26,6 +27,8 @@ public class UiResourceMetadata extends UiComponentMetadata {
 		this.toscaResourceName = metadata.getToscaResourceName();
 		this.derivedFrom = derivedFrom;
 	}
+	
+	public UiResourceMetadata(){}
 	
 	public List<String> getDerivedFrom() {
 		return derivedFrom;

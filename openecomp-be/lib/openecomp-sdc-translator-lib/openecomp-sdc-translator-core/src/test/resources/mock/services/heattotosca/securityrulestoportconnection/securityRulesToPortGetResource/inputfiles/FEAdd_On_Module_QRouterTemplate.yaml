@@ -62,7 +62,7 @@ parameters:
   vnf_id:
     type: string
 resources:
-  QRouter:
+  QRouter1:
     properties:
       availability_zone:
         get_param: availability_zone_0
@@ -178,7 +178,7 @@ resources:
   qrouter_volume_0_att:
     properties:
       instance_uuid:
-        get_resource: QRouter
+        get_resource: QRouter1
       volume_id:
         get_resource: qrouter_volume_0
     type: OS::Cinder::VolumeAttachment
@@ -194,7 +194,7 @@ resources:
   qrouter_volume_1_att:
     properties:
       instance_uuid:
-        get_resource: QRouter
+        get_resource: QRouter1
       volume_id:
         get_resource: qrouter_volume_1
     type: OS::Cinder::VolumeAttachment
@@ -210,7 +210,7 @@ resources:
   qrouter_volume_2_att:
     properties:
       instance_uuid:
-        get_resource: QRouter
+        get_resource: QRouter1
       volume_id:
         get_resource: qrouter_volume_2
     type: OS::Cinder::VolumeAttachment

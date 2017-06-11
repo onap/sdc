@@ -25,8 +25,8 @@ beSslPort: 8443
 version: 1.0
 released: 2012-11-30
 
-titanCfgFile: C:\Git_work\Git_UGN\d2-sdnc\asdctool\src\main\resources\config\titan.properties
-titanMigrationKeySpaceCfgFile: C:\Git_work\Git_UGN\d2-sdnc\asdctool\src\main\resources\config\titan-migration.properties
+titanCfgFile: src\main\resources\config\titan.properties
+titanMigrationKeySpaceCfgFile: src\main\resources\config\titan-migration.properties
 titanInMemoryGraph: false
 titanLockTimeout: 1800
 titanReconnectIntervalInSeconds: 3

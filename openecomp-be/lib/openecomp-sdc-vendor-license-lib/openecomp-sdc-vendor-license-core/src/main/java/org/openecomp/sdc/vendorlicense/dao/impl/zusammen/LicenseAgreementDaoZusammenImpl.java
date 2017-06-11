@@ -187,8 +187,13 @@ public class LicenseAgreementDaoZusammenImpl implements LicenseAgreementDao {
           mapElementInfoToLicenseAgreement(licenseAgreement.getId(), licenseAgreement.getVersion(),
               elementInfo.get());
 
-      currentLicenseAgreement.getFeatureGroupIds().removeAll(removedFeatureGroupIds);
-      currentLicenseAgreement.getFeatureGroupIds().addAll(addedFeatureGroupIds);
+      if (! (removedFeatureGroupIds == null) ) {
+        currentLicenseAgreement.getFeatureGroupIds().removeAll(removedFeatureGroupIds);
+      }
+
+      if (! (addedFeatureGroupIds == null)) {
+        currentLicenseAgreement.getFeatureGroupIds().addAll(addedFeatureGroupIds);
+      }
       licenseAgreementElement.setRelations(currentLicenseAgreement.getFeatureGroupIds().stream()
           .map(relation -> VlmZusammenUtil
               .createRelation(RelationType.LicenseAgreementToFeatureGroup, relation))

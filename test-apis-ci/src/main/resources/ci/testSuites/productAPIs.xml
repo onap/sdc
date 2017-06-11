@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="productAPIs" configfailurepolicy="continue" verbose="2"  parallel="tests" thread-count="6">
+
+  <test name="Test">
+    <classes>
+    
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCreateWithValidationsTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest"/>
+      <class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest"/>
+      
+      
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->

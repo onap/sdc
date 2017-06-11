@@ -136,7 +136,6 @@
             "minimum": {
               "type": "number",
               "minimum": 0,
-              "exclusiveMinimum": true,
               "maximum": 100
             },
             "maximum": {

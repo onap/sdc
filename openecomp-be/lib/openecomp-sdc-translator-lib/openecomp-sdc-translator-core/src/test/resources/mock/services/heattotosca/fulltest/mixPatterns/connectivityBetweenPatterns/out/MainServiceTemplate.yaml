@@ -143,6 +143,52 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_1c1_scalling_instance_user_data_format:
+        - RAW2
+        - RAW1
+        port_1c1_t2_port_network_role_tag:
+        - ppds
+        - ppds
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_1c1_t1_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        compute_1c1_scalling_instance_name:
+        - get_input:
+          - 1c1_scalling_instance_names
+          - 2
+        - get_input:
+          - 1c1_scalling_instance_names
+          - 1
+        port_1c1_t1_port_name:
+        - 1c1_t1_port_1
+        - 1c1_t1_port_0
+        port_1c1_t1_port_network:
+        - 1c1_scalling_instance_network
+        - 1c1_scalling_instance_network
+        port_1c1_t2_port_fixed_ips:
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 4
+        - - ip_address:
+              get_input:
+              - myIPs
+              - 2
+        port_1c1_t2_port_network:
+        - get_input: ppds_net_name
+        - get_input: ppds_net_name
         port_1c1_t1_port_fixed_ips:
         - - ip_address:
               get_input:
@@ -152,9 +198,6 @@ topology_template:
               get_input:
               - myIPs
               - 1
-        compute_1c1_scalling_instance_user_data_format:
-        - RAW2
-        - RAW1
         port_1c1_t2_port_ip_requirements:
         - - ip_version: 4
             ip_count_required:
@@ -171,35 +214,17 @@ topology_template:
             is_required: false
         - mac_count_required:
             is_required: false
-        port_1c1_t2_port_network_role_tag:
-        - ppds
-        - ppds
         port_1c1_t2_port_mac_requirements:
         - mac_count_required:
             is_required: false
         - mac_count_required:
             is_required: false
-        vm_flavor_name:
-          get_input: pd_flavor_name
         compute_1c1_scalling_instance_availability_zone:
         - get_input: availabilityzone_name
         - get_input: availabilityzone_name
-        port_1c1_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
         port_1c1_t2_port_name:
         - 1c1_t2_port_1
         - 1c1_t2_port_0
-        vm_image_name:
-          get_input: pd_image_name
         compute_1c1_scalling_instance_scheduler_hints:
         - group: BE_Affinity_group
         - group: BE_Affinity_group
@@ -233,31 +258,6 @@ topology_template:
             get_attribute:
             - abstract_b_single_1b_0
             - b_single_1b_instance_name
-        compute_1c1_scalling_instance_name:
-        - get_input:
-          - 1c1_scalling_instance_names
-          - 2
-        - get_input:
-          - 1c1_scalling_instance_names
-          - 1
-        port_1c1_t1_port_name:
-        - 1c1_t1_port_1
-        - 1c1_t1_port_0
-        port_1c1_t1_port_network:
-        - 1c1_scalling_instance_network
-        - 1c1_scalling_instance_network
-        port_1c1_t2_port_fixed_ips:
-        - - ip_address:
-              get_input:
-              - myIPs
-              - 4
-        - - ip_address:
-              get_input:
-              - myIPs
-              - 2
-        port_1c1_t2_port_network:
-        - get_input: ppds_net_name
-        - get_input: ppds_net_name
         service_template_filter:
           substitute_service_template: Nested_1c1_scalling_instanceServiceTemplate.yaml
           count: 2
@@ -276,6 +276,18 @@ topology_template:
       directives:
       - substitutable
       properties:
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_1b_t1_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        compute_b_single_1b_user_data_format:
+        - RAW
         port_1b_t2_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -289,16 +301,6 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
-        vm_flavor_name:
-          get_input: pd_flavor_name
-        port_1b_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        vm_image_name:
-          get_input: pd_image_name
         compute_b_single_1b_metadata:
         - connectivityTo4PNested:
             get_attribute:
@@ -329,8 +331,6 @@ topology_template:
             is_required: false
         port_1b_t2_port_network:
         - b_single_1b_network
-        compute_b_single_1b_user_data_format:
-        - RAW
         compute_b_single_1b_name:
         - get_input:
           - b_single_1b_names
@@ -358,13 +358,23 @@ topology_template:
       directives:
       - substitutable
       properties:
+        compute_1c2_catalog_instance_availability_zone:
+        - get_input: availabilityzone_name
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        vm_image_name:
+          get_input: pd_image_name
+        port_1c2_t2_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         port_1c2_t1_port_mac_requirements:
         - mac_count_required:
             is_required: false
         port_1c2_t2_port_network:
         - 1c2_catalog_instance_network
-        compute_1c2_catalog_instance_availability_zone:
-        - get_input: availabilityzone_name
         compute_1c2_catalog_instance_metadata:
         - connectivityTo4PNested:
             get_attribute:
@@ -398,21 +408,11 @@ topology_template:
         - get_input:
           - 1c2_catalog_instance_names
           - 1
-        vm_flavor_name:
-          get_input: pd_flavor_name
         port_1c2_t1_port_network:
         - get_input: oam_net_name
         port_1c2_t2_port_mac_requirements:
         - mac_count_required:
             is_required: false
-        vm_image_name:
-          get_input: pd_image_name
-        port_1c2_t2_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         compute_1c2_catalog_instance_user_data_format:
         - RAW1
         port_1c2_t1_port_network_role_tag:
@@ -443,24 +443,10 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_1c2_t1_port_mac_requirements:
-        - mac_count_required:
-            is_required: false
-        port_1c2_t2_port_network:
-        - 1c2_catalog_instance_network
         compute_1c2_catalog_instance_availability_zone:
         - get_input: availabilityzone_name
-        compute_1c2_catalog_instance_name:
-        - get_input:
-          - 1c2_catalog_instance_names
-          - 2
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_1c2_t1_port_network:
-        - get_input: oam_net_name
-        port_1c2_t2_port_mac_requirements:
-        - mac_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
         port_1c2_t2_port_ip_requirements:
@@ -469,6 +455,20 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+        port_1c2_t1_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        port_1c2_t2_port_network:
+        - 1c2_catalog_instance_network
+        compute_1c2_catalog_instance_name:
+        - get_input:
+          - 1c2_catalog_instance_names
+          - 2
+        port_1c2_t1_port_network:
+        - get_input: oam_net_name
+        port_1c2_t2_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
         compute_1c2_catalog_instance_user_data_format:
         - get_attribute:
           - abstract_1c2_catalog_instance_0
@@ -661,10 +661,6 @@ topology_template:
             get_attribute:
             - abstract_1c1_scalling_instance
             - 1c1_scalling_instance_1c1_t2_port_tenant_id
-        compute_a_single_1a_availability_zone:
-        - get_input: availabilityzone_name
-        compute_a_single_1a_scheduler_hints:
-        - group: BE_Affinity_group
         port_1a_t1_port_ip_requirements:
         - - ip_version: 4
             ip_count_required:
@@ -690,6 +686,10 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
+        compute_a_single_1a_availability_zone:
+        - get_input: availabilityzone_name
+        compute_a_single_1a_scheduler_hints:
+        - group: BE_Affinity_group
         compute_a_single_1a_user_data_format:
         - RAW
         compute_a_single_1a_name:
@@ -877,6 +877,18 @@ topology_template:
       directives:
       - substitutable
       properties:
+        vm_flavor_name:
+          get_input: pd_flavor_name
+        port_1b_t1_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        compute_b_single_1b_user_data_format:
+        - RAW
         port_1b_t2_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -890,29 +902,17 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
-        vm_flavor_name:
-          get_input: pd_flavor_name
         port_1b_t1_port_value_specs:
         - get_attribute:
           - abstract_a_single_1a
           - a_single_1a_1a_t1_port_tenant_id
         port_1b_t1_port_network_role_tag:
         - oam
-        port_1b_t1_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        vm_image_name:
-          get_input: pd_image_name
         port_1b_t1_port_mac_requirements:
         - mac_count_required:
             is_required: false
         port_1b_t2_port_network:
         - b_single_1b_network
-        compute_b_single_1b_user_data_format:
-        - RAW
         port_1b_t1_port_network:
         - get_input: oam_net_name
         compute_b_single_1b_name:

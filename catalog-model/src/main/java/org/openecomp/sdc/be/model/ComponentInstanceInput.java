@@ -32,10 +32,6 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 	 */
 	private static final long serialVersionUID = -3937554584759816724L;
 
-	/**
-	 * Value of property
-	 */
-	private String value;
 
 	/**
 	 * The unique id of the property value on graph
@@ -58,14 +54,14 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 			String valueUniqueUid) {
 		super(curPropertyDef);
 		this.inputId = inputId;
-		this.value = value;
+		setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
 	public ComponentInstanceInput(InputDefinition pd, String value, String valueUniqueUid) {
 		super(pd);
 
-		this.value = value;
+		setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
 
@@ -98,14 +94,6 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 
 	public void setInputId(String inputId) {
 		this.inputId = inputId;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
 	}
 
 	public String getValueUniqueUid() {
@@ -142,7 +130,7 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 
 	@Override
 	public String toString() {
-		return "ComponentInstanceInput [ " + super.toString() + " , value=" + value + ", valueUniqueUid = "
+		return "ComponentInstanceInput [ " + super.toString() + " , value=" + getValue() + ", valueUniqueUid = "
 				+ valueUniqueUid + " , rules=" + rules + " , path=" + path + " ]";
 	}
 

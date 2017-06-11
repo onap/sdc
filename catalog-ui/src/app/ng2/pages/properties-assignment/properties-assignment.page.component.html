@@ -4,9 +4,12 @@
             <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
                 <tab tabTitle="Properties">
                     <properties-table class="properties-table"
-                        [fePropertiesMap]="instanceFePropertiesMap | searchFilter:'name':searchQuery"
-                        [selectedPropertyId]="selectedFlatProperty.uniqueId"
+                        [fePropertiesMap]="instanceFePropertiesMap"
+                        [searchTerm]="searchQuery"
+                        [selectedPropertyId]="selectedFlatProperty.path"
                         [propertyNameSearchText]="searchPropertyName"
+                        [readonly]="isReadonly"
+                        [isLoading]="loadingProperties"
                         (valueChanged)="propertyValueChanged($event)"
                         (propertySelected)="propertySelected($event)"
                         (selectPropertyRow)="selectPropertyRow($event)"
@@ -16,39 +19,51 @@
                         </properties-table>
                 </tab>
                 <tab tabTitle="Inputs">
-                    <inputs-table class="properties-table" [inputs]="inputs | searchFilter:'name':searchQuery" (deleteInput)="deleteInput($event)" (inputValueChanged)="inputValueChanged($event)"></inputs-table>
+                    <inputs-table class="properties-table"
+                                  [readonly]="isReadonly"
+                                  [inputs]="inputs | searchFilter:'name':searchQuery"
+                                  [isLoading]="loadingInputs"
+                                  (deleteInput)="deleteInput($event)"
+                                  (inputValueChanged)="inputValueChanged($event)"></inputs-table>
                 </tab>
             </tabs>
             <div class="header">
                 <div class="search-filter-container">
                     <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" />
                     <span class="sprite search-icon"></span>
-                    <filter-properties-assignment *ngIf="!hideAdvanceSearch" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
-                    <span *ngIf="displayClearSearch && !hideAdvanceSearch" (click)="clickOnClearSearch()" class="clear-filter">Clear All</span>
+                    <filter-properties-assignment *ngIf="!isInpusTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
+                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter">Clear All</span>
                 </div>
-                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount" (click)="declareProperties()">Declare</button>
+                <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly" (click)="declareProperties()">Declare</button>
             </div>
         </div>
         <div class="right-column gray-border">
             <tabs #hierarchyNavTabs tabStyle="simple-tabs">
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">
-                    <div class="hierarchy-header">{{component.name}}</div>
-                    <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0">No data to display</div>
-                    <hierarchy-navigation class="hierarchy-nav" (updateSelected)="onInstanceSelectedUpdate($event)"
-                                          [displayData]="instancesNavigationData"
-                                          [selectedItem]="selectedInstanceData.uniqueId"
-                                          [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
+                        <loader [display]="loadingInstances" size="medium" [relative]="true"></loader>
+                        <div class="hierarchy-header">
+                            <span tooltip="{{component.name}}">{{component.name}}</span>
+                        </div>
+                        <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
+                        <hierarchy-navigation class="hierarchy-nav"
+                                (updateSelected)="onInstanceSelectedUpdate($event)"
+                                [displayData]="isInpusTabSelected ? []: instancesNavigationData"
+                                [selectedItem]="selectedInstanceData.uniqueId"
+                                [displayOptions]="hierarchyInstancesDisplayOptions"></hierarchy-navigation>
                     </div>
                 </tab>
                 <tab tabTitle="Property Structure">
                     <div class="hierarchy-nav-container">
-                    <div class="hierarchy-header">{{propertyStructureHeader || selectedFlatProperty.name || "No Property Selected"}}</div>
-                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0">No data to display</div>
-                    <hierarchy-navigation class="hierarchy-nav" (updateSelected)="onPropertySelectedUpdate($event)"
-                                          [displayData]="propertiesNavigationData"
-                                          [selectedItem]="selectedFlatProperty.uniqueId"
-                                          [displayOptions]="hierarchyPropertiesDisplayOptions"></hierarchy-navigation>
+                    <div class="hierarchy-header">
+                        <span tooltip="{{!isInpusTabSelected ? (propertyStructureHeader || selectedFlatProperty.name) : ''}}">{{!isInpusTabSelected ? (propertyStructureHeader || selectedFlatProperty.name || "No Property Selected") : "No Property Selected"}}</span>
+                    </div>
+                    <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
+                    <hierarchy-navigation class="hierarchy-nav"
+                            (updateSelected)="onPropertySelectedUpdate($event)"
+                            [displayData]="isInpusTabSelected ? [] : propertiesNavigationData"
+                            [selectedItem]="selectedFlatProperty.path"
+                            [displayOptions]="hierarchyPropertiesDisplayOptions"></hierarchy-navigation>
                     </div>
                 </tab>
             </tabs>

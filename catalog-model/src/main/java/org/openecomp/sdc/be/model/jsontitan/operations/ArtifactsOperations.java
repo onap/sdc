@@ -30,6 +30,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	public Either<ArtifactDefinition, StorageOperationStatus> addArifactToComponent(ArtifactDefinition artifactInfo, String parentId, NodeTypeEnum type, boolean failIfExist, String instanceId) {
 
-		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactInfo.getUniqueId(), instanceId);
+		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(parentId, artifactInfo, type, artifactInfo.getUniqueId(), instanceId, false);
 		if (status.isRight()) {
 
 			log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), parentId, status.right().value());
@@ -64,7 +65,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	public Either<ArtifactDefinition, StorageOperationStatus> updateArifactOnResource(ArtifactDefinition artifactInfo, String id, String artifactId, NodeTypeEnum type, String instanceId) {
 
-		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId);
+		Either<ArtifactDataDefinition, StorageOperationStatus> status = updateArtifactOnGraph(id, artifactInfo, type, artifactId, instanceId, true);
 		if (status.isRight()) {
 
 			log.debug("Failed to update artifact {} of {} {}. status is {}", artifactInfo.getArtifactName(), type.getName(), id, status.right().value());
@@ -211,11 +212,14 @@ public class ArtifactsOperations extends BaseOperation {
 
 	}
 
-	public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion) {
+	public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion, boolean isUpdate) {
 		if (oldVesrion == null || oldVesrion.isEmpty())
 			oldVesrion = "0";
 
 		String currentChecksum = artifactData.getArtifactChecksum();
+		if(isUpdate && artifactData.getArtifactType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())){
+			generateUUID(artifactData, oldVesrion);
+		}
 		if (oldChecksum == null || oldChecksum.isEmpty()) {
 			if (currentChecksum != null) {
 				generateUUID(artifactData, oldVesrion);
@@ -259,7 +263,7 @@ public class ArtifactsOperations extends BaseOperation {
 		}
 
 		Map<String, ArtifactDefinition> artifacts = artifactsEither.left().value();
-		List<ArtifactDefinition> envList = artifacts.values().stream().filter(a -> a.getGeneratedFromId().equals(artifactId)).collect(Collectors.toList());
+		List<ArtifactDefinition> envList = artifacts.values().stream().filter(a -> a.getGeneratedFromId()!= null && a.getGeneratedFromId().equals(artifactId)).collect(Collectors.toList());
 		if (envList != null && !envList.isEmpty()) {
 			envList.forEach(a -> {
 				a.setGeneratedFromId(newArtifactId);
@@ -409,7 +413,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 	}
 
-	public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(String componentId, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId) {
+	public Either<ArtifactDataDefinition, StorageOperationStatus> updateArtifactOnGraph(String componentId, ArtifactDefinition artifactInfo, NodeTypeEnum type, String artifactId, String instanceId, boolean isUpdate) {
 		Either<ArtifactDataDefinition, StorageOperationStatus> res = null;
 		ArtifactDataDefinition artifactToUpdate = new ArtifactDataDefinition(artifactInfo);
 		ArtifactGroupTypeEnum groupType = artifactInfo.getArtifactGroupType();
@@ -479,7 +483,7 @@ public class ArtifactsOperations extends BaseOperation {
 				}
 			}
 		}
-		updateUUID(artifactToUpdate, oldChecksum, oldVersion);
+		updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate);
 
 		if (artifactInfo.getPayloadData() == null) {
 			if (!artifactToUpdate.getMandatory() || artifactToUpdate.getEsId() != null) {

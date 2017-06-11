@@ -38,7 +38,7 @@ import javax.ws.rs.core.Response;
 import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
@@ -96,13 +96,13 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
 		try {
 			Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-			Wrapper<AttributeDefinition> attributesWrapper = new Wrapper<>();
+			Wrapper<PropertyDefinition> attributesWrapper = new Wrapper<>();
 			// convert json to AttributeDefinition
 
 			buildAttributeFromString(data, attributesWrapper, errorWrapper);
 			if (errorWrapper.isEmpty()) {
 				AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-				Either<AttributeDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
+				Either<PropertyDefinition, ResponseFormat> createAttribute = businessLogic.createAttribute(resourceId, attributesWrapper.getInnerElement(), userId);
 				if (createAttribute.isRight()) {
 					errorWrapper.setInnerElement(createAttribute.right().value());
 				} else {
@@ -115,7 +115,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 				log.info("Failed to create Attribute. Reason - ", errorWrapper.getInnerElement());
 				response = buildErrorResponse(errorWrapper.getInnerElement());
 			} else {
-				AttributeDefinition createdAttDef = attributesWrapper.getInnerElement();
+				PropertyDefinition createdAttDef = attributesWrapper.getInnerElement();
 				log.debug("Attribute {} created successfully with id {}", createdAttDef.getName(), createdAttDef.getUniqueId());
 				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.CREATED);
 				response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(createdAttDef));
@@ -165,14 +165,14 @@ public class AttributeServlet extends AbstractValidationsServlet {
 		try {
 			// convert json to PropertyDefinition
 			Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-			Wrapper<AttributeDefinition> attributesWrapper = new Wrapper<>();
+			Wrapper<PropertyDefinition> attributesWrapper = new Wrapper<>();
 			// convert json to AttributeDefinition
 
 			buildAttributeFromString(data, attributesWrapper, errorWrapper);
 
 			if (errorWrapper.isEmpty()) {
 				AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-				Either<AttributeDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
+				Either<PropertyDefinition, ResponseFormat> eitherUpdateAttribute = businessLogic.updateAttribute(resourceId, attributeId, attributesWrapper.getInnerElement(), userId);
 				// update property
 				if (eitherUpdateAttribute.isRight()) {
 					errorWrapper.setInnerElement(eitherUpdateAttribute.right().value());
@@ -186,7 +186,7 @@ public class AttributeServlet extends AbstractValidationsServlet {
 				log.info("Failed to update Attribute. Reason - ", errorWrapper.getInnerElement());
 				response = buildErrorResponse(errorWrapper.getInnerElement());
 			} else {
-				AttributeDefinition updatedAttribute = attributesWrapper.getInnerElement();
+				PropertyDefinition updatedAttribute = attributesWrapper.getInnerElement();
 				log.debug("Attribute id {} updated successfully ", updatedAttribute.getUniqueId());
 				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 				response = buildOkResponse(responseFormat, RepresentationUtils.toRepresentation(updatedAttribute));
@@ -232,12 +232,12 @@ public class AttributeServlet extends AbstractValidationsServlet {
 
 			// delete the property
 			AttributeBusinessLogic businessLogic = getClassFromWebAppContext(context, () -> AttributeBusinessLogic.class);
-			Either<AttributeDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
+			Either<PropertyDefinition, ResponseFormat> eitherAttribute = businessLogic.deleteAttribute(resourceId, attributeId, userId);
 			if (eitherAttribute.isRight()) {
 				log.debug("Failed to delete Attribute. Reason - ", eitherAttribute.right().value());
 				return buildErrorResponse(eitherAttribute.right().value());
 			}
-			AttributeDefinition attributeDefinition = eitherAttribute.left().value();
+			PropertyDefinition attributeDefinition = eitherAttribute.left().value();
 			String name = attributeDefinition.getName();
 
 			log.debug("Attribute {} deleted successfully with id {}", name, attributeDefinition.getUniqueId());
@@ -253,11 +253,11 @@ public class AttributeServlet extends AbstractValidationsServlet {
 		}
 	}
 
-	private void buildAttributeFromString(String data, Wrapper<AttributeDefinition> attributesWrapper, Wrapper<ResponseFormat> errorWrapper) {
+	private void buildAttributeFromString(String data, Wrapper<PropertyDefinition> attributesWrapper, Wrapper<ResponseFormat> errorWrapper) {
 
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			final AttributeDefinition attribute = gson.fromJson(data, AttributeDefinition.class);
+			final PropertyDefinition attribute = gson.fromJson(data, PropertyDefinition.class);
 			if (attribute == null) {
 				log.info("Attribute content is invalid - {}", data);
 				ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);

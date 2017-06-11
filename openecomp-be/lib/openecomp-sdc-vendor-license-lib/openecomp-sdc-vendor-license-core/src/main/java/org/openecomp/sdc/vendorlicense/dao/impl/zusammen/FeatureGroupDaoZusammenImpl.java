@@ -176,8 +176,12 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
           mapElementInfoToFeatureGroup(featureGroup.getId(), featureGroup.getVersion(),
               elementInfo.get());
 
-      currentFeatureGroup.getEntitlementPoolIds().removeAll(removedEntitlementPools);
-      currentFeatureGroup.getEntitlementPoolIds().addAll(addedEntitlementPools);
+      if (!(removedEntitlementPools == null)) {
+        currentFeatureGroup.getEntitlementPoolIds().removeAll(removedEntitlementPools);
+      }
+      if (!(addedEntitlementPools == null)) {
+        currentFeatureGroup.getEntitlementPoolIds().addAll(addedEntitlementPools);
+      }
       if (featureGroupElement.getRelations() == null) {
         featureGroupElement.setRelations(new ArrayList<>());
       }
@@ -187,7 +191,12 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
                   .createRelation(RelationType.FeatureGroupToEntitlmentPool, relation))
               .collect(Collectors.toList()));
 
-      currentFeatureGroup.getLicenseKeyGroupIds().removeAll(removedLicenseKeyGroups);
+      if (!(removedLicenseKeyGroups == null)) {
+        currentFeatureGroup.getLicenseKeyGroupIds().removeAll(removedLicenseKeyGroups);
+      }
+      if (!(addedLicenseKeyGroups == null)) {
+        currentFeatureGroup.getLicenseKeyGroupIds().addAll(addedLicenseKeyGroups);
+      }
       currentFeatureGroup.getLicenseKeyGroupIds().addAll(addedLicenseKeyGroups);
       featureGroupElement.getRelations()
           .addAll(currentFeatureGroup.getLicenseKeyGroupIds().stream()

@@ -172,7 +172,9 @@ public class CompositionDataHealer implements Healer {
         JsonUtil.json2Object(component.getCompositionData(), ComponentData.class);
     componentData
         .setDisplayName(compositionDataExtractor.getComponentDisplayName(componentData.getName()));
-    componentData.setVfcCode(componentData.getDisplayName());
+    String displayName = componentData.getDisplayName();
+    componentData.setName(displayName);
+    componentData.setVfcCode(displayName);
     component.setCompositionData(JsonUtil.object2Json(componentData));
 
     mdcDataDebugMessage.debugExitMessage("VSP id, component id", component.getVspId(), component

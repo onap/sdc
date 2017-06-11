@@ -98,30 +98,30 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_port2_network:
-        - get_input: port_name
+        compute_smp_availability_zone:
+        - get_input: availability_zone_0
+        vm_flavor_name:
+          get_input: flavor_smp_name
+        compute_smp_user_data_format:
+        - RAW
         vm_image_name:
           get_input: image_smp_name
         port_port2_replacement_policy:
         - AUTO
         compute_smp_name:
         - get_input: smp_name_1
-        compute_smp_availability_zone:
-        - get_input: availability_zone_0
         port_port1_replacement_policy:
         - AUTO
         port_port1_network:
         - get_input: port_name
-        vm_flavor_name:
-          get_input: flavor_smp_name
+        port_port2_network:
+        - get_input: port_name
         compute_smp_metadata:
         - jx_vm_role: smp2
           vnf_id:
             get_input: vnf_id
           jx_lab_name:
             get_input: lab_name
-        compute_smp_user_data_format:
-        - RAW
         compute_smp_scheduler_hints:
         - group: BE_Affinity_group
         service_template_filter:

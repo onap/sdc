@@ -202,21 +202,8 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pd01_port_mac_requirements:
-        - mac_count_required:
-            is_required: false
         compute_pd_server_scheduler_hints:
         - group: BE_Affinity_group
-        vm_image_name:
-          get_input: pd_image_name
-        port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        port_pd01_port_network:
-        - get_input: oam_net_name
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -229,6 +216,19 @@ topology_template:
           - name
         port_pd01_port_security_groups:
         - - jsa_security_group
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
+        port_pd01_port_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_network:
+        - get_input: oam_net_name
         port_pd01_port_network_role_tag:
         - oam
         compute_pd_server_user_data_format:
@@ -251,21 +251,27 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_pd01_port_mac_requirements:
-        - mac_count_required:
-            is_required: false
         compute_ps_server_name:
         - get_input:
           - ps_server_names
           - 0
-        vm_image_name:
-          get_input: pd_image_name
         compute_ps_server_availability_zone:
         - get_input: availabilityzone_name
         compute_ps_server_user_data_format:
         - RAW
         compute_ps_server_scheduler_hints:
         - group: BE_Affinity_group
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
+        port_pd01_port_security_groups:
+        - - jsa_security_group
+        port_pd01_port_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        vm_image_name:
+          get_input: pd_image_name
         port_pd01_port_ip_requirements:
         - - ip_version: 4
             ip_count_required:
@@ -276,12 +282,6 @@ topology_template:
         - get_attribute:
           - network_policy_server
           - name
-        vm_flavor_name:
-          get_attribute:
-          - network_policy_server
-          - name
-        port_pd01_port_security_groups:
-        - - jsa_security_group
         service_template_filter:
           substitute_service_template: Nested_ps_serverServiceTemplate.yaml
           count: 1
@@ -300,6 +300,12 @@ topology_template:
       directives:
       - substitutable
       properties:
+        vm_flavor_name:
+          get_attribute:
+          - network_policy_server
+          - name
+        port_pd01_port_security_groups:
+        - - jsa_security_group
         port_pd01_port_mac_requirements:
         - mac_count_required:
             is_required: false
@@ -315,18 +321,12 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        vm_flavor_name:
-          get_attribute:
-          - network_policy_server
-          - name
         compute_oam_server_user_data_format:
         - RAW
         compute_oam_server_name:
         - get_input:
           - oam_server_names
           - 0
-        port_pd01_port_security_groups:
-        - - jsa_security_group
         port_pd01_port_network_role_tag:
         - oam
         compute_oam_server_scheduler_hints:

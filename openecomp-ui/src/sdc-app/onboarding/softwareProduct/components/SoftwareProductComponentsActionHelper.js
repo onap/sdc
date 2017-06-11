@@ -16,7 +16,7 @@
 import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 
-import {actionTypes, COMPONENTS_QUESTIONNAIRE, forms} from './SoftwareProductComponentsConstants.js';
+import {actionTypes, COMPONENTS_QUESTIONNAIRE} from './SoftwareProductComponentsConstants.js';
 import ValidationHelper from 'sdc-app/common/helpers/ValidationHelper.js';
 
 function baseUrl(softwareProductId, version) {
@@ -89,12 +89,12 @@ const SoftwareProductComponentsActionHelper = {
 	},
 
 	fetchSoftwareProductComponent(dispatch, {softwareProductId, version, vspComponentId}) {
-		dispatch({
-			type: actionTypes.COMPONENT_LOAD
-		});
 		return Promise.all([
 			fetchSoftwareProductComponent(softwareProductId, version, vspComponentId).then(response => {
-				ValidationHelper.dataChanged(dispatch,{deltaData: response.data, formName: forms.ALL_SPC_FORMS});
+				dispatch({
+					type: actionTypes.COMPONENT_LOAD,
+					component: response.data
+				});
 				return response;
 			}),
 			fetchSoftwareProductComponentQuestionnaire(softwareProductId, version, vspComponentId).then(response => {

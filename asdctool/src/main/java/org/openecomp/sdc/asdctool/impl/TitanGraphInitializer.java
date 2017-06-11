@@ -2,18 +2,14 @@ package org.openecomp.sdc.asdctool.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.graph.datatype.ActionEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
-import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.UserData;
@@ -72,49 +68,28 @@ public class TitanGraphInitializer {
 		return false;
 	}
 
-	private static void createDefaultUsers() {
-		List<UserData> users = createUserList();
-		for (UserData user : users) {
-			Vertex vertex = null;
-			Map<String, Object> checkedProperties = new HashMap<String, Object>();
-			checkedProperties.put(GraphPropertiesDictionary.USERID.getProperty(), user.getUserId());
-			checkedProperties.put(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
-			Map<String, Object> properties = null;
-			if (!isVertexExist(checkedProperties)) {
-				vertex = graph.addVertex();
-				vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
-				properties = user.toGraphMap();
-				for (Map.Entry<String, Object> entry : properties.entrySet()) {
-					vertex.property(entry.getKey(), entry.getValue());
-				}
-			}
-		}
+	private static void createDefaultAdminUser() {
+		createUser(getDefaultUserAdmin());
 		graph.tx().commit();
 
 	}
 
-	private static List<UserData> createUserList() {
-		LinkedList<UserData> users = new LinkedList<UserData>();
-		users.add(getDefaultUserAdmin1());
-		users.add(getDefaultUserAdmin2());
-		users.add(getDefaultUserDesigner1());
-		users.add(getDefaultUserDesigner2());
-		users.add(getDefaultUserTester1());
-		users.add(getDefaultUserTester2());
-		users.add(getDefaultUserTester3());
-		users.add(getDefaultUserGovernor1());
-		users.add(getDefaultUserGovernor2());
-		users.add(getDefaultUserOps1());
-		users.add(getDefaultUserOps2());
-		users.add(getDefaultUserProductManager1());
-		users.add(getDefaultUserProductManager2());
-		users.add(getDefaultUserProductStrategist1());
-		users.add(getDefaultUserProductStrategist2());
-		users.add(getDefaultUserProductStrategist3());
-		return users;
+	private static void createUser(UserData user) {
+		Map<String, Object> checkedProperties = new HashMap<>();
+		checkedProperties.put(GraphPropertiesDictionary.USERID.getProperty(), user.getUserId());
+		checkedProperties.put(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
+		Map<String, Object> properties = null;
+		if (!isVertexExist(checkedProperties)) {
+            Vertex vertex = graph.addVertex();
+            vertex.property(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
+            properties = user.toGraphMap();
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                vertex.property(entry.getKey(), entry.getValue());
+            }
+        }
 	}
 
-	private static UserData getDefaultUserAdmin1() {
+	private static UserData getDefaultUserAdmin() {
 		UserData userData = new UserData();
 		userData.setAction(ActionEnum.Create);
 		userData.setElementType(GraphElementTypeEnum.Node);
@@ -128,215 +103,6 @@ public class TitanGraphInitializer {
 		return userData;
 	}
 
-	private static UserData getDefaultUserAdmin2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("tr0001");
-		userData.setEmail("admin@sdc.com");
-		userData.setFirstName("Todd");
-		userData.setLastName("Rundgren");
-		userData.setRole("ADMIN");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserDesigner1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("cs0008");
-		userData.setEmail("designer@sdc.com");
-		userData.setFirstName("Carlos");
-		userData.setLastName("Santana");
-		userData.setRole("DESIGNER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserDesigner2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("me0009");
-		userData.setEmail("designer@sdc.com");
-		userData.setFirstName("Melissa");
-		userData.setLastName("Etheridge");
-		userData.setRole("DESIGNER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserTester1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("jm0007");
-		userData.setEmail("tester@sdc.com");
-		userData.setFirstName("Joni");
-		userData.setLastName("Mitchell");
-		userData.setRole("TESTER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserTester2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("kb0004");
-		userData.setEmail("tester@sdc.com");
-		userData.setFirstName("Kate");
-		userData.setLastName("Bush");
-		userData.setRole("TESTER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserTester3() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("jt0005");
-		userData.setEmail("tester@sdc.com");
-		userData.setFirstName("James");
-		userData.setLastName("Taylor");
-		userData.setRole("TESTER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserOps1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("op0001");
-		userData.setEmail("ops@sdc.com");
-		userData.setFirstName("Steve");
-		userData.setLastName("Regev");
-		userData.setRole("OPS");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserOps2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("af0006");
-		userData.setEmail("designer@sdc.com");
-		userData.setFirstName("Aretha");
-		userData.setLastName("Franklin");
-		userData.setRole("OPS");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserGovernor1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("gv0001");
-		userData.setEmail("governor@sdc.com");
-		userData.setFirstName("David");
-		userData.setLastName("Shadmi");
-		userData.setRole("GOVERNOR");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserGovernor2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("ah0002");
-		userData.setEmail("admin@sdc.com");
-		userData.setFirstName("Alex");
-		userData.setLastName("Harvey");
-		userData.setRole("GOVERNOR");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserProductManager1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("pm0001");
-		userData.setEmail("pm1@sdc.com");
-		userData.setFirstName("Teddy");
-		userData.setLastName("Isashar");
-		userData.setRole("PRODUCT_MANAGER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserProductManager2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("pm0002");
-		userData.setEmail("pm2@sdc.com");
-		userData.setFirstName("Sarah");
-		userData.setLastName("Bettens");
-		userData.setRole("PRODUCT_MANAGER");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserProductStrategist1() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("ps0001");
-		userData.setEmail("ps1@sdc.com");
-		userData.setFirstName("Eden");
-		userData.setLastName("Rozin");
-		userData.setRole("PRODUCT_STRATEGIST");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserProductStrategist2() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("ps0002");
-		userData.setEmail("ps2@sdc.com");
-		userData.setFirstName("Ella");
-		userData.setLastName("Kvetny");
-		userData.setRole("PRODUCT_STRATEGIST");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
-
-	private static UserData getDefaultUserProductStrategist3() {
-		UserData userData = new UserData();
-		userData.setAction(ActionEnum.Create);
-		userData.setElementType(GraphElementTypeEnum.Node);
-		userData.setUserId("ps0003");
-		userData.setEmail("ps3@sdc.com");
-		userData.setFirstName("Geva");
-		userData.setLastName("Alon");
-		userData.setRole("PRODUCT_STRATEGIST");
-		userData.setStatus(UserStatusEnum.ACTIVE.name());
-		userData.setLastLoginTime(0L);
-		return userData;
-	}
 
 	private static void createVertexIndixes() {
 		logger.info("** createVertexIndixes started");
@@ -399,6 +165,6 @@ public class TitanGraphInitializer {
 	private static void createIndexesAndDefaults() {
 		createVertexIndixes();
 		createEdgeIndixes();
-		createDefaultUsers();
+		createDefaultAdminUser();
 	}
 }

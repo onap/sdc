@@ -2,8 +2,6 @@ import { Component, Input, Output, EventEmitter, SimpleChanges, ViewChild, Eleme
 import { trigger, state, style, transition, animate} from '@angular/core';
 import {PropertyFEModel, DerivedFEProperty, DerivedPropertyType, InstanceFePropertiesMap} from "app/models";
 import {PropertiesService} from "../../services/properties.service";
-// import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
-//import {PropertiesValueInnerTableComponent} from "./properties-table/properties-value-inner-table/properties-value-inner-table";
 import { DynamicElementComponent } from 'app/ng2/components/dynamic-element/dynamic-element.component';
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 
@@ -19,7 +17,10 @@ export class PropertiesTableComponent {
     @Input() selectedPropertyId: string;
     @Input() displayDeleteButton: boolean;
     @Input() propertyNameSearchText:string;
-
+    @Input() searchTerm:string;
+    @Input() readonly:boolean;
+    @Input() isLoading:boolean;
+    
     @Output() valueChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() selectPropertyRow: EventEmitter<PropertyRowSelectedEvent> = new EventEmitter<PropertyRowSelectedEvent>();
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -50,6 +51,7 @@ export class PropertiesTableComponent {
     // Click on main row (row of propertyFEModel)
     onClickPropertyRow = (property:PropertyFEModel, instanceName:string, event?) => {
         //event && event.stopPropagation();
+        this.selectedPropertyId = property.name;
         let propertyRowSelectedEvent:PropertyRowSelectedEvent = new PropertyRowSelectedEvent(property, instanceName);
         this.selectPropertyRow.emit(propertyRowSelectedEvent);
     };
@@ -71,14 +73,6 @@ export class PropertiesTableComponent {
         }
         this.updateCheckedPropertyCount.emit(isChecked);
     }
-
-    putDefaultValueInEmptyProperty = (property:PropertyFEModel):void => {
-        property.value = property.value || property.defaultValue;
-    }
-
-    // clickOnInstanceRow = (instanceName:string) =>{
-    //     this.selectInstanceRow.emit(instanceName);
-    // };
 
 }
 

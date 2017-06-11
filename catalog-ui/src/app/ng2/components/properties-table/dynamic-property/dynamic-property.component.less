@@ -1,40 +1,40 @@
+.flat-children-container {
+    dynamic-property:first-child .dynamic-property-row:not(.with-top-border) {
+        border-top:none;
+    }
+    .dynamic-property-row {
+        border-top: solid 1px #CCC;
+    }
+}
 .dynamic-property-row {
     display:flex;
     flex-direction:row;
-    position:relative;
-
+    align-items: center;
+    
     .table-cell {
-        flex: 1 0 50%;
+        flex: 1;
         padding:5px;
-        position:relative;
         text-overflow: ellipsis;
         white-space: nowrap;
-        
+        overflow:hidden;
+        min-height:32px;
 
-        &.full-width {
-            border-right:none;
-            flex: 0 0 100%;
-        }
-
-        &:first-child:not(:only-child) {
+        &:first-child {
+            flex: 0 0 50%;
             border-right:#d2d2d2 solid 1px;
-            overflow:hidden;
+            
+        
+            &:only-of-type {
+                flex: 1 1 100%;
+                border-right:none;
+            }
         }
 
-
     }
-    span.delete-item-icon{
-        position: absolute;
-        right: 25px;
-        top: 10px;
-    }
-    span.add-item-icon {
-        float:right;
+    .property-icon {
+        flex: 0 0 auto;
     }
     span.expand-icon {
-        position: absolute;
-        top:6px;
-        right: 10px;
         transition: 200ms transform ease-in-out;
     }
     span.expand-icon.expanded {

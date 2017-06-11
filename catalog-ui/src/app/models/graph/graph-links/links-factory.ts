@@ -33,19 +33,20 @@ export class LinksFactory {
 
     let newRelation:CompositionCiLinkBase;
 
-    let fromNode:CompositionCiNodeBase = cy.getElementById(relation.fromNode).data();
-    let toNode:CompositionCiNodeBase = cy.getElementById(relation.toNode).data();
-
-    if ((relation.fromNode && fromNode.isUcpePart) || (relation.toNode && toNode.isUcpePart )) { //Link from or to node inside ucpe
-
-      if (singleRelation && singleRelation.relationship.type && singleRelation.relationship.type == 'tosca.relationships.HostedOn') {
-        newRelation = new LinkUcpeHost(relation, singleRelation);
-      } else if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
-        newRelation = new CompositionCiVlUcpeLink(relation, fromNode.isUcpePart, singleRelation);
-      } else {
-        newRelation = new CompositionCiUcpeLink(relation, fromNode.isUcpePart, singleRelation);
-      }
-    } else if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
+    // let fromNode:CompositionCiNodeBase = cy.getElementById(relation.fromNode).data();
+    // let toNode:CompositionCiNodeBase = cy.getElementById(relation.toNode).data();
+    //
+    // if ((relation.fromNode && fromNode.isUcpePart) || (relation.toNode && toNode.isUcpePart )) { //Link from or to node inside ucpe
+    //
+    //   if (singleRelation && singleRelation.relationship.type && singleRelation.relationship.type == 'tosca.relationships.HostedOn') {
+    //     newRelation = new LinkUcpeHost(relation, singleRelation);
+    //   } else if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
+    //     newRelation = new CompositionCiVlUcpeLink(relation, fromNode.isUcpePart, singleRelation);
+    //   } else {
+    //     newRelation = new CompositionCiUcpeLink(relation, fromNode.isUcpePart, singleRelation);
+    //   }
+    // } else
+     if (singleRelation.relationship.type && _.includes(singleRelation.relationship.type.toLowerCase(), 'link')) {
       newRelation = new CompositionCiVLink(relation, singleRelation);
     } else {
       newRelation = new CompositionCiSimpleLink(relation, singleRelation);

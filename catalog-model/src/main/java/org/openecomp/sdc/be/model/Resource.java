@@ -52,7 +52,7 @@ public class Resource extends Component implements Serializable {
 
 	private List<PropertyDefinition> properties;
 
-	private List<AttributeDefinition> attributes;
+	private List<PropertyDefinition> attributes;
 
 	// Later
 	private Map<String, InterfaceDefinition> interfaces;
@@ -98,11 +98,11 @@ public class Resource extends Component implements Serializable {
 		this.properties = properties;
 	}
 
-	public List<AttributeDefinition> getAttributes() {
+	public List<PropertyDefinition> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<AttributeDefinition> attributes) {
+	public void setAttributes(List<PropertyDefinition> attributes) {
 		this.attributes = attributes;
 	}
 

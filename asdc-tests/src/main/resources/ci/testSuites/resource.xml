@@ -315,46 +315,6 @@
 				<include name="opsList_AllCertifiedVersionsOfServiceApproved"/>	
 			  </methods>
 		</class>
-		
-		<!-- Product tests start-->
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckinTest">
-			  <methods>
-				<include name="checkInProductByCreator"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ChangeServiceInstanceVersionTest">
-			  <methods>
-				<include name="changeServiceInstanceVersionByPm"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCheckoutTest">
-			  <methods>
-				<include name="checkOutProductByPmNotInContacts"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductComponentInstanceCRUDTest">
-			  <methods>
-				<include name="createServiceInstanceTest"/>	
-				<include name="deleteServiceInstanceByPm"/>	
-				<include name="updateServiceInstanceNameByPm"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductCrudTest">
-			  <methods>
-				<include name="createManyGroupingsDiffCategories"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductGetFollowedTest">
-			  <methods>
-				<include name="followedPageTest"/>	
-			  </methods>
-		</class>
-		<class name="org.openecomp.sdc.ci.tests.execute.product.ProductUndoCheckoutTest">
-			  <methods>
-				<include name="undoCheckOutProductByPm"/>	
-			  </methods>
-		</class>
-		<!-- Product tests end-->
 	 </classes>
   </test> <!-- Test -->
 </suite> <!-- Sanity -->

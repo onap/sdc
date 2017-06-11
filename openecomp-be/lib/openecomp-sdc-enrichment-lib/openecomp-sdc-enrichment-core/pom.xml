@@ -38,7 +38,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-utilities-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -71,7 +71,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-tosca-lib</artifactId>
             <version>${project.version}</version>
         </dependency>

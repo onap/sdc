@@ -2,6 +2,8 @@ package org.openecomp.sdc.translator.services.heattotosca;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.datatypes.configuration.ImplementationConfiguration;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.heat.datatypes.model.HeatResourcesTypes;
@@ -141,13 +143,21 @@ public class ConsolidationDataUtil {
    *
    * @param context              the context
    * @param serviceTemplate      the service template
-   * @param nestedNodeTemplateId the nested node template id
-   * @return the nested template consolidation data
+   * @param nestedHeatFileName
+   *@param nestedNodeTemplateId the nested node template id  @return the nested template consolidation data
    */
   public static NestedTemplateConsolidationData getNestedTemplateConsolidationData(
       TranslationContext context,
       ServiceTemplate serviceTemplate,
-      String nestedNodeTemplateId) {
+      String nestedHeatFileName, String nestedNodeTemplateId) {
+
+    if(isNestedResourceIdOccuresInDifferentNestedFiles(context, nestedHeatFileName,
+        nestedNodeTemplateId)){
+      throw new CoreException((new ErrorCode.ErrorCodeBuilder())
+          .withMessage("Resource with id "
+              + nestedNodeTemplateId + " occures more than once in different addOn "
+              + "files").build());
+    }
 
     ConsolidationData consolidationData = context.getConsolidationData();
     String serviceTemplateFileName = ToscaUtil.getServiceTemplateFileName(serviceTemplate);
@@ -174,6 +184,12 @@ public class ConsolidationDataUtil {
     }
 
     return nestedTemplateConsolidationData;
+  }
+
+  private static boolean isNestedResourceIdOccuresInDifferentNestedFiles(TranslationContext context,
+                                                                         String nestedHeatFileName,
+                                                                         String nestedNodeTemplateId) {
+    return context.getAllTranslatedResourceIdsFromDiffNestedFiles(nestedHeatFileName).contains(nestedNodeTemplateId);
   }
 
   /**
@@ -372,7 +388,7 @@ public class ConsolidationDataUtil {
     } else if (consolidationEntityType == ConsolidationEntityType.NESTED
         || consolidationEntityType == ConsolidationEntityType.VFC_NESTED) {
       entityConsolidationData = getNestedTemplateConsolidationData(translationContext,
-          serviceTemplate, dependentNodeTemplateId);
+          serviceTemplate, translateTo.getHeatFileName(), dependentNodeTemplateId);
     }
 
     if (entityConsolidationData.getNodesConnectedIn() == null) {
@@ -530,7 +546,8 @@ public class ConsolidationDataUtil {
   public static void updateNestedNodeTemplateId(TranslateTo translateTo) {
     TranslationContext context = translateTo.getContext();
     ServiceTemplate serviceTemplate = translateTo.getServiceTemplate();
-    getNestedTemplateConsolidationData(context, serviceTemplate, translateTo.getTranslatedId());
+    getNestedTemplateConsolidationData(
+        context, serviceTemplate, translateTo.getHeatFileName(), translateTo.getTranslatedId());
   }
 
   public static void removeSharedResource(ServiceTemplate serviceTemplate,

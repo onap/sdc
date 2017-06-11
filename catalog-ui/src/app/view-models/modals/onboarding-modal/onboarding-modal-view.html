@@ -9,9 +9,9 @@
             <input type="text"
                    class="search-text"
                    placeholder="Search"
-                   data-ng-model="searchBind"
+                   data-ng-model="search.filterTerm"
                    data-tests-id="onboarding-search"
-                   ng-model-options="{ debounce: 500 }" />
+                   ng-model-options="{ debounce: 300 }" />
             <span class="w-sdc-search-icon magnification"></span>
         </div>
     </div>
@@ -38,16 +38,16 @@
                     <div infinite-scroll-disabled='allItemsDisplayed'  infinite-scroll="increaseNumItemsToDisplay()" infinite-scroll-container="'#onboarding-modal-scrollbar-container'">
 
                     <!-- Loop on components list -->
-                    <div data-ng-repeat-start="component in componentsList | filter: searchBind | orderBy:sortBy:reverse | limitTo:numberOfItemsToDisplay track by $index"
+                    <div data-ng-repeat-start="component in componentsList | filter: search | orderBy:sortBy:reverse | limitTo:numberOfItemsToDisplay track by $index"
                          class="flex-container data-row"
-                         data-ng-class="{'selected': component === selectedComponent}"
+                         data-ng-class="{'selected': component.packageId === selectedComponent.packageId}"
                          data-ng-click="doSelectComponent(component);"
                          data-tests-id="csar-row"
                          >
 
                         <!-- Name -->
                         <div class="table-col-general flex-item"  sdc-smart-tooltip>
-                            <span class="sprite table-arrow" data-ng-class="{'opened': component === selectedComponent}" data-tests-id="{{component.name}}"></span>
+                            <span class="sprite table-arrow" data-ng-class="{'opened': component.packageId === selectedComponent.packageId}" data-tests-id="{{component.name}}"></span>
                             {{component.name}}
                         </div>
 
@@ -71,7 +71,7 @@
 
                     </div>
 
-                    <div data-ng-repeat-end="" data-ng-if="component===selectedComponent" class="item-opened">
+                    <div data-ng-repeat-end="" data-ng-if="component.packageId === selectedComponent.packageId" class="item-opened">
 
                         <div class="item-opened-description">
                             <div class="item-opened-description-title">VSP Description:</div>

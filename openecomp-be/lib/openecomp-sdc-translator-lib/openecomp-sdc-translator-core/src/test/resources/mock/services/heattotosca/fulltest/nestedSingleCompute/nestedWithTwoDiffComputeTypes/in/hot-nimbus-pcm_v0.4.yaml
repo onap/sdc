@@ -73,7 +73,7 @@ parameters:
     type: string
 
 resources:
-  server_pcm:
+  server_pcm_1:
     type: nested-pcm_v0.1.yaml
     properties:
       pcm_server_name: { get_param: [pcm_server_names, 0] }
@@ -90,7 +90,7 @@ resources:
       oam_net_mask: { get_param: oam_net_mask }
       oam_net_gw: { get_param: oam_net_gw }
 
-  server_pd:
+  server_pd_1:
     type: nested-pcm_v0.1.yaml
     properties:
       pcm_server_name: { get_param: [pd_server_names, 1] }

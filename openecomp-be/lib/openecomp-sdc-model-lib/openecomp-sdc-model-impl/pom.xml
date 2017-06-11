@@ -31,7 +31,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.openecomp.sdc.core</groupId>
+            <groupId>org.openecomp.core</groupId>
             <artifactId>openecomp-zusammen-api</artifactId>
             <version>${project.version}</version>
         </dependency>

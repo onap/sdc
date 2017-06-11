@@ -63,6 +63,8 @@ public enum ToscaPropertyType {
 	FLOAT("float", FloatValidator.getInstance(), ToscaFloatConverter.getInstance(), FloatConverter.getInstance()),
 
 	INTEGER("integer", IntegerValidator.getInstance(), DefaultConverter.getInstance(), IntegerConverter.getInstance()),
+	
+	SCALAR_UNIT("scalar-unit", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 
 	SCALAR_UNIT_SIZE("scalar-unit.size", StringValidator.getInstance(), DefaultConverter.getInstance(), ToscaValueDefaultConverter.getInstance()),
 

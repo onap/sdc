@@ -109,14 +109,6 @@ topology_template:
               is_required: false
         port_pd01_port_1_security_groups:
         - - jsa_security_group
-        port_pd01_port_0_network_role_tag:
-        - oam
-        port_pd01_port_1_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         compute_pd_server_availability_zone:
         - get_input: availabilityzone_name
         compute_pd_server_name:
@@ -127,19 +119,27 @@ topology_template:
         - AUTO
         vm_flavor_name:
           get_input: pd_flavor_name
-        port_pd01_port_1_mac_requirements:
-        - mac_count_required:
-            is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_1_replacement_policy:
-        - AUTO
         port_pd01_port_1_network_role_tag:
         - oam
         port_pd01_port_1_network:
         - get_input: oam_net_name
         compute_pd_server_user_data_format:
         - RAW
+        port_pd01_port_0_network_role_tag:
+        - oam
+        port_pd01_port_1_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_pd01_port_1_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        port_pd01_port_1_replacement_policy:
+        - AUTO
         port_pd01_port_0_security_groups:
         - - jsa_security_group
         service_template_filter:

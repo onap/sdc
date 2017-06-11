@@ -31,7 +31,7 @@ public class VFResourcesMigration extends ComponentMigration<Resource> {
     }
 
     @Override
-    Either<Resource, StorageOperationStatus> save(Resource element) {
+    boolean save(Resource element) {
         requirementsCapabilitiesMigrationService.overrideInstanceCapabilitiesRequirements(element);
         return super.save(element);
     }

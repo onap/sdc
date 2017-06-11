@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="CRUDArtifacts" configfailurepolicy="continue" verbose="2"  parallel="tests" thread-count="10">
+
+  <test name="Test">
+    <classes>
+      <class 
+      name="org.openecomp.sdc.ci.tests.execute.devCI.CRUDExternalAPI">
+   			   <methods>
+					<include name="uploadArtifactOnVFViaExternalAPI" />
+					<include name="uploadArtifactOnServiceViaExternalAPI" />
+					<include name="uploadArtifactOnRIViaExternalAPI" />
+					<include name="uploadInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI" />
+					<include name="uploadArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset" />
+					<include name="uploadArtifactOnAssetWhichNotExist" />
+					<include name="uploadArtifactOnAssetWhichInInvalidStateForUploading" />
+					
+					
+					<include name="updateArtifactForServiceViaExternalAPI" />
+					<include name="updateArtifactForVFViaExternalAPI" />
+					<include name="updateArtifactOnRIViaExternalAPI" />
+					<include name="updateArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset" />
+					<include name="updateArtifactOnAssetWhichNotExist" />
+					<include name="updateArtifactOnAssetWhichInInvalidStateForUploading" />
+					<include name="updateInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI" />
+					
+					
+					<include name="deleteArtifactForServiceViaExternalAPI" />
+					<include name="deleteArtifactForVFViaExternalAPI" />
+					<include name="deleteArtifactOnRIViaExternalAPI" />
+					<include name="deleteArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset" />
+					<include name="deleteArtifactOnAssetWhichNotExist" />
+					<include name="deleteArtifactOnAssetWhichInInvalidStateForUploading" />
+				</methods>
+      
+      </class>
+      
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->

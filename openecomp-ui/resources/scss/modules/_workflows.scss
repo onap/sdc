@@ -25,19 +25,3 @@
     padding: 15px;
   }
 }
-
-.sequence-diagram {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  top: 0;
-
-  padding-bottom: 20px;
-  .sequence-diagram-action-buttons {
-    display: flex;
-    button {
-      margin: 20px;
-    }
-  }
-}

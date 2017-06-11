@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, ContentChildren } from '@angular/core';
+import {Component, ViewChild, ElementRef, ContentChildren, Input} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser'
 import { UiElementBase, UiElementBaseInterface } from './../ui-element-base.component';
 
@@ -8,7 +8,6 @@ import { UiElementBase, UiElementBaseInterface } from './../ui-element-base.comp
     styleUrls: ['./ui-element-input.component.less'],
 })
 export class UiElementInputComponent extends UiElementBase implements UiElementBaseInterface {
-
     constructor() {
         super();
         this.pattern = this.validation.validationPatterns.comment;

@@ -38,7 +38,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -1470,12 +1469,12 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		checkListValues(listValue.get(1), 2, SPECIAL_CHARACTERS);
 
 		// Verify attributes
-		List<AttributeDefinition> attributes = resource.getAttributes();
+		List<PropertyDefinition> attributes = resource.getAttributes();
 
 		assertEquals("check properties size", 2, attributes.size());
 
 		// Verify attribute from type map
-		AttributeDefinition attributeMapDefinition = attributes.stream()
+		PropertyDefinition attributeMapDefinition = attributes.stream()
 				.filter(p -> p.getName().equals("validation_test_map")).findFirst().get();
 		String defaultMapValue = attributeMapDefinition.getDefaultValue();
 		Map attributeMapValue = gson.fromJson(defaultMapValue, Map.class);
@@ -1484,7 +1483,7 @@ public class ImportNewResourceCITest extends ComponentBaseTest {
 		checkMapValues(attributeMapValue, "key", 2, SPECIAL_CHARACTERS);
 
 		// Verify attribute from type list
-		AttributeDefinition attributeListDefinition = attributes.stream()
+		PropertyDefinition attributeListDefinition = attributes.stream()
 				.filter(p -> p.getName().equals("validation_test_list")).findFirst().get();
 		String defaultListValue = attributeListDefinition.getDefaultValue();
 

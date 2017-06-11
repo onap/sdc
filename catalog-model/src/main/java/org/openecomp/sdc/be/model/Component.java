@@ -54,7 +54,7 @@ public abstract class Component implements Serializable {
 
 	private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
 
-	private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
+	private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
 
 	private Map<String, List<CapabilityDefinition>> capabilities;
 
@@ -609,12 +609,12 @@ public abstract class Component implements Serializable {
 		}
 	}
 
-	public Map<String, List<ComponentInstanceAttribute>> getComponentInstancesAttributes() {
+	public Map<String, List<ComponentInstanceProperty>> getComponentInstancesAttributes() {
 		return componentInstancesAttributes;
 	}
 
 	public void setComponentInstancesAttributes(
-			Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes) {
+			Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes) {
 		this.componentInstancesAttributes = componentInstancesAttributes;
 	}
 

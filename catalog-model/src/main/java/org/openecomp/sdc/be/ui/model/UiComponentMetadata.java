@@ -64,6 +64,7 @@ public abstract class UiComponentMetadata {
 	
 	private String lastUpdaterFullName;
 
+	public UiComponentMetadata(){}
 
 	public UiComponentMetadata (List<CategoryDefinition> categories, ComponentMetadataDataDefinition metadata) {
 	

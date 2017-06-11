@@ -294,32 +294,22 @@ topology_template:
     service_instance:
       type: org.openecomp.resource.vfc.nodes.heat.st
       properties:
-        availability_zone:
-          get_input: availability_zone
-        static_routes_list:
-          get_input: static_routes_list
-        availability_zone_enable:
-          get_input: availability_zone_enable
-        service_template_name:
-          get_input: service_template_name
-        ordered_interfaces:
-          get_input: ordered_interfaces
         flavor:
           get_input: flavor
         image_name:
           get_input: image_name
+        availability_zone:
+          get_input: availability_zone
         service_type:
           get_input: service_type
-        service_interface_type_list:
-          get_input: service_interface_type_list
+        availability_zone_enable:
+          get_input: availability_zone_enable
+        service_template_name:
+          get_input: service_template_name
         service_instance_name:
           get_input: service_instance_name
-        interface_list:
-          get_input: interface_list
         service_mode:
           get_input: service_mode
-        shared_ip_list:
-          get_input: shared_ip_list
   groups:
     service_instance_group:
       type: org.openecomp.groups.heat.HeatStack

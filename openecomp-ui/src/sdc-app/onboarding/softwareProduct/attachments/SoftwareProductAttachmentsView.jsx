@@ -50,7 +50,7 @@ class HeatScreenView extends Component {
 							iconClassName={this.props.goToOverview ? '' : 'disabled'}
 							className={`go-to-overview-icon ${this.props.goToOverview ? '' : 'disabled'}`}
 							labelClassName='go-to-overview-label'
-							onClick={this.props.goToOverview ? onGoToOverview : undefined}
+							onClick={this.props.goToOverview ? () => onGoToOverview({version}) : undefined}
 							image='go-to-overview'
 							label={i18n('Go to Overview')}
 							data-test-id='go-to-overview'/>}

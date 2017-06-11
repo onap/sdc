@@ -25,6 +25,7 @@ export class UiElementBase {
     protected type: string;
     protected value: any;
     protected pattern: any;
+    protected readonly:boolean;
 
     constructor() {
         //this.control = new FormControl('', [Validators.required]);

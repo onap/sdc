@@ -1,0 +1,77 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+node_types: 
+  org.openecomp.resource.MyCompute:
+    derived_from: tosca.nodes.Root
+    attributes:
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+      - local_storage100: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [1, UNBOUNDED]
+      - local_storage200: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [1, 1]
+      - local_storage300: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [1, 10]
+      - local_storage400: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [1, 10000000]
+      - local_storage500: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [2, 3]
+      - local_storageNoOccurrences600: 
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.BlockStorage
+          relationship: tosca.relationships.AttachesTo         
+    capabilities:
+      host: 
+        type: tosca.capabilities.Container
+        valid_source_types: [tosca.nodes.SoftwareComponent] 
+      endpointNoOccurrence :
+        type: tosca.capabilities.Endpoint.Admin 
+      endpoint200 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [1, 2]  
+      endpoint300 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [1, 1]  
+      endpoint400 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [1, 10]  
+      endpoint500 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [1, 10000000]  
+      endpoint600 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [1, UNBOUNDED  ]   
+      endpoint700 :
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences: [2, 4  ]  
+      os: 
+        type: tosca.capabilities.OperatingSystem
+      scalable:
+        type: tosca.capabilities.Scalable
+      binding:
+        type: tosca.capabilities.network.Bindable

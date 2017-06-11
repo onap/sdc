@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { UiElementPopoverInputComponent } from "./elements-ui/popover-input/ui-element-popover-input.component";
 import {PopoverModule} from "../popover/popover.module";
 import {TooltipModule} from "../tooltip/tooltip.module";
+import {UiElementIntegerInputComponent} from "./elements-ui/integer-input/ui-element-integer-input.component";
 
 @NgModule({
     declarations: [
@@ -15,7 +16,8 @@ import {TooltipModule} from "../tooltip/tooltip.module";
         UiElementInputComponent,
         UiElementCheckBoxComponent,
         UiElementDropDownComponent,
-        UiElementPopoverInputComponent
+        UiElementPopoverInputComponent,
+        UiElementIntegerInputComponent
     ],
     imports: [
         BrowserModule,

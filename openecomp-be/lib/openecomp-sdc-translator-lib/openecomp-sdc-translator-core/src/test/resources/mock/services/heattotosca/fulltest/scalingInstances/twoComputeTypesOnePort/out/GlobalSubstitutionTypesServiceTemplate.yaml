@@ -8,28 +8,6 @@ node_types:
   org.openecomp.resource.abstract.nodes.pd_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
-      port_pd01_port_mac_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      vm_image_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_pd01_port_ip_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_pd01_port_network:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: string
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -56,10 +34,68 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
+      port_pd01_port_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_pd01_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_network:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       compute_pd_server_user_data_format:
         type: list
         required: true
@@ -411,10 +447,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_image_name:
-        type: string
+      port_ps01_port_subnetpoolid:
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       compute_ps_server_availability_zone:
         type: list
         required: true
@@ -435,6 +473,32 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_ps01_port_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_ps01_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      vm_image_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_ps01_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_ps01_port_replacement_policy:
         type: list
         required: true
@@ -453,11 +517,19 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_flavor_name:
-        type: string
+      port_ps01_port_ip_requirements:
+        type: list
         required: true
         status: SUPPORTED
-      port_ps01_port_ip_requirements:
+        entry_schema:
+          type: json
+      port_ps01_port_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_ps01_port_exCP_naming:
         type: list
         required: true
         status: SUPPORTED

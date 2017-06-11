@@ -99,14 +99,14 @@ topology_template:
       properties:
         compute_QRouter_availability_zone:
         - Availability-test
-        port_oam_private_net_network_port_network:
-        - get_input: oam_private_net_name
-        vm_image_name: Image-test
         compute_QRouter_config_drive:
         - true
         port_cdr_network_port_network:
         - get_input: cdr_network
         vm_flavor_name: FLAVOR-test
+        port_oam_private_net_network_port_network:
+        - get_input: oam_private_net_name
+        vm_image_name: Image-test
         compute_QRouter_name:
         - QRouter-name
         service_template_filter:

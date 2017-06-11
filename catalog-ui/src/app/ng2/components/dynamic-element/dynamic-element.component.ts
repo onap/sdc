@@ -4,6 +4,7 @@ import { UiElementDropDownComponent, DropdownValue } from './elements-ui/dropdow
 import { UiElementInputComponent } from './elements-ui/input/ui-element-input.component';
 import {UiElementPopoverInputComponent} from "./elements-ui/popover-input/ui-element-popover-input.component";
 import {ValidationConfiguration} from "app/models";
+import {UiElementIntegerInputComponent} from "./elements-ui/integer-input/ui-element-integer-input.component";
 
 @Component({
     selector: 'dynamic-element',
@@ -13,7 +14,8 @@ import {ValidationConfiguration} from "app/models";
         UiElementInputComponent,
         UiElementDropDownComponent,
         UiElementCheckBoxComponent,
-        UiElementPopoverInputComponent
+        UiElementPopoverInputComponent,
+        UiElementIntegerInputComponent
     ]
 })
 export class DynamicElementComponent {
@@ -21,6 +23,7 @@ export class DynamicElementComponent {
     @ViewChild('target', { read: ViewContainerRef }) target: any;
     @Input() type: any;
     @Input() name: string;
+    @Input() readonly:boolean;
     value:any;
 
     // Two way binding for value (need to write the "Change" word like this)
@@ -50,17 +53,16 @@ export class DynamicElementComponent {
         // Factory to create component based on type or peroperty name.
         switch(this.type) {
             case 'list':
-            case 'integer': 
-                this.createComponent(UiElementInputComponent);
+            case 'integer':
+                this.createComponent(UiElementIntegerInputComponent);
                 this.cmpRef.instance.pattern = this.validation.validationPatterns.integer;
                 break;
             case 'string':
-                switch(this.name.toUpperCase()) {
-                    case 'SUBNETPOOLID':
-                        this.createComponent(UiElementPopoverInputComponent);
-                        break;
-                    default:
-                        this.createComponent(UiElementInputComponent);
+                if (this.name.toUpperCase().indexOf("SUBNETPOOLID") !== -1) {
+                    this.createComponent(UiElementPopoverInputComponent);
+                }
+                else {
+                    this.createComponent(UiElementInputComponent);
                 }
                 break;
             case 'boolean':
@@ -84,6 +86,7 @@ export class DynamicElementComponent {
             this.cmpRef.instance.name = this.name;
             this.cmpRef.instance.type = this.type;
             this.cmpRef.instance.value = this.value;
+            this.cmpRef.instance.readonly = this.readonly;
         }
 
         // Subscribe to change event of of ui-element-basic and fire event to change the value

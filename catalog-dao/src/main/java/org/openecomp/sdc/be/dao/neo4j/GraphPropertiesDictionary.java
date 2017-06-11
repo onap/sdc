@@ -29,6 +29,7 @@ public enum GraphPropertiesDictionary {
 	CONTACT_ID			("contactId",				String.class, 				false,		false),
 	VENDOR_NAME			("vendorName",				String.class, 				false,		false),
 	VENDOR_RELEASE		("vendorRelease",			String.class, 				false,		false),
+	CONFORMANCE_LEVEL	("conformanceLevel",		String.class, 				false,		false),
 	ICON				("icon",					String.class, 				false,		false),
 	TAGS				("tags",					String.class, 		    	false,		false),
 	UUID				("uuid",					String.class, 				false,		true),

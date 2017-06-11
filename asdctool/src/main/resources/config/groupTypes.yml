@@ -63,7 +63,20 @@ org.openecomp.groups.VfModule:
         Group. 
         VID operator must select the Volume Group instance to attach to a VF-Module 
         at deployment time.
-      
+    availability_zone_count:
+      type: integer
+      required: false
+      description: >
+        Quantity of Availability Zones needed for this VF-Module    
+        (source: Extracted from VF-Module HEAT template)
+    vfc_list:
+      type: map
+      entry_schema: 
+        description: <vfc_id>:<count>
+        type: string
+      required: false
+      description: >
+        Identifies the set of VM types and their count included in the VF-Module
 tosca.groups.Root:
   description: The TOSCA Group Type all other TOSCA Group Types derive from
   interfaces: 

@@ -14,12 +14,82 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_FSB1_Internal_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB1_Internal_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_FSB1_metadata:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: json
+      port_FSB2_Internal_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_FSB2_Internal_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      vm_flavor_name:
+        type: string
+        required: true
+        status: SUPPORTED
+      port_FSB2_Internal_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB1_Internal_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB1_Internal_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       compute_FSB1_availability_zone:
         type: list
         required: true
@@ -40,23 +110,49 @@ node_types:
         status: SUPPORTED
         constraints:
         - greater_or_equal: 0
+      port_FSB2_Internal_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB2_Internal_mac_address:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_FSB2_Internal_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_FSB1_Internal_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
       port_FSB2_Internal_network:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
+      port_FSB1_Internal_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       compute_FSB1_name:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      vm_flavor_name:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_FSB2_Internal_mac_address:
+      port_FSB2_Internal_network_role_tag:
         type: list
         required: true
         status: SUPPORTED

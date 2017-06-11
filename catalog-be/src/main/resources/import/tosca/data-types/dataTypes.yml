@@ -21,6 +21,19 @@ map:
 
 json:
   derived_from: tosca.datatypes.Root
+
+scalar-unit:
+  derived_from: tosca.datatypes.Root
+
+scalar-unit.size:
+  derived_from: scalar-unit
+
+scalar-unit.time:
+  derived_from: scalar-unit
+
+scalar-unit.frequency:
+  derived_from: scalar-unit
+
   
 tosca.datatypes.Credential: 
   derived_from: tosca.datatypes.Root

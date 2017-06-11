@@ -26,20 +26,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
-      port_pd01_port_1_ip_requirements:
+      port_pd01_port_0_network_role:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      index_value:
-        type: integer
-        description: Index value of this substitution service template runtime instance
-        required: false
-        default: 0
-        status: SUPPORTED
-        constraints:
-        - greater_or_equal: 0
+          type: string
       compute_pd_server_availability_zone:
         type: list
         required: true
@@ -62,17 +54,35 @@ node_types:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_1_mac_requirements:
+      port_pd01_port_1_network_role:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
+      port_pd01_port_0_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
-      port_pd01_port_1_replacement_policy:
+      port_pd01_port_1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_0_subnetpoolid:
         type: list
         required: true
         status: SUPPORTED
@@ -90,6 +100,68 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd01_port_0_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      index_value:
+        type: integer
+        description: Index value of this substitution service template runtime instance
+        required: false
+        default: 0
+        status: SUPPORTED
+        constraints:
+        - greater_or_equal: 0
+      port_pd01_port_1_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_0_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_1_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_1_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_1_replacement_policy:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_1_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node

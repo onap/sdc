@@ -91,11 +91,13 @@ export class PROPERTY_DATA {
     public static TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP];
     public static SIMPLE_TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON];
     public static ROOT_DATA_TYPE = "tosca.datatypes.Root";
+    public static OPENECOMP_ROOT = "org.openecomp.datatypes.Root";
+    public static SUPPLEMENTAL_DATA = "supplemental_data";
     public static SOURCES = [SOURCES.A_AND_AI, SOURCES.ORDER, SOURCES.RUNTIME];
 }
 
 export class PROPERTY_VALUE_CONSTRAINTS {
-    public static MAX_LENGTH = 100;
+    public static MAX_LENGTH = 2500;
     public static JSON_MAX_LENGTH = 4096;
 }
 
@@ -216,6 +218,7 @@ export class EVENTS {
     static ON_WORKSPACE_SAVE_BUTTON_CLICK = "onWorkspaceSaveButtonClick";
     static ON_WORKSPACE_SAVE_BUTTON_SUCCESS = "onWorkspaceSaveButtonSuccess";
     static ON_WORKSPACE_SAVE_BUTTON_ERROR = "onWorkspaceSaveButtonError";
+    static ON_CHECKOUT = "onCheckout";
 
     //Loader events
     static SHOW_LOADER_EVENT = "showLoaderEvent";

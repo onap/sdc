@@ -1,0 +1,357 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ui-ci</artifactId>
+	<description>Selenium tests for the SDnC Application</description>
+
+	<parent>
+		<groupId>org.openecomp.sdc</groupId>
+		<artifactId>sdc-main</artifactId>
+		<version>1.1.0-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.53.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>2.53.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.3</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openecomp.sdc</groupId>
+			<artifactId>test-apis-ci</artifactId>
+			<version>${project.version}</version>
+			<!--  <classifier>jar-with-dependencies</classifier> -->
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>${snakeyaml.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	    <dependency>
+			<groupId>org.functionaljava</groupId>
+			<artifactId>functionaljava</artifactId>
+			<version>${functionaljava.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- http client -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+            <version>${commons-logging}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- http core -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>${httpcore.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- TITAN -->
+		<dependency>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-core</artifactId>
+			<version>${titan.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.thinkaurelius.titan</groupId>
+			<artifactId>titan-cassandra</artifactId>
+			<version>${titan.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+			<version>${jackson.annotations.version}</version>
+            <scope>compile</scope>
+       </dependency>
+
+		<dependency>
+			<groupId>org.openecomp.sdc.sdc-distribution-client</groupId>
+			<artifactId>sdc-distribution-client</artifactId>
+			<version>1.1.9-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>${json-simple.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jci-core</artifactId>
+			<version>${commons-jci-core.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.sikuli</groupId>
+			<artifactId>sikuli-api</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.sikuli</groupId>
+			<artifactId>sikuli-core</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+            <version>${commons-codec}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+  			<groupId>com.aventstack</groupId>
+  			<artifactId>extentreports</artifactId>
+  			<version>3.0.6</version>
+  			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+            <groupId>net.lightbody.bmp</groupId>
+            <!-- To use the legacy, Jetty-based implementation, 
+             change the artifactId to browsermob-core -->
+            <artifactId>browsermob-core</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.markusbernhardt</groupId>
+            <artifactId>proxy-vole</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.paulhammant</groupId>
+            <artifactId>ngwebdriver</artifactId>
+            <version>0.9.7</version>
+            <scope>compile</scope>
+        </dependency>
+        	
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- ================================================== -->
+			<!-- Get the next versions from the properties file. -->
+			<!-- ================================================== -->
+			<!--<plugin>-->
+				<!--<groupId>org.codehaus.mojo</groupId>-->
+				<!--<artifactId>properties-maven-plugin</artifactId>-->
+				<!--<version>1.0-alpha-1</version>-->
+				<!--<inherited>false</inherited>-->
+
+				<!--<executions>-->
+					<!--<execution>-->
+						<!--<id>ui-ci</id>-->
+						<!--<phase>initialize</phase>-->
+						<!--<goals>-->
+							<!--<goal>read-project-properties</goal>-->
+						<!--</goals>-->
+
+						<!--<configuration>-->
+							<!--<files>-->
+								<!--<file>../target/FullReleaseVersion.properties</file>-->
+							<!--</files>-->
+						<!--</configuration>-->
+					<!--</execution>-->
+				<!--</executions>-->
+			<!--</plugin>-->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<!-- ============================================= -->
+			<!-- Create the JAR file with its dependencies -->
+			<!-- ============================================= -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.5</version>
+				<executions>
+					<execution>
+						<id>create.jar.with.dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>Fortify</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+
+					<!-- =========================== -->
+					<!-- HP Fortify scanner -->
+					<!-- =========================== -->
+					<plugin>
+						<groupId>com.fortify.ps.maven.plugin</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>4.30</version>
+						<configuration>
+							<scanEnabled>false</scanEnabled>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

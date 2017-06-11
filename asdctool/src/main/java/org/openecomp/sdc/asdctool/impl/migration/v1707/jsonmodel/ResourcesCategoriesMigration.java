@@ -2,7 +2,7 @@ package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.migration.MigrationMsg;
-import org.openecomp.sdc.asdctool.impl.migration.Migration;
+import org.openecomp.sdc.asdctool.impl.migration.Migration1707Task;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.TitanDao;
@@ -11,6 +11,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import static org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.Categori
 import static org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.CategoriesUtils.filterOldSubCategories;
 
 
-public class ResourcesCategoriesMigration implements Migration {
+public class ResourcesCategoriesMigration implements Migration1707Task {
 
     @Resource(name = "element-operation")
     private IElementOperation elementOperation;
@@ -74,7 +75,10 @@ public class ResourcesCategoriesMigration implements Migration {
     }
 
     private List<SubCategoryDefinition> getAllDistinctSubCategories (List<CategoryDefinition> categoriesDefinitions) {
-        Map<String, List<SubCategoryDefinition>> subCategoriesByNormalName = categoriesDefinitions.stream().flatMap(ct -> ct.getSubcategories().stream()).collect(Collectors.groupingBy(SubCategoryDefinition::getNormalizedName));
+        Map<String, List<SubCategoryDefinition>> subCategoriesByNormalName = categoriesDefinitions.stream()
+                .filter(ct -> ct.getSubcategories()!=null)
+                .flatMap(ct -> ct.getSubcategories().stream())
+                .collect(Collectors.groupingBy(SubCategoryDefinition::getNormalizedName));
         return getDistinctSubCategories(subCategoriesByNormalName);
     }
 
@@ -112,7 +116,7 @@ public class ResourcesCategoriesMigration implements Migration {
     }
 
     private boolean migrateSubcategoryIfNotExists(CategoryDefinition parentCategory, SubCategoryDefinition subCategory) {
-        return isExists(subCategory).either(isExists -> isExists || migrateSubCategory(parentCategory, subCategory),
+        return isExists(parentCategory, subCategory).either(isExists -> isExists || migrateSubCategory(parentCategory, subCategory),
                                             status -> MigrationUtils.handleError(MigrationMsg.FAILED_TO_RETRIEVE_CATEGORY.getMessage(subCategory.getName(), status.name())));
     }
 
@@ -124,13 +128,13 @@ public class ResourcesCategoriesMigration implements Migration {
     }
 
     private Either<Boolean, ActionStatus> isExists(CategoryDefinition category) {
-        Either<CategoryDefinition, ActionStatus> byId = getCategoryById(category.getUniqueId());
+        Either<CategoryDefinition, ActionStatus> byId = getCategoryById(category);
         return byId.either(existingVal -> Either.left(true),
                            this::getEitherNotExistOrErrorStatus);
     }
 
-    private Either<Boolean, ActionStatus> isExists(SubCategoryDefinition subCategory) {
-        return getSubCategoryById(subCategory.getUniqueId()).either(existingVal -> Either.left(true),
+    private Either<Boolean, ActionStatus> isExists(CategoryDefinition parentCategory, SubCategoryDefinition subCategory) {
+        return getSubCategoryById(parentCategory, subCategory).either(existingVal -> Either.left(true),
                                                this::getEitherNotExistOrErrorStatus);
     }
 
@@ -138,12 +142,19 @@ public class ResourcesCategoriesMigration implements Migration {
         return status == ActionStatus.COMPONENT_CATEGORY_NOT_FOUND ? Either.left(false) : Either.right(status);
     }
 
-    private Either<CategoryDefinition, ActionStatus> getCategoryById(String uid) {
-        return elementOperationMigration.getCategory(NodeTypeEnum.ResourceNewCategory, uid);
+    private Either<CategoryDefinition, ActionStatus> getCategoryById(CategoryDefinition category) {
+        return elementOperationMigration.getCategory(NodeTypeEnum.ResourceNewCategory, category.getUniqueId());
     }
 
-    private Either<SubCategoryDefinition, ActionStatus> getSubCategoryById(String uid) {
-        return elementOperationMigration.getSubCategory(NodeTypeEnum.ResourceSubcategory, uid);
+    private Either<SubCategoryDefinition, ActionStatus> getSubCategoryById(CategoryDefinition parentCategory, SubCategoryDefinition subCategory) {
+        String subCategoryUid = getExpectedSubCategoryId(parentCategory, subCategory);
+        return elementOperationMigration.getSubCategory(NodeTypeEnum.ResourceSubcategory, subCategoryUid);
+    }
+
+    //since a sub category might belong to a different category in old graph its new graph id is different than its old graph id
+    private String getExpectedSubCategoryId(CategoryDefinition parentCategory, SubCategoryDefinition subCategory) {
+        String parentId = UniqueIdBuilder.buildCategoryUid(parentCategory.getNormalizedName(), NodeTypeEnum.ResourceNewCategory);
+        return UniqueIdBuilder.buildSubCategoryUid(parentId, subCategory.getNormalizedName());
     }
 
 

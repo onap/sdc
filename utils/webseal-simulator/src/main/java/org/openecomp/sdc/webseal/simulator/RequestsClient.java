@@ -17,29 +17,51 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.openecomp.sdc.webseal.simulator.conf.Conf;
 
 public class RequestsClient extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+
+		String hostname = request.getParameter("hostname") != null ? request.getParameter("hostname") : "127.0.0.1";
+		String port = request.getParameter("port") != null ? request.getParameter("port") : "8080";
+		String adminId = request.getParameter("adminId") != null ? request.getParameter("adminId") : "jh0003";
+
+		String createAll = request.getParameter("all");
 		
-		String userId = request.getParameter("userId");
-		String role = request.getParameter("role");
-		String firstName = request.getParameter("firstName");
-		String lastName = request.getParameter("lastName");
-		String email = request.getParameter("email");
-		
-		String hostname = request.getParameter("hostname") != null?request.getParameter("hostname"):"127.0.0.1";
-		String port = request.getParameter("port") != null?request.getParameter("port"):"8080";
-		String adminId = request.getParameter("adminId") != null?request.getParameter("adminId"):"jh0003";
-		
-		response.setContentType("text/html");
 		PrintWriter writer = response.getWriter();
-		writer.println("userId: " + userId);
-		writer.println("role: " + role);
+		
+		int resultCode;
+		
+		if ("true".equals(createAll)) {
+			Map<String, User> users = Conf.getInstance().getUsers();
+			for (User user : users.values()) {
+				resultCode = createUser(response, user.getUserId(), user.getRole().toUpperCase(), user.getFirstName(), user.getLastName(), user.getEmail(), hostname, port, adminId);
+				writer.println("User "+ user.getFirstName() + " " + user.getLastName() + getResultMessage(resultCode) + "<br>");
+			}
+		} else {
+			String userId = request.getParameter("userId");
+			String role = request.getParameter("role").toUpperCase();
+			String firstName = request.getParameter("firstName");
+			String lastName = request.getParameter("lastName");
+			String email = request.getParameter("email");
+			resultCode = createUser(response, userId, role, firstName, lastName, email, hostname, port, adminId);
+			writer.println("User "+ firstName + " " + lastName +getResultMessage(resultCode));	
+		}
+
+		
+
+	}
+	
+	private String getResultMessage(int resultCode){
+		return 201 == resultCode? " created successfuly":" not created ("+ resultCode +")";
+	}
+
+	private int createUser(final HttpServletResponse response, String userId, String role, String firstName, String lastName, String email, String hostname, String port, String adminId) throws IOException {
+		response.setContentType("text/html");
 
 		// Fill the data of the request
 		String url = "http://" + hostname + ":" + port + "/sdc2/rest/v1/user";
@@ -47,13 +69,12 @@ public class RequestsClient extends HttpServlet {
 		HashMap<String, String> headers = new HashMap<String, String>();
 		headers.put("Content-Type", "application/json");
 		headers.put("USER_ID", adminId);
-		sendHttpPost(url, body, headers);
-
+		return sendHttpPost(url, body, headers);
 	}
-	
-	private String sendHttpPost(String url, String body, Map<String, String> headers) throws IOException {
-		
-		String responseString=""; 
+
+	private int sendHttpPost(String url, String body, Map<String, String> headers) throws IOException {
+
+		String responseString = "";
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -79,8 +100,8 @@ public class RequestsClient extends HttpServlet {
 		}
 
 		int responseCode = con.getResponseCode();
-		//logger.debug("Send POST http request, url: {}", url);
-		//logger.debug("Response Code: {}", responseCode);
+		// logger.debug("Send POST http request, url: {}", url);
+		// logger.debug("Response Code: {}", responseCode);
 
 		StringBuffer response = new StringBuffer();
 		try {
@@ -91,7 +112,7 @@ public class RequestsClient extends HttpServlet {
 			}
 			in.close();
 		} catch (Exception e) {
-			//logger.debug("response body is null");
+			// logger.debug("response body is null");
 		}
 
 		String result;
@@ -103,18 +124,18 @@ public class RequestsClient extends HttpServlet {
 		} catch (Exception e2) {
 			result = null;
 		}
-		//logger.debug("Response body: {}", response);
+		// logger.debug("Response body: {}", response);
 
 		if (response != null) {
 			responseString = response.toString();
 		}
 
-		//Map<String, List<String>> headerFields = con.getHeaderFields();
-		//String responseMessage = con.getResponseMessage();
+		// Map<String, List<String>> headerFields = con.getHeaderFields();
+		// String responseMessage = con.getResponseMessage();
 
 		con.disconnect();
-		return responseString;
+		return responseCode;
 
 	}
-	
+
 }

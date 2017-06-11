@@ -24,6 +24,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaElementTypes;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.sdc.tosca.datatypes.model.NodeType;
+import org.openecomp.sdc.tosca.datatypes.model.PropertyDefinition;
 import org.openecomp.sdc.tosca.datatypes.model.RequirementAssignment;
 import org.openecomp.sdc.tosca.datatypes.model.ServiceTemplate;
 
@@ -76,4 +77,7 @@ public interface ToscaAnalyzerService {
   boolean isRequirementExistInNodeTemplate(NodeTemplate nodeTemplate,
                                            String requirementId,
                                            RequirementAssignment requirementAssignment);
+
+  public Map<String, PropertyDefinition> manageSubstitutionNodeTypeProperties(
+      ServiceTemplate substitutionServiceTemplate);
 }

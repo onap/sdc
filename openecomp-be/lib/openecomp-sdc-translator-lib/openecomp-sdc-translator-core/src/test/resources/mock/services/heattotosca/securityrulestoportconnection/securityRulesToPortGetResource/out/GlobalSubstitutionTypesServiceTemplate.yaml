@@ -131,20 +131,6 @@ node_types:
         required: true
         status: SUPPORTED
     requirements:
-    - dependency_QRouter:
-        capability: tosca.capabilities.Node
-        node: tosca.nodes.Root
-        relationship: tosca.relationships.DependsOn
-        occurrences:
-        - 0
-        - UNBOUNDED
-    - local_storage_QRouter:
-        capability: tosca.capabilities.Attachment
-        node: tosca.nodes.BlockStorage
-        relationship: tosca.relationships.AttachesTo
-        occurrences:
-        - 0
-        - UNBOUNDED
     - dependency_qrouter_volume_1:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -179,6 +165,20 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+    - dependency_QRouter1:
+        capability: tosca.capabilities.Node
+        node: tosca.nodes.Root
+        relationship: tosca.relationships.DependsOn
+        occurrences:
+        - 0
+        - UNBOUNDED
+    - local_storage_QRouter1:
+        capability: tosca.capabilities.Attachment
+        node: tosca.nodes.BlockStorage
+        relationship: tosca.relationships.AttachesTo
+        occurrences:
+        - 0
+        - UNBOUNDED
     - dependency_oam_private_net_network_port:
         capability: tosca.capabilities.Node
         node: tosca.nodes.Root
@@ -193,21 +193,14 @@ node_types:
         - 1
         - 1
     capabilities:
-      disk.usage_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.outgoing.bytes_cdr_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.bytes_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+      binding_QRouter1:
+        type: tosca.capabilities.network.Bindable
         occurrences:
         - 1
         - UNBOUNDED
@@ -221,19 +214,8 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.bytes_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       feature_qrouter_volume_2:
         type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      endpoint_QRouter:
-        type: tosca.capabilities.Endpoint.Admin
         occurrences:
         - 1
         - UNBOUNDED
@@ -247,7 +229,7 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.capacity_QRouter:
+      cpu_util_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -255,12 +237,6 @@ node_types:
         - UNBOUNDED
       attachment_qrouter_volume_0:
         type: tosca.capabilities.Attachment
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.read.bytes.rate_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
@@ -280,37 +256,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      disk.device.read.bytes.rate_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.bytes.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      instance_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.device.latency_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.device.usage_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.ephemeral.size_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.device.iops_QRouter:
+      disk.device.read.bytes_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -328,15 +286,22 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.bytes_QRouter:
+      memory.resident_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.iops_QRouter:
+      disk.device.latency_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      host_QRouter1:
+        type: tosca.capabilities.Container
+        valid_source_types:
+        - tosca.nodes.SoftwareComponent
         occurrences:
         - 1
         - UNBOUNDED
@@ -345,28 +310,15 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.requests.rate_QRouter:
+      disk.device.write.bytes.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.read.bytes_QRouter:
+      disk.device.usage_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      memory.resident_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      host_QRouter:
-        type: tosca.capabilities.Container
-        valid_source_types:
-        - tosca.nodes.SoftwareComponent
         occurrences:
         - 1
         - UNBOUNDED
@@ -376,35 +328,25 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      memory_QRouter:
+      instance_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.requests_QRouter:
+      disk.root.size_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      scalable_QRouter:
-        type: tosca.capabilities.Scalable
-        occurrences:
-        - 1
-        - UNBOUNDED
-      os_QRouter:
-        type: tosca.capabilities.OperatingSystem
+      vcpus_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
       network.incoming.bytes_oam_private_net_network_port:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.write.bytes.rate_QRouter:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -415,9 +357,38 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      cpu_util_QRouter:
+      cpu.delta_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.capacity_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      memory.usage_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests.rate_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.read.requests_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      feature_QRouter1:
+        type: tosca.capabilities.Node
         occurrences:
         - 1
         - UNBOUNDED
@@ -427,13 +398,19 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.requests_QRouter:
+      disk.ephemeral.size_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.read.bytes.rate_QRouter:
+      disk.latency_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.capacity_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -445,56 +422,50 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.allocation_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.outgoing.bytes_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.capacity_QRouter:
+      disk.iops_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      feature_QRouter:
-        type: tosca.capabilities.Node
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.read.requests_QRouter:
+      disk.device.write.requests_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.bytes.rate_QRouter:
+      disk.device.write.requests.rate_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.requests_QRouter:
+      disk.device.allocation_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.root.size_QRouter:
+      memory_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      memory.usage_QRouter:
+      disk.usage_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      scalable_QRouter1:
+        type: tosca.capabilities.Scalable
         occurrences:
         - 1
         - UNBOUNDED
@@ -511,25 +482,19 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
-      cpu_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      vcpus_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      disk.allocation_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
       network.incoming.packets.rate_cdr_network_port:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.bytes_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.write.requests_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
@@ -541,26 +506,32 @@ node_types:
         occurrences:
         - 1
         - UNBOUNDED
+      cpu_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      os_QRouter1:
+        type: tosca.capabilities.OperatingSystem
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests.rate_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.incoming.packets.rate_oam_private_net_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.device.write.requests.rate_QRouter:
+      disk.read.bytes_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      cpu.delta_QRouter:
-        type: org.openecomp.capabilities.metric.Ceilometer
-        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
-        occurrences:
-        - 1
-        - UNBOUNDED
-      binding_QRouter:
-        type: tosca.capabilities.network.Bindable
         occurrences:
         - 1
         - UNBOUNDED
@@ -571,19 +542,48 @@ node_types:
         occurrences:
         - 0
         - UNBOUNDED
+      disk.write.bytes.rate_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.write.bytes_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
       network.outgoing.packets.rate_cdr_network_port:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.latency_QRouter:
+      disk.device.iops_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:
         - 1
         - UNBOUNDED
-      disk.write.requests.rate_QRouter:
+      disk.read.bytes.rate_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      endpoint_QRouter1:
+        type: tosca.capabilities.Endpoint.Admin
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.allocation_QRouter1:
+        type: org.openecomp.capabilities.metric.Ceilometer
+        description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
+        occurrences:
+        - 1
+        - UNBOUNDED
+      disk.device.read.requests_QRouter1:
         type: org.openecomp.capabilities.metric.Ceilometer
         description: A node type that includes the Metric capability indicates that it can be monitored using ceilometer.
         occurrences:

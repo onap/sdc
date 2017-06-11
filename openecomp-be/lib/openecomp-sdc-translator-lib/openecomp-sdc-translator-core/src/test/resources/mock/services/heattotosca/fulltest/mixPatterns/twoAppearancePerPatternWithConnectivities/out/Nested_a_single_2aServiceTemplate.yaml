@@ -11,19 +11,16 @@ node_types:
     derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
 topology_template:
   inputs:
-    compute_a_single_2a_name:
-      type: list
-      required: true
-      entry_schema:
-        type: string
     compute_a_single_2a_user_data_format:
       type: list
       required: true
       entry_schema:
         type: string
-    vm_image_name:
-      type: string
+    port_1a_t1_port_exCP_naming:
+      type: list
       required: true
+      entry_schema:
+        type: json
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -36,11 +33,26 @@ topology_template:
       required: true
       entry_schema:
         type: json
+    port_1a_t1_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_1a_t1_port_network_role:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     compute_a_single_2a_scheduler_hints:
       type: list
       required: true
       entry_schema:
         type: json
+    port_1a_t1_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
     compute_a_single_2a_availability_zone:
       type: list
       required: true
@@ -49,11 +61,6 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    compute_a_single_2a_metadata:
-      type: list
-      required: true
-      entry_schema:
-        type: json
     port_1a_t1_port_mac_requirements:
       type: list
       required: true
@@ -64,6 +71,29 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_1a_t1_port_subnetpoolid:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_a_single_2a_name:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_1a_t1_port_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    compute_a_single_2a_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
   node_templates:
     a_single_2a:
       type: org.openecomp.resource.vfc.nodes.heat.a_single_2a
@@ -95,13 +125,37 @@ topology_template:
     a_single_2a_1a_t1_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
+        exCP_naming:
+          get_input:
+          - port_1a_t1_port_exCP_naming
+          - index_value
+        vlan_requirements:
+          get_input:
+          - port_1a_t1_port_vlan_requirements
+          - index_value
         ip_requirements:
           get_input:
           - port_1a_t1_port_ip_requirements
           - index_value
+        network_role_tag:
+          get_input:
+          - port_1a_t1_port_network_role_tag
+          - index_value
         mac_requirements:
           get_input:
           - port_1a_t1_port_mac_requirements
+          - index_value
+        order:
+          get_input:
+          - port_1a_t1_port_order
+          - index_value
+        network_role:
+          get_input:
+          - port_1a_t1_port_network_role
+          - index_value
+        subnetpoolid:
+          get_input:
+          - port_1a_t1_port_subnetpoolid
           - index_value
         network:
           get_input:

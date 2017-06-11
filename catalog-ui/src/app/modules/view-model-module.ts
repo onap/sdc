@@ -53,7 +53,7 @@ import {ReqAndCapabilitiesViewModel} from "../view-models/workspace/tabs/req-and
 import {InputFormViewModel} from "../view-models/forms/input-form/input-form-view-modal";
 import {HierarchyViewModel} from "../view-models/tabs/hierarchy/hierarchy-view-model";
 import {downgradeComponent} from "@angular/upgrade/static";
-import {ConformanceLevelModalViewModel} from "../view-models/workspace/conformance-level-modal/conformance-level-modal-view-model";
+import {ConformanceLevelModalViewModel} from "../view-models/modals/conformance-level-modal/conformance-level-modal-view-model";
 // import {NG2ExampleComponent} from "../ng2/view-ng2/ng2.example.component/ng2.example.component";
 // import {upgradeAdapter} from "../ng2/app.module";
 // import { UpgradeAdapter } from '@angular/upgrade';

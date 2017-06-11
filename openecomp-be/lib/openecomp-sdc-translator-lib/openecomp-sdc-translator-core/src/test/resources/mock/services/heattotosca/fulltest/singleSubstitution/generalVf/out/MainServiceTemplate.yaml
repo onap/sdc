@@ -627,8 +627,6 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_VLC_SCTP_A_network:
-        - epc-sctp-a-net
         port_VLC_OAM_network_role_tag:
         - oam
         port_VLC_GTP_ip_requirements:
@@ -657,17 +655,8 @@ topology_template:
         port_VLC_SCTP_A_fixed_ips:
         - - ip_address:
               get_input: vlc2-sctp-a-ip
-        port_VLC_OAM_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
         port_VLC2_Internal2_mac_address:
         - get_input: vlc2-Internal2-mac
-        port_VLC_OAM_fixed_ips:
-        - - ip_address:
-              get_input: vlc2-oam-ip
         vm_image_name:
           get_input: pxe-image
         port_VLC2_Internal1_mac_address:
@@ -678,12 +667,6 @@ topology_template:
         port_VLC2_Internal1_mac_requirements:
         - mac_count_required:
             is_required: true
-        port_VLC_SCTP_A_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: true
-            floating_ip_count_required:
-              is_required: false
         port_VLC_SCTP_B_network:
         - epc-sctp-b-net
         port_VLC_GTP_network:
@@ -692,6 +675,30 @@ topology_template:
         - - ip_version: 4
             ip_count_required:
               is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_VLC_GTP_fixed_ips:
+        - - ip_address:
+              get_input: vlc2-gtp-ip
+        port_VLC_OAM_network:
+        - get_input: oam_net_id
+        port_VLC2_Internal2_network:
+        - Internal2-net
+        port_VLC_SCTP_A_network:
+        - epc-sctp-a-net
+        port_VLC_OAM_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
+            floating_ip_count_required:
+              is_required: false
+        port_VLC_OAM_fixed_ips:
+        - - ip_address:
+              get_input: vlc2-oam-ip
+        port_VLC_SCTP_A_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: true
             floating_ip_count_required:
               is_required: false
         compute_VLC2_name:
@@ -706,19 +713,12 @@ topology_template:
         - Internal1-net
         compute_VLC2_availability_zone:
         - get_input: vlc_zone
-        port_VLC_GTP_fixed_ips:
-        - - ip_address:
-              get_input: vlc2-gtp-ip
         port_VLC_OAM_mac_requirements:
         - mac_count_required:
             is_required: false
-        port_VLC_OAM_network:
-        - get_input: oam_net_id
         port_VLC_SCTP_B_mac_requirements:
         - mac_count_required:
             is_required: false
-        port_VLC2_Internal2_network:
-        - Internal2-net
         service_template_filter:
           substitute_service_template: Nested_VLC2ServiceTemplate.yaml
           count: 1
@@ -755,10 +755,6 @@ topology_template:
       properties:
         port_VLC1_Internal2_mac_address:
         - get_input: vlc1-Internal2-mac
-        port_VLC1_Internal1_network:
-        - Internal1-net
-        port_VLC_SCTP_A_network:
-        - epc-sctp-a-net
         port_VLC_OAM_network_role_tag:
         - oam
         port_VLC1_Internal1_mac_address:
@@ -785,6 +781,32 @@ topology_template:
         port_VLC_SCTP_A_fixed_ips:
         - - ip_address:
               get_input: vlc1-sctp-a-ip
+        vm_image_name:
+          get_input: pxe-image
+        port_VLC_SCTP_B_network:
+        - epc-sctp-b-net
+        port_VLC_GTP_network:
+        - epc-gtp-net
+        port_VLC1_Internal1_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        port_VLC_GTP_fixed_ips:
+        - - ip_address:
+              get_input: vlc1-gtp-ip
+        port_VLC_OAM_network:
+        - get_input: oam_net_id
+        compute_VLC1_name:
+        - get_input: vlc1-name
+        port_VLC1_Internal2_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_VLC1_Internal1_network:
+        - Internal1-net
+        port_VLC_SCTP_A_network:
+        - epc-sctp-a-net
         port_VLC_OAM_ip_requirements:
         - - ip_version: 4
             ip_count_required:
@@ -800,23 +822,14 @@ topology_template:
         port_VLC_OAM_fixed_ips:
         - - ip_address:
               get_input: vlc1-oam-ip
-        vm_image_name:
-          get_input: pxe-image
         port_VLC_SCTP_A_ip_requirements:
         - - ip_version: 4
             ip_count_required:
               is_required: true
             floating_ip_count_required:
               is_required: false
-        port_VLC_SCTP_B_network:
-        - epc-sctp-b-net
-        port_VLC_GTP_network:
-        - epc-gtp-net
         compute_VLC1_availability_zone:
         - get_input: vlc_zone
-        port_VLC1_Internal1_mac_requirements:
-        - mac_count_required:
-            is_required: true
         port_VLC1_Internal2_mac_requirements:
         - mac_count_required:
             is_required: true
@@ -826,25 +839,12 @@ topology_template:
         port_VLC_GTP_mac_requirements:
         - mac_count_required:
             is_required: false
-        port_VLC_GTP_fixed_ips:
-        - - ip_address:
-              get_input: vlc1-gtp-ip
         port_VLC_OAM_mac_requirements:
         - mac_count_required:
             is_required: false
-        port_VLC_OAM_network:
-        - get_input: oam_net_id
-        compute_VLC1_name:
-        - get_input: vlc1-name
         port_VLC_SCTP_B_mac_requirements:
         - mac_count_required:
             is_required: false
-        port_VLC1_Internal2_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         service_template_filter:
           substitute_service_template: Nested_VLC1ServiceTemplate.yaml
           count: 1
@@ -900,35 +900,35 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_GPB1_Internal2_network:
-        - Internal2-net
-        port_GPB1_Internal1_network:
-        - Internal1-net
         compute_GPB1_name:
         - get_input: gpb1-name
         vm_flavor_name:
           get_input: gpb-flavor
-        port_GPB1_Internal2_mac_requirements:
-        - mac_count_required:
-            is_required: true
-        port_GPB1_Internal1_mac_address:
-        - get_input: gpb1-Internal1-mac
         port_GPB1_Internal2_mac_address:
         - get_input: gpb1-Internal2-mac
         vm_image_name:
           get_input: pxe-image
-        port_GPB1_Internal1_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         port_GPB1_Internal1_mac_requirements:
         - mac_count_required:
             is_required: true
         compute_GPB1_availability_zone:
         - get_input: gpb_zone
         port_GPB1_Internal2_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_GPB1_Internal2_network:
+        - Internal2-net
+        port_GPB1_Internal1_network:
+        - Internal1-net
+        port_GPB1_Internal2_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        port_GPB1_Internal1_mac_address:
+        - get_input: gpb1-Internal1-mac
+        port_GPB1_Internal1_ip_requirements:
         - - ip_version: 4
             ip_count_required:
               is_required: false
@@ -956,6 +956,20 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_GPB2_Internal1_network:
+        - Internal1-net
+        vm_flavor_name:
+          get_input: gpb-flavor
+        port_GPB2_Internal2_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        vm_image_name:
+          get_input: pxe-image
+        compute_GPB2_name:
+        - get_input: gpb2-name
         port_GPB2_Internal2_mac_address:
         - get_input: gpb2-Internal2-mac
         port_GPB2_Internal2_mac_requirements:
@@ -967,25 +981,11 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
-        port_GPB2_Internal1_network:
-        - Internal1-net
         compute_GPB2_availability_zone:
         - get_input: gpb_zone
-        vm_flavor_name:
-          get_input: gpb-flavor
         port_GPB2_Internal1_mac_requirements:
         - mac_count_required:
             is_required: true
-        port_GPB2_Internal2_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        vm_image_name:
-          get_input: pxe-image
-        compute_GPB2_name:
-        - get_input: gpb2-name
         port_GPB2_Internal1_mac_address:
         - get_input: gpb2-Internal1-mac
         port_GPB2_Internal2_network:
@@ -1051,6 +1051,21 @@ topology_template:
       directives:
       - substitutable
       properties:
+        vm_flavor_name:
+          get_input: ncb-flavor
+        compute_NCB1_name:
+        - get_input: ncb1-name
+        port_NCB1_Internal2_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: pxe-image
+        port_NCB1_Internal2_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
         port_NCB1_Internal2_mac_address:
         - get_input: ncb1-Internal2-mac
         port_NCB1_Internal1_mac_address:
@@ -1061,28 +1076,13 @@ topology_template:
               is_required: false
             floating_ip_count_required:
               is_required: false
-        vm_flavor_name:
-          get_input: ncb-flavor
-        compute_NCB1_name:
-        - get_input: ncb1-name
         port_NCB1_Internal1_mac_requirements:
-        - mac_count_required:
-            is_required: true
-        port_NCB1_Internal2_mac_requirements:
         - mac_count_required:
             is_required: true
         port_NCB1_Internal1_network:
         - Internal1-net
         compute_NCB1_availability_zone:
         - get_input: ncb_zone
-        vm_image_name:
-          get_input: pxe-image
-        port_NCB1_Internal2_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
         port_NCB1_Internal2_network:
         - Internal2-net
         service_template_filter:
@@ -1107,32 +1107,32 @@ topology_template:
       directives:
       - substitutable
       properties:
-        port_NCB2_Internal1_network:
-        - Internal1-net
         compute_NCB2_availability_zone:
         - get_input: ncb_zone
+        vm_flavor_name:
+          get_input: ncb-flavor
+        port_NCB2_Internal2_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        port_NCB2_Internal1_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        vm_image_name:
+          get_input: pxe-image
+        port_NCB2_Internal1_network:
+        - Internal1-net
         port_NCB2_Internal2_ip_requirements:
         - - ip_version: 4
             ip_count_required:
               is_required: false
             floating_ip_count_required:
               is_required: false
-        vm_flavor_name:
-          get_input: ncb-flavor
-        port_NCB2_Internal2_mac_requirements:
-        - mac_count_required:
-            is_required: true
         port_NCB2_Internal2_network:
         - Internal2-net
-        port_NCB2_Internal1_mac_requirements:
-        - mac_count_required:
-            is_required: true
         port_NCB2_Internal1_mac_address:
         - get_input: ncb2-Internal1-mac
         port_NCB2_Internal2_mac_address:
         - get_input: ncb2-Internal2-mac
-        vm_image_name:
-          get_input: pxe-image
         compute_NCB2_name:
         - get_input: ncb2-name
         port_NCB2_Internal1_ip_requirements:
@@ -1187,11 +1187,6 @@ topology_template:
         - oam
         port_FSB1_Internal2_network:
         - Internal2-net
-        port_FSB_OAM_mac_requirements:
-        - mac_count_required:
-            is_required: false
-        compute_FSB1_availability_zone:
-        - get_input: fsb_zone
         port_FSB1_Internal1_network:
         - Internal1-net
         vm_flavor_name:
@@ -1204,6 +1199,22 @@ topology_template:
               is_required: true
             floating_ip_count_required:
               is_required: false
+        port_FSB1_Internal1_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        port_FSB1_Internal1_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_FSB_OAM_network:
+        - get_input: oam_net_id
+        port_FSB_OAM_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        compute_FSB1_availability_zone:
+        - get_input: fsb_zone
         port_FSB1_Internal2_mac_requirements:
         - mac_count_required:
             is_required: true
@@ -1218,17 +1229,6 @@ topology_template:
               get_input: fsb1-oam-ip
         compute_FSB1_name:
         - get_input: fsb1-name
-        port_FSB1_Internal1_mac_requirements:
-        - mac_count_required:
-            is_required: true
-        port_FSB1_Internal1_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        port_FSB_OAM_network:
-        - get_input: oam_net_id
         service_template_filter:
           substitute_service_template: Nested_FSB1ServiceTemplate.yaml
           count: 1
@@ -1253,20 +1253,6 @@ topology_template:
       properties:
         port_FSB_OAM_network_role_tag:
         - oam
-        port_FSB2_Internal2_mac_requirements:
-        - mac_count_required:
-            is_required: true
-        port_FSB_OAM_mac_requirements:
-        - mac_count_required:
-            is_required: false
-        port_FSB2_Internal2_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        port_FSB2_Internal2_network:
-        - Internal2-net
         vm_flavor_name:
           get_input: fsb2-flavor
         compute_FSB2_availability_zone:
@@ -1287,18 +1273,32 @@ topology_template:
         - get_input: fsb2-name
         port_FSB2_Internal1_mac_address:
         - get_input: fsb2-Internal1-mac
-        port_FSB_OAM_fixed_ips:
-        - - ip_address:
-              get_input: fsb2-oam-ip
-        port_FSB2_Internal1_mac_requirements:
-        - mac_count_required:
-            is_required: true
         port_FSB_OAM_network:
         - get_input: oam_net_id
         port_FSB2_Internal1_network:
         - Internal1-net
         port_FSB2_Internal2_mac_address:
         - get_input: fsb2-Internal2-mac
+        port_FSB2_Internal2_mac_requirements:
+        - mac_count_required:
+            is_required: true
+        port_FSB_OAM_mac_requirements:
+        - mac_count_required:
+            is_required: false
+        port_FSB2_Internal2_ip_requirements:
+        - - ip_version: 4
+            ip_count_required:
+              is_required: false
+            floating_ip_count_required:
+              is_required: false
+        port_FSB2_Internal2_network:
+        - Internal2-net
+        port_FSB_OAM_fixed_ips:
+        - - ip_address:
+              get_input: fsb2-oam-ip
+        port_FSB2_Internal1_mac_requirements:
+        - mac_count_required:
+            is_required: true
         service_template_filter:
           substitute_service_template: Nested_FSB2ServiceTemplate.yaml
           count: 1

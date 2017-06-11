@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;

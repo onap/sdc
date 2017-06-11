@@ -46,7 +46,6 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapReqDef;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -2837,9 +2836,9 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		ToscaNodeTypeInfo parseToscaNodeYaml = utils
 				.parseToscaNodeYaml(Decoder.decode(importReqDetails.getPayloadData()));
 
-		HashMap<String, AttributeDefinition> attr = new HashMap<>();
+		HashMap<String, PropertyDefinition> attr = new HashMap<>();
 
-		AttributeDefinition newAttr2 = new AttributeDefinition();
+		PropertyDefinition newAttr2 = new PropertyDefinition();
 		newAttr2.setName("networks");
 		newAttr2.setType("map");
 		newAttr2.setDefaultValue("{\"keyA\" : val1 , \"keyB\" : val2}");
@@ -2850,17 +2849,17 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 		newAttr2.setSchema(schema);
 		attr.put("networks", newAttr2);
 
-		AttributeDefinition newAttr1 = new AttributeDefinition();
+		PropertyDefinition newAttr1 = new PropertyDefinition();
 		newAttr1.setName("public_address");
 		newAttr1.setType("string");
 		attr.put("public_address", newAttr1);
 
-		AttributeDefinition newAttr3 = new AttributeDefinition();
+		PropertyDefinition newAttr3 = new PropertyDefinition();
 		newAttr3.setName("ports");
 		newAttr3.setDescription("this is my description");
 		attr.put("ports", newAttr3);
 
-		AttributeDefinition newAttr = new AttributeDefinition();
+		PropertyDefinition newAttr = new PropertyDefinition();
 		newAttr.setDefaultValue("myDefault");
 		newAttr.setName("private_address");
 		newAttr.setStatus("supported");
@@ -2880,8 +2879,8 @@ public class ImportToscaResourceTest extends ComponentBaseTest {
 				AuditingActionEnum.IMPORT_RESOURCE.getName(), null, false);
 	}
 
-	private void validateResourceAttribute(Resource resource, Map<String, AttributeDefinition> attr) {
-		List<AttributeDefinition> resList = resource.getAttributes();
+	private void validateResourceAttribute(Resource resource, Map<String, PropertyDefinition> attr) {
+		List<PropertyDefinition> resList = resource.getAttributes();
 		int size = resList.size();
 		String attributeName;
 		for (int i = 0; i < size; i++) {

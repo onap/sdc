@@ -348,6 +348,14 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
 		this.conformanceLevel = conformanceLevel;
 	}
 
+	public String getLifecycleState() {
+		return state;
+	}
+
+	public void setLifecycleState(String state) {
+		this.state = state;
+	}
+	
 	@Override
 	public String toString() {
 		return "ComponentMetadataDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", version=" + version

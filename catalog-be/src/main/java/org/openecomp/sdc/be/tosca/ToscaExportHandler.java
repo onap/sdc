@@ -336,10 +336,9 @@ public class ToscaExportHandler {
 			Resource resource = (Resource) component;
 			toscaMetadata.setType(resource.getResourceType().name());
 			toscaMetadata.setSubcategory(categoryDefinition.getSubcategories().get(0).getName());
-			if (!isInstance) {
-				toscaMetadata.setResourceVendor(resource.getVendorName());
-				toscaMetadata.setResourceVendorRelease(resource.getVendorRelease());
-			}
+			toscaMetadata.setResourceVendor(resource.getVendorName());
+			toscaMetadata.setResourceVendorRelease(resource.getVendorRelease());
+			
 			break;
 		case SERVICE:
 			toscaMetadata.setType(component.getComponentType().getValue());

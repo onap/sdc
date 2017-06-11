@@ -62,6 +62,8 @@ public class VfModuleArtifactPayload {
 		vfModuleModelDescription = group.getDescription();
 
 		artifacts = group.getArtifactsUuid();
+		artifacts.addAll(group.getGroupInstanceArtifactsUuid());
+		
 		// Base Value is set from properties
 		setBaseValue(group);
 		

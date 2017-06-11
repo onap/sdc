@@ -18,7 +18,6 @@ export class DropdownValue {
   styleUrls: ['./ui-element-dropdown.component.less'],
 })
 export class UiElementDropDownComponent extends UiElementBase implements UiElementBaseInterface {
-
   @Input()
   values: DropdownValue[];
 
@@ -27,7 +26,7 @@ export class UiElementDropDownComponent extends UiElementBase implements UiEleme
   }
 
     onSave() {
-        this.baseEmitter.emit(this.value);
+        this.baseEmitter.emit(JSON.parse(this.value));
     }
 
 }

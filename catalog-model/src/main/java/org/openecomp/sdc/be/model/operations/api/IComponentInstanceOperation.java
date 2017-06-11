@@ -30,7 +30,6 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.RequirementAndRelationshipPair;
@@ -196,7 +195,7 @@ public interface IComponentInstanceOperation {
 	 *            * @param resourceInstanceId * @param index * @param inTransaction
 	 * @return
 	 **/
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceAttribute resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction);
+	public Either<ComponentInstanceProperty, StorageOperationStatus> addAttributeValueToResourceInstance(ComponentInstanceProperty resourceInstanceAttribute, String resourceInstanceId, Integer index, boolean inTransaction);
 
 	public Either<ComponentInstanceProperty, StorageOperationStatus> updatePropertyValueInResourceInstance(ComponentInstanceProperty resourceInstanceProperty, String resourceInstanceId, boolean inTransaction);
 
@@ -208,9 +207,9 @@ public interface IComponentInstanceOperation {
 	 * @param inTransaction
 	 * @return
 	 */
-	public Either<ComponentInstanceAttribute, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceAttribute attribute, String resourceInstanceId, boolean inTransaction);
+	public Either<ComponentInstanceProperty, StorageOperationStatus> updateAttributeValueInResourceInstance(ComponentInstanceProperty attribute, String resourceInstanceId, boolean inTransaction);
 
-	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(ComponentInstanceAttribute attributeInstanceProperty, String resourceInstanceId);
+	public Either<AttributeValueData, TitanOperationStatus> createOrUpdateAttributeOfResourceInstance(ComponentInstanceProperty attributeInstanceProperty, String resourceInstanceId);
 
 	public Either<ComponentInstanceInput, StorageOperationStatus> addInputValueToResourceInstance(ComponentInstanceInput input, String resourceInstanceId, Integer innerElement, boolean b);
 

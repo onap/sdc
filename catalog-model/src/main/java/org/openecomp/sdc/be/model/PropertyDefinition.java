@@ -104,7 +104,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 
 	private List<PropertyConstraint> constraints;
 	// private Schema schema;
-	private String status;
+	// private String status;
 
 
 
@@ -120,7 +120,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 	public PropertyDefinition(PropertyDefinition pd) {
 		super(pd);	
 		this.setConstraints(pd.getConstraints());		
-		status = pd.status;
+		//status = pd.status;
 		
 	}
 
@@ -149,13 +149,13 @@ public class PropertyDefinition extends PropertyDataDefinition
 	// return schema;
 	// }
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
 
 	
 
@@ -174,7 +174,7 @@ public class PropertyDefinition extends PropertyDataDefinition
 		int result = super.hashCode();
 		result = prime * result + ((constraints == null) ? 0 : constraints.hashCode());
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		//result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -197,11 +197,11 @@ public class PropertyDefinition extends PropertyDataDefinition
 				return false;
 		} else if (!getName().equals(other.getName()))
 			return false;
-		if (status == null) {
-			if (other.status != null)
-				return false;
-		} else if (!status.equals(other.status))
-			return false;
+//		if (status == null) {
+//			if (other.status != null)
+//				return false;
+//		} else if (!status.equals(other.status))
+//			return false;
 		return true;
 	}
 

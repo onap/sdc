@@ -13,21 +13,20 @@ import { SearchFilterPipe } from "../../pipes/searchFilter.pipe";
 import { FilterChildPropertiesPipe } from "../../pipes/filterChildProperties.pipe";
 import { DataTypeService } from './../../services/data-type.service';
 import { PropertiesService } from './../../services/properties.service';
+import { HierarchyNavService } from './../../services/hierarchy-nav.service';
 import { PropertiesUtils } from './properties.utils';
 import { PostsService } from "../../services/posts.service";
-import { PropertiesValueInnerTableComponent } from "./../../components/properties-table/properties-value-inner-table/properties-value-inner-table.component";
-import { ListPropertyComponent } from "./../../components/properties-table/list-property/list-property.component";
-import { MapPropertyComponent } from "./../../components/properties-table/map-property/map-property.component";
 import { DynamicElementModule } from 'app/ng2/components/dynamic-element/dynamic-element.module';
 import { DynamicPropertyComponent } from './../../components/properties-table/dynamic-property/dynamic-property.component';
-import { DerivedPropertyComponent } from './../../components/properties-table/derived-property/derived-property.component';
-// import {PopoverContentComponent} from "../../components/popover/popover-content.component"
-// import {PopoverComponent} from "../../components/popover/popover.component"
+import {ConfirmationDeleteInputComponent} from "app/ng2/components/inputs-table/confirmation-delete-input/confirmation-delete-input.component"
 import { PopoverModule } from "../../components/popover/popover.module"
 import { FilterPropertiesAssignmentComponent } from "./../../components/filter-properties-assignment/filter-properties-assignment.component";
 import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import {TooltipModule} from "../../components/tooltip/tooltip.module";
+import { ComponentModeService } from "app/ng2/services/component-mode.service"
+import { ModalComponent } from "app/ng2/components/modal/modal.component"
+import {LoaderComponent} from "app/ng2/components/loader/loader.component"
 
 @NgModule({
     declarations: [
@@ -40,14 +39,13 @@ import {TooltipModule} from "../../components/tooltip/tooltip.module";
         SearchFilterPipe,
         FilterChildPropertiesPipe,
         HierarchyNavigationComponent,
-        PropertiesValueInnerTableComponent,
-        ListPropertyComponent,
-        MapPropertyComponent,
-        DerivedPropertyComponent,
         DynamicPropertyComponent,
         // PopoverContentComponent,
         // PopoverComponent,
-        FilterPropertiesAssignmentComponent
+        FilterPropertiesAssignmentComponent,
+        ModalComponent,
+        ConfirmationDeleteInputComponent,
+        LoaderComponent
     ],
     imports: [
         BrowserModule,
@@ -65,7 +63,7 @@ import {TooltipModule} from "../../components/tooltip/tooltip.module";
         // PopoverContentComponent,
         // PopoverComponent
     ],
-    providers: [PropertiesService, PropertiesUtils, DataTypeService, PostsService, ContentAfterLastDotPipe, GroupByPipe, KeysPipe]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, PostsService, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 

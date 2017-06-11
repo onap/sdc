@@ -144,7 +144,48 @@ topology_template:
       description: OAM network name
       default: oam_protected_net_0
   node_templates:
-    server_pcm:
+    server_pd_1:
+      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
+      directives:
+      - substitutable
+      properties:
+        availabilityzone_name:
+          get_input: availabilityzone_name
+        oam_net_gw:
+          get_input: oam_net_gw
+        pcm_image_name:
+          get_input: pd_image_name
+        security_group_name:
+          get_input: security_group_name
+        cps_net_ip:
+          get_input:
+          - cps_net_ips
+          - 0
+        pcm_flavor_name:
+          get_input: pd_flavor_name
+        service_template_filter:
+          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        pcm_vol:
+          get_input:
+          - pcm_volumes
+          - 0
+        pcm_server_name:
+          get_input:
+          - pd_server_names
+          - 1
+        cps_net_name:
+          get_input: cps_net_name
+        cps_net_mask:
+          get_input: cps_net_mask
+        oam_net_ip:
+          get_input:
+          - oam_net_ips
+          - 0
+        oam_net_mask:
+          get_input: oam_net_mask
+        oam_net_name:
+          get_input: oam_net_name
+    server_pcm_1:
       type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
       directives:
       - substitutable
@@ -199,47 +240,6 @@ topology_template:
             is_required: false
         network:
           get_input: net_name
-    server_pd:
-      type: org.openecomp.resource.abstract.nodes.heat.nested-pcm_v0.1
-      directives:
-      - substitutable
-      properties:
-        availabilityzone_name:
-          get_input: availabilityzone_name
-        oam_net_gw:
-          get_input: oam_net_gw
-        pcm_image_name:
-          get_input: pd_image_name
-        security_group_name:
-          get_input: security_group_name
-        cps_net_ip:
-          get_input:
-          - cps_net_ips
-          - 0
-        pcm_flavor_name:
-          get_input: pd_flavor_name
-        service_template_filter:
-          substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
-        pcm_vol:
-          get_input:
-          - pcm_volumes
-          - 0
-        pcm_server_name:
-          get_input:
-          - pd_server_names
-          - 1
-        cps_net_name:
-          get_input: cps_net_name
-        cps_net_mask:
-          get_input: cps_net_mask
-        oam_net_ip:
-          get_input:
-          - oam_net_ips
-          - 0
-        oam_net_mask:
-          get_input: oam_net_mask
-        oam_net_name:
-          get_input: oam_net_name
   groups:
     hot-nimbus-pcm_v0.4_group:
       type: org.openecomp.groups.heat.HeatStack
@@ -247,6 +247,6 @@ topology_template:
         heat_file: ../Artifacts/hot-nimbus-pcm_v0.4.yaml
         description: heat template that creates PCRF Cluman stack
       members:
-      - server_pcm
+      - server_pd_1
+      - server_pcm_1
       - compute_port_0
-      - server_pd

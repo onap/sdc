@@ -20,20 +20,11 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.TitanVertex;
+import fj.data.Either;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -54,25 +45,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
-import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.InterfaceDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Operation;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RequirementDefinition;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.ResourceMetadataDefinition;
+import org.openecomp.sdc.be.model.*;
 import org.openecomp.sdc.be.model.cache.ComponentCache;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -82,7 +55,7 @@ import org.openecomp.sdc.be.model.operations.api.IAttributeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.migration.MigrationErrorInformer;
+import org.openecomp.sdc.be.model.operations.migration.MigrationMalformedDataLogger;
 import org.openecomp.sdc.be.model.operations.utils.GraphDeleteUtil;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
@@ -100,13 +73,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.TitanVertex;
-
-import fj.Function;
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component("resource-operation")
 @Deprecated
@@ -651,7 +629,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return getPropertiesOfAllDerivedFromRes;
 	}
 
-	private TitanOperationStatus associateAttributesToResource(TitanVertex metadataVertex, List<AttributeDefinition> attributes, String resourceId) {
+	private TitanOperationStatus associateAttributesToResource(TitanVertex metadataVertex, List<PropertyDefinition> attributes, String resourceId) {
 		TitanOperationStatus operationStatus = TitanOperationStatus.OK;
 
 		Either<Map<String, DataTypeDefinition>, TitanOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
@@ -662,7 +640,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		}
 
 		if (attributes != null) {
-			Map<String, AttributeDefinition> convertedAttributes = attributes.stream().collect(Collectors.toMap(e -> e.getName(), e -> e));
+			Map<String, PropertyDefinition> convertedAttributes = attributes.stream().collect(Collectors.toMap(e -> e.getName(), e -> e));
 			operationStatus = attributeOperation.addAttributesToGraph(metadataVertex, convertedAttributes, resourceId, allDataTypes.left().value());
 		}
 		return operationStatus;
@@ -805,12 +783,12 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 	}
 
 	private TitanOperationStatus setComponentInstancesAttributesFromGraph(String uniqueId, Resource component) {
-		Map<String, List<ComponentInstanceAttribute>> resourceInstancesAttributes = new HashMap<>();
+		Map<String, List<ComponentInstanceProperty>> resourceInstancesAttributes = new HashMap<>();
 		TitanOperationStatus status = TitanOperationStatus.OK;
 		List<ComponentInstance> componentInstances = component.getComponentInstances();
 		if (componentInstances != null) {
 			for (ComponentInstance resourceInstance : componentInstances) {
-				Either<List<ComponentInstanceAttribute>, TitanOperationStatus> eitherRIAttributes = attributeOperation.getAllAttributesOfResourceInstance(resourceInstance);
+				Either<List<ComponentInstanceProperty>, TitanOperationStatus> eitherRIAttributes = attributeOperation.getAllAttributesOfResourceInstance(resourceInstance);
 				if (eitherRIAttributes.isRight()) {
 					status = eitherRIAttributes.right().value();
 					break;
@@ -875,8 +853,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		} else {
 			Map<String, CapabilityDefinition> capabilities = result.left().value();
 			if (capabilities != null && !capabilities.isEmpty() && resource.getResourceType().equals(ResourceTypeEnum.VF)) {
-				log.error(String.format("VF %s has direct capabilities.!!!!!!!!!!!!!", resource.getName()));
-				MigrationErrorInformer.addMalformedVF(resource.getUniqueId());
+				MigrationMalformedDataLogger.reportMalformedVF(resource.getUniqueId(), String.format("VF %s with id %s has direct capabilities.!!!!!!!!!!!!!", resource.getName(), resource.getUniqueId()));
 			}
 			if (capabilities == null || capabilities.isEmpty() || resource.getResourceType().equals(ResourceTypeEnum.VF)) {
 				Either<Map<String, List<CapabilityDefinition>>, TitanOperationStatus> eitherCapabilities = super.getCapabilities(resource, NodeTypeEnum.Resource, true);
@@ -946,8 +923,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		} else {
 			Map<String, RequirementDefinition> requirements = result.left().value();
 			if (requirements != null && !requirements.isEmpty() && resource.getResourceType().equals(ResourceTypeEnum.VF)) {
-				log.error(String.format("VF %s has direct requirements.!!!!!!!!!!!!!", resource.getName()));
-				MigrationErrorInformer.addMalformedVF(resource.getUniqueId());
+				MigrationMalformedDataLogger.reportMalformedVF(resource.getUniqueId(), String.format("VF %s with id %s has direct requirements.!!!!!!!!!!!!!", resource.getName(), resource.getUniqueId()));
 			}
 			if (requirements == null || requirements.isEmpty() || resource.getResourceType() == ResourceTypeEnum.VF) {
 				Either<Map<String, List<RequirementDefinition>>, TitanOperationStatus> eitherCapabilities = super.getRequirements(resource, NodeTypeEnum.Resource, true);
@@ -982,7 +958,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 
 	private TitanOperationStatus setResourceAttributesFromGraph(String uniqueId, Resource resource) {
 
-		List<AttributeDefinition> attributes = new ArrayList<>();
+		List<PropertyDefinition> attributes = new ArrayList<>();
 		TitanOperationStatus status = attributeOperation.findAllResourceAttributesRecursively(uniqueId, attributes);
 		if (status == TitanOperationStatus.OK) {
 			resource.setAttributes(attributes);
@@ -1372,7 +1348,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 	}
 
 	private StorageOperationStatus removeAttributesFromResource(Resource resource) {
-		Either<Map<String, AttributeDefinition>, StorageOperationStatus> deleteAllAttributeAssociatedToNode = attributeOperation.deleteAllAttributeAssociatedToNode(NodeTypeEnum.Resource, resource.getUniqueId());
+		Either<Map<String, PropertyDefinition>, StorageOperationStatus> deleteAllAttributeAssociatedToNode = attributeOperation.deleteAllAttributeAssociatedToNode(NodeTypeEnum.Resource, resource.getUniqueId());
 		return deleteAllAttributeAssociatedToNode.isRight() ? deleteAllAttributeAssociatedToNode.right().value() : StorageOperationStatus.OK;
 	}
 
@@ -1862,25 +1838,23 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		return getResourceListByCriteria(rootToscaResource, false);
 	}
 
-	@Override
-	public Either<List<Resource>, StorageOperationStatus> getAll() {
-		Either<List<Resource>, StorageOperationStatus> resourceListByCriteria = getResourceListByCriteria(new HashMap<>(), false);
-		if (resourceListByCriteria.isRight() && resourceListByCriteria.right().value() == StorageOperationStatus.NOT_FOUND) {
-			return Either.left(Collections.emptyList());
-		}
-		return resourceListByCriteria;
-	}
-
-
 	private Either<List<ImmutablePair<ResourceMetadataData, GraphEdge>>, TitanOperationStatus> getDerivingChildren(Resource resource) {
 		return titanGenericDao.getParentNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Resource), resource.getUniqueId(), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Resource, ResourceMetadataData.class);
 	}
 
 	private Either<List<Resource>, StorageOperationStatus> convertToResources(List<ResourceMetadataData> resourcesMetaData) {
-		List<Either<Resource, StorageOperationStatus>> resources = resourcesMetaData.stream()
-				.map(resourceMetaData -> this.getResource(resourceMetaData.getMetadataDataDefinition().getUniqueId()))
-				.collect(Collectors.toList());
-		return Either.sequenceLeft(fj.data.List.iterableList(resources)).bimap(fj.data.List::toJavaList, Function.identity());
+		List<Resource> resources = new ArrayList<>();
+		for (ResourceMetadataData resourceMetadataData : resourcesMetaData) {
+			String uniqueId = resourceMetadataData.getMetadataDataDefinition().getUniqueId();
+			Either<Resource, StorageOperationStatus> resource = this.getResource(uniqueId);
+			if (resource.isRight()) {
+				StorageOperationStatus status = resource.right().value();
+				log.error("Failed to fetch resource {} . status is {}", uniqueId, status);
+				return Either.right(status);
+			}
+			resources.add(resource.left().value());
+		}
+		return Either.left(resources);
 	}
 
 	protected TitanOperationStatus findResourcesPathRecursively(String resourceId, List<ResourceMetadataData> resourcesPathList) {
@@ -2163,17 +2137,21 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		if (byCriteria.isRight()) {
 			return Either.right(DaoStatusConverter.convertTitanStatusToStorageStatus(byCriteria.right().value()));
 		}
-		List<Resource> resources = new ArrayList<Resource>();
+		List<Resource> resources = new ArrayList<>();
 		List<ResourceMetadataData> resourcesDataList = byCriteria.left().value();
 		for (ResourceMetadataData data : resourcesDataList) {
-			Either<Resource, StorageOperationStatus> resource = getResource(data.getMetadataDataDefinition().getUniqueId(), inTransaction);
-			if (resource.isLeft()) {
-				resources.add(resource.left().value());
-			} else {
-				log.debug("Failed to fetch resource for name = {} and id = {}", data.getUniqueId(), data.getMetadataDataDefinition().getName());
-			}
+			buildResource(inTransaction, resources, data);
 		}
 		return Either.left(resources);
+	}
+
+	private void buildResource(boolean inTransaction, List<Resource> resources, ResourceMetadataData data) {
+		Either<Resource, StorageOperationStatus> resource = getResource(data.getMetadataDataDefinition().getUniqueId(), inTransaction);
+		if (resource.isLeft()) {
+            resources.add(resource.left().value());
+        } else {
+            log.debug("Failed to fetch resource for name = {} and id = {}", data.getUniqueId(), data.getMetadataDataDefinition().getName());
+        }
 	}
 
 	public Either<List<Resource>, StorageOperationStatus> getResourceListByUuid(String uuid, boolean inTransaction) {
@@ -2623,7 +2601,7 @@ public class ResourceOperation extends ComponentOperation implements IResourceOp
 		}
 		resource.setInterfaces(interfacesOfResourceOnly.left().value());
 
-		List<AttributeDefinition> attributes = new ArrayList<>();
+		List<PropertyDefinition> attributes = new ArrayList<>();
 		TitanOperationStatus status = attributeOperation.findNodeNonInheretedAttribues(prevId, NodeTypeEnum.Resource, attributes);
 		if (status != TitanOperationStatus.OK) {
 			return DaoStatusConverter.convertTitanStatusToStorageStatus(status);

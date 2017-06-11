@@ -162,22 +162,22 @@ topology_template:
         - get_input: fsb1-Internal1-mac
         port_FSB1_Internal2_network:
         - Internal2-net
+        port_FSB1_Internal1_network:
+        - Internal1-net
+        vm_flavor_name:
+          get_input: fsb-flavor
+        port_FSB1_Internal2_mac_address:
+        - get_input: fsb1-Internal2-mac
         vm_image_name:
           get_input: fsb-image
         compute_FSB_admin_pass:
         - STATIC-DATA-FSB1
-        port_FSB1_Internal1_network:
-        - Internal1-net
         compute_FSB_metadata:
         - write_files:
           - path: /path1/etc/sysconfig/network-scripts/ifcfg-eth0
           - path: /path2/etc/sysconfig/network-scripts/ifcfg-eth1
         compute_FSB_availability_zone:
         - get_input: fsb1_zone
-        vm_flavor_name:
-          get_input: fsb-flavor
-        port_FSB1_Internal2_mac_address:
-        - get_input: fsb1-Internal2-mac
         compute_FSB_name:
         - get_input: fsb1-name
         service_template_filter:

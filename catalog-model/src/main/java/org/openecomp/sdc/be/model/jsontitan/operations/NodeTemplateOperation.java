@@ -30,11 +30,11 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CompositionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapAttributesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
@@ -343,7 +343,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		CompositionDataDefinition composition = container.getCompositions().get(JsonConstantKeysEnum.COMPOSITION.getValue());
 		if (composition != null) {
 			Map<String, RelationshipInstDataDefinition> relations = composition.getRelations();
-			if (relations != null) {
+			if (MapUtils.isNotEmpty(relations)) {
 				Either<Pair<GraphVertex, Map<String, MapListCapabiltyDataDefinition>>, StorageOperationStatus> capResult = fetchContainerCalculatedCapability(containerV, EdgeLabelEnum.CALCULATED_CAPABILITIES);
 				if (capResult.isRight()) {
 					return capResult.right().value();
@@ -397,6 +397,11 @@ public class NodeTemplateOperation extends BaseOperation {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
 			return status;
 		}
+		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, componentInstanceId);
+		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated capabilty properties for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
+			return status;
+		}
 		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.CALCULATED_REQUIREMENTS, VertexTypeEnum.CALCULATED_REQUIREMENTS, componentInstanceId);
 		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove calculated requirement  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
@@ -414,12 +419,12 @@ public class NodeTemplateOperation extends BaseOperation {
 		}
 		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, componentInstanceId);
 		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove fullfilled requirement  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove attributes for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
 			return status;
 		}
 		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, componentInstanceId);
 		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
-			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove fullfilled requirement  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove properties for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
 			return status;
 		}
 		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_INPUTS, VertexTypeEnum.INST_INPUTS, componentInstanceId);
@@ -434,13 +439,18 @@ public class NodeTemplateOperation extends BaseOperation {
 		}
 		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, componentInstanceId);
 		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
+			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove instance deployment artifacts  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
+			return status;
+		}
+		status = deleteToscaDataDeepElementsBlockToToscaElement(containerV, EdgeLabelEnum.INSTANCE_ARTIFACTS, VertexTypeEnum.INSTANCE_ARTIFACTS, componentInstanceId);
+		if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
 			CommonUtility.addRecordToLog(logger, LogLevelEnum.DEBUG, "Failed to remove instance artifacts  for instance {} in container {}. error {] ", componentInstanceId, containerV.getUniqueId(), status);
 			return status;
 		}
 		return StorageOperationStatus.OK;
 	}
 
-	private Either<GraphVertex, StorageOperationStatus> addComponentInstanceToscaDataToContainerComponent(ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex, User user) {
+	protected Either<GraphVertex, StorageOperationStatus> addComponentInstanceToscaDataToContainerComponent(ToscaElement originToscaElement, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex, User user) {
 
 		Either<GraphVertex, StorageOperationStatus> result;
 		StorageOperationStatus status;
@@ -561,7 +571,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			return status;
 		}
 
-		MapAttributesDataDefinition instAttributes = new MapAttributesDataDefinition(originNodeType.getAttributes());
+		MapPropertiesDataDefinition instAttributes = new MapPropertiesDataDefinition(originNodeType.getAttributes());
 
 		status = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_ATTRIBUTES, VertexTypeEnum.INST_ATTRIBUTES, instAttributes, componentInstance.getUniqueId());
 
@@ -775,7 +785,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		return null;
 	}
 
-	public StorageOperationStatus addGroupInstancesToComponentInstance(Component containerComponent, ComponentInstance componentInstance, List<GroupDefinition> groups, Map<String, List<ArtifactDefinition>> groupInstancesArtifacts) {
+	public StorageOperationStatus addGroupInstancesToComponentInstance(Component containerComponent, ComponentInstanceDataDefinition componentInstance, List<GroupDefinition> groups, Map<String, List<ArtifactDefinition>> groupInstancesArtifacts) {
 
 		StorageOperationStatus result = null;
 		Map<String, GroupInstanceDataDefinition> groupInstanceToCreate = new HashMap<>();
@@ -783,7 +793,7 @@ public class NodeTemplateOperation extends BaseOperation {
 			for (Map.Entry<String, List<ArtifactDefinition>> groupArtifacts : groupInstancesArtifacts.entrySet()) {
 				Optional<GroupDefinition> groupOptional = groups.stream().filter(g -> g.getUniqueId().equals(groupArtifacts.getKey())).findFirst();
 				if (groupOptional.isPresent()) {
-					GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition(groupOptional.get(), componentInstance);
+					GroupInstanceDataDefinition groupInstance = buildGroupInstanceDataDefinition((GroupDataDefinition)groupOptional.get(), (ComponentInstanceDataDefinition)componentInstance);
 					groupInstance.setGroupInstanceArtifacts(groupArtifacts.getValue().stream().map(a -> a.getUniqueId()).collect(Collectors.toList()));
 					groupInstance.setGroupInstanceArtifactsUuid(groupArtifacts.getValue().stream().map(a -> a.getArtifactUUID()).collect(Collectors.toList()));
 					groupInstanceToCreate.put(groupInstance.getName(), groupInstance);
@@ -799,31 +809,7 @@ public class NodeTemplateOperation extends BaseOperation {
 		return result;
 	}
 
-	private GroupInstanceDataDefinition buildGroupInstanceDataDefinition(GroupDefinition group, ComponentInstance componentInstance) {
-
-		String componentInstanceName = componentInstance.getName();
-		Long creationDate = System.currentTimeMillis();
-		GroupInstanceDataDefinition groupInstance = new GroupInstanceDataDefinition();
-		String groupUid = group.getUniqueId();
-
-		groupInstance.setGroupUid(groupUid);
-		groupInstance.setType(group.getType());
-		groupInstance.setCustomizationUUID(generateCustomizationUUID());
-		groupInstance.setCreationTime(creationDate);
-		groupInstance.setModificationTime(creationDate);
-		groupInstance.setName(buildGroupInstanceName(componentInstanceName, group.getName()));
-		groupInstance.setGroupName(groupInstance.getName());
-		groupInstance.setNormalizedName(ValidationUtils.normalizeComponentInstanceName(groupInstance.getName()));
-		groupInstance.setUniqueId(UniqueIdBuilder.buildResourceInstanceUniuqeId(componentInstance.getUniqueId(), groupUid, groupInstance.getNormalizedName()));
-		groupInstance.setArtifacts(group.getArtifacts());
-		groupInstance.setArtifactsUuid(group.getArtifactsUuid());
-		groupInstance.setProperties(group.getProperties());
-		groupInstance.setInvariantUUID(group.getInvariantUUID());
-		groupInstance.setGroupUUID(group.getGroupUUID());
-		groupInstance.setVersion(group.getVersion());
-
-		return groupInstance;
-	}
+	
 
 	private ComponentInstanceDataDefinition buildComponentInstanceDataDefinition(ComponentInstance resourceInstance, String containerComponentId, String instanceNewName, boolean generateUid, ToscaElement originToscaElement) {
 		String ciOriginComponentUid = resourceInstance.getComponentUid();
@@ -892,15 +878,9 @@ public class NodeTemplateOperation extends BaseOperation {
 		return isUniqueName;
 	}
 
-	private String buildGroupInstanceName(String instanceName, String groupName) {
-		int groupNameIndex = groupName.indexOf("..");
-		//turn group name from VFName..heatfile..module-n to VFiName..heatfile..module-n
-		return ValidationUtils.normaliseComponentName(instanceName) + groupName.substring(groupNameIndex);
-	}
+	
 
-	private String generateCustomizationUUID() {
-		return UUID.randomUUID().toString();
-	}
+	
 
 	private String buildComponentInstanceName(String instanceSuffixNumber, String instanceName) {
 		return instanceName + " " + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
@@ -1525,7 +1505,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
 		RelationshipInstDataDefinition relationshipTypeData = buildRelationshipInstData(fromInstId, toInstId, relationPair);
 
-		relationshipTypeData.setType(type);
+		relationshipTypeData.setType(requirementForRelation.getRelationship());
 
 		return Either.left(relationshipTypeData);
 	}
@@ -1716,7 +1696,8 @@ public class NodeTemplateOperation extends BaseOperation {
 		pathKeys.add(componentInstanceId);
 		return updateToscaDataDeepElementOfToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_PROPERTIES, VertexTypeEnum.INST_PROPERTIES, property, pathKeys, JsonPresentationFields.NAME);
 	}
-
+	
+	
 	public StorageOperationStatus addComponentInstanceProperty(Component containerComponent, String componentInstanceId, ComponentInstanceProperty property) {
 		List<String> pathKeys = new ArrayList<>();
 		pathKeys.add(componentInstanceId);

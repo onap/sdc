@@ -7,10 +7,8 @@ import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
-import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -48,7 +46,7 @@ public class UiComponentDataTransfer {
 
 	private Map<String, List<ComponentInstanceProperty>> componentInstancesProperties;
 
-	private Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes;
+	private Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes;
 
 	private Map<String, List<CapabilityDefinition>> capabilities;
 
@@ -60,7 +58,7 @@ public class UiComponentDataTransfer {
 	
 	protected List<AdditionalInformationDefinition> additionalInformation;
 
-
+	public UiComponentDataTransfer(){}
 
 	public Map<String, ArtifactDefinition> getArtifacts() {
 		return artifacts;
@@ -192,13 +190,13 @@ public class UiComponentDataTransfer {
 	}
 
 
-	public Map<String, List<ComponentInstanceAttribute>> getComponentInstancesAttributes() {
+	public Map<String, List<ComponentInstanceProperty>> getComponentInstancesAttributes() {
 		return componentInstancesAttributes;
 	}
 
 
 	public void setComponentInstancesAttributes(
-			Map<String, List<ComponentInstanceAttribute>> componentInstancesAttributes) {
+			Map<String, List<ComponentInstanceProperty>> componentInstancesAttributes) {
 		this.componentInstancesAttributes = componentInstancesAttributes;
 	}
 

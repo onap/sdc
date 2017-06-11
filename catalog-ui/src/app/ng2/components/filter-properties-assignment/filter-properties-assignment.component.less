@@ -6,6 +6,13 @@ form{
         &:not(:last-child){
             border-bottom: solid 1px @main_color_o;
         }
+        input{
+            &::-webkit-input-placeholder { font-style: italic; } /* Safari, Chrome and Opera */
+            &:-moz-placeholder { font-style: italic; } /* Firefox 18- */
+            &::-moz-placeholder { font-style: italic; } /* Firefox 19+ */
+            &:-ms-input-placeholder { font-style: italic; } /* IE 10+ */
+            &:-ms-input-placeholder { font-style: italic; } /* Edge */
+        }
     }
     /deep/ [ng-reflect-checked="true"]{
         /deep/ .checkbox-label-content{
@@ -16,7 +23,7 @@ form{
 
 .open-filter-button{
     cursor: pointer;
-    width: 25px;
+    width: 32px;
     height: 34px;
     display: inline-block;
     &.open{
@@ -29,6 +36,7 @@ form{
     }
     .filter-icon{
         top: 8px;
+        right: 2px;
         position: relative;
     }
 }

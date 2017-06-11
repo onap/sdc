@@ -34,10 +34,28 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: json
+      port_pd01_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
+      port_pd02_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd02_port_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_pd02_port_network_role_tag:
         type: list
         required: true
@@ -45,6 +63,12 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_mac_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd02_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
@@ -66,7 +90,49 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pd02_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pd01_port_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd02_port_exCP_naming:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_network_role:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       port_pd02_port_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: json
+      port_pd01_port_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pd01_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED

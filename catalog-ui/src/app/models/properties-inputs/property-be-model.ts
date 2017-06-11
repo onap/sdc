@@ -1,4 +1,11 @@
 import { SchemaPropertyGroupModel, SchemaProperty } from "../aschema-property";
+import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
+export enum DerivedPropertyType {
+    SIMPLE,
+    LIST,
+    MAP,
+    COMPLEX
+}
 
 export class PropertyBEModel {
 
@@ -16,6 +23,7 @@ export class PropertyBEModel {
     definition: boolean;
     inputPath: string;
     propertiesName: string;
+    ownerId: string;
     input: PropertyBEModel;
 
     constructor(property?: PropertyBEModel, childProperty?:PropertyBEModel) {
@@ -32,6 +40,7 @@ export class PropertyBEModel {
             this.uniqueId = property.uniqueId;
             this.value = property.value ? property.value : property.defaultValue;
             this.definition = property.definition;
+            this.ownerId = property.ownerId;
             if (property.inputPath) {
                 this.inputPath = property.inputPath;
             }
@@ -39,6 +48,8 @@ export class PropertyBEModel {
         if (childProperty) {
             this.input = childProperty;
             this.propertiesName = childProperty.propertiesName;
+        } else {
+            this.propertiesName = this.name;
         }
 
         if (!this.schema || !this.schema.property) {
@@ -48,7 +59,7 @@ export class PropertyBEModel {
         }
     }
 
- 
+
 
     public toJSON = (): any => {
         let temp = angular.copy(this);
@@ -56,6 +67,18 @@ export class PropertyBEModel {
         temp.defaultValue = temp.defaultValue === "{}" || temp.defaultValue === "[]" ? undefined : temp.defaultValue;
         return temp;
     };
+
+    public getDerivedPropertyType = () => {
+        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1) {
+            return DerivedPropertyType.SIMPLE;
+        } else if (this.type == PROPERTY_TYPES.LIST) {
+            return DerivedPropertyType.LIST;
+        } else if (this.type == PROPERTY_TYPES.MAP) {
+            return DerivedPropertyType.MAP;
+        } else {
+            return DerivedPropertyType.COMPLEX;
+        }
+    }
 
 }
 

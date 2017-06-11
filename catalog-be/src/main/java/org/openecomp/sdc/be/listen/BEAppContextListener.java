@@ -29,11 +29,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.openecomp.portalsdk.core.onboarding.ueb.UebException;
-import org.openecomp.portalsdk.core.onboarding.ueb.UebManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.impl.DownloadArtifactLogic;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
@@ -49,9 +45,7 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 
 	private static final String MANIFEST_FILE_NAME = "/META-INF/MANIFEST.MF";
 	private static Logger log = LoggerFactory.getLogger(BEAppContextListener.class.getName());
-
-	private static UebManager uebManager = null;
-
+	
 	public void contextInitialized(ServletContextEvent context) {
 
 		super.contextInitialized(context);
@@ -73,34 +67,10 @@ public class BEAppContextListener extends AppContextListener implements ServletC
 		BeMonitoringService bms = new BeMonitoringService(context.getServletContext());
 		bms.start(configurationManager.getConfiguration().getSystemMonitoring().getProbeIntervalInSeconds(15));
 
-		initUebManager();
-
 		log.debug("After executing {}", this.getClass());
 
 	}
-
-	private void initUebManager() {
-		try {
-			if (uebManager == null) {
-				uebManager = UebManager.getInstance();
-				uebManager.initListener(null);
-			}
-		} catch (UebException ex) {
-			log.debug("Failed to initialize UebManager", ex);
-			BeEcompErrorManager.getInstance().logInternalConnectionError("InitUebManager", "Failed to initialize listener of UebManager", ErrorSeverity.ERROR);
-		}
-		log.debug("After init listener of UebManager");
-	}
-
-	public void contextDestroyed(ServletContextEvent context) {
-		if (uebManager != null) {
-			uebManager.shutdown();
-			uebManager = null;
-		}
-		super.contextDestroyed(context);
-
-	}
-
+	
 	private IResourceOperation getResourceOperationManager(Class<? extends IResourceOperation> clazz, WebApplicationContext webContext) {
 
 		return webContext.getBean(clazz);
