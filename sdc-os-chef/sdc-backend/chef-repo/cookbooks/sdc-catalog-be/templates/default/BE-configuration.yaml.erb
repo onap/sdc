@@ -45,6 +45,20 @@ protocols:
    - http
    - https
 
+# Default imports
+defaultImports:
+   - nodes:
+        file: nodes.yml
+   - datatypes:
+        file: data.yml
+   - capabilities:
+        file: capabilities.yml
+   - relationships:
+        file: relationships.yml
+   - groups:
+        file: groups.yml
+   - policies:
+        file: policies.yml
 # Users
 users:
     tom: passwd
@@ -108,6 +122,9 @@ artifactTypes:
    - AAI_VF_MODULE_MODEL
    - AAI_VF_INSTANCE_MODEL
    - OTHER
+   - SNMP_POLL
+   - SNMP_TRAP
+   - GUIDE
 
 
 licenseTypes:
@@ -121,6 +138,8 @@ resourceTypes: &allResourceTypes
   - CP
   - VL
   - VF
+  - VFCMT
+  - Abstract
 
 # validForResourceTypes usage
 #     validForResourceTypes:
@@ -134,6 +153,11 @@ deploymentResourceInstanceArtifacts:
       displayName: "HEAT ENV"
       type: HEAT_ENV
       description: "Auto-generated HEAT Environment deployment artifact"
+      fileExtension: "env"
+  VfHeatEnv:
+      displayName: "VF HEAT ENV"
+      type: HEAT_ENV
+      description: "VF Auto-generated HEAT Environment deployment artifact"
       fileExtension: "env"
 
 #tosca artifacts placeholders
@@ -165,7 +189,7 @@ informationalResourceArtifacts:
   testScripts:
       displayName: Test Scripts
       type: OTHER
-  cloudQuestionnaire:
+  CloudQuestionnaire:
       displayName: Cloud Questionnaire (completed)
       type: OTHER
   HEATTemplateFromVendor:
@@ -321,6 +345,22 @@ resourceDeploymentArtifacts:
         acceptedTypes:
             - xml
         validForResourceTypes: *allResourceTypes
+    LIFECYCLE_OPERATIONS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes:
+            - VF
+            - VFC
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+        validForResourceTypes: *allResourceTypes
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
+        validForResourceTypes: *allResourceTypes
     APPC_CONFIG:
         acceptedTypes:
         validForResourceTypes:
@@ -332,24 +372,29 @@ resourceDeploymentArtifacts:
             - yaml
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_JSON:
         acceptedTypes:
             - json
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_POLICY:
         acceptedTypes:
             - emf
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_DOC:
         acceptedTypes:
         validForResourceTypes:
             - VF
+            - VFCMT
     DCAE_EVENT:
         acceptedTypes:
         validForResourceTypes:
             - VF
+            - VFCMT
 #AAI Artifacts
     AAI_VF_MODEL:
         acceptedTypes:
@@ -364,6 +409,12 @@ resourceDeploymentArtifacts:
     OTHER:
         acceptedTypes:
         validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
 
 resourceInstanceDeploymentArtifacts:
     HEAT_ENV:
@@ -372,6 +423,13 @@ resourceInstanceDeploymentArtifacts:
     VF_MODULES_METADATA:
         acceptedTypes:
             - json
+    VES_EVENTS:
+        acceptedTypes:
+            - yaml
+            - yml
+    PERFORMANCE_COUNTER:
+        acceptedTypes:
+            - csv
 #DCAE_VF Instance Artifacts
     DCAE_INVENTORY_TOSCA:
         acceptedTypes:
@@ -389,6 +447,56 @@ resourceInstanceDeploymentArtifacts:
       acceptedTypes:
     DCAE_INVENTORY_EVENT:
       acceptedTypes:
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+
+resourceInformationalArtifacts:
+    CHEF:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    PUPPET:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SHELL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    YANG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    HEAT:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    BPEL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    DG_XML:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    MURANO_PKG:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    OTHER:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_POLL:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    SNMP_TRAP:
+        acceptedTypes:
+        validForResourceTypes: *allResourceTypes
+    GUIDE:
+        acceptedTypes:
+        validForResourceTypes:
+            - VF
+            - VFC
+
 resourceInformationalDeployedArtifacts:
 
 
@@ -456,6 +564,25 @@ applicationL2Cache:
         numberOfCacheWorkers: 4
 
 toscaValidators:
-    stringMaxLength: 65536
+    stringMaxLength: 2500
 
 disableAudit: false
+
+vfModuleProperties:
+    min_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    max_vf_module_instances:
+        forBaseModule: 1
+        forNonBaseModule:
+    initial_count:
+        forBaseModule: 1
+        forNonBaseModule: 0
+    vf_module_type:
+        forBaseModule: Base
+        forNonBaseModule: Expansion
+
+genericAssetNodeTypes:
+  VFC: org.openecomp.resource.abstract.nodes.VFC
+  VF : org.openecomp.resource.abstract.nodes.VF
+  Service: org.openecomp.resource.abstract.nodes.service
