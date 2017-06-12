@@ -28,7 +28,7 @@ bash "import-Comformance" do
     cd /tmp/sdctool/scripts
     /bin/chmod +x sdcSchemaFileImport.sh
     echo "execute /tmp/sdctool/scripts/sdcSchemaFileImport.sh $conf_dir/$schema_file_name #{cl_release} $cl_version $conf_dir "
-    ./sdcSchemaFileImport.sh ${conf_dir}/${schema_file_name} $cl_release ${cl_version} ${conf_dir} 
+    ./sdcSchemaFileImport.sh ${conf_dir}/${schema_file_name} #{cl_release} ${cl_version} ${conf_dir} 
   EOH
 end
 
