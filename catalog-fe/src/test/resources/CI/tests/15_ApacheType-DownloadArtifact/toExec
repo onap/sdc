@@ -1,1 +1,0 @@
-curl -o "/tmp/start_apache.sh" "http://172.20.43.124:8080/sdc2/rest/v1/catalog/resources/alien.nodes.Apache/2.0.0-SNAPSHOT/artifacts/start_apache.sh" -sL -w ":%{http_code}:%{size_request} BYTES:%{time_total} \n"

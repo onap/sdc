@@ -61,7 +61,7 @@ public class ListDataDefinition<T extends ToscaDataDefinition> extends ToscaData
 		Map<String, T> mapByName = listToMapByName(listToscaDataDefinition);
 		List<T> otherList = ((ListDataDefinition)other).getListToscaDataDefinition();
 		for(T item : otherList){
-			mapByName.merge(item.getName(), item, (thisItem, otherItem) -> thisItem.mergeFunction(otherItem, allowDefaultValueOverride));
+			mapByName.merge((String)item.getToscaPresentationValue(JsonPresentationFields.NAME), item, (thisItem, otherItem) -> thisItem.mergeFunction(otherItem, allowDefaultValueOverride));
 		}
 		((ListDataDefinition)other).listToscaDataDefinition = mapByName.values().stream().collect(Collectors.toList());
 		return other;	

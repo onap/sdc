@@ -217,7 +217,7 @@ topology_template:
         port_pd01_port_security_groups:
         - - jsa_security_group
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -229,8 +229,7 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -268,7 +267,7 @@ topology_template:
         port_pd01_port_security_groups:
         - - jsa_security_group
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -307,7 +306,7 @@ topology_template:
         port_pd01_port_security_groups:
         - - jsa_security_group
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         compute_oam_server_availability_zone:
         - get_input: availabilityzone_name
@@ -327,8 +326,7 @@ topology_template:
         - get_input:
           - oam_server_names
           - 0
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_oam_server_scheduler_hints:
         - group: BE_Affinity_group
         service_template_filter:

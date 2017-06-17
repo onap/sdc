@@ -27,6 +27,7 @@ import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.DataTypesUpdate;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707ArtifactUuidFix;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707RelationsFix;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707VnfFix;
 import org.openecomp.sdc.be.auditing.api.IAuditingManager;
@@ -588,6 +589,11 @@ public class AppConfig {
     public Migration1707VnfFix migration1707VnfFix() {
         return new Migration1707VnfFix();
     }
+    @Bean(name = "migration1707UuidFix")
+    public Migration1707ArtifactUuidFix migration1707ArtifactUuidFix() {
+        return new Migration1707ArtifactUuidFix();
+    }
+    
     
 //    @Bean(name = "migration1707relationsFix")
 //    public Migration1707RelationsFix migration1707RelationsFix() {

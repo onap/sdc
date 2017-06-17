@@ -1,4 +1,6 @@
  @import '../../../../assets/styles/tlv-sprite';
+@import '../../../../assets/styles/sprite';
+
  
 .checkbox-container {
     display:inline-block;
@@ -12,7 +14,7 @@
     }
     
     .checkbox-label {
-        font-weight: normal;
+        font-weight: inherit;
         font-size: inherit;
     }
 
@@ -37,7 +39,8 @@
         height:0;
         display:none;
         &:checked ~ .checkbox-icon::before{
-            background-position: -10px -120px;
+            .sprite-new;
+            .filled-checkbox-icon
         }
         &[disabled] ~ .checkbox-icon::before {
             /* TODO: add disabled styles here */
@@ -52,7 +55,7 @@
         background-color: #009fdb;
         position: absolute;
         left: 2px;
-        top: 5px;
+        top: 4px;
         width:10px;
         height:10px;
         border-radius: 50%;

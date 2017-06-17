@@ -12,6 +12,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     isDeclared: boolean;
     isSelected: boolean;
     isDisabled: boolean;
+    hidden: boolean;
     isChildOfListOrMap: boolean;
     canBeDeclared: boolean;
     mapKey: string;

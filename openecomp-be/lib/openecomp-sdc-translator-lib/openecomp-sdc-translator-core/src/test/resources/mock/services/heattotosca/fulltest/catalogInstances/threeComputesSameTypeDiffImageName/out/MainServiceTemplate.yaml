@@ -86,7 +86,7 @@ topology_template:
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: diff_image_name
@@ -127,7 +127,7 @@ topology_template:
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -168,7 +168,7 @@ topology_template:
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name

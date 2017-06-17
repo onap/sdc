@@ -1,5 +1,6 @@
 package org.openecomp.sdc.migration;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.EnrichedServiceModelDaoFactory;
@@ -19,14 +20,19 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.ComponentData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.composition.CompositionData;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
 
@@ -43,6 +49,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -68,12 +75,14 @@ public class ToscaNamespaceMigration {
       VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
   private static PackageInfoDao packageInfoDao = PackageInfoDaoFactory.getInstance()
       .createInterface();
+  private static final ComponentDao componentDao =
+      ComponentDaoFactory.getInstance().createInterface();
   private static Logger logger = LoggerFactory.getLogger(ToscaNamespaceMigration.class);
   private static int status = 0;
 
 
   public static void main(String[] args) {
-    CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
+    //CassandraConnectionInitializer.setCassandraConnectionPropertiesToSystem();
 
     Collection<VspDetails> vspList = vspInfoDao.list(new VspDetails());
 
@@ -90,6 +99,9 @@ public class ToscaNamespaceMigration {
   }
 
   private static void performMigration(VspDetails vspDetails) {
+
+    changeComponentNamePrefix(vspDetails);
+
     try {
       changeNamespaceInServiceTemplates(vspDetails);
     } catch (Exception e) {
@@ -101,6 +113,37 @@ public class ToscaNamespaceMigration {
     if (vspDetails.getVersion().isFinal()) {
       changeNamespaceInPackage(vspDetails);
     }
+
+  }
+
+  private static void changeComponentNamePrefix(VspDetails vspDetails){
+    Collection<ComponentEntity> componentsList =
+        componentDao.list(new ComponentEntity(vspDetails.getId(), vspDetails.getVersion(), null));
+
+    if(CollectionUtils.isEmpty(componentsList)){
+      printMessage("No component namespace migration was performed on vsp with id" + vspDetails
+          .getId() + " and version " + vspDetails.getVersion().toString() + " since it has no " +
+          "components");
+      return;
+    }
+
+    for(ComponentEntity component : componentsList){
+      String compositionData = component.getCompositionData();
+
+      if(Objects.isNull(compositionData)){
+        continue;
+      }
+
+      ComponentData componentData =
+          JsonUtil.json2Object(compositionData, ComponentData.class);
+      componentData.setName(componentData.getName().replace("com.att.d2", "org.openecomp"));
+      component.setCompositionData(JsonUtil.object2Json(componentData));
+
+      componentDao.update(component);
+    }
+
+    printMessage("Component namespace migration was performed on vsp with id" + vspDetails
+        .getId() + " and version " + vspDetails.getVersion().toString());
   }
 
   private static void changeNamespaceInServiceTemplates(VspDetails vspDetails) throws IOException {

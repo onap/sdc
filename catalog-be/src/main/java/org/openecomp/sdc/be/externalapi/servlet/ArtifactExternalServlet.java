@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -71,6 +72,7 @@ import fj.data.Either;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
+@Api(value = "Artifact External Servlet", description = "Servlet serves external users operations on artifacts.")
 @Singleton
 public class ArtifactExternalServlet extends AbstractValidationsServlet {
 

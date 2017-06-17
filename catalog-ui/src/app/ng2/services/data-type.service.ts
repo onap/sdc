@@ -20,35 +20,7 @@ export class DataTypeService {
     public getDataTypeByTypeName(typeName: string): DataTypeModel {
         return this.dataTypes[typeName];
     }
-/*
-    //if the dt derived from simple- return the first parent type, else- return null
-    public getTypeForDataTypeDerivedFromSimple = (dataTypeName:string):string => {
-        /////////temporary hack for tosca primitives///////////////////////
-        if (!this.dataTypes[dataTypeName]) {
-            return PROPERTY_TYPES.STRING;
-        }
-        ///////////////////////////////////////////////////////////////////
-        if (this.dataTypes[dataTypeName].derivedFromName == PROPERTY_DATA.ROOT_DATA_TYPE || this.dataTypes[dataTypeName].properties) {
-            return null;
-        }
-        if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.dataTypes[dataTypeName].derivedFromName) > -1) {
-            return this.dataTypes[dataTypeName].derivedFromName
-        }
-        return this.getTypeForDataTypeDerivedFromSimple(this.dataTypes[dataTypeName].derivedFromName);
-    };
 
-    /**
-     * The function returns all properties for the DataType passed in, and recurses through parent dataTypes (derivedFrom) to retrieve their properties as well
-     * @param dataTypeObj
-     *
-    public getDataTypePropertiesRecursively(dataTypeObj: DataTypeModel): Array<PropertyBEModel> {
-        let propertiesArray: Array<PropertyBEModel> = dataTypeObj.properties || [];
-        if (PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFromName) {
-            propertiesArray = propertiesArray.concat(this.getDataTypePropertiesRecursively(dataTypeObj.derivedFrom));
-        }
-        return propertiesArray;
-    }
-*/
 
     public getDerivedDataTypeProperties(dataTypeObj: DataTypeModel, propertiesArray: Array<DerivedFEProperty>, parentName: string) {
         //push all child properties to array
@@ -65,6 +37,25 @@ export class DataTypeService {
         if (PROPERTY_DATA.ROOT_DATA_TYPE !== dataTypeObj.derivedFrom.name) {
             this.getDerivedDataTypeProperties(dataTypeObj.derivedFrom, propertiesArray, parentName);
         }
+    }
+
+    /**
+     * Checks for custom behavior for a given data type by checking if a function exists within data-type.service with that name
+     * Additional custom behavior can be added by adding a function with the given dataType name
+     */    
+    public checkForCustomBehavior = (property:PropertyFEModel) => {
+        let shortTypeName:string = property.type.split('.').pop();
+        if (this[shortTypeName]) {
+            this[shortTypeName](property); //execute function for given type, pass property as param
+        }
+    }
+
+    public Naming = (property: PropertyFEModel) => {
+        let generatedNamingVal: boolean = _.get(property.valueObj, 'ecomp_generated_naming', true);
+        property.flattenedChildren.forEach((prop) => {
+            if (prop.name == 'naming_policy') prop.hidden = !generatedNamingVal;
+            if (prop.name == 'instance_name') prop.hidden = generatedNamingVal;
+        });
     }
 
 }

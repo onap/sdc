@@ -137,6 +137,11 @@ public class ToscaExportHandler {
 	}
 
 	public Either<ToscaRepresentation, ToscaError> exportComponentInterface(Component component) {
+		if(null == DEFAULT_IMPORTS) {
+			log.debug("convertToToscaTemplate - failed to get Default Imports section from configuration");
+			return Either.right(ToscaError.GENERAL_ERROR);
+		}
+		
 		ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
 		toscaTemplate.setImports(new ArrayList<>(DEFAULT_IMPORTS));
 		Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
@@ -189,6 +194,11 @@ public class ToscaExportHandler {
 	}
 
 	private Either<ToscaTemplate, ToscaError> convertToToscaTemplate(Component component) {
+		if(null == DEFAULT_IMPORTS) {
+			log.debug("convertToToscaTemplate - failed to get Default Imports section from configuration");
+			return Either.right(ToscaError.GENERAL_ERROR);
+		}
+		
 		log.trace("start tosca export for {}", component.getUniqueId());
 		ToscaTemplate toscaTemplate = new ToscaTemplate(TOSCA_VERSION);
 
@@ -357,6 +367,12 @@ public class ToscaExportHandler {
 
 	private Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports(Component component,
 			ToscaTemplate toscaTemplate) {
+		
+		if(null == DEFAULT_IMPORTS) {
+			log.debug("convertToToscaTemplate - failed to get Default Imports section from configuration");
+			return Either.right(ToscaError.GENERAL_ERROR);
+		}
+		
 		Map<String, Component> componentCache = new HashMap<>();
 
 		if (!ToscaUtils.isAtomicType(component)) {
@@ -603,9 +619,8 @@ public class ToscaExportHandler {
 				}
 				for (GroupInstance groupInst : groupInstances) {
 					ToscaGroupTemplate toscaGroup = convertGroupInstance(groupInst);
-					String keyName = groupInst.getGroupName();
 
-					groupsMap.put(keyName, toscaGroup);
+					groupsMap.put(groupInst.getName(), toscaGroup);
 				}
 			}
 
@@ -701,7 +716,7 @@ public class ToscaExportHandler {
 		ToscaGroupTemplate toscaGroup = new ToscaGroupTemplate();
 		Map<String, String> members = group.getMembers();
 		if (members != null)
-			toscaGroup.setMembers(new ArrayList(members.keySet()));
+			toscaGroup.setMembers(new ArrayList<String>(members.keySet()));
 
 		Supplier<String> supplGroupType = () -> group.getType();
 		Supplier<String> supplDescription = () -> group.getDescription();

@@ -12,10 +12,8 @@ node_types:
 topology_template:
   inputs:
     port_FSB1_Internal_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB_OAM_network_role_tag:
       type: list
       required: true
@@ -142,10 +140,8 @@ topology_template:
       entry_schema:
         type: json
     port_FSB2_Internal_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB2_Internal_exCP_naming:
       type: list
       required: true
@@ -160,7 +156,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_FSB2_Internal_network:
       type: list
       required: true
@@ -227,9 +223,7 @@ topology_template:
           - port_FSB1_Internal_network
           - index_value
         mac_address:
-          get_input:
-          - port_FSB1_Internal_mac_address
-          - index_value
+          get_input: port_FSB1_Internal_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -275,9 +269,7 @@ topology_template:
           - port_FSB2_Internal_network
           - index_value
         mac_address:
-          get_input:
-          - port_FSB2_Internal_mac_address
-          - index_value
+          get_input: port_FSB2_Internal_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -319,9 +311,7 @@ topology_template:
           - port_FSB_OAM_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_FSB_OAM_fixed_ips
-          - index_value
+          get_input: port_FSB_OAM_fixed_ips
         network:
           get_input:
           - port_FSB_OAM_network

@@ -238,8 +238,7 @@ topology_template:
       - substitutable
       properties:
         port_FSB1_Internal_mac_address:
-        - get_input: fsb1-Internal1-mac
-        - get_input: fsb1-Internal2-mac
+          get_input: fsb1-Internal1-mac
         compute_FSB_user_data:
         - STATIC-DATA-FSB1
         - STATIC-DATA-FSB2
@@ -254,8 +253,7 @@ topology_template:
         - Internal1-net-fsb1-Internal1
         - Internal1-net-fsb1-Internal2
         port_FSB2_Internal_mac_address:
-        - get_input: fsb2-Internal1-mac
-        - get_input: fsb2-Internal2-mac
+          get_input: fsb2-Internal1-mac
         port_FSB2_Internal_network:
         - Internal2-net-fsb2-Internal1
         - Internal2-net-fsb2-Internal2

@@ -15,7 +15,7 @@
 		<!-- ==================== -->
 		<build.type>-SNAPSHOT</build.type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sprint.number>42</sprint.number>
+		<sprint.number>73</sprint.number>
 
 		<!-- 3rd parties versions -->
 		<lang3.version>3.3.2</lang3.version>
@@ -347,8 +347,8 @@
 				<module>catalog-ui</module>
 				<module>catalog-fe</module>
 				<module>asdc-tests</module>
-				<!--<module>test-apis-ci</module>-->
-				<!--<module>ui-ci</module>-->
+				<module>test-apis-ci</module>
+				<module>ui-ci</module>
 				<module>sdc-os-chef</module>
 			</modules>
 

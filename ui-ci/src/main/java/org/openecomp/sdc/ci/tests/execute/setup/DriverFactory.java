@@ -95,6 +95,9 @@ public class DriverFactory {
 			if (webDriverThread.getDriver() != null)
 				webDriverThread.quitDriver();
 		}
+		
+		MobProxy.removeAllProxyServers();
+		
 		deleteDownloadDirs();
 	}
 
@@ -111,6 +114,7 @@ public class DriverFactory {
 		driverThread.get().quitDriver();
 		driverThread.remove();
 		WindowTestManager.removeWindowTest();
+		MobProxy.removePoxyServer();
 	}
 
 	public static Config getConfig() {

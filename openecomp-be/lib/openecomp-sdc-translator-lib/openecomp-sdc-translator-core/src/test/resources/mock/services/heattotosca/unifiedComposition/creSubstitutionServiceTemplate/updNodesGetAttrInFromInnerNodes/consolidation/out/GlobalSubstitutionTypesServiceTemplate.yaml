@@ -9,11 +9,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_FSB1_Internal_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB1_Internal_ip_requirements:
         type: list
         required: true
@@ -75,11 +73,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_FSB2_Internal_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal_network_role:
         type: list
         required: true

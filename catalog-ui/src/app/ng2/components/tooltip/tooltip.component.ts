@@ -14,6 +14,7 @@ export class TooltipComponent {
 
     private tooltip: ComponentRef<TooltipContentComponent>;
     private visible: boolean;
+    private delayInProgress: boolean = false;
 
     // -------------------------------------------------------------------------
     // Constructor
@@ -31,6 +32,7 @@ export class TooltipComponent {
     @Input() tooltipDisabled: boolean;
     @Input() tooltipAnimation: boolean = true;
     @Input() tooltipPlacement: "top"|"bottom"|"left"|"right" = "bottom";
+    @Input() tooltipDelay: number = 1500;
 
     // -------------------------------------------------------------------------
     // Public Methods
@@ -39,6 +41,11 @@ export class TooltipComponent {
     @HostListener("mouseenter")
     show(): void {
         if(this.tooltipDisabled || this.visible || this.content === "") {
+            return;
+        }
+        if (this.tooltipDelay && !this.delayInProgress) {
+            this.delayInProgress = true;
+            setTimeout(() => { this.delayInProgress && this.show() }, this.tooltipDelay);
             return;
         }
 
@@ -65,6 +72,7 @@ export class TooltipComponent {
 
     @HostListener("mouseleave")
     hide(): void {
+        this.delayInProgress = false;
         if (!this.visible) {
             return;
         }

@@ -1,22 +1,25 @@
-import {Component, Module, NodesFactory, ComponentInstance} from "app/models";
-import {ComponentInstanceFactory} from "app/utils";
-import {DeploymentGraphGeneralUtils} from "./deployment-utils/deployment-graph-general-utils";
-import {CommonGraphUtils} from "../common/common-graph-utils";
-import {ComponentInstanceNodesStyle} from "../common/style/component-instances-nodes-style";
-import {ModulesNodesStyle} from "../common/style/module-node-style";
-import {GRAPH_EVENTS} from "app/utils";
-import {EventListenerService} from "app/services";
-import 'cytoscape-expand-collapse';
+import { Component, Module, NodesFactory, ComponentInstance } from "app/models";
+import { ComponentInstanceFactory } from "app/utils";
+import { DeploymentGraphGeneralUtils } from "./deployment-utils/deployment-graph-general-utils";
+import { CommonGraphUtils } from "../common/common-graph-utils";
+import { ComponentInstanceNodesStyle } from "../common/style/component-instances-nodes-style";
+import { ModulesNodesStyle } from "../common/style/module-node-style";
+import { GRAPH_EVENTS } from "app/utils";
+import { EventListenerService } from "app/services";
+import '@bardit/cytoscape-expand-collapse';
 
 interface IDeploymentGraphScope extends ng.IScope {
-    component:Component;
+    component: Component;
 }
 
 export class DeploymentGraph implements ng.IDirective {
-    private _cy:Cy.Instance;
+    private _cy: Cy.Instance;
 
-    constructor(private NodesFactory:NodesFactory, private commonGraphUtils:CommonGraphUtils,
-                private deploymentGraphGeneralUtils:DeploymentGraphGeneralUtils, private ComponentInstanceFactory:ComponentInstanceFactory, private eventListenerService:EventListenerService) {
+    constructor(private NodesFactory: NodesFactory,
+        private commonGraphUtils: CommonGraphUtils,
+        private deploymentGraphGeneralUtils: DeploymentGraphGeneralUtils,
+        private ComponentInstanceFactory: ComponentInstanceFactory,
+        private eventListenerService: EventListenerService) {
     }
 
     restrict = 'E';
@@ -26,7 +29,7 @@ export class DeploymentGraph implements ng.IDirective {
         isViewOnly: '='
     };
 
-    link = (scope:IDeploymentGraphScope, el:JQuery) => {
+    link = (scope: IDeploymentGraphScope, el: JQuery) => {
 
         if (scope.component.isResource()) {
             if (scope.component.componentInstances && scope.component.componentInstancesRelations && scope.component.groups) {
@@ -39,16 +42,15 @@ export class DeploymentGraph implements ng.IDirective {
         }
     };
 
-
-    public initGraphNodes = (cy:Cy.Instance, component:Component):void => {
+    public initGraphNodes = (cy: Cy.Instance, component: Component): void => {
         if (component.groups) { // Init module nodes
-            _.each(component.groups, (groupModule:Module) => {
+            _.each(component.groups, (groupModule: Module) => {
                 let moduleNode = this.NodesFactory.createModuleNode(groupModule);
                 this.commonGraphUtils.addNodeToGraph(cy, moduleNode);
 
             });
         }
-        _.each(component.componentInstances, (instance:ComponentInstance) => { // Init component instance nodes
+        _.each(component.componentInstances, (instance: ComponentInstance) => { // Init component instance nodes
             let componentInstanceNode = this.NodesFactory.createNode(instance);
             componentInstanceNode.parent = this.deploymentGraphGeneralUtils.findInstanceModule(component.groups, instance.uniqueId);
             if (componentInstanceNode.parent) { // we are not drawing instances that are not a part of a module
@@ -58,7 +60,7 @@ export class DeploymentGraph implements ng.IDirective {
 
         // This is a special functionality to pass the cytoscape default behavior - we can't create Parent module node without children's
         // so we must add an empty dummy child node
-        _.each(this._cy.nodes('[?isGroup]'), (moduleNode:Cy.CollectionFirstNode) => {
+        _.each(this._cy.nodes('[?isGroup]'), (moduleNode: Cy.CollectionFirstNode) => {
             if (!moduleNode.isParent()) {
                 let dummyInstance = this.ComponentInstanceFactory.createEmptyComponentInstance();
                 let componentInstanceNode = this.NodesFactory.createNode(dummyInstance);
@@ -80,7 +82,7 @@ export class DeploymentGraph implements ng.IDirective {
         });
     }
 
-    private loadGraph = (scope:IDeploymentGraphScope, el:JQuery) => {
+    private loadGraph = (scope: IDeploymentGraphScope, el: JQuery) => {
 
         let graphEl = el.find('.sdc-deployment-graph-wrapper');
         this._cy = cytoscape({
@@ -112,9 +114,17 @@ export class DeploymentGraph implements ng.IDirective {
         this.commonGraphUtils.initGraphLinks(this._cy, scope.component.componentInstancesRelations);
         this._cy.collapseAll();
         this.registerGraphEvents();
+
+        scope.$on('$destroy', () => {
+            this._cy.destroy();
+            _.forEach(GRAPH_EVENTS, (event) => {
+                this.eventListenerService.unRegisterObserver(event);
+            });
+        });
+
     };
 
-    public static factory = (NodesFactory:NodesFactory, CommonGraphUtils:CommonGraphUtils, DeploymentGraphGeneralUtils:DeploymentGraphGeneralUtils, ComponentInstanceFactory:ComponentInstanceFactory, EventListenerService:EventListenerService) => {
+    public static factory = (NodesFactory: NodesFactory, CommonGraphUtils: CommonGraphUtils, DeploymentGraphGeneralUtils: DeploymentGraphGeneralUtils, ComponentInstanceFactory: ComponentInstanceFactory, EventListenerService: EventListenerService) => {
         return new DeploymentGraph(NodesFactory, CommonGraphUtils, DeploymentGraphGeneralUtils, ComponentInstanceFactory, EventListenerService)
     }
 }

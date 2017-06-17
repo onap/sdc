@@ -1,4 +1,5 @@
 @import '../../../../assets/styles/variables';
+//@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @ng2-shadow-gray: #f8f8f8;
 @ng2-light-gray: #eaeaea;
 @ng2-medium-gray: #d2d2d2;
@@ -15,6 +16,7 @@
 
 .properties-assignment-page {
     height: 100%;
+    font-family: 'Open Sans', omnes-regular, sans-serif; 
 
     .main-content {
         display:flex;
@@ -28,20 +30,21 @@
         margin: 0 0 1em 0;
 
         /deep/ .tabs {
-            width:25%;
+            width:33%;
             text-align:center;
-
         }
 
         /deep/ .tab {
-            padding: 10px .5em;
+            padding: 12px;
+            flex: 1;
+            font-weight:bold;
 
             &.active {
                 color:#009fdb;
                 border-color: #d2d2d2;
                 border-top: solid 4px #009fdb;
                 background-color: white;
-                padding-top:7px;
+                padding-top:9px;
             }
         }
 
@@ -49,39 +52,47 @@
             position:absolute;
             top:0;
             right:0;
-            min-width:200px;
         }
 
         .search-filter-container{
-            position: relative;
-            right: 164px;
-        }
+            position: absolute;
+            right: 100px;
+            display:flex;
+            flex-direction:row;
+        
+            .search-box {
+                border: 1px solid @ng2-medium-gray;
+                border-radius: 3px;
+                height: 32px;
+                margin: 0;
+                padding: 2px 20px 4px 10px;
+                outline: none;
+                font-style: italic;
+                color:@ng2-med-dark-gray;
 
-        .search-box {
-            border: 1px solid @ng2-medium-gray;
-            border-radius: 4px;
-            height: 32px;
-            margin: 0;
-            padding: 2px 20px 4px 10px;
-            outline: none;
-            font-style: italic;
-            color:@ng2-med-dark-gray;
-            margin-right:10px;
+                &::-moz-placeholder { color:@ng2-med-dark-gray;}
+                &::-webkit-input-placeholder{ color:@ng2-med-dark-gray;}
+            }
 
-            &::-moz-placeholder { color:@ng2-med-dark-gray;}
-            &::-webkit-input-placeholder{ color:@ng2-med-dark-gray;}
-        }
-        .search-icon {
-            background-position: -48px -3137px;
-            width: 14px;
-            height: 14px;
-            position: relative;
-            right: 34px;
-            top: 4px;
+            .search-icon {
+                background-position: -48px -3137px;
+                width: 14px;
+                height: 14px;
+                position: absolute;
+                right:42px;
+                top: 8px;
+            }
+
+            &.without-filter {
+                margin-right:10px;
+                .search-icon {
+                    right: 4px;
+                }
+            }
+
         }
         .advance-search{
-            position: relative;
-            right: 22px;
+
         }
         .clear-filter{
             cursor: pointer;
@@ -104,18 +115,19 @@
         display:flex;
         flex:0 0 350px;
         flex-direction:column;
-        margin: 3em 0 1em 1em;
-        padding: 10px;
-        overflow:auto;
+        margin: 45px 0 1em 1em;
+        overflow-x:auto;
 
         /deep/ .tabs {
-            width: 33%;
+            border-bottom: solid 1px #d0d0d0;
         }
 
         /deep/ .tab {
-            padding: 0.5em 1em 0 1em;
-            white-space: nowrap;
-            font-size: 13px;
+            flex: none;
+            padding: 8px 20px 0;
+            font-size: 14px;
+            font-weight:bold;
+            line-height:30px;
         }
     }
 
@@ -127,6 +139,28 @@
         border: 1px solid #ddd;
     }
 
+    /deep/ .white-sub-header {
+        background-color:  #fffefe;
+        box-shadow: 0px 1px 0.99px 0.01px rgba(34, 31, 31, 0.15);
+        border-bottom: #d2d2d2 solid 1px;
+        color:#009fdb;
+        font-weight:bold;
+        font-size:14px;
+        text-align:left;
+        flex:0 0 auto;
+        padding: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &.hierarchy-header {
+            padding-left:20px;
+            &.selected {
+                background-color: #e6f6fb;
+            }
+        }
+
+    }
 
     .hierarchy-nav-container {
         flex:1;
@@ -136,15 +170,7 @@
     }
 
     .hierarchy-header {
-        height:30px;
-        line-height: 2.5em;
-        display: flex;
-        width: 100%;
-        padding-left: 14px;
-        font-weight: bold;
-        text-align: left;
-        background-color: @ng2-light-gray;
-        font-size: 13px;
+
         span{
             text-overflow: ellipsis;
             overflow: hidden;

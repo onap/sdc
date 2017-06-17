@@ -1777,10 +1777,18 @@ errors:
         messageId: "SVC4660"
     }
 #---------SVC4661------------------------------
-# %1 - assetType
-# %2 - matching generic node type name
+# %1 - version
+# %2 - conformance level
     TOSCA_SCHEMA_FILES_NOT_FOUND: {
         code: 400,
         message: "Error: CSAR packaging failed. TOSCA schema files for SDC-Version: %1 and Conformance-Level %2 were not found",
         messageId: "SVC4661"
+    }
+#---------SVC4662------------------------------ 
+# %1 - file name
+# %2 - parser error
+    TOSCA_PARSE_ERROR: {
+        code: 400,
+        message: "Error: Invalid TOSCA template in file %1. %2",
+        messageId: "SVC4662"
     }

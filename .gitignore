@@ -36,7 +36,6 @@ catalog-ui/app/tsconfig.json
 catalog-be/.checkstyle
 catalog-be/bin/
 catalog-be/src/main/java/META-INF/MANIFEST.MF
-catalog-builders/src/test/java/com/att/tlv/sdc/be/builders/tosca/t1
 a4c/
 catalog-ui/*.tmp.txt
 catalog-dao/bin/
@@ -70,8 +69,6 @@ catalog-fe/bin
 !catalog-fe/src/main/webapp/META-INF/
 ui-ci/.tern-project
 catalog-be/data/*
-ci/src/main/java/com/att/tlv/sdc/ci/tests/execute/ShayPracticeTests.java
-ci/src/main/java/com/att/tlv/sdc/ci/tests/execute/ShayPracticeTests.java
 .metadata/*
 .metadata/*
 .idea/*
@@ -147,3 +144,4 @@ dox-sequence-diagram-ui/node/*
 openecomp-ui/node/*
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/SDC-*.zip
 sdc-os-chef/sdc-cassandra/chef-repo/cookbooks/cassandra-actions/files/default/sdctool.tar
+sdc-os-chef/.idea/*

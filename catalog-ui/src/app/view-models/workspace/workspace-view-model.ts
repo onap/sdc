@@ -246,7 +246,7 @@ export class WorkspaceViewModel {
                 type: this.$scope.componentType.toLowerCase(),
                 mode: WorkspaceMode.VIEW,
                 components: this.$state.params['components']
-            });
+            },{reload: true});
 
         };
 

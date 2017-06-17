@@ -64,8 +64,9 @@ public class Constants {
   public static final String SERVICE_INSTANCE_PORT_PREFIX = "port_";
   public static final String SERVICE_INSTANCE_LINK_PREFIX = "link_";
   //Unified model
-  public static final String IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
-  public static final String IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";
+  public static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_PREFIX = "vm_";
+  public static final String COMPUTE_IDENTICAL_VALUE_PROPERTY_SUFFIX = "_name";
+  public static final String PORT_IDENTICAL_VALUE_PROPERTY_PREFIX = "port_";
   public static final String ABSTRACT_NODE_TEMPLATE_ID_PREFIX = "abstract_";
 
   private Constants() {

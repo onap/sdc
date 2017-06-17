@@ -25,7 +25,7 @@ configurationFile: ../catalog-be/src/main/resources/config/configuration.yaml
 importTypesConfigDir: src/test/resources/CI/importTypesTest
 browser: FireFox
 windowsDownloadDirectory: "c:\\apache-ftpserver-1.1.0\\res\\home\\"
-systemUnderDebug: false
+systemUnderDebug: true
 reportDBhost: dbhost
 reportDBport: 27017
 

@@ -86,16 +86,10 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 	private static final String EMPTY_VALUE = null;
 	
 	private DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-	
+
 	@javax.annotation.Resource
 	private IResourceOperation resourceOperation = null;
-
-	@Autowired
-	private ToscaOperationFacade toscaOperationFacade;
-
-	@javax.annotation.Resource
-	private ComponentsUtils componentsUtils;
-
+	
 	protected static IElementOperation getElementDao(Class<IElementOperation> class1, ServletContext context) {
 		WebAppContextWrapper webApplicationContextWrapper = (WebAppContextWrapper) context.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR);
 
@@ -248,15 +242,17 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, ""));
 		}
 		for (PropertyDefinition property : properties) {
-			// esofer - check also that the property belongs to the current
-			// resource
-			if (property.getUniqueId().equals(propertyId) && property.getParentUniqueId().equals(resourceId)) {
+			if (property.getUniqueId().equals(propertyId) && isPropertyBelongsToResource(property, resourceId)) {
 				Map<String, PropertyDefinition> propMap = new HashMap<>();
 				propMap.put(property.getName(), property);
 				return Either.left(propMap.entrySet().iterator().next());
 			}
 		}
 		return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, ""));
+	}
+
+	private boolean isPropertyBelongsToResource(PropertyDataDefinition property, String resourceId) {
+		return  property.getOwnerId() == null || property.getOwnerId().equals(resourceId);
 	}
 
 	/**

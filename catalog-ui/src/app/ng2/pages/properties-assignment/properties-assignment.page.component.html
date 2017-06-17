@@ -28,7 +28,7 @@
                 </tab>
             </tabs>
             <div class="header">
-                <div class="search-filter-container">
+                <div class="search-filter-container" [class.without-filter]="isInpusTabSelected">
                     <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" />
                     <span class="sprite search-icon"></span>
                     <filter-properties-assignment *ngIf="!isInpusTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
@@ -42,7 +42,7 @@
                 <tab tabTitle="Composition">
                     <div class="hierarchy-nav-container">
                         <loader [display]="loadingInstances" size="medium" [relative]="true"></loader>
-                        <div class="hierarchy-header">
+                        <div class="hierarchy-header white-sub-header">
                             <span tooltip="{{component.name}}">{{component.name}}</span>
                         </div>
                         <div *ngIf="!instancesNavigationData || instancesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
@@ -55,8 +55,8 @@
                 </tab>
                 <tab tabTitle="Property Structure">
                     <div class="hierarchy-nav-container">
-                    <div class="hierarchy-header">
-                        <span tooltip="{{!isInpusTabSelected ? (propertyStructureHeader || selectedFlatProperty.name) : ''}}">{{!isInpusTabSelected ? (propertyStructureHeader || selectedFlatProperty.name || "No Property Selected") : "No Property Selected"}}</span>
+                    <div class="hierarchy-header white-sub-header" [class.selected]="selectedFlatProperty.path == propertyStructureHeader">
+                        <span tooltip="{{!isInpusTabSelected ? propertyStructureHeader : ''}}">{{!isInpusTabSelected ? (propertyStructureHeader || "No Property Selected") : "No Property Selected"}}</span>
                     </div>
                     <div *ngIf="!propertiesNavigationData || propertiesNavigationData.length === 0 || isInpusTabSelected">No data to display</div>
                     <hierarchy-navigation class="hierarchy-nav"
