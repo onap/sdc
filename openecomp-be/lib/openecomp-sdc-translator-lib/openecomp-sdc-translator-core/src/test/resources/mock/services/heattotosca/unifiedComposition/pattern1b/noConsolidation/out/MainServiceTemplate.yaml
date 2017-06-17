@@ -143,7 +143,7 @@ topology_template:
       - substitutable
       properties:
         port_FSB1_Internal_mac_address:
-        - get_input: fsb1-Internal1-mac
+          get_input: fsb1-Internal1-mac
         compute_FSB1_availability_zone:
         - get_input: fsb_zone
         port_FSB1_Internal_network:
@@ -151,7 +151,7 @@ topology_template:
         vm_flavor_name:
           get_input: fsb1-flavor
         port_FSB2_Internal_mac_address:
-        - get_input: fsb1-Internal2-mac
+          get_input: fsb1-Internal2-mac
         port_FSB2_Internal_network:
         - Internal2-net
         service_template_filter:

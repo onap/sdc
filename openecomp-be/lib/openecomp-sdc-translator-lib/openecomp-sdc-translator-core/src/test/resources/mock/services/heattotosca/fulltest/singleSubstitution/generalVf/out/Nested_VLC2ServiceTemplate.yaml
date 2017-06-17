@@ -17,25 +17,21 @@ topology_template:
       entry_schema:
         type: json
     port_VLC_OAM_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_VLC_GTP_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC2_Internal2_ip_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC_SCTP_A_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     vm_flavor_name:
       type: string
       required: true
@@ -43,22 +39,20 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC_SCTP_A_fixed_ips:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_VLC2_Internal1_network_role_tag:
       type: list
       required: true
       entry_schema:
         type: string
     port_VLC2_Internal2_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_VLC_GTP_network_role_tag:
       type: list
       required: true
@@ -68,20 +62,14 @@ topology_template:
       type: string
       required: true
     port_VLC2_Internal1_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_VLC2_Internal2_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_VLC2_Internal1_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_VLC_SCTP_B_network:
       type: list
       required: true
@@ -96,7 +84,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC_GTP_order:
       type: list
       required: true
@@ -121,7 +109,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_VLC_OAM_network:
       type: list
       required: true
@@ -166,12 +154,12 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC_OAM_fixed_ips:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_VLC2_Internal1_order:
       type: list
       required: true
@@ -186,7 +174,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_VLC2_Internal2_vlan_requirements:
       type: list
       required: true
@@ -248,7 +236,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_VLC_GTP_network_role:
       type: list
       required: true
@@ -265,10 +253,8 @@ topology_template:
       entry_schema:
         type: integer
     port_VLC_GTP_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_VLC2_Internal1_network:
       type: list
       required: true
@@ -285,10 +271,8 @@ topology_template:
       entry_schema:
         type: json
     port_VLC_OAM_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_VLC2_Internal1_vlan_requirements:
       type: list
       required: true
@@ -300,10 +284,8 @@ topology_template:
       entry_schema:
         type: string
     port_VLC_SCTP_B_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_VLC2_Internal2_exCP_naming:
       type: list
       required: true
@@ -347,17 +329,13 @@ topology_template:
           - port_VLC2_Internal2_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC2_Internal2_ip_requirements
-          - index_value
+          get_input: port_VLC2_Internal2_ip_requirements
         network_role_tag:
           get_input:
           - port_VLC2_Internal2_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_VLC2_Internal2_mac_requirements
-          - index_value
+          get_input: port_VLC2_Internal2_mac_requirements
         order:
           get_input:
           - port_VLC2_Internal2_order
@@ -375,9 +353,7 @@ topology_template:
           - port_VLC2_Internal2_network
           - index_value
         mac_address:
-          get_input:
-          - port_VLC2_Internal2_mac_address
-          - index_value
+          get_input: port_VLC2_Internal2_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -395,17 +371,11 @@ topology_template:
           - port_VLC_OAM_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC_OAM_ip_requirements
-          - index_value
+          get_input: port_VLC_OAM_ip_requirements
         network_role_tag:
-          get_input:
-          - port_VLC_OAM_network_role_tag
-          - index_value
+          get_input: port_VLC_OAM_network_role_tag
         mac_requirements:
-          get_input:
-          - port_VLC_OAM_mac_requirements
-          - index_value
+          get_input: port_VLC_OAM_mac_requirements
         order:
           get_input:
           - port_VLC_OAM_order
@@ -419,9 +389,7 @@ topology_template:
           - port_VLC_OAM_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_VLC_OAM_fixed_ips
-          - index_value
+          get_input: port_VLC_OAM_fixed_ips
         network:
           get_input:
           - port_VLC_OAM_network
@@ -443,17 +411,13 @@ topology_template:
           - port_VLC2_Internal1_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC2_Internal1_ip_requirements
-          - index_value
+          get_input: port_VLC2_Internal1_ip_requirements
         network_role_tag:
           get_input:
           - port_VLC2_Internal1_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_VLC2_Internal1_mac_requirements
-          - index_value
+          get_input: port_VLC2_Internal1_mac_requirements
         order:
           get_input:
           - port_VLC2_Internal1_order
@@ -471,9 +435,7 @@ topology_template:
           - port_VLC2_Internal1_network
           - index_value
         mac_address:
-          get_input:
-          - port_VLC2_Internal1_mac_address
-          - index_value
+          get_input: port_VLC2_Internal1_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -491,17 +453,13 @@ topology_template:
           - port_VLC_SCTP_A_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC_SCTP_A_ip_requirements
-          - index_value
+          get_input: port_VLC_SCTP_A_ip_requirements
         network_role_tag:
           get_input:
           - port_VLC_SCTP_A_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_VLC_SCTP_A_mac_requirements
-          - index_value
+          get_input: port_VLC_SCTP_A_mac_requirements
         order:
           get_input:
           - port_VLC_SCTP_A_order
@@ -515,9 +473,7 @@ topology_template:
           - port_VLC_SCTP_A_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_VLC_SCTP_A_fixed_ips
-          - index_value
+          get_input: port_VLC_SCTP_A_fixed_ips
         network:
           get_input:
           - port_VLC_SCTP_A_network
@@ -539,17 +495,13 @@ topology_template:
           - port_VLC_SCTP_B_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC_SCTP_B_ip_requirements
-          - index_value
+          get_input: port_VLC_SCTP_B_ip_requirements
         network_role_tag:
           get_input:
           - port_VLC_SCTP_B_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_VLC_SCTP_B_mac_requirements
-          - index_value
+          get_input: port_VLC_SCTP_B_mac_requirements
         order:
           get_input:
           - port_VLC_SCTP_B_order
@@ -563,9 +515,7 @@ topology_template:
           - port_VLC_SCTP_B_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_VLC_SCTP_B_fixed_ips
-          - index_value
+          get_input: port_VLC_SCTP_B_fixed_ips
         network:
           get_input:
           - port_VLC_SCTP_B_network
@@ -587,17 +537,13 @@ topology_template:
           - port_VLC_GTP_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_VLC_GTP_ip_requirements
-          - index_value
+          get_input: port_VLC_GTP_ip_requirements
         network_role_tag:
           get_input:
           - port_VLC_GTP_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_VLC_GTP_mac_requirements
-          - index_value
+          get_input: port_VLC_GTP_mac_requirements
         order:
           get_input:
           - port_VLC_GTP_order
@@ -611,9 +557,7 @@ topology_template:
           - port_VLC_GTP_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_VLC_GTP_fixed_ips
-          - index_value
+          get_input: port_VLC_GTP_fixed_ips
         network:
           get_input:
           - port_VLC_GTP_network

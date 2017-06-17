@@ -1348,9 +1348,7 @@ public abstract class BaseOperation {
 	}
 	
 	protected String buildGroupInstanceName(String instanceName, String groupName) {
-		int groupNameIndex = groupName.indexOf("..");
-		//turn group name from VFName..heatfile..module-n to VFiName..heatfile..module-n
-		return ValidationUtils.normaliseComponentName(instanceName) + groupName.substring(groupNameIndex);
+		return ValidationUtils.normaliseComponentName(instanceName) + ".." + groupName;
 	}
 	
 	protected String generateCustomizationUUID() {

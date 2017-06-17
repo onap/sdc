@@ -55,13 +55,21 @@ public class VspInformationConvertor {
 
   public static CollaborationElement[] convertVspToElement(VspInformation vspInformation) {
 
-    CollaborationElement[] vspElements = new CollaborationElement[4];
+    CollaborationElement[] vspElements;
+    if(vspInformation.getQuestionnaireData() == null){
+      vspElements = new CollaborationElement[4];
+    }else{
+      vspElements = new CollaborationElement[5];
+    }
+
+    int index=0;
+
     List<String> vspNamespace = getVspNamespace(vspInformation);
 
 
     String vspEntityId = StructureElement.General.name();
 
-    vspElements[0] = ElementHandler.getElementEntity(
+    vspElements[index] = ElementHandler.getElementEntity(
         vspInformation.getId(), vspInformation.getVersion().toString(),
         vspEntityId,
         vspNamespace,
@@ -70,8 +78,9 @@ public class VspInformationConvertor {
         null,
         null);
 
+    index++;
     String vspOrchestrationTemplateEntityId = StructureElement.OrchestrationTemplate.name();
-    vspElements[1] = ElementHandler.getElementEntity(
+    vspElements[index] = ElementHandler.getElementEntity(
         vspInformation.getId(), vspInformation.getVersion().toString(),
         vspOrchestrationTemplateEntityId,
         vspNamespace,
@@ -80,11 +89,23 @@ public class VspInformationConvertor {
         null,
         null);
 
-
+    if(vspInformation.getQuestionnaireData()!= null) {
+      index++;
+      String vspQuestionnaireEntityId = StructureElement.Questionnaire.name();
+      vspElements[index] = ElementHandler.getElementEntity(
+          vspInformation.getId(), vspInformation.getVersion().toString(),
+          vspQuestionnaireEntityId,
+          vspNamespace,
+          ElementHandler.getStructuralElementInfo(vspQuestionnaireEntityId),
+          null,
+          null,
+          vspInformation.getQuestionnaireData().getBytes() != null ? vspInformation
+              .getQuestionnaireData().getBytes() : null);
+    }
     vspNamespace.add(vspOrchestrationTemplateEntityId);
-
+    index++;
     String vspOrchestrationTemplateValidationDataEntityId = StructureElement.OrchestrationTemplateValidationData.name();
-    vspElements[2] = ElementHandler.getElementEntity(
+    vspElements[index] = ElementHandler.getElementEntity(
         vspInformation.getId(), vspInformation.getVersion().toString(),
         vspOrchestrationTemplateValidationDataEntityId,
         vspNamespace,
@@ -93,9 +114,9 @@ public class VspInformationConvertor {
         null,
         vspInformation.getValidationData()!= null?vspInformation.getValidationData().getBytes()
             :null);
-
+    index++;
     String vspOrchestrationTemplateContentEntityId = StructureElement.OrchestrationTemplateContent.name();
-    vspElements[3] = ElementHandler.getElementEntity(
+    vspElements[index] = ElementHandler.getElementEntity(
         vspInformation.getId(), vspInformation.getVersion().toString(),
         vspOrchestrationTemplateContentEntityId,
         vspNamespace,

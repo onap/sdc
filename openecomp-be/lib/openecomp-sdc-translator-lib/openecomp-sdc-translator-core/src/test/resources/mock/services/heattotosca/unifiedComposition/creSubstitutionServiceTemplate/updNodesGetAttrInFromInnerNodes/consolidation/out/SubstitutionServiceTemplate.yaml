@@ -12,10 +12,8 @@ node_types:
 topology_template:
   inputs:
     port_FSB1_Internal_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB1_Internal_ip_requirements:
       type: list
       required: true
@@ -67,10 +65,8 @@ topology_template:
       type: string
       required: true
     port_FSB2_Internal_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB2_Internal_network_role:
       type: list
       required: true
@@ -172,9 +168,7 @@ topology_template:
           - FSB1_FSB2_Internal
           - device_id
         mac_address:
-          get_input:
-          - port_FSB1_Internal_mac_address
-          - index_value
+          get_input: port_FSB1_Internal_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -224,9 +218,7 @@ topology_template:
           - port_FSB2_Internal_network
           - index_value
         mac_address:
-          get_input:
-          - port_FSB2_Internal_mac_address
-          - index_value
+          get_input: port_FSB2_Internal_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

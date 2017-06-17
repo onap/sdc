@@ -1,5 +1,5 @@
 <div class="properties-table">
-    <loader [display]="isLoading" size="large" [relative]="true"></loader>
+    <loader [display]="isLoading" size="large" [relative]="false"></loader>
     <div class="table-header">
         <div class="table-cell col1">Property Name</div>
         <div class="table-cell col2">Type</div>
@@ -7,10 +7,10 @@
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body">
-        <div class="no-data" *ngIf="!feInstancesNames">No data to display</div>
+        <div class="no-data" *ngIf="!feInstancesNames || !feInstancesNames.length">No data to display</div>
 
-        <div *ngFor="let instanceName of feInstancesNames; trackBy:instanceName">
-            <div class="table-rows-header">{{instanceName | contentAfterLastDot}}</div>
+        <ng-container *ngFor="let instanceName of feInstancesNames; trackBy:instanceName">
+            <div class="table-rows-header white-sub-header">{{instanceName | contentAfterLastDot}}</div>
 
             <div class="table-row"
                 *ngFor="let property of fePropertiesMap[instanceName] | searchFilter:'name':searchTerm; trackBy:property?.name"
@@ -26,15 +26,18 @@
                         <span>{{property.name}}</span>
                     </div>
                 </div>
-                <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}"></span>
+                <span *ngIf="property.description" class="property-description-icon sprite-new show-desc" tooltip="{{property.description}}" tooltipDelay="0"></span>
                 </div>
                 <div class="table-cell col2">
                     <div class="inner-cell-div" tooltip="{{property.type | contentAfterLastDot}}">
                         <span>{{property.type | contentAfterLastDot}}</span>
                     </div>
                 </div>
-                <div class="table-cell col3">{{property.schema && property.schema.property && property.schema.property.type ? (property.schema.property.type
-                    | contentAfterLastDot) : ''}}</div>
+                <div class="table-cell col3">
+                    <div *ngIf="property.schema && property.schema.property && property.schema.property.type" class="inner-cell-div" tooltip="{{property.schema.property.type | contentAfterLastDot}}">
+                        <span>{{property.schema.property.type | contentAfterLastDot}}</span>
+                    </div>
+                </div>
                 <div class="table-cell valueCol">
                     <!-- [ngClass]="{'filtered':property.name === propertyNameSearchText}" (selectProperty)="propertySelected(property, $event, flatProperty.propertiesName)" [propType]="property.type" [propSchema]="property.schema" [propKey]="" [propValue]="property.value"-->
                     <dynamic-property
@@ -54,7 +57,7 @@
                 </div>
             </div>
 
-        </div>
+        </ng-container>
 
     </div>
 </div>

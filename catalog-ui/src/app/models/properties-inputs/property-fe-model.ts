@@ -78,4 +78,33 @@ export class PropertyFEModel extends PropertyBEModel {
     //     this.flattenedChildren.filter(prop => prop.parentName == item.parentName).map(prop => prop.propertiesName).indexOf(item.propertiesName)
     // }
 
+    /* Updates parent valueObj when a child prop's value has changed */    
+    public childPropUpdated = (childProp: DerivedFEProperty): void => {          
+        let parentNames = this.getParentNamesArray(childProp.propertiesName, []);
+        if (parentNames.length) {
+            _.set(this.valueObj, parentNames.join('.'), childProp.valueObj);
+        }
+    };
+
+    /* Returns array of individual parents for given prop path, with list/map UUIDs replaced with index/mapkey */    
+    private getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
+        if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
+
+        let parentProp: DerivedFEProperty = this.flattenedChildren.find(prop => prop.propertiesName === parentPropName);
+        let nameToInsert: string = parentProp.name;
+
+        if (parentProp.isChildOfListOrMap) {
+            if (parentProp.derivedDataType == DerivedPropertyType.MAP) {
+                nameToInsert = parentProp.mapKey;
+            } else { //LIST
+                let siblingProps = this.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
+                nameToInsert = siblingProps.indexOf(parentProp.propertiesName).toString();
+            }
+        }
+
+        parentNames.splice(0, 0, nameToInsert); //add prop name to array
+        return this.getParentNamesArray(parentProp.parentName, parentNames); //continue recursing
+    }
+
+
 }

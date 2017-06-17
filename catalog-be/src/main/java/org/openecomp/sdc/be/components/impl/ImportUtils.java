@@ -43,6 +43,7 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyCons
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.util.GsonFactory;
+import org.springframework.beans.factory.config.YamlProcessor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -60,7 +61,8 @@ public final class ImportUtils {
 	private ImportUtils() {
 
 	}
-
+	public static Yaml STRICT_MAPPING_YAML_LOADER = new YamlLoader().getStrictYamlLoader();
+	
 	private static CustomResolver customResolver = new CustomResolver();
 
 	private static class CustomResolver extends Resolver {
@@ -72,6 +74,12 @@ public final class ImportUtils {
 	         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
 	         addImplicitResolver(Tag.NULL, EMPTY, null);
 	         addImplicitResolver(Tag.YAML, YAML, "!&*");	
+		}
+	}
+	
+	private static class YamlLoader extends YamlProcessor {
+		public Yaml getStrictYamlLoader() {
+			return createYaml();
 		}
 	}
 

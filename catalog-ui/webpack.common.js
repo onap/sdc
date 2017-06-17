@@ -33,11 +33,11 @@ const bundledScripts = [
     "script-loader!./node_modules/checklist-model/checklist-model.js",
     "script-loader!./node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.jquery.min.js",
     "script-loader!./node_modules/qtip2/dist/jquery.qtip.min.js",
-    "script-loader!./node_modules/cytoscape-qtip/cytoscape-qtip.js",
+    "script-loader!./node_modules/@bardit/cytoscape-qtip/cytoscape-qtip.js",
     "script-loader!./node_modules/js-md5/build/md5.min.js",
     "script-loader!./node_modules/angular-clipboard/angular-clipboard.js",
     "script-loader!./node_modules/angular-resizable/angular-resizable.min.js",
-    "script-loader!./node_modules/angular-dragdrop/src/angular-dragdrop.min.js",
+    "script-loader!./node_modules/sdc-angular-dragdrop/src/angular-dragdrop.min.js",
     "script-loader!./node_modules/angular-tooltips/dist/angular-tooltips.min.js",
     "script-loader!./node_modules/angular-sanitize/angular-sanitize.min.js"
 ];

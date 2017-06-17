@@ -212,22 +212,46 @@ public class ArtifactsOperations extends BaseOperation {
 
 	}
 
-	public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion, boolean isUpdate) {
+	public void updateUUID(ArtifactDataDefinition artifactData, String oldChecksum, String oldVesrion, boolean isUpdate, EdgeLabelEnum edgeLabel) {
 		if (oldVesrion == null || oldVesrion.isEmpty())
 			oldVesrion = "0";
 
 		String currentChecksum = artifactData.getArtifactChecksum();
-		if(isUpdate && artifactData.getArtifactType().equalsIgnoreCase(ArtifactTypeEnum.HEAT_ENV.getType())){
-			generateUUID(artifactData, oldVesrion);
-		}
-		if (oldChecksum == null || oldChecksum.isEmpty()) {
-			if (currentChecksum != null) {
+		
+		if ( isUpdate ){
+			ArtifactTypeEnum type = ArtifactTypeEnum.findType(artifactData.getArtifactType());
+			switch ( type ){
+			case HEAT_ENV: 
+				if ( edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS ){
+					generateUUID(artifactData, oldVesrion);
+				}else{
+					updateVersionAndDate(artifactData, oldVesrion);
+				}
+				break;
+			case HEAT:
+			case HEAT_NET:
+			case HEAT_VOL:
+				generateUUID(artifactData, oldVesrion);
+				break;
+			default:
+				if (oldChecksum == null || oldChecksum.isEmpty()) {
+					if (currentChecksum != null) {
+						generateUUID(artifactData, oldVesrion);
+					}
+				} else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
+					generateUUID(artifactData, oldVesrion);
+				}
+				break;
+			}
+		}else{
+			if (oldChecksum == null || oldChecksum.isEmpty()) {
+				if (currentChecksum != null) {
+					generateUUID(artifactData, oldVesrion);
+				}
+			} else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
 				generateUUID(artifactData, oldVesrion);
 			}
-		} else if ((currentChecksum != null && !currentChecksum.isEmpty()) && !oldChecksum.equals(currentChecksum)) {
-			generateUUID(artifactData, oldVesrion);
 		}
-
 	}
 
 	// @TODO add implementation
@@ -483,7 +507,7 @@ public class ArtifactsOperations extends BaseOperation {
 				}
 			}
 		}
-		updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate);
+		updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate, edgeLabelEnum );
 
 		if (artifactInfo.getPayloadData() == null) {
 			if (!artifactToUpdate.getMandatory() || artifactToUpdate.getEsId() != null) {

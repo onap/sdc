@@ -20,15 +20,11 @@ topology_template:
       type: string
       required: true
     port_NCB2_Internal2_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_NCB2_Internal1_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     vm_image_name:
       type: string
       required: true
@@ -73,7 +69,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_NCB2_Internal2_network_role_tag:
       type: list
       required: true
@@ -90,15 +86,11 @@ topology_template:
       entry_schema:
         type: json
     port_NCB2_Internal1_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_NCB2_Internal2_mac_address:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_NCB2_Internal1_subnetpoolid:
       type: list
       required: true
@@ -133,7 +125,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
   node_templates:
     NCB2:
       type: org.openecomp.resource.vfc.nodes.heat.NCB2
@@ -162,17 +154,13 @@ topology_template:
           - port_NCB2_Internal1_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_NCB2_Internal1_ip_requirements
-          - index_value
+          get_input: port_NCB2_Internal1_ip_requirements
         network_role_tag:
           get_input:
           - port_NCB2_Internal1_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_NCB2_Internal1_mac_requirements
-          - index_value
+          get_input: port_NCB2_Internal1_mac_requirements
         order:
           get_input:
           - port_NCB2_Internal1_order
@@ -190,9 +178,7 @@ topology_template:
           - port_NCB2_Internal1_network
           - index_value
         mac_address:
-          get_input:
-          - port_NCB2_Internal1_mac_address
-          - index_value
+          get_input: port_NCB2_Internal1_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -210,17 +196,13 @@ topology_template:
           - port_NCB2_Internal2_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_NCB2_Internal2_ip_requirements
-          - index_value
+          get_input: port_NCB2_Internal2_ip_requirements
         network_role_tag:
           get_input:
           - port_NCB2_Internal2_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_NCB2_Internal2_mac_requirements
-          - index_value
+          get_input: port_NCB2_Internal2_mac_requirements
         order:
           get_input:
           - port_NCB2_Internal2_order
@@ -238,9 +220,7 @@ topology_template:
           - port_NCB2_Internal2_network
           - index_value
         mac_address:
-          get_input:
-          - port_NCB2_Internal2_mac_address
-          - index_value
+          get_input: port_NCB2_Internal2_mac_address
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

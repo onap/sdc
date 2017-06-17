@@ -39,11 +39,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -53,7 +51,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network:
         type: list
         required: true

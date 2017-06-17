@@ -28,15 +28,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.openqa.selenium.remote.internal.ApacheHttpClient;
-
 public class TestFtp {
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		AttFtpClient instance = AttFtpClient.getInstance();
 		
-		 String server = "135.177.130.113";
+		 String server = "localhost";
 	      int port = 2121;
 	      String user = "admin";
 	      String pass = "admin";
@@ -66,8 +63,10 @@ public class TestFtp {
 
 	        StringBuilder sb = new StringBuilder();
 	        BufferedReader br = null;
+	        FileReader fileReader = null;
 	        try {
-	            br = new BufferedReader(new FileReader(retrieveLastModifiedFileFromFTP.getPath()));
+	        	fileReader = new FileReader(retrieveLastModifiedFileFromFTP.getPath());
+	            br = new BufferedReader(fileReader);
 	            String line;
 	            while ((line = br.readLine()) != null) {
 	                if (sb.length() > 0) {
@@ -76,14 +75,17 @@ public class TestFtp {
 	                sb.append(line);
 	            }
 	        } catch (IOException e) {
-	            e.printStackTrace();
+	            System.out.println(e);
 	        } finally {
 	            try {
 	                if (br != null) {
 	                    br.close();
 	                }
+	                if(fileReader != null) {
+	                	fileReader.close();
+	                }
 	            } catch (IOException ex) {
-	                ex.printStackTrace();
+	                System.out.println(ex);
 	            }
 	        }
 	        String contents = sb.toString();

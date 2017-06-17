@@ -24,6 +24,7 @@ export class DynamicElementComponent {
     @Input() type: any;
     @Input() name: string;
     @Input() readonly:boolean;
+    @Input() path:string;//optional param. used only for for subnetpoolid type
     value:any;
 
     // Two way binding for value (need to write the "Change" word like this)
@@ -58,7 +59,11 @@ export class DynamicElementComponent {
                 this.cmpRef.instance.pattern = this.validation.validationPatterns.integer;
                 break;
             case 'string':
-                if (this.name.toUpperCase().indexOf("SUBNETPOOLID") !== -1) {
+                if (this.path && this.path.toUpperCase().indexOf("SUBNETPOOLID") !== -1) {
+                    if(this.name.toUpperCase().indexOf("SUBNETPOOLID") == -1){//if it's an item of subnetpoolid list get the parent name
+                        let pathArray = this.path.split("#");
+                        this.name = pathArray[pathArray.length - 2];
+                    }
                     this.createComponent(UiElementPopoverInputComponent);
                 }
                 else {

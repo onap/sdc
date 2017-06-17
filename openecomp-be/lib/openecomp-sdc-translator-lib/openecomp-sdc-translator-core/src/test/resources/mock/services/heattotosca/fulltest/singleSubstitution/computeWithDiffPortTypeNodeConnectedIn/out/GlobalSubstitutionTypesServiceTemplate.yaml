@@ -37,17 +37,13 @@ node_types:
         entry_schema:
           type: json
       port_pd02_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -63,7 +59,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd02_port_network_role:
         type: list
         required: true
@@ -91,11 +87,9 @@ node_types:
         constraints:
         - greater_or_equal: 0
       port_pd02_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_exCP_naming:
         type: list
         required: true
@@ -161,13 +155,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd02_port_network:
         type: list
         required: true

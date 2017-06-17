@@ -37,10 +37,8 @@ topology_template:
       type: string
       required: true
     port_pd01_port_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     vm_image_name:
       type: string
       required: true
@@ -48,7 +46,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_pd01_port_network:
       type: list
       required: true
@@ -70,10 +68,8 @@ topology_template:
       entry_schema:
         type: string
     port_pd01_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pd01_port_vlan_requirements:
       type: list
       required: true
@@ -116,17 +112,11 @@ topology_template:
           - port_pd01_port_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_pd01_port_ip_requirements
-          - index_value
+          get_input: port_pd01_port_ip_requirements
         network_role_tag:
-          get_input:
-          - port_pd01_port_network_role_tag
-          - index_value
+          get_input: port_pd01_port_network_role_tag
         mac_requirements:
-          get_input:
-          - port_pd01_port_mac_requirements
-          - index_value
+          get_input: port_pd01_port_mac_requirements
         order:
           get_input:
           - port_pd01_port_order

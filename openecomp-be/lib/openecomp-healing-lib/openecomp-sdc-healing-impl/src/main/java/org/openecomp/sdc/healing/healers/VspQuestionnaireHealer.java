@@ -60,7 +60,7 @@ public class VspQuestionnaireHealer implements Healer {
     VspQuestionnaireEntity vspQuestionnaireEntity =
         vspInfoDao.getQuestionnaire(vspId, version);
 
-    if(Objects.isNull(vspQuestionnaireEntity.getQuestionnaireData())) {
+    if(Objects.isNull(vspQuestionnaireEntity.getQuestionnaireData())|| "".equals(vspQuestionnaireEntity.getQuestionnaireData())) {
       questionnaireData = healQuestionnaire(vspId, version);
     }
 

@@ -59,7 +59,10 @@ import org.openecomp.sdc.ci.tests.utils.general.ElementFactory;
 import org.openecomp.sdc.ci.tests.verificator.ServiceVerificator;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.clearspring.analytics.util.Pair;
@@ -67,6 +70,15 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.ExtentTest;
 
 public class Onboard extends SetupCDTest {
+	
+	
+	protected String makeDistributionValue;
+	
+	@Parameters({ "makeDistribution" })
+	@BeforeMethod
+	public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
+		makeDistributionValue = makeDistributionReadValue;                             
+	}
 	
 	public static Object[][] provideData(Object[] fileNamesFromFolder, String filepath) {
 		Object[][] arObject = new Object[fileNamesFromFolder.length][];
@@ -177,6 +189,7 @@ public class Onboard extends SetupCDTest {
 	@Test(dataProvider = "VNF_List")
 	public void onboardVNFTest(String filepath, String vnfFile) throws Exception, Throwable {
 		setLog(vnfFile);
+		System.out.println("printttttttttttttt - >" + makeDistributionValue);
 		runOnboardToDistributionFlow(filepath, vnfFile);
 	}
 
@@ -241,17 +254,20 @@ public class Onboard extends SetupCDTest {
 		reloginWithNewRole(UserRoleEnum.GOVERNOR);
 		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
 		GovernorOperationPage.approveSerivce(serviceMetadata.getName());
-
-		reloginWithNewRole(UserRoleEnum.OPS);
-		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
-		OpsOperationPage.distributeService();
-		OpsOperationPage.displayMonitor();
-
-		List<WebElement> rowsFromMonitorTable = OpsOperationPage.getRowsFromMonitorTable();
-		AssertJUnit.assertEquals(1, rowsFromMonitorTable.size());
-
-		OpsOperationPage.waitUntilArtifactsDistributed(0);
-
+		
+		if (!makeDistributionValue.equals("true")){
+			
+				reloginWithNewRole(UserRoleEnum.OPS);
+				GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
+				OpsOperationPage.distributeService();
+				OpsOperationPage.displayMonitor();
+		
+				List<WebElement> rowsFromMonitorTable = OpsOperationPage.getRowsFromMonitorTable();
+				AssertJUnit.assertEquals(1, rowsFromMonitorTable.size());
+		
+				OpsOperationPage.waitUntilArtifactsDistributed(0);
+		}
+		
 		getExtendTest().log(Status.INFO, String.format("onboarding %s test is passed ! ", vnfFile));
 		
 		

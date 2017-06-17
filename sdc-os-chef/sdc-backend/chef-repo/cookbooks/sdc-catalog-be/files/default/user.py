@@ -56,7 +56,7 @@ def createUser( firstName, lastName, userId , email_dom , role ):
 userId    = [ "demo" , "op0001" , "gv0001" , "jh0003" , "jm0007" , "cs0008" ]
 firstName = [ "demo" , "Oper" , "Giuseppe" , "Jimmy" , "Joni" , "Carlos" ]
 lastName  = [ "demo" , "P" , "Verdi" , "Hendrix" , "Mitchell" , "Santana" ]
-role      = [ "ADMIN" , "OPS" , "ADMIN" , "GOVERNOR" , "TESTER" , "DESIGNER" ]
+role      = [ "ADMIN" , "OPS" , "GOVERNOR" , "ADMIN" , "TESTER" , "DESIGNER" ]
 email_dom = "openecomp.org"
 beStat=0
 

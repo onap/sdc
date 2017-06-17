@@ -273,10 +273,6 @@ public class Vf extends SetupCDTest {
 	@Test
 	public void changeInstanceVersionTest() throws Exception{
 		
-		if(true){
-			throw new SkipException("Open bug 291567");			
-		}
-		
 		ResourceReqDetails atomicResourceMetaData = null;
 		ResourceReqDetails vfMetaData = null;
 		CanvasManager vfCanvasManager;

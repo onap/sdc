@@ -153,7 +153,7 @@ export class ModulePropertyView extends PropertyFormBaseView {
                 switch (this.$scope.property.name) {
 
                     case UNIQUE_GROUP_PROPERTIES_NAME.MIN_VF_MODULE_INSTANCES:
-                        if (!maxPropertyValue || maxPropertyValue === null) {
+                        if (isNaN(maxPropertyValue) || maxPropertyValue == null) {
                             isValid = propertyValue <= initialCountPropertyValue;
                         }
                         else {
@@ -161,7 +161,7 @@ export class ModulePropertyView extends PropertyFormBaseView {
                         }
                         this.$scope.forms.editForm["value"].$setValidity('maxValidation', isValid);
                         if (this.component.isService()) {
-                            if (!parentPropertyValue || parentPropertyValue === null) {
+                            if (isNaN(parentPropertyValue) || parentPropertyValue == null) {
                                 isValid = true;
                             } else {
                                 isValid = propertyValue >= parentPropertyValue;
@@ -170,14 +170,14 @@ export class ModulePropertyView extends PropertyFormBaseView {
                         }
                         break;
                     case UNIQUE_GROUP_PROPERTIES_NAME.MAX_VF_MODULE_INSTANCES:
-                        if (!minPropertyValue || minPropertyValue === null) {
+                        if (isNaN(minPropertyValue) || minPropertyValue == null) {
                             isValid = propertyValue >= initialCountPropertyValue;
                         } else {
                             isValid = !propertyValue || (propertyValue >= minPropertyValue && propertyValue >= initialCountPropertyValue);
                         }
                         this.$scope.forms.editForm["value"].$setValidity('minValidation', isValid);
                         if (this.component.isService()) {
-                            if (!parentPropertyValue || parentPropertyValue === null) {
+                            if (isNaN(parentPropertyValue) || parentPropertyValue == null) {
                                 isValid = true;
                             }
                             else {
@@ -187,11 +187,11 @@ export class ModulePropertyView extends PropertyFormBaseView {
                         }
                         break;
                     case UNIQUE_GROUP_PROPERTIES_NAME.INITIAL_COUNT:
-                        if ((!minPropertyValue || minPropertyValue === null) && (!maxPropertyValue || maxPropertyValue === null)) {
+                        if ((isNaN(minPropertyValue) || minPropertyValue == null) && (isNaN(maxPropertyValue) || maxPropertyValue == null)) {
                             isValid = true;
-                        } else if (!minPropertyValue || minPropertyValue === null) {
+                        } else if (isNaN(minPropertyValue) || minPropertyValue == null) {
                             isValid = propertyValue <= maxPropertyValue;
-                        } else if (!maxPropertyValue || maxPropertyValue === null) {
+                        } else if (isNaN(maxPropertyValue) || maxPropertyValue == null) {
                             isValid = propertyValue >= minPropertyValue;
                         } else {
                             isValid = minPropertyValue <= propertyValue && propertyValue <= maxPropertyValue;

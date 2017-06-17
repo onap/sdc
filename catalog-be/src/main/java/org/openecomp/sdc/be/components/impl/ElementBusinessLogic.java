@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -1101,8 +1103,22 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 			log.debug("getCatalogComponentsByUuidAndAssetType: Corresponding ComponentTypeEnum not found");
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
 		}
-
-		Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade.getComponentListByUuid(uuid, null);
+		
+		Map<GraphPropertyEnum, Object> additionalPropertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+		
+		switch (assetTypeEnum) {
+		case RESOURCE:
+			additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+			break;
+		case SERVICE:
+			additionalPropertiesToMatch.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
+			break;
+		default:
+			log.debug("getCatalogComponentsByUuidAndAssetType: Corresponding ComponentTypeEnum not allowed for this API");
+			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+		}
+		
+		Either<List<Component>, StorageOperationStatus> componentsListByUuid = toscaOperationFacade.getComponentListByUuid(uuid, additionalPropertiesToMatch);
 		if(componentsListByUuid.isRight()) {
 			log.debug("getCatalogComponentsByUuidAndAssetType: Service fetching failed");
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(componentsListByUuid.right().value(), ComponentTypeEnum.SERVICE);

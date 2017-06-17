@@ -148,7 +148,7 @@ resources:
     type: OS::Neutron::Port
     properties:
       network: {get_param: ppds_net_name}
-      fixed_ips: [{"ip_address": {get_param: [myIPs, 2]}}]
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
       name: 1c1_t2_port_0
 
   1c1_scalling_instance_network:
@@ -174,14 +174,14 @@ resources:
     type: OS::Neutron::Port
     properties:
       network: {get_resource: 1c1_scalling_instance_network}
-      fixed_ips: [{"ip_address": {get_param: [myIPs, 3]}}]
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
       name: 1c1_t1_port_1
 
   1c1_t2_port_1:
     type: OS::Neutron::Port
     properties:
       network: {get_param: ppds_net_name}
-      fixed_ips: [{"ip_address": {get_param: [myIPs, 4]}}]
+      fixed_ips: [{"ip_address": {get_param: [myIPs, 1]}}]
       name: 1c1_t2_port_1
 
   1c201_catalog_instance_1C2:

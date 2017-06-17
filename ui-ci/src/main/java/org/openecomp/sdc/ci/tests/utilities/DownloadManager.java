@@ -30,8 +30,6 @@ import org.openecomp.sdc.ci.tests.execute.setup.ExtentTestActions;
 import org.openecomp.sdc.ci.tests.execute.setup.SetupCDTest;
 import org.openecomp.sdc.ci.tests.pages.HomePage;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.aventstack.extentreports.Status;
 
@@ -92,7 +90,7 @@ public class DownloadManager {
 	
 //	AttFtpClient instance = AttFtpClient.getInstance();
 //	
-//	 String server = "135.177.130.113";
+//	 String server = "localhost";
 //     int port = 2121;
 //     String user = "admin";
 //     String pass = "admin";

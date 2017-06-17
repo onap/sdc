@@ -22,6 +22,7 @@
         <module>/configuration</module>
         <module>/tools/swagger-ui</module>
         <module>/tools/migration/1702_to_1707_zusammen</module>
+        <module>/tools/zusammen-tools</module>
         <module>/backend</module>
     </modules>
 

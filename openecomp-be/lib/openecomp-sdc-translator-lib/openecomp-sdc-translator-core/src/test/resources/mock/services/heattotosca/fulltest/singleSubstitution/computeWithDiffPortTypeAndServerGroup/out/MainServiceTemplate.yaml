@@ -56,7 +56,7 @@ topology_template:
       - substitutable
       properties:
         port_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         port_port_network:
         - get_input: port_name

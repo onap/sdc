@@ -287,7 +287,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * the method returns a list of all the resources that are certified, the returned resources are only abstract or only none abstract according to the given param
-	 * 
+	 *
 	 * @param getAbstract
 	 * @param userId
 	 *            TODO
@@ -300,16 +300,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		}
 		Boolean isHighest = null;
 		switch (highestFilter) {
-		case ALL:
-			break;
-		case HIGHEST_ONLY:
-			isHighest = true;
-			break;
-		case NON_HIGHEST_ONLY:
-			isHighest = false;
-			break;
-		default:
-			break;
+			case ALL:
+				break;
+			case HIGHEST_ONLY:
+				isHighest = true;
+				break;
+			case NON_HIGHEST_ONLY:
+				isHighest = false;
+				break;
+			default:
+				break;
 		}
 		Either<List<Resource>, StorageOperationStatus> getResponse = toscaOperationFacade.getAllCertifiedResources(getAbstract, isHighest);
 
@@ -488,7 +488,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> updateResourceFromCsar(Resource oldRresource, Resource newRresource, User user, AuditingActionEnum updateResource, boolean inTransaction, Either<Map<String, byte[]>, StorageOperationStatus> csarUIPayload,
-			String csarUUID) {
+																	String csarUUID) {
 
 		// check state
 		if (LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.equals(oldRresource.getLifecycleState())) {
@@ -674,7 +674,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(Map<String, byte[]> csar, String csarUUID, String yamlFileName, Resource oldResource, User user,
-			boolean inTransaction, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
+																																		 boolean inTransaction, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap) {
 
 		Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csar);
 		Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle = new HashMap<>();
@@ -828,7 +828,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * Changes resource life cycle state to checked out
-	 * 
+	 *
 	 * @param resource
 	 * @param user
 	 * @param inTransaction
@@ -860,7 +860,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * Handles Artifacts of NodeType
-	 * 
+	 *
 	 * @param nodeTypeResource
 	 * @param nodeTypeArtifactsToHandle
 	 * @param vfcsNewCreatedArtifacts
@@ -869,7 +869,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 * @return
 	 */
 	public Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifacts(Resource nodeTypeResource, Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> vfcsNewCreatedArtifacts,
-			User user, boolean inTransaction) {
+																					User user, boolean inTransaction) {
 		Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRequestRes;
 		Either<List<ArtifactDefinition>, ResponseFormat> handleNodeTypeArtifactsRes = null;
 		Either<Resource, ResponseFormat> changeStateResponse;
@@ -927,7 +927,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					nestedServiceTemplatesMap.put(ci.getType(), tempName);
 				}
 			}
-			
+
 			if (!nodeTypes.isEmpty()) {
 				Iterator<Entry<String, Object>> nodesNameEntry = nodeTypes.entrySet().iterator();
 				while (nodesNameEntry.hasNext()) {
@@ -1116,7 +1116,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	public Either<Map<String, Resource>, ResponseFormat> createResourcesFromYamlNodeTypesList(String yamlName, Resource resource, String resourceYml, User user, boolean needLock,
-			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+																							  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
 
 		Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(resourceYml);
 
@@ -1167,7 +1167,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createNodeTypeResourceFromYaml(String yamlName, Entry<String, Object> nodeNameValue, User user, Map<String, Object> mapToConvert, Resource resourceVf, boolean needLock,
-			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+																										 Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
 
 		Either<UploadResourceInfo, ResponseFormat> resourceMetaData = fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
 		if (resourceMetaData.isRight()) {
@@ -1213,7 +1213,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	public Either<ImmutablePair<Resource, ActionStatus>, ResponseFormat> createResourceFromNodeType(String nodeTypeYaml, UploadResourceInfo resourceMetaData, User creator, boolean isInTransaction, boolean needLock,
-			Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+																									Map<ArtifactOperationEnum, List<ArtifactDefinition>> nodeTypeArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
 
 		LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction("certification on import", LifecycleChanceActionEnum.CREATE_FROM_CSAR);
 		Function<Resource, Either<Boolean, ResponseFormat>> validator = (resource) -> this.validateResourceCreationFromNodeType(resource, creator);
@@ -1279,7 +1279,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createResourceAndRIsFromYaml(String yamlName, Resource resource, User user, ParsedToscaYamlInfo parsedToscaYamlInfo, AuditingActionEnum actionEnum, boolean isNormative, String csarUUID,
-			Map<String, byte[]> csar, List<ArtifactDefinition> createdArtifacts, String topologyTemplateYaml) {
+																		  Map<String, byte[]> csar, List<ArtifactDefinition> createdArtifacts, String topologyTemplateYaml) {
 
 		boolean result = true;
 		boolean inTransaction = true;
@@ -1567,7 +1567,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * This Method validates that there is no cyclic group dependencies. meaning group A as member in group B which is member in group A
-	 * 
+	 *
 	 * @param allGroups
 	 * @return
 	 */
@@ -1599,7 +1599,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * This Method fills recursively the set groupMembers with all the members of the given group which are also of type group.
-	 * 
+	 *
 	 * @param groupName
 	 * @param allGroups
 	 * @param allGroupMembers
@@ -1617,12 +1617,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		// Filtered Members Of Current Group containing only members which
 		// are groups
 		List<String> currGroupFilteredMembers = currGroupMembers.stream().
-		// Keep Only Elements of type group and not Resource Instances
-				filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
+				// Keep Only Elements of type group and not Resource Instances
+						filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
 				// Add Filtered Elements to main Set
-				peek(innerGroupName -> allGroupMembers.add(innerGroupName)).
+						peek(innerGroupName -> allGroupMembers.add(innerGroupName)).
 				// Collect results
-				collect(Collectors.toList());
+						collect(Collectors.toList());
 
 		// Recursively call the method for all the filtered group members
 		for (String innerGroupName : currGroupFilteredMembers) {
@@ -1648,17 +1648,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		if (!stop) {
 			final Set<String> allMembers = allGroups.get(groupName).getMembers().keySet();
 			Set<String> membersOfTypeGroup = allMembers.stream().
-			// Filter In Only Group members
-					filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
+					// Filter In Only Group members
+							filter(innerGroupName -> allGroups.containsKey(innerGroupName)).
 					// Collect
-					collect(Collectors.toSet());
+							collect(Collectors.toSet());
 			stop = allGroupMembers.containsAll(membersOfTypeGroup);
 		}
 		return stop;
 	}
 
 	private Either<Resource, ResponseFormat> createRIAndRelationsFromYaml(String yamlName, Resource resource, User user, Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap, AuditingActionEnum actionEnum,
-			String topologyTemplateYaml, Map<String, byte[]> csar, String csarUUID, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, Resource> createdVfcs) {
+																		  String topologyTemplateYaml, Map<String, byte[]> csar, String csarUUID, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, Resource> createdVfcs) {
 
 		Either<Resource, ResponseFormat> result;
 		Either<Resource, ResponseFormat> createResourcesInstancesEither;
@@ -1754,7 +1754,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Map<String, Resource>, ResponseFormat> handleNodeTypes(String yamlName, Resource resource, User user, String topologyTemplateYaml, Map<String, byte[]> csar, boolean needLock,
-			Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
+																		  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts) {
 
 		Map<String, Resource> createdResourcesFromdNodeTypeMap = new HashMap<>();
 		Either<Map<String, Resource>, ResponseFormat> result = Either.left(createdResourcesFromdNodeTypeMap);
@@ -1791,7 +1791,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> handleCsarArtifacts(Resource resource, User user, String csarUUID, Map<String, byte[]> csar, List<ArtifactDefinition> createdArtifacts, ArtifactOperationInfo artifactOperation, boolean shouldLock,
-			boolean inTransaction) {
+																 boolean inTransaction) {
 
 		if (csar != null) {
 			String vendorLicenseModelId = null;
@@ -1870,8 +1870,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Boolean, ResponseFormat> createOrUpdateSingleNonMetaArtifact(Resource resource, User user, String csarUUID, Map<String, byte[]> csar, String artifactPath, String artifactFileName, String artifactType,
-			ArtifactGroupTypeEnum artifactGroupType, String artifactLabel, String artifactDisplayName, String artifactDescription, String artifactId, ArtifactOperationInfo operation, List<ArtifactDefinition> createdArtifacts, boolean shouldLock,
-			boolean inTransaction) {
+																				ArtifactGroupTypeEnum artifactGroupType, String artifactLabel, String artifactDisplayName, String artifactDescription, String artifactId, ArtifactOperationInfo operation, List<ArtifactDefinition> createdArtifacts, boolean shouldLock,
+																				boolean inTransaction) {
 		byte[] artifactFileBytes = null;
 
 		if (csar.containsKey(artifactPath)) {
@@ -1922,7 +1922,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		ArtifactDefinition artifactDefinitionFromJson = RepresentationUtils.convertJsonToArtifactDefinition(jsonStr, ArtifactDefinition.class);
 		String artifactUniqueId = artifactDefinitionFromJson == null ? null : artifactDefinitionFromJson.getUniqueId();
 		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> uploadArtifactToService = artifactsBusinessLogic.validateAndHandleArtifact(resource.getUniqueId(), ComponentTypeEnum.RESOURCE, operation, artifactUniqueId,
-				artifactDefinitionFromJson, origMd5, jsonStr, null, null, null, user, resource, false, true);
+				artifactDefinitionFromJson, origMd5, jsonStr, null, null, null, user, resource, false, true, false);
 		if (uploadArtifactToService.isRight())
 			return Either.right(uploadArtifactToService.right().value());
 
@@ -1930,7 +1930,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	public Either<Resource, ResponseFormat> updateResourceArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdNewArtifacts,
-			boolean shouldLock, boolean inTransaction) {
+																			boolean shouldLock, boolean inTransaction) {
 
 		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, user);
 		if (parseResourceInfoFromYamlEither.isRight()) {
@@ -2023,7 +2023,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		////////////// dissociate, associate or create
 		////////////// artifacts////////////////////////////
 		Either<Resource, ResponseFormat> assDissotiateEither = associateAndDissociateArtifactsToGroup(csarUUID, csar, resource, user, createdNewArtifacts, labelCounter, shouldLock, inTransaction, createdDeplymentArtifactsAfterDelete,
-				dissocArtifactFromGroup, mergedgroup, deletedArtifacts);
+				 mergedgroup, deletedArtifacts);
 
 		if (assDissotiateEither.isRight()) {
 			log.debug("Failed to delete artifacts. Status is {} ", assDissotiateEither.right().value());
@@ -2076,7 +2076,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			/*
 			 * if (!groupToUpdate.isEmpty()) { Either<List<GroupDefinition>, ResponseFormat> assotiateGroupEither = groupBusinessLogic.associateMembersToGroup(resource.getUniqueId(), user.getUserId(), ComponentTypeEnum.RESOURCE, groupToUpdate, false,
 			 * true); if (assotiateGroupEither.isRight()) { log.debug("Failed to associate artifacts to groups. Status is {} ", assotiateGroupEither.right().value()); return Either.right(assotiateGroupEither.right().value());
-			 * 
+			 *
 			 * } }
 			 */
 
@@ -2141,7 +2141,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<List<ArtifactDefinition>, ResponseFormat> deleteArtifactsInUpdateCsarFlow(Resource resource, User user, boolean shouldLock, boolean inTransaction, Set<ArtifactDefinition> artifactsToDelete,
-			Map<String, List<ArtifactDefinition>> groupToDelete) {
+																							 Map<String, List<ArtifactDefinition>> groupToDelete) {
 		List<ArtifactDefinition> deletedArtifacts = new ArrayList<ArtifactDefinition>();
 		String resourceId = resource.getUniqueId();
 		if (!artifactsToDelete.isEmpty()) {
@@ -2154,7 +2154,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 					 * Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromGraph = artifactOperation.removeArifactFromResource(resourceId, artifact.getUniqueId(), NodeTypeEnum.Resource, true, true); if
 					 * (removeArifactFromGraph.isRight()) { StorageOperationStatus status = removeArifactFromGraph.right().value(); log.debug("Failed to delete heat env artifact  {} . status is {}", artifact.getUniqueId(), status); ActionStatus
 					 * actionStatus = componentsUtils.convertFromStorageResponse(status); return Either.right(componentsUtils.getResponseFormat(actionStatus)); }
-					 * 
+					 *
 					 * deletedArtifacts.add(removeArifactFromGraph.left().value());
 					 */
 
@@ -2194,70 +2194,55 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> associateAndDissociateArtifactsToGroup(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, List<ArtifactDefinition> createdNewArtifacts, int labelCounter, boolean shouldLock,
-			boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete, Map<String, List<String>> dissocArtifactFromGroup, Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
+																					boolean inTransaction, List<ArtifactDefinition> createdDeplymentArtifactsAfterDelete, Map<GroupDefinition, MergedArtifactInfo> mergedgroup, List<ArtifactDefinition> deletedArtifacts) {
 		Map<GroupDefinition, List<ArtifactTemplateInfo>> artifactsToAssotiate = new HashMap<GroupDefinition, List<ArtifactTemplateInfo>>();
 		Map<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>> artifactsToUpdateMap = new HashMap<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>>();
 		Either<Resource, ResponseFormat> resEither = Either.left(resource);
 		for (Entry<GroupDefinition, MergedArtifactInfo> entry : mergedgroup.entrySet()) {
 			List<ArtifactDefinition> dissArtifactsInGroup = entry.getValue().getListToDissotiateArtifactFromGroup(deletedArtifacts);
+			GroupDefinition grDef = entry.getKey();
 			if (dissArtifactsInGroup != null && !dissArtifactsInGroup.isEmpty()) {
-				List<String> dissList = new ArrayList<String>();
 				for (ArtifactDefinition art : dissArtifactsInGroup) {
-					dissList.add(art.getUniqueId());
-					// String heatEnvId = checkAndGetHeatEnvId(art);
-					// if (!heatEnvId.isEmpty()) {
-					// dissList.add(heatEnvId);
-					// }
+					grDef.getArtifacts().remove(art.getUniqueId());
+					grDef.getArtifactsUuid().remove(art.getArtifactUUID());
 				}
-				dissocArtifactFromGroup.put(entry.getKey().getUniqueId(), dissList);
 			}
 
 			List<ArtifactTemplateInfo> newArtifactsInGroup = entry.getValue().getListToAssociateArtifactToGroup();
 			if (newArtifactsInGroup != null && !newArtifactsInGroup.isEmpty())
 				artifactsToAssotiate.put(entry.getKey(), newArtifactsInGroup);
+			
 
 			List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> artifactsToUpdate = entry.getValue().getListToUpdateArtifactInGroup();
 			if (artifactsToUpdate != null && !artifactsToUpdate.isEmpty())
 				artifactsToUpdateMap.put(entry.getKey(), artifactsToUpdate);
 		}
 
-		// Map<String, Set<String>> dissocArtifactFromGroup = new HashMap<String, Set<String>>();
-		// HashMap<String, Set<String>>();
-		List<GroupDefinition> dissotiateArtifactsgroups = new ArrayList<GroupDefinition>();
-		for (Entry<String, List<String>> dissotiateEntry : dissocArtifactFromGroup.entrySet()) {
-
-			GroupDefinition dissotiateGroup = new GroupDefinition();
-			dissotiateGroup.setUniqueId(dissotiateEntry.getKey());
-			dissotiateGroup.setArtifacts(dissotiateEntry.getValue());
-			dissotiateArtifactsgroups.add(dissotiateGroup);
-		}
-		if (!dissotiateArtifactsgroups.isEmpty()) {
-			/*
-			 * log.debug("try to dissociate artifacts  from groups "); Either<List<GroupDefinition>, ResponseFormat> dissotiateGroupEither = groupBusinessLogic.dissociateArtifactsFromGroup(resource.getUniqueId(), user.getUserId(),
-			 * ComponentTypeEnum.RESOURCE, dissotiateArtifactsgroups, shouldLock, inTransaction); if (dissotiateGroupEither.isRight()) { log.debug("Failed to dissociate artifacts from groups. Status is {} ", dissotiateGroupEither.right().value());
-			 * resEither = Either.right(dissotiateGroupEither.right().value()); return resEither;
-			 * 
-			 * }
-			 */
-		}
-
 		if (!artifactsToUpdateMap.isEmpty()) {
 			List<ArtifactDefinition> updatedArtifacts = new ArrayList<ArtifactDefinition>();
 			for (Entry<GroupDefinition, List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>>> artifactsToUpdateEntry : artifactsToUpdateMap.entrySet()) {
 				List<ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo>> artifactsToUpdateList = artifactsToUpdateEntry.getValue();
+				GroupDefinition groupToUpdate = artifactsToUpdateEntry.getKey();
+				
 				for (ImmutablePair<ArtifactDefinition, ArtifactTemplateInfo> artifact : artifactsToUpdateList) {
+					String prevUUID = artifact.getKey().getArtifactUUID();
+					String prevId = artifact.getKey().getUniqueId();
 					Either<ArtifactDefinition, ResponseFormat> updateArtifactEither = updateDeploymentArtifactsFromCsar(csarUUID, csar, resource, user, artifact.getKey(), artifact.getValue(), updatedArtifacts,
 							artifact.getRight().getRelatedArtifactsInfo(), shouldLock, inTransaction);
 					if (updateArtifactEither.isRight()) {
 						log.debug("failed to update artifacts. status is {}", updateArtifactEither.right().value());
 						resEither = Either.right(updateArtifactEither.right().value());
 						return resEither;
-
 					}
-
+					ArtifactDefinition artAfterUpdate = updateArtifactEither.left().value();
+					if ( !prevUUID.equals(artAfterUpdate.getArtifactUUID()) ||  !prevId.equals(artAfterUpdate.getUniqueId()) ){
+						groupToUpdate.getArtifacts().remove(prevId);
+						groupToUpdate.getArtifactsUuid().remove(prevUUID);
+						groupToUpdate.getArtifacts().add(artAfterUpdate.getUniqueId());
+						groupToUpdate.getArtifactsUuid().add(artAfterUpdate.getArtifactUUID());
+					}
 				}
 			}
-
 		}
 
 		List<GroupDefinition> associateArtifactGroup = new ArrayList<GroupDefinition>();
@@ -2266,11 +2251,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			List<ArtifactTemplateInfo> associatedArtifact = associateEntry.getValue();
 			Set<String> arifactsUids = new HashSet<String>();
 			for (ArtifactTemplateInfo artifactTemplate : associatedArtifact) { // try
-																				// to
-																				// find
-																				// artifact
-																				// in
-																				// resource
+				// to
+				// find
+				// artifact
+				// in
+				// resource
 				boolean isCreate = true;
 				for (ArtifactDefinition createdArtifact : createdDeplymentArtifactsAfterDelete) {
 					if (artifactTemplate.getFileName().equalsIgnoreCase(createdArtifact.getArtifactName())) {
@@ -2338,12 +2323,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		/*
 		 * if (!associateArtifactGroup.isEmpty()) {
-		 * 
+		 *
 		 * log.debug("Try to associate artifacts to groups.");
-		 * 
+		 *
 		 * Either<List<GroupDefinition>, ResponseFormat> assotiateGroupEither = groupBusinessLogic.associateArtifactsToGroup(resource.getUniqueId(), user.getUserId(), ComponentTypeEnum.RESOURCE, associateArtifactGroup, shouldLock, inTransaction); if
 		 * (assotiateGroupEither.isRight()) { log.debug("Failed to associate artifacts to groups. Status is {} ", assotiateGroupEither.right().value()); resEither = Either.right(assotiateGroupEither.right().value()); return resEither;
-		 * 
+		 *
 		 * } }
 		 */
 
@@ -2368,7 +2353,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Map<GroupDefinition, MergedArtifactInfo> mergeGroupInUpdateFlow(Map<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupArtifact, Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup,
-			Set<ArtifactDefinition> artifactsToDelete, Map<String, List<ArtifactDefinition>> groupToDelete, Set<ArtifactTemplateInfo> jsonMasterArtifacts, List<ArtifactDefinition> createdDeplymentArtifacts) {
+																			Set<ArtifactDefinition> artifactsToDelete, Map<String, List<ArtifactDefinition>> groupToDelete, Set<ArtifactTemplateInfo> jsonMasterArtifacts, List<ArtifactDefinition> createdDeplymentArtifacts) {
 		Map<GroupDefinition, MergedArtifactInfo> mergedgroup = new HashMap<GroupDefinition, MergedArtifactInfo>();
 		for (Entry<GroupDefinition, Map<ArtifactDefinition, List<ArtifactDefinition>>> groupListEntry : groupArtifact.entrySet()) {
 			Map<ArtifactDefinition, List<ArtifactDefinition>> createdArtifactMap = groupListEntry.getValue();
@@ -2426,7 +2411,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private void findArtifactToDelete(Map<ArtifactTemplateInfo, Set<ArtifactTemplateInfo>> parsedGroup, Set<ArtifactDefinition> artifactsToDelete, String deleteGroupId, ArtifactDefinition artifact,
-			List<ArtifactDefinition> createdDeplymentArtifacts) {
+									  List<ArtifactDefinition> createdDeplymentArtifacts) {
 		boolean isNeedToDeleteArtifact = true;
 		String artifactType = artifact.getArtifactType();
 		ArtifactDefinition generatedFromArt = null;
@@ -2492,7 +2477,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	public Either<Resource, ResponseFormat> createResourceArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, String artifactsMetaFile, String artifactsMetaFileName, List<ArtifactDefinition> createdArtifacts,
-			boolean shouldLock, boolean inTransaction) {
+																			boolean shouldLock, boolean inTransaction) {
 
 		log.debug("parseResourceArtifactsInfoFromFile start");
 		Either<Map<String, List<ArtifactTemplateInfo>>, ResponseFormat> parseResourceInfoFromYamlEither = parseResourceArtifactsInfoFromFile(resource, artifactsMetaFile, artifactsMetaFileName, user);
@@ -2523,7 +2508,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, List<ArtifactTemplateInfo> artifactsTemplateList,
-			List<ArtifactDefinition> createdNewArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shouldLock, boolean inTransaction) {
+																					List<ArtifactDefinition> createdNewArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shouldLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		List<GroupDefinition> createdGroups = resource.getGroups();
 		List<GroupDefinition> heatGroups = null;
@@ -2560,7 +2545,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			GroupProperty prop = new GroupProperty();
 			prop.setName(Constants.IS_BASE);
 			prop.setValue(Boolean.toString(groupTemplateInfo.isBase()));
-
+			properties.add(prop);
+			
 			List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
 			createdArtifacts.addAll(createdNewArtifacts);
 			createdArtifacts.addAll(artifactsFromResource);
@@ -2571,8 +2557,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			properties = createVfModuleAdditionalProperties(groupTemplateInfo.isBase(), groupName, properties, createdArtifacts, artifactsList, getLatestGroupTypeRes.left().value());
 			groupDefinition.convertFromGroupProperties(properties);
 
-			properties.add(prop);
-			groupDefinition.convertFromGroupProperties(properties);
 			// Either<GroupDefinition, ResponseFormat> createGroup = groupBusinessLogic.createGroup(resource.getUniqueId(), user.getUserId(), ComponentTypeEnum.RESOURCE, groupDefinition, inTransaction);
 			// if (createGroup.isRight())
 			// return Either.right(createGroup.right().value());
@@ -2598,7 +2582,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createDeploymentArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
-			ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shoudLock, boolean inTransaction) {
+																			   ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, List<ArtifactDefinition> artifactsFromResource, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		String artifactFileName = artifactTemplateInfo.getFileName();
 		String artifactUid = "";
@@ -2683,7 +2667,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createResourceArtifacts(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, Map<String, List<ArtifactTemplateInfo>> artifactsMap, AuditingActionEnum createResource,
-			List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction) {
+																	 List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction) {
 
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 
@@ -2702,7 +2686,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createOrUpdateNonMetaArtifacts(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, List<ArtifactDefinition> createdArtifacts, boolean shouldLock, boolean inTransaction,
-			ArtifactOperationInfo artifactOperation) {
+																			ArtifactOperationInfo artifactOperation) {
 
 		Either<Resource, ResponseFormat> resStatus = null;
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
@@ -2750,9 +2734,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 									// filter in only error
 									.filter(e -> e.isRight()).
 									// Convert the error from either to ResponseFormat
-									map(e -> e.right().value()).
+											map(e -> e.right().value()).
 									// Check if an error occurred
-									findAny();
+											findAny();
 					// Error found on artifact Creation
 					if (optionalCreateInDBError.isPresent()) {
 						resStatus = Either.right(optionalCreateInDBError.get());
@@ -2817,7 +2801,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createGroupDeploymentArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, List<ArtifactTemplateInfo> artifactsTemplateList, List<ArtifactDefinition> createdArtifacts,
-			int labelCounter, boolean shouldLock, boolean inTransaction) {
+																					int labelCounter, boolean shouldLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		List<GroupDefinition> createdGroups = resource.getGroups();
 		List<GroupDefinition> heatGroups = null;
@@ -3005,7 +2989,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createDeploymentArtifactFromCsar(String csarUUID, String artifactPath, Map<String, byte[]> csar, Resource resource, User user, Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
-			ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
+																			  ArtifactTemplateInfo artifactTemplateInfo, List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		Either<Resource, ResponseFormat> resStatus = Either.left(resource);
 		String artifactFileName = artifactTemplateInfo.getFileName();
 		String artifactUid = "";
@@ -3078,7 +3062,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<ArtifactDefinition, ResponseFormat> createDeploymentArtifact(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, String artifactPath, ArtifactTemplateInfo artifactTemplateInfo,
-			List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
+																				List<ArtifactDefinition> createdArtifacts, int labelCounter, boolean shoudLock, boolean inTransaction) {
 		final String artifactFileName = artifactTemplateInfo.getFileName();
 		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(csarUUID, csar, artifactPath + artifactFileName, artifactFileName, componentsUtils);
 		if (artifactContententStatus.isRight()) {
@@ -3114,7 +3098,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<ArtifactDefinition, ResponseFormat> createInformationalArtifact(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, ArtifactTemplateInfo artifactTemplateInfo, int labelCounter, boolean shoudLock,
-			boolean inTransaction) {
+																				   boolean inTransaction) {
 		final String artifactFileName = artifactTemplateInfo.getFileName();
 		String artifactPath = CsarUtils.ARTIFACTS_PATH + CsarUtils.INFORMATIONAL_ARTIFACTS + artifactFileName;
 		Either<ImmutablePair<String, byte[]>, ResponseFormat> artifactContententStatus = CsarValidationUtils.getArtifactsContent(csarUUID, csar, artifactPath, artifactFileName, componentsUtils);
@@ -3136,7 +3120,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<ArtifactDefinition, ResponseFormat> updateDeploymentArtifactsFromCsar(String csarUUID, Map<String, byte[]> csar, Resource resource, User user, ArtifactDefinition oldArtifact, ArtifactTemplateInfo artifactTemplateInfo,
-			List<ArtifactDefinition> updatedArtifacts, List<ArtifactTemplateInfo> updatedRequiredArtifacts, boolean shouldLock, boolean inTransaction) {
+																						 List<ArtifactDefinition> updatedArtifacts, List<ArtifactTemplateInfo> updatedRequiredArtifacts, boolean shouldLock, boolean inTransaction) {
 
 		Either<ArtifactDefinition, ResponseFormat> resStatus = null;
 		String artifactFileName = artifactTemplateInfo.getFileName();
@@ -3205,7 +3189,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			Either<List<HeatParameterDefinition>, ResponseFormat> propsStatus = extractHeatParameters(ArtifactTypeEnum.HEAT_ENV.getType(), artifactTemplateInfo.getEnv(), artifactparamsStatus.left().value().getValue(), false);
 			/*
 			 * if (propsStatus.isRight()) {
-			 * 
+			 *
 			 * resStatus = Either.right(propsStatus.right().value()); return resStatus; }
 			 */
 			if (propsStatus.isLeft()) {
@@ -3244,6 +3228,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 						log.debug("Failed to update heat paratemers of heat on CSAR flow for component {} artifact {} label {}", resource.getUniqueId(), currentInfo.getUniqueId(), currentInfo.getArtifactLabel());
 						return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateArifactOnResource.right().value())));
 					}
+					resStatus = Either.left(updateArifactOnResource.left().value());
 				}
 			}
 		}
@@ -3307,7 +3292,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Map<String, Object> buildJsonForUpdateArtifact(String artifactId, String artifactName, String artifactType, ArtifactGroupTypeEnum artifactGroupType, String label, String displayName, String description, byte[] artifactContentent,
-			List<ArtifactTemplateInfo> updatedRequiredArtifacts) {
+														   List<ArtifactTemplateInfo> updatedRequiredArtifacts) {
 
 		Map<String, Object> json = new HashMap<String, Object>();
 		if (artifactId != null && !artifactId.isEmpty())
@@ -3690,7 +3675,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private ResponseFormat addPropertyValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo, Resource resource, Resource originResource, ComponentInstance currentCompInstance, String yamlName,
-			Map<String, List<ComponentInstanceProperty>> instProperties, Map<String, DataTypeDefinition> allDataTypes) {
+												 Map<String, List<ComponentInstanceProperty>> instProperties, Map<String, DataTypeDefinition> allDataTypes) {
 
 		Map<String, List<UploadPropInfo>> propMap = uploadComponentInstanceInfo.getProperties();
 		if (propMap != null && propMap.size() > 0) {
@@ -3799,9 +3784,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	// US740820 Relate RIs according to capability name
 	private CapabilityDefinition findAvailableCapabilityByTypeOrName(RequirementDefinition validReq, ComponentInstance currentCapCompInstance, UploadReqInfo uploadReqInfo) {
 		if (null == uploadReqInfo.getCapabilityName() || validReq.getCapability().equals(uploadReqInfo.getCapabilityName())) {// get
-																																// by
-																																// capability
-																																// type
+			// by
+			// capability
+			// type
 			return findAviableCapability(validReq, currentCapCompInstance);
 		}
 		return findAvailableCapability(validReq, currentCapCompInstance, uploadReqInfo);
@@ -3990,7 +3975,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Resource, ResponseFormat> createResourceInstances(User user, String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap, boolean inTransaction, boolean needLock,
-			Map<String, Resource> nodeTypeNamespaceMap) {
+																	 Map<String, Resource> nodeTypeNamespaceMap) {
 
 		Either<Resource, ResponseFormat> eitherResource = null;
 		log.debug("createResourceInstances is {} - going to create resource instanse from CSAR", yamlName);
@@ -4070,7 +4055,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		parametersView.setIgnoreComponentInstances(false);
 		parametersView.setIgnoreUsers(false);
 		parametersView.setIgnoreInputs(false); // inputs are read when creating
-												// property values on instances
+		// property values on instances
 		Either<Resource, StorageOperationStatus> eitherGerResource = toscaOperationFacade.getToscaElement(resource.getUniqueId(), parametersView);
 		log.debug("*************finished to get resource {}", resource.getUniqueId());
 		if (eitherGerResource.isRight()) {
@@ -4379,17 +4364,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/*
 	 * private boolean valueContainsStrReplace(Object propValue) {
-	 * 
+	 *
 	 * log.debug("valueContainsStrReplace value is {}", propValue); boolean result = false; if (propValue != null) { log.debug("valueContainsStrReplace value is {}", propValue.getClass()); Matcher matcher =
 	 * STR_REPLACE_PATTERN.matcher(propValue.toString()); result = matcher.find(); }
-	 * 
+	 *
 	 * return result; }
-	 * 
+	 *
 	 * private boolean valueContainsToken(Object propValue) {
-	 * 
+	 *
 	 * log.debug("valueContainsToken value is {}", propValue); boolean result = false; if (propValue != null) { log.debug("valueContainsToken value is {}", propValue.getClass()); Matcher matcher = TOKEN_PATTERN.matcher(propValue.toString()); result =
 	 * matcher.find(); }
-	 * 
+	 *
 	 * return result; }
 	 */
 
@@ -4572,7 +4557,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/*
 	 * /**
-	 * 
+	 *
 	 * @deprecated Use {@link #createOrUpdateResourceByImport(Resource,User,boolean, boolean,boolean)} instead
 	 */
 	/*
@@ -4743,7 +4728,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * Merge old resource with new. Keep old category and vendor name without change
-	 * 
+	 *
 	 * @param oldResource
 	 * @param newResource
 	 */
@@ -4876,10 +4861,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		if (resource.getRequirements() != null && resource.getRequirements().size() > 0) {
 			log.debug("validate capability Types Exist - requirements section");
-
 			for (String type : resource.getRequirements().keySet()) {
-
-				eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource, actionEnum, eitherResult, type, inTransaction);
+				eitherResult = validateCapabilityTypeExists(user, capabilityTypeOperation, resource, resource.getRequirements().get(type) , actionEnum, eitherResult, type, inTransaction);
 				if (eitherResult.isRight()) {
 					return Either.right(eitherResult.right().value());
 				}
@@ -4889,8 +4872,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return eitherResult;
 	}
 
-	private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation, Resource resource, AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult, String type,
-			boolean inTransaction) {
+	//@param typeObject- the object to which the validation is done
+	private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation, Resource resource, List validationObjects , AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult, String type,
+																			 boolean inTransaction) {
 		Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation.getCapabilityType(type, inTransaction);
 		if (eitherCapTypeFound.isRight()) {
 			if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
@@ -4901,7 +4885,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 			}
 			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeDaoSystemError, "Create Resource - validateCapabilityTypesCreate");
 			log.debug("Trying to get capability type {} failed with error: {}", type, eitherCapTypeFound.right().value().name());
-			ResponseFormat errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
+			ResponseFormat errorResponse =null;
+			if (type!=null)
+				errorResponse = componentsUtils.getResponseFormat(ActionStatus.MISSING_CAPABILITY_TYPE, type);
+			else
+				errorResponse = componentsUtils.getResponseFormatByElement(ActionStatus.MISSING_CAPABILITY_TYPE, validationObjects );
 			eitherResult = Either.right(errorResponse);
 			componentsUtils.auditResource(errorResponse, user, resource, "", "", actionEnum, null);
 		}
@@ -4909,7 +4897,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<Boolean, ResponseFormat> validateCapabilityTypeExists(User user, ICapabilityTypeOperation capabilityTypeOperation, Resource resource, AuditingActionEnum actionEnum, Either<Boolean, ResponseFormat> eitherResult,
-			Entry<String, List<CapabilityDefinition>> typeEntry, boolean inTransaction) {
+																		 Entry<String, List<CapabilityDefinition>> typeEntry, boolean inTransaction) {
 		Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation.getCapabilityType(typeEntry.getKey(), inTransaction);
 		if (eitherCapTypeFound.isRight()) {
 			if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
@@ -5121,7 +5109,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * deleteResource
-	 * 
+	 *
 	 * @param resourceId
 	 * @param user
 	 * @return
@@ -5268,7 +5256,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * updateResourceMetadata
-	 * 
+	 *
 	 * @param user
 	 *            - modifier data (userId)
 	 * @param inTransaction
@@ -5276,7 +5264,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	 * @param resourceIdToUpdate
 	 *            - the resource identifier
 	 * @param newResource
-	 * 
+	 *
 	 * @return Either<Resource, responseFormat>
 	 */
 	public Either<Resource, ResponseFormat> updateResourceMetadata(String resourceIdToUpdate, Resource newResource, Resource currentResource, User user, boolean inTransaction) {
@@ -5405,7 +5393,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * validateResourceFieldsBeforeCreate
-	 * 
+	 *
 	 * @param user
 	 *            - modifier data (userId)
 	 * @param dataModel
@@ -5424,7 +5412,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 		/*
 		 * log.debug("validate resource name"); Either<Boolean, ResponseFormat> eitherValidation = validateComponentName(user, resource, actionEnum); if (eitherValidation.isRight()) { return eitherValidation; }
-		 * 
+		 *
 		 * // validate description log.debug("validate description"); eitherValidation = validateDescriptionAndCleanup(user, resource, actionEnum); if (eitherValidation.isRight()) { return eitherValidation; }
 		 */
 
@@ -5514,7 +5502,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/**
 	 * validateResourceFieldsBeforeUpdate
-	 * 
+	 *
 	 * @param currentResource
 	 *            - Resource object to validate
 	 * @return Either<Boolean, ErrorResponse>
@@ -5678,18 +5666,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
 	/*
 	 * private Either<Boolean, ResponseFormat> validateResourceName(User user, Resource resource, AuditingActionEnum actionEnum) { log.debug("validate resource name is not empty"); String resourceName = resource.getResourceName();
-	 * 
+	 *
 	 * if (!ValidationUtils.validateStringNotEmpty(resourceName)) { log.debug("Resource name is empty"); ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.MISSING_COMPONENT_NAME, ComponentTypeEnum.RESOURCE.getValue());
 	 * componentsUtils.auditResource(responseFormat, user, resource, "", "", actionEnum, null); return Either.right(responseFormat); }
-	 * 
+	 *
 	 * if (!ValidationUtils.validateResourceNameLength(resourceName)) { log.debug("Resource name is exceeds max length {} ", ValidationUtils.RESOURCE_NAME_MAX_LENGTH); ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.
 	 * COMPONENT_NAME_EXCEEDS_LIMIT, ComponentTypeEnum.RESOURCE.getValue(), "" + ValidationUtils.RESOURCE_NAME_MAX_LENGTH); componentsUtils.auditResource(responseFormat, user, resource, "", "", actionEnum, null); return Either.right(responseFormat);
 	 * }
-	 * 
+	 *
 	 * if (!ValidationUtils.validateResourceName(resourceName)) { log.debug("Resource name {} has invalid format", resourceName); ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPONENT_NAME,
 	 * ComponentTypeEnum.RESOURCE.getValue()); componentsUtils.auditResource(responseFormat, user, resource, "", "", actionEnum, null); return Either.right(responseFormat); } resource.setNormalizedName(ValidationUtils.normaliseComponentName(
 	 * resourceName)); resource.setSystemName(ValidationUtils.convertToSystemName(resourceName)) ;
-	 * 
+	 *
 	 * return Either.left(true); }
 	 */
 
@@ -5850,7 +5838,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 		return Either.left(true);
 	}
 
-	// for extending inheritance US815447
+	// Tal G for extending inheritance US815447
 	private Either<Boolean, ResponseFormat> validateDerivedFromExtending(User user, Resource currentResource, Resource updateInfoResource, AuditingActionEnum actionEnum) {
 		// If updated resource is not deriving, should fail validation
 		/*
@@ -6564,7 +6552,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 	}
 
 	private Either<EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>>, ResponseFormat> organizeVfCsarArtifactsByArtifactOperation(List<NonMetaArtifactInfo> artifactPathAndNameList, List<ArtifactDefinition> existingArtifactsToHandle,
-			Resource resource, User user) {
+																																		 Resource resource, User user) {
 
 		EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> nodeTypeArtifactsToHandle = new EnumMap<>(ArtifactOperationEnum.class);
 		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
@@ -6736,7 +6724,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				log.debug("Failed to found resource with id {} ", resourceId);
 				Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
 			}
-			
+
 			log.debug("failed to get resource by id {} with filters {}", resourceId, dataParamsToReturn.toString());
 			return Either.right(componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(resourceResultEither.right().value()), ""));
 		}

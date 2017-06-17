@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.components.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.rmi.activation.ActivationSystem;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -270,7 +272,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 		// step 8
 		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = validateAndHandleArtifact(componentId, componentType, operation, artifactId, artifactInfo, origMd5, originData, interfaceName, operationName, parentId, user, component,
-				shouldLock, inTransaction);
+				shouldLock, inTransaction, true);
 
 		return result;
 	}
@@ -283,7 +285,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	 * @return
 	 */
 	public Either<Either<ArtifactDefinition, Operation>, ResponseFormat> validateAndHandleArtifact(String componentUniqueId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactUniqueId,
-			ArtifactDefinition artifactDefinition, String origMd5, String originData, String interfaceName, String operationName, String parentId, User user, Component component, boolean shouldLock, boolean inTransaction) {
+			ArtifactDefinition artifactDefinition, String origMd5, String originData, String interfaceName, String operationName, String parentId, User user, Component component, boolean shouldLock, boolean inTransaction, boolean needUpdateGroup) {
 		Component parent = component;
 		Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
 
@@ -293,7 +295,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result;
 		if (errorWrapper.isEmpty()) {
 			// step 10
-			result = doAction(componentUniqueId, componentType, operation, artifactUniqueId, artifactDefinition, origMd5, originData, interfaceName, operationName, auditingAction, user, parent, shouldLock, inTransaction);
+			result = doAction(componentUniqueId, componentType, operation, artifactUniqueId, artifactDefinition, origMd5, originData, interfaceName, operationName, auditingAction, user, parent, shouldLock, inTransaction, needUpdateGroup);
 		} else {
 			result = Either.right(errorWrapper.getInnerElement());
 		}
@@ -387,7 +389,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> doAction(String componentId, ComponentTypeEnum componentType, ArtifactOperationInfo operation, String artifactId, ArtifactDefinition artifactInfo, String origMd5,
-			String originData, String interfaceName, String operationName, AuditingActionEnum auditingAction, User user, org.openecomp.sdc.be.model.Component parent, boolean shouldLock, boolean inTransaction) {
+			String originData, String interfaceName, String operationName, AuditingActionEnum auditingAction, User user, org.openecomp.sdc.be.model.Component parent, boolean shouldLock, boolean inTransaction, boolean needUpdateGroup) {
 		if (interfaceName != null && operationName != null) {
 			interfaceName = interfaceName.toLowerCase();
 			operationName = operationName.toLowerCase();
@@ -401,20 +403,117 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		case Delete:
 			return handleDelete(componentId, artifactId, user, auditingAction, componentType, parent, interfaceName, operationName, shouldLock, inTransaction);
 		case Update:
+			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> result = null;
 			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactInfo.getArtifactType());
 			if (componentType.equals(ComponentTypeEnum.RESOURCE_INSTANCE)
 					&& (artifactType == ArtifactTypeEnum.HEAT || artifactType == ArtifactTypeEnum.HEAT_VOL || artifactType == ArtifactTypeEnum.HEAT_NET || artifactType == ArtifactTypeEnum.HEAT_ENV)) {
-				return handleUpdateHeatEnv(componentId, artifactInfo, auditingAction, artifactId, user, componentType, parent, originData, origMd5, operation, shouldLock, inTransaction);
+				result = handleUpdateHeatEnv(componentId, artifactInfo, auditingAction, artifactId, user, componentType, parent, originData, origMd5, operation, shouldLock, inTransaction);
+				if (needUpdateGroup && result.isLeft()) {
+					Either<ArtifactDefinition, Operation> updateResult = result.left().value();
+					ActionStatus error = updateGroupInstance(artifactInfo, updateResult.left().value(), parent, componentType, componentId);
+					if (error != ActionStatus.OK) {
+						result = Either.right(componentsUtils.getResponseFormat(error));
+					}
+				}
 			} else {
 				if (componentType.equals(ComponentTypeEnum.RESOURCE) && artifactType == ArtifactTypeEnum.HEAT_ENV) {
-					return handleUpdateHeatWithHeatEnvParams(componentId, artifactInfo, auditingAction, artifactId, user, componentType, parent, originData, origMd5, operation, shouldLock, inTransaction);
+					result = handleUpdateHeatWithHeatEnvParams(componentId, artifactInfo, auditingAction, artifactId, user, componentType, parent, originData, origMd5, operation, shouldLock, inTransaction, needUpdateGroup);
 				}
 			}
-			return handleUpdate(componentId, artifactInfo, operation, auditingAction, artifactId, user, componentType, parent, origMd5, originData, interfaceName, operationName, shouldLock, inTransaction);
+			if (result == null) {
+				result = handleUpdate(componentId, artifactInfo, operation, auditingAction, artifactId, user, componentType, parent, origMd5, originData, interfaceName, operationName, shouldLock, inTransaction);
+				if (needUpdateGroup && result.isLeft()) {
+					Either<ArtifactDefinition, Operation> updateResult = result.left().value();
+
+					ActionStatus error = updateGroupForHeat(artifactInfo, updateResult.left().value(), parent, componentType);
+					if (error != ActionStatus.OK) {
+						result = Either.right(componentsUtils.getResponseFormat(error));
+					}
+				}
+			}
+			return result;
 		case Create:
 			return handleCreate(componentId, artifactInfo, operation, auditingAction, user, componentType, parent, origMd5, originData, interfaceName, operationName, shouldLock, inTransaction);
 		}
 		return null;
+	}
+
+	private ActionStatus updateGroupForHeat(ArtifactDefinition artifactInfo, ArtifactDefinition artAfterUpdate, Component parent, ComponentTypeEnum componentType) {
+		List<GroupDefinition> groups = parent.getGroups();
+		if (groups != null && !groups.isEmpty()) {
+			List<GroupDataDefinition> groupToUpdate = groups.stream().filter(g -> g.getArtifacts() != null && g.getArtifacts().contains(artifactInfo.getUniqueId())).collect(Collectors.toList());
+			if (groupToUpdate != null && !groupToUpdate.isEmpty()) {
+				groupToUpdate.forEach(g -> {
+					g.getArtifacts().remove(artifactInfo.getUniqueId());
+					g.getArtifactsUuid().remove(artifactInfo.getArtifactUUID());
+					g.getArtifacts().add(artAfterUpdate.getUniqueId());
+					g.getArtifactsUuid().add(artAfterUpdate.getArtifactUUID());
+				});
+				Either<List<GroupDefinition>, StorageOperationStatus> status = toscaOperationFacade.updateGroupsOnComponent(parent, componentType, groupToUpdate);
+				if (status.isRight()) {
+					log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+					return componentsUtils.convertFromStorageResponse(status.right().value());
+				}
+			}
+		}
+		return ActionStatus.OK;
+	}
+
+	private ActionStatus updateGroupForHeat(ArtifactDefinition artifactInfoHeat, ArtifactDefinition artHeatAfterUpdate, ArtifactDefinition artifactInfoHeatE, ArtifactDefinition artHEAfterUpdate, Component parent, ComponentTypeEnum componentType) {
+		List<GroupDefinition> groups = parent.getGroups();
+		if (groups != null && !groups.isEmpty()) {
+			List<GroupDataDefinition> groupToUpdate = groups.stream().filter(g -> g.getArtifacts() != null && g.getArtifacts().contains(artifactInfoHeat.getUniqueId())).collect(Collectors.toList());
+			if (groupToUpdate != null && !groupToUpdate.isEmpty()) {
+				groupToUpdate.forEach(g -> {
+					g.getArtifacts().remove(artifactInfoHeat.getUniqueId());
+					g.getArtifactsUuid().remove(artifactInfoHeat.getArtifactUUID());
+					g.getArtifacts().remove(artifactInfoHeatE.getUniqueId());
+					g.getArtifacts().add(artHeatAfterUpdate.getUniqueId());
+					g.getArtifactsUuid().add(artHeatAfterUpdate.getArtifactUUID());
+					g.getArtifacts().add(artHEAfterUpdate.getUniqueId());
+				});
+				Either<List<GroupDefinition>, StorageOperationStatus> status = toscaOperationFacade.updateGroupsOnComponent(parent, componentType, groupToUpdate);
+				if (status.isRight()) {
+					log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+					return componentsUtils.convertFromStorageResponse(status.right().value());
+				}
+			}
+		}
+		return ActionStatus.OK;
+	}
+
+	private ActionStatus updateGroupInstance(ArtifactDefinition artifactInfo, ArtifactDefinition artAfterUpdate, Component parent, ComponentTypeEnum componentType, String parentId) {
+		List<GroupInstance> updatedGroupInstances = new ArrayList<>();
+		List<GroupInstance> groupInstances = null;
+		Optional<ComponentInstance> componentInstOp = parent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(parentId)).findFirst();
+		if (componentInstOp.isPresent()) {
+			groupInstances = componentInstOp.get().getGroupInstances();
+		}
+		if (CollectionUtils.isNotEmpty(groupInstances)) {
+			boolean isUpdated = false;
+			for (GroupInstance groupInstance : groupInstances) {
+				isUpdated = false;
+				if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifacts()) && groupInstance.getGroupInstanceArtifacts().contains(artifactInfo.getUniqueId())) {
+					groupInstance.getGroupInstanceArtifacts().remove(artifactInfo.getUniqueId());
+					groupInstance.getGroupInstanceArtifacts().add(artAfterUpdate.getUniqueId());
+					isUpdated = true;
+				}
+				if (CollectionUtils.isNotEmpty(groupInstance.getGroupInstanceArtifactsUuid()) && groupInstance.getGroupInstanceArtifactsUuid().contains(artifactInfo.getArtifactUUID())) {
+					groupInstance.getGroupInstanceArtifactsUuid().remove(artifactInfo.getArtifactUUID());
+					groupInstance.getGroupInstanceArtifacts().add(artAfterUpdate.getArtifactUUID());
+					isUpdated = true;
+				}
+				if (isUpdated) {
+					updatedGroupInstances.add(groupInstance);
+				}
+			}
+		}
+		Either<List<GroupInstance>, StorageOperationStatus> status = toscaOperationFacade.updateGroupInstancesOnComponent(parent, componentType, parentId, updatedGroupInstances);
+		if (status.isRight()) {
+			log.debug("Failed to update groups of the component {}. ", parent.getUniqueId());
+			return componentsUtils.convertFromStorageResponse(status.right().value());
+		}
+		return ActionStatus.OK;
 	}
 
 	Either<Either<ArtifactDefinition, Operation>, ResponseFormat> generateNotSavedArtifact(org.openecomp.sdc.be.model.Component parent, ArtifactDefinition artifactInfo, boolean shouldLock, boolean inTransaction) {
@@ -437,7 +536,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> handleUpdateHeatWithHeatEnvParams(String componentId, ArtifactDefinition artifactInfo, AuditingActionEnum auditingAction, String artifactId, User user,
-			ComponentTypeEnum componentType, Component parent, String originData, String origMd5, ArtifactOperationInfo operation, boolean shouldLock, boolean inTransaction) {
+			ComponentTypeEnum componentType, Component parent, String originData, String origMd5, ArtifactOperationInfo operation, boolean shouldLock, boolean inTransaction, boolean needToUpdateGroup) {
 		convertParentType(componentType);
 		String parentId = parent.getUniqueId();
 		Either<ArtifactDefinition, StorageOperationStatus> artifactHeatRes = artifactToscaOperation.getArtifactById(componentId, artifactInfo.getGeneratedFromId());
@@ -476,7 +575,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		}
 		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> resultOp = null;
 		try {
-			resultOp = updateHeatParams(componentId, artifactId, artifactInfo, user, auditingAction, parent, componentType, currHeatArtifact, origMd5);
+			resultOp = updateHeatParams(componentId, artifactId, artifactInfo, user, auditingAction, parent, componentType, currHeatArtifact, origMd5, needToUpdateGroup);
 			return resultOp;
 
 		} finally {
@@ -1061,11 +1160,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	private ArtifactDefinition findArtifact(Component parentComponent, ComponentTypeEnum componentType, String parentId, String artifactId) {
 		ArtifactDefinition foundArtifact;
 		if (parentComponent.getUniqueId().equals(parentId)) {
-            foundArtifact = artifactsResolver.findArtifactOnComponent(parentComponent, componentType, artifactId);
-        } else {
-            ComponentInstance instance = findComponentInstance(parentId, parentComponent);
-            foundArtifact = artifactsResolver.findArtifactOnComponentInstance(instance, artifactId);
-        }
+			foundArtifact = artifactsResolver.findArtifactOnComponent(parentComponent, componentType, artifactId);
+		} else {
+			ComponentInstance instance = findComponentInstance(parentId, parentComponent);
+			foundArtifact = artifactsResolver.findArtifactOnComponentInstance(instance, artifactId);
+		}
 		return foundArtifact;
 	}
 
@@ -2557,6 +2656,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 				String artifactType = artifactInfo.getArtifactType();
 				if (NodeTypeEnum.Resource == convertParentType
 						&& (ArtifactTypeEnum.HEAT.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.HEAT_VOL.getType().equalsIgnoreCase(artifactType) || ArtifactTypeEnum.HEAT_NET.getType().equalsIgnoreCase(artifactType))) {
+
+					if (!artifactUniqueId.equals(artifactId)) {
+						// need to update the generated id in heat env
+						Map<String, ArtifactDefinition> deploymentArtifacts = parent.getDeploymentArtifacts();
+						Optional<Entry<String, ArtifactDefinition>> findFirst = deploymentArtifacts.entrySet().stream().filter(a -> a.getValue().getGeneratedFromId().equals(artifactId)).findFirst();
+						if (findFirst.isPresent()) {
+							ArtifactDefinition artifactEnvInfo = findFirst.get().getValue();
+							artifactEnvInfo.setArtifactChecksum(null);
+							artifactToscaOperation.updateHeatEnvArtifact(parent.getUniqueId(), artifactEnvInfo, artifactId, artifactUniqueId, convertParentType, parentId);
+						}
+					}
+
 					/*
 					 * if (!artifactUniqueId.equals(artifactId)) { artifactToscaOperation.updateHeatEnvArtifact(parentId, null, artifactId, artifactUniqueId, convertParentType);
 					 * 
@@ -2692,8 +2803,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		if (!ArtifactTypeEnum.HEAT_ENV.getType().equalsIgnoreCase(artifactType)) {
 			// HEAT specific YAML validation
 			DeploymentArtifactHeatConfiguration heatConfiguration = yamlToObjectConverter.convert(decodedPayload, DeploymentArtifactHeatConfiguration.class);
-			if (heatConfiguration == null || heatConfiguration.getHeat_template_version() == null || heatConfiguration.getResources() == null) {
-				log.debug("HEAT doesn't contain required \"heat_template_version\" and \"resources\" sections ");
+			if (heatConfiguration == null || heatConfiguration.getHeat_template_version() == null) {
+				log.debug("HEAT doesn't contain required \"heat_template_version\" section.");
 				ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_DEPLOYMENT_ARTIFACT_HEAT, artifactType);
 				return Either.right(responseFormat);
 			}
@@ -3552,7 +3663,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
 					oldCheckSum = artifactDefinition.getArtifactChecksum();
 					artifactDefinition.setArtifactChecksum(newCheckSum);
-//					artifactToscaOperation.updateUUID(artifactDefinition, oldCheckSum, artifactDefinition.getArtifactVersion());
+					// artifactToscaOperation.updateUUID(artifactDefinition, oldCheckSum, artifactDefinition.getArtifactVersion());
 					artifactDefinition.setEsId(artifactDefinition.getUniqueId());
 					updateArifactDefinitionStatus = artifactToscaOperation.updateArifactOnResource(artifactDefinition, component.getUniqueId(), artifactDefinition.getUniqueId(), componentType.getNodeType(), instanceId);
 
@@ -3765,7 +3876,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<Either<ArtifactDefinition, Operation>, ResponseFormat> updateHeatParams(String componentId, String artifactId, ArtifactDefinition artifactEnvInfo, User user, AuditingActionEnum auditingAction, Component parent,
-			ComponentTypeEnum componentType, ArtifactDefinition currHeatArtifact, String origMd5) {
+			ComponentTypeEnum componentType, ArtifactDefinition currHeatArtifact, String origMd5, boolean needToUpdateGroup) {
 
 		Either<Either<ArtifactDefinition, Operation>, ResponseFormat> resultOp = null;
 		Either<ArtifactDefinition, Operation> insideEither = null;
@@ -3773,6 +3884,21 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		 * currently getArtifactById does not retrieve heatParameters Either<ArtifactDefinition, StorageOperationStatus> artifactRes = artifactOperation.getArtifactById(artifactId, false); ArtifactDefinition currArtifact = artifactRes.left().value();
 		 */
 		String currentHeatId = currHeatArtifact.getUniqueId();
+		
+		String esArtifactId = currHeatArtifact.getEsId();
+		Either<ESArtifactData, CassandraOperationStatus> artifactfromES = artifactCassandraDao.getArtifact(esArtifactId);
+		if (artifactfromES.isRight()) {
+			CassandraOperationStatus resourceUploadStatus = artifactfromES.right().value();
+			StorageOperationStatus storageResponse = DaoStatusConverter.convertCassandraStatusToStorageStatus(resourceUploadStatus);
+			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(storageResponse);
+			log.debug("Error when getting artifact from ES, error: {}", actionStatus.name());
+			return Either.right(componentsUtils.getResponseFormatByArtifactId(actionStatus, currHeatArtifact.getArtifactDisplayName()));
+		}
+
+		ESArtifactData esArtifactData = artifactfromES.left().value();
+		byte[] data = esArtifactData.getDataAsArray();
+		
+		
 		ArtifactDefinition updatedHeatArt = currHeatArtifact;
 
 		List<HeatParameterDefinition> updatedHeatEnvParams = artifactEnvInfo.getListHeatParameters();
@@ -3817,16 +3943,43 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
 				}
 				updatedHeatArt = operationStatus.left().value();
+				boolean res = true;
+				if (!updatedHeatArt.getDuplicated() || esArtifactData.getId() == null)
+					esArtifactData.setId(updatedHeatArt.getEsId());
+				res = saveArtifacts(esArtifactData, parent.getUniqueId(), false);
+				
+				if (res) {
+					log.debug("Artifact saved into ES - {}", updatedHeatArt.getUniqueId());
+					ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);
+					handleAuditing(auditingAction, parent, parent.getUniqueId(), user, updatedHeatArt, currentHeatId, updatedHeatArt.getUniqueId(), responseFormat, componentType, null);
+					// resultOp = Either.left(result.left().value());
+					// return resultOp;
+				} else {
+					BeEcompErrorManager.getInstance().logBeDaoSystemError("Update Artifact");
+					log.debug("Failed to save the artifact.");
+					ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+					handleAuditing(auditingAction, parent, parent.getUniqueId(), user, updatedHeatArt, currentHeatId, updatedHeatArt.getUniqueId(), responseFormat, componentType, null);
+					resultOp = Either.right(responseFormat);
+					// return resultOp;
+				}
+				
 				insideEither = Either.left(updatedHeatArt);
 			}
 		}
-
+		Either<ArtifactDefinition, StorageOperationStatus> updateHeatEnvArtifact;
 		if (!currentHeatId.equals(updatedHeatArt.getUniqueId())) {
 			artifactEnvInfo.setArtifactChecksum(null);
-			artifactToscaOperation.updateHeatEnvArtifact(parent.getUniqueId(), artifactEnvInfo, currentHeatId, updatedHeatArt.getUniqueId(), componentType.getNodeType(), componentId);
+			updateHeatEnvArtifact = artifactToscaOperation.updateHeatEnvArtifact(parent.getUniqueId(), artifactEnvInfo, currentHeatId, updatedHeatArt.getUniqueId(), componentType.getNodeType(), componentId);
 		} else {
-			artifactToscaOperation.updateHeatEnvPlaceholder(artifactEnvInfo, componentId, componentType.getNodeType());
+			updateHeatEnvArtifact = artifactToscaOperation.updateHeatEnvPlaceholder(artifactEnvInfo, componentId, componentType.getNodeType());
 
+		}
+		if ( needToUpdateGroup && updateHeatEnvArtifact.isLeft() ){
+			ActionStatus result = updateGroupForHeat(currHeatArtifact, updatedHeatArt, artifactEnvInfo, updateHeatEnvArtifact.left().value(), parent, componentType);
+			if ( result != ActionStatus.OK ){
+				ResponseFormat responseFormat = componentsUtils.getResponseFormat(result);
+				return Either.right(responseFormat);
+			}
 		}
 		resultOp = Either.left(insideEither);
 		ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.OK);

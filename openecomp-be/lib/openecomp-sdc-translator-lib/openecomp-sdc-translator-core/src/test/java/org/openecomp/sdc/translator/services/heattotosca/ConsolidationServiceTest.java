@@ -508,6 +508,53 @@ public class ConsolidationServiceTest {
   }
 
   @Test
+  public void testFalseComputeConsolidationOneImageNameMissing() throws IOException {
+    ConsolidationData consolidationData = new ConsolidationData();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.pd_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/computeportconsolidation/one_image_missing",
+            null, null);
+
+    TestUtils.initComputeNodeTypeInConsolidationData(
+        mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    portTypeToIdList.add(new ImmutablePair<>("sm01_port", "sm01_port_1"));
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_pd01",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_pd02",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_pd03",
+        null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "sm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
   public void testFalseComputeConsolidationForTwoSimilarFlavorNamesAndOneDiff() throws IOException {
     ConsolidationData consolidationData = new ConsolidationData();
     String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
@@ -548,6 +595,53 @@ public class ConsolidationServiceTest {
     List<UnifiedCompositionMode> expectedUnifiedModes =
         Arrays.asList(UnifiedCompositionMode.CatalogInstance);
     verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testFalsePortConsolidationForOneDiffFixedIpsValue() throws IOException {
+    ConsolidationData consolidationData = new ConsolidationData();
+    String computeNodeTypeName = "org.openecomp.resource.vfc.nodes.heat.ps_server";
+    ToscaServiceModel toscaServiceModel = TestUtils.loadToscaServiceModel
+        ("/mock/services/heattotosca/consolidation/translatedfiles/computeportconsolidation/one_exCP_naming_diff",
+            null, null);
+
+    TestUtils.initComputeNodeTypeInConsolidationData(mainST, computeNodeTypeName, consolidationData);
+
+    List<Pair<String, String>> portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_1"));
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps01", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_2"));
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps02", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    portTypeToIdList = new ArrayList<>();
+    portTypeToIdList.add(new ImmutablePair<>("cm01_port", "cm01_port_3"));
+    TestUtils.updateComputeTemplateConsolidationData(
+        mainST,
+        computeNodeTypeName, "server_ps03", null, null, null, null, null, null,
+        portTypeToIdList, consolidationData);
+
+    TestUtils.initPortConsolidationData(mainST, consolidationData);
+    TestUtils.updatePortConsolidationData(mainST, "cm01_port_1",
+        null, null, null, null, null,
+        consolidationData);
+
+    translationContext.setConsolidationData(consolidationData);
+    List<UnifiedCompositionMode> expectedUnifiedModes =
+        Arrays.asList(UnifiedCompositionMode.CatalogInstance);
+    verifyMainServiceTemplateConsolidation(1, expectedUnifiedModes, toscaServiceModel);
+  }
+
+  @Test
+  public void testFalsePortConsolidationForOneDiffExpcNaming(){
+
   }
 
   @Test

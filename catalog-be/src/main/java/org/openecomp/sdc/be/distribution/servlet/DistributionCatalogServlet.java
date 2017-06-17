@@ -51,14 +51,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 import fj.data.Either;
 
+/**
+ * This Servlet serves external users to download artifacts.
+ * 
+ * @author tgitelman
+ *
+ */
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
+@Api(value = "Distribution Catalog Servlet", description = "This Servlet serves external users to download artifacts.")
 @Singleton
 public class DistributionCatalogServlet extends BeGenericServlet {
 

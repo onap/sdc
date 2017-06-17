@@ -9,11 +9,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_FSB_OAM_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal2_network_role_tag:
         type: list
         required: true
@@ -53,13 +51,13 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB2_Internal1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB2_Internal1_network_role:
         type: list
         required: true
@@ -79,11 +77,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB2_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal1_vlan_requirements:
         type: list
         required: true
@@ -109,11 +105,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB2_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB_OAM_subnetpoolid:
         type: list
         required: true
@@ -121,23 +115,19 @@ node_types:
         entry_schema:
           type: string
       port_FSB2_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_FSB_OAM_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_FSB2_Internal2_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -187,13 +177,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_FSB2_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_FSB2_Internal2_order:
         type: list
         required: true
@@ -714,29 +702,25 @@ node_types:
         entry_schema:
           type: json
       port_VLC_OAM_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC_GTP_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC2_Internal2_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_SCTP_A_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -746,13 +730,13 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_SCTP_A_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC2_Internal1_network_role_tag:
         type: list
         required: true
@@ -760,11 +744,9 @@ node_types:
         entry_schema:
           type: string
       port_VLC2_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC_GTP_network_role_tag:
         type: list
         required: true
@@ -776,23 +758,17 @@ node_types:
         required: true
         status: SUPPORTED
       port_VLC2_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC2_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC2_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC_SCTP_B_network:
         type: list
         required: true
@@ -810,7 +786,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_GTP_order:
         type: list
         required: true
@@ -840,7 +816,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC_OAM_network:
         type: list
         required: true
@@ -894,13 +870,13 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_OAM_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC2_Internal1_order:
         type: list
         required: true
@@ -918,7 +894,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC2_Internal2_vlan_requirements:
         type: list
         required: true
@@ -992,7 +968,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC_GTP_network_role:
         type: list
         required: true
@@ -1012,11 +988,9 @@ node_types:
         entry_schema:
           type: integer
       port_VLC_GTP_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC2_Internal1_network:
         type: list
         required: true
@@ -1036,11 +1010,9 @@ node_types:
         entry_schema:
           type: json
       port_VLC_OAM_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC2_Internal1_vlan_requirements:
         type: list
         required: true
@@ -1054,11 +1026,9 @@ node_types:
         entry_schema:
           type: string
       port_VLC_SCTP_B_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC2_Internal2_exCP_naming:
         type: list
         required: true
@@ -1853,11 +1823,9 @@ node_types:
         entry_schema:
           type: string
       port_NCB1_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -1873,7 +1841,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_NCB1_Internal1_exCP_naming:
         type: list
         required: true
@@ -1899,11 +1867,9 @@ node_types:
         entry_schema:
           type: string
       port_NCB1_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -1913,11 +1879,9 @@ node_types:
         constraints:
         - greater_or_equal: 0
       port_NCB1_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_NCB1_Internal1_order:
         type: list
         required: true
@@ -1935,7 +1899,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_NCB1_Internal1_vlan_requirements:
         type: list
         required: true
@@ -1943,11 +1907,9 @@ node_types:
         entry_schema:
           type: json
       port_NCB1_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_NCB1_Internal1_network:
         type: list
         required: true
@@ -2400,17 +2362,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_NCB2_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_NCB2_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -2464,7 +2422,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_NCB2_Internal2_network_role_tag:
         type: list
         required: true
@@ -2484,17 +2442,13 @@ node_types:
         entry_schema:
           type: json
       port_NCB2_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_NCB2_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_NCB2_Internal1_subnetpoolid:
         type: list
         required: true
@@ -2536,7 +2490,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
     requirements:
     - dependency_NCB2:
         capability: tosca.capabilities.Node
@@ -2987,7 +2941,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -3023,23 +2977,19 @@ node_types:
         entry_schema:
           type: string
       port_GPB2_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_GPB2_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_GPB2_Internal1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_GPB2_Internal2_network_role:
         type: list
         required: true
@@ -3073,11 +3023,9 @@ node_types:
         entry_schema:
           type: integer
       port_GPB2_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_GPB2_Internal1_exCP_naming:
         type: list
         required: true
@@ -3091,11 +3039,9 @@ node_types:
         entry_schema:
           type: string
       port_GPB2_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_GPB2_Internal2_network:
         type: list
         required: true
@@ -3520,11 +3466,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_VLC1_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC_GTP_exCP_naming:
         type: list
         required: true
@@ -3532,23 +3476,19 @@ node_types:
         entry_schema:
           type: json
       port_VLC_OAM_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC1_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_VLC_GTP_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC1_Internal2_exCP_naming:
         type: list
         required: true
@@ -3562,11 +3502,9 @@ node_types:
         entry_schema:
           type: string
       port_VLC_SCTP_A_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -3582,13 +3520,13 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_SCTP_A_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC1_Internal2_network_role_tag:
         type: list
         required: true
@@ -3642,11 +3580,9 @@ node_types:
         entry_schema:
           type: json
       port_VLC1_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC1_Internal1_vlan_requirements:
         type: list
         required: true
@@ -3676,7 +3612,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC_OAM_network:
         type: list
         required: true
@@ -3694,7 +3630,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC1_Internal1_network:
         type: list
         required: true
@@ -3748,19 +3684,19 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC1_Internal1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_OAM_fixed_ips:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC1_Internal2_vlan_requirements:
         type: list
         required: true
@@ -3790,7 +3726,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_VLC_SCTP_A_subnetpoolid:
         type: list
         required: true
@@ -3830,11 +3766,9 @@ node_types:
         constraints:
         - greater_or_equal: 0
       port_VLC1_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC_SCTP_B_subnetpoolid:
         type: list
         required: true
@@ -3846,7 +3780,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_VLC_GTP_network_role:
         type: list
         required: true
@@ -3860,17 +3794,13 @@ node_types:
         entry_schema:
           type: string
       port_VLC_GTP_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC_OAM_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC1_Internal1_exCP_naming:
         type: list
         required: true
@@ -3878,11 +3808,9 @@ node_types:
         entry_schema:
           type: json
       port_VLC_SCTP_B_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_VLC_SCTP_B_order:
         type: list
         required: true
@@ -4637,17 +4565,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_FSB1_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB_OAM_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB1_Internal2_network:
         type: list
         required: true
@@ -4671,17 +4595,15 @@ node_types:
         entry_schema:
           type: json
       port_FSB1_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB_OAM_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB1_Internal1_subnetpoolid:
         type: list
         required: true
@@ -4695,11 +4617,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB1_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_FSB_OAM_network_role:
         type: list
         required: true
@@ -4711,7 +4631,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB1_Internal1_order:
         type: list
         required: true
@@ -4743,11 +4663,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB_OAM_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_FSB1_availability_zone:
         type: list
         required: true
@@ -4787,17 +4705,15 @@ node_types:
         entry_schema:
           type: string
       port_FSB1_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_FSB1_Internal2_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_FSB1_Internal2_order:
         type: list
         required: true
@@ -4809,7 +4725,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_FSB1_Internal1_exCP_naming:
         type: list
         required: true
@@ -5358,11 +5274,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_GPB1_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_GPB1_Internal1_order:
         type: list
         required: true
@@ -5386,11 +5300,9 @@ node_types:
         entry_schema:
           type: json
       port_GPB1_Internal1_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_GPB1_availability_zone:
         type: list
         required: true
@@ -5408,7 +5320,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_GPB1_Internal2_vlan_requirements:
         type: list
         required: true
@@ -5442,17 +5354,13 @@ node_types:
         entry_schema:
           type: string
       port_GPB1_Internal2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_GPB1_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_GPB1_Internal1_subnetpoolid:
         type: list
         required: true
@@ -5476,7 +5384,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_GPB1_Internal2_order:
         type: list
         required: true

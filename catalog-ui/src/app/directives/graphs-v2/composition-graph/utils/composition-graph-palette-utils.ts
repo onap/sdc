@@ -3,7 +3,7 @@ import {CapabilitiesGroup, NodesFactory, ComponentInstance, Component, Compositi
 import {ComponentFactory, ComponentInstanceFactory, GRAPH_EVENTS, GraphUIObjects} from "app/utils";
 import {CompositionGraphGeneralUtils} from "./composition-graph-general-utils";
 import {CommonGraphUtils} from "../../common/common-graph-utils";
-import 'angular-dragdrop';
+import 'sdc-angular-dragdrop';
 import {LeftPaletteComponent} from "../../../../models/components/displayComponent";
 
 export class CompositionGraphPaletteUtils {

@@ -92,12 +92,29 @@ public class MobProxy {
 			server.start();
 			// filter firefox requests to mozilla when system proxy is absent
 			server.blacklistRequests(".*mozilla.*", 200);
-		}		
-		mobProxyServerMap.put(Thread.currentThread().getId(), server);       
+		}
+		addProxyServerToPull(Thread.currentThread().getId(), server);
 	}
 	
 	public static synchronized BrowserMobProxyServer getPoxyServer() {
         return mobProxyServerMap.get(Thread.currentThread().getId());
-    }	
+    }
+	
+	public static void addProxyServerToPull(Long threadId, BrowserMobProxyServer server){
+		mobProxyServerMap.put(threadId, server);
+	}
+	
+	public static synchronized void removePoxyServer() {
+		if (getPoxyServer() != null){
+			getPoxyServer().stop();
+			mobProxyServerMap.remove(Thread.currentThread().getId());
+		}
+    }
+	
+	public static void removeAllProxyServers(){
+		for(Long threadNumber :mobProxyServerMap.keySet()){
+			mobProxyServerMap.get(threadNumber).stop();
+		}
+	}
 
 }

@@ -43,6 +43,7 @@ export class PropertiesUtils {
                     this.initValueObjectRef(newFEProp); //initialize valueObj.
                     propertyFeArray.push(newFEProp);
                     newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children
+                    this.dataTypeService.checkForCustomBehavior(newFEProp);
                 }    
             });
             instanceFePropertiesMap[instanceName] = propertyFeArray;

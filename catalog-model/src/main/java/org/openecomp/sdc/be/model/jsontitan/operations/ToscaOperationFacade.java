@@ -1,9 +1,9 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1536,7 +1536,8 @@ public class ToscaOperationFacade {
 	public Either<List<Component>, StorageOperationStatus> getLatestComponentListByUuid(String componentUuid) {
 		Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
 		propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-		return getComponentListByUuid(componentUuid, propertiesToMatch);
+		Either<List<Component>, StorageOperationStatus> componentListByUuid = getComponentListByUuid(componentUuid, propertiesToMatch);
+		return componentListByUuid;
 	}
 
 	public Either<List<Component>, StorageOperationStatus> getComponentListByUuid(String componentUuid, Map<GraphPropertyEnum, Object> additionalPropertiesToMatch) {
@@ -1565,11 +1566,28 @@ public class ToscaOperationFacade {
 			return Either.right(StorageOperationStatus.NOT_FOUND);
 		}
 
-		List<Component> latestComponents = new ArrayList<Component>();
+		ArrayList<Component> latestComponents = new ArrayList<>();
 		for (GraphVertex vertex : vertexList) {
-			latestComponents.add(getToscaElementByOperation(vertex).left().value());
+			Either<Component, StorageOperationStatus> toscaElementByOperation = getToscaElementByOperation(vertex);
+			
+			if(toscaElementByOperation.isRight()){
+				log.debug("Could not fetch the following Component by UUID {}", vertex.getUniqueId());
+				return Either.right(toscaElementByOperation.right().value());
+			}
+			
+			latestComponents.add(toscaElementByOperation.left().value());
 		}
-
+		
+		if(latestComponents.size() > 1) {
+			for (Component component : latestComponents) {
+				if(component.isHighestVersion()){
+					LinkedList<Component> highestComponent = new LinkedList<>();
+					highestComponent.add(component);
+					return Either.left(highestComponent);
+				}
+			}
+		}
+		
 		return Either.left(latestComponents);
 	}
 

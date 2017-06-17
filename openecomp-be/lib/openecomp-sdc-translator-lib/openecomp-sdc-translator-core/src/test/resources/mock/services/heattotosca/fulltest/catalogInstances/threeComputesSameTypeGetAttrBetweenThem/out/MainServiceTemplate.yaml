@@ -184,7 +184,7 @@ topology_template:
           - network_policy_server
           - name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -196,8 +196,7 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -229,7 +228,7 @@ topology_template:
           - network_policy_server
           - name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -241,8 +240,7 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -269,7 +267,7 @@ topology_template:
           - network_policy_server
           - name
         port_pd01_port_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
@@ -281,8 +279,7 @@ topology_template:
               is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

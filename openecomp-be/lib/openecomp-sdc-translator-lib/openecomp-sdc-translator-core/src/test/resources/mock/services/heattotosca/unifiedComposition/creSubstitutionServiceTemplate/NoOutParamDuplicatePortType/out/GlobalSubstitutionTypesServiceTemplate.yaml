@@ -9,11 +9,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_FSB1_Internal_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB_OAM_network_role_tag:
         type: list
         required: true
@@ -97,11 +95,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB2_Internal1_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal1_vlan_requirements:
         type: list
         required: true
@@ -145,11 +141,9 @@ node_types:
         entry_schema:
           type: string
       port_FSB2_Internal2_mac_address:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_FSB2_Internal2_mac_requirements:
         type: list
         required: true
@@ -247,7 +241,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_FSB2_Internal2_order:
         type: list
         required: true

@@ -20,24 +20,26 @@
 
 package org.openecomp.sdc.be.components;
 
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import fj.data.Either;
+import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -53,35 +55,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import fj.data.Either;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PropertyBusinessLogicTest {
 
 	private static Logger log = LoggerFactory.getLogger(PropertyBusinessLogicTest.class.getName());
-	final ServletContext servletContext = Mockito.mock(ServletContext.class);
-	final IPropertyOperation propertyOperation = Mockito.mock(IPropertyOperation.class);
-	final IResourceOperation resourceOperation = Mockito.mock(IResourceOperation.class);
-	WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-	UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-	WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
-	PropertyBusinessLogic bl = new PropertyBusinessLogic();
-	User user = null;
-	Resource resourceResponse = null;
-	ResourceBusinessLogic blResource = new ResourceBusinessLogic();
-	PropertyBusinessLogic spy = null;
-	String resourceId = "resourceforproperty.0.1";
+	@Mock
+	private ServletContext servletContext;
+	@Mock
+	private IPropertyOperation propertyOperation;
+	@Mock
+	private IResourceOperation resourceOperation;
+	@Mock
+	private WebAppContextWrapper webAppContextWrapper;
+	@Mock
+	private UserBusinessLogic mockUserAdmin;
+	@Mock
+	private WebApplicationContext webAppContext;
+	@Mock
+	private ComponentsUtils componentsUtils;
+	@Mock
+	private ToscaOperationFacade toscaOperationFacade;
 
-	public PropertyBusinessLogicTest() {
-
-	}
+	@InjectMocks
+	private PropertyBusinessLogic bl = new PropertyBusinessLogic();
+	private User user = null;
+	private String resourceId = "resourceforproperty.0.1";
 
 	@Before
 	public void setup() {
-
+		MockitoAnnotations.initMocks(this);
 		ExternalConfiguration.setAppName("catalog-be");
 
 		// Init Configuration
@@ -117,18 +129,6 @@ public class PropertyBusinessLogicTest {
 
 		Either<Resource, StorageOperationStatus> eitherGetResource = Either.left(createResourceObject(true));
 		when(resourceOperation.getResource(resourceId)).thenReturn(eitherGetResource);
-
-		// // createResource
-		// resourceResponse = createResourceObject(true);
-		// Either<Resource, StorageOperationStatus> eitherCreate =
-		// Either.left(resourceResponse);
-		// when(resourceOperation.createResource(Mockito.any(Resource.class))).thenReturn(eitherCreate);
-
-		// BL object
-		// bl = PropertyBusinessLogic.getInstance(servletContext);
-		// PropertyBusinessLogic spy = PowerMockito.spy(bl);
-		// when(spy, method(PropertyBusinessLogic.class, "getResource",
-		// String.class)).withArguments(resource).thenReturn(true);
 
 	}
 
@@ -174,6 +174,48 @@ public class PropertyBusinessLogicTest {
 		Assert.assertEquals(newPropertyDefinition, either.left().value());
 	}
 
+	@Test
+	public void getProperty_propertyNotFound() throws Exception {
+		Resource resource = new Resource();
+		PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
+		PropertyDefinition property2 = createPropertyObject("someProperty2", "myResource");
+		resource.setProperties(Arrays.asList(property1, property2));
+		String resourceId = "myResource";
+		resource.setUniqueId(resourceId);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
+		Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> nonExistingProperty = bl.getProperty(resourceId, "NonExistingProperty", user.getUserId());
+		assertTrue(nonExistingProperty.isRight());
+		Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, "");
+	}
+
+	@Test
+	public void getProperty_propertyNotBelongsToResource() throws Exception {
+		Resource resource = new Resource();
+		PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
+		resource.setProperties(Arrays.asList(property1));
+		String resourceId = "myResource";
+		resource.setUniqueId(resourceId);
+
+		Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
+		Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> notFoundProperty = bl.getProperty(resourceId, property1.getUniqueId(), user.getUserId());
+		assertTrue(notFoundProperty.isRight());
+		Mockito.verify(componentsUtils).getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, "");
+	}
+
+	@Test
+	public void getProperty() throws Exception {
+		Resource resource = new Resource();
+		resource.setUniqueId(resourceId);
+		PropertyDefinition property1 = createPropertyObject("someProperty", null);
+		resource.setProperties(Arrays.asList(property1));
+
+		Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(resource));
+		Either<Map.Entry<String, PropertyDefinition>, ResponseFormat> foundProperty = bl.getProperty(resourceId, property1.getUniqueId(), user.getUserId());
+		assertTrue(foundProperty.isLeft());
+		assertEquals(foundProperty.left().value().getValue().getUniqueId(), property1.getUniqueId());
+	}
+
 	private PropertyDefinition createPropertyObject(String propertyName, String resourceId) {
 		PropertyDefinition pd = new PropertyDefinition();
 		List<PropertyConstraint> constraints = new ArrayList<PropertyConstraint>();
@@ -183,6 +225,7 @@ public class PropertyBusinessLogicTest {
 		pd.setPassword(false);
 		pd.setRequired(true);
 		pd.setType("Integer");
+		pd.setOwnerId(resourceId);
 		pd.setUniqueId(resourceId + "." + propertyName);
 		return pd;
 	}
