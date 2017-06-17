@@ -10,7 +10,7 @@ import {
 import {CompositionGraphGeneralUtils} from "../composition-graph/utils/composition-graph-general-utils";
 import {EventListenerService} from "app/services";
 import {ResourceType, GRAPH_EVENTS, EVENTS, ComponentInstanceFactory, ModalsHandler} from "app/utils";
-import 'angular-dragdrop';
+import 'sdc-angular-dragdrop';
 import {LeftPaletteLoaderService} from "../../../services/components/utils/composition-left-palette-service";
 
 interface IPaletteScope {

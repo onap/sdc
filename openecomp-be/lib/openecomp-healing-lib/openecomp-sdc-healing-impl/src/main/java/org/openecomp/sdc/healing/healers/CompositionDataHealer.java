@@ -173,7 +173,7 @@ public class CompositionDataHealer implements Healer {
     componentData
         .setDisplayName(compositionDataExtractor.getComponentDisplayName(componentData.getName()));
     String displayName = componentData.getDisplayName();
-    componentData.setName(displayName);
+    componentData.setName(componentData.getName().replace("com.att.d2", "org.openecomp"));
     componentData.setVfcCode(displayName);
     component.setCompositionData(JsonUtil.object2Json(componentData));
 

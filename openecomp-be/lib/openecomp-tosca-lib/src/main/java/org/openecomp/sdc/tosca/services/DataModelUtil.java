@@ -595,7 +595,7 @@ public class DataModelUtil {
     if (status != null) {
       paramDef.setStatus(status);
     }
-    paramDef.setEntry_schema(entrySchema);
+    paramDef.setEntry_schema(entrySchema == null ? null : entrySchema.clone());
     paramDef.set_default(defaultVal);
 
     mdcDataDebugMessage.debugExitMessage(null, null);

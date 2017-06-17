@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter, SimpleChanges, ViewChild, ElementRef } from "@angular/core";
-import { trigger, state, style, transition, animate} from '@angular/core';
 import {PropertyFEModel, DerivedFEProperty, DerivedPropertyType, InstanceFePropertiesMap} from "app/models";
 import {PropertiesService} from "../../services/properties.service";
 import { DynamicElementComponent } from 'app/ng2/components/dynamic-element/dynamic-element.component';
@@ -8,8 +7,7 @@ import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 @Component({
     selector: 'properties-table',
     templateUrl: './properties-table.component.html',
-    styleUrls: ['./properties-table.component.less'],
-    animations: [trigger('fadeIn', [transition(':enter', [style({ opacity: '0' }), animate('.3s ease-out', style({ opacity: '1' }))]) ])]
+    styleUrls: ['./properties-table.component.less']
 })
 export class PropertiesTableComponent {
 
@@ -65,7 +63,6 @@ export class PropertiesTableComponent {
     propertyChecked = (prop: PropertyFEModel, childPropName?: string) => {
         let isChecked: boolean = (!childPropName)? prop.isSelected : prop.flattenedChildren.find(prop => prop.propertiesName == childPropName).isSelected;
 
-        console.log(isChecked, childPropName, prop);
         if (!isChecked) {
             this.propertiesService.undoDisableRelatedProperties(prop, childPropName);
         } else {

@@ -55,11 +55,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.jcabi.aspects.Loggable;
+import com.wordnik.swagger.annotations.Api;
 
 import fj.data.Either;
 
+/**
+ * This Servlet serves external users for distribution purposes.
+ * 
+ * @author tgitelman
+ *
+ */
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1")
+@Api(value = "Distribution Servlet", description = "This Servlet serves external users for distribution purposes.")
 @Singleton
 public class DistributionServlet extends BeGenericServlet {
 

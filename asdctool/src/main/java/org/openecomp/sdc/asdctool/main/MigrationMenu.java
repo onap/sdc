@@ -34,6 +34,7 @@ import org.openecomp.sdc.asdctool.impl.migration.v1610.TitanFixUtils;
 import org.openecomp.sdc.asdctool.impl.migration.v1610.ToscaArtifactsAlignment;
 import org.openecomp.sdc.asdctool.impl.migration.v1702.Migration1702;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707;
+import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707ArtifactUuidFix;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707Config;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.DistributionStatusUpdate;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.Migration1707VnfFix;
@@ -69,7 +70,8 @@ public class MigrationMenu {
 		DISTRIBUTION_STATUS_UPDATE_1707("distribution-status-update-1707", "distributionStatusUpdate"),
 		VFMODULES_PROPERTIES_ADDING("vfModules-properties-adding", "vfModulesPropertiesAdding"),
 		MIGRATION_1707_RELATIONS_FIX("fix-relations-after-migration-1707", "migration1707relationsFix"),
-		MIGRATION_1707_VNF_FIX("fix-vnf-after-migration-1707", "migration1707vnfFix");
+		MIGRATION_1707_VNF_FIX("fix-vnf-after-migration-1707", "migration1707vnfFix"),
+		MIGRATION_1707_UUID_FIX("fix-UUID-1707", "migration1707UuidFix");
 		// UPDATE_DATA_TYPES("update_data_types", "updateDataTypes");
 
 		private String value, beanName;
@@ -308,6 +310,25 @@ public class MigrationMenu {
 //				}
 				System.exit(0);
 				break;
+			case MIGRATION_1707_UUID_FIX:
+				if (args == null || args.length < 5) {
+					System.out.println("Usage: fix-UUID-1707 <configuration dir> <all/distributed_only> <services/service_vf/fix/fix_only_services>");
+					System.exit(1);
+				}
+				String fixServices = args[3];
+				String runMode = args[4];
+				log.info("Start fixing artifact UUID after 1707 migration with arguments run with configutation [{}] , for [{}] services", runMode, fixServices);
+				
+				Migration1707ArtifactUuidFix migrationFix = (Migration1707ArtifactUuidFix) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migrationFix.migrate(fixServices,  runMode);
+				if (isSuccessful) {
+					log.info("Fixing artifacts UUID for 1707  was finished successfully");
+				} else{
+					log.info("Fixing artifacts UUID for 1707  has failed");
+					System.exit(2);
+				}
+				System.exit(0);
+				break;
 			default:
 				usageAndExit();
 			}
@@ -347,5 +368,6 @@ public class MigrationMenu {
 		System.out.println("Usage: vfModules-properties-adding <group_types_input_file path> <configuration dir>");
 		System.out.println("Usage: fix-relations-after-migration-1707 <configuration dir>");
 		System.out.println("Usage: fix-vnf-after-migration-1707 <configuration dir>");
+		System.out.println("Usage: fix-UUID-1707 <configuration dir> <all/distributed_only> <services/service_vf/fix/fix_only_services>");
 	}
 }

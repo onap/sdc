@@ -54,7 +54,7 @@ topology_template:
       - substitutable
       properties:
         port_pd01_port_0_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         port_pd01_port_0_network:
         - get_attribute:
@@ -83,12 +83,10 @@ topology_template:
           - network_policy_server
           - name
         port_pd01_port_1_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_1_network_role_tag:
-        - oam
         port_pd01_port_1_network:
         - get_input: oam_net_name
         compute_pd_server_user_data_format:

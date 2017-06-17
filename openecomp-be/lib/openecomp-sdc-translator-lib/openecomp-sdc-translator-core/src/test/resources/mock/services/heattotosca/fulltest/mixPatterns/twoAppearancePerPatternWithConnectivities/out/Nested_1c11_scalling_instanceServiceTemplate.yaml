@@ -20,17 +20,15 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.heat.neutron.port.FixedIps
     port_1c1_t1_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: json
     port_1c1_t1_port_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -60,7 +58,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     vm_image_name:
       type: string
       required: true
@@ -135,17 +133,13 @@ topology_template:
           - port_1c1_t1_port_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_1c1_t1_port_ip_requirements
-          - index_value
+          get_input: port_1c1_t1_port_ip_requirements
         network_role_tag:
           get_input:
           - port_1c1_t1_port_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_1c1_t1_port_mac_requirements
-          - index_value
+          get_input: port_1c1_t1_port_mac_requirements
         order:
           get_input:
           - port_1c1_t1_port_order
@@ -159,9 +153,7 @@ topology_template:
           - port_1c1_t1_port_subnetpoolid
           - index_value
         fixed_ips:
-          get_input:
-          - port_1c1_t1_port_fixed_ips
-          - index_value
+          get_input: port_1c1_t1_port_fixed_ips
         name:
           get_input:
           - port_1c1_t1_port_name

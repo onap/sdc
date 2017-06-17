@@ -30,7 +30,9 @@ import SoftwareProductComponentsMonitoringAction from './softwareProduct/compone
 import {actionTypes, enums} from './OnboardingConstants.js';
 import {navigationItems as SoftwareProductNavigationItems, actionTypes as SoftwareProductActionTypes} from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import ActivityLogActionHelper from 'nfvo-components/activity-log/ActivityLogActionHelper.js';
+import licenseModelOverviewActionHelper from 'sdc-app/onboarding/licenseModel/overview/licenseModelOverviewActionHelper.js';
 import store from 'sdc-app/AppStore.js';
+import {selectedButton as licenseModelOverviewSelectedButton} from 'sdc-app/onboarding/licenseModel/overview/LicenseModelOverviewConstants.js';
 
 function setCurrentScreen(dispatch, screen, props = {}) {
 	dispatch({
@@ -92,7 +94,7 @@ export default {
 			LicenseModelActionHelper.fetchLicenseModelItems(dispatch, {licenseModelId, version}).then(() =>{
 				setCurrentScreen(dispatch, enums.SCREEN.LICENSE_MODEL_OVERVIEW, {licenseModelId, version});
 			});
-
+			licenseModelOverviewActionHelper.selectVLMListView(dispatch, {buttonTab: licenseModelOverviewSelectedButton.VLM_LIST_VIEW});
 		});
 	},
 	navigateToLicenseAgreements(dispatch, {licenseModelId, version}) {

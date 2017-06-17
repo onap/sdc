@@ -629,7 +629,7 @@ public class CsarUtils {
 			}
 
 			Either<Either<ArtifactDefinition, Operation>, ResponseFormat> validateAndHandleArtifact = artifactsBusinessLogic.validateAndHandleArtifact(componentUniqueId, componentType, operationType, artifactUniqueId, artDef, dataMD5, data, null,
-					null, null, user, component, shouldLock, inTransaction);
+					null, null, user, component, shouldLock, inTransaction, false);
 
 			if (validateAndHandleArtifact.isRight()) {
 				if (ArtifactOperationEnum.Create == operationType.getArtifactOperationEnum() || ArtifactOperationEnum.Update == operationType.getArtifactOperationEnum()) {

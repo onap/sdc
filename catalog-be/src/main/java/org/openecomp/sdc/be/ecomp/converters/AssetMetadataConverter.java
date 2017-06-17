@@ -196,11 +196,10 @@ public class AssetMetadataConverter {
 
 	private <T extends ResourceAssetMetadata> T convertToResourceMetadata(T assetToPopulate, Resource resource, String serverBaseURL, boolean detailed) {
 		assetToPopulate = convertToAsset(assetToPopulate, resource, serverBaseURL, detailed);
-		CategoryDefinition categoryDefinition;
 		if(resource.getCategories() != null && !resource.getCategories().isEmpty()){
-			categoryDefinition = resource.getCategories().iterator().next();
+			CategoryDefinition categoryDefinition = resource.getCategories().get(0);
 			assetToPopulate.setCategory(categoryDefinition.getName());
-			assetToPopulate.setSubCategory(categoryDefinition.getSubcategories().iterator().next().getName());
+			assetToPopulate.setSubCategory(categoryDefinition.getSubcategories().get(0).getName());
 		}
 		assetToPopulate.setResourceType(resource.getResourceType().name());
 		assetToPopulate.setLifecycleState(resource.getLifecycleState().name());
@@ -212,9 +211,11 @@ public class AssetMetadataConverter {
 	private <T extends ServiceAssetMetadata> T convertToServiceAssetMetadata(T assetToPopulate, Service service, String serverBaseURL, boolean detailed) {
 		assetToPopulate = convertToAsset(assetToPopulate, service, serverBaseURL, detailed);
 
-		CategoryDefinition categoryDefinition = service.getCategories().iterator().next();
-
-		assetToPopulate.setCategory(categoryDefinition.getName());
+		if(service.getCategories() != null && !service.getCategories().isEmpty()){
+			CategoryDefinition categoryDefinition = service.getCategories().get(0);
+			assetToPopulate.setCategory(categoryDefinition.getName());
+		}
+		
 		assetToPopulate.setLifecycleState(service.getLifecycleState().name());
 		assetToPopulate.setLastUpdaterUserId(service.getLastUpdaterUserId());
 		assetToPopulate.setDistributionStatus(service.getDistributionStatus().name());

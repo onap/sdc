@@ -55,14 +55,6 @@ public abstract class ToscaDataDefinition {
 	}
 	
 	
-	public String getType(){
-		return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
-	}
-	
-	public String getName(){
-		return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-	}
-	
 	//default merge function for merging data maps - implement where needed and use mergeDataMaps method where applicable instead of map1.putAll(map2) 
 	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride){
 		other.setOwnerId(getOwnerId());
@@ -86,6 +78,6 @@ public abstract class ToscaDataDefinition {
 	
 	public static <T extends ToscaDataDefinition> Map<String, T> listToMapByName(List<T> dataList) {
 		return null == dataList? new HashMap<>() : dataList.stream()
-		.collect(Collectors.toMap(p -> p.getName(), p -> p));
+		.collect(Collectors.toMap(p -> (String)p.getToscaPresentationValue(JsonPresentationFields.NAME), p -> p));
 	}
 }

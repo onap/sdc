@@ -104,7 +104,7 @@ topology_template:
       - substitutable
       properties:
         port_pd01_port_0_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         port_pd01_port_0_network:
         - packet_mirror_network
@@ -137,7 +137,7 @@ topology_template:
             floating_ip_count_required:
               is_required: false
         port_pd01_port_1_mac_requirements:
-        - mac_count_required:
+          mac_count_required:
             is_required: false
         port_pd01_port_1_replacement_policy:
         - AUTO

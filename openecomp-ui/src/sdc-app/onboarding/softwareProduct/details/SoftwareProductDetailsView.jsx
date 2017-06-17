@@ -65,7 +65,7 @@ class GeneralSection extends React.Component {
 					isRequired={true}
 					errorText={genericFieldInfo.name.errorText}
 					isValid={genericFieldInfo.name.isValid}
-					onChange={name => this.props.onDataChanged({name}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS)}/>
+					onChange={name => name.length <= 25 && this.props.onDataChanged({name}, forms.VENDOR_SOFTWARE_PRODUCT_DETAILS)}/>
 				<Input
 					data-test-id='vsp-vendor-name'
 					label={i18n('Vendor')}

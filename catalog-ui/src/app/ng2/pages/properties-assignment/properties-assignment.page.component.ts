@@ -242,10 +242,8 @@ export class PropertiesAssignmentComponent {
             this.propertiesNavigationData = simpleFlatProperty;
         }
 
-        // Updatet the header in the navigation tree with property name.
-        if(property instanceof DerivedFEProperty) {
-            this.propertyStructureHeader = (property.propertiesName.split('#'))[0];
-        }
+        // Update the header in the navigation tree with property name.
+        this.propertyStructureHeader = (property.propertiesName.split('#'))[0];
 
         // Set selected property in table
         this.selectedFlatProperty = this.hierarchyNavService.createSimpleFlatProperty(property, instanceName);

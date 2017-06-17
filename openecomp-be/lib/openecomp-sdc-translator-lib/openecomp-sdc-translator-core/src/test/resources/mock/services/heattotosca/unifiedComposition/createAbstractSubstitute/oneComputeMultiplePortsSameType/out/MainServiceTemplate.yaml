@@ -159,7 +159,7 @@ topology_template:
       - substitutable
       properties:
         port_FSB1_Internal1_mac_address:
-        - get_input: fsb1-Internal1-mac
+          get_input: fsb1-Internal1-mac
         port_FSB1_Internal2_network:
         - Internal2-net
         port_FSB1_Internal1_network:
@@ -167,7 +167,7 @@ topology_template:
         vm_flavor_name:
           get_input: fsb-flavor
         port_FSB1_Internal2_mac_address:
-        - get_input: fsb1-Internal2-mac
+          get_input: fsb1-Internal1-mac
         vm_image_name:
           get_input: fsb-image
         compute_FSB_admin_pass:

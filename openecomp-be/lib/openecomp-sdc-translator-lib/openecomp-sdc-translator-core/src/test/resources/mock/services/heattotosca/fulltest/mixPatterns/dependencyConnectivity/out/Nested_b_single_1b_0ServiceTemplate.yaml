@@ -12,10 +12,8 @@ node_types:
 topology_template:
   inputs:
     port_1b_t2_port_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     compute_b_single_1b_availability_zone:
       type: list
       required: true
@@ -47,7 +45,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     port_1b_t1_port_network_role:
       type: list
       required: true
@@ -70,7 +68,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.IpRequirements
     vm_image_name:
       type: string
       required: true
@@ -80,10 +78,8 @@ topology_template:
       entry_schema:
         type: string
     port_1b_t1_port_mac_requirements:
-      type: list
+      type: org.openecomp.datatypes.network.MacRequirements
       required: true
-      entry_schema:
-        type: json
     port_1b_t2_port_network:
       type: list
       required: true
@@ -165,17 +161,13 @@ topology_template:
           - port_1b_t1_port_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_1b_t1_port_ip_requirements
-          - index_value
+          get_input: port_1b_t1_port_ip_requirements
         network_role_tag:
           get_input:
           - port_1b_t1_port_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_1b_t1_port_mac_requirements
-          - index_value
+          get_input: port_1b_t1_port_mac_requirements
         order:
           get_input:
           - port_1b_t1_port_order
@@ -209,17 +201,13 @@ topology_template:
           - port_1b_t2_port_vlan_requirements
           - index_value
         ip_requirements:
-          get_input:
-          - port_1b_t2_port_ip_requirements
-          - index_value
+          get_input: port_1b_t2_port_ip_requirements
         network_role_tag:
           get_input:
           - port_1b_t2_port_network_role_tag
           - index_value
         mac_requirements:
-          get_input:
-          - port_1b_t2_port_mac_requirements
-          - index_value
+          get_input: port_1b_t2_port_mac_requirements
         order:
           get_input:
           - port_1b_t2_port_order

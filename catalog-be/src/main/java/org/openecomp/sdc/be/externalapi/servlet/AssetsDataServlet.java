@@ -77,7 +77,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
@@ -93,6 +92,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -100,8 +100,16 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 import fj.data.Either;
 
+/**
+ * This Servlet serves external users for retrieving component metadata.
+ * 
+ * @author tgitelman
+ *
+ */
+
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
+@Api(value = "Asset Metadata External Servlet", description = "This Servlet serves external users for retrieving component metadata.")
 @Singleton
 public class AssetsDataServlet extends AbstractValidationsServlet {
 

@@ -1,12 +1,12 @@
-<div class="dynamic-property-row"
+<div *ngIf="!property.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
     [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName }"
     [class.with-top-border]="property.isChildOfListOrMap"
     (click)="onClickPropertyRow(property, $event)">
     <!-- LEFT CELL -->
     <ng-container *ngIf="!isPropertyFEModel">
         <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}"> <!-- simple children of complex type -->
-            <checkbox  [label]="property.name" [(checked)]="property.isSelected" [disabled]="property.isDisabled ||property.isDeclared || readonly" (checkedChange)="checkProperty.emit(property.propertiesName)"
-            ></checkbox>
+            <checkbox [(checked)]="property.isSelected" [disabled]="property.isDisabled ||property.isDeclared || readonly" (checkedChange)="checkProperty.emit(property.propertiesName)"></checkbox> 
+            <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">{{property.name}}</div> <!-- simple children of complex type within map or list -->
         <div class="table-cell map-entry" *ngIf="property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP"><!-- map left cell -->
@@ -21,24 +21,24 @@
                 [(value)]="property.valueObj"
                 [type]="property.isDeclared ? 'string' : property.type"
                 [name]="property.name"
+                [path]="property.propertiesName"
                 (valueChange)="valueChanged.emit();"
-                             [readonly]="readonly||property.isDeclared"
-                > <!--[disabled]="property.isDisabled || property.isDeclared" -->
-            </dynamic-element>
+                [readonly]="readonly||property.isDeclared||property.isDisabled"
+            ></dynamic-element>
         </div>
     </ng-container>
     <ng-container *ngIf="!isPropertyFEModel && propType != derivedPropertyTypes.SIMPLE && !property.isDeclared"> <!-- right cell for complex elements, or list complex -->
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.COMPLEX">{{property.type | contentAfterLastDot }}</div>
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.MAP && !property.schema.property.isSimpleType">{{property.schema.property.type | contentAfterLastDot }}</div>
     </ng-container>
-    <ng-container *ngIf="isPropertyFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP)"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
+    <ng-container *ngIf="isPropertyFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isDeclared"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
         <div class="table-cell empty"></div>
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
     <ng-container *ngIf="!property.isDeclared">
-            <span *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon sprite-new add-item-icon" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly}"></span>
+            <a *ngIf="(propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isChildOfListOrMap" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly}">Add value to list</a>
             <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}"></span>
-            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || hasChildren())" (click)="expandChildById(propPath)" class="property-icon expand-icon" [class.expanded]="propPath == expandedChildId">V</span>
+            <span *ngIf="!isPropertyFEModel && (propType == derivedPropertyTypes.COMPLEX || ((propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && hasChildren()))" (click)="expandChildById(propPath)" class="property-icon sprite-new round-expand-icon" [class.open]="propPath == expandedChildId"></span>
     </ng-container>
 
 </div>

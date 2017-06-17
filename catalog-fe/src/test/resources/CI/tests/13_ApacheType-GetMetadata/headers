@@ -1,8 +1,0 @@
---header "Content-Type: application/json" 
---header "HTTP_IV_USER: HTTP_IV_USER" 
---header "HTTP_CSP_FIRSTNAME: HTTP_CSP_FIRSTNAME" 
---header "HTTP_CSP_LASTNAME: HTTP_CSP_LASTNAME" 
---header "HTTP_IV_REMOTE_ADDRESS: HTTP_IV_REMOTE_ADDRESS" 
---header "HTTP_CSP_WSTYPE: HTTP_CSP_WSTYPE"
---header "USER_ID: USER_ID"
---header "Content-MD5: `cat contentMD5.txt`"

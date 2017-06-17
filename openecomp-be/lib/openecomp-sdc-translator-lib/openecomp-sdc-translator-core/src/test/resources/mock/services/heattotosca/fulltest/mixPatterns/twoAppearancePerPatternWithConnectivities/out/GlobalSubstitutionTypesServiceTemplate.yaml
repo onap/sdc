@@ -943,7 +943,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       compute_1c12_scalling_instance_name:
         type: list
         required: true
@@ -957,11 +957,9 @@ node_types:
         entry_schema:
           type: json
       port_1c1_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -985,7 +983,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -1393,7 +1391,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.heat.neutron.port.FixedIps
       port_1c1_t1_port_vlan_requirements:
         type: list
         required: true
@@ -1401,11 +1399,9 @@ node_types:
         entry_schema:
           type: json
       port_1c1_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -1441,7 +1437,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -2418,7 +2414,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t1_port_network_role_tag:
         type: list
         required: true
@@ -2454,11 +2450,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_1a_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1a_t1_port_network:
         type: list
         required: true
@@ -2905,13 +2899,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1c2_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network_role:
         type: list
         required: true
@@ -2951,11 +2943,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t2_port_vlan_requirements:
         type: list
         required: true
@@ -2969,17 +2959,15 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_1c2_catalog_instance_scheduler_hints:
         type: list
         required: true
@@ -3420,13 +3408,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
@@ -3444,11 +3430,9 @@ node_types:
         entry_schema:
           type: string
       port_1a_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1a_t1_port_network:
         type: list
         required: true
@@ -3470,7 +3454,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t1_port_vlan_requirements:
         type: list
         required: true
@@ -3558,11 +3542,9 @@ node_types:
         entry_schema:
           type: string
       port_1a_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
     attributes:
       a_single_1a_instance_name:
         type: list
@@ -4058,13 +4040,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1c2_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network_role:
         type: list
         required: true
@@ -4104,11 +4084,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t2_port_vlan_requirements:
         type: list
         required: true
@@ -4122,17 +4100,15 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_1c2_catalog_instance_scheduler_hints:
         type: list
         required: true
@@ -4594,7 +4570,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -4636,11 +4612,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_b_single_1b_availability_zone:
         type: list
         required: true
@@ -4672,7 +4646,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1b_t1_port_network_role_tag:
         type: list
         required: true
@@ -4692,11 +4666,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network:
         type: list
         required: true
@@ -5210,13 +5182,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1c2_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network_role:
         type: list
         required: true
@@ -5262,11 +5232,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t2_port_vlan_requirements:
         type: list
         required: true
@@ -5280,17 +5248,15 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_1c2_catalog_instance_scheduler_hints:
         type: list
         required: true
@@ -5792,13 +5758,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1c2_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network_role:
         type: list
         required: true
@@ -5838,11 +5802,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t2_port_vlan_requirements:
         type: list
         required: true
@@ -5856,17 +5818,15 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_1c2_catalog_instance_scheduler_hints:
         type: list
         required: true
@@ -6329,7 +6289,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -6377,11 +6337,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -6401,7 +6359,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_b_single_2b_name:
         type: list
         required: true
@@ -6427,11 +6385,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network:
         type: list
         required: true
@@ -6894,7 +6850,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -6936,11 +6892,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_b_single_1b_availability_zone:
         type: list
         required: true
@@ -6972,7 +6926,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_1b_t1_port_value_specs:
         type: list
         required: true
@@ -6980,11 +6934,9 @@ node_types:
         entry_schema:
           type: json
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_subnetpoolid:
         type: list
         required: true
@@ -6992,11 +6944,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network:
         type: list
         required: true
@@ -7476,7 +7426,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       vm_image_name:
         type: string
         required: true
@@ -7524,11 +7474,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -7548,7 +7496,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       compute_b_single_2b_name:
         type: list
         required: true
@@ -7568,11 +7516,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_subnetpoolid:
         type: list
         required: true
@@ -7580,11 +7526,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network:
         type: list
         required: true

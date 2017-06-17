@@ -39,11 +39,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -53,7 +51,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network:
         type: list
         required: true
@@ -79,11 +77,9 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_vlan_requirements:
         type: list
         required: true
@@ -466,11 +462,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_image_name:
         type: string
         required: true
@@ -480,7 +474,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network:
         type: list
         required: true
@@ -911,23 +905,19 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_2_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_3_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_3_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_3_network:
         type: list
         required: true
@@ -969,11 +959,9 @@ node_types:
         entry_schema:
           type: json
       port_pd01_port_2_mac_requirements:
-        type: list
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_2_exCP_naming:
         type: list
         required: true
@@ -981,11 +969,9 @@ node_types:
         entry_schema:
           type: json
       port_pd01_port_3_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_pd_server_user_data_format:
         type: list
         required: true
@@ -997,7 +983,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_3_exCP_naming:
         type: list
         required: true

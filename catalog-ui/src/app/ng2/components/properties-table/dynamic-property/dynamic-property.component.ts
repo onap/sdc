@@ -3,12 +3,14 @@ import { PropertyBEModel, PropertyFEModel, DerivedFEProperty, DerivedPropertyTyp
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 import { PropertiesUtils } from "app/ng2/pages/properties-assignment/properties.utils";
 import { DataTypeService } from "../../../services/data-type.service";
+import { trigger, state, style, transition, animate } from '@angular/core';
 
 
 @Component({
     selector: 'dynamic-property',
     templateUrl: './dynamic-property.component.html',
-    styleUrls: ['./dynamic-property.component.less']
+    styleUrls: ['./dynamic-property.component.less'],
+    animations: [trigger('fadeIn', [transition(':enter', [style({ opacity: '0' }), animate('.7s ease-out', style({ opacity: '1' }))])])]
 })
 export class DynamicPropertyComponent {
 
@@ -16,7 +18,7 @@ export class DynamicPropertyComponent {
     propType: DerivedPropertyType;
     propPath: string;
     isPropertyFEModel: boolean;
-    childrenCount: number;
+    nestedLevel: number;
 
     @Input() canBeDeclared: boolean;
     @Input() property: PropertyFEModel | DerivedFEProperty;
@@ -41,6 +43,7 @@ export class DynamicPropertyComponent {
         this.isPropertyFEModel = this.property instanceof PropertyFEModel;
         this.propType = this.property.derivedDataType;
         this.propPath = (this.property instanceof PropertyFEModel) ? this.property.name : this.property.propertiesName;
+        this.nestedLevel = (this.property.propertiesName.match(/#/g) || []).length;
     }
 
 
@@ -66,7 +69,7 @@ export class DynamicPropertyComponent {
 
     createNewChildProperty = (): void => {
         
-        let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", null);
+        let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", undefined);
         if (this.property instanceof PropertyFEModel) {
             this.addChildProps(newProps, this.property.name);
         } else {
@@ -86,11 +89,8 @@ export class DynamicPropertyComponent {
     childValueChanged = (property: DerivedFEProperty) => { //value of child property changed
 
         if (this.property instanceof PropertyFEModel) { // will always be the case
-            let parentNames = this.getParentNamesArray(property.propertiesName, []);
-            if (parentNames.length) {
-                _.set(this.property.valueObj, parentNames.join('.'), property.valueObj);
-            }
-            console.log(parentNames);
+            this.property.childPropUpdated(property);
+            this.dataTypeService.checkForCustomBehavior(this.property);
             this.valueChanged.emit(this.property.name);
         }
     }    
@@ -126,30 +126,5 @@ export class DynamicPropertyComponent {
             }
         }
     }
-
-
-    getParentNamesArray = (parentPropName: string, parentNames?: Array<string>): Array<string> => {
-        if (this.property instanceof PropertyFEModel) {
-
-            if (parentPropName.indexOf("#") == -1) { return parentNames; } //finished recursing parents. return
-
-            let parentProp: DerivedFEProperty = this.property.flattenedChildren.find(prop => prop.propertiesName === parentPropName);
-            let nameToInsert: string = parentProp.name;
-
-            if (parentProp.isChildOfListOrMap) {
-                if (parentProp.derivedDataType == DerivedPropertyType.MAP) {
-                    nameToInsert = parentProp.mapKey;
-                } else { //LIST
-                    let siblingProps = this.property.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
-                    nameToInsert = siblingProps.indexOf(parentProp.propertiesName).toString();
-                }
-            }
-
-            parentNames.splice(0, 0, nameToInsert); //add prop name to array
-            return this.getParentNamesArray(parentProp.parentName, parentNames); //continue recursing
-            
-        }
-    }
-
 
 }

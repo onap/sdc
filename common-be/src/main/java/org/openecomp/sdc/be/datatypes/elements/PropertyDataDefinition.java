@@ -354,7 +354,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	
 	@Override
 	public <T extends ToscaDataDefinition> T mergeFunction(T other, boolean allowDefaultValueOverride){
-		if(this.getType().equals(other.getType()) && compareSchemaType(other)){
+		if(this.getType().equals(other.getToscaPresentationValue(JsonPresentationFields.TYPE)) && compareSchemaType(other)){
 			other.setOwnerId(getOwnerId());
 			if(allowDefaultValueOverride)
 				other.setToscaPresentationValue(JsonPresentationFields.DEFAULT_VALUE, getDefaultValue());
