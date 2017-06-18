@@ -833,5 +833,6 @@ ng1appModule.run([
         };
 
         registerStateChangeStartWatcher();
+        
     }]);
 
