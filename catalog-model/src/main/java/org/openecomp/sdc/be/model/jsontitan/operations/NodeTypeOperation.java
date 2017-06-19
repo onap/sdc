@@ -2,11 +2,8 @@ package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import fj.data.Either;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -15,40 +12,20 @@ import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapCapabiltyProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DerivedNodeTypeResolver;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.NodeType;
-import org.openecomp.sdc.be.model.jsontitan.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
-import org.openecomp.sdc.be.resources.data.AttributeData;
-import org.openecomp.sdc.be.resources.data.AttributeValueData;
-import org.openecomp.sdc.be.resources.data.CapabilityData;
-import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
-import org.openecomp.sdc.be.resources.data.DataTypeData;
-import org.openecomp.sdc.be.resources.data.GroupData;
-import org.openecomp.sdc.be.resources.data.GroupTypeData;
-import org.openecomp.sdc.be.resources.data.InputValueData;
-import org.openecomp.sdc.be.resources.data.InputsData;
-import org.openecomp.sdc.be.resources.data.PolicyTypeData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import org.openecomp.sdc.be.resources.data.RelationshipInstData;
-import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
-import org.openecomp.sdc.be.resources.data.RequirementData;
-import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.slf4j.Logger;
@@ -57,11 +34,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 @org.springframework.stereotype.Component("node-type-operation")
@@ -748,34 +724,17 @@ public class NodeTypeOperation extends ToscaElementOperation {
 
 	}
 
-	private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate) {
-        
-		StorageOperationStatus status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.CAPABILITIES, nodeToUpdate);
-		if (status != StorageOperationStatus.OK) {
-			return status;
+	private StorageOperationStatus updateDataFromNewDerived(List<GraphVertex> newDerived, GraphVertex nodeTypeV, NodeType nodeToUpdate) {    
+		EnumSet<EdgeLabelEnum> edgeLabels = EnumSet.of(EdgeLabelEnum.CAPABILITIES, EdgeLabelEnum.REQUIREMENTS, EdgeLabelEnum.PROPERTIES, EdgeLabelEnum.ATTRIBUTES, EdgeLabelEnum.CAPABILITIES_PROPERTIES, EdgeLabelEnum.ADDITIONAL_INFORMATION);
+		StorageOperationStatus status = null;
+		for (EdgeLabelEnum edge : edgeLabels){
+			status = updateDataByType(newDerived, nodeTypeV, edge, nodeToUpdate);
+			if (status != StorageOperationStatus.OK) {
+				break;
+			}
 		}
-		
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.REQUIREMENTS, nodeToUpdate);
-		if (status != StorageOperationStatus.OK) {
-			return status;
-		}
-	
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.PROPERTIES, nodeToUpdate);
-		if (status != StorageOperationStatus.OK) {
-			return status;
-		}
-		
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ATTRIBUTES, nodeToUpdate);
-		if (status != StorageOperationStatus.OK) {
-				return status;
-		}
-		
-		status = updateDataByType(newDerived, nodeTypeV,EdgeLabelEnum.CAPABILITIES_PROPERTIES, nodeToUpdate);
-		if (status != StorageOperationStatus.OK) {
-			return status;
-		}
-		status = updateDataByType(newDerived, nodeTypeV, EdgeLabelEnum.ADDITIONAL_INFORMATION, nodeToUpdate);
 		return status;
+		
 	}
 
 	private <T extends ToscaDataDefinition> StorageOperationStatus updateDataByType(List<GraphVertex> newDerivedList, GraphVertex nodeTypeV, EdgeLabelEnum label, NodeType nodeElement) {

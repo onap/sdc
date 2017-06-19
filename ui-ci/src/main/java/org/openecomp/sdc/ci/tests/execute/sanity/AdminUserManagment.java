@@ -58,7 +58,16 @@ public class AdminUserManagment extends SetupCDTest {
 	@DataProvider(name = "searchValues")
 	private final Object[][] searchString(){
 		User newUser = createNewUserUsingAPI();
+		GeneralUIUtils.getDriver().navigate().refresh();
  		return new Object[][]{{newUser.getUserId(), newUser}, {newUser.getFirstName(), newUser}, {newUser.getLastName(), newUser}, {newUser.getEmail(), newUser}};
+	}
+	
+	//TC915101
+	@Test(dataProvider = "searchValues")
+	public void searchUserByCriterionsTest(String searchCriterion, User user) throws IOException{
+		setLog(searchCriterion);
+		AdminWorkspaceUIUtilies.searchForUser(searchCriterion);
+		UserManagementVerificator.validateFirstRowDisplayedCorrectly(user);
 	}
 
 	//TC915100
@@ -137,13 +146,7 @@ public class AdminUserManagment extends SetupCDTest {
 		Assert.assertEquals(inputErrors.size() - 1 , inputErrorsSize, "Did not find an error : " + expectedErrorMsg);
 	}
 	
-	//TC915101
-	@Test(dataProvider = "searchValues")
-	public void searchUserByCriterionsTest(String searchCriterion, User user) throws IOException{
-		setLog(searchCriterion);
-		AdminWorkspaceUIUtilies.searchForUser(searchCriterion);
-		UserManagementVerificator.validateFirstRowDisplayedCorrectly(user);
-	}
+
 
 	//TC915101
 	@Test
@@ -253,7 +256,7 @@ public class AdminUserManagment extends SetupCDTest {
 	private User createNewUserUsingAPI() {
 		UserRoleEnum role = UserRoleEnum.DESIGNER;
 		String userId = generateValidUserId();
-		User userByEnv = new User("Tzemer", "Gefen", userId, "userId@intl.sdc.com", role.name(), null);
+		User userByEnv = new User(generateValidUserId(), generateValidUserId(), userId, generateValidUserId()+"@intl.sdc.com", role.name(), null);
 		User adminUser = getUserByEnv(UserRoleEnum.ADMIN);
 		try {
 			RestResponse createUserResp = UserRestUtils.createUser(userByEnv, adminUser);

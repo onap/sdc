@@ -64,6 +64,8 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	private Integer defaultArtifactInstallationTimeout = 60;
 
+	private boolean useHttpsWithDmaap;
+
 	public static class DistribNotifServiceArtifacts {
 
 		Map<String, Object> service;
@@ -258,6 +260,14 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
 	public void setDefaultArtifactInstallationTimeout(int defaultArtifactInstallationTimeout) {
 		this.defaultArtifactInstallationTimeout = defaultArtifactInstallationTimeout;
+	}
+
+	public boolean isUseHttpsWithDmaap() {
+		return useHttpsWithDmaap;
+	}
+
+	public void setUseHttpsWithDmaap(boolean useHttpsWithDmaap) {
+		this.useHttpsWithDmaap = useHttpsWithDmaap;
 	}
 
 	public static class CreateTopicConfig {

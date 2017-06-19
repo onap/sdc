@@ -65,7 +65,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		deploymentArtifacts.add(new  ArtifactInfo(null, "heatartifactname1.yaml", null, "heatartifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
 		
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder, deploymentArtifacts, null);
 	}
@@ -86,7 +86,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		deploymentArtifacts.add(new  ArtifactInfo(null, "HeatVolArtifactName3.yaml", null, "HeatVolArtifactName3", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
 		
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName,folder, deploymentArtifacts, null);
 	}
@@ -105,7 +105,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		informationalArtifacts.add(new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
@@ -127,7 +127,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		informationalArtifacts.add(new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
@@ -156,7 +156,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		deploymentArtifacts.add(new  ArtifactInfo(null, "HeatVolArtifactName2.yaml", null, "HeatVolArtifactName2", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
 		deploymentArtifacts.add(new  ArtifactInfo(null, "HeatVolArtifactName3.yaml", null, "HeatVolArtifactName3", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		informationalArtifacts.add(new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
@@ -183,7 +183,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "ArtifactName.yaml", null, "ArtifactName", ArtifactTypeEnum.OTHER.getType(), "1"));
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
 	}
@@ -202,7 +202,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		informationalArtifacts.add(new  ArtifactInfo(null, "ArtifactName.yaml", null, "ArtifactName", ArtifactTypeEnum.OTHER.getType(), "1"));
@@ -266,8 +266,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		
-		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
 		
@@ -289,8 +289,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		
-		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
 		ArtifactInfo artifactInfo = new  ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1");
 		deploymentArtifacts.add(artifactInfo);
 		
@@ -316,8 +316,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 			
-		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));
 		ArtifactInfo artifactInfo = new  ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1");
 		deploymentArtifacts.add(artifactInfo);
 			
@@ -346,7 +346,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 			
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
 			
@@ -374,7 +374,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		ArtifactInfo artifactInfo = new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1");
@@ -408,7 +408,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		ArtifactInfo artifactInfo = new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1");
@@ -438,7 +438,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 		deploymentArtifacts.add(new  ArtifactInfo(null, "heatartifactname1.yaml", null, "heatartifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
 		deploymentArtifacts.add(new  ArtifactInfo(null, "heatartifactname2.yaml", null, "heatartifactname2", ArtifactTypeEnum.HEAT.getType(), "1"));	
 		deploymentArtifacts.add(new  ArtifactInfo(null, "HeatVolArtifactName1.yaml", null, "HeatVolArtifactName1", ArtifactTypeEnum.HEAT_VOL.getType(), "1"));
@@ -541,7 +541,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 		deploymentArtifacts.add(new  ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
 			
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
@@ -572,7 +572,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));		
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));		
 		
 		List<ArtifactInfo> informationalArtifacts = new ArrayList<ArtifactInfo>();
 		informationalArtifacts.add(new  ArtifactInfo(null, "artifactname1.xml", null, "artifactname1", ArtifactTypeEnum.OTHER.getType(), "1"));
@@ -601,7 +601,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 			
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));		
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));		
 		deploymentArtifacts.add(new  ArtifactInfo(null, "artifactname1.yaml", null, "artifactname1", ArtifactTypeEnum.HEAT.getType(), "1"));
 			
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
@@ -680,7 +680,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
 		
@@ -725,7 +725,7 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
 		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));			
 		
 		importVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(fileName, folder,  deploymentArtifacts, null);
 	}
@@ -741,8 +741,8 @@ public class VfDeploymentInformationalArtifacts extends SetupCDTest {
 		String updatedCsarFileName = "UpdateTC1444533.csar";
 		
 		List<ArtifactInfo> deploymentArtifacts = new ArrayList<ArtifactInfo>();
-		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));
-		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "1"));			
+		deploymentArtifacts.add(new  ArtifactInfo(null, "base_ldsa.yaml", null, "base_ldsa", ArtifactTypeEnum.HEAT.getType(), "2"));
+		deploymentArtifacts.add(new  ArtifactInfo(null, "module_1_ldsa.yaml", null, "module_1_ldsa", ArtifactTypeEnum.HEAT.getType(), "4"));			
 		
 		updateVfAndValidateInformationalDeploymentArtifactPagesOnPagesAndComposition(folder, updatedCsarFileName, deploymentArtifacts, null, null, null);
 	}

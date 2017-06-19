@@ -246,69 +246,30 @@ public class MigrationMenu {
 			
 				break;
 			case MIGRATION_1702_1707://this migration is currently not needed, but will be commented out for production env
-//				log.info("Start ASDC migration from 1702 to 1707");
-//				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migration1707.migrate();
-//				if (isSuccessful) {
-//					log.info("SDC migration from 1702 to 1707 was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("SDC migration from 1702 to 1707 has failed");
-//					System.exit(2);
-//				}
-				System.exit(0);
+				log.info("Start ASDC migration from 1702 to 1707");
+				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migration1707.migrate();
+				if (isSuccessful) {
+					log.info("SDC migration from 1702 to 1707 was finished successfully");
+					System.exit(0);
+				} else{
+					log.info("SDC migration from 1702 to 1707 has failed");
+					System.exit(2);
+				}
+				//System.exit(0);
 				break;
 			case VFMODULES_PROPERTIES_ADDING://this migration is currently not needed, but will be commented out for production env
-//				log.info("Start adding new properties to vfModules");
-//				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
-//				if (isSuccessful) {
-//					log.info("Adding new properties to vfModules was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("Adding new properties to vfModules has failed");
-//					System.exit(2);
-//				}
-				System.exit(0);
-				break;
-			case MIGRATION_1707_VNF_FIX://this migration is currently not needed, but will be commented out for production env
-//				log.info("Start fixing vnf after 1707 migration");
-//				Migration1707VnfFix migrationVnfFix = (Migration1707VnfFix) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migrationVnfFix.migrate();
-//				if (isSuccessful) {
-//					log.info("Fixing VNFs after 1707 migration was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("Fixing VNFs after 1707 migration has failed");
-//					System.exit(2);
-//				}
-				System.exit(0);
-				break;
-			case DISTRIBUTION_STATUS_UPDATE_1707://not needed can be dropped
-//				log.info("Start Distribution status update 1707");
-//				DistributionStatusUpdate distStatusUpdate = (DistributionStatusUpdate) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = distStatusUpdate.migrate();
-//				if (isSuccessful) {
-//					log.info("ASDC Distribution status update 1707 was finished successful");
-//					System.exit(0);
-//				} else{
-//					log.info("ASDC Distribution status update 1707 has failed");
-//					System.exit(2);
-//				}
-				System.exit(0);
-				break;
-			case MIGRATION_1707_RELATIONS_FIX://not needed can be dropped
-//				log.info("Start fixing relations after 1707 migration");
-//				Migration migrationFix = (Migration1707RelationsFix) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migrationFix.migrate();
-//				if (isSuccessful) {
-//					log.info("Fixing relations after 1707 migration was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("Fixing relations after 1707 migration has failed");
-//					System.exit(2);
-//				}
-				System.exit(0);
+				log.info("Start adding new properties to vfModules");
+				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
+				if (isSuccessful) {
+					log.info("Adding new properties to vfModules was finished successfully");
+					System.exit(0);
+				} else{
+					log.info("Adding new properties to vfModules has failed");
+					System.exit(2);
+				}
+				//System.exit(0);
 				break;
 			case MIGRATION_1707_UUID_FIX:
 				if (args == null || args.length < 5) {

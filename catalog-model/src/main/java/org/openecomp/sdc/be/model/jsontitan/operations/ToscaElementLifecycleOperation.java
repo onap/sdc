@@ -992,6 +992,11 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
 		}
 		return result;
 	}
+	
+	//TODO remove after jsonModelMigration
+	public void resolveToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
+		fixToscaComponentName(vfInst, origCompMap);
+	}
 
 	private boolean fixToscaComponentName(ComponentInstanceDataDefinition vfInst, Map<String, ToscaElement> origCompMap) {
 		if (vfInst.getToscaComponentName() == null || vfInst.getToscaComponentName().isEmpty()) {

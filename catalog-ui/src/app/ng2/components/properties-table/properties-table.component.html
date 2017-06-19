@@ -17,8 +17,8 @@
                 (click)="onClickPropertyRow(property, instanceName, $event)"
                 [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name }">
 
-                <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}">
-                <div class="property-name cut-inner-long-text">
+                <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared">
+                <div class="property-name">
                     <checkbox [(checked)]="property.isSelected"
                           [disabled]="property.isDisabled || property.isDeclared || readonly"
                           (checkedChange)="propertyChecked(property)"></checkbox>

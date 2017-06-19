@@ -56,6 +56,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.jcabi.aspects.Loggable;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 import fj.data.Either;
 
@@ -80,6 +83,8 @@ public class DistributionServlet extends BeGenericServlet {
 	@Path("/distributionUebCluster")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "UEB Server List", httpMethod = "GET", notes = "return the available UEB Server List", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "UEB server list fetched successfully"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
 	public Response getUebServerList(@Context final HttpServletRequest request, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, @HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
 		init(request);
@@ -134,6 +139,8 @@ public class DistributionServlet extends BeGenericServlet {
 	@Path("/artifactTypes")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact types list fetched successfully"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
 	public Response getValidArtifactTypes(@Context final HttpServletRequest request, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, @HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, @HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
 		init(request);
@@ -156,6 +163,8 @@ public class DistributionServlet extends BeGenericServlet {
 	@Path("/registerForDistribution")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Subscribes for distribution notifications", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Subscribed for distribution notifications successfull"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
 	public Response registerForDistribution(@Context final HttpServletRequest request, String requestJson) {
 		String url = request.getMethod() + " " + request.getRequestURI();
 		log.debug("Start handle request of {}", url);
@@ -187,6 +196,8 @@ public class DistributionServlet extends BeGenericServlet {
 	@Path("/unRegisterForDistribution")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Removes from subscription for distribution notifications", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Successfully removed from subscription for distribution notifications"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
 	public Response unRegisterForDistribution(@Context final HttpServletRequest request, String requestJson) {
 		String url = request.getMethod() + " " + request.getRequestURI();
 		log.debug("Start handle request of {}", url);

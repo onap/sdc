@@ -88,11 +88,11 @@ export class ActivityLogViewModel {
 
     private initSortedTableScope = ():void => {
         this.$scope.tableHeadersList = [
-            {title: 'Date', property: 'logDate'},
-            {title: 'Action', property: 'logAction'},
-            {title: 'Comment', property: 'logComment'},
-            {title: 'Username', property: 'logUsername'},
-            {title: 'Status', property: 'logStatus'}
+            {title: 'Date', property: 'dateFormat'},
+            {title: 'Action', property: 'ACTION'},
+            {title: 'Comment', property: 'COMMENT'},
+            {title: 'Username', property: 'MODIFIER'},
+            {title: 'Status', property: 'STATUS'}
         ];
 
         this.$scope.sort = (sortBy:string):void => {

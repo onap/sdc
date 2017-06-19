@@ -16,7 +16,7 @@ public class NormativesMigration extends ComponentMigration<Resource> {
 
     private static Logger LOGGER = LoggerFactory.getLogger(NormativesMigration.class);
     private static final String JCP_VERSION_PROPERTY = "jcp-version";
-    private static final Set<String> e2eMalformedVfcs = Sets.newHashSet("71879ee1-ad63-46d0-9943-d33083a6fdbb", "e54e7c4d-6020-4c53-838b-42d34c0da5c9");
+    private static final Set<String> e2eMalformedVfcs = Sets.newHashSet("59da26b4-edd0-4412-a2e6-d6711f376340");
 
     @javax.annotation.Resource(name = "normatives-resolver")
     private NormativesResolver normativesResolver;

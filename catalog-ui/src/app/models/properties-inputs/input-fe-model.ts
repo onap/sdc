@@ -27,9 +27,10 @@ export class InputFEModel extends InputBEModel {
                 this.instanceId = input.inputs[0].componentInstanceId;
                 this.propertyName = input.inputs[0].name;
             }else{
-                if (input.inputPath) {
+                if (input.inputPath && input.inputPath.indexOf('#') > -1) { 
                     this.propertyName = input.inputPath.substring(0, input.inputPath.indexOf('#'))
                 } else {
+                    this.inputPath = undefined; //input path may be populated even if its a parent - ensure its empty
                     this.propertyName = this.name.substring(propNameIndex + 1);
                 }
             }

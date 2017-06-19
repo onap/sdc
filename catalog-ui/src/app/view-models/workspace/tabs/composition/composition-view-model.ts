@@ -20,7 +20,7 @@
 'use strict';
 import {Component, Product, ComponentInstance, IAppMenu} from "app/models";
 import {SharingService, CacheService, EventListenerService, LeftPaletteLoaderService} from "app/services";
-import {ModalsHandler, GRAPH_EVENTS, ComponentFactory, ChangeLifecycleStateHandler, MenuHandler} from "app/utils";
+import {ModalsHandler, GRAPH_EVENTS, ComponentFactory, ChangeLifecycleStateHandler, MenuHandler, EVENTS} from "app/utils";
 import {IWorkspaceViewModelScope} from "../../workspace-view-model";
 import {ComponentServiceNg2} from "app/ng2/services/component-services/component.service";
 import {ComponentGenericResponse} from "app/ng2/services/responses/component-generic-response";
@@ -240,7 +240,13 @@ export class CompositionViewModel {
             this.$scope.currentComponent = component;
             this.$scope.setComponent(this.$scope.currentComponent);
             this.$scope.updateSelectedComponent();
-        }
+        };
+
+        this.$scope.reload = (component:Component):void => {
+            this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
+        };
+
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);
 
     }
 }

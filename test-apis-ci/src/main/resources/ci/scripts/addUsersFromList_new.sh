@@ -46,12 +46,12 @@ function addUser ()
             firstName=`echo $user|awk '{print $3}'`
             lastName=`echo $user|awk '{print $4}'`
             email=`echo $user|awk '{print $5}'`
-			curl -i -X post -d '{ "userId" : "'${userId}'", "role" : "'${role}'", "firstName" : "'${firstName}'", "lastName" : "'${lastName}'", "email" : "'${email}'" }'  -H "Content-Type: application/json" -H "USER_ID: jh0003" http://${IP}:8080/sdc2/rest/v1/user
+			curl --noproxy '*' -i -X post -d '{ "userId" : "'${userId}'", "role" : "'${role}'", "firstName" : "'${firstName}'", "lastName" : "'${lastName}'", "email" : "'${email}'" }'  -H "Content-Type: application/json" -H "USER_ID: jh0003" http://${IP}:8080/sdc2/rest/v1/user
 		else
 			echo "Host" $IP "Is Unreachable"
 		fi
 	done
-curl -i -X post -d '{"consumerName": "ci","consumerSalt": "2a1f887d607d4515d4066fe0f5452a50","consumerPassword": "0a0dc557c3bf594b1a48030e3e99227580168b21f44e285c69740b8d5b13e33b"}'  -H "Content-Type: application/json" -H "USER_ID: jh0003" -H "Authorization:Basic Y2k6MTIzNDU2" http://${IP}:8080/sdc2/rest/v1/consumers
+curl --noproxy '*' -i -X post -d '{"consumerName": "ci","consumerSalt": "2a1f887d607d4515d4066fe0f5452a50","consumerPassword": "0a0dc557c3bf594b1a48030e3e99227580168b21f44e285c69740b8d5b13e33b"}'  -H "Content-Type: application/json" -H "USER_ID: jh0003" -H "Authorization:Basic Y2k6MTIzNDU2" http://${IP}:8080/sdc2/rest/v1/consumers
 	
 }
 

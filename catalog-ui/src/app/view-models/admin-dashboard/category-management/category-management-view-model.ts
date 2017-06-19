@@ -98,7 +98,7 @@ export class CategoryManagementViewModel {
             };
 
             let modalOptions:ng.ui.bootstrap.IModalSettings = {
-                template: 'src/app/view-models/admin-dashboard/add-category-modal/add-category-modal-view.html',
+                templateUrl: '../add-category-modal/add-category-modal-view.html',
                 controller: 'Sdc.ViewModels.AddCategoryModalViewModel',
                 size: 'sdc-xsm',
                 backdrop: 'static',

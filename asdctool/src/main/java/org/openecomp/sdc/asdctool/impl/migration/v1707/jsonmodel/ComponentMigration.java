@@ -3,7 +3,11 @@ package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.relations.RequirementsCapabilitiesMigrationService;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.migration.MigrationMalformedDataLogger;
@@ -12,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.openecomp.sdc.asdctool.impl.migration.v1707.MigrationUtils.handleError;
@@ -29,14 +35,16 @@ public abstract class ComponentMigration <T extends Component> extends JsonModel
 
     @Resource(name = "invariant-uuid-resolver")
     private InvariantUUIDResolver <T> invariantUUIDResolver;
-
+    
+    @Resource(name = "node-template-missing-data-resolver")
+    private NodeTemplateMissingDataResolver nodeTemplateMissingDataResolver;
+	
     @Override
     boolean save(T element) {
         LOGGER.debug(String.format("creating component %s in new graph", element.getName()));
         return toscaOperations.createToscaComponent(element)
                 .either(savedNode -> true,
                         err -> handleError(String.format("failed to create component %s with id %s. reason: %s", element.getName(), element.getUniqueId(), err.name())));
-
     }
 
     @Override
@@ -70,6 +78,20 @@ public abstract class ComponentMigration <T extends Component> extends JsonModel
         }
         return cmptsWithoutInvariant;
     }
+    
+    
+    protected void setMissingTemplateInfo(List<T> components) {
+    	Map<String, ToscaElement> origCompMap = new HashMap<>();
+    	for (T component : components) {
+    		for (ComponentInstance instance : component.getComponentInstances()){
+    			nodeTemplateMissingDataResolver.resolveNodeTemplateInfo(instance, origCompMap, component);	
+    		}	
+    	}
+    }
+    
+    
+    
+    
 
 
 }

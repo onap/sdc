@@ -8,6 +8,8 @@ const webpackCommonConfig = require('./webpack.common');
 const {GlobCopyWebpackPlugin, BaseHrefWebpackPlugin} = require('@angular/cli/plugins/webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+var currentTime = new Date().getTime();
+
 const params = {
     // entryPoints: [
     //     '/sdc1/scripts/inline',
@@ -22,26 +24,35 @@ const params = {
 
 const webpackProdConfig = {
     module: {
-            rules: [
-                { test: /\.(eot|svg)$/, loader: "file-loader?name=/scripts/fonts/[name].[hash:20].[ext]" },
-                { test: /\.(jpg|png|gif|otf|ttf|woff|woff2|cur|ani)$/, loader: "url-loader?name=/scripts/images/[name].[hash:20].[ext]&limit=10000" }
-            ]
+        rules: [
+            {test: /\.(eot|svg)$/, loader: "file-loader?name=/scripts/fonts/[name].[hash:20].[ext]"},
+            {
+                test: /\.(jpg|png|gif|otf|ttf|woff|woff2|cur|ani)$/,
+                loader: "url-loader?name=/scripts/images/[name].[hash:20].[ext]&limit=10000"
+            }
+        ]
     },
     output: {
         path: path.join(process.cwd(), "dist"),
-        filename: "[name].bundle.js",
+        filename: "[name]." + currentTime + ".bundle.js",
         chunkFilename: "[id].chunk.js",
         publicPath: "/sdc1"
     },
-	plugins: [
+    plugins: [
         new webpack.DefinePlugin({
             __DEBUG__: JSON.stringify(false),
             __ENV__: JSON.stringify('prod')
         }),
+
         new CopyWebpackPlugin([
-            { from: './src/index.html'}  
+            {
+                from: './src/index.html', transform: function (content, path) {
+                    content = (content + '').replace(/\.bundle/g, '.' + currentTime + '.bundle');
+                    return content;
+                }
+            }
         ]),
-		new webpack.optimize.UglifyJsPlugin({
+        new webpack.optimize.UglifyJsPlugin({
             beautify: false,
             mangle: {
                 screw_ie8: true,
@@ -53,7 +64,7 @@ const webpackProdConfig = {
             },
             comments: false
         })
-	]
+    ]
 };
 
 module.exports = merge(webpackProdConfig, webpackCommonConfig(params));

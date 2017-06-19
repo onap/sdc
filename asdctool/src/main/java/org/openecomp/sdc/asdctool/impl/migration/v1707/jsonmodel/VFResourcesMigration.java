@@ -1,14 +1,14 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
-import fj.data.Either;
+import java.util.List;
+
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.operations.api.IResourceOperation;
-import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import fj.data.Either;
 
 public class VFResourcesMigration extends ComponentMigration<Resource> {
 
@@ -47,6 +47,12 @@ public class VFResourcesMigration extends ComponentMigration<Resource> {
     boolean doPostMigrateOperation(List<Resource> elements) {
         LOGGER.info("migrating VFs versions");
         return versionMigration.buildComponentsVersionChain(elements);
+    }
+
+    @Override
+    void doPreMigrationOperation(List<Resource> elements) {
+        super.doPreMigrationOperation(elements);
+        setMissingTemplateInfo(elements);
     }
 
 

@@ -28,16 +28,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openecomp.sdc.ci.tests.datatypes.CanvasElement;
 import org.openecomp.sdc.ci.tests.datatypes.CanvasManager;
-import org.openecomp.sdc.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.openecomp.sdc.ci.tests.datatypes.ServiceReqDetails;
 import org.openecomp.sdc.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openecomp.sdc.ci.tests.execute.setup.ArtifactsCorrelationManager;
@@ -65,9 +61,8 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.clearspring.analytics.util.Pair;
 import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.ExtentTest;
+import com.clearspring.analytics.util.Pair;
 
 public class Onboard extends SetupCDTest {
 	
@@ -113,9 +108,9 @@ public class Onboard extends SetupCDTest {
 	
 	@Test
 	public void onboardVNFTestSanity() throws Exception, Throwable {
-//		String filepath = getFilePath();
-//		String vnfFile = "2016-043_vsaegw_fdnt_30_1607_e2e.zip";
 		String filepath = getFilePath();
+//		String vnfFile = "2016-012_vMX_AV_30_1072_e2e.zip";
+//		String filepath = getFilePath();
 		Object[] fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
 		String vnfFile = fileNamesFromFolder[0].toString();
 		runOnboardToDistributionFlow(filepath, vnfFile);
@@ -159,6 +154,9 @@ public class Onboard extends SetupCDTest {
 		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
 		GovernorOperationPage.approveSerivce(serviceMetadata.getName());
 
+		if (makeDistributionValue.equals("true")){
+			
+		
 		reloginWithNewRole(UserRoleEnum.OPS);
 		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
 		OpsOperationPage.distributeService();
@@ -171,6 +169,8 @@ public class Onboard extends SetupCDTest {
 		
 //		validateInputArtsVSouput(serviceMetadata.getName());
 
+		}
+		
 		getExtendTest().log(Status.INFO, String.format("The onboarding %s test is passed ! ", vnfFile));
 	}
 
@@ -255,7 +255,7 @@ public class Onboard extends SetupCDTest {
 		GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
 		GovernorOperationPage.approveSerivce(serviceMetadata.getName());
 		
-		if (!makeDistributionValue.equals("true")){
+
 			
 				reloginWithNewRole(UserRoleEnum.OPS);
 				GeneralUIUtils.findComponentAndClick(serviceMetadata.getName());
@@ -266,7 +266,7 @@ public class Onboard extends SetupCDTest {
 				AssertJUnit.assertEquals(1, rowsFromMonitorTable.size());
 		
 				OpsOperationPage.waitUntilArtifactsDistributed(0);
-		}
+		
 		
 		getExtendTest().log(Status.INFO, String.format("onboarding %s test is passed ! ", vnfFile));
 		

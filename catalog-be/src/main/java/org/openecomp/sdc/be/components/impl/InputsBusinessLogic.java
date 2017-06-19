@@ -21,38 +21,26 @@
 package org.openecomp.sdc.be.components.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.json.simple.JSONObject;
+import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
-import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
@@ -66,27 +54,17 @@ import org.openecomp.sdc.be.model.User;
 
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
-import org.openecomp.sdc.be.model.operations.impl.InputsOperation;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
-import org.openecomp.sdc.be.resources.data.InputValueData;
-import org.openecomp.sdc.be.resources.data.InputsData;
-import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.gson.Gson;
-import com.thinkaurelius.titan.core.TitanVertex;
 
-import fj.Function;
 import fj.data.Either;
 
 @Component("inputsBusinessLogic")
@@ -97,15 +75,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	private static Logger log = LoggerFactory.getLogger(InputsBusinessLogic.class.getName());
 
-	
-
-	@javax.annotation.Resource
-	private PropertyOperation propertyOperation = null;
-
-
-	@Autowired
-	private ComponentsUtils componentsUtils;
-	
 	private static final String GET_INPUT = "get_input";
 
 	private static String ASSOCIATING_INPUT_TO_PROP = "AssociatingInputToComponentInstanceProperty";
@@ -148,7 +117,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	}
 	
-	public Either<List<ComponentInstanceInput>, ResponseFormat> getComponentInstanceInputs(String userId, String componentId, String componentInstanceId,String fromName, int amount) {
+	public Either<List<ComponentInstanceInput>, ResponseFormat> getComponentInstanceInputs(String userId, String componentId, String componentInstanceId) {
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "get Inputs", false);
 
@@ -171,15 +140,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			
 		}
 		org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
-		Map<String, List<ComponentInstanceInput>> ciInputs = component.getComponentInstancesInputs();
-		if(!ciInputs.containsKey(componentInstanceId)){
+
+		if(!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)){
 			ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
 			log.debug("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
 		}
-	
-		return Either.left(ciInputs.get(componentInstanceId));
-
+		Map<String, List<ComponentInstanceInput>> ciInputs = Optional.ofNullable(component.getComponentInstancesInputs()).orElse(Collections.emptyMap());
+		return Either.left(ciInputs.getOrDefault(componentInstanceId, Collections.emptyList()));
 	}
 
 	/**

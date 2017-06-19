@@ -2660,7 +2660,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					if (!artifactUniqueId.equals(artifactId)) {
 						// need to update the generated id in heat env
 						Map<String, ArtifactDefinition> deploymentArtifacts = parent.getDeploymentArtifacts();
-						Optional<Entry<String, ArtifactDefinition>> findFirst = deploymentArtifacts.entrySet().stream().filter(a -> a.getValue().getGeneratedFromId().equals(artifactId)).findFirst();
+						Optional<Entry<String, ArtifactDefinition>> findFirst = deploymentArtifacts.entrySet().stream().filter(a -> a.getValue().getGeneratedFromId()!=null && a.getValue().getGeneratedFromId().equals(artifactId)).findFirst();
 						if (findFirst.isPresent()) {
 							ArtifactDefinition artifactEnvInfo = findFirst.get().getValue();
 							artifactEnvInfo.setArtifactChecksum(null);

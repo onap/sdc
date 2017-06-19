@@ -44,3 +44,5 @@ createTopic:
    replicationCount: 1
 
 startDistributionEngine: true
+
+useHttpsWithDmaap: true

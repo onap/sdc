@@ -34,7 +34,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.openecomp.sdc.be.components.impl.DistributionMonitoringBusinessLogic;
 import org.openecomp.sdc.be.components.impl.HealthCheckBusinessLogic;
 import org.openecomp.sdc.be.components.impl.MonitoringBusinessLogic;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -42,9 +41,9 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
-import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckComponent;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
+import org.openecomp.sdc.common.api.HealthCheckWrapper;
 import org.openecomp.sdc.common.config.EcompErrorName;
 import org.openecomp.sdc.common.monitoring.MonitoringEvent;
 import org.openecomp.sdc.exception.ResponseFormat;

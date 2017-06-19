@@ -19,6 +19,7 @@ end
 template "catalog-be-config" do
    path "/var/lib/jetty/config/catalog-be/configuration.yaml"
    source "BE-configuration.yaml.erb"
+   cookbook "sdc-os-common"
    owner "jetty"
    group "jetty"
    mode "0755"
@@ -28,7 +29,8 @@ template "catalog-be-config" do
       :ssl_port     => node['BE'][:https_port],
       :cassandra_ip => node['Nodes']['CS'],
       :rep_factor   => 1,
-      :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment
+      :DC_NAME      => node['cassandra'][:cluster_name]+node.chef_environment,
+      :titan_Path   => "/var/lib/jetty/config/catalog-be/"
    })
 end
 

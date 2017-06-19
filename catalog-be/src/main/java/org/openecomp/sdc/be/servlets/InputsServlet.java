@@ -179,8 +179,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Get Inputs only", httpMethod = "GET", notes = "Returns Inputs list", response = Resource.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Component found"), @ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Component not found") })
 	public Response getComponentInstanceInputs(@PathParam("componentType") final String componentType, @PathParam("componentId") final String componentId, @PathParam("instanceId") final String instanceId,
-			@PathParam("originComponentUid") final String originComonentUid, @Context final HttpServletRequest request, @QueryParam("fromName") String fromName, @QueryParam("amount") int amount,
-			@HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+			@PathParam("originComponentUid") final String originComonentUid, @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
 
 		ServletContext context = request.getSession().getServletContext();
 		String url = request.getMethod() + " " + request.getRequestURI();
@@ -190,7 +189,7 @@ public class InputsServlet extends AbstractValidationsServlet {
 		try {
 			InputsBusinessLogic businessLogic = getInputBL(context);
 
-			Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = businessLogic.getComponentInstanceInputs(userId, componentId, instanceId, fromName, amount);
+			Either<List<ComponentInstanceInput>, ResponseFormat> inputsResponse = businessLogic.getComponentInstanceInputs(userId, componentId, instanceId);
 			if (inputsResponse.isRight()) {
 				log.debug("failed to get component instance inputs {}", componentType);
 				return buildErrorResponse(inputsResponse.right().value());

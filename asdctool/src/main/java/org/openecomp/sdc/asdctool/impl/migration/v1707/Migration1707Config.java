@@ -47,60 +47,60 @@ public class Migration1707Config {
         return new Migration1707(migrations);
     }
 
-    //@Bean(name = "renameGraphPropertyKeysMigration")
-    //@Order(1)
-    //public Migration1707Task renameGraphPropertyKeysMigration() {
-     //   return new RenameGraphPropertyKeys();
-   // }
+    @Bean(name = "renameGraphPropertyKeysMigration")
+    @Order(1)
+    public Migration1707Task renameGraphPropertyKeysMigration() {
+        return new RenameGraphPropertyKeys();
+    }
 
-    //@Bean(name = "toscaNamesUpdate")
-    //@Order(2)
-    //public Migration1707Task toscaNamesUpdate() {
-    //    return new ToscaNamesUpdate();
-    //}
+    @Bean(name = "toscaNamesUpdate")
+    @Order(2)
+    public Migration1707Task toscaNamesUpdate() {
+        return new ToscaNamesUpdate();
+    }
 
     @Bean(name = "users-migration")
-    @Order(1)
+    @Order(3)
     public Migration1707Task usersMigration() {
         return new UsersMigration();
     }
 
     @Bean(name = "resource-category-migration")
-    @Order(2)
+    @Order(4)
     public Migration1707Task resourceCategoriesMigration() {
         return new ResourcesCategoriesMigration();
     }
 
     @Bean(name = "service-category-migration")
-    @Order(3)
+    @Order(5)
     public Migration1707Task serviceCategoriesMigration() {
         return new ServiceCategoriesMigration();
     }
 
     @Bean(name = "normatives-migration")
-    @Order(4)
+    @Order(6)
     public Migration1707Task normativesMigration() {
         return new NormativesMigration();
     }
 
     @Bean(name = "vf-migration")
-    @Order(5)
+    @Order(7)
     public Migration1707Task vfMigration() {
         return new VFResourcesMigration();
     }
 
     @Bean(name = "service-migration")
-    @Order(6)
+    @Order(8)
     public Migration1707Task serviceMigration() {
         return new ServicesMigration();
     }
 
     @Bean(name = "consumers-migration")
-    @Order(7)
+    @Order(9)
     public Migration1707Task consumersMigration() { return new ConsumersMigration(); }
 
     @Bean(name = "tosca-template-regeneration")
-    @Order(8)
+    @Order(10)
     public Migration1707Task ToscaTemplateRegeneration() {
         return new ToscaTemplateRegeneration();
     }
@@ -244,6 +244,11 @@ public class Migration1707Config {
     @Bean(name = "vfModulesPropertiesAdding")
     public VfModulesPropertiesAdding vfModulesPropertiesAdding() {
         return new VfModulesPropertiesAdding();
+    }
+    
+    @Bean(name = "node-template-missing-data-resolver")
+    public NodeTemplateMissingDataResolver nodeTemplateMissingDataResolver() {
+    	return new NodeTemplateMissingDataResolver<>();
     }
 
 }

@@ -22,6 +22,7 @@ import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapGroupsDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -56,14 +57,20 @@ public class Migration1707ArtifactUuidFix {
 
 	private static Logger log = LoggerFactory.getLogger(Migration1707ArtifactUuidFix.class.getName());
 
-	public boolean migrate(String fixServices, String runMode) {
+	public boolean migrate(String fixComponent, String runMode) {
 		List<Resource> vfLst = new ArrayList<>();
 		List<Service> serviceList = new ArrayList<>();
 
 		long time = System.currentTimeMillis();
 
-		if (fetchServices(fixServices, serviceList, time) == false) {
-			return false;
+		if (fixComponent.equals("vf_only")) {
+			if (fetchFaultVf(fixComponent, vfLst, time) == false) {
+				return false;
+			}
+		} else {
+			if (fetchServices(fixComponent, serviceList, time) == false) {
+				return false;
+			}
 		}
 		if (runMode.equals("service_vf") || runMode.equals("fix")) {
 			log.info("Mode {}. Find problem VFs", runMode);
@@ -82,6 +89,80 @@ public class Migration1707ArtifactUuidFix {
 			log.info("Mode {}. Fix finished withh success", runMode);
 		}
 
+		return true;
+	}
+
+	private boolean fetchFaultVf(String fixComponent, List<Resource> vfLst, long time) {
+		log.info("Find fault VF ");
+		Writer writer = null;
+		try {
+			String fileName = "fault_" + time + ".csv";
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "utf-8"));
+			writer.write("vf name, vf id, state, version\n");
+
+			Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
+			hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
+			hasProps.put(GraphPropertyEnum.RESOURCE_TYPE, ResourceTypeEnum.VF.name());
+
+			Map<GraphPropertyEnum, Object> hasNotProps = new HashMap<>();
+			hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
+			log.info("Try to fetch resources with properties {} and not {}", hasProps, hasNotProps);
+
+			Either<List<GraphVertex>, TitanOperationStatus> servicesByCriteria = titanDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, hasProps, hasNotProps, JsonParseFlagEnum.ParseAll);
+			if (servicesByCriteria.isRight()) {
+				log.info("Failed to fetch resources {}", servicesByCriteria.right().value());
+				return false;
+			}
+			List<GraphVertex> resources = servicesByCriteria.left().value();
+			for (GraphVertex gv : resources) {
+				ComponentParametersView filter = new ComponentParametersView(true);
+				filter.setIgnoreComponentInstances(false);
+				filter.setIgnoreArtifacts(false);
+				filter.setIgnoreGroups(false);
+
+				Either<Resource, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(gv.getUniqueId());
+				if (toscaElement.isRight()) {
+					log.info("Failed to fetch resources {} {}", gv.getUniqueId(), toscaElement.right().value());
+					return false;
+				}
+
+				Resource resource = toscaElement.left().value();
+				String resourceName = resource.getName();
+				Map<String, ArtifactDefinition> deploymentArtifacts = resource.getDeploymentArtifacts();
+				List<GroupDefinition> groups = resource.getGroups();
+				if (groups == null || groups.isEmpty()) {
+					log.info("No groups for resource {} id {} ", resourceName, gv.getUniqueId());
+					continue;
+				}
+				boolean isProblematic = false;
+				for (GroupDefinition gr : groups) {
+					if (gr.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
+						if (isProblematicGroup(gr, resourceName, deploymentArtifacts)) {
+							isProblematic = true;
+							break;
+						}
+					}
+				}
+				if (isProblematic) {
+					vfLst.add(resource);
+					writeModuleResultToFile(writer, resource, null);
+					writer.flush();
+					break;
+				}
+			}
+			titanDao.commit();
+
+		} catch (Exception e) {
+			log.info("Failed to fetch vf resources ", e);
+			return false;
+		} finally {
+			titanDao.commit();
+			try {
+				writer.flush();
+				writer.close();
+			} catch (Exception ex) {
+				/* ignore */}
+		}
 		return true;
 	}
 
@@ -196,6 +277,7 @@ public class Migration1707ArtifactUuidFix {
 						serviceList.add(service);
 						writeModuleResultToFile(writer, service, null);
 						writer.flush();
+						break;
 					}
 				}
 				titanDao.commit();
@@ -213,6 +295,49 @@ public class Migration1707ArtifactUuidFix {
 				/* ignore */}
 		}
 		return true;
+	}
+
+	private boolean isProblematicGroup(GroupDefinition gr, String resourceName, Map<String, ArtifactDefinition> deploymentArtifacts) {
+		List<String> artifacts = gr.getArtifacts();
+		List<String> artifactsUuid = gr.getArtifactsUuid();
+
+		if ((artifactsUuid == null || artifactsUuid.isEmpty()) && (artifacts == null || artifacts.isEmpty())) {
+			log.info("No groups in resource {} ", resourceName);
+			return false;
+		}
+		if (artifacts.size() < artifactsUuid.size()) {
+			log.info(" artifacts.size() < artifactsUuid.size() group {} in resource {} ", gr.getName(), resourceName);
+			return true;
+		}
+		if (artifacts.size() > 0 && (artifactsUuid == null || artifactsUuid.isEmpty())) {
+			log.info(" artifacts.size() > 0 && (artifactsUuid == null || artifactsUuid.isEmpty() group {} in resource {} ", gr.getName(), resourceName);
+			return true;
+		}
+		if (artifactsUuid.contains(null)) {
+			log.info(" artifactsUuid.contains(null) group {} in resource {} ", gr.getName(), resourceName);
+			return true;
+		}
+
+		for (String artifactId : artifacts) {
+			String artifactlabel = findArtifactLabelFromArtifactId(artifactId);
+			ArtifactDefinition artifactDefinition = deploymentArtifacts.get(artifactlabel);
+			if (artifactDefinition == null) {
+				log.info(" artifactDefinition == null label {} group {} in resource {} ", artifactlabel, gr.getName(), resourceName);
+				return true;
+			}
+			ArtifactTypeEnum artifactType = ArtifactTypeEnum.findType(artifactDefinition.getArtifactType());
+			if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
+				if (!artifactId.equals(artifactDefinition.getUniqueId())) {
+					log.info(" !artifactId.equals(artifactDefinition.getUniqueId() artifact {}  artId {} group {} in resource {} ", artifactlabel, artifactId, gr.getName(), resourceName);
+					return true;
+				}
+				if (!artifactsUuid.contains(artifactDefinition.getArtifactUUID())) {
+					log.info(" artifactsUuid.contains(artifactDefinition.getArtifactUUID() label {} group {} in resource {} ", artifactlabel, gr.getName(), resourceName);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean isProblematicGroupInstance(GroupInstance gi, String instName, String servicename, Map<String, ArtifactDefinition> deploymentArtifacts) {
@@ -359,7 +484,7 @@ public class Migration1707ArtifactUuidFix {
 										if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {
 											group.getArtifactsUuid().add(correctArtifactUUID);
 										}
-									}else{
+									} else {
 										log.debug("Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ", group.getName(), correctArtifactId, correctArtifactUUID);
 										group.getGroupInstanceArtifacts().add(correctArtifactId);
 										if (correctArtifactUUID != null && !correctArtifactUUID.isEmpty()) {

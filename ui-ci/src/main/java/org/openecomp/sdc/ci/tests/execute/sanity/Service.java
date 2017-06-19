@@ -293,12 +293,7 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
-	public void ManagmentWorkflowTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 287416");			
-		}
-		
+	public void ManagmentWorkflowTest() throws Exception{		
 		String descriptionText     = DESCRIPTION,
 			   descriptionTextEdit = "kuku2";
 
@@ -578,12 +573,7 @@ public class Service extends SetupCDTest {
 	}
 	
 	@Test
-	public void deploymentViewServiceTest() throws Exception{
-		
-		if(true){
-			throw new SkipException("Open bug 295220, 295180");			
-		}
-		
+	public void deploymentViewServiceTest() throws Exception{				
 		String fileName2 = "vSeGW.csar";
 		
 		ResourceReqDetails resourceMetaData = ElementFactory.getDefaultResourceByType("ciRes", NormativeTypesEnum.ROOT, ResourceCategoryEnum.APPLICATION_L4_DATABASE, getUser().getUserId(), ResourceTypeEnum.VF.toString());
@@ -607,7 +597,7 @@ public class Service extends SetupCDTest {
 				String instanceModuleText = instanceModule.getText();
 				ResourceUIUtils.clickOnElementByText(instanceModuleText, "instance");
 								
-				ServiceVerificator.verifyDeploymentPageSubElements(instanceModuleText.split("\\.\\.")[1], new DeploymentViewVerificator(filePath + fileName2));
+				ServiceVerificator.verifyDeploymentPageSubElements(instanceModuleText.split("\\.\\.")[2], new DeploymentViewVerificator(filePath + fileName2));
 				
 				ServiceVerificator.verifyDisabledServiceProperties();
 				String isBaseValue = ServiceVerificator.getVFModulePropertieValue(serviceMetadata, "isBase", instanceModuleText);

@@ -10,16 +10,6 @@ public class UiServiceMetadata extends UiComponentMetadata {
 	private String distributionStatus;
 	private Boolean ecompGeneratedNaming;
 	private String namingPolicy;
-	private UiServiceMetadata metadata;
-	
-	
-	public UiServiceMetadata getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(UiServiceMetadata metadata) {
-		this.metadata = metadata;
-	}
 
 	public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
 		super(categories, metadata);

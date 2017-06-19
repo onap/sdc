@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -766,19 +767,37 @@ public class OnboardingUtils {
 		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get("Deployment"));
 		ArtifactsCorrelationManager.addVNFartifactDetails(vspName, deploymentArtifacts);
 		
-		for(HeatMetaFirstLevelDefinition deploymentArtifact: deploymentArtifacts) {
-			if(deploymentArtifact.getType().equals("HEAT_ENV")) {
-				continue;
-			} else if(deploymentArtifact.getFileName().contains(".")) {
-				ArtifactUIUtils.validateArtifactNameVersionType(deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf(".")), "1", deploymentArtifact.getType());
-			} else {
-				ArtifactUIUtils.validateArtifactNameVersionType(deploymentArtifact.getFileName().trim(), "1", deploymentArtifact.getType());
-			}
-			
-		}
+		List<String> heatEnvFilesFromCSAR = deploymentArtifacts.stream().filter(e -> e.getType().equals("HEAT_ENV")).
+																		 map(e -> e.getFileName()).
+																		 collect(Collectors.toList());
+		
+		validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
 		
 		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
 		return createVendorSoftwareProduct;
+	}
+
+	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts,
+			List<String> heatEnvFilesFromCSAR) {
+		String artifactVersion;
+		String artifactName;
+		
+		for(HeatMetaFirstLevelDefinition deploymentArtifact: deploymentArtifacts) {
+			artifactVersion = "1";
+			
+			if(deploymentArtifact.getType().equals("HEAT_ENV")) {
+				continue;
+			} else if(deploymentArtifact.getFileName().contains(".")) {
+				artifactName = deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf("."));				
+			} else {
+				artifactName = deploymentArtifact.getFileName().trim();				
+			}
+			
+			if (heatEnvFilesFromCSAR.contains(artifactName + ".env")){
+				artifactVersion = "2";
+			}
+			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());			
+		}
 	}
 
 }

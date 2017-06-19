@@ -1,6 +1,12 @@
 package org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel;
 
-import fj.data.Either;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.Service;
@@ -9,11 +15,7 @@ import org.openecomp.sdc.be.model.operations.migration.MigrationMalformedDataLog
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import fj.data.Either;
 
 public class ServicesMigration extends ComponentMigration<Service> {
 
@@ -56,6 +58,12 @@ public class ServicesMigration extends ComponentMigration<Service> {
     boolean doPostMigrateOperation(List<Service> elements) {
         LOGGER.info("migrating services versions");
         return versionMigration.buildComponentsVersionChain(elements);
+    }
+    
+    @Override
+    void doPreMigrationOperation(List<Service> elements) {
+        super.doPreMigrationOperation(elements);
+        setMissingTemplateInfo(elements);
     }
 
     private void filterOutDuplicatePropsAndAttrs(Service element) {
@@ -148,5 +156,5 @@ public class ServicesMigration extends ComponentMigration<Service> {
 //                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 //    }
 
-
+	
 }

@@ -1,4 +1,5 @@
 @import './../../../../assets/styles/variables.less';
+@import '../../../../assets/styles/sprite';
 @smaller-screen: ~"only screen and (max-width: 1580px)";
 
 :host /deep/ input { width:100%;}
@@ -108,10 +109,6 @@
                 margin-left: 5px;
                 flex: 0 0 auto;
             }
-
-            /deep/ .checkbox-container {
-                margin-right: 10px;
-            }
         }
         &.col2 {
             flex: 0 0 150px;
@@ -129,6 +126,27 @@
             flex: 1 0 350px;
             display: flex;
             @media @smaller-screen { flex: 1 0 40%;}
+        }
+
+        
+        /deep/ .checkbox-container {
+            margin-right: 10px;
+        }
+
+        /deep/ &.round-checkbox {
+            .checkbox-container input[type=checkbox].checkbox-hidden {
+                &:checked ~ .checkbox-icon::before {
+                    .sprite-new;
+                    .round-checked-icon;
+                }
+                &[disabled] ~ .checkbox-icon::before {
+                    .sprite-new;
+                    .round-checked-icon.disabled;
+                    background-color:inherit;
+                    border:none;
+                    //animation: addDisabledCheck 4s linear;
+                }
+            }
         }
     }
 

@@ -72,7 +72,7 @@ public class ProductServlet extends BeGenericServlet {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Create product", httpMethod = "POST", notes = "Returns created product", response = Product.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "Product created"), @ApiResponse(code = 403, message = "Restricted operation / Empty USER_ID header"), @ApiResponse(code = 400, message = "Invalid/missing content"),
-			@ApiResponse(code = 409, message = "Product already exists / User not found / Wrong user role") })
+	@ApiResponse(code = 409, message = "Product already exists / User not found / Wrong user role") })
 	public Response createProduct(@ApiParam(value = "Product object to be created", required = true) String data, @Context final HttpServletRequest request,
 			@HeaderParam(value = Constants.USER_ID_HEADER) @ApiParam(value = "USER_ID of product strategist user", required = true) String userId) {
 

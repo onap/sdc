@@ -35,7 +35,10 @@ public class MigrationMalformedDataLogger {
             Set<String> serviceInstances = componentInstances.stream().map(ComponentInstance::getComponentUid).collect(Collectors.toSet());
             serviceInstances.retainAll(malformedVFs);
             if (!serviceInstances.isEmpty()) {
-                log.error(String.format("Service %s is using malformed VFs: %s", service.getUniqueId(), StringUtils.join(serviceInstances, ',')));
+                log.error(String.format("Service %s with id %s and version %s is using malformed VFs: %s", service.getName(),
+                                                                                                           service.getVersion(),
+                                                                                                           service.getUniqueId(),
+                                                                                                           StringUtils.join(serviceInstances, ',')));
             }
         }
     }

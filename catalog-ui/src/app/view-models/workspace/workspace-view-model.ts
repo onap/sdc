@@ -424,7 +424,6 @@ export class WorkspaceViewModel {
                             //when checking out a major(certified) version
                             this.components.unshift(component);
                         }
-                        this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
                         // this.$state.go(this.$state.current.name, {
                         //     id: component.uniqueId,
                         //     type: component.componentType.toLowerCase(),
@@ -434,7 +433,7 @@ export class WorkspaceViewModel {
                         this.initChangeLifecycleStateButtons();
                         this.initVersionObject();
                         this.$scope.isLoading = false;
-
+                        this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
                         this.Notification.success({
                             message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
                             title: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TITLE")
