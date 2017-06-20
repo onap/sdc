@@ -442,13 +442,21 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
 
+            <build>
+            	<finalName>${project.artifactId}-${project.version}</finalName>          
+            </build>
+        </profile>
+        
+        <profile>
+            <id>build</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
 
             <build>
-
                 <finalName>${project.artifactId}-${full.release.version}</finalName>
-
+                
                 <plugins>
-
                     <!-- ================================================== -->
                     <!-- Get the next versions from the properties file. -->
                     <!-- ================================================== -->
@@ -475,7 +483,6 @@
                 </plugins>
             </build>
         </profile>
-
 
 		<profile>
 			<id>Fortify</id>

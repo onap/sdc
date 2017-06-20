@@ -869,8 +869,19 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
 
-
             <build>
+            	<finalName>${project.artifactId}-${project.version}</finalName>            	
+            </build>
+        </profile>
+        
+        <profile>
+            <id>build</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+
+            <build>            
 				<finalName>${project.artifactId}-${full.release.version}</finalName>
                 <plugins>
                     <plugin>
