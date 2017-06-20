@@ -19,7 +19,6 @@ end
 template "catalog-be-config" do
    path "/var/lib/jetty/config/catalog-be/configuration.yaml"
    source "BE-configuration.yaml.erb"
-   cookbook "sdc-os-common"
    owner "jetty"
    group "jetty"
    mode "0755"
