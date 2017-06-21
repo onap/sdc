@@ -24,6 +24,7 @@ public class Constants {
 
 	public static String HTTP_IV_USER = "HTTP_IV_USER";
 	public static String USER_ID = "USER_ID";
+	public static String ECOMP_PORTAL_COOKIE = "UserId";
 	public static String HTTP_CSP_FIRSTNAME = "HTTP_CSP_FIRSTNAME";
 	public static String HTTP_CSP_LASTNAME = "HTTP_CSP_LASTNAME";
 	public static String HTTP_IV_REMOTE_ADDRESS = "HTTP_IV_REMOTE_ADDRESS";

@@ -283,7 +283,7 @@ public class PortalServlet extends HttpServlet {
 		Cookie userIdcookie = null;
 		if (cookies != null)
 			for (Cookie cookie : cookies)
-				if (cookie.getName().equals(Constants.USER_ID))
+				if (cookie.getName().equals(Constants.ECOMP_PORTAL_COOKIE))
 					userIdcookie = cookie;
 		if (userIdcookie != null) {
 			userId = CipherUtil.decrypt(userIdcookie.getValue(),

@@ -85,10 +85,10 @@
 
 		<!-- Swagger Dependencies Start -->
 		<dependency>
-			<groupId>com.wordnik</groupId>
+			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey2-jaxrs</artifactId>
 			<scope>compile</scope>
-			<version>1.5.1-M2</version>
+			<version>1.5.15</version>
 		</dependency>
 
 
