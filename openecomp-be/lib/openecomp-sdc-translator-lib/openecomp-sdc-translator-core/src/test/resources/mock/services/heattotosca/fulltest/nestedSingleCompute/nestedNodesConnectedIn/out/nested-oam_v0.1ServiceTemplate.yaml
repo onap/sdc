@@ -32,6 +32,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_oam_port_1_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     oam_server_name:
       label: oam server name
       hidden: false
@@ -48,16 +53,29 @@ topology_template:
       required: true
       entry_schema:
         type: string
+    port_oam_port_1_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_oam_port_1_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     port_oam_port_1_order:
       type: list
       required: true
       entry_schema:
         type: integer
+    port_oam_port_0_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
     port_oam_port_1_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     oam_image_name:
       label: image name
       hidden: false
@@ -82,6 +100,9 @@ topology_template:
       immutable: false
       type: string
       description: CPS network gateway
+    port_oam_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
     oam_flavor_name:
       label: PCRF CM flavor name
       hidden: false
@@ -109,17 +130,13 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     port_oam_port_1_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     port_oam_port_0_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     pcm_vol:
       label: CPS Cluman Cinder Volume
       hidden: false
@@ -144,6 +161,11 @@ topology_template:
       immutable: false
       type: string
       description: CPS network mask
+    port_oam_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
     shared_security_group_id1:
       hidden: false
       immutable: false
@@ -154,42 +176,28 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+          get_input: port_oam_port_0_ip_requirements
         security_groups:
         - get_input: shared_security_group_id1
         network_role:
-          get_input:
-          - port_oam_port_0_network_role
-          - index_value
+          get_input: port_oam_port_0_network_role
         fixed_ips:
         - ip_address:
             get_input: cps_net_ip
         subnetpoolid:
-          get_input:
-          - port_oam_port_0_subnetpoolid
-          - index_value
+          get_input: port_oam_port_0_subnetpoolid
         mac_requirements:
-          mac_count_required:
-            is_required: false
+          get_input: port_oam_port_0_mac_requirements
         exCP_naming:
-          get_input:
-          - port_oam_port_0_exCP_naming
-          - index_value
+          get_input: port_oam_port_0_exCP_naming
         vlan_requirements:
-          get_input:
-          - port_oam_port_0_vlan_requirements
-          - index_value
-        network_role_tag: cps
+          get_input: port_oam_port_0_vlan_requirements
+        network_role_tag:
+          get_input: port_oam_port_0_network_role_tag
         network:
           get_input: cps_net_name
         order:
-          get_input:
-          - port_oam_port_0_order
-          - index_value
+          get_input: port_oam_port_0_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable
@@ -211,43 +219,29 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         ip_requirements:
-        - ip_version: 4
-          ip_count_required:
-            is_required: true
-          floating_ip_count_required:
-            is_required: false
+          get_input: port_oam_port_1_ip_requirements
         security_groups:
         - get_input: shared_security_group_id1
         - get_input: security_group_name
         network_role:
-          get_input:
-          - port_oam_port_1_network_role
-          - index_value
+          get_input: port_oam_port_1_network_role
         fixed_ips:
         - ip_address:
             get_input: oam_net_ip
         subnetpoolid:
-          get_input:
-          - port_oam_port_1_subnetpoolid
-          - index_value
+          get_input: port_oam_port_1_subnetpoolid
         mac_requirements:
-          mac_count_required:
-            is_required: false
+          get_input: port_oam_port_1_mac_requirements
         exCP_naming:
-          get_input:
-          - port_oam_port_1_exCP_naming
-          - index_value
+          get_input: port_oam_port_1_exCP_naming
         vlan_requirements:
-          get_input:
-          - port_oam_port_1_vlan_requirements
-          - index_value
-        network_role_tag: oam
+          get_input: port_oam_port_1_vlan_requirements
+        network_role_tag:
+          get_input: port_oam_port_1_network_role_tag
         network:
           get_input: oam_net_name
         order:
-          get_input:
-          - port_oam_port_1_order
-          - index_value
+          get_input: port_oam_port_1_order
       requirements:
       - binding:
           capability: tosca.capabilities.network.Bindable

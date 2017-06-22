@@ -139,6 +139,10 @@ public class VendorSoftwareProductDaoImpl implements VendorSoftwareProductDao {
 
   @Override
   public void updateProcess(ProcessEntity processEntity) {
+    ProcessEntity process = processDao.get(new ProcessEntity(processEntity.getVspId(), processEntity.getVersion(),
+            processEntity.getComponentId(), processEntity.getId()));
+    processEntity.setArtifact(process.getArtifact());
+    processEntity.setArtifactName(process.getArtifactName());
     processDao.update(processEntity);
   }
 

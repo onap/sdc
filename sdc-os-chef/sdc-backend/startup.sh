@@ -6,7 +6,7 @@ cd /root/chef-solo
 echo "normal['HOST_IP'] = \"${HOST_IP}\"" > /root/chef-solo/cookbooks/sdc-catalog-be/attributes/default.rb
 chef-solo -c solo.rb -E ${CHEFNAME}
 
-sed -i '/^set -e/aJAVA_OPTIONS=\" -XX:MaxPermSize=256m -Xmx1500m -Dconfig.home=${JETTY_BASE}\/config -Dlog.home=${JETTY_BASE}\/logs -Dlogback.configurationFile=${JETTY_BASE}\/config\/catalog-be\/logback.xml -Dconfiguration.yaml=${JETTY_BASE}\/config\/catalog-be\/configuration.yaml\"' /docker-entrypoint.sh
+sed -i '/^set -e/aJAVA_OPTIONS=\" -XX:MaxPermSize=256m -Xmx1500m -Dconfig.home=${JETTY_BASE}\/config -Dlog.home=${JETTY_BASE}\/logs -Dlogback.configurationFile=${JETTY_BASE}\/config\/catalog-be\/logback.xml -Dconfiguration.yaml=${JETTY_BASE}\/config\/catalog-be\/configuration.yaml -Dartifactgenerator.config=${JETTY_BASE}\/config\/catalog-be\/Artifact-Generator.properties\" ' /docker-entrypoint.sh
 sed -i '/^set -e/aTMPDIR=${JETTY_BASE}\/temp' /docker-entrypoint.sh
 
 # executiong the jetty

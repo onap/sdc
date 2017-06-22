@@ -29,11 +29,9 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -77,15 +75,17 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_pd01_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_pd_server_user_data_format:
         type: list
         required: true
@@ -468,7 +468,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       vm_flavor_name:
         type: string
         required: true
@@ -506,15 +506,15 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_ps01_port_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
-      port_ps01_port_exCP_naming:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: string
+      port_ps01_port_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
     requirements:
     - dependency_ps_server:
         capability: tosca.capabilities.Node

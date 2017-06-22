@@ -42,8 +42,6 @@ import org.openecomp.sdc.translator.services.heattotosca.NameExtractor;
 import org.openecomp.sdc.translator.services.heattotosca.globaltypes.GlobalTypesGenerator;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -473,6 +471,33 @@ public class TranslationContext {
     }
     return this.unifiedSubstitutionData.get(serviceTemplateName).getGlobalNodeTypeIndex
         (computeType);
+  }
+
+  public void addNewPropertyIdToNodeTemplate(String serviceTemplateName,
+                                             String newPropertyId,
+                                             Object origPropertyValue){
+    this.unifiedSubstitutionData.putIfAbsent(serviceTemplateName, new UnifiedSubstitutionData());
+    this.unifiedSubstitutionData.get(serviceTemplateName).addNewPropertyIdToNodeTemplate(
+        newPropertyId, origPropertyValue);
+  }
+
+  public Optional<Object> getNewPropertyInputParamId(String serviceTemplateName,
+                                                     String newPropertyId){
+    if(Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))){
+      return Optional.empty();
+    }
+
+    return this.unifiedSubstitutionData.get(serviceTemplateName).getNewPropertyInputParam
+        (newPropertyId);
+  }
+
+  public Map<String, Object> getAllNewPropertyInputParamIdsPerNodeTenplateId(String serviceTemplateName){
+    if(Objects.isNull(this.unifiedSubstitutionData.get(serviceTemplateName))){
+      return new HashMap<>();
+    }
+
+    return this.unifiedSubstitutionData.get(serviceTemplateName).getAllNewPropertyInputParamIds();
+
   }
 
 

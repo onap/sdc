@@ -927,11 +927,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c1_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_1c12_scalling_instance_scheduler_hints:
         type: list
         required: true
@@ -955,7 +953,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1c1_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -1381,11 +1379,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c1_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c1_t1_port_fixed_ips:
         type: list
         required: true
@@ -1397,7 +1393,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1c1_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -1840,6 +1836,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pcm_port_1_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
@@ -1850,7 +1852,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       pcm_image_name:
         type: string
         description: PCRF CM image name
@@ -1874,6 +1876,12 @@ node_types:
         status: SUPPORTED
         entry_schema:
           type: string
+      port_pcm_port_0_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
       pcm_server_name:
         type: string
         description: PCRF CM server name
@@ -1885,17 +1893,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pcm_port_0_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       oam_net_name:
         type: string
         description: OAM network name
@@ -1915,6 +1919,12 @@ node_types:
         type: json
         required: true
         status: SUPPORTED
+      port_pcm_port_0_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       oam_net_gw:
         type: string
         description: CPS network gateway
@@ -1930,12 +1940,16 @@ node_types:
         description: CPS network ip
         required: true
         status: SUPPORTED
+      port_pcm_port_1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
       port_pcm_port_1_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       pcm_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
@@ -1944,6 +1958,16 @@ node_types:
       pcm_vol:
         type: string
         description: CPS Cluman Cinder Volume
+        required: true
+        status: SUPPORTED
+      port_pcm_port_1_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      port_pcm_port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       cps_net_name:
@@ -2396,11 +2420,9 @@ node_types:
         entry_schema:
           type: string
       port_1a_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -2480,7 +2502,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_a_single_2a_metadata:
         type: list
         required: true
@@ -2871,17 +2893,15 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_order:
         type: list
         required: true
@@ -2931,11 +2951,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network:
         type: list
         required: true
@@ -2951,7 +2969,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_1c2_catalog_instance_user_data_format:
         type: list
         required: true
@@ -2959,9 +2977,11 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -3410,9 +3430,11 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t2_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       vm_flavor_name:
         type: string
         required: true
@@ -3460,13 +3482,11 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1a_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       compute_a_single_1a_availability_zone:
         type: list
         required: true
@@ -3506,17 +3526,15 @@ node_types:
         entry_schema:
           type: integer
       port_1a_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1a_t2_port_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1a_t2_port_subnetpoolid:
         type: list
         required: true
@@ -4012,17 +4030,15 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_order:
         type: list
         required: true
@@ -4072,11 +4088,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network:
         type: list
         required: true
@@ -4092,7 +4106,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_1c2_catalog_instance_user_data_format:
         type: list
         required: true
@@ -4100,9 +4114,11 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -4556,11 +4572,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -4594,11 +4608,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network_role_tag:
         type: list
         required: true
@@ -4640,7 +4652,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t2_port_ip_requirements:
         type: list
         required: true
@@ -4680,7 +4692,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_b_single_1b_name:
         type: list
         required: true
@@ -5154,17 +5166,15 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_order:
         type: list
         required: true
@@ -5220,11 +5230,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network:
         type: list
         required: true
@@ -5240,7 +5248,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_1c2_catalog_instance_user_data_format:
         type: list
         required: true
@@ -5248,9 +5256,11 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -5730,17 +5740,15 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_order:
         type: list
         required: true
@@ -5790,11 +5798,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1c2_t1_port_network:
         type: list
         required: true
@@ -5810,7 +5816,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_1c2_catalog_instance_user_data_format:
         type: list
         required: true
@@ -5818,9 +5824,11 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -6269,11 +6277,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -6313,11 +6319,9 @@ node_types:
         entry_schema:
           type: integer
       port_1b_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network_role_tag:
         type: list
         required: true
@@ -6353,7 +6357,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t2_port_ip_requirements:
         type: list
         required: true
@@ -6399,7 +6403,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
     attributes:
       b_single_2b_instance_name:
         type: list
@@ -6836,11 +6840,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -6874,11 +6876,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network_role_tag:
         type: list
         required: true
@@ -6920,7 +6920,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t2_port_ip_requirements:
         type: list
         required: true
@@ -6934,9 +6934,11 @@ node_types:
         entry_schema:
           type: json
       port_1b_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1b_t1_port_subnetpoolid:
         type: list
         required: true
@@ -6958,7 +6960,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t1_port_network:
         type: list
         required: true
@@ -7412,11 +7414,9 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -7450,11 +7450,9 @@ node_types:
         entry_schema:
           type: integer
       port_1b_t2_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_1b_t2_port_network_role_tag:
         type: list
         required: true
@@ -7490,7 +7488,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t2_port_ip_requirements:
         type: list
         required: true
@@ -7516,9 +7514,11 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_1b_t1_port_subnetpoolid:
         type: list
         required: true
@@ -7540,7 +7540,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_1b_t1_port_network:
         type: list
         required: true

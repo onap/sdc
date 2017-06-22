@@ -49,7 +49,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_port_network_role_tag:
         type: list
         required: true
@@ -89,11 +89,9 @@ node_types:
         entry_schema:
           type: json
       port_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_port_replacement_policy:
         type: list
         required: true

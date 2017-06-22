@@ -25,6 +25,8 @@ public class UnifiedSubstitutionData {
       new HashMap<>();
   //Key - nested compute type, Value - list of nested files that the compute type is present
   private Map<String, Set<String>> handledNestedComputeTypesNestedFiles = new HashMap<>();
+  //Key - new property id, Value - orig property value
+  private Map<String, Object> newParameterIdsToPropertiesFromOrigNodeTemplate = new HashMap<>();
   //handled nested files
   private Set<String> handledNestedFiles = new HashSet<>();
 
@@ -141,5 +143,22 @@ public class UnifiedSubstitutionData {
   public int getGlobalNodeTypeIndex(String computeType){
     return this.handledNestedComputeTypesNestedFiles.get(computeType).size() == 1 ? 0:
         this.handledNestedComputeTypesNestedFiles.get(computeType).size() - 1;
+  }
+
+  public void addNewPropertyIdToNodeTemplate(String newPropertyId,
+                                             Object origPropertyValue){
+    newParameterIdsToPropertiesFromOrigNodeTemplate.putIfAbsent(newPropertyId, origPropertyValue);
+  }
+
+  public Optional<Object> getNewPropertyInputParam(String newPropertyId){
+    if(!newParameterIdsToPropertiesFromOrigNodeTemplate.containsKey(newPropertyId)){
+      return Optional.empty();
+    }
+
+    return Optional.of(newParameterIdsToPropertiesFromOrigNodeTemplate.get(newPropertyId));
+  }
+
+  public Map<String, Object> getAllNewPropertyInputParamIds(){
+    return this.newParameterIdsToPropertiesFromOrigNodeTemplate;
   }
 }

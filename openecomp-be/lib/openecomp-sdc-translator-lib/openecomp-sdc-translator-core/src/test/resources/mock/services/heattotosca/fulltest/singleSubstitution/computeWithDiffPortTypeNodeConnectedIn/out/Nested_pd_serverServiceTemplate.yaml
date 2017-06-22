@@ -35,8 +35,10 @@ topology_template:
       entry_schema:
         type: json
     port_pd02_port_network_role_tag:
-      type: string
+      type: list
       required: true
+      entry_schema:
+        type: string
     port_pd01_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -62,7 +64,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     compute_pd_server_user_data_format:
       type: list
       required: true
@@ -79,10 +81,8 @@ topology_template:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
     port_pd01_port_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     port_pd02_port_order:
       type: list
       required: true
@@ -97,7 +97,7 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     port_pd02_port_security_groups:
       type: list
       required: true
@@ -119,10 +119,8 @@ topology_template:
       entry_schema:
         type: string
     port_pd02_port_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     port_pd01_port_network_role:
       type: list
       required: true
@@ -134,8 +132,10 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_pd01_port_network_role_tag:
-      type: string
+      type: list
       required: true
+      entry_schema:
+        type: string
     port_pd02_port_network:
       type: list
       required: true
@@ -169,17 +169,13 @@ topology_template:
           - port_pd01_port_security_groups
           - index_value
         exCP_naming:
-          get_input:
-          - port_pd01_port_exCP_naming
-          - index_value
+          get_input: port_pd01_port_exCP_naming
         replacement_policy:
           get_input:
           - port_pd01_port_replacement_policy
           - index_value
         vlan_requirements:
-          get_input:
-          - port_pd01_port_vlan_requirements
-          - index_value
+          get_input: port_pd01_port_vlan_requirements
         ip_requirements:
           get_input: port_pd01_port_ip_requirements
         network_role_tag:
@@ -187,17 +183,11 @@ topology_template:
         mac_requirements:
           get_input: port_pd01_port_mac_requirements
         order:
-          get_input:
-          - port_pd01_port_order
-          - index_value
+          get_input: port_pd01_port_order
         network_role:
-          get_input:
-          - port_pd01_port_network_role
-          - index_value
+          get_input: port_pd01_port_network_role
         subnetpoolid:
-          get_input:
-          - port_pd01_port_subnetpoolid
-          - index_value
+          get_input: port_pd01_port_subnetpoolid
         network:
           get_input:
           - port_pd01_port_network
@@ -215,17 +205,13 @@ topology_template:
           - port_pd02_port_security_groups
           - index_value
         exCP_naming:
-          get_input:
-          - port_pd02_port_exCP_naming
-          - index_value
+          get_input: port_pd02_port_exCP_naming
         replacement_policy:
           get_input:
           - port_pd02_port_replacement_policy
           - index_value
         vlan_requirements:
-          get_input:
-          - port_pd02_port_vlan_requirements
-          - index_value
+          get_input: port_pd02_port_vlan_requirements
         ip_requirements:
           get_input: port_pd02_port_ip_requirements
         network_role_tag:
@@ -233,17 +219,11 @@ topology_template:
         mac_requirements:
           get_input: port_pd02_port_mac_requirements
         order:
-          get_input:
-          - port_pd02_port_order
-          - index_value
+          get_input: port_pd02_port_order
         network_role:
-          get_input:
-          - port_pd02_port_network_role
-          - index_value
+          get_input: port_pd02_port_network_role
         subnetpoolid:
-          get_input:
-          - port_pd02_port_subnetpoolid
-          - index_value
+          get_input: port_pd02_port_subnetpoolid
         network:
           get_input:
           - port_pd02_port_network

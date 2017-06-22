@@ -56,6 +56,7 @@
                 <version>${mvn.surefire.version}</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
+					<skipTests>true</skipTests>
                     <systemPropertyVariables>
                         <config.location>${project.basedir}/configuration</config.location>
                     </systemPropertyVariables>

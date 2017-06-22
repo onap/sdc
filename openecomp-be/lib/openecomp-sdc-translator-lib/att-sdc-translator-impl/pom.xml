@@ -58,6 +58,7 @@
                 <version>${mvn.surefire.version}</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
+					<skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>

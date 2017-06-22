@@ -125,17 +125,15 @@ node_types:
         entry_schema:
           type: integer
       port_pd01_port_0_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_1_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -147,17 +145,15 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_1_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_0_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
     requirements:
     - dependency_pd_server:
         capability: tosca.capabilities.Node

@@ -125,18 +125,38 @@ topology_template:
       directives:
       - substitutable
       properties:
+        port_pcm_1port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_1port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         availabilityzone_name:
           get_input: availabilityzone_name
+        port_pcm_1port_0_network_role_tag: cps
         oam_net_gw:
           get_input: oam_net_gw
         pcm_image_name:
           get_input: pcm_image_name
+        port_pcm_2port_1_network_role_tag: oam
         security_group_name:
           get_input: security_group_name
         cps_net_ip:
           get_input:
           - cps_net_ips
           - 0
+        port_pcm_2port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_2port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         pcm_flavor_name:
           get_input: pcm_flavor_name
         service_template_filter:

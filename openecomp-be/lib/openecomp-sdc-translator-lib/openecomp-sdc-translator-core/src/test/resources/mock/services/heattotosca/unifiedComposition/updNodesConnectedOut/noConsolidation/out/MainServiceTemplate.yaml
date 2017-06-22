@@ -188,8 +188,8 @@ topology_template:
         port_FSB2_Internal_mac_address:
           get_input: fsb1-Internal2-mac
         port_FSB_OAM_fixed_ips:
-        - - ip_address:
-              get_input: fsb1-oam-ip
+        - ip_address:
+            get_input: fsb1-oam-ip
         port_FSB2_Internal_network:
         - Internal2-net
         compute_FSB_metadata:

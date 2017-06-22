@@ -42,3 +42,13 @@ template "distribution-engine-configuration" do
    mode "0755"
 end
 
+
+cookbook_file "ArtifactGenerator" do
+   path "/var/lib/jetty/config/catalog-be/Artifact-Generator.properties"
+   source "Artifact-Generator.properties"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+end
+
+

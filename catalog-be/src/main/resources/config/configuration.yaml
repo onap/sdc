@@ -6,7 +6,8 @@ identificationHeaderFields:
    - HTTP_CSP_WSTYPE
 
 # catalog backend hostname
-beFqdn: sdccatalog.att.com
+beFqdn: localhost
+# sdccatalog.att.com
 
 # catalog backend http port
 beHttpPort: 8080

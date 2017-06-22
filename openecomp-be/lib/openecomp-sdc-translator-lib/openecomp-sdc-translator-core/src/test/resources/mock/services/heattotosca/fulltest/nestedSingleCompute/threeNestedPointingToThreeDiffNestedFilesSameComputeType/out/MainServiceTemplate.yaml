@@ -63,10 +63,30 @@ topology_template:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.1ServiceTemplate.yaml
+        port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         pcm_server_name:
           get_input:
           - pcm_server_names
@@ -80,10 +100,30 @@ topology_template:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.2ServiceTemplate.yaml
+        port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         pcm_server_name:
           get_input:
           - pcm_server_names
@@ -97,10 +137,30 @@ topology_template:
           get_input: pcm_flavor_name
         service_template_filter:
           substitute_service_template: nested-pcm_v0.3ServiceTemplate.yaml
+        port_pcm_port_1_network_role_tag: oam
         availabilityzone_name:
           get_input: availabilityzone_name
+        port_pcm_port_0_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
         pcm_image_name:
           get_input: pcm_image_name
+        port_pcm_port_1_mac_requirements:
+          mac_count_required:
+            is_required: false
+        port_pcm_port_1_ip_requirements:
+        - ip_version: 4
+          ip_count_required:
+            is_required: true
+          floating_ip_count_required:
+            is_required: false
+        port_pcm_port_0_network_role_tag: cps
+        port_pcm_port_0_mac_requirements:
+          mac_count_required:
+            is_required: false
         pcm_server_name:
           get_input:
           - pcm_server_names

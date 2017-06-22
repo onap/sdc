@@ -25,9 +25,11 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_0_network_role_tag:
-        type: string
+        type: list
         required: true
         status: SUPPORTED
+        entry_schema:
+          type: string
       port_pd01_port_0_network_role:
         type: list
         required: true
@@ -71,11 +73,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_0_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       port_pd01_port_1_network_role:
         type: list
         required: true
@@ -93,7 +93,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -109,21 +109,21 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_1_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      port_pd01_port_1_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
-      port_pd01_port_1_network_role_tag:
-        type: string
-        required: true
-        status: SUPPORTED
+          type: string
       port_pd01_port_0_vlan_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       port_pd01_port_0_subnetpoolid:
         type: list
         required: true

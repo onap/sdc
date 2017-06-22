@@ -85,7 +85,6 @@ topology_template:
           - 0
         port_pd01_port_replacement_policy:
         - AUTO
-        - AUTO
         vm_flavor_name:
           get_input: pd_flavor_name
         port_pd01_port_mac_requirements:
@@ -94,16 +93,11 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - Network-PD-1
         - Network-PD-0
@@ -146,7 +140,6 @@ topology_template:
           get_input: ps_image_name
         port_ps01_port_replacement_policy:
         - AUTO
-        - AUTO
         port_ps01_port_mac_requirements:
           mac_count_required:
             is_required: false
@@ -154,16 +147,11 @@ topology_template:
         - Network-PS-0
         - Network-PS-1
         port_ps01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_ps_serverServiceTemplate.yaml
           count: 2

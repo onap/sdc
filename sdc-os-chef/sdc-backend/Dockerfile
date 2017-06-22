@@ -18,6 +18,7 @@ RUN curl -L https://omnitruck.chef.io/install.sh | bash
 
 ADD onboarding-be-*.war                        ${JETTY_BASE}/webapps/
 ADD catalog-be-*.war                           ${JETTY_BASE}/webapps/
+ADD api-docs.war	                           ${JETTY_BASE}/webapps/
 RUN chown -R jetty:jetty                       ${JETTY_BASE}/webapps
 
 COPY startup.sh /root/

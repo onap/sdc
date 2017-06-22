@@ -71,6 +71,24 @@
 						<version>3.0.2</version>
 						<executions>
 							<execution>
+								<id>copy-resources-apidocs</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/sdc-backend</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.parent.basedir}/openecomp-be/tools/swagger-ui/api-docs</directory>
+											<includes>
+												<include>api-docs.war</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
 								<id>copy-resources-be</id>
 								<phase>validate</phase>
 								<goals>

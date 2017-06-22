@@ -90,11 +90,11 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - packet_external_network
         compute_pd_server_user_data_format:
@@ -136,11 +136,11 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - packet_internal_network
         compute_pd_server_user_data_format:
@@ -177,11 +177,11 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - packet_internal_network
         compute_pd_server_user_data_format:

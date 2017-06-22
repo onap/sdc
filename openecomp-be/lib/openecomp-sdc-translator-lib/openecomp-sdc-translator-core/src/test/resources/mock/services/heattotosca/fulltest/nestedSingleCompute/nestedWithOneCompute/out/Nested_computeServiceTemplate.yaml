@@ -16,9 +16,11 @@ topology_template:
       required: true
       entry_schema:
         type: string
-    vm_image_name:
-      type: string
+    port_compute_port_subnetpoolid:
+      type: list
       required: true
+      entry_schema:
+        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -26,11 +28,11 @@ topology_template:
       default: 0
       constraints:
       - greater_or_equal: 0
-    compute_compute_metadata:
+    port_compute_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     compute_compute_name:
       type: list
       required: true
@@ -39,11 +41,45 @@ topology_template:
     vm_flavor_name:
       type: string
       required: true
-    compute_compute_config_drive:
+    port_compute_port_network_role:
       type: list
       required: true
       entry_schema:
-        type: boolean
+        type: string
+    vm_image_name:
+      type: string
+      required: true
+    port_compute_port_network:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    port_compute_port_network_role_tag:
+      type: list
+      required: true
+      entry_schema:
+        type: string
+    compute_compute_metadata:
+      type: list
+      required: true
+      entry_schema:
+        type: json
+    port_compute_port_order:
+      type: list
+      required: true
+      entry_schema:
+        type: integer
+    port_compute_port_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_compute_port_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    port_compute_port_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
   node_templates:
     compute:
       type: org.openecomp.resource.vfc.nodes.heat.compute
@@ -55,9 +91,23 @@ topology_template:
           - compute_compute_metadata
           - index_value
         config_drive:
-          get_input:
-          - compute_compute_config_drive
-          - index_value
+          get_attribute:
+          - compute_compute_port
+          - tenant_id
+          - port_security_enabled
+          - device_id
+          - qos_policy
+          - allowed_address_pairs
+          - show
+          - device_owner
+          - network
+          - security_groups
+          - fixed_ips
+          - mac_address
+          - admin_state_up
+          - name
+          - subnets
+          - status
         image:
           get_input: vm_image_name
         name:
@@ -68,36 +118,46 @@ topology_template:
           get_input:
           - compute_compute_user_data_format
           - index_value
+    compute_compute_port:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        exCP_naming:
+          get_input: port_compute_port_exCP_naming
+        vlan_requirements:
+          get_input: port_compute_port_vlan_requirements
+        ip_requirements:
+          get_input: port_compute_port_ip_requirements
+        network_role_tag:
+          get_input: port_compute_port_network_role_tag
+        mac_requirements:
+          get_input: port_compute_port_mac_requirements
+        order:
+          get_input: port_compute_port_order
+        network_role:
+          get_input: port_compute_port_network_role
+        subnetpoolid:
+          get_input: port_compute_port_subnetpoolid
+        network:
+          get_input:
+          - port_compute_port_network
+          - index_value
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: compute
+          relationship: tosca.relationships.network.BindsTo
   substitution_mappings:
     node_type: org.openecomp.resource.abstract.nodes.compute
     capabilities:
-      disk.device.usage_compute:
-      - compute
-      - disk.device.usage
       disk.write.requests_compute:
       - compute
       - disk.write.requests
-      instance_compute:
-      - compute
-      - instance
-      disk.ephemeral.size_compute:
-      - compute
-      - disk.ephemeral.size
-      disk.device.read.bytes.rate_compute:
-      - compute
-      - disk.device.read.bytes.rate
       disk.latency_compute:
       - compute
       - disk.latency
-      memory.resident_compute:
-      - compute
-      - memory.resident
-      memory_compute:
-      - compute
-      - memory
-      disk.iops_compute:
-      - compute
-      - disk.iops
+      network.incoming.bytes_compute_compute_port:
+      - compute_compute_port
+      - network.incoming.bytes
       disk.root.size_compute:
       - compute
       - disk.root.size
@@ -107,6 +167,78 @@ topology_template:
       disk.read.requests_compute:
       - compute
       - disk.read.requests
+      os_compute:
+      - compute
+      - os
+      disk.write.bytes.rate_compute:
+      - compute
+      - disk.write.bytes.rate
+      vcpus_compute:
+      - compute
+      - vcpus
+      disk.device.iops_compute:
+      - compute
+      - disk.device.iops
+      network.incoming.bytes.rate_compute_compute_port:
+      - compute_compute_port
+      - network.incoming.bytes.rate
+      disk.device.write.requests.rate_compute:
+      - compute
+      - disk.device.write.requests.rate
+      attachment_compute_compute_port:
+      - compute_compute_port
+      - attachment
+      host_compute:
+      - compute
+      - host
+      disk.device.write.bytes_compute:
+      - compute
+      - disk.device.write.bytes
+      cpu_compute:
+      - compute
+      - cpu
+      binding_compute_compute_port:
+      - compute_compute_port
+      - binding
+      disk.allocation_compute:
+      - compute
+      - disk.allocation
+      cpu.delta_compute:
+      - compute
+      - cpu.delta
+      binding_compute:
+      - compute
+      - binding
+      feature_compute_compute_port:
+      - compute_compute_port
+      - feature
+      disk.device.usage_compute:
+      - compute
+      - disk.device.usage
+      network.incoming.packets_compute_compute_port:
+      - compute_compute_port
+      - network.incoming.packets
+      instance_compute:
+      - compute
+      - instance
+      disk.ephemeral.size_compute:
+      - compute
+      - disk.ephemeral.size
+      disk.device.read.bytes.rate_compute:
+      - compute
+      - disk.device.read.bytes.rate
+      memory.resident_compute:
+      - compute
+      - memory.resident
+      memory_compute:
+      - compute
+      - memory
+      disk.iops_compute:
+      - compute
+      - disk.iops
+      network.incoming.packets.rate_compute_compute_port:
+      - compute_compute_port
+      - network.incoming.packets.rate
       disk.device.read.requests.rate_compute:
       - compute
       - disk.device.read.requests.rate
@@ -122,15 +254,9 @@ topology_template:
       disk.usage_compute:
       - compute
       - disk.usage
-      os_compute:
-      - compute
-      - os
-      disk.write.bytes.rate_compute:
-      - compute
-      - disk.write.bytes.rate
-      vcpus_compute:
-      - compute
-      - vcpus
+      network.outgoing.bytes.rate_compute_compute_port:
+      - compute_compute_port
+      - network.outgoing.bytes.rate
       disk.capacity_compute:
       - compute
       - disk.capacity
@@ -146,58 +272,49 @@ topology_template:
       disk.device.write.requests_compute:
       - compute
       - disk.device.write.requests
-      disk.device.iops_compute:
-      - compute
-      - disk.device.iops
-      disk.device.write.requests.rate_compute:
-      - compute
-      - disk.device.write.requests.rate
+      network.outgoing.packets.rate_compute_compute_port:
+      - compute_compute_port
+      - network.outgoing.packets.rate
+      network.outgoing.bytes_compute_compute_port:
+      - compute_compute_port
+      - network.outgoing.bytes
       endpoint_compute:
       - compute
       - endpoint
       memory.usage_compute:
       - compute
       - memory.usage
-      host_compute:
-      - compute
-      - host
       feature_compute:
       - compute
       - feature
-      disk.device.write.bytes_compute:
-      - compute
-      - disk.device.write.bytes
-      cpu_compute:
-      - compute
-      - cpu
       disk.device.write.bytes.rate_compute:
       - compute
       - disk.device.write.bytes.rate
       scalable_compute:
       - compute
       - scalable
+      network.outpoing.packets_compute_compute_port:
+      - compute_compute_port
+      - network.outpoing.packets
       disk.device.read.requests_compute:
       - compute
       - disk.device.read.requests
-      disk.allocation_compute:
-      - compute
-      - disk.allocation
       disk.device.capacity_compute:
       - compute
       - disk.device.capacity
       disk.device.allocation_compute:
       - compute
       - disk.device.allocation
-      cpu.delta_compute:
-      - compute
-      - cpu.delta
-      binding_compute:
-      - compute
-      - binding
     requirements:
       local_storage_compute:
       - compute
       - local_storage
+      dependency_compute_compute_port:
+      - compute_compute_port
+      - dependency
+      link_compute_compute_port:
+      - compute_compute_port
+      - link
       dependency_compute:
       - compute
       - dependency

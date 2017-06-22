@@ -35,11 +35,9 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       vm_flavor_name:
         type: string
         required: true
@@ -99,7 +97,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
       compute_pd_server_user_data_format:
         type: list
         required: true

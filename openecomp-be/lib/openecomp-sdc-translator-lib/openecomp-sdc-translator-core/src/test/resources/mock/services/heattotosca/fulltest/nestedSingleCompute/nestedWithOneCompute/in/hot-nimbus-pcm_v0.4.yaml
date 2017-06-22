@@ -57,7 +57,7 @@ parameters:
     description: the name of security group
   compute_image_name:
     type: string
-  net_name:
+  port_net_name:
     type: string
 
 resources:
@@ -87,11 +87,14 @@ resources:
       flavor: { compute_flavor_name }
       user_data_format: { get_attr: [server_pcm_001 , oam_net_gw] }
       metadata: { get_attr: [server_pcm_001]}
+      networks:
+        - port: { get_resource: compute_port_0}
+
 
   compute_port_0:
     type: OS::Neutron::Port
     properties:
-      network: { get_param: net_name }
+      network: { get_param: port_net_name }
 
   packet_mirror_network:
     type: OS::Neutron::Net
@@ -99,5 +102,5 @@ resources:
       - server_pcm_001
     properties:
       name:
-        get_param: net_name
+        get_param: port_net_name
 

@@ -114,15 +114,15 @@ public class UnifiedCompositionSingleSubstitutionFullTest extends BaseFullTransl
     testTranslationWithInit();
   }
 
-  @Test
-  public void testGeneralVf() throws IOException {
-    inputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/generalVf/in";
-    outputFilesPath =
-        "/mock/services/heattotosca/fulltest/singleSubstitution/generalVf/out";
-
-    testTranslationWithInit();
-  }
+//  @Test
+//  public void testGeneralVf() throws IOException {
+//    inputFilesPath =
+//        "/mock/services/heattotosca/fulltest/singleSubstitution/generalVf/in";
+//    outputFilesPath =
+//        "/mock/services/heattotosca/fulltest/singleSubstitution/generalVf/out";
+//
+//    testTranslationWithInit();
+//  }
 
   @Test
   public void testTwoSetsOfSingle() throws IOException {

@@ -8,9 +8,77 @@ node_types:
   org.openecomp.resource.abstract.nodes.heat.pcm_server:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
+      port_pcm_1port_0_ip_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
       availabilityzone_name:
         type: string
         description: availabilityzone name
+        required: true
+        status: SUPPORTED
+      port_pcm_1port_0_network_role_tag:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      pcm_image_name:
+        type: string
+        description: PCRF CM image name
+        required: true
+        status: SUPPORTED
+      port_pcm_1port_0_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pcm_1port_0_order:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: integer
+      port_pcm_2port_1_subnetpoolid:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: string
+      port_pcm_2port_1_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
+        required: true
+        status: SUPPORTED
+      port_pcm_1port_0_vlan_requirements:
+        type: list
+        required: true
+        status: SUPPORTED
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      port_pcm_1port_0_exCP_naming:
+        type: org.openecomp.datatypes.Naming
+        required: true
+        status: SUPPORTED
+      pcm_server_name:
+        type: string
+        description: PCRF CM server name
+        required: true
+        status: SUPPORTED
+      cps_net_mask:
+        type: string
+        description: CPS network mask
+        required: true
+        status: SUPPORTED
+      oam_net_name:
+        type: string
+        description: OAM network name
+        required: true
+        status: SUPPORTED
+      port_pcm_1port_0_mac_requirements:
+        type: org.openecomp.datatypes.network.MacRequirements
         required: true
         status: SUPPORTED
       port_pcm_2port_1_network_role:
@@ -24,18 +92,13 @@ node_types:
         description: CPS network gateway
         required: true
         status: SUPPORTED
-      pcm_image_name:
-        type: string
-        description: PCRF CM image name
-        required: true
-        status: SUPPORTED
       port_pcm_1port_0_network_role:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
           type: string
-      port_pcm_1port_0_subnetpoolid:
+      port_pcm_2port_1_network_role_tag:
         type: list
         required: true
         status: SUPPORTED
@@ -46,64 +109,34 @@ node_types:
         description: the name of security group
         required: true
         status: SUPPORTED
-      port_pcm_1port_0_order:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: integer
       cps_net_ip:
         type: string
         description: CPS network ip
         required: true
         status: SUPPORTED
-      port_pcm_2port_1_subnetpoolid:
+      port_pcm_2port_1_ip_requirements:
         type: list
         required: true
         status: SUPPORTED
         entry_schema:
-          type: string
+          type: org.openecomp.datatypes.network.IpRequirements
       pcm_flavor_name:
         type: string
         description: flavor name of PCRF CM instance
         required: true
         status: SUPPORTED
       port_pcm_2port_1_exCP_naming:
-        type: list
+        type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: json
       pcm_vol:
         type: string
         description: CPS Cluman Cinder Volume
         required: true
         status: SUPPORTED
-      port_pcm_1port_0_vlan_requirements:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      port_pcm_1port_0_exCP_naming:
-        type: list
-        required: true
-        status: SUPPORTED
-        entry_schema:
-          type: json
-      pcm_server_name:
-        type: string
-        description: PCRF CM server name
-        required: true
-        status: SUPPORTED
       cps_net_name:
         type: string
         description: CPS network name
-        required: true
-        status: SUPPORTED
-      cps_net_mask:
-        type: string
-        description: CPS network mask
         required: true
         status: SUPPORTED
       oam_net_ip:
@@ -114,11 +147,6 @@ node_types:
       oam_net_mask:
         type: string
         description: CPS network mask
-        required: true
-        status: SUPPORTED
-      oam_net_name:
-        type: string
-        description: OAM network name
         required: true
         status: SUPPORTED
       port_pcm_2port_1_order:
@@ -132,7 +160,7 @@ node_types:
         required: true
         status: SUPPORTED
         entry_schema:
-          type: json
+          type: org.openecomp.datatypes.network.VlanRequirements
     attributes:
       server_pcm_id:
         type: string

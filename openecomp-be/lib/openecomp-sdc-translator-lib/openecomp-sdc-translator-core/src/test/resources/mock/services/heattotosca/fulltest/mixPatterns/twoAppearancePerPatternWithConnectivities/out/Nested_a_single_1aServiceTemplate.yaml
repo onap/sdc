@@ -22,8 +22,10 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_1a_t2_port_network_role_tag:
-      type: string
+      type: list
       required: true
+      entry_schema:
+        type: string
     vm_flavor_name:
       type: string
       required: true
@@ -62,12 +64,10 @@ topology_template:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     port_1a_t1_port_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     compute_a_single_1a_availability_zone:
       type: list
       required: true
@@ -101,15 +101,13 @@ topology_template:
       entry_schema:
         type: integer
     port_1a_t2_port_exCP_naming:
-      type: list
+      type: org.openecomp.datatypes.Naming
       required: true
-      entry_schema:
-        type: json
     port_1a_t2_port_vlan_requirements:
       type: list
       required: true
       entry_schema:
-        type: json
+        type: org.openecomp.datatypes.network.VlanRequirements
     port_1a_t2_port_subnetpoolid:
       type: list
       required: true
@@ -138,33 +136,21 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input:
-          - port_1a_t1_port_exCP_naming
-          - index_value
+          get_input: port_1a_t1_port_exCP_naming
         vlan_requirements:
-          get_input:
-          - port_1a_t1_port_vlan_requirements
-          - index_value
+          get_input: port_1a_t1_port_vlan_requirements
         ip_requirements:
           get_input: port_1a_t1_port_ip_requirements
         network_role_tag:
-          get_input:
-          - port_1a_t1_port_network_role_tag
-          - index_value
+          get_input: port_1a_t1_port_network_role_tag
         mac_requirements:
           get_input: port_1a_t1_port_mac_requirements
         order:
-          get_input:
-          - port_1a_t1_port_order
-          - index_value
+          get_input: port_1a_t1_port_order
         network_role:
-          get_input:
-          - port_1a_t1_port_network_role
-          - index_value
+          get_input: port_1a_t1_port_network_role
         subnetpoolid:
-          get_input:
-          - port_1a_t1_port_subnetpoolid
-          - index_value
+          get_input: port_1a_t1_port_subnetpoolid
         network:
           get_input:
           - port_1a_t1_port_network
@@ -205,13 +191,9 @@ topology_template:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
       properties:
         exCP_naming:
-          get_input:
-          - port_1a_t2_port_exCP_naming
-          - index_value
+          get_input: port_1a_t2_port_exCP_naming
         vlan_requirements:
-          get_input:
-          - port_1a_t2_port_vlan_requirements
-          - index_value
+          get_input: port_1a_t2_port_vlan_requirements
         ip_requirements:
           get_input: port_1a_t2_port_ip_requirements
         network_role_tag:
@@ -219,17 +201,11 @@ topology_template:
         mac_requirements:
           get_input: port_1a_t2_port_mac_requirements
         order:
-          get_input:
-          - port_1a_t2_port_order
-          - index_value
+          get_input: port_1a_t2_port_order
         network_role:
-          get_input:
-          - port_1a_t2_port_network_role
-          - index_value
+          get_input: port_1a_t2_port_network_role
         subnetpoolid:
-          get_input:
-          - port_1a_t2_port_subnetpoolid
-          - index_value
+          get_input: port_1a_t2_port_subnetpoolid
         network:
           get_input:
           - port_1a_t2_port_network

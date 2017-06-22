@@ -719,6 +719,10 @@ public class DataModelUtil {
 
     mdcDataDebugMessage.debugEntryMessage(null, null);
 
+    if(Objects.isNull(type) && Objects.isNull(description) && CollectionUtils.isEmpty(constraints)){
+      return null;
+    }
+
     EntrySchema entrySchema = new EntrySchema();
     entrySchema.setType(type);
     entrySchema.setDescription(description);

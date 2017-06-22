@@ -185,13 +185,14 @@ topology_template:
           get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_2_network_role_tag: oam
+        port_pd01_port_2_network_role_tag:
+        - oam
         port_pd01_port_3_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_3_mac_requirements:
           mac_count_required:
             is_required: false
@@ -204,15 +205,16 @@ topology_template:
         port_pd01_port_2_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd01_port_3_network_role_tag: oam
+        port_pd01_port_3_network_role_tag:
+        - oam
         compute_pd_server_user_data_format:
         - RAW
         port_pd01_port_2_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         service_template_filter:
           substitute_service_template: Nested_pd_server_2ServiceTemplate.yaml
           count: 1
@@ -247,14 +249,15 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag: oam
+        port_pd01_port_network_role_tag:
+        - oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -286,11 +289,11 @@ topology_template:
         vm_image_name:
           get_input: pd_image_name
         port_pd01_port_ip_requirements:
-        - - ip_version: 4
-            ip_count_required:
-              is_required: false
-            floating_ip_count_required:
-              is_required: false
+        - ip_version: 4
+          ip_count_required:
+            is_required: false
+          floating_ip_count_required:
+            is_required: false
         port_pd01_port_network:
         - get_attribute:
           - network_policy_server
