@@ -15,7 +15,6 @@ import { DataTypeService } from './../../services/data-type.service';
 import { PropertiesService } from './../../services/properties.service';
 import { HierarchyNavService } from './../../services/hierarchy-nav.service';
 import { PropertiesUtils } from './properties.utils';
-import { PostsService } from "../../services/posts.service";
 import { DynamicElementModule } from 'app/ng2/components/dynamic-element/dynamic-element.module';
 import { DynamicPropertyComponent } from './../../components/properties-table/dynamic-property/dynamic-property.component';
 import {ConfirmationDeleteInputComponent} from "app/ng2/components/inputs-table/confirmation-delete-input/confirmation-delete-input.component"
@@ -27,6 +26,7 @@ import {TooltipModule} from "../../components/tooltip/tooltip.module";
 import { ComponentModeService } from "app/ng2/services/component-mode.service"
 import { ModalComponent } from "app/ng2/components/modal/modal.component"
 import {LoaderComponent} from "app/ng2/components/loader/loader.component"
+import {HttpInterceptor} from "../../services/http.interceptor.service";
 
 @NgModule({
     declarations: [
@@ -63,7 +63,7 @@ import {LoaderComponent} from "app/ng2/components/loader/loader.component"
         // PopoverContentComponent,
         // PopoverComponent
     ],
-    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService, PostsService, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
+    providers: [PropertiesService, HierarchyNavService, PropertiesUtils, DataTypeService,HttpInterceptor, ContentAfterLastDotPipe, GroupByPipe, KeysPipe, ComponentModeService]
 })
 export class PropertiesAssignmentModule {
 

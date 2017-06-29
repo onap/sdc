@@ -21,6 +21,7 @@
 package org.openecomp.sdc.ci.tests.execute.setup;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import org.json.simple.JSONObject;
 import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.openecomp.sdc.be.model.User;
@@ -43,6 +45,7 @@ import org.openecomp.sdc.ci.tests.run.StartTest;
 import org.openecomp.sdc.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.ci.tests.utilities.GeneralUIUtils;
 import org.openecomp.sdc.ci.tests.utilities.RestCDUtils;
+import org.openecomp.sdc.ci.tests.utils.rest.AutomationUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -59,6 +62,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
@@ -233,16 +237,48 @@ public abstract class SetupCDTest extends DriverFactory {
 			getCsvReport().writeRow(result.getInstanceName(), name.replace(RE_RUN,""), status);
 		}
 	}
+	
+	public void generateReport4Jenkins(ITestResult result, ITestContext context) {
+		String suiteName = ExtentManager.getSuiteName(context);	
+//		String outputDirectory = context.getOutputDirectory();
+	    JSONObject obj = new JSONObject();
+	    String success = Integer.toString(context.getPassedTests().size());
+	    String failed = Integer.toString(context.getFailedTests().size());
+	    String total = Integer.toString(context.getFailedTests().size()+context.getPassedTests().size());
+        obj.put("projectName", "SDC-ONAP-UI-Automation-"+suiteName);
+        obj.put("projectVersion",  AutomationUtils.getOSVersion());
+        obj.put("platform", "Linux");
+        obj.put("total", total);
+        obj.put("success", success);
+        obj.put("failed", failed);
+        
+        try (FileWriter file = new FileWriter(getReportFolder() + "jenkinsResults.json")) {
+
+            file.write(obj.toJSONString());
+            file.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.print(obj);
+		
+		
+	}
+	
+	
 		
 	@AfterSuite(alwaysRun = true)
-	public void afterSuite() throws Exception  {
+	public void afterSuite(ITestResult result, ITestContext context) throws Exception  {
 		
 		if (getConfig().getUseBrowserMobProxy()){
 			MobProxy.getPoxyServer().stop();
 		}
 		
 		csvReport.closeFile();
+		generateReport4Jenkins(result, context);
 		RestCDUtils.deleteOnDemand();
+		
 	}
 	
 	protected static String setUrl() {
@@ -262,7 +298,9 @@ public abstract class SetupCDTest extends DriverFactory {
 			return;
 		}
 		File credentialsFileRemote = new File(FileHandling.getBasePath() + File.separator + "conf" + File.separator + CREDENTIALS_FILE);
-		File credentialsFileLocal = new File(FileHandling.getConfFilesPath() + CREDENTIALS_FILE);
+//		File credentialsFileLocal = new File(FileHandling.getConfFilesPath() + CREDENTIALS_FILE);
+		File credentialsFileLocal = new File(FileHandling.getSdcVncPath() + File.separator + "conf" 
+				+ File.separator + CREDENTIALS_FILE);
 		File[] credentialFiles = {credentialsFileRemote, credentialsFileLocal};
 		for (File credentialsFile : credentialFiles){
 			if (credentialsFile.exists()){

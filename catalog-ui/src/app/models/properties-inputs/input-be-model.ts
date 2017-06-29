@@ -3,11 +3,17 @@ import {PropertyBEModel} from 'app/models';
  * Created by rc2122 on 6/1/2017.
  */
 export class InputBEModel extends PropertyBEModel {
-    properties:Array<ComponentInstanceProperty>;
-    inputs:Array<ComponentInstanceInput>;
+    properties: Array<ComponentInstanceModel>;
+    inputs: Array<ComponentInstanceModel>;
+    instanceUniqueId: string;
+    propertyId: string;
 
-    constructor(input?: PropertyBEModel) {
+    constructor(input?: InputBEModel) {
         super(input);
+        this.instanceUniqueId = input.instanceUniqueId;
+        this.propertyId = input.propertyId;
+        this.properties = input.properties;
+        this.inputs = input.inputs;
     }
 
 
@@ -17,33 +23,7 @@ export class InputBEModel extends PropertyBEModel {
 
 }
 
-export class ComponentInstanceProperty extends PropertyBEModel {
+export interface ComponentInstanceModel extends InputBEModel {
     componentInstanceId:string;
-    componentInstanceName:string;
-
-    constructor(property?: PropertyBEModel) {
-        super(property);
-    }
-
-
-
-    public toJSON = (): any => {
-    };
-
+    componentInstanceName: string;
 }
-
-export class ComponentInstanceInput extends InputBEModel {
-    componentInstanceId:string;
-    componentInstanceName:string;
-
-    constructor(property?: PropertyBEModel) {
-        super(property);
-    }
-
-
-
-    public toJSON = (): any => {
-    };
-
-}
-

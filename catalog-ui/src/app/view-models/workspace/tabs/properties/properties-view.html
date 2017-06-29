@@ -46,8 +46,8 @@
                             <span data-tests-id="propertyDescription_{{property.name}}" data-ng-bind="property.description"></span>
                         </div>
                         <div class="table-btn-col flex-item" ng-if="!isViewMode()">
-                            <button class="table-delete-btn" data-tests-id="delete_{{property.name}}"  data-ng-if="property.parentUniqueId==component.uniqueId"
-                                    data-ng-click="delete(property); $event.stopPropagation();"  data-ng-class="{'disabled': isViewMode()}"> </button>
+                            <button class="table-delete-btn" data-tests-id="delete_{{property.name}}"  data-ng-if="!property.ownerId || property.ownerId==component.uniqueId"
+                                    data-ng-click="delete(property); $event.stopPropagation();"  data-ng-class="{'disabled': isViewMode()}"></button>
                         </div>
                     </div>
                 </perfect-scrollbar>

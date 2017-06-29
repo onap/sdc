@@ -40,6 +40,7 @@ public interface Constants {
 	public static final String LAST_NAME_HEADER = "HTTP_CSP_LASTNAME";
 	public static final String USER_ID_HEADER = "USER_ID";
 	public static final String MD5_HEADER = "Content-MD5";
+	public static final String CONTENT_LENGTH_HEADER = "Content-Length";
 	public static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 	public static final String CONTENT_TYPE_HEADER = "Content-Type";
 	public static final String ORIGIN_HEADER = "HTTP_IV_REMOTE_ADDRESS";

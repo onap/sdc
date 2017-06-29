@@ -72,7 +72,8 @@ public class ToscaTemplateRegeneration implements Migration1707Task {
 	private boolean regenerateToscaTemplateArtifacts(List<GraphVertex> components) {
 		boolean result = true;
 		for(GraphVertex componentV : components){
-			Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentsRes = toscaOperationFacade.getToscaElement(componentV);
+			String componentId = componentV.getUniqueId();
+			Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentsRes = toscaOperationFacade.getToscaElement(componentId);
 			if (getComponentsRes.isRight()) {
 				result = false;
 				break;
@@ -135,7 +136,7 @@ public class ToscaTemplateRegeneration implements Migration1707Task {
 		Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
 		propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
 		List<GraphVertex> components = null;
-		Either<List<GraphVertex>, TitanOperationStatus> getVerticiesRes = toscaOperationFacade.getTitanDao().getByCriteria(null, propertiesToMatch,JsonParseFlagEnum.ParseMetadata);
+		Either<List<GraphVertex>, TitanOperationStatus> getVerticiesRes = toscaOperationFacade.getTitanDao().getByCriteria(null, propertiesToMatch,JsonParseFlagEnum.NoParse);
 
 		if (getVerticiesRes.isRight() && getVerticiesRes.right().value() != TitanOperationStatus.NOT_FOUND) {
 			LOGGER.debug("Failed to fetch all certified components. Status is {}", getVerticiesRes.right().value());

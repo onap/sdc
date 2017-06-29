@@ -234,7 +234,10 @@ public class CsarUtilsTest extends ComponentBaseTest {
 			while ((len = zip.read(buffer)) > 0) {
 				sb.append(new String(buffer, 0, len));
 			}
+			assertTrue(nextEntry.getName().equals("csar.meta"));
 
+			readNextEntry(sb, len, buffer, zip);
+			nextEntry = zip.getNextEntry();
 			assertTrue(nextEntry.getName().equals("TOSCA-Metadata/TOSCA.meta"));
 
 			YamlToObjectConverter yamlToObjectConverter = new YamlToObjectConverter();

@@ -148,3 +148,5 @@ sdc-os-chef/.idea/*
 
 # chef
 .delivery
+
+common/openecomp-sdc-artifact-generator-lib/openecomp-sdc-artifact-generator-core/logs/*

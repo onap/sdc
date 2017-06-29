@@ -1,14 +1,7 @@
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -359,7 +352,7 @@ public class ToscaOperationFacade {
 
 	}
 
-	public <T extends Component> Either<List<T>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, ComponentTypeEnum componentType) {
+	public <T extends Component> Either<Set<T>, StorageOperationStatus> getFollowed(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates, ComponentTypeEnum componentType) {
 		Either<List<ToscaElement>, StorageOperationStatus> followedResources;
 		if (componentType == ComponentTypeEnum.RESOURCE) {
 			followedResources = nodeTypeOperation.getFollowedComponent(userId, lifecycleStates, lastStateStates, componentType);
@@ -367,7 +360,7 @@ public class ToscaOperationFacade {
 			followedResources = topologyTemplateOperation.getFollowedComponent(userId, lifecycleStates, lastStateStates, componentType);
 		}
 
-		List<T> components = new ArrayList<>();
+		Set<T> components = new HashSet<>();
 		if (followedResources.isRight() && followedResources.right().value() != StorageOperationStatus.NOT_FOUND) {
 			return Either.right(followedResources.right().value());
 		}

@@ -31,6 +31,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -108,13 +109,22 @@ public class FileHandling {
 		return System.getProperty("user.dir") + File.separator;
 	}
 	
+	public static String getSdcVncPath() {
+		return  Paths.get(System.getProperty("user.dir"), "..", "..", "sdc-vnfs").toString();
+	}
+	
+
+	
 	public static String getDriversPath() {
 		return getBasePath() + "src" + File.separator + "main" + File.separator + "resources"
 				+ File.separator + "ci" + File.separator + "drivers" + File.separator;
 	}
 
 	public static String getResourcesFilesPath() {
-		return getBasePath() + "src" + File.separator + "main" + File.separator + "resources"
+//		return getBasePath() + "src" + File.separator + "main" + File.separator + "resources"
+//				+ File.separator + "Files" + File.separator;
+
+		return getSdcVncPath()+ File.separator + "ui-tests" 
 				+ File.separator + "Files" + File.separator;
 	}
 	

@@ -3,7 +3,7 @@
  */
 
 import { ArtifactGroupModel, PropertyModel, PropertiesGroup, AttributeModel, AttributesGroup, ComponentInstance,
-    InputModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup,InputFEModel} from "app/models";
+    InputBEModel, Module, ComponentMetadata, RelationshipModel, RequirementsGroup, CapabilitiesGroup,InputFEModel} from "app/models";
 import {CommonUtils} from "app/utils";
 import {Serializable} from "../utils/serializable";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
@@ -18,7 +18,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public componentInstancesAttributes:AttributesGroup;
     public componentInstancesRelations:Array<RelationshipModel>;
     public componentInstances:Array<ComponentInstance>;
-    public inputs:Array<PropertyBEModel>;
+    public inputs:Array<InputBEModel>;
     public capabilities:CapabilitiesGroup;
     public requirements:RequirementsGroup;
     public properties:Array<PropertyModel>;

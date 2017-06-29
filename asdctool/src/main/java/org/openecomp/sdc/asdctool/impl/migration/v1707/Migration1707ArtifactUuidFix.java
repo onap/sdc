@@ -147,10 +147,9 @@ public class Migration1707ArtifactUuidFix {
 					vfLst.add(resource);
 					writeModuleResultToFile(writer, resource, null);
 					writer.flush();
-					break;
 				}
+				titanDao.commit();
 			}
-			titanDao.commit();
 
 		} catch (Exception e) {
 			log.info("Failed to fetch vf resources ", e);
@@ -510,7 +509,7 @@ public class Migration1707ArtifactUuidFix {
 			List<GroupDefinition> groupsList = resource.getGroups();
 			if (groupsList != null && artifactsMap != null) {
 				for (GroupDefinition group : groupsList) {
-					if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE)) {
+					if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) && group.getArtifacts() != null) {
 						log.debug("Migration1707ArtifactUuidFix  fix group:  resource id {}, group name {} ", resource.getUniqueId(), group.getName());
 						List<String> groupArtifacts = new ArrayList<String>(group.getArtifacts());
 						group.getArtifacts().clear();

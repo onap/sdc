@@ -38,8 +38,6 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 	 */
 	private String valueUniqueUid;
 
-	private String inputId;
-
 	private List<String> path = null;
 
 	private List<PropertyRule> rules = null;
@@ -53,7 +51,7 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 	public ComponentInstanceInput(PropertyDataDefinition curPropertyDef, String inputId, String value,
 			String valueUniqueUid) {
 		super(curPropertyDef);
-		this.inputId = inputId;
+		setInputId(inputId);
 		setValue(value);
 		this.valueUniqueUid = valueUniqueUid;
 	}
@@ -68,7 +66,7 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 	public ComponentInstanceInput(PropertyDataDefinition propertyDefinition) {
 		super(propertyDefinition);
 		if(propertyDefinition.getGetInputValues() != null && !propertyDefinition.getGetInputValues().isEmpty()){
-			this.inputId = propertyDefinition.getGetInputValues().get(0).getInputId();
+			setInputId(propertyDefinition.getGetInputValues().get(0).getInputId());
 		}
 	}
 
@@ -86,14 +84,6 @@ public class ComponentInstanceInput extends InputDefinition implements IComponen
 
 	public void setComponentInstanceId(String componentInstanceId) {
 		this.componentInstanceId = componentInstanceId;
-	}
-
-	public String getInputId() {
-		return inputId;
-	}
-
-	public void setInputId(String inputId) {
-		this.inputId = inputId;
 	}
 
 	public String getValueUniqueUid() {

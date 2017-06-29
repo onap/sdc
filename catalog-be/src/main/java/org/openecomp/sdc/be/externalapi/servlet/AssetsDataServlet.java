@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.datatypes.enums.AssetTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.FilterKeyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
 import org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter;
 import org.openecomp.sdc.be.externalapi.servlet.representation.AssetMetadata;
 import org.openecomp.sdc.be.model.Component;
@@ -117,19 +118,41 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	private HttpServletRequest request;
 
 	private static Logger log = LoggerFactory.getLogger(AssetsDataServlet.class.getName());
-
+	
+	/**
+	 * 
+	 * @param assetType
+	 * @param category
+	 * @param subCategory
+	 * @param distributionStatus
+	 * @param resourceType
+	 * @param instanceIdHeader
+	 * @return
+	 */
 	@GET
 	@Path("/{assetType}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Fetch list of assets", httpMethod = "GET", notes = "Returns list of assets", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Assets Fetched"), @ApiResponse(code = 400, message = "Invalid content / Missing content"), @ApiResponse(code = 401, message = "Authorization required"),
-			@ApiResponse(code = 403, message = "Restricted operation"), @ApiResponse(code = 404, message = "Asset not found") })
-	public Response getAssetList(@PathParam("assetType") final String assetType, @QueryParam("category") String category, @QueryParam("subCategory") String subCategory, @QueryParam("distributionStatus") String distributionStatus,
-			@QueryParam("resourceType") String resourceType) {
+	@ApiOperation(value = "Fetch list of assets", httpMethod = "GET", notes = "Returns list of assets", response = AssetMetadata.class, responseContainer="List")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", response = AssetMetadata.class, responseContainer="List"),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution (PUT,DELETE,POST  will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+	public Response getAssetList(
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The filter key (resourceType only for resources)", required = false)@QueryParam("category") String category, 
+			@ApiParam(value = "The filter key (resourceType only for resources)", required = false)@QueryParam("subCategory") String subCategory, 
+			@ApiParam(value = "The filter key (resourceType only for resources)", required = false)@QueryParam("distributionStatus") String distributionStatus,
+			@ApiParam(value = "The filter key (resourceType only for resources)", required = false)@QueryParam("resourceType") String resourceType) {
 
 		Response response = null;
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String query = request.getQueryString();
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
@@ -205,18 +228,26 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param assetType
+	 * @param uuid
+	 * @param request
+	 * @param instanceIdHeader
+	 * @return
+	 */
 	@GET
 	@Path("/{assetType}/{uuid}/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Fetch metadata of asset by uuid", httpMethod = "GET", notes = "Returns metadata of asset", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Assets Fetched"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response getAssetListByUuid(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @Context final HttpServletRequest request) {
+	public Response getAssetListByUuid(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @Context final HttpServletRequest request,
+			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Response response = null;
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_ASSET_METADATA;
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
@@ -273,7 +304,15 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param uuid
+	 * @param assetType
+	 * @param authorization
+	 * @param instanceIdHeader
+	 * @return
+	 */
 	@GET
 	@Path("/{assetType}/{uuid}/toscaModel")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -282,7 +321,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response getToscaModel(@PathParam("uuid") final String uuid,
 			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("assetType") final String assetType,
-			@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization) {
+			@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		String url = request.getRequestURI();
 		log.debug("Start handle request of {} {}", request.getMethod(), url);
@@ -291,14 +330,13 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		ServletContext context = request.getSession().getServletContext();
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
 		AuditingActionEnum auditingActionEnum = AuditingActionEnum.GET_TOSCA_MODEL;
-		String userId = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
-		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, userId);
+		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, url);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_TYPE, componentType.getValue());
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_SERVICE_INSTANCE_ID, uuid);
 
-		if (userId == null || userId.isEmpty()) {
+		if (instanceIdHeader == null || instanceIdHeader.isEmpty()) {
 			log.debug("getToscaModel: Missing X-ECOMP-InstanceID header");
 			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
 			getComponentsUtils().auditExternalGetAsset(responseFormat, auditingActionEnum, additionalParam);
@@ -341,6 +379,8 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	 * 
 	 * @param assetType
 	 * @param data
+	 * @param userId
+	 * @param instanceIdHeader
 	 * @return
 	 */
 	@POST
@@ -353,12 +393,15 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 201, message = "Resource created"), @ApiResponse(code = 400, message = "Invalid content / Missing content"),
 			@ApiResponse(code = 409, message = "Resource already exist") })
-	public Response createResource(@PathParam("assetType") final String assetType, @ApiParam(value = "json describe the artifact", required = true) String data) {
+	public Response createResource(@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "json describe the artifact", required = true) String data,
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, 
+			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+		
 		init(log);
 		
 		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
 		String requestURI = request.getRequestURI();
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("Start handle request of {}", url);
 		Resource resource = null;
@@ -369,8 +412,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		try {
 			// Validate X-ECOMP-InstanceID Header
 			if (responseWrapper.isEmpty()) {
-				validateXECOMPInstanceIDHeader(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER),
-						responseWrapper);
+				validateXECOMPInstanceIDHeader(instanceIdHeader, responseWrapper);
 			}
 			// Validate USER_ID Header
 			if (responseWrapper.isEmpty()) {
@@ -457,7 +499,123 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 					additionalParams);
 		}
 	}
-
+	
+	/**
+	 * Changing the lifecycle of an asset
+	 * @param jsonChangeInfo	The description - request body
+	 * @param assetType The requested asset type.Valid values are: resources / services (for VFCMT – use "resources")
+	 * @param uuid The uuid of the desired resource to be changed
+	 * @param lifecycleTransition The lifecycle operation to be performed on the asset.Valid values are:Checkin / Checkout /  CERTIFICATION_REQUEST
+	 * @param userId
+	 * @return
+	 */
+	@POST
+	@Path("/{assetType}/{uuid}/lifecycleState/{lifecycleOperation}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Resource state changed"), @ApiResponse(code = 403, message = "Asset is already checked-out by another user")})
+	public Response changeResourceState(@ApiParam(value = "LifecycleChangeInfo - relevant for checkin", required = false) String jsonChangeInfo,
+			@ApiParam(value = "validValues: resources / services ", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam(value = "assetType") final String assetType,
+			@ApiParam(value = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
+			@ApiParam(allowableValues = "checkout, checkin", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition, 
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+		
+		Response response = null;
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
+		
+		init(log);
+		
+		String requestURI = request.getRequestURI();
+		String url = request.getMethod() + " " + requestURI;
+		log.debug("Start handle request of {}", url);
+		
+		//get the business logic
+		ServletContext context = request.getSession().getServletContext();
+		LifecycleBusinessLogic businessLogic = getLifecycleBL(context);		
+		
+		Wrapper<ResponseFormat> responseWrapper = runValidations(assetType);					
+		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
+		Component component = null;
+		Component responseObject = null;
+		User modifier = null;
+		
+		try{
+			if (responseWrapper.isEmpty()) {
+				//get user
+				Either<User, ResponseFormat> eitherGetUser = getUser(request, userId);
+				if (eitherGetUser.isRight()) {
+					ResponseFormat responseFormat = eitherGetUser.right().value();
+					responseWrapper.setInnerElement(responseFormat);
+					return buildErrorResponse(responseFormat);
+				}
+				modifier = eitherGetUser.left().value();
+								
+				//get the component id from the uuid
+				Either<Component, ResponseFormat> latestVersion = businessLogic.getLatestComponentByUuid(componentType, uuid);		
+				if (latestVersion.isRight()) {
+					ResponseFormat responseFormat = latestVersion.right().value();
+					responseWrapper.setInnerElement(responseFormat);
+					return buildErrorResponse(responseFormat);
+				}
+				component = latestVersion.left().value();
+				String componentId = component.getUniqueId();
+								
+				//validate the transition is valid
+				Either<LifeCycleTransitionEnum, ResponseFormat> validateEnum = validateTransitionEnum(lifecycleTransition, modifier);
+				if (validateEnum.isRight()) {
+					ResponseFormat responseFormat = validateEnum.right().value();
+					responseWrapper.setInnerElement(responseFormat);
+					return buildErrorResponse(responseFormat);
+				}
+				LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
+				
+				//create changeInfo
+				LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction();
+				try {
+					if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
+						ObjectMapper mapper = new ObjectMapper();
+						changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
+					}
+				}
+				catch (Exception e) {
+					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
+					BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
+					log.debug("failed to convert from json {}", jsonChangeInfo, e);
+					ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(modifier, AuditingActionEnum.CHECKOUT_RESOURCE);
+					responseWrapper.setInnerElement(responseFormat);
+					return buildErrorResponse(responseFormat);
+				}
+				
+				//execute business logic
+				Either<? extends Component, ResponseFormat> actionResponse = businessLogic.changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);	
+				if (actionResponse.isRight()) {
+					log.info("failed to change resource state");
+					ResponseFormat responseFormat = actionResponse.right().value();
+					responseWrapper.setInnerElement(responseFormat);
+					return buildErrorResponse(responseFormat);					
+				}
+	  
+				log.debug("change state successful !!!");
+				responseObject = actionResponse.left().value();
+				response = buildCreatedResourceResponse(responseObject, context, responseWrapper);				
+			} else {
+				response = buildErrorResponse(responseWrapper.getInnerElement());
+			}
+			
+			return response;
+		} catch (Exception e) {
+			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Change Lifecycle State");
+			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Change Lifecycle State");
+			log.debug("change lifecycle state failed with exception", e);
+			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
+			responseWrapper.setInnerElement(responseFormat);
+			return buildErrorResponse(responseFormat);			
+		} finally{
+			auditChnageLifecycleAction(additionalParams, responseWrapper, componentType, component, responseObject, modifier, userId);
+		}
+	}
+	
 	private void prepareAdditionalAudit(Resource resource, EnumMap<AuditingFieldsKeysEnum, Object> additionalParams) {
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_VERSION, StringUtils.EMPTY);		
 		additionalParams.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_PREV_STATE, StringUtils.EMPTY);
@@ -489,14 +647,12 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 			responseFormat = resMetadata.right().value();
 			responseWrapper.setInnerElement(responseFormat);
 			response = buildErrorResponse(responseFormat);
-		}
-		else{
+		}else{
 			final AssetMetadata assetData = resMetadata.left().value();
 			assetData.setToscaModelURL(null);
 			
 			responseWrapper.setInnerElement(getComponentsUtils().getResponseFormat(ActionStatus.CREATED));
 			Object representation = RepresentationUtils.toRepresentation(assetData);
-			responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
 			response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), representation);
 		}
 		return response;
@@ -575,119 +731,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	}
 
 	
-	/**
-	 * Changing the lifecycle of an asset
-	 * @param jsonChangeInfo	The description - request body
-	 * @param assetType The requested asset type.Valid values are: resources / services (for VFCMT – use "resources")
-	 * @param uuid The uuid of the desired resource to be changed
-	 * @param lifecycleTransition The lifecycle operation to be performed on the asset.Valid values are:Checkin / Checkout /  CERTIFICATION_REQUEST
-	 * @return
-	 */
-	@POST
-	@Path("/{assetType}/{uuid}/lifecycleState/{lifecycleOperation}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Resource state changed"), @ApiResponse(code = 403, message = "Asset is already checked-out by another user")})
-	public Response changeResourceState(@ApiParam(value = "LifecycleChangeInfo - relevant for checkin", required = false) String jsonChangeInfo,
-			@ApiParam(value = "validValues: resources / services ", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam(value = "assetType") final String assetType,
-			@ApiParam(value = "id of component to be changed") @PathParam(value = "uuid") final String uuid,
-			@ApiParam(allowableValues = "checkout, checkin", required = true) @PathParam(value = "lifecycleOperation") final String lifecycleTransition) {
-		Response response = null;
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParams = new EnumMap<>(AuditingFieldsKeysEnum.class);
-		
-		init(log);
-		
-		String requestURI = request.getRequestURI();
-		String url = request.getMethod() + " " + requestURI;
-		log.debug("Start handle request of {}", url);
-		
-		//get the business logic
-		ServletContext context = request.getSession().getServletContext();
-		LifecycleBusinessLogic businessLogic = getLifecycleBL(context);		
-		
-		Wrapper<ResponseFormat> responseWrapper = runValidations(assetType);					
-		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
-		Component component = null;
-		Component responseObject = null;
-		User modifier = null;
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
-		
-		try{
-			if (responseWrapper.isEmpty()) {
-				//get user
-				Either<User, ResponseFormat> eitherGetUser = getUser(request, userId);
-				if (eitherGetUser.isRight()) {
-					ResponseFormat responseFormat = eitherGetUser.right().value();
-					responseWrapper.setInnerElement(responseFormat);
-					return buildErrorResponse(responseFormat);
-				}
-				modifier = eitherGetUser.left().value();
-								
-				//get the component id from the uuid
-				Either<Component, ResponseFormat> latestVersion = businessLogic.getLatestComponentByUuid(componentType, uuid);		
-				if (latestVersion.isRight()) {
-					ResponseFormat responseFormat = latestVersion.right().value();
-					responseWrapper.setInnerElement(responseFormat);
-					return buildErrorResponse(responseFormat);
-				}
-				component = latestVersion.left().value();
-				String componentId = component.getUniqueId();
-								
-				//validate the transition is valid
-				Either<LifeCycleTransitionEnum, ResponseFormat> validateEnum = validateTransitionEnum(lifecycleTransition, modifier);
-				if (validateEnum.isRight()) {
-					ResponseFormat responseFormat = validateEnum.right().value();
-					responseWrapper.setInnerElement(responseFormat);
-					return buildErrorResponse(responseFormat);
-				}
-				LifeCycleTransitionEnum transitionEnum = validateEnum.left().value();
-				
-				//create changeInfo
-				LifecycleChangeInfoWithAction changeInfo = new LifecycleChangeInfoWithAction();
-				try {
-					if (jsonChangeInfo != null && !jsonChangeInfo.isEmpty()) {
-						ObjectMapper mapper = new ObjectMapper();
-						changeInfo = new LifecycleChangeInfoWithAction(mapper.readValue(jsonChangeInfo, LifecycleChangeInfoBase.class).getUserRemarks());
-					}
-				}
-				catch (Exception e) {
-					BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeInvalidJsonInput, "convertJsonToObject");
-					BeEcompErrorManager.getInstance().logBeInvalidJsonInput("convertJsonToObject");
-					log.debug("failed to convert from json {}", jsonChangeInfo, e);
-					ResponseFormat responseFormat = getComponentsUtils().getInvalidContentErrorAndAudit(modifier, AuditingActionEnum.CHECKOUT_RESOURCE);
-					responseWrapper.setInnerElement(responseFormat);
-					return buildErrorResponse(responseFormat);
-				}
-				
-				//execute business logic
-				Either<? extends Component, ResponseFormat> actionResponse = businessLogic.changeComponentState(componentType, componentId, modifier, transitionEnum, changeInfo, false, true);	
-				if (actionResponse.isRight()) {
-					log.info("failed to change resource state");
-					ResponseFormat responseFormat = actionResponse.right().value();
-					responseWrapper.setInnerElement(responseFormat);
-					return buildErrorResponse(responseFormat);					
-				}
-	  
-				log.debug("change state successful !!!");
-				responseObject = actionResponse.left().value();
-				response = buildCreatedResourceResponse(responseObject, context, responseWrapper);				
-			} else {
-				response = buildErrorResponse(responseWrapper.getInnerElement());
-			}
-			
-			return response;
-		} catch (Exception e) {
-			BeEcompErrorManager.getInstance().processEcompError(EcompErrorName.BeRestApiGeneralError, "Change Lifecycle State");
-			BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Change Lifecycle State");
-			log.debug("change lifecycle state failed with exception", e);
-			ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR);
-			responseWrapper.setInnerElement(responseFormat);
-			return buildErrorResponse(responseFormat);			
-		} finally{
-			auditChnageLifecycleAction(additionalParams, responseWrapper, componentType, component, responseObject, modifier, userId);
-		}
-	}
+	
 
 	private void auditChnageLifecycleAction(EnumMap<AuditingFieldsKeysEnum, Object> additionalParams,
 			Wrapper<ResponseFormat> responseWrapper, ComponentTypeEnum componentType, Component component,
@@ -755,7 +799,6 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 		
 		return responseWrapper;
 	}
-	
 	
 	private Either<LifeCycleTransitionEnum, ResponseFormat> validateTransitionEnum(final String lifecycleTransition, User user) {
 		LifeCycleTransitionEnum transitionEnum = LifeCycleTransitionEnum.CHECKOUT;
