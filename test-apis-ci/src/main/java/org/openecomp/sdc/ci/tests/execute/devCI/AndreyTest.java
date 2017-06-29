@@ -82,21 +82,45 @@ public class AndreyTest {
         long startTime = System.currentTimeMillis();
         long estimatedTime = System.currentTimeMillis() - startTime; 
         System.out.println("Time to init factory " + estimatedTime);
-        String fileStr1 = "src//test//resources//CI//csars//service-ServiceFdnt-csar-0904-2.csar";//ToscaParserStubsTest.class.getClassLoader().getResource("csars/service-ServiceFdnt-csar-0904-2.csar").getFile();
+        String fileStr1 = "C:\\Users\\ys9693\\NewDownload\\2016-006_vvm_vvm_30_1607_e2e.zip.csar";//ToscaParserStubsTest.class.getClassLoader().getResource("csars/service-ServiceFdnt-csar-0904-2.csar").getFile();
         File file1 = new File(fileStr1);
         String name = file1.getName();
         String absolutePath = file1.getAbsolutePath();
         ISdcCsarHelper fdntCsarHelper = factory.getSdcCsarHelper(file1.getAbsolutePath());
         
         List<NodeTemplate> serviceVfList = fdntCsarHelper.getServiceVfList();
-        serviceVfList.size();
+        System.out.println("serviceVfList----->" + serviceVfList);
+        
+        List<NodeTemplate> serviceNodeTemplatesByTypeVF = fdntCsarHelper.getServiceNodeTemplatesByType("VF");
+        System.out.println("serviceNodeTemplatesByTypeVF----->" + serviceNodeTemplatesByTypeVF);
+        List<NodeTemplate> serviceNodeTemplatesByTypeVFC = fdntCsarHelper.getServiceNodeTemplatesByType("VFC");
+        System.out.println("serviceNodeTemplatesByTypeVFC -------->" + serviceNodeTemplatesByTypeVFC);
+        List<NodeTemplate> serviceNodeTemplatesByTypeVL = fdntCsarHelper.getServiceNodeTemplatesByType("VL");
+        System.out.println("serviceNodeTemplatesByTypeVL------>" +serviceNodeTemplatesByTypeVL);
+        List<NodeTemplate> serviceNodeTemplatesByTypeCP = fdntCsarHelper.getServiceNodeTemplatesByType("CP");
+        System.out.println("serviceNodeTemplatesByTypeCP ---------->" + serviceNodeTemplatesByTypeCP);        
+        
+        System.out.println("getMetaData"+ serviceVfList.get(0).getMetaData());
+        System.out.println("UUID"+ serviceVfList.get(0).getMetaData().getValue("UUID"));
+        System.out.println("customizationUUID"+ serviceVfList.get(0).getMetaData().getValue("customizationUUID"));
+        System.out.println("serviceVfList.size()------->"+  serviceVfList.size());
+        System.out.println("getCpListByVf--------->" + fdntCsarHelper.getCpListByVf(serviceVfList.get(0).getMetaData().getValue("customizationUUID")));
+        List<NodeTemplate> vfcListByVf = fdntCsarHelper.getVfcListByVf(serviceVfList.get(0).getMetaData().getValue("customizationUUID"));
+        System.out.println("getVfcListByVf--------->" + vfcListByVf);
+        for (NodeTemplate nodeTemplate : vfcListByVf) {
+			
+        	System.out.println("----> getCpPropertiesFromVfc--------->" + fdntCsarHelper.getCpPropertiesFromVfc(nodeTemplate));
+		}
+        
         for (NodeTemplate nodeTemplate : serviceVfList) {
+        	System.out.println("NodeName---->"+nodeTemplate.getName());
+        	System.out.println("getTypeOfNodeTemplate--------->" + fdntCsarHelper.getTypeOfNodeTemplate(nodeTemplate));
+        	System.out.println("getServiceInputLeafValueOfDefault--------->" + fdntCsarHelper.getServiceInputLeafValueOfDefault(serviceVfList.get(0).getMetaData().getValue("customizationUUID")));
+        	System.out.println("getVfModulesByVf--------->" + fdntCsarHelper.getVfModulesByVf(nodeTemplate.getMetaData().getValue("customizationUUID")));
         	ArrayList<Object> requirements = nodeTemplate.getRequirements();
         	requirements.size();
         	LinkedHashMap<String, Capability> capabilities = nodeTemplate.getCapabilities();
         	ArrayList<Object> requirements2 = nodeTemplate.getRequirements();
-        	
-        	System.out.println(nodeTemplate.getName());
 		}
         
 	}

@@ -91,13 +91,20 @@ public class AuditValidationUtils {
 
 	}
 
-	public static String buildAuditDescription(ErrorInfo errorInfo, List<String> variables) {
+	public static String buildAuditDescription(ErrorInfo errorInfo, List<String> errorVariablesList) {
 
 		String auditDesc = errorInfo.getMessageId() + ": " + errorInfo.getMessage();
-		if(! variables.isEmpty() && variables.get(0) != null && ! variables.get(0).isEmpty()){
-			for (int i = 0; i < variables.size(); i++) {
+//		if(! variables.isEmpty() && variables.get(0) != null && ! variables.get(0).isEmpty()){
+//			for (int i = 0; i < variables.size(); i++) {
+//				if (auditDesc.contains("%" + (i + 1))) {
+//					auditDesc = auditDesc.replace("%" + (i + 1), variables.get(i));
+//				}
+//			}
+//		}
+		if(! errorVariablesList.isEmpty() && errorVariablesList.get(0) != null){
+			for (int i = 0; i < errorVariablesList.size(); i++) {
 				if (auditDesc.contains("%" + (i + 1))) {
-					auditDesc = auditDesc.replace("%" + (i + 1), variables.get(i));
+					auditDesc = auditDesc.replace("%" + (i + 1), errorVariablesList.get(i));
 				}
 			}
 		}

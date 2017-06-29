@@ -110,6 +110,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
 		try {
 
 			ComponentInstance componentInstance = RepresentationUtils.fromRepresentation(data, ComponentInstance.class);
+			componentInstance.setInvariantName(null);
 			ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
 			ComponentInstanceBusinessLogic componentInstanceLogic = getComponentInstanceBL(context, componentTypeEnum);
 			if (componentInstanceLogic == null) {

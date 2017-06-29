@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.components.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.rmi.activation.ActivationSystem;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -1335,7 +1334,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					isUpdated = true;
 				}
 				if (CollectionUtils.isNotEmpty(group.getArtifactsUuid()) && group.getArtifactsUuid().contains(foundArtifact.getArtifactUUID())) {
-					group.getArtifacts().remove(foundArtifact.getArtifactUUID());
+					group.getArtifactsUuid().remove(foundArtifact.getArtifactUUID());
 					isUpdated = true;
 				}
 				if (isUpdated) {
@@ -4087,7 +4086,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 		Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
 		Either<byte[], ResponseFormat> result;
 		byte[] downloadedArtifact = null;
-		Component component = getLatestComponentByUuid(componentType, componentUuid, errorWrapper);
+		Component component = getComponentByUuid(componentType, componentUuid, errorWrapper);
 		if (errorWrapper.isEmpty()) {
 			auditAdditionalParam.put(AuditingFieldsKeysEnum.AUDIT_RESOURCE_NAME, component.getName());
 			downloadedArtifact = downloadArtifact(component.getDeploymentArtifacts(), artifactUUID, errorWrapper, component.getName());
@@ -4686,7 +4685,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 	private ComponentInstance getRelatedComponentInstance(ComponentTypeEnum componentType, String componentUuid, String resourceInstanceName, Wrapper<ResponseFormat> errorWrapper) {
 		ComponentInstance componentInstance = null;
 		String normalizedName = ValidationUtils.normalizeComponentInstanceName(resourceInstanceName);
-		Component component = getLatestComponentByUuid(componentType, componentUuid, errorWrapper);
+		Component component = getComponentByUuid(componentType, componentUuid, errorWrapper);
 		if (errorWrapper.isEmpty()) {
 			componentInstance = component.getComponentInstances().stream().filter(ci -> ValidationUtils.normalizeComponentInstanceName(ci.getName()).equals(normalizedName)).findFirst().orElse(null);
 			if (componentInstance == null) {
@@ -4764,6 +4763,26 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 			errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
 		} else {
 			component = getComponentRes.left().value();
+		}
+		return component;
+	}
+	
+	private Component getComponentByUuid(ComponentTypeEnum componentType, String componentUuid, Wrapper<ResponseFormat> errorWrapper) {
+		Component component = null;
+		Either<List<Component>, StorageOperationStatus> getComponentRes = toscaOperationFacade.getComponentListByUuid(componentUuid, null);
+		if (getComponentRes.isRight()) {
+			StorageOperationStatus status = getComponentRes.right().value();
+			log.debug("Could not fetch component with type {} and uuid {}. Status is {}. ", componentType, componentUuid, status);
+			errorWrapper.setInnerElement(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status)));
+		} else {
+			List<Component> value = getComponentRes.left().value();
+			if (value.isEmpty()){
+				log.debug("Could not fetch component with type {} and uuid {}.", componentType, componentUuid);
+				ActionStatus status = componentType == ComponentTypeEnum.RESOURCE ? ActionStatus.RESOURCE_NOT_FOUND : ActionStatus.SERVICE_NOT_FOUND;
+				errorWrapper.setInnerElement(componentsUtils.getResponseFormat(status));
+			} else {
+				component = value.get(0);
+			}
 		}
 		return component;
 	}

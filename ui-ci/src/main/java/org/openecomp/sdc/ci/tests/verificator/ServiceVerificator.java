@@ -270,11 +270,6 @@ public class ServiceVerificator {
 				} else if (propertyName.equals("max_vf_module_instances")) {
 					actualNumber = baseNumber + 1;
 				} else if (propertyName.equals("min_vf_module_instances")){
-					
-					if(true){
-					    throw new SkipException("Open bug 305331");			
-				    }
-					
 					actualNumber = baseNumber - 1;				
 				}
 				

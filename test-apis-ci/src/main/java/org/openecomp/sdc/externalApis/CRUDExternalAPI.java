@@ -129,7 +129,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		super(name, CRUDExternalAPI.class.getName());
 	}
 	
-	@DataProvider(name="uploadArtifactOnVfcVlCpViaExternalAPI" , parallel=false) 
+	@DataProvider(name="uploadArtifactOnVfcVlCpViaExternalAPI" , parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnVfcVlCpViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML", ResourceTypeEnum.VFC},
@@ -232,7 +232,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		uploadArtifactOnAssetViaExternalAPI(ComponentTypeEnum.RESOURCE, chosenLifeCycleState, artifactType, resourceTypeEnum);
 	}
 	
-	@DataProvider(name="uploadArtifactOnVFViaExternalAPI", parallel=false) 
+	@DataProvider(name="uploadArtifactOnVFViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnVFViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_JSON"},
@@ -288,7 +288,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="uploadArtifactOnServiceViaExternalAPI" , parallel=false) 
+	@DataProvider(name="uploadArtifactOnServiceViaExternalAPI" , parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnServiceViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML"},
@@ -317,7 +317,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="uploadArtifactOnServiceViaExternalAPIIncludingDistribution", parallel=false) 
+	@DataProvider(name="uploadArtifactOnServiceViaExternalAPIIncludingDistribution", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnServiceViaExternalAPIIncludingDistribution() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML"},
@@ -587,7 +587,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="uploadArtifactOnRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="uploadArtifactOnRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA"},
@@ -633,7 +633,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="uploadArtifactOnVfcVlCpRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="uploadArtifactOnVfcVlCpRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnVfcVlCpRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA", ResourceTypeEnum.VFC},
@@ -735,7 +735,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="uploadInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI", parallel=false) 
+	@DataProvider(name="uploadInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUploadInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI() {
 		return new Object[][] {
 			
@@ -821,13 +821,13 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 			
 			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.RESOURCE, "uploadArtifactWithSameLabel"},
 			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.SERVICE, "uploadArtifactWithSameLabel"},
-			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
+//	DE306360		{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
 			{LifeCycleStatesEnum.CHECKIN, ComponentTypeEnum.RESOURCE, "uploadArtifactWithSameLabel"},
 			{LifeCycleStatesEnum.CHECKIN, ComponentTypeEnum.SERVICE, "uploadArtifactWithSameLabel"},
-			{LifeCycleStatesEnum.CHECKIN, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
+//	DE306360		{LifeCycleStatesEnum.CHECKIN, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
 			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, ComponentTypeEnum.RESOURCE, "uploadArtifactWithSameLabel"},
 			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, ComponentTypeEnum.SERVICE, "uploadArtifactWithSameLabel"},
-			{LifeCycleStatesEnum.CERTIFICATIONREQUEST, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
+//	DE306360		{LifeCycleStatesEnum.CERTIFICATIONREQUEST, ComponentTypeEnum.RESOURCE_INSTANCE, "uploadArtifactWithSameLabel"},
 			
 			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.RESOURCE, "uploadArtifactWithInvalidCheckSum"},
 			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.SERVICE, "uploadArtifactWithInvalidCheckSum"},
@@ -1140,7 +1140,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="uploadArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=false) 
+	@DataProvider(name="uploadArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset() {
 		return new Object[][] {
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.DESIGNER2, LifeCycleStatesEnum.CHECKOUT},
@@ -1223,7 +1223,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="uploadArtifactOnAssetWhichNotExist", parallel=false) 
+	@DataProvider(name="uploadArtifactOnAssetWhichNotExist", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnAssetWhichNotExist() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE},
@@ -1273,7 +1273,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="uploadArtifactOnAssetWhichInInvalidStateForUploading", parallel=false) 
+	@DataProvider(name="uploadArtifactOnAssetWhichInInvalidStateForUploading", parallel=true) 
 	public static Object[][] dataProviderUploadArtifactOnAssetWhichInInvalidStateForUploading() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE},
@@ -1318,7 +1318,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////
 
-	@DataProvider(name="updateArtifactForServiceViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactForServiceViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactForServiceViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML"},
@@ -1361,7 +1361,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		}
 	}
 	
-	@DataProvider(name="updateArtifactForVFViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactForVFViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactForVFViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_JSON"},
@@ -1423,7 +1423,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		}
 	}
 	
-	@DataProvider(name="updateArtifactForVfcVlCpViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactForVfcVlCpViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactForVfcVlCpViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML", ResourceTypeEnum.VFC},
@@ -1533,7 +1533,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		}
 	}
 	
-	@DataProvider(name="updateArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI() {
 		return new Object[][] {
 			{ResourceTypeEnum.VFC},
@@ -1575,7 +1575,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="updateArtifactOnRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactOnRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactOnRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA", null},
@@ -1625,7 +1625,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="updateArtifactOnVfcVlCpRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateArtifactOnVfcVlCpRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactOnVfcVlCpRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA", ResourceTypeEnum.VFC},
@@ -1741,7 +1741,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="updateArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=false) 
+	@DataProvider(name="updateArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset() {
 		return new Object[][] {
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.DESIGNER2, LifeCycleStatesEnum.CHECKOUT, "OTHER"},
@@ -1803,7 +1803,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="updateArtifactOnAssetWhichNotExist", parallel=false) 
+	@DataProvider(name="updateArtifactOnAssetWhichNotExist", parallel=true) 
 	public static Object[][] dataProviderUpdateArtifactOnAssetWhichNotExist() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE, "OTHER", null},
@@ -1866,7 +1866,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="updateArtifactOnAssetWhichInInvalidStateForUploading", parallel=false) 
+	@DataProvider(name="updateArtifactOnAssetWhichInInvalidStateForUploading", parallel=true) 
 	public static Object[][] dataProviderUpdateProviderDeleteArtifactOnAssetWhichInInvalidStateForUploading() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE, "OTHER"},
@@ -1891,7 +1891,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	
 	
 	
-	@DataProvider(name="updateInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI", parallel=false) 
+	@DataProvider(name="updateInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderUpdateInvalidArtifactTypeExtensionLabelDescriptionCheckSumDuplicateLabelViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, ComponentTypeEnum.RESOURCE, "updateArtifactWithInvalidCheckSum"},
@@ -2545,7 +2545,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////
-	@DataProvider(name="deleteArtifactForServiceViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactForServiceViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactForServiceViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML"},
@@ -2582,7 +2582,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		deleteArtifactOnAssetViaExternalAPI(component, ComponentTypeEnum.SERVICE, lifeCycleStatesEnum);
 	}
 	
-	@DataProvider(name="deleteArtifactForVFViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactForVFViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactForVFViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_JSON"},
@@ -2638,7 +2638,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		deleteArtifactOnAssetViaExternalAPI(component, ComponentTypeEnum.RESOURCE, lifeCycleStatesEnum);
 	}
 	
-	@DataProvider(name="deleteArtifactForVfcVlCpViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactForVfcVlCpViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactForVfcVlCpViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "YANG_XML", ResourceTypeEnum.VFC},
@@ -2742,7 +2742,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		deleteArtifactOnAssetViaExternalAPI(component, ComponentTypeEnum.RESOURCE, lifeCycleStatesEnum);
 	}
 	
-	@DataProvider(name="deleteArtifactOnRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactOnRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOnRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA", null},
@@ -2781,7 +2781,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="deleteArtifactOnVfcVlCpRIViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactOnVfcVlCpRIViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOnVfcVlCpRIViaExternalAPI() {
 		return new Object[][] {
 			{LifeCycleStatesEnum.CHECKOUT, "DCAE_INVENTORY_TOSCA", ResourceTypeEnum.VFC},
@@ -2882,7 +2882,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="deleteArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=false) 
+	@DataProvider(name="deleteArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOnVFViaExternalAPIByDiffrentUserThenCreatorOfAsset() {
 		return new Object[][] {
 			{ComponentTypeEnum.RESOURCE, UserRoleEnum.DESIGNER2, LifeCycleStatesEnum.CHECKOUT, "OTHER"},
@@ -2966,7 +2966,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="deleteArtifactOnAssetWhichNotExist", parallel=false) 
+	@DataProvider(name="deleteArtifactOnAssetWhichNotExist", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOnAssetWhichNotExist() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE, "OTHER", null},
@@ -3032,7 +3032,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 		
 	}
 	
-	@DataProvider(name="deleteArtifactOnAssetWhichInInvalidStateForUploading", parallel=false) 
+	@DataProvider(name="deleteArtifactOnAssetWhichInInvalidStateForUploading", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOnAssetWhichInInvalidStateForUploading() {
 		return new Object[][] {
 			{ComponentTypeEnum.SERVICE, "OTHER"},
@@ -3075,7 +3075,7 @@ public class CRUDExternalAPI extends ComponentBaseTest {
 	}
 	
 	
-	@DataProvider(name="deleteArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI", parallel=false) 
+	@DataProvider(name="deleteArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI", parallel=true) 
 	public static Object[][] dataProviderDeleteArtifactOfVfcVlCpForVfciVliCpiViaExternalAPI() {
 		return new Object[][] {
 			{ResourceTypeEnum.VFC},

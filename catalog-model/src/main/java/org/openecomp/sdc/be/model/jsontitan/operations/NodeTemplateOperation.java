@@ -602,18 +602,18 @@ public class NodeTemplateOperation extends BaseOperation {
 
 	public MapArtifactDataDefinition prepareInstDeploymentArtifactPerInstance(Map<String, ArtifactDataDefinition> deploymentArtifacts, String componentInstanceId, User user, String envType) {
 		if (deploymentArtifacts != null && envType.equals(HEAT_VF_ENV_NAME)) {
-			Map<String, ArtifactDataDefinition> instDeploymentArtifacts = new HashMap<>();
+			
 			deploymentArtifacts.entrySet().forEach(e -> {
 				ArtifactDataDefinition artifact = e.getValue();
 				String type = artifact.getArtifactType();
-				if (!(type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType()))) {
-					instDeploymentArtifacts.put(e.getKey(), artifact);
+				if (type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType())) {
+					//instDeploymentArtifacts.put(e.getKey(), artifact);
 					ArtifactDataDefinition artifactEnv = createArtifactPlaceHolderInfo(artifact, componentInstanceId, user, envType);
-					instDeploymentArtifacts.put(artifactEnv.getArtifactLabel(), artifactEnv);
+					deploymentArtifacts.put(artifactEnv.getArtifactLabel(), artifactEnv);
 				}
 			});
 
-			MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(instDeploymentArtifacts);
+			MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(deploymentArtifacts);
 			return instArtifacts;
 		}
 		return null;
@@ -820,12 +820,16 @@ public class NodeTemplateOperation extends BaseOperation {
 		ComponentInstanceDataDefinition dataDefinition = new ComponentInstanceDataDefinition(resourceInstance);
 
 		Long creationDate = resourceInstance.getCreationTime();
+		Long modificationTime;
 		if (creationDate == null) {
 			creationDate = System.currentTimeMillis();
+			modificationTime = creationDate;
+		} else {
+			modificationTime = System.currentTimeMillis();
 		}
 		dataDefinition.setComponentUid(ciOriginComponentUid);
 		dataDefinition.setCreationTime(creationDate);
-		dataDefinition.setModificationTime(creationDate);
+		dataDefinition.setModificationTime(modificationTime);
 		if (StringUtils.isNotEmpty(instanceNewName)) {
 			dataDefinition.setName(instanceNewName);
 			resourceInstance.setName(instanceNewName);

@@ -352,18 +352,18 @@ public final class ArtifactUIUtils {
 	public static void validateArtifactNameVersionType(String artifactLabel, String artifactVersion, String artifactType) {
 //		Assert.assertEquals(GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.ARTIFACT_NAME.getValue() + artifactLabel + "']")).getAttribute("textContent").trim(), artifactLabel);
 		if(!GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.ARTIFACT_NAME.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactLabel)) {
-			SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact label not equal - this warnning represent defect.");	
+			SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact label not equal - this warning represent defect.");	
 		}
 		if(artifactVersion != null) {
 //			Assert.assertEquals(GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.VERSION.getValue() + artifactLabel + "']")).getAttribute("textContent").trim(), artifactVersion, "Artifact version not equal.");
 			if(!GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.VERSION.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactVersion)) {
-				SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact version not equal - this warnning represent defect.");	
+				SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact version not equal - this warning represent defect.");	
 			}
 		}
 		if(artifactType != null) {
 //			Assert.assertEquals(GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.TYPE.getValue() + artifactLabel + "']")).getAttribute("textContent").trim(), artifactType, "Artifact type not equal.");
 			if(!GeneralUIUtils.getDriver().findElement(By.xpath("//*[@data-tests-id='" + DataTestIdEnum.ArtifactPageEnum.TYPE.getValue() + artifactLabel + "']")).getAttribute("textContent").trim().equals(artifactType)) {
-				SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact type not equal - this warnning represent defect.");	
+				SetupCDTest.getExtendTest().log(Status.WARNING, "Artifact type not equal - this warning represent defect.");	
 			}
 		}
 	}

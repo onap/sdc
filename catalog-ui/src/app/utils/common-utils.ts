@@ -1,6 +1,6 @@
 import {Module, AttributeModel, ResourceInstance, PropertyModel, InputFEModel} from "../models";
 import {ComponentInstanceFactory} from "./component-instance-factory";
-import {PropertyBEModel, RelationshipModel} from "app/models";
+import {InputBEModel, PropertyBEModel, RelationshipModel} from "app/models";
 
 export class CommonUtils {
 
@@ -57,13 +57,13 @@ export class CommonUtils {
         return modules;
     };
 
-    static initInputs(inputsObj:Array<PropertyBEModel>):Array<PropertyBEModel> {
+    static initInputs(inputsObj: Array<InputBEModel>): Array<InputBEModel> {
 
-        let inputs = new Array<PropertyBEModel>();
+        let inputs = new Array<InputBEModel>();
 
         if(inputsObj) {
-            _.forEach(inputsObj, (input:PropertyBEModel):void => {
-                inputs.push(new PropertyBEModel(input));
+            _.forEach(inputsObj, (input: InputBEModel):void => {
+                inputs.push(new InputBEModel(input));
             })
         }
 

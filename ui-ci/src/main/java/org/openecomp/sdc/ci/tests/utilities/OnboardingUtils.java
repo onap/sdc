@@ -767,34 +767,22 @@ public class OnboardingUtils {
 		LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get("Deployment"));
 		ArtifactsCorrelationManager.addVNFartifactDetails(vspName, deploymentArtifacts);
 		
-		List<String> heatEnvFilesFromCSAR = deploymentArtifacts.stream().filter(e -> e.getType().equals("HEAT_ENV")).
-																		 map(e -> e.getFileName()).
-																		 collect(Collectors.toList());
-		
-		validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
-		
+		validateDeploymentArtifactsVersion(deploymentArtifacts);
 		DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
 		return createVendorSoftwareProduct;
 	}
 
-	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts,
-			List<String> heatEnvFilesFromCSAR) {
-		String artifactVersion;
+	public static void validateDeploymentArtifactsVersion(LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts) {
+		String artifactVersion = "1";
 		String artifactName;
 		
 		for(HeatMetaFirstLevelDefinition deploymentArtifact: deploymentArtifacts) {
-			artifactVersion = "1";
-			
 			if(deploymentArtifact.getType().equals("HEAT_ENV")) {
 				continue;
 			} else if(deploymentArtifact.getFileName().contains(".")) {
 				artifactName = deploymentArtifact.getFileName().trim().substring(0, deploymentArtifact.getFileName().lastIndexOf("."));				
 			} else {
 				artifactName = deploymentArtifact.getFileName().trim();				
-			}
-			
-			if (heatEnvFilesFromCSAR.contains(artifactName + ".env")){
-				artifactVersion = "2";
 			}
 			ArtifactUIUtils.validateArtifactNameVersionType(artifactName, artifactVersion, deploymentArtifact.getType());			
 		}

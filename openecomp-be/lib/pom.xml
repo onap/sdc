@@ -29,7 +29,6 @@
         <module>openecomp-sdc-enrichment-lib</module>
         <module>openecomp-logging-lib</module>
         <module>openecomp-healing-lib</module>
-        <module>openecomp-migration-lib</module>
         <module>openecomp-sdc-activity-log-lib</module>
     </modules>
 </project>

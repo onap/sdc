@@ -617,6 +617,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 		Either<ComponentInstance, ResponseFormat> resultOp = null;
 		Optional<ComponentInstance> componentInstanceOptional = null;
 		Either<ImmutablePair<Component, String>, StorageOperationStatus> updateRes = null;
+		ComponentInstance oldComponentInstance = null;
 
 		if (resultOp == null) {
 			componentInstanceOptional = containerComponent.getComponentInstances().stream().filter(ci -> ci.getUniqueId().equals(componentInstance.getUniqueId())).findFirst();
@@ -626,7 +627,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			}
 		}
 		if (resultOp == null) {
-			ComponentInstance oldComponentInstance = componentInstanceOptional.get();
+			oldComponentInstance = componentInstanceOptional.get();
 			String newInstanceName = componentInstance.getName();
 			Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, oldComponentInstance, newInstanceName);
 			if (!isUniqueName) {
@@ -635,7 +636,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			}
 		}
 		if (resultOp == null) {
-			updateRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent, origComponent, componentInstance);
+			updateRes = toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(containerComponent, origComponent, updateComponentInstanceMetadata(oldComponentInstance, componentInstance));
 			if (updateRes.isRight()) {
 				CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update metadata of component instance {} belonging to container component {}. Status is {}. ", componentInstance.getName(), containerComponent.getName(),
 						updateRes.right().value());
@@ -658,6 +659,13 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			resultOp = Either.left(componentInstanceOptional.get());
 		}
 		return resultOp;
+	}
+
+	private ComponentInstance updateComponentInstanceMetadata(ComponentInstance oldComponentInstance, ComponentInstance newComponentInstance) {
+		oldComponentInstance.setName(newComponentInstance.getName());
+		oldComponentInstance.setModificationTime(System.currentTimeMillis());
+		oldComponentInstance.setCustomizationUUID(UUID.randomUUID().toString());
+		return oldComponentInstance;
 	}
 
 	public Either<ComponentInstance, ResponseFormat> deleteComponentInstance(String containerComponentParam, String containerComponentId, String componentInstanceId, String userId) {

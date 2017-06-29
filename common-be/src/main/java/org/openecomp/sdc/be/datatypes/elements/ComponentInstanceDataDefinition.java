@@ -60,6 +60,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 	private String componentName;
 	private String componentVersion;
 	private String toscaComponentName;
+	private String invariantName;
 	
 	public ComponentInstanceDataDefinition() {
 		super();
@@ -82,6 +83,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 		this.componentName = dataDefinition.componentName;
 		this.componentVersion = dataDefinition.componentVersion;
 		this.toscaComponentName = dataDefinition.toscaComponentName;
+		this.invariantName = dataDefinition.invariantName;
 	}
 	
 	public String getIcon() {
@@ -152,7 +154,18 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 	}
 
 	public void setName(String name) {
+		if(invariantName == null){
+			invariantName = name;
+		}
 		this.name = name;
+	}
+	
+	public String getInvariantName() {
+		return invariantName;
+	}
+
+	public void setInvariantName(String invariantName) {
+		this.invariantName = invariantName;
 	}
 
 	public Integer getPropertyValueCounter() {

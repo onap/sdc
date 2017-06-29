@@ -1,17 +1,17 @@
-import {Injectable, Query} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {Response, URLSearchParams} from '@angular/http';
 import { Component, PropertyBEModel, InstancePropertiesAPIMap, FilterPropertiesAssignmentData} from "app/models";
 import {downgradeInjectable} from '@angular/upgrade/static';
-import {HttpService} from "../http.service";
 import {COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {sdc2Config} from "../../../../main";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
 import {API_QUERY_PARAMS} from "app/utils";
 import {ComponentType, ServerTypeUrl} from "../../../utils/constants";
+import {InterceptorService} from "ng2-interceptors/index";
 
 declare var angular:angular.IAngularStatic;
 
@@ -20,7 +20,7 @@ export class ComponentServiceNg2 {
 
     protected baseUrl;
 
-    constructor(private http:HttpService) {
+    constructor(private http:InterceptorService) {
         this.baseUrl = sdc2Config.api.root + sdc2Config.api.component_api_root;
     }
 

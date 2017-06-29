@@ -101,7 +101,7 @@ public class AssetsDataServletTest extends JerseyTest {
 		when(request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER)).thenReturn("mockXEcompInstanceId");
 		when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn("mockAttID");
 		when(request.getRequestURL()).thenReturn(new StringBuffer("sdc/v1/catalog/resources"));
-
+		
 		when(session.getServletContext()).thenReturn(servletContext);
 		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
 		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
@@ -159,7 +159,8 @@ public class AssetsDataServletTest extends JerseyTest {
 	@Test
 	public void createVfcmtHappyScenario() {
 		final JSONObject createRequest = buildCreateJsonRequest();
-		Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).post(Entity.json(createRequest.toJSONString()), Response.class);
+		Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON).header(Constants.X_ECOMP_INSTANCE_ID_HEADER, "mockXEcompInstanceId").header(Constants.USER_ID_HEADER, "mockAttID")
+				.post(Entity.json(createRequest.toJSONString()), Response.class);
 		assertTrue(response.getStatus() == HttpStatus.SC_CREATED);
 
 	}

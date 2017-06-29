@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -98,7 +99,7 @@ public class ArtifactsOperations extends BaseOperation {
 		ArtifactDataDefinition foundArtifact = null;
 		if (componentType != null && componentType == ComponentTypeEnum.RESOURCE_INSTANCE) {
 			foundArtifact = getInstanceArtifactByLabelAndId(parentId, id, containerId, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS);
-			if ( foundArtifact == null ){
+			if (foundArtifact == null) {
 				foundArtifact = getInstanceArtifactByLabelAndId(parentId, id, containerId, EdgeLabelEnum.INSTANCE_ARTIFACTS);
 			}
 		}
@@ -217,14 +218,14 @@ public class ArtifactsOperations extends BaseOperation {
 			oldVesrion = "0";
 
 		String currentChecksum = artifactData.getArtifactChecksum();
-		
-		if ( isUpdate ){
+
+		if (isUpdate) {
 			ArtifactTypeEnum type = ArtifactTypeEnum.findType(artifactData.getArtifactType());
-			switch ( type ){
-			case HEAT_ENV: 
-				if ( edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS ){
+			switch (type) {
+			case HEAT_ENV:
+				if (edgeLabel == EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS) {
 					generateUUID(artifactData, oldVesrion);
-				}else{
+				} else {
 					updateVersionAndDate(artifactData, oldVesrion);
 				}
 				break;
@@ -243,7 +244,7 @@ public class ArtifactsOperations extends BaseOperation {
 				}
 				break;
 			}
-		}else{
+		} else {
 			if (oldChecksum == null || oldChecksum.isEmpty()) {
 				if (currentChecksum != null) {
 					generateUUID(artifactData, oldVesrion);
@@ -287,7 +288,7 @@ public class ArtifactsOperations extends BaseOperation {
 		}
 
 		Map<String, ArtifactDefinition> artifacts = artifactsEither.left().value();
-		List<ArtifactDefinition> envList = artifacts.values().stream().filter(a -> a.getGeneratedFromId()!= null && a.getGeneratedFromId().equals(artifactId)).collect(Collectors.toList());
+		List<ArtifactDefinition> envList = artifacts.values().stream().filter(a -> a.getGeneratedFromId() != null && a.getGeneratedFromId().equals(artifactId)).collect(Collectors.toList());
 		if (envList != null && !envList.isEmpty()) {
 			envList.forEach(a -> {
 				a.setGeneratedFromId(newArtifactId);
@@ -366,7 +367,7 @@ public class ArtifactsOperations extends BaseOperation {
 
 		Map<String, ArtifactDefinition> artMap = null;
 		Map<String, ArtifactDataDefinition> artifactDataMap = null;
-		
+
 		if (edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
 			Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
 			if (resultEither.isRight()) {
@@ -374,7 +375,7 @@ public class ArtifactsOperations extends BaseOperation {
 				return Either.right(resultEither.right().value());
 			}
 			artifactDataMap = resultEither.left().value();
-		}else{
+		} else {
 			Either<Map<String, MapArtifactDataDefinition>, TitanOperationStatus> resultEither = getDataFromGraph(parentId, edgeLabelEnum);
 			if (resultEither.isRight()) {
 				log.debug("failed to fetch {} for tosca element with id {}, error {}", edgeLabelEnum, parentId, resultEither.right().value());
@@ -382,13 +383,13 @@ public class ArtifactsOperations extends BaseOperation {
 			}
 			Map<String, MapArtifactDataDefinition> mapArtifacts = resultEither.left().value();
 			MapArtifactDataDefinition artifactPerInstance = mapArtifacts.get(instanceId);
-			if ( artifactPerInstance != null ){
+			if (artifactPerInstance != null) {
 				artifactDataMap = artifactPerInstance.getMapToscaDataDefinition();
 			}
 		}
 		if (artifactDataMap != null && !artifactDataMap.isEmpty()) {
 			artMap = artifactDataMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> convertArtifactDataToArtifactDefinition(null, e.getValue())));
-		}else{
+		} else {
 			artMap = new HashMap<>();
 		}
 		return Either.left(artMap);
@@ -462,26 +463,28 @@ public class ArtifactsOperations extends BaseOperation {
 				uniqueId = UniqueIdBuilder.buildPropertyUniqueId(instanceId, artifactToUpdate.getArtifactLabel());
 			}
 			artifactToUpdate.setUniqueId(uniqueId);
-
+			artifactToUpdate.setEsId(uniqueId);
 		} else
 			artifactToUpdate.setUniqueId(artifactId);
 
-		Map<String, ArtifactDataDefinition> artifacts = null;
+		Map<String, ArtifactDataDefinition> artifacts = new HashMap<>();
+		Map<String, MapArtifactDataDefinition> artifactInst = null;
 		if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
 
 			Either<Map<String, ArtifactDataDefinition>, TitanOperationStatus> artifactsEither = this.getDataFromGraph(componentId, edgeLabelEnum);
 
 			if (artifactsEither.isLeft() && artifactsEither.left().value() != null && !artifactsEither.left().value().isEmpty()) {
 				artifacts = artifactsEither.left().value();
-				if (isNeedToClone) {
+				if (isNeedToClone && artifacts != null) {
 					artifacts.values().stream().forEach(a -> a.setDuplicated(Boolean.TRUE));
 				}
 			}
 		} else {
+
 			Either<Map<String, MapArtifactDataDefinition>, TitanOperationStatus> artifactsEither = this.getDataFromGraph(componentId, edgeLabelEnum);
 			if (artifactsEither.isLeft()) {
-				Map<String, MapArtifactDataDefinition> artifactInst = artifactsEither.left().value();
-				if (isNeedToClone) {
+				artifactInst = artifactsEither.left().value();
+				if (isNeedToClone && artifactInst != null) {
 					artifactInst.values().forEach(ma -> ma.getMapToscaDataDefinition().values().forEach(a -> a.setDuplicated(Boolean.TRUE)));
 				}
 				MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
@@ -496,6 +499,9 @@ public class ArtifactsOperations extends BaseOperation {
 			ArtifactDataDefinition oldArtifactData = artifacts.get(artifactInfo.getArtifactLabel());
 			oldChecksum = oldArtifactData.getArtifactChecksum();
 			oldVersion = oldArtifactData.getArtifactVersion();
+			//duplicated flag didn't receive from UI, take from DB 
+			artifactToUpdate.setDuplicated(oldArtifactData.getDuplicated());
+			
 			if (isNeedToClone)
 				artifactToUpdate.setDuplicated(Boolean.FALSE);
 			else {
@@ -503,11 +509,12 @@ public class ArtifactsOperations extends BaseOperation {
 					String id = type != NodeTypeEnum.ResourceInstance ? componentId : instanceId;
 					String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(id, artifactToUpdate.getArtifactLabel());
 					artifactToUpdate.setUniqueId(uniqueId);
-					artifactToUpdate.setDuplicated(Boolean.TRUE);
+					artifactToUpdate.setEsId(uniqueId);
+					artifactToUpdate.setDuplicated(Boolean.FALSE);
 				}
 			}
 		}
-		updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate, edgeLabelEnum );
+		updateUUID(artifactToUpdate, oldChecksum, oldVersion, isUpdate, edgeLabelEnum);
 
 		if (artifactInfo.getPayloadData() == null) {
 			if (!artifactToUpdate.getMandatory() || artifactToUpdate.getEsId() != null) {
@@ -516,19 +523,44 @@ public class ArtifactsOperations extends BaseOperation {
 		} else {
 			if (artifactToUpdate.getEsId() == null) {
 				artifactToUpdate.setEsId(artifactToUpdate.getUniqueId());
-
 			}
 		}
 
-		StorageOperationStatus status;
+		StorageOperationStatus status = StorageOperationStatus.OK;
 		if (edgeLabelEnum != EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS && edgeLabelEnum != EdgeLabelEnum.INSTANCE_ARTIFACTS) {
-			status = updateToscaDataOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, artifactToUpdate, JsonPresentationFields.ARTIFACT_LABEL);
-		} else {
-			List<String> pathKeys = new ArrayList<>();
-			pathKeys.add(instanceId);
 			List<ArtifactDataDefinition> toscaDataList = new ArrayList<>();
 			toscaDataList.add(artifactToUpdate);
-			status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataList, pathKeys, JsonPresentationFields.ARTIFACT_LABEL);
+
+			if (isNeedToClone && artifacts != null) {
+				artifacts.values().stream().filter(a -> !a.getArtifactLabel().equals(artifactToUpdate.getArtifactLabel())).forEach(a -> toscaDataList.add(a));
+			}
+			status = updateToscaDataOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataList, JsonPresentationFields.ARTIFACT_LABEL);
+		} else {
+			List<ArtifactDataDefinition> toscaDataList = new ArrayList<>();
+			toscaDataList.add(artifactToUpdate);
+			List<String> pathKeys = new ArrayList<>();
+			pathKeys.add(instanceId);
+			if (isNeedToClone) {
+				MapArtifactDataDefinition artifatcsOnInstance = artifactInst.get(instanceId);
+				if (artifatcsOnInstance != null) {
+					artifacts = artifatcsOnInstance.getMapToscaDataDefinition();
+					artifacts.put(artifactToUpdate.getArtifactLabel(), artifactToUpdate);
+				}
+
+				for ( Entry<String, MapArtifactDataDefinition> e : artifactInst.entrySet() ) {
+					List<ArtifactDataDefinition> toscaDataListPerInst = e.getValue().getMapToscaDataDefinition().values().stream().collect(Collectors.toList());
+					List<String> pathKeysPerInst = new ArrayList<>();
+					pathKeysPerInst.add(e.getKey());
+					status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataListPerInst, pathKeysPerInst, JsonPresentationFields.ARTIFACT_LABEL);
+					if ( status != StorageOperationStatus.OK) {
+						log.debug("Failed to update atifacts group for instance {} in component {} edge type {} error {}", instanceId, componentId, edgeLabelEnum, status);
+						res = Either.right(status);
+						break;
+					}
+				}
+			} else {
+				status = updateToscaDataDeepElementsOfToscaElement(componentId, edgeLabelEnum, vertexTypeEnum, toscaDataList, pathKeys, JsonPresentationFields.ARTIFACT_LABEL);
+			}
 		}
 		if (status == StorageOperationStatus.OK)
 			res = Either.left(artifactToUpdate);
