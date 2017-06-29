@@ -20,8 +20,8 @@ export class PropertiesUtils {
      */
     public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap:InstanceBePropertiesMap, inputs:Array<InputFEModel>): InstanceFePropertiesMap => {
         let instanceFePropertiesMap:InstanceFePropertiesMap = new InstanceFePropertiesMap();
-        angular.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceName:string) => {
-            let instanceInputs: Array<InputFEModel> = inputs.filter(input => input.instanceName == instanceName.split('.').pop());
+        angular.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceId:string) => {
+            let instanceInputs: Array<InputFEModel> = inputs.filter(input => input.instanceUniqueId == instanceId);
             let propertyFeArray: Array<PropertyFEModel> = [];
             _.forEach(properties, (property: PropertyBEModel) => {
 
@@ -35,9 +35,9 @@ export class PropertiesUtils {
                         newFEProp.flattenedChildren = this.createFlattenedChildren(newFEProp.type, newFEProp.name);
                     }
                     if (instanceInputs.length) { //if this prop (or any children) are declared, set isDeclared and disable checkbox on parents/children
-                        instanceInputs.filter(input => input.propertyName == newFEProp.name).forEach((input) => {
-                            newFEProp.setAsDeclared(input.inputPath); //if a path was sent, its a child prop. this param is optional
-                            this.propertiesService.disableRelatedProperties(newFEProp, input.inputPath);
+                        instanceInputs.filter(input => input.relatedProperty.name == newFEProp.name).forEach((input) => {
+                            newFEProp.setAsDeclared(input.relatedProperty.nestedPath); //if a path was sent, its a child prop. this param is optional
+                            this.propertiesService.disableRelatedProperties(newFEProp, input.relatedProperty.nestedPath);
                         });
                     }
                     this.initValueObjectRef(newFEProp); //initialize valueObj.
@@ -46,7 +46,7 @@ export class PropertiesUtils {
                     this.dataTypeService.checkForCustomBehavior(newFEProp);
                 }    
             });
-            instanceFePropertiesMap[instanceName] = propertyFeArray;
+            instanceFePropertiesMap[instanceId] = propertyFeArray;
 
         });
         return instanceFePropertiesMap;
@@ -140,10 +140,10 @@ export class PropertiesUtils {
         });
     }
 
-    public resetPropertyValue = (property: PropertyFEModel, newValue: string, inputPath?: string): void => {
+    public resetPropertyValue = (property: PropertyFEModel, newValue: string, nestedPath?: string): void => {
         property.value = newValue;
-        if (inputPath) {
-            let newProp = property.flattenedChildren.find(prop => prop.propertiesName == inputPath);
+        if (nestedPath) {
+            let newProp = property.flattenedChildren.find(prop => prop.propertiesName == nestedPath);
             newProp && this.assignFlattenedChildrenValues(JSON.parse(newValue), [newProp], property.name);
         } else {
             this.initValueObjectRef(property);

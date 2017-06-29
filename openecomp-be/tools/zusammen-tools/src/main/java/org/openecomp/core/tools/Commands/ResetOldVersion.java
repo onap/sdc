@@ -2,22 +2,16 @@ package org.openecomp.core.tools.Commands;
 
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.SessionContext;
-import com.amdocs.zusammen.plugin.statestore.cassandra.dao.impl.ItemCassandraDao;
 import com.amdocs.zusammen.plugin.statestore.cassandra.dao.impl.VersionCassandraDao;
-import org.openecomp.core.tools.loaders.VersionInfoCassandraLoader;
-import org.openecomp.core.tools.loaders.zusammen.VspGeneralLoader;
+import org.openecomp.core.tools.store.VersionInfoCassandraLoader;
+import org.openecomp.core.tools.store.VspGeneralLoader;
 import org.openecomp.core.tools.store.ElementHandler;
 import org.openecomp.core.zusammen.impl.CassandraConnectionInitializer;
-import org.openecomp.core.zusammen.plugin.dao.impl.CassandraElementRepository;
 import org.openecomp.core.zusammen.plugin.dao.types.ElementEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants;
 import org.openecomp.sdc.versioning.dao.types.VersionInfoEntity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ResetOldVersion {
 

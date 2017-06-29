@@ -66,7 +66,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	
 	private String inputPath;
     private String status;
-
+    private String inputId;
+    private String instanceUniqueId;
+    private String propertyId;
 	/**
 	 * The resource id which this property belongs to
 	 */
@@ -85,7 +87,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 	}
 
 	public PropertyDataDefinition(PropertyDataDefinition p) {
-
 		super();
 		this.setUniqueId(p.getUniqueId());
 		this.setRequired(p.isRequired());
@@ -105,7 +106,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.setGetInputValues(p.getInputValues);
 		this.setInputPath(p.getInputPath());
 		this.setStatus(p.getStatus());
-
+		this.setInputId(p.getInputId());
+		this.setInstanceUniqueId(p.getInstanceUniqueId());
+		this.setPropertyId(p.getPropertyId());
 	}
 
 	public String getInputPath() {
@@ -247,9 +250,36 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 		this.status = status;
 	}
 	
+	public String getInputId() {
+		return inputId;
+	}
+
+	public void setInputId(String inputId) {
+		this.inputId = inputId;
+	}
+
+	public String getInstanceUniqueId() {
+		return instanceUniqueId;
+	}
+
+	public void setInstanceUniqueId(String instanceUniqueId) {
+		this.instanceUniqueId = instanceUniqueId;
+	}
+
+	public String getPropertyId() {
+		return propertyId;
+	}
+
+	public void setPropertyId(String propertyId) {
+		this.propertyId = propertyId;
+	}
+
+
 	@Override
 	public String toString() {
-		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", defaultValue=" + defaultValue + ", description=" + description + ", entrySchema=" + schema + ", parentUniqueId=" + parentUniqueId + ", password=" + password + "]";
+		return "PropertyDataDefinition [uniqueId=" + uniqueId + ", type=" + type + ", required=" + required + ", definition=" + definition + ", defaultValue=" + defaultValue + ", description=" + description + ", schema=" + schema + ", password="
+				+ password + ", name=" + name + ", value=" + value + ", label=" + label + ", hidden=" + hidden + ", immutable=" + immutable + ", inputPath=" + inputPath + ", status=" + status + ", inputId=" + inputId + ", instanceUniqueId="
+				+ instanceUniqueId + ", propertyId=" + propertyId + ", parentUniqueId=" + parentUniqueId + ", getInputValues=" + getInputValues + "]";
 	}
 
 	@Override
@@ -361,6 +391,11 @@ public class PropertyDataDefinition extends ToscaDataDefinition implements Seria
 			return other;
 		}
 		return null;
+	}
+	
+	public void convertPropertyDataToInstancePropertyData(){
+		if(null != value)
+			defaultValue = value;
 	}
 		
 

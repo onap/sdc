@@ -10,7 +10,5 @@
 
 
 # change exist package and service templates in db
-java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=/apps/jetty/base/be/config/catalog-be/configuration.yaml  -jar openecomp-zusammen-tools-1.0-SNAPSHOT.jar org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4
-
-STATUS="${?}" echo "${STATUS}" echo "All log messages for the zusammenMainTool
-migration process are in /apps/jetty/base/be/logs/ASDC/ASDC-BE/zusammen_tool_debug.log"
+java -Dlog.home=/apps/jetty/base/be/logs -Dconfiguration.yaml=/apps/jetty/base/be/config/catalog-be/configuration.yaml  -jar openecomp-zusammen-tools-1.0-SNAPSHOT.jar org.openecomp.core.tools.main.ZusammenMainTool $1 $2 $3 $4 $5 $6
+STATUS="${?}" echo "${STATUS}" echo "All log messages for the zusammenMainTool migration process are in /apps/jetty/base/be/logs/ASDC/ASDC-BE/zusammen_tool_debug.log"

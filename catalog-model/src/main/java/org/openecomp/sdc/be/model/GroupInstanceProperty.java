@@ -48,6 +48,7 @@ public class GroupInstanceProperty extends GroupProperty {
 	
 	public GroupInstanceProperty(PropertyDataDefinition propertyDataDefinition) {
 		super(propertyDataDefinition);
+		parentValue = getDefaultValue();
 	}
 
 	public String getParentValue() {

@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
@@ -2364,6 +2365,21 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 				for (ArtifactDefinition artToDelete : listToDelete) {
 					findArtifactToDelete(parsedGroup, artifactsToDelete, groupListEntry.getKey().getUniqueId(), artToDelete, createdDeplymentArtifacts);
 				}
+				if(artifactsToDelete != null && !artifactsToDelete.isEmpty()){
+					GroupDefinition group = groupListEntry.getKey();
+					for(ArtifactDefinition artifactDefinition: artifactsToDelete){
+						if (CollectionUtils.isNotEmpty(group.getArtifacts()) && group.getArtifacts().contains(artifactDefinition.getUniqueId())) {
+							group.getArtifacts().remove(artifactDefinition.getUniqueId());
+							
+						}
+						if (CollectionUtils.isNotEmpty(group.getArtifactsUuid()) && group.getArtifactsUuid().contains(artifactDefinition.getArtifactUUID())) {
+							group.getArtifactsUuid().remove(artifactDefinition.getArtifactUUID());
+							
+						}
+					}
+					
+				}
+			
 				for (ArtifactTemplateInfo jsonMasterArtifact : jsonMasterArtifacts) {
 					if (maserArtifact.getArtifactName().equalsIgnoreCase(jsonMasterArtifact.getFileName())) {
 						MergedArtifactInfo mergedGroup = new MergedArtifactInfo();

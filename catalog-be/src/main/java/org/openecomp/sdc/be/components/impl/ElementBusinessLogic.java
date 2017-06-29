@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,7 +111,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 	 * @return
 	 */
 	public Either<Map<String, List<? extends Component>>, ResponseFormat> getFollowed(User user) {
-		Either<Map<String, List<? extends Component>>, ResponseFormat> response = null;
+		// Used for not getting duplicated followed. Cheaper than checking ArrayList.contains
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> response = null;
+		// Used for returning as the code requires.
+		Either<Map<String, List<? extends Component>>, ResponseFormat> arrayResponse = null;
+
 		// Getting the role
 		String role = user.getRole();
 		String userId = null;
@@ -155,12 +160,25 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 			response = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
 			break;
 		}
-		return response;
+		//converting the Set to List so the rest of the code will handle it normally (Was changed because the same element with the same uuid was returned twice)
+		return convertedToListResponse(response);
 
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleAdmin() {
-		Either<Map<String, List<? extends Component>>, ResponseFormat> response;
+	private Either<Map<String,List<? extends Component>>,ResponseFormat> convertedToListResponse(Either<Map<String, Set<? extends Component>>, ResponseFormat> setResponse) {
+
+		Map<String, List<? extends Component>> arrayResponse = new HashMap<>();
+		if (setResponse.isLeft()) {
+			for (Map.Entry<String, Set<? extends Component>> entry : setResponse.left().value().entrySet()) {
+				arrayResponse.put(entry.getKey(), (new ArrayList(new HashSet(entry.getValue()))));
+			}
+			return Either.left(arrayResponse);
+		}
+		return Either.right(setResponse.right().value());
+	}
+
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleAdmin() {
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
 		// userId should stay null
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
@@ -169,10 +187,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return response;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleDesigner(String userId) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleDesigner(String userId) {
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
-		Either<Map<String, List<? extends Component>>, ResponseFormat> response;
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
 		lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
@@ -184,22 +202,22 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return response;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleGovernor(String userId) {
-		Either<Map<String, List<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(null);
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleGovernor(String userId) {
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(null);
 		return result;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleProductStrategist(String userId) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductStrategist(String userId) {
 		// Should be empty list according to Ella, 13/03/16
-		Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
-		result.put("products", new ArrayList<>());
+		Map<String, Set<? extends Component>> result = new HashMap<String, Set<? extends Component>>();
+		result.put("products", new HashSet<>());
 		return Either.left(result);
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleProductManager(String userId) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleProductManager(String userId) {
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		Set<LifecycleStateEnum> lastStateStates = new HashSet<LifecycleStateEnum>();
-		Either<Map<String, List<? extends Component>>, ResponseFormat> response;
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> response;
 		lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
 		lifecycleStates.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
 		lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
@@ -211,47 +229,47 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		return response;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleOps(String userId) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleOps(String userId) {
 		Set<DistributionStatusEnum> distStatus = new HashSet<DistributionStatusEnum>();
 		distStatus.add(DistributionStatusEnum.DISTRIBUTION_APPROVED);
 		distStatus.add(DistributionStatusEnum.DISTRIBUTED);
 
-		Either<Map<String, List<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(distStatus);
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> result = handleFollowedCertifiedServices(distStatus);
 		return result;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleFollowedCertifiedServices(Set<DistributionStatusEnum> distStatus) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleFollowedCertifiedServices(Set<DistributionStatusEnum> distStatus) {
 
 		Either<List<Service>, StorageOperationStatus> services = toscaOperationFacade.getCertifiedServicesWithDistStatus(distStatus);
 		if (services.isLeft()) {
-			Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
-			List<Service> list = new ArrayList<>();
-			list.addAll(services.left().value());
-			result.put("services", list);
+			Map<String, Set<? extends Component>> result = new HashMap<>();
+			Set<Service> set = new HashSet<>();
+			set.addAll(services.left().value());
+			result.put("services", set);
 			return Either.left(result);
 		} else {
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(services.right().value())));
 		}
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> handleTester(String userId) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> handleTester(String userId) {
 		Set<LifecycleStateEnum> lifecycleStates = new HashSet<LifecycleStateEnum>();
 		lifecycleStates.add(LifecycleStateEnum.CERTIFICATION_IN_PROGRESS);
 		lifecycleStates.add(LifecycleStateEnum.READY_FOR_CERTIFICATION);
-		Either<Map<String, List<? extends Component>>, ResponseFormat> result = getFollowedResourcesAndServices(null, lifecycleStates, null);
+		Either<Map<String, Set<? extends Component>>, ResponseFormat> result = getFollowedResourcesAndServices(null, lifecycleStates, null);
 
 		return result;
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> getFollowedResourcesAndServices(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> getFollowedResourcesAndServices(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
 
 		try {
-			Either<List<Resource>, StorageOperationStatus> resources = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.RESOURCE);
+			Either<Set<Resource>, StorageOperationStatus> resources = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.RESOURCE);
 
 			if (resources.isLeft()) {
-				Either<List<Service>, StorageOperationStatus> services = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
+				Either<Set<Service>, StorageOperationStatus> services = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.SERVICE);
 				if (services.isLeft()) {
-					Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
+					Map<String, Set<? extends Component>> result = new HashMap<String, Set<? extends Component>>();
 					result.put("services", services.left().value());
 					result.put("resources", resources.left().value());
 					return Either.left(result);
@@ -266,10 +284,10 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 	}
 
-	private Either<Map<String, List<? extends Component>>, ResponseFormat> getFollowedProducts(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
-		Either<List<Product>, StorageOperationStatus> products = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.PRODUCT);
+	private Either<Map<String, Set<? extends Component>>, ResponseFormat> getFollowedProducts(String userId, Set<LifecycleStateEnum> lifecycleStates, Set<LifecycleStateEnum> lastStateStates) {
+		Either<Set<Product>, StorageOperationStatus> products = toscaOperationFacade.getFollowed(userId, lifecycleStates, lastStateStates, ComponentTypeEnum.PRODUCT);
 		if (products.isLeft()) {
-			Map<String, List<? extends Component>> result = new HashMap<String, List<? extends Component>>();
+			Map<String, Set<? extends Component>> result = new HashMap<>();
 			result.put("products", products.left().value());
 			return Either.left(result);
 		} else {
@@ -1031,10 +1049,9 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 		}
 
 		Either<List<Component>, StorageOperationStatus> result = getFilteredComponents(filters, assetTypeEnum, false);
-
-		if (result.isRight()) {// category hierarchy mismatch or
-								// category/subCategory/distributionStatus not
-								// found
+		
+		// category hierarchy mismatch or category/subCategory/distributionStatus not found
+		if (result.isRight()) {
 			List<String> params = getErrorResponseParams(filters, assetTypeEnum);
 			return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(result.right().value()), params.get(0), params.get(1), params.get(2)));
 		}
@@ -1046,7 +1063,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<List<Component>, StorageOperationStatus> getFilteredComponents(Map<FilterKeyEnum, String> filters, ComponentTypeEnum assetType, boolean inTransaction) {
-		Either<List<Component>, StorageOperationStatus> assetResult = null;
+		Either<List<Component>, StorageOperationStatus> assetResult = Either.left(new LinkedList<>());
 		if(assetType == ComponentTypeEnum.RESOURCE){
 			 
 			assetResult = getFilteredResouces(filters, inTransaction);

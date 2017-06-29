@@ -50,6 +50,7 @@ export class PropertyModel implements IPropertyModel {
     schema:SchemaPropertyGroupModel;
     componentInstanceId:string;
     parentValue:string;
+    ownerId:string;
 
     //instance properties
     value:string;
@@ -90,6 +91,7 @@ export class PropertyModel implements IPropertyModel {
             this.simpleType = property.simpleType;
             this.componentInstanceId = property.componentInstanceId;
             this.parentValue = property.parentValue;
+            this.ownerId = property.ownerId;
         }
 
         if (!this.schema || !this.schema.property) {

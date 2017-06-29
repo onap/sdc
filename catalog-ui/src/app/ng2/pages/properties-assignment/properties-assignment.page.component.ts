@@ -1,5 +1,4 @@
 import {Component, ViewChild, ElementRef, Renderer, Inject} from "@angular/core";
-import {PostsService} from "../../services/posts.service";
 import { PropertiesService } from "../../services/properties.service";
 import { HierarchyNavService } from "../../services/hierarchy-nav.service";
 import { PropertiesUtils } from './properties.utils';
@@ -8,15 +7,13 @@ import { PROPERTY_TYPES, ResourceType } from "app/utils";
 import property = require("lodash/property");
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
-import { InputFEModel, ComponentInstance, PropertyBEModel, DerivedPropertyType, DerivedFEProperty, ResourceInstance, SimpleFlatProperty } from "app/models";
+import { InputBEModel, InputFEModel, ComponentInstance, PropertyBEModel, DerivedPropertyType, DerivedFEProperty, ResourceInstance, SimpleFlatProperty } from "app/models";
 import {HierarchyDisplayOptions} from "../../components/hierarchy-navigtion/hierarchy-display-options"
 import {PropertyRowSelectedEvent} from "./../../components/properties-table/properties-table.component";
 import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 import {FilterPropertiesAssignmentComponent} from "../../components/filter-properties-assignment/filter-properties-assignment.component";
 import { ComponentModeService } from "app/ng2/services/component-mode.service"
 import {WorkspaceMode, EVENTS} from "../../../utils/constants";
-import {ComponentInstanceProperty, InputBEModel} from "app/models"
-import {ComponentInstanceInput} from "../../../models/properties-inputs/input-be-model";
 import {EventListenerService} from "app/services/event-listener-service"
 @Component({
     templateUrl: './properties-assignment.page.component.html',
@@ -102,6 +99,7 @@ export class PropertiesAssignmentComponent {
                 }
                 this.selectFirstInstanceByDefault();
             });
+
     };
 
     ngOnDestroy() {
@@ -292,41 +290,23 @@ export class PropertiesAssignmentComponent {
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
                 _.forEach(response, (input: InputBEModel) => {
-                    this.inputs.push(new InputFEModel(input));
-                    this.updatePropertyValueAfterDeclare(input);
+                    let newInput: InputFEModel = new InputFEModel(input);
+                    this.inputs.push(newInput);
+                    this.updatePropertyValueAfterDeclare(newInput);
                 });
             });
     };
 
-    updatePropertyValueAfterDeclare = (input: InputBEModel) => {
-        _.forEach(input.properties, (property: ComponentInstanceProperty) => {
-            this.updatePropertyOrInputValueAfterDeclare(property, input);
-        });
 
-        _.forEach(input.inputs, (inputInstance: ComponentInstanceInput) => {
-            this.updatePropertyOrInputValueAfterDeclare(inputInstance, input);
-        });
-    }
-
-    updatePropertyOrInputValueAfterDeclare = (inputSource: ComponentInstanceProperty | ComponentInstanceInput, input: InputBEModel) => {
-        if (this.instanceFePropertiesMap[inputSource.componentInstanceId]) {
-            let propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[inputSource.componentInstanceId], (feProperty: PropertyFEModel) => {
-                return feProperty.name == inputSource.name;
+    updatePropertyValueAfterDeclare = (input: InputFEModel) => {
+        if (this.instanceFePropertiesMap[input.instanceUniqueId]) {
+            let propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[input.instanceUniqueId], (feProperty: PropertyFEModel) => {
+                return feProperty.name == input.relatedProperty.name;
             });
 
-            if (input.inputPath == propertyForUpdatindVal.name) input.inputPath = null; //Fix - if inputPath is sent for parent props, remove it
-
-            propertyForUpdatindVal.setAsDeclared(input.inputPath); //set prop as declared before assigning value
-            this.propertiesService.disableRelatedProperties(propertyForUpdatindVal, input.inputPath);
-            this.propertiesUtils.resetPropertyValue(propertyForUpdatindVal, inputSource.value, input.inputPath);
-            // if (input.inputPath) {
-            //     let childProp = _.find(propertyForUpdatindVal.flattenedChildren, (child: DerivedFEProperty) => {
-            //         return child.propertiesName == input.inputPath;
-            //     });
-            //     this.propertiesUtils.assignFlattenedChildrenValues(JSON.parse(inputSource.value), [childProp], inputSource.name);
-            // } else {
-            //     propertyForUpdatindVal.valueObj = inputSource.value;
-            // }
+            propertyForUpdatindVal.setAsDeclared(input.relatedProperty.nestedPath); //set prop as declared before assigning value
+            this.propertiesService.disableRelatedProperties(propertyForUpdatindVal, input.relatedProperty.nestedPath);
+            this.propertiesUtils.resetPropertyValue(propertyForUpdatindVal, input.relatedProperty.value, input.relatedProperty.nestedPath);
         }
     }
 
@@ -366,14 +346,6 @@ export class PropertiesAssignmentComponent {
                 //     }
                 // }
             });
-    };
-
-    getInstanceUniqueId = (instanceName: string): string => {
-        let wantedInstance: ComponentInstance = this.instances.find((instance) => {
-            return instance.normalizedName === instanceName;
-        });
-
-        return wantedInstance.uniqueId;
     };
 
 

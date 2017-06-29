@@ -57,7 +57,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	public void importVfvArtifactsDeploymentArtifactsMultipleArtifactsMultipleTypes() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 197126");			
+			throw new SkipException("Due to the new design the test should be updated accordingly");			
 		}
 		
 		String filePath = FileHandling.getFilePath(folder);
@@ -118,7 +118,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	public void importVfcArtifactsInformationalArtifactsOnSingleVfc() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 197126");			
+			throw new SkipException("Due to the new design the test should be updated accordingly");			
 		}
 		
 		String filePath = FileHandling.getFilePath(folder);
@@ -152,7 +152,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	public void importVfcArtifactsDeploymentAndInformationalArtifactsMultipleVfcs() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 197126");			
+			throw new SkipException("Due to the new design the test should be updated accordingly");			
 		}
 		
 		String filePath = FileHandling.getFilePath(folder);
@@ -212,7 +212,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	public void importVfcArtifactsDeploymentArtifactsExtraFolderUnderVfcIdentification() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 197126");			
+			throw new SkipException("Due to the new design the test should be updated accordingly");			
 		}
 		
 		String filePath = FileHandling.getFilePath(folder);
@@ -254,7 +254,7 @@ public class ImportUpdateInformationalDeploymentArtifacts extends SetupCDTest {
 	public void importVfcArtifactsDeploymentArtifactsInvalidArtifactType() throws Exception {
 		
 		if(true){
-			throw new SkipException("Open bug 197126");			
+			throw new SkipException("Due to the new design the test should be updated accordingly");			
 		}
 		
 		String filePath = FileHandling.getFilePath(folder);

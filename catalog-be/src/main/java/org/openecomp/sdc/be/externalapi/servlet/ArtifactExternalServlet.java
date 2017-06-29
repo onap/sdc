@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -96,13 +97,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "uploads of artifact to a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact uploaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response uploadArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @ApiParam(value = "json describe the artifact", required = true) String data) {
+	public Response uploadArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @ApiParam(value = "json describe the artifact", required = true) String data,
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 		init(log);
 		
 		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -166,13 +166,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact uploaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response uploadArtifactToInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@ApiParam(value = "json describe the artifact", required = true) String data) {
+			@ApiParam(value = "json describe the artifact", required = true) String data, 
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -238,13 +237,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Updated"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response updateArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
-			@ApiParam(value = "json describe the artifact", required = true) String data) {
+			@ApiParam(value = "json describe the artifact", required = true) String data, 
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -311,13 +309,12 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Updated"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response updateArtifactOnResourceInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@PathParam("artifactUUID") final String artifactUUID, @ApiParam(value = "json describe the artifact", required = true) String data) {
+			@PathParam("artifactUUID") final String artifactUUID, @ApiParam(value = "json describe the artifact", required = true) String data,
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
 		ComponentTypeEnum componentType = ComponentTypeEnum.findByParamName(assetType);
@@ -383,12 +380,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "deletes an artifact of a resource or service", httpMethod = "DELETE", notes = "deletes an artifact of a resource or service", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Deleted"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response deleteArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID) {
+	public Response deleteArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
@@ -455,12 +451,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Deleted"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
 			@ApiResponse(code = 404, message = "Asset not found") })
 	public Response deleteArtifactOnResourceInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@PathParam("artifactUUID") final String artifactUUID) {
+			@PathParam("artifactUUID") final String artifactUUID, 
+			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
-		String userId = request.getHeader(Constants.USER_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
@@ -529,11 +524,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 404, message = "Artifact not found") })
 	public Response downloadComponentArtifact(
 			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("assetType") final String assetType,
-			@PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID) {
+			@PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
+			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);
@@ -596,11 +591,11 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 404, message = "Artifact not found") })
 	public Response downloadResourceInstanceArtifact(
 			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("assetType") final String assetType,
-			@PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName, @PathParam("artifactUUID") final String artifactUUID) {
+			@PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName, @PathParam("artifactUUID") final String artifactUUID,
+			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		String url = request.getMethod() + " " + requestURI;
 		log.debug("{} {}", startLog, url);

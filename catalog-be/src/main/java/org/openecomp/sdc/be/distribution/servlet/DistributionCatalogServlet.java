@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,12 +52,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 import fj.data.Either;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 /**
  * This Servlet serves external users to download artifacts.
@@ -76,18 +78,43 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	// *******************************************************
 	// Download (GET) artifacts
 	// **********************************************************/
-
+	/**
+	 * 
+	 * @param request
+	 * @param requestId
+	 * @param instanceIdHeader
+	 * @param accept
+	 * @param authorization
+	 * @param serviceName
+	 * @param serviceVersion
+	 * @param artifactName
+	 * @return
+	 */
 	@GET
 	@Path("/services/{serviceName}/{serviceVersion}/artifacts/{artifactName}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download service artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact downloaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Artifact not found") })
-	public Response downloadServiceArtifact(@PathParam("serviceName") final String serviceName, @PathParam("serviceVersion") final String serviceVersion, @PathParam("artifactName") final String artifactName,
-			@Context final HttpServletRequest request) {
+	@ApiOperation(value = "Download service artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),
+			@ApiResponse(code = 404, message = "Specified Service Version is  not  found - SVC4504"),
+			@ApiResponse(code = 404, message = "Specified artifact is  not found - SVC4505"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+	public Response downloadServiceArtifact(@Context final HttpServletRequest request,
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@PathParam("serviceName") final String serviceName, 
+			@PathParam("serviceVersion") final String serviceVersion, 
+			@PathParam("artifactName") final String artifactName) {
+		
 		Response response = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		AuditingActionEnum auditingActionEnum = AuditingActionEnum.DISTRIBUTION_ARTIFACT_DOWNLOAD;
 		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
@@ -128,18 +155,49 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param request
+	 * @param requestId
+	 * @param instanceIdHeader
+	 * @param accept
+	 * @param authorization
+	 * @param serviceName
+	 * @param serviceVersion
+	 * @param resourceName
+	 * @param resourceVersion
+	 * @param artifactName
+	 * @return
+	 */
 	@GET
 	@Path("/services/{serviceName}/{serviceVersion}/resources/{resourceName}/{resourceVersion}/artifacts/{artifactName}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download resource artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact downloaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Artifact not found") })
-	public Response downloadResourceArtifact(@PathParam("serviceName") final String serviceName, @PathParam("serviceVersion") final String serviceVersion, @PathParam("resourceName") final String resourceName,
-			@PathParam("resourceVersion") final String resourceVersion, @PathParam("artifactName") final String artifactName, @Context final HttpServletRequest request) {
+	@ApiOperation(value = "Download resource artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),
+			@ApiResponse(code = 404, message = "Specified Resource Instance  is not found - SVC4526"),
+			@ApiResponse(code = 404, message = "Specified Service Version is  not  found - SVC4504"),
+			@ApiResponse(code = 404, message = "Specified artifact is  not found - SVC4505"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+	public Response downloadResourceArtifact(@Context final HttpServletRequest request,
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@PathParam("serviceName") final String serviceName, 
+			@PathParam("serviceVersion") final String serviceVersion, 
+			@PathParam("resourceName") final String resourceName,
+			@PathParam("resourceVersion") final String resourceVersion, 
+			@PathParam("artifactName") final String artifactName) {
+		
 		Response response = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		AuditingActionEnum auditingActionEnum = AuditingActionEnum.DISTRIBUTION_ARTIFACT_DOWNLOAD;
 		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
@@ -181,22 +239,49 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 		}
 	}
 
-	// --------------------------------
-
+	/**
+	 * 
+	 * @param request
+	 * @param requestId
+	 * @param instanceIdHeader
+	 * @param accept
+	 * @param authorization
+	 * @param serviceName
+	 * @param serviceVersion
+	 * @param resourceInstanceName
+	 * @param artifactName
+	 * @return
+	 */
 	@GET
 	@Path("/services/{serviceName}/{serviceVersion}/resourceInstances/{resourceInstanceName}/artifacts/{artifactName}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download resource artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact downloaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Artifact not found") })
-	public Response downloadResourceInstanceArtifact(@PathParam("serviceName") final String serviceName, @PathParam("serviceVersion") final String serviceVersion, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@PathParam("artifactName") final String artifactName, @Context final HttpServletRequest request) {
+	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),
+			@ApiResponse(code = 404, message = "Specified Resource Instance  is not found - SVC4526"),
+			@ApiResponse(code = 404, message = "Specified Service Version is  not  found - SVC4504"),
+			@ApiResponse(code = 404, message = "Specified artifact is  not found - SVC4505"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
+	public Response downloadResourceInstanceArtifact(@Context final HttpServletRequest request,
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@PathParam("serviceName") final String serviceName, 
+			@PathParam("serviceVersion") final String serviceVersion, 
+			@PathParam("resourceInstanceName") final String resourceInstanceName,
+			@PathParam("artifactName") final String artifactName) {
+		
 		Response response = null;
-		String instanceIdHeader = request.getHeader(Constants.X_ECOMP_INSTANCE_ID_HEADER);
 		String requestURI = request.getRequestURI();
 		AuditingActionEnum auditingActionEnum = AuditingActionEnum.DISTRIBUTION_ARTIFACT_DOWNLOAD;
-		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<AuditingFieldsKeysEnum, Object>(AuditingFieldsKeysEnum.class);
+		EnumMap<AuditingFieldsKeysEnum, Object> additionalParam = new EnumMap<>(AuditingFieldsKeysEnum.class);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_CONSUMER_ID, instanceIdHeader);
 		additionalParam.put(AuditingFieldsKeysEnum.AUDIT_DISTRIBUTION_RESOURCE_URL, requestURI);
 
@@ -234,6 +319,4 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 			return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
 		}
 	}
-
-	// --------------------------------
 }

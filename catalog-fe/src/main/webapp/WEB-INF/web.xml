@@ -79,27 +79,31 @@
 		<url-pattern>/kibanaProxy/*</url-pattern>
 	</servlet-mapping>
 
-<!--  
+ 
 	<filter>
 		<filter-name>GzipFilter</filter-name>
 		<filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
         <async-supported>true</async-supported>
 		<init-param>
-			<param-name></param-name>
+			<param-name>mimeTypes</param-name>
 			<param-value>text/html,text/plain,text/css,application/javascript,application/json</param-value>
 		</init-param>
 		<init-param>
 			<param-name>methods</param-name>
-			<param-value>get,post</param-value>
+			<param-value>GET,POST,PUT,DELETE</param-value>
+		</init-param>
+		<init-param>
+			<param-name>excludePaths</param-name>
+			<param-value>/sdc1/feProxy/*</param-value>
 		</init-param>
 	</filter>
 
 
 	<filter-mapping>
 		<filter-name>GzipFilter</filter-name>
-		<url-pattern>/sdc2/*</url-pattern>
+		<url-pattern>/sdc1/*</url-pattern>
 	</filter-mapping>
--->
+
 
 	<listener>
 		<listener-class>org.openecomp.sdc.fe.listen.FEAppContextListener</listener-class>

@@ -4,18 +4,24 @@ import fj.data.Either;
 import org.openecomp.sdc.asdctool.impl.migration.v1707.jsonmodel.relations.RequirementsCapabilitiesMigrationService;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.jsontitan.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaElementLifecycleOperation;
 import org.openecomp.sdc.be.model.jsontitan.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.migration.MigrationMalformedDataLogger;
+import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,11 +89,20 @@ public abstract class ComponentMigration <T extends Component> extends JsonModel
     protected void setMissingTemplateInfo(List<T> components) {
     	Map<String, ToscaElement> origCompMap = new HashMap<>();
     	for (T component : components) {
-    		for (ComponentInstance instance : component.getComponentInstances()){
-    			nodeTemplateMissingDataResolver.resolveNodeTemplateInfo(instance, origCompMap, component);	
-    		}	
+    	    List<ComponentInstance> instances = component.getComponentInstances();
+    	    if(null != instances) {
+                for (ComponentInstance instance : instances) {
+                    nodeTemplateMissingDataResolver.resolveNodeTemplateInfo(instance, origCompMap, component);
+                    nodeTemplateMissingDataResolver.fixVFGroupInstances(component, instance);
+                }
+            }
+    		nodeTemplateMissingDataResolver.fixVFGroups(component);
     	}
     }
+    
+
+	
+	
     
     
     

@@ -90,10 +90,8 @@
 			<scope>compile</scope>
 			<version>1.5.15</version>
 		</dependency>
-
-
-
 		<!-- Swagger Dependencies End -->
+
 		<dependency>
 			<groupId>org.openecomp.sdc</groupId>
 			<artifactId>common-app-api</artifactId>
@@ -493,7 +491,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.openecomp.sdc.common</groupId>
+			<groupId>${dox-common-lib.groupId}</groupId>
 			<artifactId>openecomp-common-lib</artifactId>
 			<version>${dox-common-lib.version}</version>
 			<type>pom</type>
@@ -662,26 +660,6 @@
 				</executions>
 			</plugin>
 
-			<!-- Swagger Plugins Start -->
-			<plugin>
-				<groupId>com.googlecode.maven-download-plugin</groupId>
-				<artifactId>download-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<id>swagger-ui</id>
-						<goals>
-							<goal>wget</goal>
-						</goals>
-						<configuration>
-							<url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui-version}.tar.gz</url>
-							<unpack>true</unpack>
-							<outputDirectory>${project.build.directory}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.6.1</version>
@@ -711,26 +689,6 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>2.6</version>
 				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/${project.artifactId}-${project.version}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.build.directory}/swagger-ui-${swagger-ui-version}/dist</directory>
-									<filtering>true</filtering>
-									<excludes>
-										<exclude>index.html</exclude>
-									</excludes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-
 					<execution>
 						<id>copy-normatives</id>
 						<phase>install</phase>

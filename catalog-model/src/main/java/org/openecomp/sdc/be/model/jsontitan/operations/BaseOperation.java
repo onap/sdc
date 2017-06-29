@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -1340,6 +1341,7 @@ public abstract class BaseOperation {
 		groupInstance.setArtifacts(group.getArtifacts());
 		groupInstance.setArtifactsUuid(group.getArtifactsUuid());
 		groupInstance.setProperties(group.getProperties());
+		convertPropertiesToInstanceProperties(groupInstance.getProperties());
 		groupInstance.setInvariantUUID(group.getInvariantUUID());
 		groupInstance.setGroupUUID(group.getGroupUUID());
 		groupInstance.setVersion(group.getVersion());
@@ -1353,6 +1355,10 @@ public abstract class BaseOperation {
 	
 	protected String generateCustomizationUUID() {
 		return UUID.randomUUID().toString();
+	}
+	
+	protected void convertPropertiesToInstanceProperties(List<PropertyDataDefinition> properties){
+		properties.forEach(p -> p.convertPropertyDataToInstancePropertyData());
 	}
 
 }

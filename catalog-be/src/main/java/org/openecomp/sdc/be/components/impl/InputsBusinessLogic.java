@@ -20,16 +20,14 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import jline.internal.Log;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -77,13 +75,15 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	private static final String GET_INPUT = "get_input";
 
+	private static final short LOOP_PROTECTION_LEVEL = 10 ;
+
 	private static String ASSOCIATING_INPUT_TO_PROP = "AssociatingInputToComponentInstanceProperty";
-	private Gson gson = new Gson(); 
-	
+	private Gson gson = new Gson();
+
 
 	/**
 	 * associate inputs to a given component with paging
-	 * 
+	 *
 	 * @param componentId
 	 * @param userId
 	 * @param fromId
@@ -97,10 +97,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		if (resp.isRight()) {
 			return Either.right(resp.right().value());
 		}
-		
-	
+
+
 		ComponentParametersView filters = new ComponentParametersView();
-		filters.disableAll();	
+		filters.disableAll();
 		filters.setIgnoreInputs(false);
 
 		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
@@ -108,15 +108,15 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found component {}, error: {}", componentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
-			
+
 		}
 		org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
 		List<InputDefinition> inputs = component.getInputs();
-	
+
 		return Either.left(inputs);
 
 	}
-	
+
 	public Either<List<ComponentInstanceInput>, ResponseFormat> getComponentInstanceInputs(String userId, String componentId, String componentInstanceId) {
 
 		Either<User, ResponseFormat> resp = validateUserExists(userId, "get Inputs", false);
@@ -124,10 +124,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		if (resp.isRight()) {
 			return Either.right(resp.right().value());
 		}
-		
-	
+
+
 		ComponentParametersView filters = new ComponentParametersView();
-		filters.disableAll();	
+		filters.disableAll();
 		filters.setIgnoreInputs(false);
 		filters.setIgnoreComponentInstances(false);
 		filters.setIgnoreComponentInstancesInputs(false);
@@ -137,7 +137,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found component {}, error: {}", componentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
-			
+
 		}
 		org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
 
@@ -152,7 +152,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	/**
 	 * associate properties to a given component instance input
-	 * 
+	 *
 	 * @param instanceId
 	 * @param userId
 	 * @param inputId
@@ -169,58 +169,58 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		ComponentParametersView filters = new ComponentParametersView();
 		filters.disableAll();
 		filters.setIgnoreComponentInstances(false);
-		
+
 		if(!instanceId.equals(inputId)){
-			
-			
+
+
 			Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
-			
+
 			if(getComponentEither.isRight()){
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 				log.debug("Failed to found component {}, error: {}", parentId, actionStatus.name());
 				return Either.right(componentsUtils.getResponseFormat(actionStatus));
-				
+
 			}
 			component = getComponentEither.left().value();
 			Optional<ComponentInstance> ciOp = component.getComponentInstances().stream().filter(ci ->ci.getUniqueId().equals(instanceId)).findAny();
 			if(ciOp.isPresent()){
 				parentId = ciOp.get().getComponentUid();
 			}
-		
-		}			
-	
-		filters.setIgnoreInputs(false);	
-		
+
+		}
+
+		filters.setIgnoreInputs(false);
+
 		filters.setIgnoreComponentInstancesProperties(false);
 		filters.setIgnoreComponentInstancesInputs(false);
 		filters.setIgnoreProperties(false);
-		
+
 		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
-		
+
 		if(getComponentEither.isRight()){
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found component {}, error: {}", parentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
-			
+
 		}
 		component = getComponentEither.left().value();
-		
+
 		Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
 		if(!op.isPresent()){
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found input {} under component {}, error: {}", inputId, parentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
 		}
-			
+
 		return Either.left(getComponentInstancePropertiesByInputId(component, inputId));
 
 	}
-	
+
 	public Either<InputDefinition, ResponseFormat> updateInputValue(ComponentTypeEnum componentType, String componentId, InputDefinition input, String userId, boolean shouldLockComp, boolean inTransaction) {
-		
+
 		Either<InputDefinition, ResponseFormat> result = null;
 		org.openecomp.sdc.be.model.Component component = null;
-		
+
 
 		try {
 			Either<User, ResponseFormat> resp = validateUserExists(userId, "get input", false);
@@ -232,7 +232,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 			ComponentParametersView componentParametersView = new ComponentParametersView();
 			componentParametersView.disableAll();
-			componentParametersView.setIgnoreInputs(false);		
+			componentParametersView.setIgnoreInputs(false);
 			componentParametersView.setIgnoreUsers(false);
 
 			Either<? extends org.openecomp.sdc.be.model.Component, ResponseFormat> validateComponent = validateComponentExists(componentId, componentType, componentParametersView);
@@ -264,7 +264,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			}
 
 			Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
-			
+
 			Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(input.getUniqueId())).findFirst();
 			if(!op.isPresent()){
 				ActionStatus actionStatus = ActionStatus.COMPONENT_NOT_FOUND;
@@ -273,7 +273,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				return result;
 			}
 			InputDefinition currentInput = op.get();
-			
+
 			String innerType = null;
 			String propertyType = currentInput.getType();
 			ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
@@ -293,7 +293,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				innerType = propDef.getType();
 			}
 			// Specific Update Logic
-		
+
 			Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(propertyType, input.getDefaultValue(), true, innerType, allDataTypes.left().value());
 
 			String newValue = currentInput.getDefaultValue();
@@ -308,23 +308,23 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 					newValue = object.toString();
 				}
 			}
-			
+
 			currentInput.setDefaultValue(newValue);
-			
+
 			Either<InputDefinition, StorageOperationStatus> status = toscaOperationFacade.updateInputOfComponent(component, currentInput);
-		
+
 			if(status.isRight()){
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status.right().value());
 				result = Either.right(componentsUtils.getResponseFormat(actionStatus, ""));
 				return result;
 			}
-			
-			
+
+
 			result = Either.left(status.left().value());
-			
+
 			return result;
-			
-			
+
+
 		}finally {
 
 				if (false == inTransaction) {
@@ -357,28 +357,28 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		org.openecomp.sdc.be.model.Component component = null;
 		ComponentParametersView filters = new ComponentParametersView();
 		filters.disableAll();
-		filters.setIgnoreComponentInstances(false);		
-		filters.setIgnoreInputs(false);			
+		filters.setIgnoreComponentInstances(false);
+		filters.setIgnoreInputs(false);
 		filters.setIgnoreComponentInstancesInputs(false);
 		filters.setIgnoreProperties(false);
-		
+
 		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
-		
+
 		if(getComponentEither.isRight()){
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found component {}, error: {}", parentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
-			
+
 		}
 		component = getComponentEither.left().value();
-		
+
 		Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
 		if(!op.isPresent()){
 			ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 			log.debug("Failed to found input {} under component {}, error: {}", inputId, parentId, actionStatus.name());
 			return Either.right(componentsUtils.getResponseFormat(actionStatus));
 		}
-			
+
 		return Either.left(getComponentInstanceInputsByInputId(component, inputId));
 
 	}
@@ -387,11 +387,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 		Either<List<InputDefinition>, ResponseFormat> result = null;
 		org.openecomp.sdc.be.model.Component component = null;
-		
+
 		Map<String, List<ComponentInstanceInput>> inputsValueToCreateMap = new HashMap<>();
-		Map<String, List<ComponentInstanceProperty>> propertiesToCreateMap = new HashMap<>();		
+		Map<String, List<ComponentInstanceProperty>> propertiesToCreateMap = new HashMap<>();
 		Map<String, InputDefinition> inputsToCreate = new HashMap<>();
-		
+
 		try {
 			Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
 
@@ -441,7 +441,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 
 			//////////////////////////////////////////////////////////////////////////////////////////////////////
-			
+
 			List<InputDefinition> resList = new ArrayList<InputDefinition>();
 			Map<String, List<InputDefinition>> newInputsMap = componentInstInputsMapUi.getComponentInstanceInputsMap();
 			List<ComponentInstance> ciList = component.getComponentInstances();
@@ -450,7 +450,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				for (Entry<String, List<InputDefinition>> entry : newInputsMap.entrySet()) {
 					List<ComponentInstanceInput> inputsValueToCreate = new ArrayList<>();
 					String compInstId = entry.getKey();
-			
+
 					Optional<ComponentInstance> op = ciList.stream().filter(ci -> ci.getUniqueId().equals(compInstId)).findAny();
 					if(!op.isPresent()){
 						ActionStatus actionStatus = ActionStatus.INVALID_CONTENT;
@@ -468,12 +468,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 						return result;
 					}
 					org.openecomp.sdc.be.model.Component origComponent = origComponentEither.left().value();
-					
+
 					List<InputDefinition> inputs = entry.getValue();
 
 					if (inputs != null && !inputs.isEmpty()) {
-						
-						for (InputDefinition input : inputs) {					
+
+						for (InputDefinition input : inputs) {
 
 							StorageOperationStatus status = addInputsToComponent(componentId, inputsToCreate, allDataTypes.left().value(), resList, index, inputsValueToCreate, compInstId, compInstname, origComponent, input);
 							if(status != StorageOperationStatus.OK ){
@@ -489,51 +489,51 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 						inputsValueToCreateMap.put(compInstId, inputsValueToCreate);
 					}
 				}
-			
+
 			}
-			
+
 			Map<String, List<ComponentInstancePropInput>> newInputsPropsMap = componentInstInputsMapUi.getComponentInstanceProperties();
 			if (newInputsPropsMap != null && !newInputsPropsMap.isEmpty()) {
-				
+
 				result = createInputsFromProperty(component, origComponentMap, inputsToCreate, propertiesToCreateMap,  dataTypes, resList, newInputsPropsMap);
-				
+
 				if (result.isRight()) {
 					log.debug("Failed to create inputs of resource  for id {} error {}", component.getUniqueId(), result.right().value());
 					return result;
 				}
 				resList = result.left().value();
-				
+
 			}
-			
-			
+
+
 			Either<List<InputDefinition>, StorageOperationStatus> assotiateInputsEither = toscaOperationFacade.addInputsToComponent(inputsToCreate, component.getUniqueId());
 			if(assotiateInputsEither.isRight()){
 				log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
 				return result;
 			}
-			
+
 			Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> assotiatePropsEither = toscaOperationFacade.addComponentInstancePropertiesToComponent(component, propertiesToCreateMap, component.getUniqueId());
 			if(assotiatePropsEither.isRight()){
 				log.debug("Failed to add inputs values under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
 				return result;
 			}
-			
+
 			Either<Map<String, List<ComponentInstanceInput>>, StorageOperationStatus> addciInputsEither = toscaOperationFacade.addComponentInstanceInputsToComponent(component, inputsValueToCreateMap);
 			if(addciInputsEither.isRight()){
 				log.debug("Failed to add inputs values under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
 				result = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
 				return result;
 			}
-			
-	
-			
-	
+
+
+
+
 			result =  Either.left(resList);
 			return result;
-			///////////////////////////////////////////////////////////////////////////////////////////	
-		
+			///////////////////////////////////////////////////////////////////////////////////////////
+
 		} finally {
 
 			if (false == inTransaction) {
@@ -558,29 +558,29 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	private StorageOperationStatus addInputsToComponent(String componentId, Map<String, InputDefinition> inputsToCreate, Map<String, DataTypeDefinition> allDataTypes, List<InputDefinition> resList, int index,
 			List<ComponentInstanceInput> inputsValueToCreate, String compInstId, String compInstname, org.openecomp.sdc.be.model.Component origComponent, InputDefinition input) {
-		
+
 		Either<List<InputDefinition>, ResponseFormat> result;
 		String innerType = null;
 		InputDefinition oldInput = origComponent.getInputs().stream().filter(ciIn -> ciIn.getUniqueId().equals(input.getUniqueId())).findAny().get();
 		String serviceInputName = compInstname + "_" + input.getName();
 		input.setName(serviceInputName);
-		
+
 		JSONObject jobject = new JSONObject();
 		jobject.put(GET_INPUT, input.getName());
-		
+
 		ComponentInstanceInput inputValue = new ComponentInstanceInput(oldInput, jobject.toJSONString(), null);
-		
+
 		Either<String, StorageOperationStatus> validatevalueEiter = validateInputValueBeforeCreate(inputValue, jobject.toJSONString(), false, innerType, allDataTypes);
-		if (validatevalueEiter.isRight()) {								
-	
+		if (validatevalueEiter.isRight()) {
+
 			return validatevalueEiter.right().value();
-		}														
-		
-		String uniqueId = UniqueIdBuilder.buildResourceInstanceInputValueUid(compInstId, index++);							
+		}
+
+		String uniqueId = UniqueIdBuilder.buildResourceInstanceInputValueUid(compInstId, index++);
 		inputValue.setUniqueId(uniqueId);
 		inputValue.setValue(validatevalueEiter.left().value());
-		
-		
+
+
 		input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, input.getName()));
 		input.setSchema(oldInput.getSchema());
 		input.setDefaultValue(oldInput.getDefaultValue());
@@ -592,20 +592,21 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		input.setRequired(oldInput.isRequired());
 		input.setOwnerId(null);
 		input.setParentUniqueId(null);
+		input.setInstanceUniqueId(compInstId);
 		inputsToCreate.put(input.getName(), input);
-		
-		
-		
+
+
+
 		List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
 		GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
 		getInputValueDataDefinition.setInputId(input.getUniqueId());
 		getInputValueDataDefinition.setInputName(input.getName());
 		getInputValues.add(getInputValueDataDefinition);
-		inputValue.setGetInputValues(getInputValues);							
-		
+		inputValue.setGetInputValues(getInputValues);
+
 		inputsValueToCreate.add(inputValue);
 		input.setInputs(inputsValueToCreate);
-		
+
 		resList.add(input);
 		return StorageOperationStatus.OK;
 	}
@@ -685,11 +686,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs, org.openecomp.sdc.be.model.Component component, User user, boolean inTransaction) {
-		
-		List<InputDefinition> resList = inputs.values().stream().collect(Collectors.toList());	
+
+		List<InputDefinition> resList = inputs.values().stream().collect(Collectors.toList());
 		Either<List<InputDefinition>, ResponseFormat> result = Either.left(resList);
 		List<InputDefinition> resourceProperties = component.getInputs();
-	
+
 		if(inputs != null && !inputs.isEmpty()){
 			Either<Map<String, DataTypeDefinition>, ResponseFormat> allDataTypes = getAllDataTypes(applicationDataTypeCache);
 			if (allDataTypes.isRight()) {
@@ -697,16 +698,16 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			}
 
 			Map<String, DataTypeDefinition> dataTypes = allDataTypes.left().value();
-			
+
 			for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
 				String inputName = inputDefinition.getKey();
-				inputDefinition.getValue().setName(inputName);	
-	
+				inputDefinition.getValue().setName(inputName);
+
 				Either<InputDefinition, ResponseFormat> preparedInputEither = prepareAndValidateInputBeforeCreate(inputDefinition.getValue(), dataTypes);
 				if(preparedInputEither.isRight()){
 					return Either.right(preparedInputEither.right().value());
 				}
-				
+
 			}
 			if (resourceProperties != null) {
 				Map<String, InputDefinition> generatedInputs = resourceProperties.stream().collect(Collectors.toMap(i -> i.getName(), i -> i));
@@ -716,28 +717,104 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				}
 				inputs = mergeEither.left().value();
 			}
-			
+
 			Either<List<InputDefinition>, StorageOperationStatus> assotiateInputsEither = toscaOperationFacade.createAndAssociateInputs(inputs, component.getUniqueId());
 			if(assotiateInputsEither.isRight()){
 				log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), assotiateInputsEither.right().value());
 				return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(assotiateInputsEither.right().value())));
 			}
 			result  = Either.left(assotiateInputsEither.left().value());
-			
+
 		}
-		
-		
+
+
 		return result;
 	}
 
+
+	/*	    Mutates the object
+	 *		Tail recurse -> traverse the tosca elements and remove nested empty map properties
+	 *		this only handles nested maps, other objects are left untouched (even a Set containing a map) since behaviour is unexpected
+	 *
+			 *		@param  toscaElement - expected map of tosca values
+	 *	    @return mutated @param toscaElement , where empty maps are deleted , return null for empty map.
+			**/
+	private Object cleanEmptyNestedValuesInMap(Object toscaElement , short loopProtectionLevel ){
+		//region - Stop if map is empty
+		if (loopProtectionLevel<=0 || toscaElement==null || !(toscaElement instanceof  Map))
+			return toscaElement;
+		//endregion
+		//region - Remove empty map entries & return null iff empty map
+		if ( MapUtils.isNotEmpty( (Map)toscaElement ) ) {
+			Object ret;
+			Set<Object> keysToRemove = new HashSet<>(); 																// use different set to avoid ConcurrentModificationException
+			for( Object key : ((Map)toscaElement).keySet() ) {
+				Object value = ((Map) toscaElement).get(key);
+				ret = cleanEmptyNestedValuesInMap(value , --loopProtectionLevel );
+				if ( ret == null )
+					keysToRemove.add(key);
+			}
+			Collection set = ((Map) toscaElement).keySet();
+			if (CollectionUtils.isNotEmpty(set))
+				set.removeAll(keysToRemove);
+
+			if ( isEmptyNestedMap(toscaElement) ) 																		// similar to < if ( MapUtils.isEmpty( (Map)toscaElement ) ) > ,but adds nested map check
+				return null;
+		}
+		//endregion
+		else
+			return null;
+		return toscaElement;
+	}
+
+	//@returns true iff map nested maps are all empty
+	//ignores other collection objects
+	private boolean isEmptyNestedMap(Object element){
+		boolean isEmpty = true;
+		if (element != null){
+			if ( element instanceof Map ){
+				if (MapUtils.isEmpty((Map)element))
+					isEmpty = true;
+				else
+				{
+					for( Object key : ((Map)(element)).keySet() ){
+						Object value =  ((Map)(element)).get(key);
+						isEmpty &= isEmptyNestedMap( value );
+					}
+				}
+			} else {
+				isEmpty = false;
+			}
+		}
+		return isEmpty;
+	}
+
+	public Either cleanNestedMap( Map mappedToscaTemplate , boolean deepClone  ){
+		if (MapUtils.isNotEmpty( mappedToscaTemplate ) ){
+			if (deepClone){
+				if (!(mappedToscaTemplate instanceof HashMap))
+					return Either.right("expecting mappedToscaTemplate as HashMap ,recieved "+ mappedToscaTemplate.getClass().getSimpleName() );
+				else
+					mappedToscaTemplate = (HashMap)((HashMap) mappedToscaTemplate).clone();
+			}
+			return Either.left( (Map) cleanEmptyNestedValuesInMap( mappedToscaTemplate , InputsBusinessLogic.LOOP_PROTECTION_LEVEL ) );
+		}
+		else {
+			log.debug("mappedToscaTemplate is empty ");
+			return Either.right("mappedToscaTemplate is empty ");
+		}
+	}
+
+
+
 	/**
 	 * Delete input from service
-	 * 
+	 *
 	 * @param componentType
 	 * @param inputId
 	 * @param component
 	 * @param user
-	 * 
+	 *
 	 * @return
 	 */
 	public Either<InputDefinition, ResponseFormat> deleteInput(String componentType, String componentId, String userId, String inputId) {
@@ -762,7 +839,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		componentParametersView.setIgnoreComponentInstancesInputs(false);
 		componentParametersView.setIgnoreComponentInstancesProperties(false);
 		componentParametersView.setIgnoreUsers(false);
-		
+
 		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade.getToscaElement(componentId, componentParametersView);
 		if (componentEither.isRight()) {
 			deleteEither =  Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(componentEither.right().value())));
@@ -779,7 +856,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		if (!optionalInput.isPresent()) {
 			return Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId));
 		}
-		
+
 		InputDefinition inputForDelete = optionalInput.get();
 
 		// Lock component
@@ -798,11 +875,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				deleteEither =  Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
 				return deleteEither;
 			}
-			
+
 			List<ComponentInstanceInput> inputsValue= getComponentInstanceInputsByInputId(component, inputId);
 			Map<String, List<ComponentInstanceInput>> insInputsMatToDelete = new HashMap<>();
-			
-			if(inputsValue != null && !inputsValue.isEmpty()){	
+
+			if(inputsValue != null && !inputsValue.isEmpty()){
 				for(ComponentInstanceInput inputValue: inputsValue){
 					List<ComponentInstanceInput> inputList = null;
 					String ciId = inputValue.getComponentInstanceId();
@@ -821,22 +898,29 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 					return deleteEither;
 				}
 			}
-		
+
 			// US848813 delete service input that relates to VL / CP property
-			
+
 			List<ComponentInstanceProperty> propertiesValue = getComponentInstancePropertiesByInputId(component, inputId);
 				if(propertiesValue != null && !propertiesValue.isEmpty()){
-					//propertyList = propertyValueStatus.left().value();	
+					//propertyList = propertyValueStatus.left().value();
 					for(ComponentInstanceProperty propertyValue: propertiesValue){
-				
+
 						String value = propertyValue.getValue();
 						Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
-						
+
 						resetInputName(mappedToscaTemplate, inputForDelete.getName());
-						
+
 						value = "";
-						if(!mappedToscaTemplate.isEmpty())
-							value = gson.toJson(mappedToscaTemplate);
+						if(!mappedToscaTemplate.isEmpty()){
+							Either result = cleanNestedMap(mappedToscaTemplate , true);
+							Map modifiedMappedToscaTemplate = mappedToscaTemplate;
+							if (result.isLeft())
+								modifiedMappedToscaTemplate = (Map)result.left().value();
+							else
+								Log.warn("Map cleanup failed -> " +result.right().value().toString());	//continue, don't break operation
+							value = gson.toJson(modifiedMappedToscaTemplate);
+						}
 						propertyValue.setValue(value);
 						String compInstId = propertyValue.getComponentInstanceId();
 						propertyValue.setRules(null);
@@ -857,7 +941,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 						if (findDefaultValue.isRight()) {
 							deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()))));
 							return deleteEither;
-							
+
 						}
 						String defaultValue = findDefaultValue.left().value();
 						propertyValue.setDefaultValue(defaultValue);
@@ -868,10 +952,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 							deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
 							return deleteEither;
 						}
-						
+
 					}
 				}
-			
+
 
 				deleteEither = Either.left(inputForDelete);
 			return deleteEither;
@@ -888,7 +972,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 	}
 
 	private Either<InputDefinition, ResponseFormat> prepareAndValidateInputBeforeCreate(InputDefinition newInputDefinition, Map<String, DataTypeDefinition> dataTypes) {
-		
+
 
 		// validate input default values
 		Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newInputDefinition, dataTypes);
@@ -918,7 +1002,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		}
 		return Either.left(newInputDefinition);
 	}
-	
+
 	public boolean isInputExist(List<InputDefinition> inputs, String resourceUid, String inputName) {
 
 		if (inputs == null) {
@@ -937,18 +1021,18 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		return false;
 
 	}
-	
-	
+
+
 	public Either<InputDefinition, ResponseFormat> getInputsAndPropertiesForComponentInput(String userId, String componentId, String inputId, boolean inTransaction) {
 		Either<InputDefinition, ResponseFormat> result = null;
 		try {
-			
+
 			Either<User, ResponseFormat> resp = validateUserExists(userId, "get Properties by input", false);
 			if (resp.isRight()) {
 				return Either.right(resp.right().value());
 			}
 			Either<List<ComponentInstanceProperty>, StorageOperationStatus> propertiesEitherRes = null;
-			
+
 			ComponentParametersView filters = new ComponentParametersView();
 			filters.disableAll();
 			filters.setIgnoreComponentInstances(false);
@@ -961,7 +1045,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
 				log.debug("Failed to found component {}, error: {}", componentId, actionStatus.name());
 				return Either.right(componentsUtils.getResponseFormat(actionStatus));
-				
+
 			}
 			org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
 			Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
@@ -970,18 +1054,18 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				log.debug("Failed to found input {} under component {}, error: {}", inputId, componentId, actionStatus.name());
 				return Either.right(componentsUtils.getResponseFormat(actionStatus));
 			}
-			
+
 			InputDefinition resObj = op.get();
-			
+
 			List<ComponentInstanceInput> inputCIInput = getComponentInstanceInputsByInputId(component, inputId) ;
-			
+
 			resObj.setInputs(inputCIInput);
-			
-				
+
+
 			List<ComponentInstanceProperty> inputProps = getComponentInstancePropertiesByInputId(component, inputId) ;
-			
-			resObj.setProperties(inputProps);			
-	
+
+			resObj.setProperties(inputProps);
+
 
 			result = Either.left(resObj);
 
@@ -1004,7 +1088,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		}
 
 	}
-	
+
 	private List<ComponentInstanceProperty> getComponentInstancePropertiesByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
 		List<ComponentInstanceProperty> resList = new ArrayList<>();
 		Map<String, List<ComponentInstanceProperty>> ciPropertiesMap = component.getComponentInstancesProperties();
@@ -1029,7 +1113,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 									}
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -1038,7 +1122,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		return resList;
 
 	}
-	
+
 	private List<ComponentInstanceInput> getComponentInstanceInputsByInputId(org.openecomp.sdc.be.model.Component component, String inputId){
 		List<ComponentInstanceInput> resList = new ArrayList<>();
 		Map<String, List<ComponentInstanceInput>> ciInputsMap = component.getComponentInstancesInputs();
@@ -1063,7 +1147,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 									}
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -1072,11 +1156,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		return resList;
 
 	}
-	
+
 	private Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getOriginComponent(ComponentInstance ci, Map<String, org.openecomp.sdc.be.model.Component> origComponentMap){
 		Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> result = null;
 		String compInstname = ci.getNormalizedName();
-		
+
 		ComponentParametersView componentParametersView = new ComponentParametersView();
 		componentParametersView.disableAll();
 		componentParametersView.setIgnoreInputs(false);
@@ -1096,9 +1180,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		result = Either.left(origComponent);
 		return result;
 	}
-	
-	
-	
+
+
+
 	private Either<List<InputDefinition>, ResponseFormat> createInputsFromProperty(org.openecomp.sdc.be.model.Component component, Map<String, org.openecomp.sdc.be.model.Component> origComponentMap,  Map<String, InputDefinition> inputsToCreate, Map<String, List<ComponentInstanceProperty>> propertiesToCreateMap, Map<String, DataTypeDefinition> dataTypes,  List<InputDefinition> resList, Map<String, List<ComponentInstancePropInput>> newInputsPropsMap) {
 		List<ComponentInstance> ciList = component.getComponentInstances();
 		String componentId = component.getUniqueId();
@@ -1106,13 +1190,13 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			List<ComponentInstanceProperty> propertiesToCreate = new ArrayList<>();
 			String compInstId = entry.getKey();
 			List<ComponentInstancePropInput> properties = entry.getValue();
-			
+
 			Optional<ComponentInstance> op = ciList.stream().filter(ci -> ci.getUniqueId().equals(compInstId)).findAny();
 			if(!op.isPresent()){
 				ActionStatus actionStatus = ActionStatus.INVALID_CONTENT;
 				log.debug("Failed to find component instance {} under component {}", compInstId, componentId);
 				return Either.right(componentsUtils.getResponseFormat(actionStatus));
-				
+
 			}
 			ComponentInstance ci = op.get();
 			String compInstname = ci.getNormalizedName();
@@ -1121,33 +1205,34 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(origComponentEither.right().value());
 				log.debug("Failed to create inputs value under component {}, error: {}", componentId, actionStatus.name());
 				return Either.right(componentsUtils.getResponseFormat(actionStatus));
-				
+
 			}
 			org.openecomp.sdc.be.model.Component origComponent = origComponentEither.left().value();
 
-			
+
 			//String originType = (String) titanGenericDao.getProperty(originVertex, GraphPropertiesDictionary.LABEL.getProperty());
-			
+
 			String inputName = compInstname;
-			
+
 			if (properties != null && !properties.isEmpty()) {
 				for (ComponentInstancePropInput propInput : properties) {
 					propInput.setOwnerId(null);
 					propInput.setParentUniqueId(null);
+
 					Either<InputDefinition, StorageOperationStatus> createInputRes = createInputForComponentInstance(component, origComponent,ci, inputsToCreate, propertiesToCreate, dataTypes, inputName, propInput);
-					
+
 					if (createInputRes.isRight()) {
 						log.debug("Failed to create input  of resource instance for id {} error {}", compInstId, createInputRes.right().value());
 						return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(createInputRes.right().value())));
-						
+
 					}
-					
+
 					resList.add(createInputRes.left().value());
-				
+
 				}
 				propertiesToCreateMap.put(compInstId, propertiesToCreate);
 			}
-			
+
 		}
 		return Either.left(resList);
 	}
@@ -1156,7 +1241,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		String propertiesName = propInput.getPropertiesName() ;
 		PropertyDefinition selectedProp = propInput.getInput();
 		String[] parsedPropNames = propInput.getParsedPropNames();
-		
+
 		if(parsedPropNames != null){
 			for(String str: parsedPropNames){
 				inputName += "_"  + str;
@@ -1164,89 +1249,103 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		} else {
 			inputName += "_"  + propInput.getName();
 		}
-		
+
 		InputDefinition input = null;
-		ComponentInstanceProperty prop = propInput;	
-		
+		ComponentInstanceProperty prop = propInput;
+
+		if(CollectionUtils.isNotEmpty(propertiesToCreate)){
+			Optional<ComponentInstanceProperty> propOpt = propertiesToCreate.stream().filter(p -> p.getName().equals(propInput.getName())).findFirst();
+			if(propOpt.isPresent()){
+				prop = propOpt.get();
+			}
+		}
+		boolean complexProperty = false;
 		if(propertiesName != null && !propertiesName.isEmpty() && selectedProp != null){
+			complexProperty = true;
 			input = new InputDefinition(selectedProp);
 		}else{
 			input = new InputDefinition(prop);
 			input.setName(inputName + "_" + prop.getName());
-			
+
 		}
-		input.setName(inputName);	
+		input.setName(inputName);
 		input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(component.getUniqueId(), input.getName()));
 		input.setInputPath(propertiesName);
-		
+		input.setInstanceUniqueId(ci.getUniqueId());
+		input.setPropertyId(propInput.getUniqueId());
+
 		JSONObject jobject = new JSONObject();
-							
-		
+
+
 		if(prop.getValue() == null || prop.getValue().isEmpty()){
-			if(propertiesName != null && !propertiesName.isEmpty() && selectedProp != null){
-					
-				jobject = createJSONValueForProperty(parsedPropNames.length -1, parsedPropNames, jobject, inputName);	
-				prop.setValue(jobject.toJSONString());	
-				
+			if(complexProperty){
+
+				jobject = createJSONValueForProperty(parsedPropNames.length -1, parsedPropNames, jobject, inputName);
+				prop.setValue(jobject.toJSONString());
+
 			}else{
-				
+
 				jobject.put(GET_INPUT, input.getName());
-				prop.setValue(jobject.toJSONString());				
-				
+				prop.setValue(jobject.toJSONString());
+
 			}
-			
+
 		}else{
-			
-			String value = prop.getValue();		
+
+			String value = prop.getValue();
 			Object objValue =  new Yaml().load(value);
 			if( objValue instanceof Map || objValue  instanceof List ){
-				if(propertiesName == null ||propertiesName.isEmpty()){
+				if(!complexProperty){
 					jobject.put(GET_INPUT, input.getName());
 					prop.setValue(jobject.toJSONString());
 					prop.setRules(null);
-						
+
 				}else{
 					Map<String, Object> mappedToscaTemplate = (Map<String, Object>) objValue;
 					createInputValue(mappedToscaTemplate, 1, parsedPropNames, inputName);
-					
-					String json = gson.toJson(mappedToscaTemplate);								
+
+					String json = gson.toJson(mappedToscaTemplate);
 					prop.setValue(json);
 					prop.setRules(null);
 				}
-					
+
 			}else{
 				jobject.put(GET_INPUT, input.getName());
 				prop.setValue(jobject.toJSONString());
 				prop.setRules(null);
 			}
-			
+
 		}
 		prop.setComponentInstanceId(ci.getUniqueId());
 		prop.setComponentInstanceName(ci.getName());
-		
-		List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
+
+		if(CollectionUtils.isEmpty(prop.getGetInputValues())){
+			prop.setGetInputValues(new ArrayList<>());
+		}
+		List<GetInputValueDataDefinition> getInputValues = prop.getGetInputValues();
+
 		GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
 		getInputValueDataDefinition.setInputId(input.getUniqueId());
 		getInputValueDataDefinition.setInputName(input.getName());
 		getInputValues.add(getInputValueDataDefinition);
-		prop.setGetInputValues(getInputValues);	
-		
-		propertiesToCreate.add(prop);
-		
+
+		if(!propertiesToCreate.contains(prop)){
+			propertiesToCreate.add(prop);
+		}
+
 		inputsToCreate.put(input.getName(), input);
-		
 		List<ComponentInstanceProperty> propertiesList = new ArrayList<>(); // adding the property with the new value for UI
 		propertiesList.add(prop);
 		input.setProperties(propertiesList);
-		
+
 		return Either.left(input);
-		
+
 	}
-	
+
 	private  JSONObject createJSONValueForProperty (int i, String [] parsedPropNames, JSONObject ooj, String inputName){
-		
+
 		while(i >= 1){
-			if( i == parsedPropNames.length -1){				
+			if( i == parsedPropNames.length -1){
 				JSONObject jobProp = new JSONObject();
 				jobProp.put(GET_INPUT, inputName);
 				ooj.put(parsedPropNames[i], jobProp);
@@ -1260,17 +1359,17 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 				return res;
 			}
 		}
-		
+
 		return ooj;
 	}
-	
+
 	public void resetInputName(Map<String, Object> lhm1, String inputName){
 	    for (Map.Entry<String, Object> entry : lhm1.entrySet()) {
 	        String key = entry.getKey();
 	        Object value = entry.getValue();
 	        if (value instanceof String && ((String) value).equalsIgnoreCase(inputName) && key.equals(GET_INPUT)) {
 	        	value = "";
-	        	lhm1.remove(key);	        	
+	        	lhm1.remove(key);
 	        } else if (value instanceof Map) {
 	            Map<String, Object> subMap = (Map<String, Object>)value;
 	            resetInputName(subMap, inputName);
@@ -1280,7 +1379,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	    }
 	}
-	
+
 	private  Map<String, Object> createInputValue(Map<String, Object> lhm1, int index, String[] inputNames, String inputName){
 		while(index < inputNames.length){
 			if(lhm1.containsKey(inputNames[index])){
@@ -1289,7 +1388,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 					if(index == inputNames.length -1){
 						((Map) value).put(GET_INPUT, inputName);
 						return ((Map) value);
-						
+
 					}else{
 						index++;
 						return  createInputValue((Map)value, index, inputNames, inputName);
@@ -1299,14 +1398,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 					if(index == inputNames.length -1){
 						jobProp.put(GET_INPUT, inputName);
 						lhm1.put(inputNames[index], jobProp);
-						return lhm1;						
-					}else{						
+						return lhm1;
+					}else{
 						lhm1.put(inputNames[index], jobProp);
 						index++;
 						return  createInputValue(jobProp, index, inputNames, inputName);
 					}
 				}
-			}else{				
+			}else{
 				Map<String, Object> jobProp = new HashMap<>();
 				lhm1.put(inputNames[index], jobProp);
 				if(index == inputNames.length -1){

@@ -130,7 +130,7 @@
     	<init-param>
 			<param-name>swagger.api.basepath</param-name>
 			<!-- Check if second param can be added -->
-			<param-value>http://localhost:8080/sdc/</param-value>
+			<param-value>http://localhost:8080/sdc</param-value>
 		</init-param>
 		
 		<init-param>
@@ -139,24 +139,6 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-
-<!-- Remove after swagger 2 integration -->
-<!-- 	<servlet>
-		<servlet-name>Jersey2Config</servlet-name>
-		<servlet-class>io.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.0.0</param-value>
-		</init-param> 
-		
-		<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<param-value>http://behost:8080/sdc2/rest</param-value>
-		</init-param>
-		
-		<load-on-startup>2</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet> -->
 	
 	<!-- ECOMP Portal -->
 	<servlet>
@@ -165,13 +147,6 @@
 		<load-on-startup>3</load-on-startup>
 		<async-supported>true</async-supported>
 	</servlet>
-
-<!-- Remove after swagger 2 integration -->
-	<!-- Removed, the servlet mapping will be taken from annotation -->
-<!-- 	<servlet-mapping>
-		<servlet-name>ECOMPServlet</servlet-name>
-		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping> -->
 	
 	<servlet>
 		<servlet-name>ViewStatusMessages</servlet-name>
@@ -190,7 +165,7 @@
 	   <async-supported>true</async-supported>
 	   <init-param>
 		<param-name>methods</param-name>
-		<param-value>GET,POST</param-value>
+		<param-value>GET,POST,PUT,DELETE</param-value>
 	   </init-param>
 	   <init-param>
 	      <param-name>mimeTypes</param-name>

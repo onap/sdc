@@ -2,6 +2,8 @@ package org.openecomp.core.tools.main;
 
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.UserInfo;
+import org.openecomp.core.tools.Commands.ImportCommand;
+import org.openecomp.core.tools.Commands.ExportDataCommand;
 import org.openecomp.core.tools.Commands.ResetOldVersion;
 import org.openecomp.core.tools.util.ToolsUtil;
 import org.openecomp.sdc.logging.api.Logger;
@@ -23,8 +25,8 @@ public class ZusammenMainTool {
     String command = ToolsUtil.getParam("c",args);
     if(command == null){
       printMessage(logger,
-          "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
-              "[additional arguments depending on the command] ");
+              "parameter -c is mandatory. script usage: zusammenMainTool.sh -c {command name} " +
+                      "[additional arguments depending on the command] ");
       System.exit(-1);
     }
     Instant startTime = Instant.now();
@@ -39,8 +41,10 @@ public class ZusammenMainTool {
         ResetOldVersion.reset(context,ToolsUtil.getParam("v",args));
         break;
       case EXPORT:
+        ExportDataCommand.exportData(context,ToolsUtil.getParam("i",args));
         break;
       case IMPORT:
+        ImportCommand.importData(context, ToolsUtil.getParam("f",args),ToolsUtil.getParam("i",args));
         break;
 
     }
@@ -52,9 +56,9 @@ public class ZusammenMainTool {
 
 
     printMessage(logger,
-        "Zusammen tools command:[] finished . Total run time was : " + minutesPart + ":" +
-            secondsPart
-            + " minutes");
+            "Zusammen tools command:[] finished . Total run time was : " + minutesPart + ":" +
+                    secondsPart
+                    + " minutes");
     System.exit(status);
 
   }

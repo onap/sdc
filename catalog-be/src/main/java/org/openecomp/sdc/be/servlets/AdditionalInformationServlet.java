@@ -66,7 +66,15 @@ import fj.data.Either;
 public class AdditionalInformationServlet extends BeGenericServlet {
 
 	private static Logger log = LoggerFactory.getLogger(AdditionalInformationServlet.class.getName());
-
+	
+	/**
+	 * 
+	 * @param resourceId
+	 * @param data
+	 * @param request
+	 * @param userUserId
+	 * @return
+	 */
 	@POST
 	@Path("/resources/{resourceId}/additionalinfo")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -80,7 +88,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userUserId, data);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param serviceId
+	 * @param data
+	 * @param request
+	 * @param userUserId
+	 * @return
+	 */
 	@POST
 	@Path("/services/{serviceId}/additionalinfo")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -94,7 +110,16 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return createAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, request, userUserId, data);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param resourceId
+	 * @param labelId
+	 * @param data
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@PUT
 	@Path("/resources/{resourceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -109,7 +134,16 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId, data);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param serviceId
+	 * @param labelId
+	 * @param data
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@PUT
 	@Path("/services/{serviceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -124,7 +158,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return updateAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId, data);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param resourceId
+	 * @param labelId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@DELETE
 	@Path("/resources/{resourceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -138,7 +180,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return deleteAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param serviceId
+	 * @param labelId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@DELETE
 	@Path("/services/{serviceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -152,7 +202,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return deleteAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param resourceId
+	 * @param labelId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@GET
 	@Path("/resources/{resourceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -166,7 +224,15 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return getAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, labelId, request, userId);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param serviceId
+	 * @param labelId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@GET
 	@Path("/services/{serviceId}/additionalinfo/{labelId}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -180,7 +246,14 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return getAdditionalInformationLabelForComponent(NodeTypeEnum.Service, serviceId, labelId, request, userId);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param resourceId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@GET
 	@Path("/resources/{resourceId}/additionalinfo")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -194,7 +267,14 @@ public class AdditionalInformationServlet extends BeGenericServlet {
 		return getAllAdditionalInformationLabelForComponent(NodeTypeEnum.Resource, resourceId, request, userId);
 
 	}
-
+	
+	/**
+	 * 
+	 * @param serviceId
+	 * @param request
+	 * @param userId
+	 * @return
+	 */
 	@GET
 	@Path("/services/{serviceId}/additionalinfo")
 	@Consumes(MediaType.APPLICATION_JSON)
