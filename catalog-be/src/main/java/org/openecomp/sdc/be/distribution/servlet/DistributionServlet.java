@@ -230,18 +230,23 @@ public class DistributionServlet extends BeGenericServlet {
 	 * @param accept
 	 * @return
 	 */
-	//TODO Get the missing AID for this API
 	@GET
 	@Path("/artifactTypes")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact types list fetched successfully"), @ApiResponse(code = 500, message = "One or more BE components (Titan, ES, BE) are down") })
+	@ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact types list fetched successfully", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
 	public Response getValidArtifactTypes(@Context final HttpServletRequest request, 
-			@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
-			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
-			@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, 
-			@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, 
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept) {
 		init(request);
 		String url = request.getMethod() + " " + request.getRequestURI();
 		log.debug("Start handle request of {}", url);

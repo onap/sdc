@@ -491,7 +491,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${dox-common-lib.groupId}</groupId>
+			<groupId>org.openecomp.sdc.common</groupId>
 			<artifactId>openecomp-common-lib</artifactId>
 			<version>${dox-common-lib.version}</version>
 			<type>pom</type>

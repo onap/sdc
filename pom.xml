@@ -31,7 +31,6 @@
 		<artifact-generator-api.version>1.1.0-SNAPSHOT</artifact-generator-api.version>
 		<artifact-generator-core.version>1.1.0-SNAPSHOT</artifact-generator-core.version>
 		<ecomp.version>1.1.0-SNAPSHOT</ecomp.version>
-		<dox-common-lib.groupId>org.openecomp.sdc.common</dox-common-lib.groupId>
 		<dox-common-lib.version>1.1.0-SNAPSHOT</dox-common-lib.version>
 
 		<!-- Elastic Search mapper (reference the elastic search version actually). -->
@@ -87,9 +86,10 @@
 		<junit.version>4.12</junit.version>
 		<testng.version>6.9.10</testng.version>
 		<extentreports.version>3.0.3</extentreports.version>
-
+		
 		<!-- parser-->
 		<sdc-tosca-parser.version>1.1.14-SNAPSHOT</sdc-tosca-parser.version>
+		
 		<!--JaCoCO -->
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -379,10 +379,9 @@
 			
 			<properties>
 				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1707.0.1-SNAPSHOT</artifact-generator-api.version>
-				<artifact-generator-core.version>1707.0.1-SNAPSHOT</artifact-generator-core.version>
-				<dox-common-lib.groupId>org.openecomp.common</dox-common-lib.groupId>
-				<dox-common-lib.version>1707.0.0-SNAPSHOT</dox-common-lib.version>
+				<artifact-generator-api.version>1707.0.0</artifact-generator-api.version>
+				<artifact-generator-core.version>1707.0.0</artifact-generator-core.version>
+				<dox-common-lib.version>1707.0.0</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
 			</properties>	
 			
@@ -412,10 +411,9 @@
 			
 			<properties>
 				<ecomp.version>1.2.7</ecomp.version>
-				<artifact-generator-api.version>1707.0.1-SNAPSHOT</artifact-generator-api.version>
-				<artifact-generator-core.version>1707.0.1-SNAPSHOT</artifact-generator-core.version>
-				<dox-common-lib.groupId>org.openecomp.common</dox-common-lib.groupId>
-				<dox-common-lib.version>1707.0.0-SNAPSHOT</dox-common-lib.version>
+				<artifact-generator-api.version>1707.0.0</artifact-generator-api.version>
+				<artifact-generator-core.version>1707.0.0</artifact-generator-core.version>
+				<dox-common-lib.version>1707.0.0</dox-common-lib.version>
 				<sdc-tosca-parser.version>1.1.14</sdc-tosca-parser.version>
 			</properties>
 		
