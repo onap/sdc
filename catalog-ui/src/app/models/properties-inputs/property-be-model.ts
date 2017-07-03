@@ -1,4 +1,4 @@
-import { SchemaPropertyGroupModel, SchemaProperty } from "../aschema-property";
+import { PropertyInputDetail, SchemaPropertyGroupModel, SchemaProperty } from "app/models";
 import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
 export enum DerivedPropertyType {
     SIMPLE,
@@ -10,8 +10,10 @@ export enum DerivedPropertyType {
 export class PropertyBEModel {
 
     defaultValue: string;
+    definition: boolean;
     description: string;
     fromDerived: boolean;
+    getInputValues: Array<PropertyInputDetail>
     name: string;
     parentUniqueId: string;
     password: boolean;
@@ -20,13 +22,8 @@ export class PropertyBEModel {
     type: string;
     uniqueId: string;
     value: string;
-    definition: boolean;
-    inputPath: string;
-    propertiesName: string;
-    ownerId: string;
-    input: PropertyBEModel;
 
-    constructor(property?: PropertyBEModel, childProperty?:PropertyBEModel) {
+    constructor(property?: PropertyBEModel) {
         if (property) {
             this.defaultValue = property.defaultValue;
             this.description = property.description;
@@ -40,16 +37,7 @@ export class PropertyBEModel {
             this.uniqueId = property.uniqueId;
             this.value = property.value ? property.value : property.defaultValue;
             this.definition = property.definition;
-            this.ownerId = property.ownerId;
-            if (property.inputPath) {
-                this.inputPath = property.inputPath;
-            }
-        }
-        if (childProperty) {
-            this.input = childProperty;
-            this.propertiesName = childProperty.propertiesName;
-        } else {
-            this.propertiesName = this.name;
+            this.getInputValues = property.getInputValues;
         }
 
         if (!this.schema || !this.schema.property) {

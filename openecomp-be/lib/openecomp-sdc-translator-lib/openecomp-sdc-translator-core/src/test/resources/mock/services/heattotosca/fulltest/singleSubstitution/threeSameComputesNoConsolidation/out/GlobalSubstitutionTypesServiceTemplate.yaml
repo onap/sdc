@@ -57,29 +57,21 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_vlan_requirements:
         type: list
         required: true
@@ -480,29 +472,21 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_vlan_requirements:
         type: list
         required: true
@@ -855,23 +839,17 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_pd01_port_2_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_3_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_3_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -903,11 +881,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_2_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_3_ip_requirements:
         type: list
         required: true
@@ -925,27 +901,21 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_2_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_2_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_pd01_port_3_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_2_network:
         type: list
         required: true
@@ -967,11 +937,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_3_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_pd_server_user_data_format:
         type: list
         required: true

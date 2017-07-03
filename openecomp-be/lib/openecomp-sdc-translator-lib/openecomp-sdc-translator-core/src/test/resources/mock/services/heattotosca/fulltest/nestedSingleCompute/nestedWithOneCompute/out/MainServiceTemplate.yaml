@@ -208,8 +208,7 @@ topology_template:
           get_input: compute_image_name
         port_compute_port_network:
         - get_input: port_net_name
-        port_compute_port_network_role_tag:
-        - port
+        port_compute_port_network_role_tag: port
         compute_compute_metadata:
         - get_attribute:
           - abstract_pcm_server_0

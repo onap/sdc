@@ -185,8 +185,7 @@ topology_template:
           get_attribute:
           - network_policy_server
           - name
-        port_pd01_port_2_network_role_tag:
-        - oam
+        port_pd01_port_2_network_role_tag: oam
         port_pd01_port_3_ip_requirements:
         - ip_version: 4
           ip_count_required:
@@ -205,8 +204,7 @@ topology_template:
         port_pd01_port_2_mac_requirements:
           mac_count_required:
             is_required: false
-        port_pd01_port_3_network_role_tag:
-        - oam
+        port_pd01_port_3_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         port_pd01_port_2_ip_requirements:
@@ -256,8 +254,7 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:

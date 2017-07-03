@@ -31,11 +31,9 @@ node_types:
         entry_schema:
           type: json
       port_pd01_port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_pd_server_availability_zone:
         type: list
         required: true
@@ -59,39 +57,29 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd01_port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_image_name:
         type: string
         required: true
         status: SUPPORTED
       port_pd01_port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_1_network:
         type: list
         required: true
@@ -105,11 +93,9 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_1_ip_requirements:
         type: list
         required: true
@@ -125,11 +111,9 @@ node_types:
         constraints:
         - greater_or_equal: 0
       port_pd01_port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_0_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true

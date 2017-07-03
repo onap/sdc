@@ -1706,7 +1706,7 @@ public class UnifiedCompositionService {
           //todo - define list of type which will match the node property type (instead of string)
           addPropertyInputParameter(propertyType, substitutionServiceTemplate, propertyDefinition
                   .getEntry_schema(),
-              parameterId, unifiedCompositionEntity);
+              parameterId, unifiedCompositionEntity, context);
         }
       }
     }
@@ -1782,7 +1782,7 @@ public class UnifiedCompositionService {
 
       addPropertyInputParameter(propertyType, substitutionServiceTemplate, enrichNodeType
               .getProperties().get(enrichPropertyName).getEntry_schema(),
-          Optional.of(inputParamId), compositionEntity);
+          Optional.of(inputParamId), compositionEntity, context);
 
     }
   }
@@ -1814,8 +1814,16 @@ public class UnifiedCompositionService {
   private void addPropertyInputParameter(String propertyType,
                                          ServiceTemplate substitutionServiceTemplate,
                                          EntrySchema entrySchema, Optional<String> parameterId,
-                                         UnifiedCompositionEntity unifiedCompositionEntity) {
-    if (isPropertySimpleType(propertyType)) {
+                                         UnifiedCompositionEntity unifiedCompositionEntity,
+                                         TranslationContext context) {
+    if(parameterId.isPresent() &&
+        isParameterBelongsToEnrichedPortProperties(parameterId.get(), context)){
+      addInputParameter(parameterId.get(),
+          propertyType,
+          propertyType.equals(PropertyType.LIST.getDisplayName()) ? entrySchema : null ,
+          substitutionServiceTemplate);
+    }
+    else if (isPropertySimpleType(propertyType)) {
       parameterId
           .ifPresent(parameterIdValue -> addInputParameter(parameterIdValue,
               PropertyType.LIST.getDisplayName(),
@@ -1840,6 +1848,19 @@ public class UnifiedCompositionService {
                       null, null),
               substitutionServiceTemplate));
     }
+  }
+
+  private boolean isParameterBelongsToEnrichedPortProperties(String parameterId,
+                                                             TranslationContext context){
+    List enrichPortResourceProperties = context.getEnrichPortResourceProperties();
+
+    for(int i = 0; i < enrichPortResourceProperties.size(); i++){
+      if(parameterId.contains((CharSequence) enrichPortResourceProperties.get(i))){
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private boolean isPropertySimpleType(String propertyType) {

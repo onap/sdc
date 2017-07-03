@@ -91,7 +91,7 @@
 		
 		<init-param>
 			<param-name>swagger.api.title</param-name>
-			<param-value>jersey1InternalAPIs</param-value>
+			<param-value>Internal API's</param-value>
 		</init-param>
 		
 		<init-param>
@@ -114,7 +114,7 @@
 	</servlet>
 	
 	<servlet>
-		<servlet-name>ExternalAndDistribution-APIs-Configurations</servlet-name>
+		<servlet-name>External and Distribution API's</servlet-name>
 		<servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
 		
 		<init-param>
@@ -124,7 +124,7 @@
 	
 		<init-param>
 			<param-name>swagger.api.title</param-name>
-			<param-value>jersey2DistributionAndExternalAPIs</param-value>
+			<param-value>DistributionAndExternalAPIs</param-value>
 		</init-param>
     
     	<init-param>

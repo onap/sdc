@@ -67,7 +67,7 @@
     </div>
     <div class="add-map-item" data-ng-class="{'schema-data-type':isSchemaTypeDataType}">
         <div class="add-btn" data-tests-id="add-map-item"
-             data-ng-class="{'disabled': readOnly || !schemaProperty.type || mapKeys.indexOf('')>-1}" data-ng-click="addMapItemFields()">Add</div>
+             data-ng-class="{'disabled': readOnly || !schemaProperty.type || mapKeys.indexOf('')>-1 || !isMapKeysUnique}" data-ng-click="addMapItemFields()">Add</div>
     </div>
 </div>
 

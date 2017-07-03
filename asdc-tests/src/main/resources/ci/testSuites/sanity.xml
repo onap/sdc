@@ -152,7 +152,6 @@
 				</methods>
 			</class>
 		</classes>
-	</test>
 	<test name="Catalog">
 		<classes>
 			<class name="org.openecomp.sdc.ci.tests.execute.category.CatalogDataApiTest" />

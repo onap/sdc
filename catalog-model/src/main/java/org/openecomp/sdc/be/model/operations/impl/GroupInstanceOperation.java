@@ -878,7 +878,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
 	}
 
 	private String buildGroupInstanceLogicalName(String instanceName, String groupName) {
-		return instanceName + ".." + groupName;
+		return ValidationUtils.normalizeComponentInstanceName(instanceName) + ".." + groupName;
 	}
 
 	/**

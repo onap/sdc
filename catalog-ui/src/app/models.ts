@@ -28,6 +28,8 @@ export * from './models/properties-inputs/property-be-model';
 export * from './models/properties-inputs/property-fe-model';
 export * from './models/properties-inputs/property-fe-map';
 export * from './models/properties-inputs/derived-fe-property';
+export * from './models/properties-inputs/property-declare-api-model';
+export * from './models/properties-inputs/property-input-detail';
 export * from './models/properties-inputs/input-fe-model';
 export * from './models/properties-inputs/simple-flat-property';
 export * from './models/data-types-map';

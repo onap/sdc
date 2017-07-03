@@ -20,10 +20,8 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_FSB1_Internal_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     compute_FSB1_metadata:
       type: list
       required: true
@@ -35,10 +33,8 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
     port_FSB2_Internal_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_FSB2_Internal_ip_requirements:
       type: list
       required: true
@@ -48,33 +44,25 @@ topology_template:
       type: string
       required: true
     port_FSB2_Internal_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB1_Internal_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB1_Internal_vlan_requirements:
       type: list
       required: true
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
     port_FSB2_Internal_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_FSB1_Internal_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
     port_FSB1_Internal_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     compute_FSB1_availability_zone:
       type: list
       required: true
@@ -102,10 +90,8 @@ topology_template:
       type: org.openecomp.datatypes.Naming
       required: true
     port_FSB1_Internal_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_FSB2_Internal_network:
       type: list
       required: true
@@ -120,10 +106,8 @@ topology_template:
       entry_schema:
         type: string
     port_FSB2_Internal_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
   node_templates:
     FSB1_FSB1_Internal:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port

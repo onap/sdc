@@ -25,10 +25,8 @@ topology_template:
       entry_schema:
         type: string
     port_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     index_value:
       type: integer
       description: Index value of this substitution service template runtime instance
@@ -47,10 +45,8 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
     port_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     vm_flavor_name:
       type: string
       required: true
@@ -65,10 +61,8 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     vm_image_name:
       type: string
       required: true
@@ -86,10 +80,8 @@ topology_template:
       entry_schema:
         type: string
     port_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     compute_smp_scheduler_hints:
       type: list
       required: true

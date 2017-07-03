@@ -1350,7 +1350,7 @@ public abstract class BaseOperation {
 	}
 	
 	protected String buildGroupInstanceName(String instanceName, String groupName) {
-		return ValidationUtils.normaliseComponentName(instanceName) + ".." + groupName;
+		return ValidationUtils.normalizeComponentInstanceName(instanceName) + ".." + groupName;
 	}
 	
 	protected String generateCustomizationUUID() {

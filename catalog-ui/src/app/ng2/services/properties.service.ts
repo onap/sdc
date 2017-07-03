@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DataTypeModel, PropertyFEModel, PropertyBEModel, SchemaProperty, DerivedFEProperty, DerivedFEPropertyMap, DerivedPropertyType, InputFEModel} from "app/models";
+import { DataTypeModel, PropertyFEModel, PropertyBEModel, SchemaProperty, PropertyDeclareAPIModel, DerivedFEProperty, DerivedFEPropertyMap, DerivedPropertyType, InputFEModel} from "app/models";
 import { DataTypeService } from "./data-type.service";
 import { PROPERTY_TYPES } from "app/utils";
 import { ContentAfterLastDotPipe } from "../pipes/contentAfterLastDot.pipe";
@@ -48,14 +48,14 @@ export class PropertiesService {
     }
 
     public getCheckedProperties = (properties: Array<PropertyFEModel>): Array<PropertyBEModel> => {
-        let selectedProps: Array<PropertyBEModel> = [];
+        let selectedProps: Array<PropertyDeclareAPIModel> = [];
         properties.forEach(prop => {
             if (prop.isSelected && !prop.isDeclared && !prop.isDisabled) {
-                selectedProps.push(new PropertyBEModel(prop));
+                selectedProps.push(new PropertyDeclareAPIModel(prop));
             } else if (prop.flattenedChildren) {
                 prop.flattenedChildren.forEach((child) => {
                     if (child.isSelected && !child.isDeclared && !child.isDisabled) {
-                        let childProp = new PropertyBEModel(prop, child); //create it from the parent
+                        let childProp = new PropertyDeclareAPIModel(prop, child); //create it from the parent
                         selectedProps.push(childProp);
                     }
                 })

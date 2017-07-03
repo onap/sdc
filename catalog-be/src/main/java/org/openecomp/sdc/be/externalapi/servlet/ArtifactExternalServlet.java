@@ -58,6 +58,8 @@ import org.slf4j.LoggerFactory;
 
 import com.jcabi.aspects.Loggable;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -87,18 +89,50 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	/**
 	 * Uploads an artifact to resource or service
 	 * 
+	 * @param contenType
+	 * @param checksum
+	 * @param userId
+	 * @param requestId
+	 * @param instanceIdHeader
+	 * @param accept
+	 * @param authorization
 	 * @param assetType
 	 * @param uuid
+	 * @param data
 	 * @return
 	 */
 	@POST
 	@Path("/{assetType}/{uuid}/artifacts")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "uploads of artifact to a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact uploaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response uploadArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @ApiParam(value = "json describe the artifact", required = true) String data,
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	@ApiOperation(value = "uploads of artifact to a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Artifact name given in input already exists in the context of the asset - SVC4125"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+	public Response uploadArtifact(
+			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid, 
+			String data) {
+		
 		init(log);
 		
 		Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
@@ -162,12 +196,35 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@POST
 	@Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "uploads an artifact to a resource instance", httpMethod = "POST", notes = "uploads an artifact to a resource instance", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact uploaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response uploadArtifactToInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@ApiParam(value = "json describe the artifact", required = true) String data, 
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	@ApiOperation(value = "uploads an artifact to a resource instance", httpMethod = "POST", notes = "uploads an artifact to a resource instance")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Artifact name given in input already exists in the context of the asset - SVC4125"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 400, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 400, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+	public Response uploadArtifactToInstance(
+			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid, 
+			@ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName,
+			String data) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -223,22 +280,51 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	}
 
 	/**
-	 * updates an artifact on a resource or service
 	 * 
+	 * @param contenType
+	 * @param checksum
+	 * @param userId
+	 * @param requestId
+	 * @param instanceIdHeader
+	 * @param accept
+	 * @param authorization
 	 * @param assetType
 	 * @param uuid
 	 * @param artifactUUID
+	 * @param data
 	 * @return
 	 */
 	@POST
 	@Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "updates an artifact on a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Updated"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response updateArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
-			@ApiParam(value = "json describe the artifact", required = true) String data, 
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	@ApiOperation(value = "updates an artifact on a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact updated", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+	public Response updateArtifact(
+			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
+			String data) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -305,12 +391,35 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@POST
 	@Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "updates an artifact on a resource instance", httpMethod = "POST", notes = "uploads of artifact to a resource or service", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Updated"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response updateArtifactOnResourceInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@PathParam("artifactUUID") final String artifactUUID, @ApiParam(value = "json describe the artifact", required = true) String data,
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	@ApiOperation(value = "updates an artifact on a resource instance", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact updated", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.model.ArtifactDefinition", paramType = "body", value = "json describe the artifact")})
+	public Response updateArtifactOnResourceInstance(
+			@ApiParam(value = "Determines the format of the body of the request", required = true)@HeaderParam(value = Constants.CONTENT_TYPE_HEADER) String contenType,
+			@ApiParam(value = "The value for this header must be the MD5 checksum over the whole json body", required = true)@HeaderParam(value = Constants.MD5_HEADER) String checksum,
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType,
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
+			@ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName,
+			String data) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -378,10 +487,31 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "deletes an artifact of a resource or service", httpMethod = "DELETE", notes = "deletes an artifact of a resource or service", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Deleted"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response deleteArtifact(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	/*@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Deleted"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
+			@ApiResponse(code = 404, message = "Asset not found") })*/
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact deleted", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	public Response deleteArtifact(
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -448,11 +578,30 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@Path("{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "deletes an artifact of a resource insatnce", httpMethod = "DELETE", notes = "deletes an artifact of a resource insatnce", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact Deleted"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Asset not found") })
-	public Response deleteArtifactOnResourceInstance(@PathParam("assetType") final String assetType, @PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName,
-			@PathParam("artifactUUID") final String artifactUUID, 
-			@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact deleted", response = ArtifactDefinition.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 400, message = "Invalid artifactType was defined as input - SVC4122"),
+			@ApiResponse(code = 400, message = "Artifact type (mandatory field) is missing in request - SVC4124"),
+			@ApiResponse(code = 400, message = "Invalid MD5 header - SVC4127"),
+			@ApiResponse(code = 400, message = "Artifact name is missing in input - SVC4128"),
+			@ApiResponse(code = 403, message = "Asset is being edited by different user. Only one user can checkout and edit an asset on given time. The asset will be available for checkout after the other user will checkin the asset - SVC4086"),
+			@ApiResponse(code = 409, message = "Restricted Operation – the user provided does not have role of Designer or the asset is being used by another designer - SVC4301")})
+	public Response deleteArtifactOnResourceInstance(
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
+			@ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -519,13 +668,25 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@GET
 	@Path("/{assetType}/{uuid}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@ApiOperation(value = "Download component artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact downloaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Artifact not found") })
+	@ApiOperation(value = "Download component artifact", httpMethod = "GET", notes = "Returns downloaded artifact")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact downloaded", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 404, message = "Artifact was not found - SVC4505")})
 	public Response downloadComponentArtifact(
-			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("assetType") final String assetType,
-			@PathParam("uuid") final String uuid, @PathParam("artifactUUID") final String artifactUUID,
-			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;
@@ -587,12 +748,25 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@Path("/{assetType}/{uuid}/resourceInstances/{resourceInstanceName}/artifacts/{artifactUUID}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Artifact downloaded"), @ApiResponse(code = 401, message = "Authorization required"), @ApiResponse(code = 403, message = "Restricted operation"),
-			@ApiResponse(code = 404, message = "Artifact not found") })
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Artifact downloaded", response = String.class),
+			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
+			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
+			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
+			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used (PUT,DELETE,POST will be rejected) - POL4050"),
+			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"),
+			@ApiResponse(code = 404, message = "Artifact was not found - SVC4505")})
 	public Response downloadResourceInstanceArtifact(
-			@ApiParam(value = "valid values: resources / services", allowableValues = ComponentTypeEnum.RESOURCE_PARAM_NAME + "," + ComponentTypeEnum.SERVICE_PARAM_NAME) @PathParam("assetType") final String assetType,
-			@PathParam("uuid") final String uuid, @PathParam("resourceInstanceName") final String resourceInstanceName, @PathParam("artifactUUID") final String artifactUUID,
-			@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader) {
+			@ApiParam(value = "The user ID of the DCAE Designer. This user must also have Designer role in SDC", required = true)@HeaderParam(value = Constants.USER_ID_HEADER) final String userId,			
+			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
+			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) final String instanceIdHeader,
+			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
+			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization,
+			@ApiParam(value = "The requested asset type", required = true, allowableValues = "resources, services")@PathParam("assetType") final String assetType, 
+			@ApiParam(value = "The uuid of the asset as published in the metadata", required = true)@PathParam("uuid") final String uuid,
+			@ApiParam(value = "The uuid of the artifact as published in the asset detailed metadata or in the response of the upload / update operation", required = true)@PathParam("artifactUUID") final String artifactUUID,
+			@ApiParam(value = "The component instance name (as publishedin the response of the detailed query)", required = true)@PathParam("resourceInstanceName") final String resourceInstanceName) {
 
 		Wrapper<Response> responseWrapper = new Wrapper<>();
 		ResponseFormat responseFormat = null;

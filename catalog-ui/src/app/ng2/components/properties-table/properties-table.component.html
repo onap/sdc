@@ -7,14 +7,14 @@
         <div class="table-cell valueCol">Value</div>
     </div>
     <div class="table-body">
-        <div class="no-data" *ngIf="!feInstancesNames || !feInstancesNames.length">No data to display</div>
+        <div class="no-data" *ngIf="!fePropertiesMap || !(fePropertiesMap | keys).length">No data to display</div>
 
-        <ng-container *ngFor="let instanceName of feInstancesNames; trackBy:instanceName">
-            <div class="table-rows-header white-sub-header">{{instanceName | contentAfterLastDot}}</div>
+        <ng-container *ngFor="let instanceId of fePropertiesMap | keys; trackBy:instanceId">
+            <div class="table-rows-header white-sub-header">{{feInstanceNamesMap[instanceId]}}</div>
 
             <div class="table-row"
-                *ngFor="let property of fePropertiesMap[instanceName] | searchFilter:'name':searchTerm; trackBy:property?.name"
-                (click)="onClickPropertyRow(property, instanceName, $event)"
+                *ngFor="let property of fePropertiesMap[instanceId] | searchFilter:'name':searchTerm; trackBy:property?.name"
+                (click)="onClickPropertyRow(property, instanceId, $event)"
                 [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.name }">
 
                 <div class="table-cell col1" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared">
@@ -49,7 +49,7 @@
                         [readonly]="readonly"
                         (valueChanged)="propValueChanged(property);"
                         (expandChild)="property.updateExpandedChildPropertyId($event)"
-                        (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceName)"
+                        (clickOnPropertyRow)="onClickPropertyInnerRow($event, instanceId)"
                         (checkProperty)="propertyChecked(property, $event)"
                         >
                     </dynamic-property>

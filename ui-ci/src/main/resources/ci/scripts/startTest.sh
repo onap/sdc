@@ -89,7 +89,7 @@ TARGET_LOG_DIR="${TARGET_DIR}/"
 BE_IP=`cat conf/attsdc.yaml | grep catalogBeHost| awk '{print $2}'`
 
 ADD_USERS_SCRIPT="addUsersFromList_new.sh"
-USER_LIST="/conf/userList.txt"
+USER_LIST="conf/userList.txt"
 chmod +x ${ADD_USERS_SCRIPT}
 echo "add users..."
 `./${ADD_USERS_SCRIPT} -ip ${BE_IP} -f ${USER_LIST}`

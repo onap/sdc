@@ -1632,6 +1632,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
 			ComponentInstance resResourceInfo = resultOp.left().value();
 			newComponentInstance.setName(resResourceInfo.getName());
+			newComponentInstance.setInvariantName(resResourceInfo.getInvariantName());
 			newComponentInstance.setPosX(resResourceInfo.getPosX());
 			newComponentInstance.setPosY(resResourceInfo.getPosY());
 			newComponentInstance.setDescription(resResourceInfo.getDescription());

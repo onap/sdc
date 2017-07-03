@@ -198,8 +198,7 @@ topology_template:
             is_required: false
         port_pd01_port_network:
         - get_input: oam_net_name
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         compute_pd_server_user_data_format:
         - RAW
         service_template_filter:
@@ -280,8 +279,7 @@ topology_template:
         - get_input:
           - oam_server_names
           - 0
-        port_pd01_port_network_role_tag:
-        - oam
+        port_pd01_port_network_role_tag: oam
         service_template_filter:
           substitute_service_template: Nested_oam_serverServiceTemplate.yaml
           count: 1

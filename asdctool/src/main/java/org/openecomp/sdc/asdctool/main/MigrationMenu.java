@@ -246,29 +246,29 @@ public class MigrationMenu {
 			
 				break;
 			case MIGRATION_1702_1707://this migration is currently not needed, but will be commented out for production env
-//				log.info("Start ASDC migration from 1702 to 1707");
-//				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migration1707.migrate();
-//				if (isSuccessful) {
-//					log.info("SDC migration from 1702 to 1707 was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("SDC migration from 1702 to 1707 has failed");
-//					System.exit(2);
-//				}
+				log.info("Start ASDC migration from 1702 to 1707");
+				Migration1707 migration1707 = (Migration1707) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migration1707.migrate();
+				if (isSuccessful) {
+					log.info("SDC migration from 1702 to 1707 was finished successfully");
+					System.exit(0);
+				} else{
+					log.info("SDC migration from 1702 to 1707 has failed");
+					System.exit(2);
+				}
 				System.exit(0);
 				break;
 			case VFMODULES_PROPERTIES_ADDING://this migration is currently not needed, but will be commented out for production env
-//				log.info("Start adding new properties to vfModules");
-//				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
-//				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
-//				if (isSuccessful) {
-//					log.info("Adding new properties to vfModules was finished successfully");
-//					System.exit(0);
-//				} else{
-//					log.info("Adding new properties to vfModules has failed");
-//					System.exit(2);
-//				}
+				log.info("Start adding new properties to vfModules");
+				VfModulesPropertiesAdding migrationVfModulesProperties = (VfModulesPropertiesAdding) context.getBean(operationEnum.getBeanName());
+				isSuccessful = migrationVfModulesProperties.migrate(args[1]);
+				if (isSuccessful) {
+					log.info("Adding new properties to vfModules was finished successfully");
+					System.exit(0);
+				} else{
+					log.info("Adding new properties to vfModules has failed");
+					System.exit(2);
+				}
 				System.exit(0);
 				break;
 			case MIGRATION_1707_UUID_FIX:

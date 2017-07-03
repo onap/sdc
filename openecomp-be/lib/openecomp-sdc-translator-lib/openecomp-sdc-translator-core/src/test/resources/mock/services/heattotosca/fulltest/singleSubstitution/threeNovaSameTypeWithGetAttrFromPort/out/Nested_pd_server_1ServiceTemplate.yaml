@@ -46,25 +46,17 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_pd01_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_pd01_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pd01_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pd01_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pd01_port_vlan_requirements:
       type: list
       required: true

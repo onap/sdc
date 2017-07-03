@@ -1,4 +1,7 @@
 import {GraphColors} from "app/utils/constants";
+import constant = require("lodash/constant");
+import {ImagesUrl} from "app/utils/constants";
+import {AngularJSBridge} from "app/services/angular-js-bridge-service";
 /**
  * Created by obarda on 12/18/2016.
  */
@@ -215,7 +218,7 @@ export class ComponentInstanceNodesStyle {
             type: "default",
             single: false,
             nodeTypeNames: ["basic-node"],
-            imageUrl: '/assets/styles/images/resource-icons/' + 'canvasPlusIcon.png',
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
             lineWidth: 2,
             lineStyle: 'dashed'
 
@@ -232,7 +235,7 @@ export class ComponentInstanceNodesStyle {
             type: "default",
             single: false,
             nodeTypeNames: ["basic-small-node"],
-            imageUrl: '/assets/styles/images/resource-icons/' + 'canvasPlusIcon.png',
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
             lineWidth: 2,
             lineStyle: 'dashed'
         }
@@ -248,7 +251,7 @@ export class ComponentInstanceNodesStyle {
             type: "default",
             single: false,
             nodeTypeNames: ["ucpe-cp-node"],
-            imageUrl: '/assets/styles/images/resource-icons/' + 'canvasPlusIcon.png',
+            imageUrl: AngularJSBridge.getAngularConfig().imagesPath + ImagesUrl.CANVAS_PLUS_ICON,
             lineWidth: 2,
             lineStyle: 'dashed'
         }

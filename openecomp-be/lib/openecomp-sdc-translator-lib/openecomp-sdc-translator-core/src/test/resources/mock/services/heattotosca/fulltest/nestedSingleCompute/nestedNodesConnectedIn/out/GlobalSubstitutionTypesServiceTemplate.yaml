@@ -9,11 +9,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_pcm_port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       p1:
         type: string
         description: UID of OAM network
@@ -25,11 +23,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
@@ -47,29 +43,21 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pcm_port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       pcm_server_name:
         type: string
         description: PCRF CM server name
@@ -94,11 +82,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_0_ip_requirements:
         type: list
         required: true
@@ -166,11 +152,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
     attributes:
       server_pcm_id:
         type: string
@@ -599,45 +583,35 @@ node_types:
         required: true
         status: SUPPORTED
       port_oam_port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
         required: true
         status: SUPPORTED
       port_oam_port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_oam_port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       oam_server_name:
         type: string
         description: oam server name
         required: true
         status: SUPPORTED
       port_oam_port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_oam_port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_oam_port_1_ip_requirements:
         type: list
         required: true
@@ -649,17 +623,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_oam_port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_oam_port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_oam_port_1_vlan_requirements:
         type: list
         required: true
@@ -706,11 +676,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_oam_port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_oam_port_0_vlan_requirements:
         type: list
         required: true

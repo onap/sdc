@@ -121,14 +121,12 @@ topology_template:
           get_input: pd_flavor_name
         vm_image_name:
           get_input: pd_image_name
-        port_pd01_port_1_network_role_tag:
-        - oam
+        port_pd01_port_1_network_role_tag: oam
         port_pd01_port_1_network:
         - get_input: oam_net_name
         compute_pd_server_user_data_format:
         - RAW
-        port_pd01_port_0_network_role_tag:
-        - oam
+        port_pd01_port_0_network_role_tag: oam
         port_pd01_port_1_ip_requirements:
         - ip_version: 4
           ip_count_required:

@@ -13,6 +13,7 @@ import {ConfirmationDeleteInputComponent} from "./confirmation-delete-input/conf
 export class InputsTableComponent {
 
     @Input() inputs: Array<InputFEModel>;
+    @Input() instanceNamesMap: Map<string, string>;
     @Input() readonly:boolean;
     @Input() isLoading:boolean;
     @Output() inputValueChanged: EventEmitter<any> = new EventEmitter<any>();

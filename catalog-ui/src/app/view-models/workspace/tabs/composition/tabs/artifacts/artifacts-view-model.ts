@@ -221,7 +221,7 @@ export class ResourceArtifactsViewModel {
             if (artifact.artifactGroupType === ArtifactGroupType.INFORMATION) {//fix DE256847
                 return this.$scope.currentComponent.artifacts && (!this.$scope.currentComponent.artifacts[artifact.artifactLabel] || !this.$scope.currentComponent.artifacts[artifact.artifactLabel].artifactName);
             }
-            return this.$scope.currentComponent.deploymentArtifacts && (!this.$scope.currentComponent.deploymentArtifacts[artifact.artifactLabel]);//fix DE251314
+            return this.$scope.currentComponent.selectedInstance && this.$scope.currentComponent.selectedInstance.deploymentArtifacts && this.$scope.currentComponent.selectedInstance.deploymentArtifacts[artifact.artifactLabel];
         };
 
         this.$scope.addOrUpdate = (artifact:ArtifactModel):void => {

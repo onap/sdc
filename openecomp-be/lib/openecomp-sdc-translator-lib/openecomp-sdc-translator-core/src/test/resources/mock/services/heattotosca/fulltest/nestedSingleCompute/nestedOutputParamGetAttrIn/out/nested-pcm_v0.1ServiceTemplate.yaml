@@ -12,10 +12,8 @@ node_types:
 topology_template:
   inputs:
     port_pcm_port_0_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     metadata:
       label: metadata
       hidden: false
@@ -23,10 +21,8 @@ topology_template:
       type: string
       description: metadata
     port_pcm_port_1_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
@@ -45,25 +41,17 @@ topology_template:
       type: string
       description: PCRF CM image name
     port_pcm_port_0_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_pcm_port_0_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_1_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_0_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     pcm_server_name:
       label: PCRF CM server name
       hidden: false
@@ -89,10 +77,8 @@ topology_template:
       type: string
       description: OAM network name
     port_pcm_port_1_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_0_ip_requirements:
       type: list
       required: true
@@ -169,10 +155,8 @@ topology_template:
       type: string
       description: CPS network mask
     port_pcm_port_1_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
   node_templates:
     pcm_port_1:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port

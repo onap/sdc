@@ -37,11 +37,9 @@ node_types:
         entry_schema:
           type: json
       port_pd02_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -63,11 +61,9 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd02_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd01_port_vlan_requirements:
         type: list
         required: true
@@ -97,17 +93,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_pd02_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd02_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd02_port_vlan_requirements:
         type: list
         required: true
@@ -127,27 +119,21 @@ node_types:
         entry_schema:
           type: string
       port_pd01_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pd01_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd02_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
       port_pd01_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd02_port_ip_requirements:
         type: list
         required: true
@@ -155,11 +141,9 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_pd01_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pd02_port_network:
         type: list
         required: true

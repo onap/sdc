@@ -9,17 +9,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_pcm_port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
@@ -37,29 +33,21 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pcm_port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       pcm_server_name:
         type: string
         description: PCRF CM server name
@@ -84,11 +72,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_0_ip_requirements:
         type: list
         required: true
@@ -156,11 +142,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
     attributes:
       server_pcm_id:
         type: string
@@ -590,11 +574,9 @@ node_types:
         entry_schema:
           type: string
       port_compute_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       index_value:
         type: integer
         description: Index value of this substitution service template runtime instance
@@ -620,11 +602,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_compute_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_image_name:
         type: string
         required: true
@@ -636,11 +616,9 @@ node_types:
         entry_schema:
           type: string
       port_compute_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_compute_metadata:
         type: list
         required: true
@@ -648,11 +626,9 @@ node_types:
         entry_schema:
           type: json
       port_compute_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_compute_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true

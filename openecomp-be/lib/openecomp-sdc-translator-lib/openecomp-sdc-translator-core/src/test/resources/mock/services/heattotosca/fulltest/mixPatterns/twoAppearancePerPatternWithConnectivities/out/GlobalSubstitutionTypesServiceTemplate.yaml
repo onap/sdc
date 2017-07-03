@@ -993,23 +993,17 @@ node_types:
         entry_schema:
           type: string
       port_1c1_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c1_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c1_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_1c12_scalling_instance_availability_zone:
         type: list
         required: true
@@ -1023,11 +1017,9 @@ node_types:
         entry_schema:
           type: string
       port_1c1_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
     attributes:
       1c12_scalling_instance_1c1_t1_port_tenant_id:
         type: list
@@ -1451,23 +1443,17 @@ node_types:
         entry_schema:
           type: json
       port_1c1_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c1_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c1_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c1_t1_port_network:
         type: list
         required: true
@@ -1475,11 +1461,9 @@ node_types:
         entry_schema:
           type: string
       port_1c1_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
     attributes:
       1c11_scalling_instance_instance_name:
         type: list
@@ -1831,17 +1815,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_pcm_port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       availabilityzone_name:
         type: string
         description: availabilityzone name
@@ -1859,29 +1839,21 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pcm_port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       pcm_server_name:
         type: string
         description: PCRF CM server name
@@ -1906,11 +1878,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       server_group:
         type: string
         required: true
@@ -1986,11 +1956,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
     attributes:
       server_pcm_id:
         type: string
@@ -2438,17 +2406,13 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1a_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_a_single_2a_scheduler_hints:
         type: list
         required: true
@@ -2456,11 +2420,9 @@ node_types:
         entry_schema:
           type: json
       port_1a_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_a_single_2a_availability_zone:
         type: list
         required: true
@@ -2482,11 +2444,9 @@ node_types:
         entry_schema:
           type: string
       port_1a_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_a_single_2a_name:
         type: list
         required: true
@@ -2855,11 +2815,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c2_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_1c2_catalog_instance_availability_zone:
         type: list
         required: true
@@ -2867,27 +2825,21 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_vlan_requirements:
         type: list
         required: true
@@ -2903,17 +2855,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1c2_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_ip_requirements:
         type: list
         required: true
@@ -2925,11 +2873,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network:
         type: list
         required: true
@@ -2977,11 +2923,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -3430,21 +3374,17 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_1a_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
       port_1a_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1a_t2_port_network:
         type: list
         required: true
@@ -3462,11 +3402,9 @@ node_types:
         entry_schema:
           type: string
       port_1a_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_image_name:
         type: string
         required: true
@@ -3508,23 +3446,17 @@ node_types:
         constraints:
         - greater_or_equal: 0
       port_1a_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1a_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1a_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1a_t2_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -3536,17 +3468,13 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.VlanRequirements
       port_1a_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1a_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_a_single_1a_user_data_format:
         type: list
         required: true
@@ -3992,11 +3920,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c2_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_1c2_catalog_instance_availability_zone:
         type: list
         required: true
@@ -4004,27 +3930,21 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_vlan_requirements:
         type: list
         required: true
@@ -4040,17 +3960,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1c2_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_ip_requirements:
         type: list
         required: true
@@ -4062,11 +3978,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network:
         type: list
         required: true
@@ -4114,11 +4028,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -4560,17 +4472,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1b_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -4590,17 +4498,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_b_single_1b_user_data_format:
         type: list
         required: true
@@ -4612,17 +4516,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -4660,11 +4560,9 @@ node_types:
         entry_schema:
           type: org.openecomp.datatypes.network.IpRequirements
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_b_single_1b_metadata:
         type: list
         required: true
@@ -4672,11 +4570,9 @@ node_types:
         entry_schema:
           type: json
       port_1b_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -5128,11 +5024,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c2_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_1c2_catalog_instance_availability_zone:
         type: list
         required: true
@@ -5140,27 +5034,21 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_vlan_requirements:
         type: list
         required: true
@@ -5176,17 +5064,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1c2_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_ip_requirements:
         type: list
         required: true
@@ -5198,11 +5082,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network:
         type: list
         required: true
@@ -5256,11 +5138,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -5702,11 +5582,9 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1c2_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_1c2_catalog_instance_availability_zone:
         type: list
         required: true
@@ -5714,27 +5592,21 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       vm_flavor_name:
         type: string
         required: true
         status: SUPPORTED
       port_1c2_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_vlan_requirements:
         type: list
         required: true
@@ -5750,17 +5622,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1c2_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_ip_requirements:
         type: list
         required: true
@@ -5772,11 +5640,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_1c2_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t2_port_network:
         type: list
         required: true
@@ -5824,11 +5690,9 @@ node_types:
         entry_schema:
           type: string
       port_1c2_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1c2_t1_port_ip_requirements:
         type: list
         required: true
@@ -6265,17 +6129,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1b_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -6307,33 +6167,25 @@ node_types:
         entry_schema:
           type: json
       port_1b_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t2_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_b_single_2b_availability_zone:
         type: list
         required: true
@@ -6377,17 +6229,13 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -6828,17 +6676,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1b_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -6858,17 +6702,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       compute_b_single_1b_user_data_format:
         type: list
         required: true
@@ -6880,17 +6720,13 @@ node_types:
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -6934,17 +6770,13 @@ node_types:
         entry_schema:
           type: json
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -7402,17 +7234,13 @@ node_types:
     derived_from: org.openecomp.resource.abstract.nodes.VFC
     properties:
       port_1b_t1_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t1_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
@@ -7438,33 +7266,25 @@ node_types:
         entry_schema:
           type: json
       port_1b_t2_port_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_1b_t2_port_exCP_naming:
         type: org.openecomp.datatypes.Naming
         required: true
         status: SUPPORTED
       port_1b_t2_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t2_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       compute_b_single_2b_availability_zone:
         type: list
         required: true
@@ -7514,17 +7334,13 @@ node_types:
         entry_schema:
           type: string
       port_1b_t1_port_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_1b_t1_port_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true

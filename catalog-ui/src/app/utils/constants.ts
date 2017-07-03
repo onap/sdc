@@ -24,6 +24,7 @@ export class ResourceType {
     static CP = 'CP';
     static VFC = 'VFC';
     static VFCMT = 'VFCMT';
+    static PNF = 'PNF';
 }
 
 export class ComponentState {
@@ -79,6 +80,10 @@ export class PROPERTY_TYPES {
     public static JSON = 'json';
     public static MAP = 'map';
     public static LIST = 'list';
+    public static SCALAR = 'scalar-unit';
+    public static SCALAR_FREQUENCY = 'scalar-unit.frequency';
+    public static SCALAR_SIZE = 'scalar-unit.size';
+    public static SCALAR_TIME = 'scalar-unit.time';
 }
 
 export class SOURCES {
@@ -88,8 +93,8 @@ export class SOURCES {
 }
 
 export class PROPERTY_DATA {
-    public static TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP];
-    public static SIMPLE_TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON];
+    public static TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.SCALAR, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME, PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP];
+    public static SIMPLE_TYPES = [PROPERTY_TYPES.STRING, PROPERTY_TYPES.INTEGER, PROPERTY_TYPES.FLOAT, PROPERTY_TYPES.BOOLEAN, PROPERTY_TYPES.JSON, PROPERTY_TYPES.SCALAR, PROPERTY_TYPES.SCALAR_FREQUENCY, PROPERTY_TYPES.SCALAR_SIZE, PROPERTY_TYPES.SCALAR_TIME];
     public static ROOT_DATA_TYPE = "tosca.datatypes.Root";
     public static OPENECOMP_ROOT = "org.openecomp.datatypes.Root";
     public static SUPPLEMENTAL_DATA = "supplemental_data";
@@ -210,6 +215,7 @@ export class States {
 
 export class EVENTS {
     static RESOURCE_LEFT_PALETTE_UPDATE_EVENT = "resourceLeftPanelUpdateEvent";
+    static RESOURCE_PNF_LEFT_PALETTE_UPDATE_EVENT = "resourcePNFLeftPanelUpdateEvent";
     static SERVICE_LEFT_PALETTE_UPDATE_EVENT = "serviceLeftPanelUpdateEvent";
     static PRODUCT_LEFT_PALETTE_UPDATE_EVENT = "productLeftPanelUdateEvent";
     static VL_LEFT_PALETTE_UPDATE_EVENT = "vlLeftPanelUdateEvent";

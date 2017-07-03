@@ -109,19 +109,15 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
 			asJsonArray.forEach(e -> {
 				Object convertedValue = null;
 				if (isScalarF) {
-					String jsonAsString = e.toString();
-					log.debug("try to convert scalar value {}", jsonAsString);
-					if ( jsonAsString == null) {
-						convertedValue = null;
+					if (e.isJsonPrimitive()) {
+						String jsonAsString = e.getAsString();
+						log.debug("try to convert scalar value {}", jsonAsString);
+						convertedValue = innerConverterFinal.convertToToscaValue(jsonAsString, innerType,
+								dataTypes);
 					} else {
-						JsonElement singleElement = jsonParser.parse(jsonAsString);
-						if (singleElement.isJsonPrimitive()) {
-							convertedValue = innerConverterFinal.convertToToscaValue(jsonAsString, innerType,
-									dataTypes);
-						} else {
-							convertedValue = handleComplexJsonValue(singleElement);
-						}
+						convertedValue = handleComplexJsonValue(e);
 					}
+
 				} else {
 					JsonObject asJsonObject = e.getAsJsonObject();
 					Set<Entry<String, JsonElement>> entrySet = asJsonObject.entrySet();

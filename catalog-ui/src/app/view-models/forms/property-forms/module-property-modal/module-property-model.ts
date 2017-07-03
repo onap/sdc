@@ -173,7 +173,7 @@ export class ModulePropertyView extends PropertyFormBaseView {
                         if (isNaN(minPropertyValue) || minPropertyValue == null) {
                             isValid = propertyValue >= initialCountPropertyValue;
                         } else {
-                            isValid = !propertyValue || (propertyValue >= minPropertyValue && propertyValue >= initialCountPropertyValue);
+                            isValid = isNaN(propertyValue) || (propertyValue >= minPropertyValue && propertyValue >= initialCountPropertyValue);
                         }
                         this.$scope.forms.editForm["value"].$setValidity('minValidation', isValid);
                         if (this.component.isService()) {

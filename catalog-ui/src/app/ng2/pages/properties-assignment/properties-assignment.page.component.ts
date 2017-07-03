@@ -22,7 +22,8 @@ import {EventListenerService} from "app/services/event-listener-service"
 export class PropertiesAssignmentComponent {
     title = "Properties & Inputs";
 
-    component:ComponentData;
+    component: ComponentData;
+    componentInstanceNamesMap: Map<string, string> = new Map<string, string>();//instanceUniqueId, name
 
     propertiesNavigationData = [];
     instancesNavigationData = [];
@@ -80,7 +81,7 @@ export class PropertiesAssignmentComponent {
             .getComponentInputs(this.component)
             .subscribe(response => {
                 _.forEach(response.inputs, (input: InputBEModel) => {
-                    this.inputs.push(new InputFEModel(input));
+                    this.inputs.push(new InputFEModel(input)); //only push items that were declared via SDC
                 });
                 this.loadingInputs = false;
 
@@ -92,6 +93,7 @@ export class PropertiesAssignmentComponent {
 
                 _.forEach(this.instances, (instance) => {
                     this.instancesNavigationData.push(instance);
+                    this.componentInstanceNamesMap[instance.uniqueId] = instance.name;
                 });
                 this.loadingInstances = false;
                 if (this.instancesNavigationData[0] == undefined) {
@@ -129,12 +131,12 @@ export class PropertiesAssignmentComponent {
         this.selectedInstanceType = resourceInstance.originType;
 
         this.loadingProperties = true;
-        if(resourceInstance.originType === ResourceType.VF) {
+        if(this.isInput(resourceInstance.originType)) {
             this.componentInstanceServiceNg2
                 .getComponentInstanceInputs(this.component, resourceInstance)
                 .subscribe(response => {
                     instanceBePropertiesMap[resourceInstance.uniqueId] = response;
-                    this.processInstancePropertiesResponse(instanceBePropertiesMap);
+                    this.processInstancePropertiesResponse(instanceBePropertiesMap, true);
                     this.loadingProperties = false;
 
                 });
@@ -143,7 +145,7 @@ export class PropertiesAssignmentComponent {
                 .getComponentInstanceProperties(this.component, resourceInstance.uniqueId)
                 .subscribe(response => {
                     instanceBePropertiesMap[resourceInstance.uniqueId] = response;
-                    this.processInstancePropertiesResponse(instanceBePropertiesMap);
+                    this.processInstancePropertiesResponse(instanceBePropertiesMap, false);
                     this.loadingProperties = false;
                 });
         }
@@ -159,8 +161,8 @@ export class PropertiesAssignmentComponent {
     /**
      * Entry point handling response from server
      */
-    processInstancePropertiesResponse = (instanceBePropertiesMap:InstanceBePropertiesMap) => {
-        this.instanceFePropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(instanceBePropertiesMap, this.inputs); //create flattened children, disable declared props, and init values
+    processInstancePropertiesResponse = (instanceBePropertiesMap: InstanceBePropertiesMap, originTypeIsVF: boolean) => {
+        this.instanceFePropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(instanceBePropertiesMap, originTypeIsVF, this.inputs); //create flattened children, disable declared props, and init values
         this.checkedPropertiesCount = 0;
     };
 
@@ -171,7 +173,7 @@ export class PropertiesAssignmentComponent {
         // Copying the actual value from the object ref into the value if it's from a complex type
         event.value = event.getJSONValue();
 
-        if (this.selectedInstanceData.originType === ResourceType.VF) {
+        if (this.isInput(this.selectedInstanceData.originType)) {
             console.log("I want to update input value on the resource instance");
             let inputToUpdate = new PropertyBEModel(event);
             this.componentInstanceServiceNg2
@@ -279,7 +281,7 @@ export class PropertiesAssignmentComponent {
         });
 
         let inputsToCreate: InstancePropertiesAPIMap;
-        if (this.selectedInstanceType !== ResourceType.VF) {
+        if (!this.isInput(this.selectedInstanceType)) {
             inputsToCreate = new InstancePropertiesAPIMap(null, selectedProperties);
         } else {
             inputsToCreate = new InstancePropertiesAPIMap(selectedProperties, null);
@@ -301,12 +303,12 @@ export class PropertiesAssignmentComponent {
     updatePropertyValueAfterDeclare = (input: InputFEModel) => {
         if (this.instanceFePropertiesMap[input.instanceUniqueId]) {
             let propertyForUpdatindVal = _.find(this.instanceFePropertiesMap[input.instanceUniqueId], (feProperty: PropertyFEModel) => {
-                return feProperty.name == input.relatedProperty.name;
+                return feProperty.name == input.relatedPropertyName;
             });
-
-            propertyForUpdatindVal.setAsDeclared(input.relatedProperty.nestedPath); //set prop as declared before assigning value
-            this.propertiesService.disableRelatedProperties(propertyForUpdatindVal, input.relatedProperty.nestedPath);
-            this.propertiesUtils.resetPropertyValue(propertyForUpdatindVal, input.relatedProperty.value, input.relatedProperty.nestedPath);
+            let inputPath = (input.inputPath && input.inputPath != propertyForUpdatindVal.name) ? input.inputPath : undefined;
+            propertyForUpdatindVal.setAsDeclared(inputPath); //set prop as declared before assigning value
+            this.propertiesService.disableRelatedProperties(propertyForUpdatindVal, inputPath);
+            this.propertiesUtils.resetPropertyValue(propertyForUpdatindVal, input.relatedPropertyValue, inputPath);
         }
     }
 
@@ -357,7 +359,7 @@ export class PropertiesAssignmentComponent {
             .filterComponentInstanceProperties(this.component, filterData)
             .subscribe(response => {
 
-                this.processInstancePropertiesResponse(response);
+                this.processInstancePropertiesResponse(response, false);
                 this.hierarchyPropertiesDisplayOptions.searchText = filterData.propertyName;//mark results in tree
                 this.searchPropertyName = filterData.propertyName;//mark in table
                 this.renderer.invokeElementMethod(this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
@@ -373,6 +375,7 @@ export class PropertiesAssignmentComponent {
         this.hierarchyPropertiesDisplayOptions.searchText = "";
         this.displayClearSearch = false;
         this.advanceSearch.clearAll();
+        this.searchQuery = '';
     };
 
     clickOnClearSearch = () => {
@@ -381,5 +384,9 @@ export class PropertiesAssignmentComponent {
         this.renderer.invokeElementMethod(
             this.hierarchyNavTabs, 'triggerTabChange', ['Composition']);
     };
+
+    private isInput = (instanceType:string):boolean =>{
+        return instanceType === ResourceType.VF || instanceType === ResourceType.PNF;
+    }
 
 }

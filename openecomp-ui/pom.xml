@@ -56,20 +56,12 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.4</version>
+                
+                <configuration>
+        			<installDirectory>${project.parent.parent.basedir}</installDirectory>
+    			</configuration> 
         
                 <executions>
-        
-                    <execution>
-                        <id>install node and npm in dox-sequence-diagram-ui</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui</workingDirectory>
-                            <nodeVersion>v6.9.5</nodeVersion>
-                            <npmVersion>3.10.10</npmVersion>
-                        </configuration>
-                    </execution>
 
                     <execution>
                         <id>install node and npm</id>
@@ -80,6 +72,16 @@
                             <nodeVersion>v6.9.5</nodeVersion>
                             <npmVersion>3.10.10</npmVersion>
                         </configuration>
+                    </execution>
+                    
+                    <execution>
+                    	<id>npm set progress off</id>
+                    	<goals>
+                    		<goal>npm</goal>
+                    	</goals>
+                    	<configuration>
+                    		<arguments>set progress=false</arguments>
+                    	</configuration>
                     </execution>
         
                     <execution>

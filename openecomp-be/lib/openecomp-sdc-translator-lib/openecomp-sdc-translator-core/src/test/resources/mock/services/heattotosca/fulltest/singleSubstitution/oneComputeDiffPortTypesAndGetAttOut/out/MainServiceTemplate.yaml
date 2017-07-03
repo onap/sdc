@@ -437,8 +437,7 @@ topology_template:
           get_attribute:
           - network_policy_server
           - name
-        port_pd02_port_network_role_tag:
-        - oam
+        port_pd02_port_network_role_tag: oam
         port_pd01_port_mac_requirements:
           mac_count_required:
             is_required: false

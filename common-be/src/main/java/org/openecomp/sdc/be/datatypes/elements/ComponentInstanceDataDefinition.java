@@ -24,6 +24,7 @@ import java.io.Serializable;
 
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
 public class ComponentInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
 
@@ -155,7 +156,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition impleme
 
 	public void setName(String name) {
 		if(invariantName == null){
-			invariantName = name;
+			invariantName = ValidationUtils.normalizeComponentInstanceName(name);
 		}
 		this.name = name;
 	}

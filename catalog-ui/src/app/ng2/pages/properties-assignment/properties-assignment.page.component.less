@@ -98,17 +98,13 @@
             }
 
         }
-        .advance-search{
-
-        }
+        
         .clear-filter{
             cursor: pointer;
-            color: @main_color_c;
-            font-family: @font-omnes-medium-italic;
+            color:#009fdb;
             text-decoration: underline;
-            position: relative;
-            top: 4px;
-            right: 16px;
+            padding-right:10px;
+            font-size:12px;
         }
 
         .declare-button{
@@ -170,8 +166,7 @@
     }
 
     .hierarchy-nav-container {
-        flex:1;
-        overflow: auto;
+        display:flex;
         flex-direction: column;
         height: 100%;
     }
@@ -187,6 +182,8 @@
     }
 
     .hierarchy-nav {
+        flex:1;
+        overflow:auto;
         display: grid;
         margin-top: 1em;
         margin-left: 1em;

@@ -5,6 +5,7 @@
                 <tab tabTitle="Properties">
                     <properties-table class="properties-table"
                         [fePropertiesMap]="instanceFePropertiesMap"
+                        [feInstanceNamesMap]="componentInstanceNamesMap"
                         [searchTerm]="searchQuery"
                         [selectedPropertyId]="selectedFlatProperty.path"
                         [propertyNameSearchText]="searchPropertyName"
@@ -22,6 +23,7 @@
                     <inputs-table class="properties-table"
                                   [readonly]="isReadonly"
                                   [inputs]="inputs | searchFilter:'name':searchQuery"
+                                  [instanceNamesMap]="componentInstanceNamesMap"
                                   [isLoading]="loadingInputs"
                                   (deleteInput)="deleteInput($event)"
                                   (inputValueChanged)="inputValueChanged($event)"></inputs-table>
@@ -29,10 +31,10 @@
             </tabs>
             <div class="header">
                 <div class="search-filter-container" [class.without-filter]="isInpusTabSelected">
+                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter">Clear All</span>
                     <input type="text" class="search-box" placeholder="Search" [(ngModel)]="searchQuery" />
                     <span class="sprite search-icon"></span>
                     <filter-properties-assignment *ngIf="!isInpusTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
-                    <span *ngIf="displayClearSearch && !isInpusTabSelected" (click)="clickOnClearSearch()" class="clear-filter">Clear All</span>
                 </div>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly" (click)="declareProperties()">Declare</button>
             </div>

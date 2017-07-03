@@ -20,34 +20,26 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_1port_0_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       pcm_image_name:
         type: string
         description: PCRF CM image name
         required: true
         status: SUPPORTED
       port_pcm_1port_0_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_1port_0_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pcm_2port_1_subnetpoolid:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_2port_1_mac_requirements:
         type: org.openecomp.datatypes.network.MacRequirements
         required: true
@@ -82,28 +74,22 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_2port_1_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       oam_net_gw:
         type: string
         description: CPS network gateway
         required: true
         status: SUPPORTED
       port_pcm_1port_0_network_role:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       port_pcm_2port_1_network_role_tag:
-        type: list
+        type: string
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: string
       security_group_name:
         type: string
         description: the name of security group
@@ -150,11 +136,9 @@ node_types:
         required: true
         status: SUPPORTED
       port_pcm_2port_1_order:
-        type: list
+        type: integer
         required: true
         status: SUPPORTED
-        entry_schema:
-          type: integer
       port_pcm_2port_1_vlan_requirements:
         type: list
         required: true

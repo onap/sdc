@@ -47,9 +47,29 @@
                                     </excludes>
                                     <followSymlinks>false</followSymlinks>
                                 </fileset>
+                                <fileset>
+                                    <directory>${basedir}/node_modules</directory>
+                                </fileset>
                             </filesets>
                         </configuration>
                     </execution>
+                    <!-- <execution>
+                        <id>clean.dist.folder</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/node_modules</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>${basedir}/dist</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution> -->
                 </executions>
 			</plugin>
 
@@ -80,9 +100,12 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.4</version>
-
+                
+                <configuration>
+        			<installDirectory>${project.parent.basedir}</installDirectory>
+   				</configuration>
+   				 
                 <executions>
-
                     <execution>
                         <id>install node and npm</id>
                         <goals>
@@ -93,6 +116,16 @@
                             <nodeVersion>v6.9.5</nodeVersion>
                             <npmVersion>3.10.10</npmVersion>
                         </configuration>
+                    </execution>
+                    
+                    <execution>
+                    	<id>npm set progress off</id>
+                    	<goals>
+                    		<goal>npm</goal>
+                    	</goals>
+                    	<configuration>
+                    		<arguments>set progress=false</arguments>
+                    	</configuration>
                     </execution>
 
                     <execution>

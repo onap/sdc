@@ -12,15 +12,11 @@ node_types:
 topology_template:
   inputs:
     port_pcm_port_0_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_1_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     availabilityzone_name:
       label: availabilityzone name
       hidden: false
@@ -39,25 +35,17 @@ topology_template:
       type: string
       description: oam server name
     port_pcm_port_0_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_pcm_port_0_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_1_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_0_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     oam_image_name:
       label: image name
       hidden: false
@@ -83,10 +71,8 @@ topology_template:
       type: string
       description: OAM network name
     port_pcm_port_1_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_pcm_port_0_ip_requirements:
       type: list
       required: true
@@ -157,10 +143,8 @@ topology_template:
       type: string
       description: CPS network mask
     port_pcm_port_1_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
   node_templates:
     server_oam:
       type: org.openecomp.resource.vfc.nodes.heat.oam_server

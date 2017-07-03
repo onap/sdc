@@ -9,6 +9,7 @@ import {SchemaProperty} from "app/models";
 export interface ITypeMapScope extends ng.IScope {
     parentFormObj:ng.IFormController;
     schemaProperty:SchemaProperty;
+    isMapKeysUnique:boolean;
     isSchemaTypeDataType:boolean;
     valueObjRef:any;
     mapKeys:Array<string>;//array of map keys
@@ -54,6 +55,7 @@ export class TypeMapDirective implements ng.IDirective {
 
     link = (scope:ITypeMapScope, element:any, $attr:any) => {
         scope.MapKeyValidationPattern = this.MapKeyValidationPattern;
+        scope.isMapKeysUnique = true;
 
         //reset valueObjRef and mapKeys when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
@@ -93,8 +95,10 @@ export class TypeMapDirective implements ng.IDirective {
             let existsKeyIndex = Object.keys(scope.valueObjRef).indexOf(newKey);
             if (existsKeyIndex > -1 && existsKeyIndex != index) {
                 scope.parentFormObj[fieldName].$setValidity('keyExist', false);
+                scope.isMapKeysUnique = false;
             } else {
                 scope.parentFormObj[fieldName].$setValidity('keyExist', true);
+                scope.isMapKeysUnique = true;
                 if (!scope.parentFormObj[fieldName].$invalid) {
                     //To preserve the order of the keys, delete each one and recreate
                     let newObj = {};

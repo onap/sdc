@@ -17,18 +17,14 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.IpRequirements
     port_1a_t2_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     vm_flavor_name:
       type: string
       required: true
     port_1a_t2_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1a_t2_port_network:
       type: list
       required: true
@@ -43,10 +39,8 @@ topology_template:
       entry_schema:
         type: string
     port_1a_t1_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     vm_image_name:
       type: string
       required: true
@@ -81,20 +75,14 @@ topology_template:
       constraints:
       - greater_or_equal: 0
     port_1a_t1_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1a_t1_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1a_t1_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_1a_t2_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -104,15 +92,11 @@ topology_template:
       entry_schema:
         type: org.openecomp.datatypes.network.VlanRequirements
     port_1a_t2_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1a_t2_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     compute_a_single_1a_user_data_format:
       type: list
       required: true

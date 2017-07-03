@@ -6,11 +6,12 @@ import { FilterPropertiesAssignmentData, PropertyBEModel, DerivedPropertyType, D
 export class PropertyFEModel extends PropertyBEModel {
 
     expandedChildPropertyId: string;
-    flattenedChildren:  Array<DerivedFEProperty>; //[parentPath] : Array<DerivedFEProp>
+    flattenedChildren:  Array<DerivedFEProperty>;
     isDeclared: boolean;
     isDisabled: boolean;
     isSelected: boolean;
     isSimpleType: boolean; //for convenience only - we can really just check if derivedDataType == derivedPropertyTypes.SIMPLE to know if the prop is simple
+    propertiesName: string;
     uniqueId: string;
     valueObj: any; //this is the only value we relate to in the html templates
     derivedDataType: DerivedPropertyType;
@@ -21,6 +22,7 @@ export class PropertyFEModel extends PropertyBEModel {
         this.setNonDeclared();
         this.derivedDataType = this.getDerivedPropertyType();
         this.flattenedChildren = [];
+        this.propertiesName = this.name;
     }
 
 
@@ -29,7 +31,7 @@ export class PropertyFEModel extends PropertyBEModel {
         //TODO: handle this.derivedDataType == DerivedPropertyType.MAP
         if (this.derivedDataType == DerivedPropertyType.LIST && this.schema.property.type == PROPERTY_TYPES.JSON) {
             try {
-                return JSON.stringify(this.valueObj.map(item => JSON.parse(item)));
+                return JSON.stringify(this.valueObj.map(item => (typeof item == 'string')? JSON.parse(item) : item));
             } catch (e){}
         }
 
@@ -37,7 +39,7 @@ export class PropertyFEModel extends PropertyBEModel {
     }
 
     public setNonDeclared = (childPath?: string): void => {
-        if (!childPath) { //declaring a child prop
+        if (!childPath) { //un-declaring a child prop
             this.isDeclared = false;
         } else {
             let childProp: DerivedFEProperty = this.flattenedChildren.find(child => child.propertiesName == childPath);
@@ -51,6 +53,7 @@ export class PropertyFEModel extends PropertyBEModel {
             this.isDeclared = true;
         } else {
             let childProp: DerivedFEProperty = this.flattenedChildren.find(child => child.propertiesName == childNameToDeclare);
+            if (!childProp) { console.log("ERROR: Unabled to find child: " + childNameToDeclare, this); return; }
             childProp.isSelected = false;
             childProp.isDeclared = true;
         }

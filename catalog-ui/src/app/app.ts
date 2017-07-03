@@ -583,6 +583,8 @@ ng1appModule.value('ComponentNameValidationPattern', /^(?=.*[^. ])[\s\w\&_.:-]{1
 ng1appModule.value('PropertyNameValidationPattern', /^[a-zA-Z0-9_:-]{1,50}$/);// DE210977
 ng1appModule.value('TagValidationPattern', /^[\s\w_.-]{1,50}$/);
 ng1appModule.value('VendorValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,25}$/);
+ng1appModule.value('VendorNameValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,60}$/);
+ng1appModule.value('VendorModelNumberValidationPattern', /^[\x20-\x21\x23-\x29\x2B-\x2E\x30-\x39\x3B\x3D\x40-\x5B\x5D-\x7B\x7D-\xFF]{1,65}$/);
 ng1appModule.value('ContactIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('UserIdValidationPattern', /^[\s\w-]{1,50}$/);
 ng1appModule.value('ProjectCodeValidationPattern', /^[\s\w-]{5,50}$/);

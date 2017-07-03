@@ -111,6 +111,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +120,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
-  private static final String VALIDATION_VSP_ID = "validationOnlyVspId";
+  private static String VALIDATION_VSP_ID = "validationOnlyVspId";
   private static final String VALIDATION_VSP_NAME = "validationOnlyVspName";
   //private static final String VALIDATION_VSP_USER = "validationOnlyVspUser";
 
@@ -412,15 +413,15 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
     VspDetails validationVsp = new VspDetails();
     validationVsp.setName(VALIDATION_VSP_NAME);
-    validationVsp.setId(VALIDATION_VSP_ID);
-    Version version = versioningManager.create(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
-        validationVsp.getId(),
-        user);
-    validationVsp.setVersion(version);
 
     vspInfoDao.create(validationVsp);
+    Version version = versioningManager.create(
+        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
+        validationVsp.getId(), user);
+    validationVsp.setVersion(version);
+
     createUniqueName(VALIDATION_VSP_NAME);
+    VALIDATION_VSP_ID = validationVsp.getId();
     return VALIDATION_VSP_ID;
   }
 
@@ -792,16 +793,24 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
   private Map<String, List<ErrorMessage>> validateUploadData(UploadDataEntity uploadData)
       throws IOException {
+
+    Map<String, List<ErrorMessage>> validationErrors = new HashMap<>();
     if (uploadData == null || uploadData.getContentData() == null) {
       return null;
     }
 
-    FileContentHandler fileContentMap =
-        CommonUtil.loadUploadFileContent(uploadData.getContentData().array());
-    //todo - check
+    FileContentHandler fileContentMap = new FileContentHandler();
+
+    try {
+      fileContentMap =
+          CommonUtil.loadUploadFileContent(uploadData.getContentData().array());
+    } catch (Exception e){
+      ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, e.getMessage());
+      validationErrors.put("Upload file", Arrays.asList(errorMessage));
+    }
     ValidationManager validationManager =
         ValidationManagerUtil.initValidationManager(fileContentMap);
-    Map<String, List<ErrorMessage>> validationErrors = validationManager.validate();
+    validationErrors.putAll(validationManager.validate());
 
     return
         MapUtils.isEmpty(MessageContainerUtil.getMessageByLevel(ErrorLevel.ERROR, validationErrors))

@@ -12,6 +12,7 @@ import { KeysPipe } from 'app/ng2/pipes/keys.pipe';
 export class PropertiesTableComponent {
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
+    @Input() feInstanceNamesMap: Map<string, string>;
     @Input() selectedPropertyId: string;
     @Input() displayDeleteButton: boolean;
     @Input() propertyNameSearchText:string;
@@ -24,23 +25,10 @@ export class PropertiesTableComponent {
     @Output() updateCheckedPropertyCount: EventEmitter<boolean> = new EventEmitter<boolean>();
     //@Output() selectInstanceRow: EventEmitter<string> = new EventEmitter<string>();
 
-    feInstancesNames: Array<string>;
 
     constructor ( private propertiesService:PropertiesService ){
     }
 
-    /**
-     * Update feInstancesNames when fePropertiesMap: InstanceFePropertiesMap change (after getting response from server)
-     */
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes['fePropertiesMap']) {
-            if (changes['fePropertiesMap'].currentValue) {
-                let keysPipe = new KeysPipe();
-                let fiteredArr = keysPipe.transform(changes['fePropertiesMap'].currentValue,[]);
-                this.feInstancesNames = fiteredArr;
-            }
-        }
-    }
 
     propValueChanged = (property) => {
         !property.isDeclared && this.valueChanged.emit(property);

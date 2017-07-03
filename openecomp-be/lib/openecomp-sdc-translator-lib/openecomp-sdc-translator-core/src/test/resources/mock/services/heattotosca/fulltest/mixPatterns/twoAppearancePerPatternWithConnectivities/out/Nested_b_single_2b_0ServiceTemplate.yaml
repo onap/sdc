@@ -12,15 +12,11 @@ node_types:
 topology_template:
   inputs:
     port_1b_t1_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_1b_t1_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1b_t1_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
@@ -41,28 +37,20 @@ topology_template:
       entry_schema:
         type: json
     port_1b_t2_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1b_t2_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_1b_t2_port_exCP_naming:
       type: org.openecomp.datatypes.Naming
       required: true
     port_1b_t2_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1b_t2_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     compute_b_single_2b_availability_zone:
       type: list
       required: true
@@ -104,15 +92,11 @@ topology_template:
       entry_schema:
         type: string
     port_1b_t1_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1b_t1_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1b_t1_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true

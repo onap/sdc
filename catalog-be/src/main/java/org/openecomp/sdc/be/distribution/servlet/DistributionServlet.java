@@ -84,10 +84,11 @@ public class DistributionServlet extends BeGenericServlet {
 	private static Logger log = LoggerFactory.getLogger(DistributionServlet.class.getName());
 	@Resource
 	private DistributionBusinessLogic distributionLogic;
+	@Context
+	private HttpServletRequest request;
 	
 	/**
 	 * 
-	 * @param request
 	 * @param requestId
 	 * @param instanceId
 	 * @param accept
@@ -110,7 +111,7 @@ public class DistributionServlet extends BeGenericServlet {
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
 			@ApiResponse(code = 500, message = "The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000")})
-	public Response getUebServerList(@Context final HttpServletRequest request, 
+	public Response getUebServerList( 
 			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
 			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
@@ -157,7 +158,6 @@ public class DistributionServlet extends BeGenericServlet {
 	
 	/**
 	 * 
-	 * @param request
 	 * @param requestId
 	 * @param instanceId
 	 * @param accept
@@ -185,7 +185,7 @@ public class DistributionServlet extends BeGenericServlet {
 			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
 	//TODO Tal G fix response headers and to check missing header validations with Michael L
 	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
-	public Response registerForDistribution(@Context final HttpServletRequest request,
+	public Response registerForDistribution(
 			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
 			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,
@@ -223,7 +223,6 @@ public class DistributionServlet extends BeGenericServlet {
 	 * Returns list of valid artifact types for validation done in the distribution client.<br>
 	 * The list is the representation of the values of the enum ArtifactTypeEnum.
 	 * 
-	 * @param request
 	 * @param requestId
 	 * @param instanceId
 	 * @param authorization
@@ -242,7 +241,7 @@ public class DistributionServlet extends BeGenericServlet {
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
 			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
-	public Response getValidArtifactTypes(@Context final HttpServletRequest request, 
+	public Response getValidArtifactTypes(
 			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
 			@ApiParam(value = "The username and password", required = true)@HeaderParam(value = Constants.AUTHORIZATION_HEADER) String authorization, 
@@ -266,7 +265,6 @@ public class DistributionServlet extends BeGenericServlet {
 	/**
 	 * Removes from subscription for distribution notifications
 	 * 
-	 * @param request
 	 * @param requestId
 	 * @param instanceId
 	 * @param accept
@@ -294,7 +292,7 @@ public class DistributionServlet extends BeGenericServlet {
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),
 			@ApiResponse(code = 500, message = "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000")})
 	@ApiImplicitParams({@ApiImplicitParam(required = true, dataType = "org.openecomp.sdc.be.distribution.api.client.RegistrationRequest", paramType = "body", value = "json describe the artifact")})
-	public Response unRegisterForDistribution(@Context final HttpServletRequest request, 
+	public Response unRegisterForDistribution( 
 			@ApiParam(value = "X-ECOMP-RequestID header", required = false)@HeaderParam(value = Constants.X_ECOMP_REQUEST_ID_HEADER) String requestId,
 			@ApiParam(value = "X-ECOMP-InstanceID header", required = true)@HeaderParam(value = Constants.X_ECOMP_INSTANCE_ID_HEADER) String instanceId, 
 			@ApiParam(value = "Determines the format of the body of the response", required = false)@HeaderParam(value = Constants.ACCEPT_HEADER) String accept,

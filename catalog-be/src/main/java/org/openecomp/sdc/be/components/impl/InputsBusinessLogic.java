@@ -448,7 +448,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 			if (newInputsMap != null && !newInputsMap.isEmpty()) {
 				int index = 0;
 				for (Entry<String, List<InputDefinition>> entry : newInputsMap.entrySet()) {
-					List<ComponentInstanceInput> inputsValueToCreate = new ArrayList<>();
+					
 					String compInstId = entry.getKey();
 
 					Optional<ComponentInstance> op = ciList.stream().filter(ci -> ci.getUniqueId().equals(compInstId)).findAny();
@@ -475,7 +475,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 						for (InputDefinition input : inputs) {
 
-							StorageOperationStatus status = addInputsToComponent(componentId, inputsToCreate, allDataTypes.left().value(), resList, index, inputsValueToCreate, compInstId, compInstname, origComponent, input);
+							StorageOperationStatus status = addInputsToComponent(componentId, inputsToCreate, inputsValueToCreateMap, allDataTypes.left().value(), resList, index, compInstId, compInstname, origComponent, input);
 							if(status != StorageOperationStatus.OK ){
 								ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(status);
 								log.debug("Failed to create inputs value under component {}, error: {}", componentId, actionStatus.name());
@@ -485,9 +485,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 						}
 					}
-					if(!inputsValueToCreate.isEmpty()){
-						inputsValueToCreateMap.put(compInstId, inputsValueToCreate);
-					}
+					
 				}
 
 			}
@@ -556,8 +554,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 	}
 
-	private StorageOperationStatus addInputsToComponent(String componentId, Map<String, InputDefinition> inputsToCreate, Map<String, DataTypeDefinition> allDataTypes, List<InputDefinition> resList, int index,
-			List<ComponentInstanceInput> inputsValueToCreate, String compInstId, String compInstname, org.openecomp.sdc.be.model.Component origComponent, InputDefinition input) {
+	private StorageOperationStatus addInputsToComponent(String componentId, Map<String, InputDefinition> inputsToCreate, Map<String, List<ComponentInstanceInput>> inputsValueToCreateMap,  Map<String, DataTypeDefinition> allDataTypes, List<InputDefinition> resList, int index,
+			String compInstId, String compInstname, org.openecomp.sdc.be.model.Component origComponent, InputDefinition input) {
+		
 
 		Either<List<InputDefinition>, ResponseFormat> result;
 		String innerType = null;
@@ -604,8 +603,23 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		getInputValues.add(getInputValueDataDefinition);
 		inputValue.setGetInputValues(getInputValues);
 
+		List<ComponentInstanceInput> inputsValueToCreate = null;
+		
+		if(inputsValueToCreateMap.containsKey(compInstId)){
+			inputsValueToCreate = inputsValueToCreateMap.get(compInstId);
+		}else{
+			inputsValueToCreate = new ArrayList<>();
+		}
 		inputsValueToCreate.add(inputValue);
-		input.setInputs(inputsValueToCreate);
+		inputsValueToCreateMap.put(compInstId, inputsValueToCreate);
+	
+		
+		inputsValueToCreate.add(inputValue);
+		List<ComponentInstanceInput> inputsValue = input.getInputs();
+		if(inputsValue == null)
+			inputsValue = new ArrayList<>();
+		inputsValue.add(inputValue);
+		input.setInputs(inputsValue);	
 
 		resList.add(input);
 		return StorageOperationStatus.OK;
@@ -881,22 +895,25 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
 			if(inputsValue != null && !inputsValue.isEmpty()){
 				for(ComponentInstanceInput inputValue: inputsValue){
+					inputValue.setValue(inputValue.getDefaultValue());
+					List<GetInputValueDataDefinition> getInputsValues = inputValue.getGetInputValues();
+					if(getInputsValues != null && !getInputsValues.isEmpty()){
+						Optional<GetInputValueDataDefinition> op = getInputsValues.stream().filter(gi -> gi.getInputId().equals(inputForDelete.getUniqueId())).findAny();
+						if(op.isPresent()){
+							getInputsValues.remove(op.get());
+						}
+					}
+					inputValue.setGetInputValues(getInputsValues);
 					List<ComponentInstanceInput> inputList = null;
 					String ciId = inputValue.getComponentInstanceId();
-					if(!insInputsMatToDelete.containsKey(ciId)){
-						inputList = new ArrayList<>();
-					}else{
-						inputList = insInputsMatToDelete.get(ciId);
+					status = toscaOperationFacade.updateComponentInstanceInput(component, ciId, inputValue);
+					if(status != StorageOperationStatus.OK){
+						log.debug("Component id: {} delete component instance input id: {} failed", componentId, inputId);
+						deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
+						return deleteEither;
 					}
-					inputList.add(inputValue);
-					insInputsMatToDelete.put(ciId, inputList);
 				}
-				status = toscaOperationFacade.deleteComponentInstanceInputsToComponent(insInputsMatToDelete, component.getUniqueId());
-				if(status != StorageOperationStatus.OK){
-					log.debug("Component id: {} delete component instance input id: {} failed", componentId, inputId);
-					deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
-					return deleteEither;
-				}
+				
 			}
 
 			// US848813 delete service input that relates to VL / CP property
@@ -932,11 +949,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 							}
 						}
 						propertyValue.setGetInputValues(getInputsValues);
-						if(status != StorageOperationStatus.OK){
-							log.debug("Component id: {} delete component instance property {} id: {} failed", componentId, propertyValue.getUniqueId(), inputId);
-							deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), component.getName()));
-							return deleteEither;
-						}
+					
 						Either<String, TitanOperationStatus> findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(propertyValue.getPath(), propertyValue.getUniqueId(), propertyValue.getDefaultValue());
 						if (findDefaultValue.isRight()) {
 							deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertTitanStatusToStorageStatus(findDefaultValue.right().value()))));
@@ -1187,8 +1200,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		List<ComponentInstance> ciList = component.getComponentInstances();
 		String componentId = component.getUniqueId();
 		for (Entry<String, List<ComponentInstancePropInput>> entry : newInputsPropsMap.entrySet()) {
-			List<ComponentInstanceProperty> propertiesToCreate = new ArrayList<>();
 			String compInstId = entry.getKey();
+			List<ComponentInstanceProperty> propertiesToCreate = null;
+			if(propertiesToCreateMap.containsKey(compInstId)){
+				propertiesToCreate = propertiesToCreateMap.get(compInstId);
+			}else{
+				propertiesToCreate = new ArrayList<>();
+			}			
+			
 			List<ComponentInstancePropInput> properties = entry.getValue();
 
 			Optional<ComponentInstance> op = ciList.stream().filter(ci -> ci.getUniqueId().equals(compInstId)).findAny();
@@ -1334,7 +1353,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 		}
 
 		inputsToCreate.put(input.getName(), input);
-		List<ComponentInstanceProperty> propertiesList = new ArrayList<>(); // adding the property with the new value for UI
+		List<ComponentInstanceProperty> propertiesList = input.getProperties();
+		if(propertiesList == null)
+		 propertiesList = new ArrayList<>(); // adding the property with the new value for UI
 		propertiesList.add(prop);
 		input.setProperties(propertiesList);
 

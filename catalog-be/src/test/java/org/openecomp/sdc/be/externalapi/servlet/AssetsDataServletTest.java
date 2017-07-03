@@ -188,7 +188,7 @@ public class AssetsDataServletTest extends JerseyTest {
 	@Override
 	protected Application configure() {
 
-		ResourceConfig resourceConfig = new ResourceConfig(AssetsDataServlet.class);
+		ResourceConfig resourceConfig = new ResourceConfig(CrudExternalServlet.class);
 		forceSet(TestProperties.CONTAINER_PORT, "0");
 		resourceConfig.register(new AbstractBinder() {
 

@@ -24,6 +24,9 @@
     "GENERAL_LABEL_CREATION_DATE": "Creation Date:",
     "GENERAL_LABEL_AUTHOR": "Author:",
     "GENERAL_LABEL_CONTACT_ID": "Contact ID:",
+    "GENERAL_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number:",
+    "GENERAL_LABEL_SERVICE_TYPE": "Service Type:",
+    "GENERAL_LABEL_SERVICE_ROLE": "Service Role:",
     "GENERAL_LABEL_STATUS": "Status:",
     "GENERAL_LABEL_PROJECT_CODE": "Project code:",
     "GENERAL_LABEL_DESCRIPTION": "Description:",
@@ -38,6 +41,10 @@
     "GENERAL_LABEL_DISTRIBUTION_STATUS": "Distribution Status:",
     "GENERAL_LABEL_SYSTEM_NAME": "System Name:",
 
+    "=========== GENERAL_TAB ===========": "",
+    "GENERAL_TAB_LABEL_RESOURCE_MODEL_NUMBER":"Vendor Model Number",
+    "GENERAL_TAB_LABEL_SERVICE_TYPE": "Service Type",
+    "GENERAL_TAB_LABEL_SERVICE_ROLE": "Service Role",
 
     "=========== GENERAL ERROR PAGES ===========": "",
     "GENERAL_ERROR_403_TITLE": "SDC",
@@ -341,7 +348,7 @@
 
     "=========== USER_MANAGEMENT SCREEN ===========": "",
     "USER_MANAGEMENT": "User Management",
-    "USER_MANAGEMENT_TABLE_HEADER_USER_ID": "User id",
+    "USER_MANAGEMENT_TABLE_HEADER_USER_ID": "User ID",
     "USER_MANAGEMENT_SEARCH_LABEL": "Search user by name, user id, email or role",
     "USER_MANAGEMENT_SEARCH_TEXT": "Enter user id",
     "CATEGORY_MANAGEMENT": "Category Management",

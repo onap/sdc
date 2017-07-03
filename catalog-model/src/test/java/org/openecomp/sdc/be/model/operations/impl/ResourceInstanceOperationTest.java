@@ -421,7 +421,7 @@ public class ResourceInstanceOperationTest extends ModelTestBase {
 		resourceInstance.setComponentUid(respurceUid);
 		resourceInstance.setCreationTime(System.currentTimeMillis());
 		resourceInstance.setModificationTime(System.currentTimeMillis());
-		resourceInstance.setNormalizedName(normaliseComponentName(name));
+		resourceInstance.setNormalizedName(normaliseComponentInstanceName(name));
 
 		// Map<String, RequirementInstance> requirements = new HashMap<String,
 		// RequirementInstance>();

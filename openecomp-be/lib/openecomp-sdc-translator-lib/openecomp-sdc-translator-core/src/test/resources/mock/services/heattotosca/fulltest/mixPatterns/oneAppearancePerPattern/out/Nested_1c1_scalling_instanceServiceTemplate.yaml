@@ -25,10 +25,8 @@ topology_template:
       entry_schema:
         type: string
     port_1c1_t2_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     vm_flavor_name:
       type: string
       required: true
@@ -91,15 +89,11 @@ topology_template:
       constraints:
       - greater_or_equal: 0
     port_1c1_t2_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1c1_t2_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
     port_1c1_t2_port_mac_requirements:
       type: org.openecomp.datatypes.network.MacRequirements
       required: true
@@ -109,10 +103,8 @@ topology_template:
       entry_schema:
         type: string
     port_1c1_t2_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1c1_t2_port_name:
       type: list
       required: true
@@ -127,25 +119,17 @@ topology_template:
       type: org.openecomp.datatypes.Naming
       required: true
     port_1c1_t1_port_subnetpoolid:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1c1_t1_port_network_role_tag:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1c1_t1_port_network_role:
-      type: list
+      type: string
       required: true
-      entry_schema:
-        type: string
     port_1c1_t1_port_order:
-      type: list
+      type: integer
       required: true
-      entry_schema:
-        type: integer
   node_templates:
     1c1_scalling_instance_1c1_t1_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
