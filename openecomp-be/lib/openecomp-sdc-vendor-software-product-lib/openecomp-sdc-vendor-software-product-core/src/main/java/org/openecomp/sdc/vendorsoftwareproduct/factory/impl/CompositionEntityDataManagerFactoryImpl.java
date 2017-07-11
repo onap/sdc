@@ -32,6 +32,7 @@ public class CompositionEntityDataManagerFactoryImpl extends CompositionEntityDa
 
   @Override
   public CompositionEntityDataManager createInterface() {
+    // this class is stateful! it must be recreated from scratch on every use!!!
     return new CompositionEntityDataManagerImpl(
         VendorSoftwareProductInfoDaoFactory.getInstance().createInterface(),
         ComponentDaoFactory.getInstance().createInterface(),

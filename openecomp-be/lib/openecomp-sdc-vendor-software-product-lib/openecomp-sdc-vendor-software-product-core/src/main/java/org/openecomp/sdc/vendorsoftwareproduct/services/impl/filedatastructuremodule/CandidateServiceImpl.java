@@ -138,7 +138,9 @@ public class CandidateServiceImpl implements CandidateService {
     FilesDataStructure fileDataStructureFromManifest =
         createFileDataStructureFromManifest(zipContentMap.getFileContent
             (SdcCommon.MANIFEST_NAME));
-    structure.getArtifacts().addAll(fileDataStructureFromManifest.getArtifacts());
+    List<String> structureArtifacts = structure.getArtifacts();
+    structureArtifacts.addAll(fileDataStructureFromManifest.getArtifacts().stream().filter
+        (artifact -> !structureArtifacts.contains(artifact)).collect((Collectors.toList())));
     handleArtifactsFromTree(tree, structure);
 
     return JsonUtil.object2Json(structure);

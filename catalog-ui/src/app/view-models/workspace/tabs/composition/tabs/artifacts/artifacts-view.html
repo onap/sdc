@@ -10,7 +10,7 @@
             <div class="i-sdc-designer-sidebar-section-content-item">
                 <div class="i-sdc-designer-sidebar-section-content-item-artifact"
                      data-ng-repeat="artifact in artifacts | orderBy: ['-mandatory', 'artifactDisplayName'] track by $index"
-                     data-ng-if="(!isComponentInstanceSelected() || isVFiArtifact(artifact)|| artifact.esId) && 'HEAT_ENV' !== artifact.artifactType"
+                     data-ng-if="(!isComponentInstanceSelected() || artifact.esId) && 'HEAT_ENV' !== artifact.artifactType"
                      data-tests-id="artifact-item-{{artifact.artifactDisplayName}}">
                     <span data-ng-if="artifact.heatParameters.length" class="i-sdc-designer-sidebar-section-content-item-file-link"></span>
                     <div class="i-sdc-designer-sidebar-section-content-item-artifact-details" data-ng-class="{'heat':artifact.isHEAT() && artifact.heatParameters.length}">
@@ -19,8 +19,8 @@
                               data-ng-if="artifact.artifactName"></div>
                         <div>
                             <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-name" data-tests-id="artifact_Display_Name-{{artifact.artifactDisplayName}}"
-                                  data-ng-class="{'hand enabled': (isVFiArtifact(artifact)) && !isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)}"
-                                  data-ng-bind="artifact.artifactDisplayName" data-ng-click="!isViewMode() && !isLoading && (!isComponentInstanceSelected()||isVFiArtifact(artifact)) && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact) && addOrUpdate(artifact)"
+                                  data-ng-class="{'hand enabled': !isViewMode() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)}"
+                                  data-ng-bind="artifact.artifactDisplayName" data-ng-click="!isViewMode() && !isLoading && !isComponentInstanceSelected() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact) && addOrUpdate(artifact)"
                                   tooltips tooltip-content="{{artifact.artifactDisplayName}}"></span>
                             <div class="i-sdc-designer-sidebar-section-content-item-artifact-heat-env" ng-if="artifact.heatParameters.length">
                                 <span data-ng-bind="getEnvArtifactName(artifact)"data-tests-id="heat_env_{{artifact.artifactDisplayName}}"></span>
@@ -36,7 +36,7 @@
                             <span class="i-sdc-designer-sidebar-section-content-item-artifact-details-desc-label" data-ng-show="artifact.description">Description:</span>{{artifact.description}}
                         </div>
                     </div>
-                    <button ng-if="!isViewMode() && artifact.esId && (!isComponentInstanceSelected()||isVFiArtifact(artifact)) && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
+                    <button ng-if="!isViewMode() && artifact.esId && !isComponentInstanceSelected() && !artifact.isHEAT() && !artifact.isThirdParty() && !isLicenseArtifact(artifact)" class="i-sdc-designer-sidebar-section-content-item-button delete sprite e-sdc-small-icon-delete"
                             data-tests-id="delete_{{artifact.artifactDisplayName}}" data-ng-click="delete(artifact)" type="button"></button>
                     <button ng-if="!isViewMode()  && artifact.isHEAT() && isComponentInstanceSelected() && artifact.heatParameters.length"
                             class="i-sdc-designer-sidebar-section-content-item-button attach sprite e-sdc-small-icon-pad"

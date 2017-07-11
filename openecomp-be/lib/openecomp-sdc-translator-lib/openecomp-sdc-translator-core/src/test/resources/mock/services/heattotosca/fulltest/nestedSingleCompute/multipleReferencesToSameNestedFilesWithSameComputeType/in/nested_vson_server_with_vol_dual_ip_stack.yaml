@@ -1,0 +1,229 @@
+heat_template_version: 2015-04-30
+#################################
+# Author: Dmitry Orzhehovsky
+# Email:  dorzheho@cisco.com
+#################################
+description: >
+  The template intended for deploying vSON VM instance.
+
+parameters:
+
+  instance_index:
+    type: number
+    label: Instance Index
+    description: Index of the instance.
+
+  vnf_name:
+    type: string
+    label: VF name
+    description: Unique name for this VF instance.
+
+  vnf_id:
+    type: string
+    label: VF ID
+    description: Unique ID for this VF instance.
+
+  vf_module_name:
+    type: string
+    label: VF module name
+    description: Unique name for this VF module instance.
+
+  vf_module_id:
+    type: string
+    label: VF module ID
+    description: Unique ID for this VF Module instance
+
+  vfc_role:
+    type: string
+    label: VF module ID
+    description: Unique ID for this VF Module instance
+
+  oam_net_id:
+    type: string
+    label: OAM network ID
+    description: The ID of the OAM network.
+
+  oam_net_subnet_prefix_length:
+    type: string
+    label: OAM net subnet prefix length
+    description: Prefix length of the subnet on the OAM network.
+
+  oam_net_subnet_v6_prefix_length:
+    type: string
+    label: OAM net IPv6 subnet prefix length
+    description: OAM network IPv6 subnet prefix length.
+
+  default_gateway:
+    type: string
+    label: Default gateway
+    description: Default gateway.
+
+  default_gateway_v6:
+    type: string
+    label: Default IPv6 gateway
+    description: Default IPv6 gateway.
+
+  dns_servers:
+    type: comma_delimited_list
+    label: DNS servers
+    description: List of DNS servers.
+
+  ntp_servers:
+    type: comma_delimited_list
+    label: NTP servers
+    description: List of NTP servers.
+
+  oam_net_security_group_id:
+    type: string
+    label: OAM network security group ID
+    description: >
+      The ID of Security group applied on the port
+      bound to the vSON OAM network.
+
+  volume_ids:
+    type: comma_delimited_list
+    label: Volumes IDs
+    description: List of Volumes IDs.
+
+  availability_zones:
+    type: comma_delimited_list
+    label: Availability zones
+    description: List of availability zones.
+
+  vson_server_group_id:
+    type: string
+    label: vSON server group ID
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+
+  vson_vm_names:
+    type: comma_delimited_list
+    label: vSON Cluster leader names
+    description: A list of unique names to be issued to the vSON Cluster leaders.
+
+  oam_net_ips:
+    type: comma_delimited_list
+    label: vSON OAM network IPv4 addresses
+    description: Fixed IPv4 assignments for vSON instances on the OAM network.
+
+  oam_net_v6_ips:
+    type: comma_delimited_list
+    label: vSON OAM network IPv6 addresses
+    description: Fixed IPv6 assignments for vSON instances on the OAM network.
+
+  vson_vm_image_name:
+    type: string
+    label: vSON base VM image name
+    description: VM Image name the vSON instance will be created from.
+
+  vson_vm_flavor_name:
+    type: string
+    label: Flavor name
+    description: The ID or name of the flavor to boot onto.
+
+  vson_dc_unit:
+    type: string
+    label: vSON Data Center name
+    description: Name of the vSON Data Center.
+
+  vson_clm_oam_net_ip:
+    type: string
+    label: vSON Cluster Manager IP
+    description: IP of the vSON Cluster Manager.
+
+  vson_join_cluster_auth_token:
+    type: string
+    label: vSON join cluster auth token
+    description: >
+      Authentication Token generated for the user permitted to add
+      a new Datacenter/vSON member to existing vSON Cluster.
+
+  swift_account_auth_token:
+    type: string
+    label: Swift account auth token
+    description: >
+      Swift account auth token.
+      Example:  041a5187bb4641f9b89583e2539776b0
+
+resources:
+
+  wait_condition:
+    type: OS::Heat::SwiftSignal
+    properties:
+      handle: {get_resource: wait_handle}
+      count: 1
+      timeout: 800
+
+  wait_handle:
+    type: OS::Heat::SwiftSignalHandle
+
+# vSON server OAM network port
+  vson_server_oam_net_port_0:
+    type: OS::Neutron::Port
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_VNF_ID_SERVER_NAME_oam_net_port_0
+          params:
+            VNF_NAME: {get_param: vnf_name}
+            VNF_ID: {get_param: vnf_id}
+            SERVER_NAME: {get_param: [vson_vm_names, {get_param: instance_index}]}
+      network_id: {get_param: oam_net_id}
+      fixed_ips:
+        - ip_address: {get_param: [oam_net_ips, {get_param: instance_index}]}
+        - ip_address: {get_param: [oam_net_v6_ips, {get_param: instance_index}]}
+      security_groups:
+      - {get_param: oam_net_security_group_id}
+
+# Attach Cinder volume to the server
+  vson_server_volume_attach:
+    type: OS::Cinder::VolumeAttachment
+    depends_on: vson_server
+    properties:
+      instance_uuid: {get_resource: vson_server}
+      volume_id: {get_param: [volume_ids, {get_param: instance_index}]}
+
+# Create vSON server
+  vson_server:
+    type: OS::Nova::Server
+    depends_on: [vson_server_oam_net_port_0]
+    properties:
+      name: {get_param: [vson_vm_names, {get_param: instance_index}]}
+      availability_zone: {get_param: [availability_zones, {get_param: instance_index}]}
+      image: {get_param: vson_vm_image_name}
+      flavor: {get_param: vson_vm_flavor_name}
+      config_drive: True
+      metadata:
+        vnf_name: {get_param: vnf_name}
+        vnf_id: {get_param: vnf_id}
+        vf_module_name: {get_param: vf_module_name}
+        vf_module_id: {get_param: vf_module_id}
+        vm_role: {get_param: vfc_role}
+      networks:
+      - port: {get_resource: vson_server_oam_net_port_0}
+      scheduler_hints:
+        group: {get_param: vson_server_group_id}
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          template: {get_file: deploy.sh}
+          params:
+            $HOT_INSTANCE_INDEX: {get_param: instance_index}
+            $HOT_VOLUME_ID: {get_param: [volume_ids, {get_param: instance_index}]}
+            $HOT_VOLUME_ATTACH: "False"
+            $HOT_VFC_ROLE: {get_param: vfc_role}
+            $HOT_CLM_SERVER_IP: {get_param: vson_clm_oam_net_ip}
+            $HOT_THIS_INSTANCE_OAM_NET_IP: {get_param: [oam_net_ips, {get_param: instance_index}]}
+            $HOT_THIS_INSTANCE_OAM_NET_PREFIX: {get_param: oam_net_subnet_prefix_length}
+            $HOT_THIS_INSTANCE_OAM_V6_NET_IP: {get_param: [oam_net_v6_ips, {get_param: instance_index}]}
+            $HOT_THIS_INSTANCE_OAM_V6_NET_PREFIX: {get_param: oam_net_subnet_v6_prefix_length}
+            $HOT_THIS_INSTANCE_DEFAULT_GATEWAY: {get_param: default_gateway}
+            $HOT_THIS_INSTANCE_DEFAULT_GATEWAY_V6: {get_param: default_gateway_v6}
+            $HOT_DNS_SERVERS: {list_join: [',', {get_param: dns_servers}]}
+            $HOT_DC_NAME: {get_param: vson_dc_unit}
+            $HOT_NTP_SERVERS: {list_join: [' ', {get_param: ntp_servers}]}
+            $HOT_SWIFT_AUTH_TOKEN: {get_param: swift_account_auth_token}
+            $HOT_VSON_JOIN_CLUSTER_AUTH_TOKEN: {get_param: vson_join_cluster_auth_token}
+            $HOT_WC_NOTIFY: { get_attr: ['wait_handle', 'curl_cli'] }

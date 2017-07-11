@@ -644,8 +644,6 @@ public class ToscaExportHandler {
 
 		if (!MapUtils.isEmpty(componentInstancesProperties)) {
 			componentInstancesProperties.get(instanceUniqueId).stream()
-					// Filters out properties with empty ValueUniqueUid
-					.filter(e -> e.getValue() != null && !e.getValue().isEmpty() )
 					// Collects filtered properties to List
 					.collect(Collectors.toList()).stream()
 					// Converts and adds each value to property map
@@ -694,7 +692,7 @@ public class ToscaExportHandler {
 		if (input.getSchema() != null && input.getSchema().getProperty() != null) {
 			innerType = input.getSchema().getProperty().getType();
 		}
-		return propertyConvertor.convertToToscaObject(propertyType, supplier.get(), innerType, dataTypes);
+		return propertyConvertor.convertToToscaObject(propertyType, input.getName(), supplier.get(), innerType, dataTypes);
 	}
 
 	private ToscaGroupTemplate convertGroup(GroupDefinition group) {

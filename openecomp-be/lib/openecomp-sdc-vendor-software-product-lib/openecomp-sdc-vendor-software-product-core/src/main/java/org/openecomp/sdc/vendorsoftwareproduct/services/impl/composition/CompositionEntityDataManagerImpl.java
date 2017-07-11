@@ -27,6 +27,8 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.logging.context.impl.MdcDataDebugMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.ComponentDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.NetworkDao;
@@ -68,6 +70,8 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   private static final String COMPOSITION_ENTITY_DATA_MANAGER_ERR_MSG =
       "Invalid input: %s may not be null";
 
+  private static final Logger logger =
+      LoggerFactory.getLogger(CompositionEntityDataManagerImpl.class);
   private static MdcDataDebugMessage mdcDataDebugMessage = new MdcDataDebugMessage();
 
   private Map<CompositionEntityId, CompositionEntityData> entities = new HashMap<>();
@@ -460,7 +464,7 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
         VspQuestionnaireEntity vspQuestionnaireEntity = (VspQuestionnaireEntity) vspEntity.entity;
         VspDetails vspDetails =
             vspInfoDao.get(new VspDetails(vspQuestionnaireEntity.getId(),
-                    vspQuestionnaireEntity.getVersion()));
+                vspQuestionnaireEntity.getVersion()));
         return vspDetails.getName();
     }
 
@@ -545,6 +549,12 @@ public class CompositionEntityDataManagerImpl implements CompositionEntityDataMa
   }
 
   private Collection<String> validateQuestionnaire(CompositionEntityData compositionEntityData) {
+    logger.debug(String.format("validateQuestionnaire start:  " +
+            "[entity.type]=%s, [entity.id]=%s, [entity.questionnaireString]=%s",
+        compositionEntityData.entity.getType().name(),
+        compositionEntityData.entity.getCompositionEntityId().toString(),
+        compositionEntityData.entity.getQuestionnaireData()));
+
     return JsonUtil.validate(
         compositionEntityData.entity.getQuestionnaireData() == null
             ? JsonUtil.object2Json(new Object())

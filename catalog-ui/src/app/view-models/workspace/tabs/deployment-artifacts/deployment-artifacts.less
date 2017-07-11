@@ -160,7 +160,7 @@
         }
 
         .i-sdc-env-form-label{
-            font-family: @font-omnes-medium;
+            font-family: @font-opensans-medium;
             color: @main_color_m;
             overflow: hidden;
             max-width: 450px;
@@ -178,8 +178,13 @@
     }
 }
 
+.table-container-flex .table .body .scrollbar-container {
+        overflow-x:auto !important; //need to override the overflow-hidden for the table so that the popover auto positioning works
+        min-height: 400px;
+}
+
 .parameter-description-popover.deployment-artifact-view {
-    margin-left: -10px;
+    margin-left: -22px;
     z-index: 1040;
     min-width: 300px;
     .input-error {

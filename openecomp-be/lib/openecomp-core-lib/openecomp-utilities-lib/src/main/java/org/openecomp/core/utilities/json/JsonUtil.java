@@ -25,7 +25,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.everit.json.schema.EnumSchema;
 import org.everit.json.schema.Schema;
@@ -33,6 +32,8 @@ import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.openecomp.core.utilities.CommonMethods;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
  * The type Json util.
  */
 public class JsonUtil {
+  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
   /**
    * Object 2 json string.
@@ -163,13 +165,15 @@ public class JsonUtil {
     Set<Object> possibleValues = ((EnumSchema) exception.getViolatedSchema()).getPossibleValues();
     return exception.getMessage().replaceFirst("enum value", possibleValues.size() == 1
         ? String.format("value. %s is the only possible value for this field",
-            possibleValues.iterator().next())
+        possibleValues.iterator().next())
         : String.format("value. Possible values: %s", CommonMethods
             .collectionToCommaSeparatedString(
                 possibleValues.stream().map(Object::toString).collect(Collectors.toList()))));
   }
 
   private static List<ValidationException> validateUsingEverit(String json, String jsonSchema) {
+    logger.debug(
+        String.format("validateUsingEverit start, json=%s, jsonSchema=%s", json, jsonSchema));
     if (json == null || jsonSchema == null) {
       throw new IllegalArgumentException("Input strings json and jsonSchema can not be null");
     }

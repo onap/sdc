@@ -107,7 +107,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Fetch list of assets", httpMethod = "GET", notes = "Returns list of assets")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", response = AssetMetadata.class, responseContainer="List"),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
@@ -217,7 +217,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Detailed metadata of asset by uuid", httpMethod = "GET", notes = "Returns detailed metadata of an asset by uuid")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", response = AssetMetadata.class, responseContainer="List"),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
@@ -306,7 +306,7 @@ public class AssetsDataServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Fetch assets CSAR", httpMethod = "GET", notes = "Returns asset csar", response = String.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Catalog Assets Metadata is returned", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),

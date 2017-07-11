@@ -1,0 +1,151 @@
+heat_template_version: 2015-04-30
+#################################
+# Author: Dmitry Orzhehovsky
+# Email:  dorzheho@cisco.com
+#################################
+
+description: The template deploys vSON VFC of type Mediator (MDR). 
+
+parameters:
+
+  vnf_name:
+    type: string
+    label: VF name
+    description: Unique name for this VF instance.
+
+  vnf_id:
+    type: string
+    label: VF ID
+    description: Unique ID for this VF instance.
+
+  vf_module_name:
+    type: string
+    label: VF module name
+    description: Unique name for this VF module instance.
+
+  vf_module_id:
+    type: string
+    label: VF module ID
+    description: Unique ID for this VF Module instance.
+
+  oam_net_id:
+    type: string
+    label: OAM network ID
+    description: The ID of the OAM network.
+
+  oam_net_subnet_prefix_length:
+    type: string
+    label: OAM net subnet prefix length
+    description: OAM network subnet prefix length.
+
+  default_gateway:
+    type: string
+    label: Default gateway
+    description: Default gateway.
+
+  dns_servers:
+    type: comma_delimited_list
+    label: DNS servers
+    description: List of DNS servers.
+
+  ntp_servers:
+    type: comma_delimited_list
+    label: NTP servers 
+    description: List of NTP servers.
+
+  oam_net_security_group_id:
+    type: string
+    label: OAM network security group ID
+    description: >
+      The ID of Security group applied on the port
+      bound to the vSON OAM network.
+
+  availability_zone_0:
+    type: string
+    label: Availability zone 0
+    description: Availability zone.
+
+  vson_mdr_server_group_id:
+    type: string
+    label: vSON Mediator server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Mediator instances.  
+
+  vson_mdr_volume_id_0:
+    type: string
+    label: vSON Mediator Volume ID 0
+    description: Volume ID of the vSON Mediator server.
+
+  vson_mdr_name_0:
+    type: string
+    label: vSON Mediator instance name
+    description: Unique name to be issued to the vSON Mediator instance.
+
+  vson_mdr_flavor_name:
+    type: string
+    label: Flavor name
+    description: The ID or name of the flavor to boot onto.
+
+  vson_mdr_oam_net_ip_0:
+    type: string
+    label: vSON MDR OAM network IP address
+    description: Fixed IP assignment for the vSON MDR instance on the OAM network.
+
+  vson_clm_0_oam_net_ip_0:
+    type: string
+    label: vSON Cluster Manager 0 OAM net IP
+    description: IP of the first vSON Cluster Management server.
+
+  vson_dc_unit:
+    type: string
+    label: vSON Datacenter name
+    description: vSON Datacenter name.
+
+  swift_account_auth_token:
+    type: string
+    label: Swift account auth token
+    description: >
+      Swift account auth token.
+      Example:  041a5187bb4641f9b89583e2539776b0
+
+  number_of_servers:
+     type: number
+     label: Number of Servers
+     description: Number of vSON Mediator servers.
+     constraints:
+       - range: { min: 1, max: 1}
+
+resources:
+
+  vson_mdr_group:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: number_of_servers}
+      resource_def:
+        type: nested_vson_server_from_vol.yaml
+        properties:
+          instance_index: "%index%"
+          vnf_name: {get_param: vnf_name}
+          vnf_id: {get_param: vnf_id}
+          vf_module_name: {get_param: vf_module_name}
+          vf_module_id: {get_param: vf_module_id}
+          vfc_role: mdr
+          oam_net_id: {get_param: oam_net_id}
+          oam_net_subnet_prefix_length: {get_param: oam_net_subnet_prefix_length}
+          default_gateway: {get_param: default_gateway}
+          dns_servers: {get_param: dns_servers}
+          ntp_servers: {get_param: ntp_servers}
+          oam_net_security_group_id: {get_param: oam_net_security_group_id}
+          availability_zones: [{get_param: availability_zone_0}]
+          vson_server_group_id: {get_param: vson_mdr_server_group_id}
+          volume_ids: [{get_param: vson_mdr_volume_id_0}]
+          vson_vm_names: [{get_param: vson_mdr_name_0}]
+          oam_net_ips: [{get_param: vson_mdr_oam_net_ip_0}]
+          vson_vm_flavor_name: {get_param: vson_mdr_flavor_name}
+          vson_clm_oam_net_ip: {get_param: vson_clm_0_oam_net_ip_0}
+          vson_dc_unit: {get_param: vson_dc_unit}
+          swift_account_auth_token: {get_param: swift_account_auth_token}
+

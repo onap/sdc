@@ -61,4 +61,11 @@ public class CompositionEntityId {
     return parentId != null ? parentId.equals(that.parentId) : that.parentId == null;
 
   }
+
+  @Override
+  public String toString() {
+    return parentId == null
+        ? id
+        : parentId.toString() + "/" + id;
+  }
 }

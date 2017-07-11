@@ -56,9 +56,11 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.PackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.UploadDataEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspQuestionnaireEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.mock.EnrichmentManagerFactoryImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
@@ -284,7 +286,7 @@ public class VendorSoftwareProductManagerImplTest {
     assertVspsEquals(vsp, vspToCreate);
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
-    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor()+1));
+    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor() + 1));
     Assert.assertTrue(activityLogEntity.isSuccess());
   }
 
@@ -409,7 +411,7 @@ public class VendorSoftwareProductManagerImplTest {
             USER1, null);
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
-    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor()+1));
+    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor() + 1));
     Assert.assertTrue(activityLogEntity.isSuccess());
   }
 
@@ -427,7 +429,7 @@ public class VendorSoftwareProductManagerImplTest {
 
     verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
-    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor()+1));
+    Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION01.getMajor() + 1));
     Assert.assertTrue(activityLogEntity.isSuccess());
   }
 
@@ -459,12 +461,27 @@ public class VendorSoftwareProductManagerImplTest {
   public void testSubmitWithMissingData() throws IOException {
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION01);
+
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
         VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE,
         VSP_ID, USER1, VersionableEntityAction.Read);
 
     VspDetails vsp = new VspDetails(VSP_ID, VERSION01);
     doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
+
+    VspQuestionnaireEntity vspQuestionnaire = new VspQuestionnaireEntity(VSP_ID, VERSION01);
+    vspQuestionnaire.setQuestionnaireData("{}");
+    doReturn(vspQuestionnaire).when(vspInfoDaoMock).getQuestionnaire(VSP_ID, VERSION01);
+
+    ComponentEntity comp1 = new ComponentEntity(VSP_ID, VERSION01, "comp1");
+    comp1.setQuestionnaireData("{}");
+    doReturn(Collections.singleton(comp1)).when(vendorSoftwareProductDaoMock)
+        .listComponentsCompositionAndQuestionnaire(VSP_ID, VERSION01);
+
+    NicEntity nic1 = new NicEntity(VSP_ID, VERSION01, "comp1", "nic1");
+    nic1.setQuestionnaireData("{}");
+    doReturn(Collections.singleton(nic1))
+        .when(vendorSoftwareProductDaoMock).listNicsByVsp(VSP_ID, VERSION01);
 
     ValidationResponse validationResponse = vendorSoftwareProductManager.submit(VSP_ID, USER1);
     Assert.assertNotNull(validationResponse);
@@ -477,7 +494,7 @@ public class VendorSoftwareProductManagerImplTest {
     verify(versioningManagerMock, never())
         .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
             USER1, null);
-    verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class),eq(USER1));
+    verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
   }
 
   // TODO: 3/15/2017 fix and enable
@@ -549,7 +566,7 @@ public class VendorSoftwareProductManagerImplTest {
     verify(versioningManagerMock)
         .submit(VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID,
             USER1, null);
-    verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(),eq(USER1));
+    verify(activityLogManagerMock).addActionLog(activityLogEntityArg.capture(), eq(USER1));
     ActivityLogEntity activityLogEntity = activityLogEntityArg.getValue();
     Assert.assertEquals(activityLogEntity.getVersionId(), String.valueOf(VERSION10.getMajor()));
     Assert.assertTrue(activityLogEntity.isSuccess());
@@ -612,7 +629,7 @@ public class VendorSoftwareProductManagerImplTest {
       Assert.assertEquals(ce.getMessage(), Messages.CREATE_MANIFEST_FROM_ZIP.getErrorMessage());
     }
 
-    verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class),eq(USER1));
+    verify(activityLogManagerMock, never()).addActionLog(any(ActivityLogEntity.class), eq(USER1));
   }
 /*
   @Test
