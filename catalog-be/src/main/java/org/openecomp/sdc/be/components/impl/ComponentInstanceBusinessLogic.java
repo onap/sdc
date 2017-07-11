@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.dao.titan.TitanOperationStatus;
+import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
@@ -557,7 +558,8 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 					ComponentInstance origInst = iterator.next();
 					Optional<ComponentInstance> op = componentInstanceList.stream().filter(ci -> ci.getUniqueId().equals(origInst.getUniqueId())).findAny();
 					if(op.isPresent()){
-						ComponentInstance updatedCi = op.get();						
+						ComponentInstance updatedCi = op.get();	
+						updatedCi.setCustomizationUUID(origInst.getCustomizationUUID());
 						Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, origInst, updatedCi.getName());
 						if(!isUniqueName){
 							CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ",
@@ -1636,6 +1638,7 @@ public abstract class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 			newComponentInstance.setPosX(resResourceInfo.getPosX());
 			newComponentInstance.setPosY(resResourceInfo.getPosY());
 			newComponentInstance.setDescription(resResourceInfo.getDescription());
+			newComponentInstance.setToscaComponentName(((ResourceMetadataDataDefinition)origComponent.getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName());
 
 			resultOp = createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
 

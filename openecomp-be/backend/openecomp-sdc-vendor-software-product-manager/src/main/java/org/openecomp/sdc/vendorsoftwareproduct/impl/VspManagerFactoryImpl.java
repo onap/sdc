@@ -32,7 +32,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.OrchestrationTemplateDaoFacto
 import org.openecomp.sdc.vendorsoftwareproduct.dao.PackageInfoDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductDaoFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
-import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.InformationArtifactGeneratorFactory;
 import org.openecomp.sdc.versioning.VersioningManagerFactory;
 
@@ -48,7 +47,6 @@ public class VspManagerFactoryImpl extends VspManagerFactory {
           EnrichedServiceModelDaoFactory.getInstance().createInterface(),
           HealingManagerFactory.getInstance().createInterface(),
           VendorLicenseArtifactServiceFactory.getInstance().createInterface(),
-          CompositionEntityDataManagerFactory.getInstance().createInterface(),
           InformationArtifactGeneratorFactory.getInstance().createInterface(),
           PackageInfoDaoFactory.getInstance().createInterface(),
           ActivityLogManagerFactory.getInstance().createInterface());

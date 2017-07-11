@@ -78,6 +78,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageInvalidErrorBuilder
 import org.openecomp.sdc.vendorsoftwareproduct.errors.PackageNotFoundErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.TranslationFileCreationErrorBuilder;
 import org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductInvalidErrorBuilder;
+import org.openecomp.sdc.vendorsoftwareproduct.factory.CompositionEntityDataManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.services.composition.CompositionEntityDataManager;
 import org.openecomp.sdc.vendorsoftwareproduct.services.schemagenerator.SchemaGenerator;
@@ -137,7 +138,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
   private HealingManager healingManager;
   private VendorLicenseArtifactsService licenseArtifactsService;
-  private CompositionEntityDataManager compositionEntityDataManager;
   private InformationArtifactGenerator informationArtifactGenerator;
   private PackageInfoDao packageInfoDao;
   private ActivityLogManager activityLogManager;
@@ -153,7 +153,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
       EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao,
       HealingManager healingManager,
       VendorLicenseArtifactsService licenseArtifactsService,
-      CompositionEntityDataManager compositionEntityDataManager,
       InformationArtifactGenerator informationArtifactGenerator,
       PackageInfoDao packageInfoDao,
       ActivityLogManager activityLogManager) {
@@ -166,7 +165,6 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     this.enrichedServiceModelDao = enrichedServiceModelDao;
     this.healingManager = healingManager;
     this.licenseArtifactsService = licenseArtifactsService;
-    this.compositionEntityDataManager = compositionEntityDataManager;
     this.informationArtifactGenerator = informationArtifactGenerator;
     this.packageInfoDao = packageInfoDao;
     this.activityLogManager = activityLogManager;
@@ -479,11 +477,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
           vsp.setValidationDataStructure(null);
           vsps.add(new VersionedVendorSoftwareProductInfo(vsp, versionInfo));
         }
-      }catch(RuntimeException rte){
-        logger.error("Error trying to retrieve vsp["+entry.getKey()+"] version["+version.toString
-            ()+"] " +
-            "message:"+rte
-            .getMessage());
+      } catch (RuntimeException rte) {
+        logger.error(
+            "Error trying to retrieve vsp[" + entry.getKey() + "] version[" + version.toString
+                () + "] " +
+                "message:" + rte
+                .getMessage());
       }
     }
 
@@ -543,11 +542,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         autoHeal(vspId, checkoutVersion, vendorSoftwareProductInfo, user);
         return checkin(vspId, user);
       case Final:
-        Version checkoutFinalVersion = checkout(vspId,user);
+        Version checkoutFinalVersion = checkout(vspId, user);
         autoHeal(vspId, checkoutFinalVersion, vendorSoftwareProductInfo, user);
-        Version checkinFinalVersion = checkin(vspId,user);
+        Version checkinFinalVersion = checkin(vspId, user);
         ValidationResponse response = submit(vspId, user);
-        if(!response.isValid()) {
+        if (!response.isValid()) {
           return checkout(vspId, user);
         }
 
@@ -828,7 +827,10 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
   private QuestionnaireValidationResult validateQuestionnaire(String vspId, Version version) {
     mdcDataDebugMessage.debugEntryMessage("VSP id", vspId);
 
-
+    // The apis of CompositionEntityDataManager used here are stateful!
+    // so, it must be re-created from scratch when it is used!
+    CompositionEntityDataManager compositionEntityDataManager =
+        CompositionEntityDataManagerFactory.getInstance().createInterface();
     compositionEntityDataManager
         .addEntity(vspInfoDao.getQuestionnaire(vspId, version), null);
 

@@ -2642,12 +2642,17 @@ public class UnifiedCompositionService {
       String newNestedNodeTypeId,
       ServiceTemplate globalSubstitutionServiceTemplate,
       TranslationContext context) {
-    Map<String, NodeType> nodeTypes = globalSubstitutionServiceTemplate.getNode_types();
-    NodeType nested = DataModelUtil.getNodeType(globalSubstitutionServiceTemplate,
-        origNestedNodeTypeId);
-    setNewValuesForNestedNodeType(origNestedNodeTypeId, newNestedNodeTypeId, nested, nodeTypes);
-    context.addUnifiedNestedNodeTypeId(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
-        origNestedNodeTypeId, newNestedNodeTypeId);
+    Set<String> relatedNestedNodeTypeIds =
+        context.getAllRelatedNestedNodeTypeIds();
+
+    if(!relatedNestedNodeTypeIds.contains(origNestedNodeTypeId)) {
+      Map<String, NodeType> nodeTypes = globalSubstitutionServiceTemplate.getNode_types();
+      NodeType nested = DataModelUtil.getNodeType(globalSubstitutionServiceTemplate,
+          origNestedNodeTypeId);
+      setNewValuesForNestedNodeType(origNestedNodeTypeId, newNestedNodeTypeId, nested, nodeTypes);
+      context.addUnifiedNestedNodeTypeId(Constants.GLOBAL_SUBSTITUTION_TYPES_TEMPLATE_NAME,
+          origNestedNodeTypeId, newNestedNodeTypeId);
+    }
   }
 
   private void setNewValuesForNestedNodeType(String origNestedNodeType,

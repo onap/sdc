@@ -62,14 +62,30 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
 
   @Override
   public void update(LicenseKeyGroupEntity licenseKeyGroup) {
-    ZusammenElement locenseKeyGroupElement =
+    ZusammenElement licenseKeyGroupElement =
         buildLicenseKeyGroupElement(licenseKeyGroup, Action.UPDATE);
 
     SessionContext context = ZusammenUtil.createSessionContext();
     Id itemId = new Id(licenseKeyGroup.getVendorLicenseModelId());
-    zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)),
-        locenseKeyGroupElement,
+
+    ElementContext elementContext = new ElementContext(itemId,
+        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+
+    Optional<ElementInfo> lkgFromDb = zusammenAdaptor.getElementInfo(context, elementContext,
+        new Id(licenseKeyGroup.getId()));
+
+    if(lkgFromDb.isPresent()) {
+
+      if( licenseKeyGroupElement.getRelations() == null) {
+        licenseKeyGroupElement.setRelations(new ArrayList<>());
+      }
+
+      lkgFromDb.get().getRelations().forEach(relation ->
+          licenseKeyGroupElement.getRelations().add(relation));
+    }
+
+    zusammenAdaptor.saveElement(context, elementContext,
+        licenseKeyGroupElement,
         String.format("Update license key group with id %s", licenseKeyGroup.getId()));
   }
 

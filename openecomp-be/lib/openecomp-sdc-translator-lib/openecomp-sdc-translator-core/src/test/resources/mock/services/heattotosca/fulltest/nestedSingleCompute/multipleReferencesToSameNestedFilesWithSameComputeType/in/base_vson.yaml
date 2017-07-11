@@ -1,0 +1,422 @@
+heat_template_version: 2015-04-30
+#################################
+# Author: Dmitry Orzhehovsky
+# Email:  dorzheho@cisco.com
+#################################
+description: >
+  Creates essential resources:
+  vSON internal network, Security Groups and
+  vSON Cluster Manager instance.
+  Deploys and configure appropriate software on the Cluster Management server.
+  Exposes shared resource as outputs that could be used by add-on templates.
+
+parameters:
+
+### vSON VF base global parameters
+  vnf_name:
+    type: string
+    label: VF name
+    description: Unique name for this VF instance.
+
+  vnf_id:
+    type: string
+    label: VF ID
+    description: Unique ID for this VF instance.
+
+  vf_module_name:
+    type: string
+    label: VF module name
+    description: Unique name for this VF module instance.
+
+  vf_module_id:
+    type: string
+    label: VF module ID
+    description: Unique ID for this VF Module instance.
+
+### OAM network parameters
+  oam_net_id:
+    type: string
+    label: OAM network ID
+    description: Unique ID for the OAM network.
+
+  oam_net_subnet_prefix_length:
+    type: string
+    label: OAM net subnet prefix length
+    description: OAM network subnet prefix length.
+
+  default_gateway:
+    type: string
+    label: Default gateway
+    description: Default gateway.
+
+  dns_servers:
+    type: comma_delimited_list
+    label: DNS servers
+    description: List of DNS servers.
+
+  ntp_servers:
+    type: comma_delimited_list
+    label: NTP servers 
+    description: List of NTP servers.
+
+  vson_clm_server_group_policy:
+    type: string
+    label: vSON Cluster Management server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Cluster Management instances.
+
+  vson_leader_server_group_policy:
+    type: string
+    label: vSON Cluster/DC leader server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Cluster/DC leader instances.
+
+  vson_dbc_server_group_policy:
+    type: string
+    label: vSON Database server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Database instances.
+
+  vson_dbg_server_group_policy:
+    type: string
+    label: vSON Database server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON DB Global instances.
+
+  vson_dbs_server_group_policy:
+    type: string
+    label: vSON Database server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON DB Shard instances.
+
+  vson_mon_server_group_policy:
+    type: string
+    label: vSON MON server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON MON instances.
+
+  vson_mgt_server_group_policy:
+    type: string
+    label: vSON Management server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Management instances.
+
+  vson_mdr_server_group_policy:
+    type: string
+    label: vSON Mediator server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Mediator instances.
+
+  vson_app_server_group_policy:
+    type: string
+    label: vSON Application server group policy
+    description: >
+      Tells what policy should be applied to the ServerGroup.
+      Affinity policy will force instances to share the same hypervisor.
+      Anti-affinity will force instances to run in different hypervisors.
+      The group intended for vSON Application instances.
+
+### CLM server parameters
+  availability_zone_0:
+    type: string
+    label: Availability zone 0
+    description: >
+      vSON Cluster Management server Availability zone.
+
+  vson_clm_name_0:
+    type: string
+    label: vSON Cluster Management server name
+    description: VM name for this vSON Cluster Management instance.
+
+  vson_clm_oam_net_ip_0:
+    type: string
+    label: vSON CLM OAM network IP address
+    description: Fixed IP assignment for vSON CLM instances on the OAM network.
+
+  vson_clm_flavor_name:
+    type: string
+    label: Flavor name
+    description: Cluster Manager VM flavor name.
+
+  vson_clm_image_name:
+    type: string
+    label: vSON Cluster Manager VM image name 
+    description: Image name the volume will be created from.
+
+  vson_master_clm_ip:
+    type: string
+    label: vSON master CLM IP
+    description: >
+      Master CLM IP. If the vSON Cluster belongs to a single OpenStack tenant,
+      the value SHOULD BE EMPTY. 
+      In case the vSON Cluster is distributed between multiple tenants:
+        -> vSON Cluster instantiation - the value should be empty 
+        -> Adding a new DC to existing vSON Cluster - IP of the CLM deployed during 
+           vSON Cluster instantiation, should be set as the value. 
+
+  vson_cluster_name:
+    type: string
+    label: vSON Cluster name
+    description: Name of the vSON Cluster.
+    constraints:
+      - length: { min: 1, max: 13 }
+        description: User name must be between 1 and 13 characters
+
+  swift_storage_url:
+    type: string
+    label: swift storage URL
+    description: >
+      Swift storage URL.
+      Example: http://172.16.209.246:8080/v1/AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029
+      http://172.16.209.246:8080 - protocol, IP and port,
+      v1 - API version
+      AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 - account ID
+
+  swift_account_auth_token:
+    type: string
+    label: Swift account auth token
+    description: >
+      Swift account auth token.
+      Example:  041a5187bb4641f9b89583e2539776b0
+
+  swift_son_container_name:
+    type: string
+    label: SON Swift
+    description: Swift container storing vSON artifacts.
+
+resources:
+
+# Server Group implements appropriate scheduling policy for vSON Cluster Management instances
+  vson_clm_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_clm_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_clm_server_group_policy}
+
+# Server Group implements appropriate scheduling policy for vSON Cluster/DC leaders
+  vson_leader_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_leader_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_leader_server_group_policy}
+
+# Server Group implements appropriate scheduling policy for vSON DBC instances
+  vson_dbc_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dbc_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_dbc_server_group_policy}
+
+# Server Group implements appropriate scheduling policy for vSON DBG instances
+  vson_dbg_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dbg_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_dbg_server_group_policy}
+
+# Server Group implements appropriate scheduling policy for vSON DBS instances
+  vson_dbs_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_dbs_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_dbs_server_group_policy} 
+
+# Server Group implements appropriate scheduling policy for vSON MON instances
+  vson_mon_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_mon_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_mon_server_group_policy}
+
+# Server Group implements appropriate scheduling policy for vSON Management instances
+  vson_mgt_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_mgt_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_mgt_server_group_policy} 
+
+# Server Group implements appropriate scheduling policy for vSON Mediator instances
+  vson_mdr_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_mdr_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_mdr_server_group_policy} 
+
+# Server Group implements appropriate scheduling policy for vSON Application instances
+  vson_app_server_group:
+    type: OS::Nova::ServerGroup
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_app_server_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      policies:
+      - {get_param: vson_app_server_group_policy} 
+
+  oam_net_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      description: Security Group for instances connected to the OAM network.
+      name:
+        str_replace:
+          template: VNF_NAME_oam_sec_group
+          params:
+            VNF_NAME: {get_param: vnf_name}
+      rules:
+      - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "47", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+      - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "47", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "egress", "remote_ip_prefix": "::/0", "protocol": "icmp", "ethertype": "IPv6"}
+      - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "tcp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "udp", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "47", "ethertype": "IPv4", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "0.0.0.0/0", "protocol": "icmp", "ethertype": "IPv4"}
+      - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "tcp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "udp", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "47", "ethertype": "IPv6", "port_range_max": 65535, "port_range_min": 1}
+      - {"direction": "ingress", "remote_ip_prefix": "::/0", "protocol": "icmp", "ethertype": "IPv6"}
+
+# vSON Cluster Manager
+  vson_clm_0:
+    type: nested_vson_server.yaml
+    depends_on: [vson_clm_server_group, oam_net_security_group]
+    properties:
+      instance_index: 0
+      vnf_name: {get_param: vnf_name}
+      vnf_id: {get_param: vnf_id}
+      vf_module_name: {get_param: vf_module_name}
+      vf_module_id: {get_param: vf_module_id}
+      vfc_role: clm
+      vson_server_group_id: {get_resource: vson_clm_server_group}
+      oam_net_id: {get_param: oam_net_id}
+      oam_net_subnet_prefix_length: {get_param: oam_net_subnet_prefix_length}
+      default_gateway: {get_param: default_gateway}
+      dns_servers: {get_param: dns_servers}
+      ntp_servers: {get_param: ntp_servers}
+      oam_net_security_group_id: {get_resource: oam_net_security_group}
+      availability_zones: [{get_param: availability_zone_0}]
+      vson_vm_names: [{get_param: vson_clm_name_0}]
+      oam_net_ips: [{get_param: vson_clm_oam_net_ip_0}]
+      vson_vm_flavor_name: {get_param: vson_clm_flavor_name}
+      vson_vm_image_name: {get_param: vson_clm_image_name}
+      vson_clm_oam_net_ip: {get_param: vson_master_clm_ip}
+      vson_cluster_name: {get_param: vson_cluster_name}
+      swift_storage_url: {get_param: swift_storage_url}
+      swift_account_auth_token: {get_param: swift_account_auth_token}
+      swift_son_container_name: {get_param: swift_son_container_name}
+
+outputs:
+
+  oam_net_security_group_id:
+    value: {get_resource: oam_net_security_group}
+    description: ID of the OAM network Security group
+
+  vson_clm_server_group_id:
+    value: {get_resource: vson_clm_server_group}
+    description: ID of the Server Group intended for vSON Cluster Management instances.
+
+  vson_leader_server_group_id:
+    value: {get_resource: vson_leader_server_group}
+    description: ID of the Server Group intended for vSON Cluster/DC leaders.
+
+  vson_dbc_server_group_id:
+    value: {get_resource: vson_dbc_server_group}
+    description: ID of the Server Group intended for vSON DBC instances.
+
+  vson_dbg_server_group_id:
+    value: {get_resource: vson_dbg_server_group}
+    description: ID of the Server Group intended for vSON DBG instances.
+
+  vson_dbs_server_group_id:
+    value: {get_resource: vson_dbs_server_group}
+    description: ID of the Server Group intended for vSON DBS instances.
+
+  vson_mon_server_group_id:
+    value: {get_resource: vson_mon_server_group}
+    description: ID of the Server Group intended for vSON MON instances.
+
+  vson_mgt_server_group_id:
+    value: {get_resource: vson_mgt_server_group}
+    description: ID of the Server Group intended for vSON Management instances.
+
+  vson_mdr_server_group_id:
+    value: {get_resource: vson_mdr_server_group}
+    description: ID of the Server Group intended for vSON Mediator instances.
+
+  vson_app_server_group_id:
+    value: {get_resource: vson_app_server_group}
+    description: ID of the Server Group intended for vSON Application instances.
+
+  vson_clm_0_oam_net_ip_0:
+    value: {get_param: vson_clm_oam_net_ip_0}
+    description: vSON Cluster Management server IP on the OAM network.
+

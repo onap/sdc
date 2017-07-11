@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -134,6 +134,8 @@ export class CompositionViewModel {
 
     private removeSelectedComponentInstance = ():void => {
         this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_DELETE_MULTIPLE_COMPONENTS);
+        this.$scope.currentComponent.selectedInstance = null;
+        this.$scope.selectedComponent = this.$scope.currentComponent;
     };
 
     private updateUuidMap = ():void => {
@@ -241,10 +243,7 @@ export class CompositionViewModel {
             this.$scope.setComponent(this.$scope.currentComponent);
             this.$scope.updateSelectedComponent();
         };
-
-        this.$scope.reload = (component:Component):void => {
-            this.$state.go(this.$state.current.name,{id:component.uniqueId},{reload:true});
-        };
+        
 
         this.eventListenerService.registerObserverCallback(EVENTS.ON_CHECKOUT, this.$scope.reload);
 

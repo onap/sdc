@@ -1,5 +1,6 @@
 package org.openecomp.sdc.translator.datatypes.heattotosca.unifiedmodel.composition;
 
+import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.tosca.datatypes.model.NodeTemplate;
 
 import java.util.Collection;
@@ -106,6 +107,13 @@ public class UnifiedSubstitutionData {
         : Optional.of(this.nestedNodeTypeRelatedUnifiedTranslatedId.get(nestedNodeTypeId));
   }
 
+  public Set<String> getAllRelatedNestedNodeTypeIds(){
+    if(MapUtils.isEmpty(nestedNodeTypeRelatedUnifiedTranslatedId)){
+      return new HashSet<>();
+    }
+    return new HashSet<>(this.nestedNodeTypeRelatedUnifiedTranslatedId.values());
+  }
+
   public void addHandledComputeType(String nestedServiceTemplateFileName,
                                     String handledComputeType) {
 
@@ -147,7 +155,9 @@ public class UnifiedSubstitutionData {
 
   public void addNewPropertyIdToNodeTemplate(String newPropertyId,
                                              Object origPropertyValue){
-    newParameterIdsToPropertiesFromOrigNodeTemplate.putIfAbsent(newPropertyId, origPropertyValue);
+    if(!newParameterIdsToPropertiesFromOrigNodeTemplate.containsKey(newPropertyId)) {
+      newParameterIdsToPropertiesFromOrigNodeTemplate.put(newPropertyId, origPropertyValue);
+    }
   }
 
   public Optional<Object> getNewPropertyInputParam(String newPropertyId){

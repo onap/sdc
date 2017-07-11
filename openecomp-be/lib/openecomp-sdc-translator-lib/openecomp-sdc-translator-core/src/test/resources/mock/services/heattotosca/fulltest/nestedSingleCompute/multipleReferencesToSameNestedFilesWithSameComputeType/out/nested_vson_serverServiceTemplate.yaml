@@ -1,0 +1,452 @@
+tosca_definitions_version: tosca_simple_yaml_1_0_0
+metadata:
+  template_name: nested_vson_server
+imports:
+- openecomp_heat_index:
+    file: openecomp-heat/_index.yml
+- GlobalSubstitutionTypes:
+    file: GlobalSubstitutionTypesServiceTemplate.yaml
+node_types:
+  org.openecomp.resource.vfc.nodes.heat.vson_vm:
+    derived_from: org.openecomp.resource.vfc.nodes.heat.nova.Server
+topology_template:
+  inputs:
+    vf_module_id:
+      label: VF module ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    vson_cluster_name:
+      label: vSON Cluster name
+      hidden: false
+      immutable: false
+      type: string
+      description: Name of the vSON Cluster.
+    default_gateway:
+      label: Default gateway
+      hidden: false
+      immutable: false
+      type: string
+      description: Default gateway.
+    port_vson_server_oam_net_port_0_ip_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.IpRequirements
+    instance_index:
+      label: Instance Index
+      hidden: false
+      immutable: false
+      type: float
+      description: Index of the instance.
+    vnf_name:
+      label: VF name
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF instance.
+    oam_net_subnet_prefix_length:
+      label: OAM net subnet prefix length
+      hidden: false
+      immutable: false
+      type: string
+      description: Prefix length of the subnet on the OAM network.
+    swift_storage_url:
+      label: swift storage URL
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Swift storage URL. Example: http://172.16.209.246:8080/v1/AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 http://172.16.209.246:8080 - protocol, IP and port, v1 - API version AUTH_a4d426b5ef2e41408a8e6e6b9a8d3029 - account ID
+    vf_module_name:
+      label: VF module name
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique name for this VF module instance.
+    dns_servers:
+      label: DNS servers
+      hidden: false
+      immutable: false
+      type: list
+      description: List of DNS servers.
+      entry_schema:
+        type: string
+    oam_net_security_group_id:
+      label: OAM network security group ID
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        The ID of Security group applied on the port bound to the vSON OAM network.
+    vson_vm_image_name:
+      label: vSON base VM image name
+      hidden: false
+      immutable: false
+      type: string
+      description: VM Image name the vSON instance will be created from.
+    vnf_id:
+      label: VF ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF instance.
+    port_vson_server_oam_net_port_0_network_role:
+      type: string
+      required: true
+    vson_clm_oam_net_ip:
+      label: vSON Cluster Manager IP
+      hidden: false
+      immutable: false
+      type: string
+      description: IP of the vSON Cluster Manager.
+    port_vson_server_oam_net_port_0_mac_requirements:
+      type: org.openecomp.datatypes.network.MacRequirements
+      required: true
+    port_vson_server_oam_net_port_0_subnetpoolid:
+      type: string
+      required: true
+    oam_net_ips:
+      label: vSON OAM network IP addresses
+      hidden: false
+      immutable: false
+      type: list
+      description: Fixed IP assignments for vSON instances on the OAM network.
+      entry_schema:
+        type: string
+    swift_son_container_name:
+      label: SON Swift
+      hidden: false
+      immutable: false
+      type: string
+      description: Swift container storing vSON artifacts.
+    vfc_role:
+      label: VF module ID
+      hidden: false
+      immutable: false
+      type: string
+      description: Unique ID for this VF Module instance
+    swift_account_auth_token:
+      label: Swift account auth token
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Swift account auth token. Example:  041a5187bb4641f9b89583e2539776b0
+    vson_server_group_id:
+      label: vSON server group ID
+      hidden: false
+      immutable: false
+      type: string
+      description: |
+        Tells what policy should be applied to the ServerGroup. Affinity policy will force instances to share the same hypervisor. Anti-affinity will force instances to run in different hypervisors.
+    vson_vm_flavor_name:
+      label: Flavor name
+      hidden: false
+      immutable: false
+      type: string
+      description: The ID or name of the flavor to boot onto.
+    port_vson_server_oam_net_port_0_network_role_tag:
+      type: string
+      required: true
+    port_vson_server_oam_net_port_0_vlan_requirements:
+      type: list
+      required: true
+      entry_schema:
+        type: org.openecomp.datatypes.network.VlanRequirements
+    availability_zones:
+      label: Availability zones
+      hidden: false
+      immutable: false
+      type: list
+      description: List of availability zones.
+      entry_schema:
+        type: string
+    ntp_servers:
+      label: NTP servers
+      hidden: false
+      immutable: false
+      type: list
+      description: List of NTP servers.
+      entry_schema:
+        type: string
+    oam_net_id:
+      label: OAM network ID
+      hidden: false
+      immutable: false
+      type: string
+      description: The ID of the OAM network.
+    port_vson_server_oam_net_port_0_order:
+      type: integer
+      required: true
+    port_vson_server_oam_net_port_0_exCP_naming:
+      type: org.openecomp.datatypes.Naming
+      required: true
+    vson_vm_names:
+      label: vSON Cluster leader names
+      hidden: false
+      immutable: false
+      type: list
+      description: A list of unique names to be issued to the vSON Cluster leaders.
+      entry_schema:
+        type: string
+  node_templates:
+    vson_server:
+      type: org.openecomp.resource.vfc.nodes.heat.vson_vm
+      properties:
+        flavor:
+          get_input: vson_vm_flavor_name
+        availability_zone:
+          get_input:
+          - availability_zones
+          - get_input: instance_index
+        image:
+          get_input: vson_vm_image_name
+        metadata:
+          vf_module_id:
+            get_input: vf_module_id
+          vm_role:
+            get_input: vfc_role
+          vnf_id:
+            get_input: vnf_id
+          vnf_name:
+            get_input: vnf_name
+          vf_module_name:
+            get_input: vf_module_name
+        config_drive: true
+        user_data_format: RAW
+        name:
+          get_input:
+          - vson_vm_names
+          - get_input: instance_index
+        scheduler_hints:
+          group:
+            get_input: vson_server_group_id
+    vson_server_oam_net_port_0:
+      type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
+      properties:
+        ip_requirements:
+          get_input: port_vson_server_oam_net_port_0_ip_requirements
+        security_groups:
+        - get_input: oam_net_security_group_id
+        network_role:
+          get_input: port_vson_server_oam_net_port_0_network_role
+        fixed_ips:
+        - ip_address:
+            get_input:
+            - oam_net_ips
+            - get_input: instance_index
+        subnetpoolid:
+          get_input: port_vson_server_oam_net_port_0_subnetpoolid
+        mac_requirements:
+          get_input: port_vson_server_oam_net_port_0_mac_requirements
+        name:
+          str_replace:
+            template: VNF_NAME_VNF_ID_SERVER_NAME_oam_net_port_0
+            params:
+              VNF_NAME:
+                get_input: vnf_name
+              VNF_ID:
+                get_input: vnf_id
+              SERVER_NAME:
+                get_input:
+                - vson_vm_names
+                - get_input: instance_index
+        exCP_naming:
+          get_input: port_vson_server_oam_net_port_0_exCP_naming
+        vlan_requirements:
+          get_input: port_vson_server_oam_net_port_0_vlan_requirements
+        network_role_tag:
+          get_input: port_vson_server_oam_net_port_0_network_role_tag
+        network:
+          get_input: oam_net_id
+        order:
+          get_input: port_vson_server_oam_net_port_0_order
+      requirements:
+      - binding:
+          capability: tosca.capabilities.network.Bindable
+          node: vson_server
+          relationship: tosca.relationships.network.BindsTo
+  groups:
+    nested_vson_server_group:
+      type: org.openecomp.groups.heat.HeatStack
+      properties:
+        heat_file: ../Artifacts/nested_vson_server.yaml
+        description: |
+          The template intended for deploying vSON VM instance.
+      members:
+      - vson_server
+      - vson_server_oam_net_port_0
+  substitution_mappings:
+    node_type: org.openecomp.resource.abstract.nodes.heat.vson_vm_3
+    capabilities:
+      disk.write.bytes_vson_server:
+      - vson_server
+      - disk.write.bytes
+      disk.device.allocation_vson_server:
+      - vson_server
+      - disk.device.allocation
+      network.incoming.packets_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.incoming.packets
+      memory.usage_vson_server:
+      - vson_server
+      - memory.usage
+      network.incoming.bytes_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.incoming.bytes
+      disk.device.latency_vson_server:
+      - vson_server
+      - disk.device.latency
+      disk.device.write.bytes.rate_vson_server:
+      - vson_server
+      - disk.device.write.bytes.rate
+      disk.device.read.requests_vson_server:
+      - vson_server
+      - disk.device.read.requests
+      memory_vson_server:
+      - vson_server
+      - memory
+      disk.latency_vson_server:
+      - vson_server
+      - disk.latency
+      os_vson_server:
+      - vson_server
+      - os
+      feature_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - feature
+      instance_vson_server:
+      - vson_server
+      - instance
+      cpu_vson_server:
+      - vson_server
+      - cpu
+      attachment_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - attachment
+      disk.iops_vson_server:
+      - vson_server
+      - disk.iops
+      network.outgoing.bytes_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.outgoing.bytes
+      disk.device.write.bytes_vson_server:
+      - vson_server
+      - disk.device.write.bytes
+      disk.device.read.bytes.rate_vson_server:
+      - vson_server
+      - disk.device.read.bytes.rate
+      endpoint_vson_server:
+      - vson_server
+      - endpoint
+      vcpus_vson_server:
+      - vson_server
+      - vcpus
+      network.incoming.packets.rate_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.incoming.packets.rate
+      disk.device.read.requests.rate_vson_server:
+      - vson_server
+      - disk.device.read.requests.rate
+      disk.write.requests.rate_vson_server:
+      - vson_server
+      - disk.write.requests.rate
+      disk.capacity_vson_server:
+      - vson_server
+      - disk.capacity
+      disk.device.capacity_vson_server:
+      - vson_server
+      - disk.device.capacity
+      disk.device.iops_vson_server:
+      - vson_server
+      - disk.device.iops
+      disk.device.write.requests.rate_vson_server:
+      - vson_server
+      - disk.device.write.requests.rate
+      network.outpoing.packets_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.outpoing.packets
+      disk.read.bytes_vson_server:
+      - vson_server
+      - disk.read.bytes
+      disk.read.bytes.rate_vson_server:
+      - vson_server
+      - disk.read.bytes.rate
+      disk.device.write.requests_vson_server:
+      - vson_server
+      - disk.device.write.requests
+      network.outgoing.packets.rate_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.outgoing.packets.rate
+      disk.root.size_vson_server:
+      - vson_server
+      - disk.root.size
+      disk.ephemeral.size_vson_server:
+      - vson_server
+      - disk.ephemeral.size
+      memory.resident_vson_server:
+      - vson_server
+      - memory.resident
+      disk.device.read.bytes_vson_server:
+      - vson_server
+      - disk.device.read.bytes
+      scalable_vson_server:
+      - vson_server
+      - scalable
+      network.outgoing.bytes.rate_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.outgoing.bytes.rate
+      disk.write.requests_vson_server:
+      - vson_server
+      - disk.write.requests
+      disk.usage_vson_server:
+      - vson_server
+      - disk.usage
+      cpu_util_vson_server:
+      - vson_server
+      - cpu_util
+      disk.device.usage_vson_server:
+      - vson_server
+      - disk.device.usage
+      cpu.delta_vson_server:
+      - vson_server
+      - cpu.delta
+      disk.write.bytes.rate_vson_server:
+      - vson_server
+      - disk.write.bytes.rate
+      feature_vson_server:
+      - vson_server
+      - feature
+      disk.allocation_vson_server:
+      - vson_server
+      - disk.allocation
+      binding_vson_server:
+      - vson_server
+      - binding
+      host_vson_server:
+      - vson_server
+      - host
+      binding_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - binding
+      network.incoming.bytes.rate_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - network.incoming.bytes.rate
+      disk.read.requests_vson_server:
+      - vson_server
+      - disk.read.requests
+    requirements:
+      link_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - link
+      dependency_vson_server:
+      - vson_server
+      - dependency
+      dependency_vson_server_oam_net_port_0:
+      - vson_server_oam_net_port_0
+      - dependency
+      local_storage_vson_server:
+      - vson_server
+      - local_storage

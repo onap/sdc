@@ -16,7 +16,7 @@
 
 .properties-assignment-page {
     height: 100%;
-    font-family: 'Open Sans', omnes-regular, sans-serif; 
+    font-family: @font-opensans-regular;
 
     .main-content {
         display:flex;
@@ -66,7 +66,7 @@
             right: 100px;
             display:flex;
             flex-direction:row;
-        
+
             .search-box {
                 border: 1px solid @ng2-medium-gray;
                 border-radius: 3px;
@@ -102,6 +102,7 @@
         .clear-filter{
             cursor: pointer;
             color:#009fdb;
+            font-family: @font-opensans-medium-italic;
             text-decoration: underline;
             padding-right:10px;
             font-size:12px;

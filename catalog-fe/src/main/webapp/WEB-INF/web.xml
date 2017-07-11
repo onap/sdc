@@ -101,7 +101,7 @@
 
 	<filter-mapping>
 		<filter-name>GzipFilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/sdc1/*</url-pattern>
 	</filter-mapping>
 
 

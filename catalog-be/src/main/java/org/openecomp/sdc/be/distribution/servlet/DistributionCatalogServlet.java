@@ -98,7 +98,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	@ApiOperation(value = "Download service artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),
@@ -177,7 +177,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	@ApiOperation(value = "Download resource artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),
@@ -258,7 +258,7 @@ public class DistributionCatalogServlet extends BeGenericServlet {
 	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = String.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "The artifact is found and streamed.", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified Service is not found - SVC4503"),

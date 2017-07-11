@@ -9,9 +9,28 @@
         padding: 0;
         margin: 0;
 
+        .i-sdc-designer-leftbar-section-content-ul-li {
+            margin-top: 5px;
+
+            .tlv-checkbox {
+                font-size: 13px;
+                font-family: @font-opensans-medium;
+                color: @func_color_s;
+            }
+        }
+
         .i-sdc-catalog-subcategories-checkbox {
             padding: 0 0 0 20px;
             margin: 0;
+
+            > li {
+                margin-top: 5px;
+
+                .tlv-checkbox {
+                    font-size:13px;
+                    font-family: @font-opensans-regular;
+                }
+            }
 
             .i-sdc-catalog-grouping-checkbox {
                 padding: 0 0 0 20px;
@@ -163,7 +182,7 @@
         padding: 10px 12px;
     }
     .w-sdc-dashboard-catalog-header {
-        .b_9;
+        .b_3;
         display: inline-block;
         font-style: italic;
         font-weight: bold;
@@ -171,28 +190,28 @@
     }
 
     .w-sdc-dashboard-catalog-header-order {
-        .b_9;
+        .b_3;
         font-weight: 800;
     }
 
     .w-sdc-dashboard-catalog-sort {
-        .b_9;
+        .b_3;
         font-weight: bold;
         white-space:pre;
         &:hover{
             .hand;
             text-decoration: none;
-            .a_9;
+            .a_3;
         }
         &.blue {
-            .a_9;
+            .a_3;
         }
     }
 
     .w-sdc-catalog-sort-arrow{
         display: inline-block;
         &.up{
-            .b_9;
+            .b_3;
             width: 0;
             height: 0;
             border-left: 5px solid transparent;
@@ -200,7 +219,7 @@
             border-bottom: 5px solid ;
         }
         &.down{
-            .b_9;
+            .b_3;
             width: 0;
             height: 0;
             border-left: 5px solid transparent;

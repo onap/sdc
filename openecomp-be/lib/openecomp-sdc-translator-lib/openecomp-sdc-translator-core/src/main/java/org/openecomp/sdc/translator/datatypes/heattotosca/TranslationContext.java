@@ -455,6 +455,16 @@ public class TranslationContext {
         .isNestedServiceTemplateWasHandled(nestedServiceTemplateFileName);
   }
 
+  public Set<String> getAllRelatedNestedNodeTypeIds(){
+    String globalName = "GlobalSubstitutionTypes";
+    if(Objects.isNull(this.unifiedSubstitutionData) ||
+       Objects.isNull(this.unifiedSubstitutionData.get(globalName))){
+      return new HashSet<>();
+    }
+
+    return this.unifiedSubstitutionData.get(globalName).getAllRelatedNestedNodeTypeIds();
+  }
+
   public void addNestedFileToUsedNestedComputeType(String serviceTemplateName,
                                                    String nestedServiceTemplateFileName,
                                                    String computeType){

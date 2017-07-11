@@ -189,12 +189,25 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
 			final boolean isScalarF, JsonElement entryValue) {
 		Object convertedValue;
 		JsonObject asJsonObjectIn = entryValue.getAsJsonObject();
-		Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
 
 		DataTypeDefinition dataTypeDefinition = dataTypes.get(innerType);
 		Map<String, PropertyDefinition> allProperties = getAllProperties(dataTypeDefinition);
 		Map<String, Object> toscaObjectPresentation = new HashMap<>();
 
+		for (Entry<String, PropertyDefinition> entry : allProperties.entrySet()) {
+			String propName = entry.getKey();
+			PropertyDefinition propertyDefinition = entry.getValue();
+			JsonElement elementValue = asJsonObjectIn.get(propName);
+			if(elementValue == null && propertyDefinition.getDefaultValue() != null){
+				JsonReader jsonReader = new JsonReader(new StringReader(propertyDefinition.getDefaultValue()));
+				jsonReader.setLenient(true);
+				elementValue = jsonParser.parse(jsonReader);
+				asJsonObjectIn.add(propName, elementValue);
+			}
+		}
+		
+		Set<Entry<String, JsonElement>> entrySetIn = asJsonObjectIn.entrySet();
+		
 		for (Entry<String, JsonElement> entry : entrySetIn) {
 			String propName = entry.getKey();
 

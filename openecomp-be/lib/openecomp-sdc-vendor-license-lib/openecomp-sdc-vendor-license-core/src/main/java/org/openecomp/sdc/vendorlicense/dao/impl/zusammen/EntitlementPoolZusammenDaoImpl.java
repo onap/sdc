@@ -73,8 +73,20 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
 
     SessionContext context = ZusammenUtil.createSessionContext();
     Id itemId = new Id(entitlementPool.getVendorLicenseModelId());
-    zusammenAdaptor.saveElement(context, new ElementContext(itemId,
-            VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor)), entitlmentpoolElement,
+    ElementContext elementContext =  new ElementContext(itemId,
+        VlmZusammenUtil.getFirstVersionId(context, itemId, zusammenAdaptor));
+
+    Optional<ElementInfo> epFromDb = zusammenAdaptor.getElementInfo(context, elementContext,
+        new Id(entitlementPool.getId()));
+
+    if (epFromDb.isPresent()) {
+      if (entitlmentpoolElement.getRelations() == null) {
+        entitlmentpoolElement.setRelations(new ArrayList<>());
+      }
+    entitlmentpoolElement.getRelations().addAll(epFromDb.get().getRelations());
+    }
+
+    zusammenAdaptor.saveElement(context,elementContext, entitlmentpoolElement,
         String.format("Update entitlement pool with id %s", entitlementPool.getId()));
   }
 

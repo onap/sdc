@@ -122,7 +122,7 @@ public class CapabiltyRequirementConvertor {
 		if (prop.getSchema() != null && prop.getSchema().getProperty() != null) {
 			innerType = prop.getSchema().getProperty().getType();
 		}
-		Object convertedValue = PropertyConvertor.getInstance().convertToToscaObject(propertyType, prop.getValue(), innerType, dataTypes);
+		Object convertedValue = PropertyConvertor.getInstance().convertToToscaObject(propertyType, prop.getName(), prop.getValue(), innerType, dataTypes);
 		return convertedValue;
 	}
 

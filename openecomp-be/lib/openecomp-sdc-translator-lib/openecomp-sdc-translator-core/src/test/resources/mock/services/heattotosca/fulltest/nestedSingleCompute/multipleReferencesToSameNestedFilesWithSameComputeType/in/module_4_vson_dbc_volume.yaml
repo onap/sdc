@@ -1,0 +1,61 @@
+heat_template_version: 2014-10-16
+#################################
+# Author: Dmitry Orzhehovsky
+# Email:  dorzheho@cisco.com
+#################################
+
+description: >
+  Creates a Cinder volume.
+  Cinder volume is a storage in the form of block devices. 
+  It can be used, for example, for providing storage to instance. 
+  Volume supports creation from snapshot, backup or image. 
+  Also volume can be created only by size.
+  The template creates volume for vSON DB Config servers
+  (Virtual Function Component DBC).
+
+parameters:
+
+  vnf_name:
+    type: string
+    label: VF name
+    description: Unique name for this VF instance.
+
+  vf_module_name:
+    type: string
+    label: VF module name
+    description: Unique name for this VF module instance.
+
+  availability_zone_0:
+    type: string
+    label: Availability zone 0
+    description: Availability zone.
+
+  vson_dbc_volume_name_0:
+    type: string
+    label: vSON DBC volume name
+    description: Volume name.
+
+  vson_dbc_volume_size_0:
+    type: number
+    label: vSON DBC cinder volume size 
+    description: Size of the Cinder volume. Measured in gigabytes.
+
+resources:
+
+  vson_dbc_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      name: {get_param: vson_dbc_volume_name_0}
+      metadata:
+        vnf_name: {get_param: vnf_name}
+        vf_module_name: {get_param: vf_module_name}
+      availability_zone: {get_param: availability_zone_0}
+      size: {get_param: vson_dbc_volume_size_0}
+      description: vSON DB Config cinder volume.
+
+outputs:
+
+  vson_dbc_volume_id_0:
+    value: {get_resource: vson_dbc_volume_0}
+    description: vSON DB Config volume ID.
+
