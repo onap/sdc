@@ -39,10 +39,14 @@
     -ms-flex-align: center;
     align-items: center;
     margin: 0px 20px;
+    max-width:350px;
+
     .title{
-        -webkit-box-flex: 999;
-        -ms-flex-positive: 999;
-        flex-grow: 999;
+        flex: 1;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .close-button{
         .sprite;

@@ -106,7 +106,7 @@ public class DistributionServlet extends BeGenericServlet {
 			@ResponseHeader(name = "Content-Length", description = "Length of  the response body", response = String.class)})
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and list of Cambria API server’s FQDNs is returned", response = ServerListResponse.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"),
@@ -174,11 +174,11 @@ public class DistributionServlet extends BeGenericServlet {
 	@ApiOperation(value = "Subscription status", httpMethod = "POST", notes = "Subscribes for distribution notifications")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is successfully registered for distribution", response = TopicRegistrationResponse.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter “apiPublicKey” - POL4501"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter “distrEnvName” - POL4502"),
-			@ApiResponse(code = 400, message = "Invalid Body :  Specified “distrEnvName” doesn’t exist - POL4137"),
+			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - POL4502"),
+			@ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"),
@@ -236,7 +236,7 @@ public class DistributionServlet extends BeGenericServlet {
 	@ApiOperation(value = "Artifact types list", httpMethod = "GET", notes = "Fetches available artifact types list")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact types list fetched successfully", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"),
@@ -282,11 +282,11 @@ public class DistributionServlet extends BeGenericServlet {
 	//TODO Edit the responses
 	@ApiResponses(value = {
 			@ApiResponse(code = 204, message = "ECOMP component is successfully unregistered", response = TopicUnregistrationResponse.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 400, message = "Missing  Body - POL4500"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter “apiPublicKey” - POL4501"),
-			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter “distrEnvName” - SVC4506"),
-			@ApiResponse(code = 400, message = "Invalid Body :  Specified “distrEnvName” doesn’t exist - POL4137"),
+			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'apiPublicKey' - POL4501"),
+			@ApiResponse(code = 400, message = "Invalid  Body  : missing mandatory parameter 'distrEnvName' - SVC4506"),
+			@ApiResponse(code = 400, message = "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 405, message = "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"),

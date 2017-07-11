@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.be.externalapi.servlet;
 
 import java.io.IOException;
@@ -100,7 +120,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "creates a resource", httpMethod = "POST", notes = "Creates a resource")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "ECOMP component is authenticated and Asset created", response = Resource.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),
@@ -249,7 +269,7 @@ public class CrudExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Change Resource lifecycle State", httpMethod = "POST")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Resource state changed", response = AssetMetadata.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  X-ECOMP-InstanceID  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Error: Requested '%1' (uuid) resource was not found - SVC4063"),

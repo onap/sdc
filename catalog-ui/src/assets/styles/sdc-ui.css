@@ -159,7 +159,7 @@ fieldset label {
 .heading-5-medium, .catalog-tile .catalog-tile-top .catalog-tile-item-name, .sdc-tile-catalog .sdc-tile-content .sdc-tile-content-info .sdc-tile-content-info-item-name {
   font-weight: 400;
   line-height: 16px;
-  font-size: 16px; }
+  font-size: 14px; }
 
 .body-1 {
   font-weight: 400;
@@ -175,7 +175,7 @@ fieldset label {
 
 .body-2, .catalog-tile .catalog-tile-top .catalog-tile-entity-details .catalog-tile-version-info .catalog-tile-item-version, .catalog-tile .catalog-tile-content .catalog-tile-locking-user-name, .sdc-tile-catalog .sdc-tile-content .sdc-tile-content-info .sdc-tile-content-info-version-info .sdc-tile-content-info-version-info-text, .sdc-tile-catalog .sdc-tile-footer .sdc-tile-footer-text {
   font-weight: 400;
-  font-size: 13px; }
+  font-size: 12px; }
 
 .body-2-medium, .catalog-tile .catalog-tile-content {
   font-weight: 600;
@@ -304,7 +304,7 @@ fieldset label {
   .sdc-tile-catalog .sdc-tile-header {
     line-height: 16px; }
     .sdc-tile-catalog .sdc-tile-header .sdc-tile-header-type {
-      font-size: 16px;
+      font-size: 14px;
       text-transform: uppercase; }
       .sdc-tile-catalog .sdc-tile-header .sdc-tile-header-type.purple {
         color: #9063cd; }

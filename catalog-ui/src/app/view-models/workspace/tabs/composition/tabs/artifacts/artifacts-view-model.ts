@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 'use strict';
 import {
     ArtifactModel,
@@ -28,7 +48,7 @@ export interface IArtifactsViewModelScope extends ICompositionViewModelScope {
     getEnvArtifact(heatArtifact:ArtifactModel):any;
     getEnvArtifactName(artifact:ArtifactModel):string;
     isLicenseArtifact(artifact:ArtifactModel):boolean;
-    isVFiArtifact(artifact:ArtifactModel):boolean;
+    //isVFiArtifact(artifact:ArtifactModel):boolean;
 }
 
 export class ResourceArtifactsViewModel {
@@ -105,6 +125,7 @@ export class ResourceArtifactsViewModel {
             }
         }
         this.$scope.artifacts = artifacts;
+        this.$scope.isLoading = false;
     };
 
 
@@ -217,12 +238,13 @@ export class ResourceArtifactsViewModel {
             return this.artifactsUtils.getTitle(this.$scope.artifactType, this.$scope.currentComponent);
         };
 
-        this.$scope.isVFiArtifact = (artifact:ArtifactModel):boolean=> {
-            if (artifact.artifactGroupType === ArtifactGroupType.INFORMATION) {//fix DE256847
-                return this.$scope.currentComponent.artifacts && (!this.$scope.currentComponent.artifacts[artifact.artifactLabel] || !this.$scope.currentComponent.artifacts[artifact.artifactLabel].artifactName);
-            }
-            return this.$scope.currentComponent.selectedInstance && this.$scope.currentComponent.selectedInstance.deploymentArtifacts && this.$scope.currentComponent.selectedInstance.deploymentArtifacts[artifact.artifactLabel];
-        };
+        // Bug 310499 - user should be unable to delete RI artifact. (also talked to David and agreed this function isn't necessary)
+        // this.$scope.isVFiArtifact = (artifact:ArtifactModel):boolean=> {
+        //     if (artifact.artifactGroupType === ArtifactGroupType.INFORMATION) {//fix DE256847
+        //         return this.$scope.currentComponent.artifacts && (!this.$scope.currentComponent.artifacts[artifact.artifactLabel] || !this.$scope.currentComponent.artifacts[artifact.artifactLabel].artifactName);
+        //     }
+        //     return this.$scope.currentComponent.selectedInstance && this.$scope.currentComponent.selectedInstance.deploymentArtifacts && this.$scope.currentComponent.selectedInstance.deploymentArtifacts[artifact.artifactLabel];
+        // };
 
         this.$scope.addOrUpdate = (artifact:ArtifactModel):void => {
             this.artifactsUtils.setArtifactType(artifact, this.$scope.artifactType);

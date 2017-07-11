@@ -34,10 +34,10 @@
                                   uib-popover-template="popoverTemplate"
                                   popover-class="parameter-description-popover deployment-artifact-view top"
                                   popover-title="Description"
-                                  popover-placement="top-left"
+                                  popover-placement="auto top-left"
                                   popover-is-open="selectedArtifactId == artifact.uniqueId && !isLoading"
                                   popover-trigger="'none'"
-                                  popover-append-to-body="true"
+                                  popover-append-to-body="false"
                                   data-ng-click="openDescriptionPopover(artifact.uniqueId)"
                                   data-tests-id="descriptionIcon_{{artifact.artifactDisplayName}}"></span>
                         </div>

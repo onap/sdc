@@ -107,7 +107,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "uploads of artifact to a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -199,7 +199,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "uploads an artifact to a resource instance", httpMethod = "POST", notes = "uploads an artifact to a resource instance")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact uploaded", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -300,7 +300,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "updates an artifact on a resource or service", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact updated", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -394,7 +394,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "updates an artifact on a resource instance", httpMethod = "POST", notes = "uploads of artifact to a resource or service")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact updated", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -491,7 +491,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 			@ApiResponse(code = 404, message = "Asset not found") })*/
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact deleted", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -580,7 +580,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "deletes an artifact of a resource insatnce", httpMethod = "DELETE", notes = "deletes an artifact of a resource insatnce", response = Response.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact deleted", response = ArtifactDefinition.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -671,7 +671,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Download component artifact", httpMethod = "GET", notes = "Returns downloaded artifact")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact downloaded", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),
@@ -750,7 +750,7 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
 	@ApiOperation(value = "Download resource instance artifact", httpMethod = "GET", notes = "Returns downloaded artifact", response = Response.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Artifact downloaded", response = String.class),
-			@ApiResponse(code = 400, message = "Missing  “X-ECOMP-InstanceID”  HTTP header - POL5001"),
+			@ApiResponse(code = 400, message = "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"),
 			@ApiResponse(code = 401, message = "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic  Authentication credentials - POL5002"),
 			@ApiResponse(code = 403, message = "ECOMP component is not authorized - POL5003"),
 			@ApiResponse(code = 404, message = "Specified resource is not found - SVC4063"),

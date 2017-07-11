@@ -164,4 +164,14 @@ public class UnifiedCompositionNestedSingleComputeFullTest extends BaseFullTrans
 
         testTranslationWithInit();
     }
+
+    @Test
+    public void testMultipleReferencesToSameNestedFilesWithSameComputeType() throws IOException {
+        inputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/multipleReferencesToSameNestedFilesWithSameComputeType/in";
+        outputFilesPath =
+            "/mock/services/heattotosca/fulltest/nestedSingleCompute/multipleReferencesToSameNestedFilesWithSameComputeType/out";
+
+        testTranslationWithInit();
+    }
 }

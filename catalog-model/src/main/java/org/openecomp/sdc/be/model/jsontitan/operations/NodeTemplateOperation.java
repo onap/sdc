@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package org.openecomp.sdc.be.model.jsontitan.operations;
 
 import java.util.ArrayList;
@@ -602,18 +622,20 @@ public class NodeTemplateOperation extends BaseOperation {
 
 	public MapArtifactDataDefinition prepareInstDeploymentArtifactPerInstance(Map<String, ArtifactDataDefinition> deploymentArtifacts, String componentInstanceId, User user, String envType) {
 		if (deploymentArtifacts != null && envType.equals(HEAT_VF_ENV_NAME)) {
+			Map<String, ArtifactDataDefinition> instDeploymentArtifacts = new HashMap<>();
 			
 			deploymentArtifacts.entrySet().forEach(e -> {
 				ArtifactDataDefinition artifact = e.getValue();
 				String type = artifact.getArtifactType();
 				if (type.equalsIgnoreCase(ArtifactTypeEnum.HEAT.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_NET.getType()) || type.equalsIgnoreCase(ArtifactTypeEnum.HEAT_VOL.getType())) {
-					//instDeploymentArtifacts.put(e.getKey(), artifact);
 					ArtifactDataDefinition artifactEnv = createArtifactPlaceHolderInfo(artifact, componentInstanceId, user, envType);
-					deploymentArtifacts.put(artifactEnv.getArtifactLabel(), artifactEnv);
+					instDeploymentArtifacts.put(artifactEnv.getArtifactLabel(), artifactEnv);
 				}
 			});
-
+			
+			deploymentArtifacts.putAll(instDeploymentArtifacts);
 			MapArtifactDataDefinition instArtifacts = new MapArtifactDataDefinition(deploymentArtifacts);
+			
 			return instArtifacts;
 		}
 		return null;
@@ -845,8 +867,10 @@ public class NodeTemplateOperation extends BaseOperation {
 			dataDefinition.setComponentVersion((String) originToscaElement.getMetadataValue(JsonPresentationFields.VERSION));
 		if (StringUtils.isEmpty(dataDefinition.getComponentName()) && originToscaElement != null)
 			dataDefinition.setComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.NAME));
-		if (StringUtils.isEmpty(dataDefinition.getToscaComponentName()) && originToscaElement != null)
-			dataDefinition.setToscaComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
+//		if (StringUtils.isEmpty(dataDefinition.getToscaComponentName()) && originToscaElement != null)
+	
+		dataDefinition.setToscaComponentName((String) originToscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
+		
 		if (dataDefinition.getOriginType() == null && originToscaElement != null) {
 			ResourceTypeEnum resourceType = originToscaElement.getResourceType();
 			OriginTypeEnum originType = null;

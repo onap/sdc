@@ -1,3 +1,23 @@
+/*-
+ * ============LICENSE_START=======================================================
+ * SDC
+ * ================================================================================
+ * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 import {Component, ViewChild, ElementRef, Renderer, Inject} from "@angular/core";
 import { PropertiesService } from "../../services/properties.service";
 import { HierarchyNavService } from "../../services/hierarchy-nav.service";
@@ -273,19 +293,21 @@ export class PropertiesAssignmentComponent {
         console.log("==>" + this.constructor.name + ": declareProperties");
 
         let selectedProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let selectedInputs: InstanceBePropertiesMap = new InstanceBePropertiesMap();
+        let instancesIds = new KeysPipe().transform(this.instanceFePropertiesMap, []);
 
-        let instancesNames = new KeysPipe().transform(this.instanceFePropertiesMap, []);
-        angular.forEach(instancesNames, (instanceName: string): void => {
-            selectedProperties[instanceName] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceName]);
-            //selectedProperties[this.selectedInstanceData.uniqueId] = this.propertiesService.getCheckedProperties(this.properties);
+        angular.forEach(instancesIds, (instanceId: string): void => {
+            let selectedInstanceData: ResourceInstance = this.instances.find(instance => instance.uniqueId == instanceId);
+            let originType: string = (selectedInstanceData) ? selectedInstanceData.originType : this.selectedInstanceType; 
+            if (!this.isInput(originType)) {
+                selectedProperties[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+            } else {
+                selectedInputs[instanceId] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+            }
         });
 
-        let inputsToCreate: InstancePropertiesAPIMap;
-        if (!this.isInput(this.selectedInstanceType)) {
-            inputsToCreate = new InstancePropertiesAPIMap(null, selectedProperties);
-        } else {
-            inputsToCreate = new InstancePropertiesAPIMap(selectedProperties, null);
-        }
+        let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedInputs, selectedProperties);
+
         this.componentServiceNg2
             .createInput(this.component, inputsToCreate)
             .subscribe(response => {

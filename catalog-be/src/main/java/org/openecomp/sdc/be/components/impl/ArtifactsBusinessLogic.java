@@ -3599,10 +3599,11 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
 	protected Either<ArtifactDefinition, ResponseFormat> generateArtifactPayload(ArtifactDefinition artifactDefinition, ComponentTypeEnum componentType, org.openecomp.sdc.be.model.Component component, String resourceInstanceName, User modifier,
 			boolean shouldLock, Supplier<Long> payloadUpdateDateGen, Supplier<Either<ESArtifactData, ResponseFormat>> esDataCreator, String instanceId) {
+		
+		log.trace("Start generating payload for {} artifact {}", artifactDefinition.getArtifactType(), artifactDefinition.getEsId());
+		if (artifactDefinition.getPayloadUpdateDate() == null || artifactDefinition.getPayloadUpdateDate() == 0 || artifactDefinition.getPayloadUpdateDate() <= payloadUpdateDateGen.get()) {
 
-		if (artifactDefinition.getPayloadUpdateDate() == null || artifactDefinition.getPayloadUpdateDate() == 0 || artifactDefinition.getPayloadUpdateDate() < payloadUpdateDateGen.get()) {
-
-			log.trace("Generaing payload for {} artifact {}", artifactDefinition.getArtifactType(), artifactDefinition.getEsId());
+			log.trace("Generating payload for {} artifact {}", artifactDefinition.getArtifactType(), artifactDefinition.getEsId());
 			Either<ESArtifactData, ResponseFormat> artifactDataRes = esDataCreator.get();
 			ESArtifactData artifactData = null;
 
@@ -3664,6 +3665,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 					artifactDefinition.setArtifactChecksum(newCheckSum);
 					// artifactToscaOperation.updateUUID(artifactDefinition, oldCheckSum, artifactDefinition.getArtifactVersion());
 					artifactDefinition.setEsId(artifactDefinition.getUniqueId());
+					log.trace("No real update done in payload for {} artifact, updating payloadUpdateDate {}", artifactDefinition.getArtifactType(), artifactDefinition.getEsId());
 					updateArifactDefinitionStatus = artifactToscaOperation.updateArifactOnResource(artifactDefinition, component.getUniqueId(), artifactDefinition.getUniqueId(), componentType.getNodeType(), instanceId);
 
 					log.trace("Update Payload  ", artifactDefinition.getEsId());

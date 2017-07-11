@@ -204,6 +204,14 @@ public class FeatureGroupDaoZusammenImpl implements FeatureGroupDao {
                   .createRelation(RelationType.FeatureGroupToLicenseKeyGroup, relation))
               .collect(Collectors.toList()));
 
+      Collection<Relation> LaRelations =  elementInfo.get().getRelations().stream().filter
+          (rel->rel.getType().equals(RelationType.FeatureGroupToReferencingLicenseAgreement.name()))
+          .map(rel ->VlmZusammenUtil.createRelation(RelationType
+          .FeatureGroupToReferencingLicenseAgreement,rel.getEdge2().getElementId().toString()))
+          .collect(Collectors.toList());
+
+      featureGroupElement.getRelations().addAll(LaRelations);
+
       zusammenAdaptor
           .saveElement(context, elementContext, featureGroupElement, "update feature group");
     }

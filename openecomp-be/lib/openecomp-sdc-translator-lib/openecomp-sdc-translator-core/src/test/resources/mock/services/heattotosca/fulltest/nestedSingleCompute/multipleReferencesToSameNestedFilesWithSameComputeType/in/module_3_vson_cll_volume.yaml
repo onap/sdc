@@ -1,0 +1,116 @@
+heat_template_version: 2014-10-16
+#################################
+# Author: Dmitry Orzhehovsky
+# Email:  dorzheho@cisco.com
+#################################
+
+description: >
+  Creates Cinder volumes.
+  Cinder volume is a storage in the form of block devices. 
+  It can be used, for example, for providing storage to instance. 
+  Volume supports creation from snapshot, backup or image. 
+  Also volume can be created only by size.
+  The template creates volumes for the vSON Cluster leaders
+  (Virtual Function Component CLL).
+
+parameters:
+
+  vnf_name:
+    type: string
+    label: VF name
+    description: Unique name for this VF instance.
+
+  vf_module_name:
+    type: string
+    label: VF module name
+    description: Unique name for this VF module instance.
+
+  availability_zone_0:
+    type: string
+    label: Availability zone 0
+    description: First availability zone.
+
+  availability_zone_1:
+    type: string
+    label: Availability zone 1
+    description: Second availability zone.
+
+  vson_cll_volume_size_0:
+    type: number
+    label: Cinder volume ID 0 size 
+    description: > 
+      Size of the first Cinder volume. Measured in gigabytes.
+
+  vson_cll_volume_size_1:
+    type: number
+    label: Cinder volume ID 1 size
+    description: >
+      Size of the second Cinder volume. Measured in gigabytes.
+
+  vson_cll_volume_size_2:
+    type: number
+    label: Cinder volume ID 2 size
+    description: >
+      Size of the third Cinder volume. Measured in gigabytes.
+
+resources:
+
+  vson_cll_volume_0:
+    type: OS::Cinder::Volume
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_cll_volume_0
+          params:
+            VNF_NAME: { get_param: vnf_name}
+      metadata:
+        vnf_name: {get_param: vnf_name}
+        vf_module_name: {get_param: vf_module_name}
+      availability_zone: {get_param: availability_zone_0}
+      size: {get_param: vson_cll_volume_size_0}
+      description: Cinder volume for the first vSON Cluster leader.
+
+  vson_cll_volume_1:
+    type: OS::Cinder::Volume
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_cll_volume_1
+          params:
+            VNF_NAME: { get_param: vnf_name}
+      metadata:
+        vnf_name: {get_param: vnf_name}
+        vf_module_name: {get_param: vf_module_name}
+      availability_zone: {get_param: availability_zone_1}
+      size: {get_param: vson_cll_volume_size_1}
+      description: Cinder volume for the second vSON Cluster leader.
+
+  vson_cll_volume_2:
+    type: OS::Cinder::Volume
+    properties:
+      name:
+        str_replace:
+          template: VNF_NAME_cll_volume_2
+          params:
+            VNF_NAME: { get_param: vnf_name}
+      metadata:
+        vnf_name: {get_param: vnf_name}
+        vf_module_name: {get_param: vf_module_name}
+      availability_zone: {get_param: availability_zone_0}
+      size: {get_param: vson_cll_volume_size_2}
+      description: Cinder volume for the third vSON Cluster leader.
+      
+outputs:
+
+  vson_cll_volume_id_0:
+    value: {get_resource: vson_cll_volume_0}
+    description: First vSON Cluster leader volume ID.
+
+  vson_cll_volume_id_1:
+    value: {get_resource: vson_cll_volume_1}
+    description: Second vSON Cluster leader volume ID.
+
+  vson_cll_volume_id_2:
+    value: {get_resource: vson_cll_volume_2}
+    description: Third vSON Cluster leader volume ID.
+
