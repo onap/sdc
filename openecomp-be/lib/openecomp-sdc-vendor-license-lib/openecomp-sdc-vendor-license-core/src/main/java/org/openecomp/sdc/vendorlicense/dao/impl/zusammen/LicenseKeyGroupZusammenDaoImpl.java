@@ -74,14 +74,15 @@ public class LicenseKeyGroupZusammenDaoImpl implements LicenseKeyGroupDao {
     Optional<ElementInfo> lkgFromDb = zusammenAdaptor.getElementInfo(context, elementContext,
         new Id(licenseKeyGroup.getId()));
 
-    if(lkgFromDb.isPresent()) {
+    if (lkgFromDb.isPresent()) {
 
-      if( licenseKeyGroupElement.getRelations() == null) {
+      if (licenseKeyGroupElement.getRelations() == null) {
         licenseKeyGroupElement.setRelations(new ArrayList<>());
       }
 
-      lkgFromDb.get().getRelations().forEach(relation ->
-          licenseKeyGroupElement.getRelations().add(relation));
+      if (lkgFromDb.get().getRelations() != null) {
+        licenseKeyGroupElement.getRelations().addAll(lkgFromDb.get().getRelations());
+      }
     }
 
     zusammenAdaptor.saveElement(context, elementContext,
