@@ -3515,11 +3515,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
 	private String generateHeatEnvPayload(ArtifactDefinition artifactDefinition) {
 		List<HeatParameterDefinition> heatParameters = artifactDefinition.getListHeatParameters();
-		heatParameters.sort(Comparator.comparing(e -> e.getName()));
 		StringBuilder sb = new StringBuilder();
 		sb.append(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatEnvArtifactHeader());
 		sb.append("parameters:\n");
 		if (heatParameters != null) {
+			heatParameters.sort(Comparator.comparing(e -> e.getName()));
+
 			List<HeatParameterDefinition> empltyHeatValues = new ArrayList<>();
 
 			for (HeatParameterDefinition heatParameterDefinition : heatParameters) {

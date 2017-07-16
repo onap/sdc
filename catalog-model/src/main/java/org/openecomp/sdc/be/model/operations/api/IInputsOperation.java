@@ -43,8 +43,6 @@ public interface IInputsOperation {
 
 	Either<List<InputDefinition>, TitanOperationStatus> addInputsToGraph(String componentId, NodeTypeEnum nodeType, Map<String, InputDefinition> inputs, Map<String, DataTypeDefinition> dataTypes);
 
-	Either<List<InputDefinition>, StorageOperationStatus> addInputsToComponent(String resourceId, NodeTypeEnum nodeType, ComponentInstInputsMap componentInsInputs, Map<String, DataTypeDefinition> dataTypes);
-
 	TitanOperationStatus findNodeNonInheretedInputs(String uniqueId, List<InputDefinition> inputs);
 
 	Either<List<InputDefinition>, StorageOperationStatus> getInputsOfComponent(String compId, String fromName, int amount);

@@ -598,26 +598,8 @@ public class NodeTemplateOperation extends BaseOperation {
 		if (status != StorageOperationStatus.OK) {
 			return status;
 		}
-		status = addInstanceDeploymentArtifacts(originNodeType, componentInstance, updatedContainerVertex, user, envType);
-		if (status != StorageOperationStatus.OK) {
-			return status;
-		}
+		
 		return addCalculatedCapReqFromNodeType(originNodeType, componentInstance, updatedContainerVertex);
-
-	}
-
-	private StorageOperationStatus addInstanceDeploymentArtifacts(ToscaElement originNodeType, ComponentInstanceDataDefinition componentInstance, GraphVertex updatedContainerVertex, User user, String envType) {
-		Map<String, ArtifactDataDefinition> deploymentArtifacts = originNodeType.getDeploymentArtifacts();
-		MapArtifactDataDefinition instArtifacts = prepareInstDeploymentArtifactPerInstance(deploymentArtifacts, componentInstance.getUniqueId(), user, envType);
-		if (instArtifacts != null) {
-			StorageOperationStatus calculatedResult = addToscaDataDeepElementsBlockToToscaElement(updatedContainerVertex, EdgeLabelEnum.INST_DEPLOYMENT_ARTIFACTS, VertexTypeEnum.INST_DEPLOYMENT_ARTIFACTS, instArtifacts,
-					componentInstance.getUniqueId());
-
-			if (calculatedResult != StorageOperationStatus.OK) {
-				return calculatedResult;
-			}
-		}
-		return StorageOperationStatus.OK;
 	}
 
 	public MapArtifactDataDefinition prepareInstDeploymentArtifactPerInstance(Map<String, ArtifactDataDefinition> deploymentArtifacts, String componentInstanceId, User user, String envType) {

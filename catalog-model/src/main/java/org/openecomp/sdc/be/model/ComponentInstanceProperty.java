@@ -23,11 +23,11 @@ package org.openecomp.sdc.be.model;
 import java.io.Serializable;
 import java.util.List;
 
-
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 
-public class ComponentInstanceProperty extends PropertyDefinition implements IComponentInstanceConnectedElement, Serializable {
+
+public class ComponentInstanceProperty extends PropertyDefinition implements IComponentInstanceConnectedElement, Serializable{
 
 	/**
 	 * 

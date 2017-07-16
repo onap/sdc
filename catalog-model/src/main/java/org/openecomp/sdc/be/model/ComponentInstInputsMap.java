@@ -31,14 +31,14 @@ public class ComponentInstInputsMap implements Serializable{
 	 */
 	private static final long serialVersionUID = 1136631343963488131L;
 	
-	Map<String, List<InputDefinition>> componentInstanceInputsMap;
+	Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap;
 	Map<String, List<ComponentInstancePropInput>> componentInstanceProperties;
 
-	public Map<String, List<InputDefinition>> getComponentInstanceInputsMap() {
+	public Map<String, List<ComponentInstancePropInput>> getComponentInstanceInputsMap() {
 		return componentInstanceInputsMap;
 	}
 
-	public void setComponentInstanceInputsMap(Map<String, List<InputDefinition>> componentInstanceInputsMap) {
+	public void setComponentInstanceInputsMap(Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap) {
 		this.componentInstanceInputsMap = componentInstanceInputsMap;
 	}
 	

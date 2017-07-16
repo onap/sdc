@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -130,10 +131,10 @@ public class InputsApiTests extends ComponentBaseTest {
 		ComponentInstance vfInstance = serviceInstances.get(0);
 		RestResponse getComponentInstanceInputsResponse = InputsRestUtils.getComponentInstanceInputs(service, vfInstance);
 		BaseValidationUtils.checkSuccess(getComponentInstanceInputsResponse);
-		List<InputDefinition> instanceInputs = new Gson().fromJson(getComponentInstanceInputsResponse.getResponse(), new TypeToken<ArrayList<InputDefinition>>(){}.getType());
+		List<ComponentInstancePropInput> instanceInputs = new Gson().fromJson(getComponentInstanceInputsResponse.getResponse(), new TypeToken<ArrayList<ComponentInstancePropInput>>(){}.getType());
 		
 		// Take only the 2 first inputs
-		List<InputDefinition> inputsToAdd = instanceInputs.stream().limit(2).collect(Collectors.toList());
+		List<ComponentInstancePropInput> inputsToAdd = instanceInputs.stream().limit(2).collect(Collectors.toList());
 		
 		// Build component instances input map to add to server
 		ComponentInstInputsMap buildComponentInstInputsMap = buildComponentInstInputsMap(vfInstance.getUniqueId(), inputsToAdd);
@@ -214,8 +215,8 @@ public class InputsApiTests extends ComponentBaseTest {
 	 * @param inputs
 	 * @return {@link org.openecomp.sdc.be.model.ComponentInstInputsMap}
 	 */
-	private ComponentInstInputsMap buildComponentInstInputsMap (String addToInput, List<InputDefinition> inputs) {
-		Map<String, List<InputDefinition>> map = new HashMap<>();
+	private ComponentInstInputsMap buildComponentInstInputsMap (String addToInput, List<ComponentInstancePropInput> inputs) {
+		Map<String, List<ComponentInstancePropInput>> map = new HashMap<>();
 		map.put(addToInput, inputs);
 		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
 		componentInstInputsMap.setComponentInstanceInputsMap(map);		
