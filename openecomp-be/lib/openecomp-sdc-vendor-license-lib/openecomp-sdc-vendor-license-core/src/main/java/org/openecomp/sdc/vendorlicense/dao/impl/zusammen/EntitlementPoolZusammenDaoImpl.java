@@ -83,7 +83,9 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
       if (entitlmentpoolElement.getRelations() == null) {
         entitlmentpoolElement.setRelations(new ArrayList<>());
       }
-    entitlmentpoolElement.getRelations().addAll(epFromDb.get().getRelations());
+      if (epFromDb.get().getRelations() != null) {
+        entitlmentpoolElement.getRelations().addAll(epFromDb.get().getRelations());
+      }
     }
 
     zusammenAdaptor.saveElement(context,elementContext, entitlmentpoolElement,
